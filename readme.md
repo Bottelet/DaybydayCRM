@@ -13,7 +13,7 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 
 **How to**
 
-- Insert project into empty folder / git clone https://github.com/Bottelet/Flarepoint.git
+- Insert project into empty folder / git clone https://github.com/Bottelet/Flarepoint-crm.git
 - Create a empty database table
 - Insert database credentials in Config\Database.php
 - Run the following commands
