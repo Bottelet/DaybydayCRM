@@ -1,0 +1,174 @@
+$primary-color: #3A485C;
+$secondary-color: #008ae6;
+$link-color:#337ab7;
+a{
+    color: $link-color;
+    text-decoration: none;
+}
+p{
+    margin: 0 0 10px;
+    line-height: 1.4285em;
+    &:last-child{
+    margin-bottom: 10px;
+    }
+}
+h1
+{
+	font-size:28px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    min-height: 0rem;
+    font-weight: 200; 
+}
+h3{
+    &:first-child{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    }
+}
+h4{
+    margin: 0;
+    font-weight: normal; 
+}
+.smalltext
+{
+    font-size: 10px;
+}
+
+.grey
+{
+    border-color: grey;
+}
+
+.movedown
+{
+    margin-top: 20px;
+}
+
+.topbar
+{
+     background-color: #313d4e;
+     width: 100%;
+     height: 40px;
+
+}
+
+
+.navbar-toggle {
+	@media (max-width: 991px)
+		{
+		    display: block;
+		}
+
+}
+#wrapper {
+   
+
+    @media(min-width:992px){
+    	 padding-left: 250px;
+    }
+
+
+}
+
+#page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding: 15px;
+	@media(min-width:768px)
+	{
+        padding: 20px;
+        position: relative;
+	}
+    @media(max-width:768px)
+    {
+	   padding: 20px;
+       position: relative;
+    }
+}
+
+.boxspace 
+{ 
+	margin-right:10px;
+	padding:10px; 
+}
+
+.taskcase
+{
+    padding: 5px 5px 15px 20px;
+    background-color: #cce5ff;
+    
+	hr
+	{
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+}
+
+
+.btn-primary
+{
+	background-color: $primary-color; //#D18551 Ornage
+	border-color: $primary-color; // #D18551 Ornage
+}
+
+.dropzone
+{
+	    border: 2px dotted $secondary-color;
+}
+
+.notification-base{ 
+width:100%; 
+height:50px; 
+}
+
+.notification-warning{
+    @extend .notification-base;
+    background-color:rgba(147, 59, 57, 0.8);
+}
+
+.notification-success{
+    @extend .notification-base;
+    background-color:rgba(0, 179, 60, 0.8);
+}
+
+.notification-icon
+{
+    font-size: 40px;
+    display: inline;
+    padding:10px;
+}
+
+.notification-text
+{
+    margin-top: -40px;
+    padding: 0 3.2em;
+    font-size: 1.3em;
+    color:#efefef;  
+}
+
+.ui.selection.dropdown .menu>.item {
+    font-size: 15px; 
+}
+
+.ui.selection.dropdown
+{
+    margin-left: 0;
+}
+
+
+.form-inline .form-control {
+    @media (min-width: 768px)
+    {
+        width:100%;
+    }
+    margin-bottom: 15px;
+}
+.removeleft
+{
+    padding-left: 0;
+}
+
+.removeright
+{
+    padding-right: 0;
+}

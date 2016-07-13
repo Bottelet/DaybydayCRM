@@ -1,0 +1,109 @@
+.navmenu
+{
+   	background-color: $primary-color;
+    top: 0;
+    width: 250px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.sidebarheader
+{
+    background-color: $secondary-color;
+    padding-top: 10px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-top: 15px;
+}
+
+.list-group-item 
+{
+
+    background-color: $primary-color;
+    border: none;
+
+    &:first-child
+    {
+		    border-top-right-radius: 0px;
+    		border-top-left-radius: 0px;
+    }
+    &:last-child
+    {
+    	    border-bottom-right-radius: 0px;
+    		border-bottom-left-radius: 0px;
+    }
+}
+
+.childlist{
+    background-color: #313d4e;
+}
+
+a.list-group-item
+{
+    color: #fff;
+	font-size:15px;
+}
+
+a.list-group-item:focus
+{
+  
+    background-color: rgba(0,0,0,0);
+}
+
+.panel
+{
+    border-radius: 0px;
+    border:0;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.05);
+}
+
+.logospace
+{
+   font-size: 18px;
+   padding-left: 80px;
+   @media(max-width:768px)
+   {
+   	 	padding-left: 15px;
+        font-size: 18px;
+   }
+
+}
+
+.activity-feed {
+  padding: 15px;
+    .feed-item {
+      position: relative;
+      padding-bottom: 20px;
+      padding-left: 30px;
+      border-left: 2px solid #e4e8eb;
+    }
+    .feed-item:last-child {
+        border-color: transparent;
+    }
+    .feed-item:after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: -6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #f37167;
+    }
+    .feed-item .activity-date {
+      position: relative;
+      top: -5px;
+      color: #6E757D;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .feed-item .activity-text {
+      position: relative;
+      top: -3px;
+    }
+
+}

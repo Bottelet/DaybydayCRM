@@ -1,0 +1,4 @@
+* text=auto
+*.css linguist-vendored
+*.less linguist-vendored
+*.rb linguist-language=Php
