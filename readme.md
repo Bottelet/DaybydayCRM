@@ -19,7 +19,7 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 - Run the following commands
 ```
     composer install
-    php artisan migrate -seed
+    php artisan migrate --seed
     php artisan key:generate
 ```
 - login in with these credentials  Mail: admin@admin.com Password: admin123 (Can be changed in the dashboard)

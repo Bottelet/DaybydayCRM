@@ -12,7 +12,7 @@ class Activity extends model
      * @var string
      */
     protected $table = 'activity_log';
-        protected $fillable = [
+    protected $fillable = [
         'user_id',
         'text',
         'type',
@@ -29,10 +29,8 @@ class Activity extends model
     {
         return $this->belongsTo('App\Tasks', 'task_id', 'id');
     }
-        public function user()
+    public function user()
     {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
-
-    
 }

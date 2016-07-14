@@ -1,4 +1,5 @@
-<?php namespace App;
+<?php
+namespace App;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -9,60 +10,60 @@ use PHPZen\LaravelRbac\Traits\Rbac;
 use Fenos\Notifynder\Notifable;
 use Cache;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+{
 
-	use Authenticatable, CanResetPassword, Rbac, Notifable;
+    use Authenticatable, CanResetPassword, Rbac, Notifable;
 
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'users';
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'users';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['name', 'email', 'password', 'address', 'personal_number', 'work_number', 'image_path'];
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = ['name', 'email', 'password', 'address', 'personal_number', 'work_number', 'image_path'];
-
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
     protected $dates = ['trial_ends_at', 'subscription_ends_at'];
-	protected $hidden = ['password', 'password_confirmation', 'remember_token'];
+    protected $hidden = ['password', 'password_confirmation', 'remember_token'];
     
 
-	protected $primaryKey ='id';
+    protected $primaryKey ='id';
     public function tasksAssign()
     {
-    	return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')
-        ->where('status',  1)
+        return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')
+        ->where('status', 1)
         ->orderBy('deadline', 'asc');
     }
     public function tasksCreated()
     {
-    	return $this->hasMany('App\Tasks', 'fk_user_id_created', 'id')->limit(10);
+        return $this->hasMany('App\Tasks', 'fk_user_id_created', 'id')->limit(10);
     }
 
-	 public function tasksCompleted()
+    public function tasksCompleted()
     {
-    	return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')->where('status', 2);
+        return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')->where('status', 2);
     }
     
-     public function tasksAll()
+    public function tasksAll()
     {
-    	return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')->whereIn('status', [1, 2]);
+        return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')->whereIn('status', [1, 2]);
     }
     public function leadsAll()
     {
-    	return $this->hasMany('App\Leads', 'fk_user_id' , 'id');
+        return $this->hasMany('App\Leads', 'fk_user_id', 'id');
     }
-        public function settings()
+    public function settings()
     {
         return $this->belongsTo('App\Settings');
     }
@@ -83,11 +84,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function departmentOne()
     {
         return $this->belongsToMany('App\Department', 'department_user')->withPivot('Department_id');
-        
     }
     public function isOnline()
     {
         return Cache::has('user-is-online-' . $this->id);
     }
-
 }

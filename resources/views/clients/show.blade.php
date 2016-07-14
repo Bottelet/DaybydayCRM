@@ -140,9 +140,9 @@ $('.popoverOption').each(function() {
       <?php  $tr =""; ?>
       @foreach($client->alltasks as $task)
       @if($task->status == 1)
-      <?php  $tr = '#adebad'; ?>
+        <?php  $tr = '#adebad'; ?>
       @elseif($task->status == 2)
-      <?php $tr = '#ff6666'; ?>
+        <?php $tr = '#ff6666'; ?>
       @endif
       <tr style="background-color:<?php echo $tr ;?>">
         
@@ -202,12 +202,12 @@ $('.popoverOption').each(function() {
       </tr>
     </thead>
     <tbody>
-      <?php  $tr =""; ?>
+        <?php  $tr =""; ?>
       @foreach($client->allleads as $lead)
       @if($lead->status == 1)
-      <?php  $tr = '#adebad'; ?>
+        <?php  $tr = '#adebad'; ?>
       @elseif($lead->status == 2)
-      <?php $tr = '#ff6666'; ?>
+        <?php $tr = '#ff6666'; ?>
       @endif
       <tr style="background-color:<?php echo $tr ;?>">
         

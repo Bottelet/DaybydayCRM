@@ -1,4 +1,5 @@
-<?php namespace App\Http\Controllers;
+<?php
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Leads;
@@ -29,24 +30,23 @@ class LeadsController extends Controller
     public function anyData()
     {
 
-        $leads = Leads::select(['id', 'title', 'fk_user_id_created', 'fk_client_id', 'fk_user_id_assign', 'contact_date'])->where('status', 1)->get();
+        $leads = Leads::select(
+            ['id', 'title', 'fk_user_id_created', 'fk_client_id', 'fk_user_id_assign', 'contact_date']
+        )->where('status', 1)->get();
         return Datatables::of($leads)
         ->addColumn('titlelink', function ($leads) {
                 return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
-            })
+        })
         ->editColumn('fk_user_id_created', function ($leads) {
                 return $leads->createdBy->name;
-                
-            })
+        })
         ->editColumn('contact_date', function ($leads) {
                 return $leads->contact_date ? with(new Carbon($leads->created_at))
                 ->format('d/m/Y') : '';
-            })
+        })
         ->editColumn('fk_user_id_assign', function ($leads) {
                 return $leads->assignee->name;
-                
-            })->make(true);
-
+        })->make(true);
     }
 
     /**
@@ -58,14 +58,18 @@ class LeadsController extends Controller
     {
         $canCreateLead = Auth::user()->canDo('lead.create');
         if (!$canCreateLead) {
-        Session::flash('flash_message', 'Not allowed to create lead!');
-        return redirect()->route('users.index');
+            Session::flash('flash_message', 'Not allowed to create lead!');
+            return redirect()->route('users.index');
         }
-        $users = User::select(array('users.name', 'users.id', DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
+        $users = User::select(
+            array('users.name', 'users.id',
+                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name'))
+        )
         ->join('department_user', 'users.id', '=', 'department_user.user_id')
         ->join('departments', 'department_user.department_id', '=', 'departments.id')
         ->lists('full_name', 'id');
-        $clients = Client::lists('name', 'id');;
+        $clients = Client::lists('name', 'id');
+        ;
         return view('leads.create')->withUsers($users)->withClients($clients);
     }
 
@@ -85,13 +89,16 @@ class LeadsController extends Controller
             'fk_user_id_created' => '',
             'fk_client_id' => '',
             'contact_date' => '']);
-        $fk_client_id = $request->get('fk_client_id');  
-        $input = $request = array_merge($request->all(),
-         ['fk_user_id_created' => \Auth::id(), 'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"]);
+          $fk_client_id = $request->get('fk_client_id');
+          $input = $request = array_merge(
+              $request->all(),
+              ['fk_user_id_created' => \Auth::id(),
+               'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"]
+          );
        
-        $lead = Leads::create($input);
-        Session::flash('flash_message', 'Lead successfully added!'); //Snippet in Master.blade.php
-        return redirect()->to("/leads/{$lead->id}");
+          $lead = Leads::create($input);
+          Session::flash('flash_message', 'Lead successfully added!'); //Snippet in Master.blade.php
+          return redirect()->to("/leads/{$lead->id}");
     }
    
     public function updateassign($id, Request $request)
@@ -102,20 +109,14 @@ class LeadsController extends Controller
 
         $settingscomplete = $settings[0]['lead_assign_allowed'];
 
-    if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) 
-        {
+        if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) {
             Session::flash('flash_message_warning', 'Only assigned user are allowed to assign new user.');
                 return redirect()->back();
-
         }
              $input = $request->get('fk_user_id_assign');
                 $input = array_replace($request->all());
                 $lead->fill($input)->save();
                 return redirect()->back();
-    
-
-
-
     }
 
     public function updatefollowup(Request $request, $id)
@@ -124,10 +125,10 @@ class LeadsController extends Controller
             'contact_date' => 'required',
             'contact_time' => 'required',
 
-        ]);
-        $lead = Leads::findOrFail($id);
-        $input = $request->all();
-        $input = $request = 
+         ]);
+         $lead = Leads::findOrFail($id);
+         $input = $request->all();
+         $input = $request =
          [ 'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"];
          $lead->fill($input)->save();
          return redirect()->back();
@@ -144,7 +145,9 @@ class LeadsController extends Controller
          $settings = Settings::findOrFail(1);
         $companyname = $settings->company;
 
-        $users =  User::select(array('users.name', 'users.id', DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
+        $users =  User::select(array(
+            'users.name', 'users.id',
+            DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
         ->join('department_user', 'users.id', '=', 'department_user.user_id')
         ->join('departments', 'department_user.department_id', '=', 'departments.id')
         ->lists('full_name', 'id');
@@ -152,7 +155,7 @@ class LeadsController extends Controller
         return view('leads.show')->withLeads($leads)->withUsers($users)->withCompanyname($companyname);
     }
 
-        public function updatestatus($id, Request $request)
+    public function updatestatus($id, Request $request)
     {
 
         $lead = Leads::findOrFail($id);
@@ -160,55 +163,20 @@ class LeadsController extends Controller
 
         $settings = Settings::all();
         $settingscomplete = $settings[0]['lead_complete_allowed'];
-     if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) 
-        {
+        if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) {
             Session::flash('flash_message_warning', 'Only assigned user are allowed to close lead.');
             return redirect()->back();
-
         }
 
-            $input = $request->get('status');
-            $input = array_replace($request->all(), ['status' => 2]);
-            $lead->fill($input)->save();
-            $commentInput = array_merge(
-            ['fk_lead_id' => $id, 'fk_user_id' => \Auth::id(), 'description' => Auth::user()->name.' Completed the lead']);
-           //dd($commentInput);
-            Comment::create($commentInput);
-            return redirect()->back();  
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        $input = $request->get('status');
+        $input = array_replace($request->all(), ['status' => 2]);
+        $lead->fill($input)->save();
+        $commentInput = array_merge(
+            ['fk_lead_id' => $id, 'fk_user_id' => \Auth::id(),
+             'description' => Auth::user()->name.' Completed the lead']
+        );
+       //dd($commentInput);
+        Comment::create($commentInput);
+        return redirect()->back();
     }
 }

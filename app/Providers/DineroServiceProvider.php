@@ -13,7 +13,6 @@ class DineroServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
     }
 
     /**
@@ -26,4 +25,3 @@ class DineroServiceProvider extends ServiceProvider
         $this->app->bind('dinero', 'App\Dinero');
     }
 }
-    

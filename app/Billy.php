@@ -1,25 +1,29 @@
 <?php
-
 namespace App;
 
 use Carbon;
-class Billy {
+
+class Billy
+{
     protected static $accessToken;
     protected static $instance;
 
-    public static function initialize($dbRow){
+    public static function initialize($dbRow)
+    {
         self::$accessToken = $dbRow['api_key'];
         self::$instance = new Billy();
     }
 
-      public static function getInstance(){
-    if (!self::$instance){
-      self::$instance = new self();
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+              self::$instance = new self();
+        }
+        return self::$instance;
     }
-    return self::$instance;
-  } 
 
-    public static function request($method, $url, $body = null) {
+    public static function request($method, $url, $body = null)
+    {
         $headers = array("X-Access-Token: " . self::$accessToken);
         $c = curl_init("https://api.billysbilling.com/v2" . $url);
         curl_setopt($c, CURLOPT_CUSTOMREQUEST, $method);
@@ -36,56 +40,47 @@ class Billy {
             'status' => $info['http_code'],
             'body' => $body
         );
-
-        
     }
 
-public static function createInvoice($params) {
-
-  $realParams =  array(
+    public static function createInvoice($params)
+    {
+        $realParams =  array(
         'invoice' => array(
-            'organizationId' =>'ACx42GkURdCdQFFweX7VDQ',
-           'contactId' => $params['contactId'],
-           'paymentTermsDays' => 8,
-           'currencyId' => $params['Currency'],
-             'entryDate' => Carbon::now()->format('Y-m-d'),
-           'lines' => array(/*[
-            'unitPrice' => 200,
-            'productId' => 'Ccx9WbbORtGTQtRX48Sdtg',
-            'description' => $params['ProductLines']['Description']
-          
-          ]*/)
-        )
+        'organizationId' =>'ACx42GkURdCdQFFweX7VDQ',
+        'contactId' => $params['contactId'],
+        'paymentTermsDays' => 8,
+        'currencyId' => $params['Currency'],
+        'entryDate' => Carbon::now()->format('Y-m-d'),
+        'lines' => array(
+                      
+          )
+            )
         );
-  foreach ($params['ProductLines'] as $productLine){
-    $realParams['invoice']['lines'][] = array(
-       'unitPrice' => $productLine['BaseAmountValue'],
-        'productId' => 'Ccx9WbbORtGTQtRX48Sdtg',
-        'description' => $productLine['Description']
-      );
-  }
+        foreach ($params['ProductLines'] as $productLine) {
+            $realParams['invoice']['lines'][] = array(
+            'unitPrice' => $productLine['BaseAmountValue'],
+            'productId' => 'Ccx9WbbORtGTQtRX48Sdtg',
+            'description' => $productLine['Description']
+              );
+        }
 
-   $res = self::request("POST", "/invoices",$realParams);
+           $res = self::request("POST", "/invoices", $realParams);
    
-   return $res;
-  }
+           return $res;
+    }
 
     public function getContacts()
     {
-      
-       $res = self::request("GET", "/contacts");
+        $res = self::request("GET", "/contacts");
     
-            $results = [];
-     $i = 0;
-     foreach ($res->body->contacts as  $contact )
-      {
-         $results[$i]['name'] = $contact->name;
-         $results[$i]['guid'] = $contact->id;
-         $i++;
-      }
+        $results = [];
+        $i = 0;
+        foreach ($res->body->contacts as $contact) {
+            $results[$i]['name'] = $contact->name;
+            $results[$i]['guid'] = $contact->id;
+            $i++;
+        }
 
-    return $results;
-       
+        return $results;
     }
 }
-

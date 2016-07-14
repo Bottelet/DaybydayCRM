@@ -1,12 +1,11 @@
 <?php
-
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
 class TaskTime extends Model
 {
-			protected $fillable = [
+    protected $fillable = [
         'time',
         'overtime',
         'fk_task_id',
@@ -15,12 +14,11 @@ class TaskTime extends Model
         'value'
     ];
 
-
     protected $hidden = ['remember_token'];
 
-	protected $table = 'tasks_time';
-   	public function Tasks()
-   	{
-   		return $this->belongsTo('App\Tasks');
-   	}
+    protected $table = 'tasks_time';
+    public function tasks()
+    {
+        return $this->belongsTo('App\Tasks');
+    }
 }

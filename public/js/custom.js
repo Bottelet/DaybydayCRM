@@ -56,25 +56,6 @@ $(function () {
 
 });
 
-/*
-    // Enable pusher logging - don't include this in production
-    Pusher.log = function(message) {
-      if (window.console && window.console.log) {
-        window.console.log(message);
-      }
-    };
-
-    var pusher = new Pusher('ebbf4dd099e3fbfc52bf', {
-      cluster: 'eu',
-   
-    });
-
-    var channel = pusher.subscribe('demoChannel');
-    channel.bind('NewTask', function(data) {
-      alert('A User assiged new task');
-    });*/
-
-
 Vue.component('graphbar', {
             template:  
             `
@@ -113,10 +94,6 @@ Vue.component('graphbar', {
 		this.legend = (chart.generateLegend());
     }
         });
-
-
-
-
 
 Vue.component('graphline', {
             template:  
