@@ -22,7 +22,7 @@ class UsersTableSeeder extends Seeder
                 'id' => 1,
                 'name' => 'Admin',
                 'email' => 'admin@admin.com',
-                'password' => bcrypt('admin123'),
+                'password' => '$2y$10$e3w9Ztdfpbuqw5qJDOqu6OrccxqYfOD3g6BefMLiDVaoEXv2ybsNC',
                 'address' => '',
                 'work_number' => 0,
                 'personal_number' => 0,
