@@ -16,11 +16,12 @@ class Integration extends Model
      */
     public static function getApi($type)
     {
+        
         $integration = Integration::find([
             //'user_id' => $userId,
             'api_type' => $type
         ]);
-
+        
         if (!$integration) {
             $integration = Integration::find([
               //  'user_id' => null,
@@ -29,7 +30,7 @@ class Integration extends Model
         }
         if ($integration) {
             $apiConfig = $integration->first();
-            
+             
             $className = $apiConfig->name;
            
             call_user_func_array(['App\\'.$className, 'initialize'], [$apiConfig]);

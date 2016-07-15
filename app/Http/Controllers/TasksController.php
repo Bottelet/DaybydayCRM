@@ -153,8 +153,13 @@ class TasksController extends Controller
         $companyname = $settings->company;
         $activity = Activity::where('type_id', $id)
         ->where('type', 'task')->get();
-
-        $api = Integration::getApi('billing');
+        $invoiceContacts = array();
+        $apiConnected = false;
+        /*
+        $integrationCheck = Integration::first();       
+    	$api = Integration::getApi('billing');
+     
+        
         if($api){
         	$apiConnected = true;
         	$invoiceContacts = $api->getContacts();
@@ -163,11 +168,7 @@ class TasksController extends Controller
 			$invoiceContacts = array();
         }
         
-            
-        
-            
-        
-
+		*/
         $users = User::select(array
             ('users.name', 'users.id',
                 DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
