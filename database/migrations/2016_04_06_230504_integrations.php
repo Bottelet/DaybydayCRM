@@ -34,5 +34,4 @@ class Integrations extends Migration
     {
         Schema::drop('integrations');
     }
-
 }

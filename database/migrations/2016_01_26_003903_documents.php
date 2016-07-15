@@ -21,7 +21,7 @@ class Documents extends Migration
                  $table->integer('fk_client_id')->unsigned();
                  $table->foreign('fk_client_id')->references('id')->on('clients');
                $table->timestamps();
-        }); 
+        });
     }
 
     /**

@@ -17,7 +17,7 @@ class SettingsTableSeeder extends Seeder
         \DB::table('settings')->delete();
         
         \DB::table('settings')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'task_complete_allowed' => 2,
@@ -27,11 +27,9 @@ class SettingsTableSeeder extends Seeder
                 'time_change_allowed' => 2,
                 'comment_allowed' => 2,
                 'company' => 'Media',
-                'created_at' => NULL,
-                'updated_at' => NULL,
+                'created_at' => null,
+                'updated_at' => null,
             ),
         ));
-        
-        
     }
 }

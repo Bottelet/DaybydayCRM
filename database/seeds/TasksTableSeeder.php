@@ -17,7 +17,7 @@ class TasksTableSeeder extends Seeder
         \DB::table('tasks')->delete();
         
         \DB::table('tasks')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'title' => 'Create this item for customer',
@@ -30,7 +30,7 @@ class TasksTableSeeder extends Seeder
                 'created_at' => '2016-06-04 13:51:52',
                 'updated_at' => '2016-06-04 13:51:52',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 2,
                 'title' => 'Let\'s help the client',
@@ -43,7 +43,7 @@ class TasksTableSeeder extends Seeder
                 'created_at' => '2016-06-04 13:51:56',
                 'updated_at' => '2016-06-04 13:51:56',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 3,
                 'title' => 'Send offer',
@@ -57,7 +57,5 @@ class TasksTableSeeder extends Seeder
                 'updated_at' => '2016-06-04 13:52:42',
             ),
         ));
-        
-        
     }
 }

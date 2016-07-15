@@ -26,7 +26,6 @@ class CreateLeadsTable extends Migration
             $table->datetime('contact_date');
             $table->timestamps();
         });
-        
     }
 
     /**

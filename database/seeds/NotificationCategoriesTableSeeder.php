@@ -17,14 +17,12 @@ class NotificationCategoriesTableSeeder extends Seeder
         \DB::table('notification_categories')->delete();
         
         \DB::table('notification_categories')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'name' => 'task.assign',
                 'text' => '{from.name} assigned a task to you',
             ),
         ));
-        
-        
     }
 }

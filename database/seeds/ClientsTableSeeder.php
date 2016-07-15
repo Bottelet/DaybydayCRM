@@ -17,7 +17,7 @@ class ClientsTableSeeder extends Seeder
         \DB::table('clients')->delete();
         
         \DB::table('clients')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 9,
                 'name' => 'Inge Sunke Jakobsen',
@@ -36,7 +36,7 @@ class ClientsTableSeeder extends Seeder
                 'created_at' => '2016-06-04 13:50:23',
                 'updated_at' => '2016-06-04 13:50:23',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 10,
                 'name' => 'Jan Hansen',
@@ -56,7 +56,5 @@ class ClientsTableSeeder extends Seeder
                 'updated_at' => '2016-06-04 13:51:24',
             ),
         ));
-        
-        
     }
 }

@@ -3,17 +3,18 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TasksTable extends Migration {
+class TasksTable extends Migration
+{
 
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-        Schema::create('tasks', function(Blueprint $table)
-		{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('tasks', function (Blueprint $table) {
+        
             $table->increments('id');
             $table->string('title');
             $table->text('description');
@@ -25,20 +26,19 @@ class TasksTable extends Migration {
             $table->integer('fk_client_id')->unsigned();
             $table->foreign('fk_client_id')->references('id')->on('clients');
             $table->date('deadline');
-			$table->timestamps();
+            $table->timestamps();
         });
-	}
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-		Schema::drop('tasks');
-		DB::statement('SET FOREIGN_KEY_CHECKS = 1');
-	}
-
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::drop('tasks');
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+    }
 }

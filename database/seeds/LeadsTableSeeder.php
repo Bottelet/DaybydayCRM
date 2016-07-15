@@ -17,7 +17,7 @@ class LeadsTableSeeder extends Seeder
         
         
         \DB::table('leads')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'title' => 'Sell Item',
@@ -30,7 +30,7 @@ class LeadsTableSeeder extends Seeder
                 'created_at' => '2016-06-04 13:51:10',
                 'updated_at' => '2016-06-04 13:51:10',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 2,
                 'title' => 'Contact Client about new offer',
@@ -43,7 +43,7 @@ class LeadsTableSeeder extends Seeder
                 'created_at' => '2016-06-04 13:56:27',
                 'updated_at' => '2016-06-04 13:56:27',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 3,
                 'title' => 'Client wants to know more about item',
@@ -57,7 +57,5 @@ class LeadsTableSeeder extends Seeder
                 'updated_at' => '2016-06-04 13:57:07',
             ),
         ));
-        
-        
     }
 }
