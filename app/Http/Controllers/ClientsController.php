@@ -16,6 +16,8 @@ use Dinero;
 use App\Settings;
 use DB;
 use App\Industry;
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
 
 class ClientsController extends Controller
 {
@@ -70,50 +72,16 @@ class ClientsController extends Controller
      *
      * @return Response
      */
-    public function store(Request $clientRequest)
+    public function store(StoreClientRequest $clientRequest)
     {
-            $this->validate($clientRequest, [
-            'name' => 'required',
-            'company_name' => 'required',
-            'vat' => 'max:8',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:4',
-            'city' => '',
-            'primary_number' => 'max:10',
-            'secondary_number' => 'max:10',
-            'industry' => '',
-            'company_type' => '',
-            'fk_user_id' => 'required'
-
-            ]);
-
             $input = $clientRequest->all();
             Client::create($input);
-        //dd($input);
             Session::flash('flash_message', 'Client successfully added!');
             return redirect()->route('clients.index');
     }
 
     public function cvrapistart(Request $vatRequest)
     {
-        $this->validate($vatRequest, [
-            'vat' => 'required',
-            'name' => '',
-            'company_name' => '',
-            'vat' => '',
-            'email' => '',
-            'address' => '',
-            'zipcode' => '',
-            'city' => '',
-            'primary_number' => '',
-            'secondary_number' => '',
-            'industry' => '',
-            'company_type' => '',
-            'fk_user_id' => ''
-
-            ]);
-        
         $vat = $vatRequest->input('vat');
 
         $country = $vatRequest->input('country');
@@ -189,25 +157,9 @@ class ClientsController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id, Request $request)
+    public function update($id, UpdateClientRequest $request)
     {
             $client = Client::findOrFail($id);
-
-            $this->validate($request, [
-            'name' => 'required',
-            'company_name' => 'required',
-            'vat' => 'max:8',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:4',
-            'city' => '',
-            'primary_number' => 'max:10',
-            'secondary_number' => 'max:10',
-            'industry' => '',
-            'company_type' => '',
-            'fk_user_id' => 'required'
-
-            ]);
 
             $input = $request->all();
             $client->fill($input)->save();

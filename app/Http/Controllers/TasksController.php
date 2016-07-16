@@ -22,7 +22,8 @@ use App\Billy;
 use App\Economic;
 use App\Integration;
 use App\Activity;
-
+use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\UpdateTimeTaskRequest;
 class TasksController extends Controller
 {
 
@@ -98,16 +99,8 @@ class TasksController extends Controller
      *
      * @return Response
      */
-    public function store(Request $request) // uses __contrust request
+    public function store(StoreTaskRequest $request) // uses __contrust request
     {
-        $this->validate($request, [
-            'title' => 'required',
-            'description' => 'required',
-            'status' => 'required',
-            'fk_user_id_assign' => 'required',
-            'fk_user_id_created' => '',
-            'fk_client_id' => '',
-            'deadline' => '']);
         $fk_client_id = $request->get('fk_client_id');
         $input = $request = array_merge(
             $this->request->all(),
@@ -259,16 +252,8 @@ class TasksController extends Controller
     }
     public function updatetime($id, Request $request)
     {
-            $this->validate($request, [
-            'title' => 'required',
-            'comment' => '',
-            'time' => 'required',
-            'value' => 'required',
-                ]);
-
             $task = Tasks::findOrFail($id);
-        
-        
+            
             $settings = Settings::all();
             $isAdmin = Auth::user()->hasRole('admin');
             $settingscomplete = $settings[0]['task_assign_allowed'];

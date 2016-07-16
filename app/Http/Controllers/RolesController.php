@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Role;
 use Session;
+use App\Http\Requests\Role\StoreRoleRequest;
 
 class RolesController extends Controller
 {
@@ -18,20 +19,16 @@ class RolesController extends Controller
     {
         return view('roles.create');
     }
-    public function store(Request $request)
+    public function store(StoreRoleRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'description' => 'required'
-        ]);
-
-        
         $roleName = $request->name;
         $roleDescription = $request->description;
         Role::create([
         'slug' => $roleName,
              'description' => $roleDescription
              ]);
+         Session::flash('flash_message', 'Role created');
+        return redirect()->back();
     }
     public function destroy($id)
     {

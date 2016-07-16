@@ -14,6 +14,8 @@ use Datatables;
 use Carbon;
 use App\Comment;
 use DB;
+use App\Http\Requests\Lead\StoreLeadRequest;
+use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
 
 class LeadsController extends Controller
 {
@@ -27,6 +29,7 @@ class LeadsController extends Controller
         $leads = Leads::all()->where('status', 1);
         return view('leads.index')->withLeads($leads);
     }
+    
     public function anyData()
     {
 
@@ -79,16 +82,8 @@ class LeadsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreLeadRequest $request)
     {
-          $this->validate($request, [
-            'title' => 'required',
-            'note' => 'required',
-            'status' => 'required',
-            'fk_user_id_assign' => 'required',
-            'fk_user_id_created' => '',
-            'fk_client_id' => '',
-            'contact_date' => '']);
           $fk_client_id = $request->get('fk_client_id');
           $input = $request = array_merge(
               $request->all(),
@@ -119,13 +114,8 @@ class LeadsController extends Controller
                 return redirect()->back();
     }
 
-    public function updatefollowup(Request $request, $id)
+    public function updatefollowup(UpdateLeadFollowUpRequest $request, $id)
     {
-         $this->validate($request, [
-            'contact_date' => 'required',
-            'contact_time' => 'required',
-
-         ]);
          $lead = Leads::findOrFail($id);
          $input = $request->all();
          $input = $request =
@@ -175,7 +165,6 @@ class LeadsController extends Controller
             ['fk_lead_id' => $id, 'fk_user_id' => \Auth::id(),
              'description' => Auth::user()->name.' Completed the lead']
         );
-       //dd($commentInput);
         Comment::create($commentInput);
         return redirect()->back();
     }

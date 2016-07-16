@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Session;
 use Auth;
+use App\Http\Requests\Setting\UpdateSettingOverallRequest;
 
 class SettingsController extends Controller
 {
@@ -42,18 +43,10 @@ class SettingsController extends Controller
         return redirect()->back();
     }
 
-    public function updateoverall(Request $request)
+    public function updateoverall(UpdateSettingOverallRequest $request)
     {
 
         $setting = Settings::findOrFail(1);
-
-        $this->validate($request, [
-            'task_complete_allowed' => 'required',
-            'task_assign_allowed'   => 'required',
-            'lead_complete_allowed' => 'required',
-            'lead_assign_allowed'   => 'required'
-        ]);
-
 
         $input = $request->all();
 

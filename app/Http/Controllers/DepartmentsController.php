@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Department;
 use Session;
+use App\Http\Requests\Department\StoreDepartmentRequest;
 
 class DepartmentsController extends Controller
 {
@@ -18,11 +19,8 @@ class DepartmentsController extends Controller
     {
         return view('departments.create');
     }
-    public function store(Request $request)
+    public function store(StoreDepartmentRequest $request)
     {
-        $this->validate($request, [
-            'name' => 'required']);
-
         $input = $request->all();
         $department = Department::create($input);
         Session::flash('flash_message', 'Successfully created New Department!');

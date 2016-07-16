@@ -17,6 +17,8 @@ use Auth;
 use Illuminate\Support\Facades\Input;
 use App\Client;
 use App\Department;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Requests\User\StoreUserRequest;
 
 class UsersController extends Controller
 {
@@ -120,7 +122,7 @@ class UsersController extends Controller
     {
         $canCreateUser = Auth::user()->canDo('user.create');
         if (!$canCreateUser) {
-            Session::flash('flash_message', 'Not allowed to create user!');
+            Session::flash('flash_message_warning', 'Not allowed to create user!');
             return redirect()->route('users.index');
         }
         $roles = Role::lists('name', 'id');
@@ -135,30 +137,10 @@ class UsersController extends Controller
      *
      * @return Response
      */
-    public function store(Request $userRequest)
+    public function store(StoreUserRequest $userRequest)
     {
-
         $settings = Settings::all();
 
-
-    
-        
-        
-        
-
-        $this->validate($userRequest, [
-            'name' => 'required',
-            'email' => 'required',
-            'address' => 'required',
-            'work_number' => '',
-            'personal_number' => '',
-            'password' => 'required|confirmed',
-            'password_confirmation' => 'required',
-            'image_path' => '',
-            'roles' => 'required',
-            'departments' => 'required'
-
-        ]);
         $password =  bcrypt($userRequest->password);
         $role = $userRequest->roles;
         $department = $userRequest->departments;
@@ -216,7 +198,7 @@ class UsersController extends Controller
     {
         $canUpdateUser = Auth::user()->canDo('user.update');
         if (!$canUpdateUser) {
-            Session::flash('flash_message', 'Not allowed to update user!');
+            Session::flash('flash_message_warning', 'Not allowed to update user!');
             return redirect()->route('users.index');
         }
 
@@ -234,24 +216,13 @@ class UsersController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update($id, Request $request)
+    public function update($id, UpdateUserRequest $request)
     {
 
         $user = User::findorFail($id);
-        $password =  bcrypt($request->password);
+        $password = bcrypt($request->password);
         $role = $request->roles;
         $department = $request->department;
-
-        $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required',
-            'address' => '',
-            'work_number' => '',
-            'personal_number' => '',
-            'roles' => 'required'
-            
-        ]);
-
 
         if ($request->hasFile('image_path')) {
             $settings = Settings::findOrFail(1);
@@ -262,11 +233,21 @@ class UsersController extends Controller
             $filename = str_random(8) . '_' . $file->getClientOriginalName() ;
 
             $file->move($destinationPath, $filename);
-            $input =  array_replace($request->all(), ['image_path'=>"$filename", 'password'=>"$password"]);
+            if ($request->password == "") {
+                $input =  array_replace($request->except('password'), ['image_path'=>"$filename"]);
+            } else {
+                $input =  array_replace($request->all(), ['image_path'=>"$filename", 'password'=>"$password"]);
+            }
         } else {
-            $input =  array_replace($request->all(), ['password'=>"$password"]);
+            if ($request->password == "") {
+                $input =  array_replace($request->except('password'));
+            } else {
+                $input =  array_replace($request->all(), ['password'=>"$password"]);
+            }
         }
-         
+        
+      
+
         $user->fill($input)->save();
         $user->roles()->sync([$role]);
         $user->department()->sync([$department]);
