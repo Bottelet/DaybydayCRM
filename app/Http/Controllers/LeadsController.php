@@ -96,7 +96,7 @@ class LeadsController extends Controller
           return redirect()->to("/leads/{$lead->id}");
     }
    
-    public function updateassign($id, Request $request)
+    public function updateAssign($id, Request $request)
     {
 
         $lead = Leads::findOrFail($id);
@@ -114,7 +114,7 @@ class LeadsController extends Controller
                 return redirect()->back();
     }
 
-    public function updatefollowup(UpdateLeadFollowUpRequest $request, $id)
+    public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
     {
          $lead = Leads::findOrFail($id);
          $input = $request->all();
@@ -145,7 +145,7 @@ class LeadsController extends Controller
         return view('leads.show')->withLeads($leads)->withUsers($users)->withCompanyname($companyname);
     }
 
-    public function updatestatus($id, Request $request)
+    public function updateStatus($id, Request $request)
     {
 
         $lead = Leads::findOrFail($id);
