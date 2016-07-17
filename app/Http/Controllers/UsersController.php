@@ -71,7 +71,7 @@ class UsersController extends Controller
         ->make(true);
     }
 
-    public function closedtaskData($id)
+    public function closedTaskData($id)
     {
         
         $tasks = Tasks::select(

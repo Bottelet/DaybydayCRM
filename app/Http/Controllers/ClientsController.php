@@ -80,7 +80,7 @@ class ClientsController extends Controller
             return redirect()->route('clients.index');
     }
 
-    public function cvrapistart(Request $vatRequest)
+    public function cvrapiStart(Request $vatRequest)
     {
         $vat = $vatRequest->input('vat');
 

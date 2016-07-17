@@ -190,7 +190,7 @@ class TasksController extends Controller
  * @param  [Model] $task->fk_user_id_assign Checks the id of the user assigned to the task
  * If Auth and fk_user_id allow complete else redirect back if all allowed excute
      * else stmt*/
-    public function updatestatus($id, Request $request)
+    public function updateStatus($id, Request $request)
     {
 
         $task = Tasks::findOrFail($id);
@@ -218,7 +218,7 @@ class TasksController extends Controller
     }
 
 
-    public function updateassign($id, Request $request)
+    public function updateAssign($id, Request $request)
     {
 
         $task = Tasks::with('assignee')->findOrFail($id);
@@ -250,7 +250,7 @@ class TasksController extends Controller
 
                 return redirect()->back();
     }
-    public function updatetime($id, Request $request)
+    public function updateTime($id, Request $request)
     {
             $task = Tasks::findOrFail($id);
             

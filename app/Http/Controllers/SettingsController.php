@@ -43,7 +43,7 @@ class SettingsController extends Controller
         return redirect()->back();
     }
 
-    public function updateoverall(UpdateSettingOverallRequest $request)
+    public function updateOverall(UpdateSettingOverallRequest $request)
     {
 
         $setting = Settings::findOrFail(1);
