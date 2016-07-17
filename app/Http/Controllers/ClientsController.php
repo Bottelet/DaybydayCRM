@@ -90,7 +90,7 @@ class ClientsController extends Controller
         // Strip all other characters than numbers
         $vat = preg_replace('/[^0-9]/', '', $vat);
         
-        function cvrapi($vat)
+        function cvrApi($vat)
         {
        
             if (empty($vat)) {
@@ -115,7 +115,7 @@ class ClientsController extends Controller
                 return json_decode($result, 1);
             }
         }
-        $result = cvrapi($vat, 'dk');
+        $result = cvrApi($vat, 'dk');
 
         return redirect()->back()->with('data', $result);
     }
