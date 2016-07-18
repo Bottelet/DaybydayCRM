@@ -12,13 +12,19 @@ use App\Settings;
 use Auth;
 use Datatables;
 use Carbon;
-use App\Comment;
+use App\Activity;
 use DB;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
 
 class LeadsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('lead.create', ['only' => ['create']]);
+        $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
+        $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -59,11 +65,6 @@ class LeadsController extends Controller
      */
     public function create()
     {
-        $canCreateLead = Auth::user()->canDo('lead.create');
-        if (!$canCreateLead) {
-            Session::flash('flash_message', 'Not allowed to create lead!');
-            return redirect()->route('users.index');
-        }
         $users = User::select(
             array('users.name', 'users.id',
                 DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name'))
@@ -100,18 +101,11 @@ class LeadsController extends Controller
     {
 
         $lead = Leads::findOrFail($id);
-        $settings = Settings::all();
 
-        $settingscomplete = $settings[0]['lead_assign_allowed'];
-
-        if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) {
-            Session::flash('flash_message_warning', 'Only assigned user are allowed to assign new user.');
-                return redirect()->back();
-        }
-             $input = $request->get('fk_user_id_assign');
-                $input = array_replace($request->all());
-                $lead->fill($input)->save();
-                return redirect()->back();
+        $input = $request->get('fk_user_id_assign');
+        $input = array_replace($request->all());
+        $lead->fill($input)->save();
+        return redirect()->back();
     }
 
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
@@ -149,23 +143,22 @@ class LeadsController extends Controller
     {
 
         $lead = Leads::findOrFail($id);
-        $isAdmin = Auth::user()->hasRole('admin');
-
-        $settings = Settings::all();
-        $settingscomplete = $settings[0]['lead_complete_allowed'];
-        if ($settingscomplete == 1  && Auth::user()->id == $lead->fk_user_id_assign || $isAdmin) {
-            Session::flash('flash_message_warning', 'Only assigned user are allowed to close lead.');
-            return redirect()->back();
-        }
 
         $input = $request->get('status');
         $input = array_replace($request->all(), ['status' => 2]);
+        $insertedId = $lead->id;
         $lead->fill($input)->save();
-        $commentInput = array_merge(
-            ['fk_lead_id' => $id, 'fk_user_id' => \Auth::id(),
-             'description' => Auth::user()->name.' Completed the lead']
-        );
-        Comment::create($commentInput);
+
+        $activityinput = array_merge(
+             ['text' => 'Lead ' . $lead->title .
+             ' was created by '. $lead->createdBy->name .
+             ' and assigned to' . $lead->assignee->name,
+             'user_id' => Auth::id(),
+             'type' => 'lead',
+             'type_id' =>  $insertedId]
+         );
+        
+        Activity::create($activityinput);
         return redirect()->back();
     }
 }

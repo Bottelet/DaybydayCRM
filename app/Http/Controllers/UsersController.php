@@ -22,6 +22,10 @@ use App\Http\Requests\User\StoreUserRequest;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('user.create', ['only' => ['create']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -120,11 +124,6 @@ class UsersController extends Controller
      */
     public function create()
     {
-        $canCreateUser = Auth::user()->canDo('user.create');
-        if (!$canCreateUser) {
-            Session::flash('flash_message_warning', 'Not allowed to create user!');
-            return redirect()->route('users.index');
-        }
         $roles = Role::lists('name', 'id');
 
         $departments = Department::lists('name', 'id');

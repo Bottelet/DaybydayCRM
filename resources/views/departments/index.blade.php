@@ -10,7 +10,9 @@
       <tr>
         <th>Title</th>
         <th>Description</th>
+        @ifUserIs('administrator') 
 		<th>Action</th>
+    @endif
       </tr>
     </thead>
     <tbody>
@@ -20,7 +22,7 @@
        <tr>
 <td>{{$dep->name}}</td>
 <td>{{Str_limit($dep->description, 50)}}</td>
-
+@ifUserIs('administrator') 
 <td>   {!! Form::open([
             'method' => 'DELETE',
             'route' => ['departments.destroy', $dep->id]
@@ -29,6 +31,7 @@
             {!! Form::submit('Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
 
         {!! Form::close(); !!}</td></td>
+        @endif
 </tr>
 @endforeach
 

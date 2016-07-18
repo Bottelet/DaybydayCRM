@@ -31,7 +31,17 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\LogLastUserActivity::class,
             ],
-
+        'client.create' => [ \App\Http\Middleware\Client\CanClientCreate::class ],
+        'client.update' => [ \App\Http\Middleware\Client\CanClientUpdate::class ],
+        'user.create' => [ \App\Http\Middleware\User\CanUserCreate::class ],
+        'user.update' => [ \App\Http\Middleware\User\CanUserUpdate::class ],
+        'task.create' => [ \App\Http\Middleware\Task\CanTaskCreate::class ],
+        'task.update.status' => [ \App\Http\Middleware\Task\CanTaskUpdateStatus::class ],
+        'task.assinged' => [ \App\Http\Middleware\Task\IsTaskAssigned::class ],
+        'lead.create' => [ \App\Http\Middleware\Lead\CanLeadCreate::class ],
+        'lead.assigned' => [ \App\Http\Middleware\Lead\IsLeadAssigned::class ],
+        'lead.update.status' => [ \App\Http\Middleware\Lead\CanLeadUpdateStatus::class ],
+        'user.is.admin' => [ \App\Http\Middleware\RedirectIfNotAdmin::class ],
         'api' => [
             'throttle:60,1',
         ],

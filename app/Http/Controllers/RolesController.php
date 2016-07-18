@@ -10,6 +10,10 @@ use App\Http\Requests\Role\StoreRoleRequest;
 
 class RolesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy']]);
+    }
     public function index()
     {
         $roles = Role::all();

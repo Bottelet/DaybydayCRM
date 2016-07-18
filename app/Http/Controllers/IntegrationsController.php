@@ -8,6 +8,10 @@ use App\Integration;
 
 class IntegrationsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('user.is.admin', ['only' => ['index']]);
+    }
     /**
      * Display a listing of the resource.
      *

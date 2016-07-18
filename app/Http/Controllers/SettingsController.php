@@ -15,6 +15,10 @@ use App\Http\Requests\Setting\UpdateSettingOverallRequest;
 
 class SettingsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('user.is.admin', ['only' => ['index']]);
+    }
     public function index()
     {
 
@@ -26,21 +30,6 @@ class SettingsController extends Controller
         ->withSettings($settings)
         ->withPermission($permission)
         ->withRoles($roles);
-    }
-
-    public function stripe()
-    {
-        
-        $token = Input::get('stripeToken');
-        $user = User::find(1);
-        
-        $user->newSubscription('main', 'Monthly')->create(
-            $token,
-            [
-            'email' => auth::user()->email
-            ]
-        );
-        return redirect()->back();
     }
 
     public function updateOverall(UpdateSettingOverallRequest $request)

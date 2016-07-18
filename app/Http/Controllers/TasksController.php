@@ -24,12 +24,16 @@ use App\Integration;
 use App\Activity;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTimeTaskRequest;
+
 class TasksController extends Controller
 {
 
     protected $request;
     public function __construct(Request $request)
     {
+        $this->middleware('task.create', ['only' => ['create']]);
+        $this->middleware('task.update.status', ['only' => ['updateStatus']]);
+        $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
         $this->request = $request;
     }
     /**
@@ -76,12 +80,6 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $canCreateTask = Auth::user()->canDo('task.create');
-        if (!$canCreateTask) {
-            Session::flash('flash_message', 'Not allowed to create task!');
-            return redirect()->route('users.index');
-        }
-        
         $users = User::select(array
             ('users.name', 'users.id',
                 DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
@@ -192,17 +190,7 @@ class TasksController extends Controller
      * else stmt*/
     public function updateStatus($id, Request $request)
     {
-
         $task = Tasks::findOrFail($id);
-        $isAdmin = Auth::user()->hasRole('admin');
-        $settings = Settings::all();
-        $settingscomplete = $settings[0]['task_complete_allowed'];
-
-
-        if ($settingscomplete == 1  && Auth::user()->id != $task->fk_user_id_assign || $isAdmin) {
-            Session::flash('flash_message_warning', 'Only assigned user are allowed to close Task.');
-                return redirect()->back();
-        }
         $input = $request->get('status');
         $input = array_replace($request->all(), ['status' => 2]);
         $task->fill($input)->save();
@@ -223,59 +211,41 @@ class TasksController extends Controller
 
         $task = Tasks::with('assignee')->findOrFail($id);
 
-        $settings = Settings::all();
-        $isAdmin = Auth::user()->hasRole('Admin');
-        $settingscomplete = $settings[0]['task_assign_allowed'];
+        $input = $request->get('fk_user_id_assign');
+
+        $input = array_replace($request->all());
+        $task->fill($input)->save();
+        $task = $task->fresh();
         $insertedName = $task->assignee->name;
+        
 
-        if ($settingscomplete == 1  && Auth::user()->id != $task->fk_user_id_assign || $isAdmin) {
-            Session::flash('flash_message_warning', 'Only assigned user are allowed to assign new user.');
-                return redirect()->back();
-        }
-                $input = $request->get('fk_user_id_assign');
+        $activityinput = array_merge(
+            ['text' => auth::user()->name.' assigned task to '. $insertedName,
+            'user_id' => Auth::id(),
+            'type' => 'task',
+            'type_id' =>  $id]
+        );
+        Activity::create($activityinput);
 
-                $input = array_replace($request->all());
-                $task->fill($input)->save();
-                $task = $task->fresh();
-                $insertedName = $task->assignee->name;
-                
-
-                $activityinput = array_merge(
-                    ['text' => auth::user()->name.' assigned task to '. $insertedName,
-                    'user_id' => Auth::id(),
-                    'type' => 'task',
-                    'type_id' =>  $id]
-                );
-                Activity::create($activityinput);
-
-                return redirect()->back();
+        return redirect()->back();
     }
+
     public function updateTime($id, Request $request)
     {
-            $task = Tasks::findOrFail($id);
-            
-            $settings = Settings::all();
-            $isAdmin = Auth::user()->hasRole('admin');
-            $settingscomplete = $settings[0]['task_assign_allowed'];
+        $task = Tasks::findOrFail($id);
+
+        $input = array_replace($request->all(), ['fk_task_id'=>"$task->id"]);
         
-            if ($settingscomplete == 1  && Auth::user()->id != $task->fk_user_id_assign || $isAdmin) {
-                Session::flash('flash_message_warning', 'Only assigned user are allowed to update time.');
-                    return redirect()->back();
-            }
-
-
-                $input = array_replace($request->all(), ['fk_task_id'=>"$task->id"]);
-                
-                TaskTime::create($input);
-                $activityinput = array_merge(
-                    ['text' => Auth::user()->name.' Inserted a new time for this task',
-                    'user_id' => Auth::id(),
-                    'type' => 'task',
-                    'type_id' =>  $id]
-                );
-                Activity::create($activityinput);
-                Session::flash('flash_message', 'Time has been updated');
-                return redirect()->back();
+        TaskTime::create($input);
+        $activityinput = array_merge(
+            ['text' => Auth::user()->name.' Inserted a new time for this task',
+            'user_id' => Auth::id(),
+            'type' => 'task',
+            'type_id' =>  $id]
+        );
+        Activity::create($activityinput);
+        Session::flash('flash_message', 'Time has been updated');
+        return redirect()->back();
     }
 
     public function invoice($id, Request $request)

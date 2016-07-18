@@ -21,6 +21,11 @@ use App\Http\Requests\Client\UpdateClientRequest;
 
 class ClientsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('client.create', ['only' => ['create']]);
+        $this->middleware('client.update', ['only' => ['edit']]);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -52,12 +57,6 @@ class ClientsController extends Controller
      */
     public function create()
     {
-
-        $canCreateClient = Auth::user()->canDo('client.create');
-        if (!$canCreateClient) {
-            Session::flash('flash_message', 'Not allowed to create client!');
-            return redirect()->route('users.index');
-        }
         $industries = Industry::lists('name', 'id');
         $users =  User::select(array('users.name', 'users.id',
         DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
@@ -141,11 +140,6 @@ class ClientsController extends Controller
      */
     public function edit($id)
     {
-        $canUpdateClient = Auth::user()->canDo('client.update');
-        if (!$canUpdateClient) {
-            Session::flash('flash_message', 'Not allowed to update client!');
-            return redirect()->route('users.index');
-        }
         $users = User::lists('name', 'id');
         $client = Client::findorFail($id);
         return view('clients.edit')->withClient($client)->withUsers($users);

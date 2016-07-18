@@ -10,6 +10,10 @@ use App\Http\Requests\Department\StoreDepartmentRequest;
 
 class DepartmentsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
+    }
     public function index()
     {
         $departments = Department::all();
