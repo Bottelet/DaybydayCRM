@@ -21,8 +21,10 @@ class CanTaskUpdateStatus
         $isAdmin = auth()->user()->hasRole('administrator');
         $settings = Settings::all();
         $settingscomplete = $settings[0]['task_complete_allowed'];
-
-        if ($settingscomplete == 1  && auth()->user()->id != $task->fk_user_id_assign || $isAdmin) {
+        if ($isAdmin) {
+            return $next($request);
+        }
+        if ($settingscomplete == 1  && auth()->user()->id != $task->fk_user_id_assign) {
             Session()->flash('flash_message_warning', 'Only assigned user are allowed to close Task.');
                 return redirect()->back();
         }

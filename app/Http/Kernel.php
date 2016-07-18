@@ -37,7 +37,7 @@ class Kernel extends HttpKernel
         'user.update' => [ \App\Http\Middleware\User\CanUserUpdate::class ],
         'task.create' => [ \App\Http\Middleware\Task\CanTaskCreate::class ],
         'task.update.status' => [ \App\Http\Middleware\Task\CanTaskUpdateStatus::class ],
-        'task.assinged' => [ \App\Http\Middleware\Task\IsTaskAssigned::class ],
+        'task.assigned' => [ \App\Http\Middleware\Task\IsTaskAssigned::class ],
         'lead.create' => [ \App\Http\Middleware\Lead\CanLeadCreate::class ],
         'lead.assigned' => [ \App\Http\Middleware\Lead\IsLeadAssigned::class ],
         'lead.update.status' => [ \App\Http\Middleware\Lead\CanLeadUpdateStatus::class ],

@@ -21,8 +21,10 @@ class IsLeadAssigned
         $settings = Settings::all();
         $isAdmin = Auth()->user()->hasRole('administrator');
         $settingscomplete = $settings[0]['lead_assign_allowed'];
-
-        if ($settingscomplete == 1  && Auth()->user()->id == $lead->fk_user_id_assign || $isAdmin) {
+        if ($isAdmin) {
+            return $next($request);
+        }
+        if ($settingscomplete == 1  && Auth()->user()->id == $lead->fk_user_id_assign) {
             Session()->flash('flash_message_warning', 'Not allowed to create lead');
                 return redirect()->back();
         }

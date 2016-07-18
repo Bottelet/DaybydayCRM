@@ -93,7 +93,18 @@ class LeadsController extends Controller
           );
        
           $lead = Leads::create($input);
+          $insertedId = $lead->id;
           Session::flash('flash_message', 'Lead successfully added!'); //Snippet in Master.blade.php
+           $activityinput = array_merge(
+             ['text' => 'Lead ' . $lead->title .
+             ' was created by '. $lead->createdBy->name .
+             ' and assigned to' . $lead->assignee->name,
+             'user_id' => Auth()->id(),
+             'type' => 'lead',
+             'type_id' =>  $insertedId]
+         );
+        
+        Activity::create($activityinput);
           return redirect()->to("/leads/{$lead->id}");
     }
    
@@ -105,6 +116,15 @@ class LeadsController extends Controller
         $input = $request->get('fk_user_id_assign');
         $input = array_replace($request->all());
         $lead->fill($input)->save();
+        $insertedName = $lead->assignee->name;
+
+        $activityinput = array_merge(
+            ['text' => auth()->user()->name.' assigned lead to '. $insertedName,
+            'user_id' => Auth()->id(),
+            'type' => 'lead',
+            'type_id' =>  $id]
+        );
+        Activity::create($activityinput);
         return redirect()->back();
     }
 
@@ -115,6 +135,14 @@ class LeadsController extends Controller
          $input = $request =
          [ 'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"];
          $lead->fill($input)->save();
+
+        $activityinput = array_merge(
+            ['text' => Auth()->user()->name.' Inserted a new time for this lead',
+            'user_id' => Auth()->id(),
+            'type' => 'lead',
+            'type_id' =>  $id]
+        );
+        Activity::create($activityinput);
          return redirect()->back();
     }
 
@@ -126,7 +154,7 @@ class LeadsController extends Controller
      */
     public function show($id)
     {
-         $settings = Settings::findOrFail(1);
+        $settings = Settings::findOrFail(1);
         $companyname = $settings->company;
 
         $users =  User::select(array(
@@ -136,7 +164,10 @@ class LeadsController extends Controller
         ->join('departments', 'department_user.department_id', '=', 'departments.id')
         ->lists('full_name', 'id');
         $leads = Leads::findorFail($id);
-        return view('leads.show')->withLeads($leads)->withUsers($users)->withCompanyname($companyname);
+        return view('leads.show')
+        ->withLeads($leads)
+        ->withUsers($users)
+        ->withCompanyname($companyname);
     }
 
     public function updateStatus($id, Request $request)
@@ -146,18 +177,15 @@ class LeadsController extends Controller
 
         $input = $request->get('status');
         $input = array_replace($request->all(), ['status' => 2]);
-        $insertedId = $lead->id;
         $lead->fill($input)->save();
 
         $activityinput = array_merge(
-             ['text' => 'Lead ' . $lead->title .
-             ' was created by '. $lead->createdBy->name .
-             ' and assigned to' . $lead->assignee->name,
-             'user_id' => Auth::id(),
-             'type' => 'lead',
-             'type_id' =>  $insertedId]
-         );
-        
+            ['text' => 'Lead was completed by '. Auth()->user()->name,
+            'user_id' => Auth()->id(),
+            'type' => 'lead',
+            'type_id' =>  $id]
+        );
+
         Activity::create($activityinput);
         return redirect()->back();
     }

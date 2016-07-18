@@ -41,4 +41,8 @@ class Leads extends Model
     {
         return Carbon\Carbon::now()->startOfDay()->diffInDays($this->contact_date, false);
     }
+    public function activity()
+    {
+        return $this->hasMany('App\Activity', 'type_id', 'id')->where('type', 'lead');
+    }
 }

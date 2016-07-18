@@ -179,9 +179,20 @@ $(document).ready(function(){
           {!! Form::submit('Complete Lead', ['class' => 'btn btn-success form-control closebtn movedown']) !!}
     {!! Form::close() !!}
        @endif
+
+               <div class="activity-feed movedown">
+          @foreach($leads->activity as $activity)
+          <div class="feed-item">
+          <div class="activity-date">{{date('d, F Y H:i', strTotime($activity->created_at))}}</div>
+             <div class="activity-text">{{$activity->text}}</div>
+                
+                </div>
+        @endforeach
+</div>
           </div>
 
         </div>
+
 
 <div class="modal fade" id="ModalFollowUp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
@@ -208,7 +219,11 @@ $(document).ready(function(){
         {!! Form::submit('Update follow up', ['class' => 'btn btn-success form-control closebtn']) !!}
         </div>
        {!! Form::close() !!}
+        </div>
       </div>
+    </div>
+  </div>
+</div>
 @stop
        
 
