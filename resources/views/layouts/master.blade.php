@@ -208,7 +208,14 @@ $(function(){
                 </div>
 
             </div>
+@if($errors->any())
+    <div class="alert alert-danger">
+        @foreach($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
 
+@endif
 @if(Session::has('flash_message_warning'))
         <div class="notification-warning navbar-fixed-bottom ">
         <div class="notification-icon ion-close-circled"></div>
