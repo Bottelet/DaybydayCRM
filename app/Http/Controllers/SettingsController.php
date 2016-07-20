@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
-use App\Permissions;
+
 use App\Role;
 use App\Settings;
 use App\User;
@@ -12,52 +12,43 @@ use Illuminate\Support\Facades\Input;
 use Session;
 use Auth;
 use App\Http\Requests\Setting\UpdateSettingOverallRequest;
+use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\Role\RoleRepositoryContract;
 
 class SettingsController extends Controller
 {
-    public function __construct()
-    {
+
+    protected $settings;
+    protected $roles;
+
+    public function __construct(
+        SettingRepositoryContract $settings,
+        RoleRepositoryContract $roles
+    ) {
+    
+        $this->settings = $settings;
+        $this->roles = $roles;
         $this->middleware('user.is.admin', ['only' => ['index']]);
     }
     public function index()
     {
-
-        $permission = Permissions::all();
-        $roles = Role::with('permissions')->get();
-        $settings = Settings::findOrFail(1);
-        
         return view('settings.index')
-        ->withSettings($settings)
-        ->withPermission($permission)
-        ->withRoles($roles);
+        ->withSettings($this->settings->getSetting())
+        ->withPermission($this->roles->allPermissions())
+        ->withRoles($this->roles->allRoles());
     }
 
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
-
-        $setting = Settings::findOrFail(1);
-
-        $input = $request->all();
-
-        $setting->fill($input)->save();
-
-        Session::flash('flash_message', 'Overall settings successfully updated!');
+        $this->settings->updateOverall($request);
+        Session::flash('flash_message', 'Overall settings successfully updated');
         return redirect()->back();
     }
 
     public function permissionsUpdate(Request $request)
     {
-        $allowed_permissions = [];
-        foreach ($request->input('permissions') as $permissionId => $permission) {
-            if ($permission === '1') {
-                $allowed_permissions[] = (int)$permissionId;
-            }
-        }
-       
-        $role = Role::find($request->input('role_id'));
-
-        $role->permissions()->sync($allowed_permissions);
-        $role->save();
+        $this->roles->permissionsUpdate($request);
+        Session::flash('flash_message', 'Role is updated');
         return redirect()->back();
     }
 }

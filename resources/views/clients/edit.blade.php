@@ -55,9 +55,10 @@ Edit Client ({{$client->name}})
 </div>  
 
 <div class="form-group">
-    {!! Form::label('industry', 'Industry:', ['class' => 'control-label']) !!}
-    {!! Form::text('industry',  null, ['class' => 'form-control']) !!}
+    {!! Form::label('industry', 'Industry:', ['class' => 'control-label']) !!} 
+{!! Form::select('industry_id', $industries, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!} 
 </div>  
+
 
 <div class="form-group">
     {!! Form::label('company_type', 'Company type:', ['class' => 'control-label']) !!}

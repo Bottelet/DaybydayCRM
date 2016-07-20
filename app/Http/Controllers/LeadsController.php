@@ -16,11 +16,29 @@ use App\Activity;
 use DB;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
+use App\Repositories\Lead\LeadRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Client\ClientRepositoryContract;
+use App\Repositories\Setting\SettingRepositoryContract;
 
 class LeadsController extends Controller
 {
-    public function __construct()
-    {
+    protected $leads;
+    protected $clients;
+    protected $settings;
+    protected $users;
+
+    public function __construct(
+        LeadRepositoryContract $leads,
+        UserRepositoryContract $users,
+        ClientRepositoryContract $clients,
+        SettingRepositoryContract $settings
+    ) {
+    
+        $this->users = $users;
+        $this->settings = $settings;
+        $this->clients = $clients;
+        $this->leads = $leads;
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
@@ -32,8 +50,7 @@ class LeadsController extends Controller
      */
     public function index()
     {
-        $leads = Leads::all()->where('status', 1);
-        return view('leads.index')->withLeads($leads);
+        return view('leads.index');
     }
     
     public function anyData()
@@ -65,16 +82,9 @@ class LeadsController extends Controller
      */
     public function create()
     {
-        $users = User::select(
-            array('users.name', 'users.id',
-                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name'))
-        )
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->lists('full_name', 'id');
-        $clients = Client::lists('name', 'id');
-        ;
-        return view('leads.create')->withUsers($users)->withClients($clients);
+        return view('leads.create')
+        ->withUsers($this->users->getAllUsersWithDepartments())
+        ->withClients($this->clients->listAllClients());
     }
 
     /**
@@ -85,65 +95,23 @@ class LeadsController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
-          $fk_client_id = $request->get('fk_client_id');
-          $input = $request = array_merge(
-              $request->all(),
-              ['fk_user_id_created' => \Auth::id(),
-               'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"]
-          );
-       
-          $lead = Leads::create($input);
-          $insertedId = $lead->id;
-          Session::flash('flash_message', 'Lead successfully added!'); //Snippet in Master.blade.php
-           $activityinput = array_merge(
-             ['text' => 'Lead ' . $lead->title .
-             ' was created by '. $lead->createdBy->name .
-             ' and assigned to' . $lead->assignee->name,
-             'user_id' => Auth()->id(),
-             'type' => 'lead',
-             'type_id' =>  $insertedId]
-         );
-        
-        Activity::create($activityinput);
-          return redirect()->to("/leads/{$lead->id}");
+          $getInsertedId = $this->leads->create($request);
+          Session()->flash('flash_message', 'Lead is created');
+          return redirect()->route('leads.show', $getInsertedId);
     }
    
     public function updateAssign($id, Request $request)
     {
-
-        $lead = Leads::findOrFail($id);
-
-        $input = $request->get('fk_user_id_assign');
-        $input = array_replace($request->all());
-        $lead->fill($input)->save();
-        $insertedName = $lead->assignee->name;
-
-        $activityinput = array_merge(
-            ['text' => auth()->user()->name.' assigned lead to '. $insertedName,
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+        $this->leads->updateAssign($id, $request);
+        Session()->flash('flash_message', 'New user is assigned');
         return redirect()->back();
     }
 
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
     {
-         $lead = Leads::findOrFail($id);
-         $input = $request->all();
-         $input = $request =
-         [ 'contact_date' => $request->contact_date ." " . $request->contact_time . ":00"];
-         $lead->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => Auth()->user()->name.' Inserted a new time for this lead',
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
-         return redirect()->back();
+        $this->leads->updateFollowup($id, $request);
+        Session()->flash('flash_message', 'New follow up date is set');
+        return redirect()->back();
     }
 
     /**
@@ -154,39 +122,16 @@ class LeadsController extends Controller
      */
     public function show($id)
     {
-        $settings = Settings::findOrFail(1);
-        $companyname = $settings->company;
-
-        $users =  User::select(array(
-            'users.name', 'users.id',
-            DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->lists('full_name', 'id');
-        $leads = Leads::findorFail($id);
         return view('leads.show')
-        ->withLeads($leads)
-        ->withUsers($users)
-        ->withCompanyname($companyname);
+        ->withLeads($this->leads->find($id))
+        ->withUsers($this->users->getAllUsersWithDepartments())
+        ->withCompanyname($this->settings->getCompanyName());
     }
 
     public function updateStatus($id, Request $request)
     {
-
-        $lead = Leads::findOrFail($id);
-
-        $input = $request->get('status');
-        $input = array_replace($request->all(), ['status' => 2]);
-        $lead->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => 'Lead was completed by '. Auth()->user()->name,
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-
-        Activity::create($activityinput);
+        $this->leads->updateStatus($id, $request);
+        Session()->flash('flash_message', 'Lead is completed');
         return redirect()->back();
     }
 }

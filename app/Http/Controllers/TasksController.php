@@ -4,37 +4,46 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Tasks;
-use App\Comment;
-use Session;
 use App\User;
 use App\Client;
 use Illuminate\Http\Request;
-use Auth;
-use App\Settings;
 use Gate;
 use App\TaskTime;
 use Datatables;
 use Carbon;
 use App\Dinero;
-use Notifynder;
-use DB;
 use App\Billy;
-use App\Economic;
 use App\Integration;
-use App\Activity;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTimeTaskRequest;
+use App\Repositories\Task\TaskRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Client\ClientRepositoryContract;
+use App\Repositories\Setting\SettingRepositoryContract;
 
 class TasksController extends Controller
 {
 
     protected $request;
-    public function __construct(Request $request)
-    {
+    protected $tasks;
+    protected $clients;
+    protected $settings;
+    protected $users;
+    
+    public function __construct(
+        TaskRepositoryContract $tasks,
+        UserRepositoryContract $users,
+        ClientRepositoryContract $clients,
+        SettingRepositoryContract $settings
+    ) {
+    
+        $this->tasks = $tasks;
+        $this->users = $users;
+        $this->clients = $clients;
+        $this->settings = $settings;
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
-        $this->request = $request;
     }
     /**
      * Display a listing of the resource.
@@ -43,14 +52,11 @@ class TasksController extends Controller
      */
     public function index()
     {
-
-        $tasks = Tasks::orderBy('deadline');
-        return view('tasks.index')->withTasks($tasks);
+        return view('tasks.index');
     }
 
     public function anyData()
     {
-        
         $tasks = Tasks::select(
             ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
         )
@@ -80,16 +86,9 @@ class TasksController extends Controller
      */
     public function create()
     {
-        $users = User::select(array
-            ('users.name', 'users.id',
-                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->lists('full_name', 'id');
-        $clients = Client::lists('name', 'id');
-        $loggedin = User::find(1);
-
-        return view('tasks.create')->withUsers($users)->withClients($clients);
+        return view('tasks.create')
+        ->withUsers($this->users->getAllUsersWithDepartments())
+        ->withClients($this->clients->listAllClients());
     }
 
     /**
@@ -99,34 +98,8 @@ class TasksController extends Controller
      */
     public function store(StoreTaskRequest $request) // uses __contrust request
     {
-        $fk_client_id = $request->get('fk_client_id');
-        $input = $request = array_merge(
-            $this->request->all(),
-            ['fk_user_id_created' => \Auth::id(), ]
-        );
-
-        $task = Tasks::create($input);
-        $insertedId = $task->id;
-
-        Session::flash('flash_message', 'Task successfully added!'); //Snippet in Master.blade.php
-        Notifynder::category('task.assign')
-        ->from(\Auth::id())
-        ->to($task->fk_user_id_assign)
-        ->url(url('tasks', $insertedId))
-        ->expire(Carbon::now()->addDays(14))
-        ->send();
-
-         $activityinput = array_merge(
-             ['text' => 'Task ' . $task->title .
-             ' was created by '. $task->taskCreator->name .
-             ' and assigned to' . $task->assignee->name,
-             'user_id' => Auth::id(),
-             'type' => 'task',
-             'type_id' =>  $insertedId]
-         );
-        
-        Activity::create($activityinput);
-        return redirect()->to("/tasks/{$task->id}");
+        $getInsertedId = $this->tasks->create($request);
+        return redirect()->route("tasks.show", $getInsertedId);
     }
 
    
@@ -139,44 +112,29 @@ class TasksController extends Controller
      */
     public function show(Request $request, $id)
     {
-        
-        $settings = Settings::findOrFail(1);
-        $companyname = $settings->company;
-        $activity = Activity::where('type_id', $id)
-        ->where('type', 'task')->get();
         $invoiceContacts = array();
         $apiConnected = false;
         /*
         $integrationCheck = Integration::first();       
-    	$api = Integration::getApi('billing');
+        $api = Integration::getApi('billing');
      
         
         if($api){
-        	$apiConnected = true;
-        	$invoiceContacts = $api->getContacts();
+            $apiConnected = true;
+            $invoiceContacts = $api->getContacts();
         }else{
-			$apiConnected = false;
-			$invoiceContacts = array();
+            $apiConnected = false;
+            $invoiceContacts = array();
         }
         
 		*/
-        $users = User::select(array
-            ('users.name', 'users.id',
-                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->lists('full_name', 'id');
-
-        $tasks = Tasks::findOrFail($id);
-        $timemanger = TaskTime::where('fk_task_id', $id)->get();
-
         
         return view('tasks.show')
-        ->withTasks($tasks)
-        ->withUsers($users)
+        ->withTasks($this->tasks->find($id))
+        ->withUsers($this->users->getAllUsersWithDepartments())
         ->withContacts($invoiceContacts)
-        ->withTasktimes($timemanger)
-        ->withCompanyname($companyname)
+        ->withTasktimes($this->tasks->getTaskTime($id))
+        ->withCompanyname($this->settings->getCompanyName())
         ->withApiconnected($apiConnected);
     }
 
@@ -190,97 +148,31 @@ class TasksController extends Controller
      * else stmt*/
     public function updateStatus($id, Request $request)
     {
-        $task = Tasks::findOrFail($id);
-        $input = $request->get('status');
-        $input = array_replace($request->all(), ['status' => 2]);
-        $task->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => 'Task was completed by '. Auth::user()->name,
-            'user_id' => Auth::id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+        $this->tasks->updateStatus($id, $request);
+        Session()->flash('flash_message', 'Task is completed');
         return redirect()->back();
     }
 
 
     public function updateAssign($id, Request $request)
     {
-
-        $task = Tasks::with('assignee')->findOrFail($id);
-
-        $input = $request->get('fk_user_id_assign');
-
-        $input = array_replace($request->all());
-        $task->fill($input)->save();
-        $task = $task->fresh();
-        $insertedName = $task->assignee->name;
-        
-
-        $activityinput = array_merge(
-            ['text' => auth::user()->name.' assigned task to '. $insertedName,
-            'user_id' => Auth::id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
-
+        $this->tasks->updateAssign($id, $request);
+        Session()->flash('flash_message', 'New user is assigned');
         return redirect()->back();
     }
 
     public function updateTime($id, Request $request)
     {
-        $task = Tasks::findOrFail($id);
-
-        $input = array_replace($request->all(), ['fk_task_id'=>"$task->id"]);
-        
-        TaskTime::create($input);
-        $activityinput = array_merge(
-            ['text' => Auth::user()->name.' Inserted a new time for this task',
-            'user_id' => Auth::id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
-        Session::flash('flash_message', 'Time has been updated');
+        $this->tasks->updateTime($id, $request);
+        Session()->flash('flash_message', 'Time has been updated');
         return redirect()->back();
     }
 
     public function invoice($id, Request $request)
     {
         
-        $contatGuid = $request->invoiceContact;
-        
-        $taskname = Tasks::find($id);
-        $timemanger = TaskTime::where('fk_task_id', $id)->get();
-            $sendMail = $request->sendMail;
-        $productlines = [];
-        foreach ($timemanger as $time) {
-            $productlines[] = array(
-              'Description' => $time->title,
-              'Comments' => $time->comment,
-              'BaseAmountValue' => $time->value,
-              'Quantity' => $time->time,
-              'AccountNumber' => 1000,
-              'Unit' => 'hours');
-        }
-
-        $api = Integration::getApi(1, 'billing');
-
-        $results = $api->createInvoice([
-            'Currency' => 'DKK',
-            'Description' => $taskname->title,
-            'contactId' => $contatGuid,
-            'ProductLines' => $productlines]);
-
-        if ($sendMail == true) {
-            $bookGuid = $booked->Guid;
-            $bookTime = $booked->TimeStamp;
-            $api->sendInvoice($bookGuid, $bookTime);
-        }
-          
+        $this->tasks->invoice($id, $request);
+        Session()->flash('flash_message', 'Invoice created');
         return redirect()->back();
     }
 

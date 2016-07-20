@@ -7,17 +7,22 @@ use App\Http\Controllers\Controller;
 use App\Department;
 use Session;
 use App\Http\Requests\Department\StoreDepartmentRequest;
+use App\Repositories\Department\DepartmentRepositoryContract;
 
 class DepartmentsController extends Controller
 {
-    public function __construct()
+
+    protected $departments;
+
+    public function __construct(DepartmentRepositoryContract $departments)
     {
+        $this->departments = $departments;
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
     }
     public function index()
     {
-        $departments = Department::all();
-        return view('departments.index')->withDepartment($departments);
+        return view('departments.index')
+        ->withDepartment($this->departments->getAllDepartments());
     }
     public function create()
     {
@@ -25,17 +30,13 @@ class DepartmentsController extends Controller
     }
     public function store(StoreDepartmentRequest $request)
     {
-        $input = $request->all();
-        $department = Department::create($input);
-        Session::flash('flash_message', 'Successfully created New Department!');
-        return view('departments.create');
+        $this->departments->create($request);
+        Session::flash('flash_message', 'Successfully created New Department');
+        return redirect()->route('departments.index');
     }
     public function destroy($id)
     {
-        $department = Department::findorFail($id);
-        
-        $department->delete();
-        
+        $this->departments->destroy($id);
         return redirect()->route('departments.index');
     }
 }

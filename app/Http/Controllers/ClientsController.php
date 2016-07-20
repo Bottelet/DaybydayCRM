@@ -5,24 +5,33 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Client;
 use Illuminate\Http\Request;
-use Session;
-use App\User;
-use App\Tasks;
-use Auth;
 use Datatables;
-use Pusher;
 use Config;
 use Dinero;
 use App\Settings;
-use DB;
-use App\Industry;
+
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Client\ClientRepositoryContract;
+use App\Repositories\Setting\SettingRepositoryContract;
 
 class ClientsController extends Controller
 {
-    public function __construct()
-    {
+
+    protected $users;
+    protected $clients;
+    protected $settings;
+
+    public function __construct(
+        UserRepositoryContract $users,
+        ClientRepositoryContract $clients,
+        SettingRepositoryContract $settings
+    ) {
+    
+        $this->users = $users;
+        $this->clients = $clients;
+        $this->settings = $settings;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
     }
@@ -33,8 +42,7 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        $clients = Client::all();
-        return view('clients.index')->withClients($clients);
+        return view('clients.index');
     }
 
     public function anyData()
@@ -57,13 +65,9 @@ class ClientsController extends Controller
      */
     public function create()
     {
-        $industries = Industry::lists('name', 'id');
-        $users =  User::select(array('users.name', 'users.id',
-        DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->lists('full_name', 'id');
-        return view('clients.create')->withUsers($users)->withIndustries($industries);
+        return view('clients.create')
+        ->withUsers($this->users->getAllUsersWithDepartments())
+        ->withIndustries($this->clients->listAllIndustries());
     }
 
     /**
@@ -71,52 +75,17 @@ class ClientsController extends Controller
      *
      * @return Response
      */
-    public function store(StoreClientRequest $clientRequest)
+    public function store(StoreClientRequest $request)
     {
-            $input = $clientRequest->all();
-            Client::create($input);
-            Session::flash('flash_message', 'Client successfully added!');
-            return redirect()->route('clients.index');
+        $this->clients->create($request->all());
+        Session()->flash('flash_message', 'Client successfully added');
+        return redirect()->route('clients.index');
     }
 
     public function cvrapiStart(Request $vatRequest)
     {
-        $vat = $vatRequest->input('vat');
-
-        $country = $vatRequest->input('country');
-        $company_name = $vatRequest->input('company_name');
-
-        // Strip all other characters than numbers
-        $vat = preg_replace('/[^0-9]/', '', $vat);
-        
-        function cvrApi($vat)
-        {
-       
-            if (empty($vat)) {
-            // Print error message
-                return('Please insert VAT');
-            } else {
-                // Start cURL
-                $ch = curl_init();
-
-                // Set cURL options
-                curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Flashpoint');
-
-                // Parse result
-                $result = curl_exec($ch);
-
-                // Close connection when done
-                curl_close($ch);
-
-                // Return our decoded result
-                return json_decode($result, 1);
-            }
-        }
-        $result = cvrApi($vat, 'dk');
-
-        return redirect()->back()->with('data', $result);
+        return redirect()->back()
+        ->with('data', $this->clients->vat($vatRequest));
     }
     /**
      * Display the specified resource.
@@ -126,10 +95,9 @@ class ClientsController extends Controller
      */
     public function show($id)
     {
-          $client = Client::with('Tasks', 'Tasks.assignee')->findOrFail($id);
-          $settings = Settings::findOrFail(1);
-          $companyname = $settings->company;
-          return view('clients.show')->with(compact('client', 'companyname'));
+          return view('clients.show')
+          ->withClient($this->clients->find($id))
+          ->withCompanyname($this->settings->getCompanyName());
     }
 
     /**
@@ -140,9 +108,10 @@ class ClientsController extends Controller
      */
     public function edit($id)
     {
-        $users = User::lists('name', 'id');
-        $client = Client::findorFail($id);
-        return view('clients.edit')->withClient($client)->withUsers($users);
+        return view('clients.edit')
+        ->withClient($this->clients->find($id))
+        ->withUsers($this->users->getAllUsersWithDepartments())
+        ->withIndustries($this->clients->listAllIndustries());
     }
 
     /**
@@ -153,13 +122,9 @@ class ClientsController extends Controller
      */
     public function update($id, UpdateClientRequest $request)
     {
-            $client = Client::findOrFail($id);
-
-            $input = $request->all();
-            $client->fill($input)->save();
-
-            Session::flash('flash_message', 'Client successfully updated!');
-            return redirect()->route('clients.index');
+        $this->clients->update($id, $request);
+        Session()->flash('flash_message', 'Client successfully updated');
+        return redirect()->route('clients.index');
     }
 
     /**
@@ -170,8 +135,8 @@ class ClientsController extends Controller
      */
     public function destroy($id)
     {
-        $client = Client::findorFail($id);
-        $client->delete();
+        $this->clients->destroy($id);
+        Session()->flash('flash_message', 'Client successfully deleted');
         return redirect()->route('clients.index');
     }
 }

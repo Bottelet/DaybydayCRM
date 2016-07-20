@@ -5,25 +5,38 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Tasks;
-use App\Settings;
-use Session;
 use Illuminate\Http\Request;
 use Gate;
 use Datatables;
 use Carbon;
 use PHPZen\LaravelRbac\Traits\Rbac;
-use App\Role;
-use Auth;
 use Illuminate\Support\Facades\Input;
 use App\Client;
-use App\Department;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Role\RoleRepositoryContract;
+use App\Repositories\Department\DepartmentRepositoryContract;
+use App\Repositories\Setting\SettingRepositoryContract;
 
 class UsersController extends Controller
 {
-    public function __construct()
-    {
+    protected $users;
+    protected $roles;
+    protected $departments;
+    protected $settings;
+
+    public function __construct(
+        UserRepositoryContract $users,
+        RoleRepositoryContract $roles,
+        DepartmentRepositoryContract $departments,
+        SettingRepositoryContract $settings
+    ) {
+    
+        $this->users = $users;
+        $this->roles = $roles;
+        $this->departments = $departments;
+        $this->settings = $settings;
         $this->middleware('user.create', ['only' => ['create']]);
     }
 
@@ -39,8 +52,7 @@ class UsersController extends Controller
 
     public function anyData()
     {
-
-        $canUpdateUser = Auth::user()->canDo('update.user');
+        $canUpdateUser = auth()->user()->canDo('update.user');
         $users = User::select(['id', 'name', 'email', 'work_number']);
         return Datatables::of($users)
         ->addColumn('namelink', function ($users) {
@@ -124,52 +136,19 @@ class UsersController extends Controller
      */
     public function create()
     {
-        $roles = Role::lists('name', 'id');
-
-        $departments = Department::lists('name', 'id');
-        
-        return view('users.create')->withRoles($roles)->withDepartments($departments);
+        return view('users.create')
+        ->withRoles($this->roles->listAllRoles())
+        ->withDepartments($this->departments->listAllDepartments());
     }
 
     /**
      * Store a newly created resource in storage.
-     *
+     * @param User $user
      * @return Response
      */
     public function store(StoreUserRequest $userRequest)
     {
-        $settings = Settings::all();
-
-        $password =  bcrypt($userRequest->password);
-        $role = $userRequest->roles;
-        $department = $userRequest->departments;
-        //dd($department);
-        if ($userRequest->hasFile('image_path')) {
-            if (!is_dir(public_path(). '/images/'. $companyname)) {
-                      mkdir(public_path(). '/images/'. $companyname, 0777, true);
-            }
-            $settings = Settings::findOrFail(1);
-            $companyname = $settings->company;
-            $file =  $userRequest->file('image_path');
-
-            $destinationPath = public_path(). '/images/'. $companyname;
-            $filename = str_random(8) . '_' . $file->getClientOriginalName() ;
-
-            $file->move($destinationPath, $filename);
-            
-            $input =  array_replace($userRequest->all(), ['image_path'=>"$filename", 'password'=>"$password"]);
-        } else {
-          //$input = $userRequest->all();
-            $input =  array_replace($userRequest->all(), ['password'=>"$password"]);
-        }
-
-        $user = User::create($input);
-        $user->roles()->attach($role);
-        $user->department()->attach($department);
-        $user->save();
-
-        //dd($usersAmount);
-        Session::flash('flash_message', 'User successfully added!'); //Snippet in Master.blade.php
+        $getInsertedId = $this->users->create($userRequest);
         return redirect()->route('users.index');
     }
 
@@ -181,10 +160,10 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $settings = Settings::findOrFail(1);
-        $companyname = $settings->company;
-        $user = User::with('tasksAssign')->whereId($id)->firstOrFail();
-        return view('users.show', compact('user', 'tasks', 'clients', 'companyname'));
+        
+        return view('users.show')
+        ->withUser($this->users->find($id))
+        ->withCompanyname($this->settings->getCompanyName());
     }
 
     /**
@@ -195,18 +174,10 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        $canUpdateUser = Auth::user()->canDo('user.update');
-        if (!$canUpdateUser) {
-            Session::flash('flash_message_warning', 'Not allowed to update user!');
-            return redirect()->route('users.index');
-        }
-
-        $roles = Role::lists('name', 'id');
-        $departments = Department::lists('name', 'id');
-        $user = User::findorFail($id);
-        
         return view('users.edit')
-        ->withUser($user)->withRoles($roles)->withDepartment($departments);
+        ->withUser($this->users->find($id))
+        ->withRoles($this->roles->listAllRoles())
+        ->withDepartment($this->departments->listAllDepartments());
     }
 
     /**
@@ -217,42 +188,8 @@ class UsersController extends Controller
      */
     public function update($id, UpdateUserRequest $request)
     {
-
-        $user = User::findorFail($id);
-        $password = bcrypt($request->password);
-        $role = $request->roles;
-        $department = $request->department;
-
-        if ($request->hasFile('image_path')) {
-            $settings = Settings::findOrFail(1);
-            $companyname = $settings->company;
-            $file =  $request->file('image_path');
-
-            $destinationPath = public_path(). '\\images\\'. $companyname;
-            $filename = str_random(8) . '_' . $file->getClientOriginalName() ;
-
-            $file->move($destinationPath, $filename);
-            if ($request->password == "") {
-                $input =  array_replace($request->except('password'), ['image_path'=>"$filename"]);
-            } else {
-                $input =  array_replace($request->all(), ['image_path'=>"$filename", 'password'=>"$password"]);
-            }
-        } else {
-            if ($request->password == "") {
-                $input =  array_replace($request->except('password'));
-            } else {
-                $input =  array_replace($request->all(), ['password'=>"$password"]);
-            }
-        }
-        
-      
-
-        $user->fill($input)->save();
-        $user->roles()->sync([$role]);
-        $user->department()->sync([$department]);
-
-     
-        Session::flash('flash_message', 'User successfully updated!');
+        $this->users->update($id, $request);
+        Session()->flash('flash_message', 'User successfully updated');
         return redirect()->back();
     }
 
@@ -264,8 +201,8 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findorFail($id);
-        $user->delete();
+        $this->users->destroy($id);
+        Session()->flash('flash_message', 'User successfully deleted');
         return redirect()->route('users.index');
     }
 }

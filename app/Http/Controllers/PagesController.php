@@ -12,89 +12,107 @@ use DB;
 use App\User;
 use App\Settings;
 use App\Leads;
+use App\Repositories\User\UserRepositoryContract;
+use App\Repositories\Client\ClientRepositoryContract;
+use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\Task\TaskRepositoryContract;
+use App\Repositories\Lead\LeadRepositoryContract;
 
 class PagesController extends Controller
 {
 
-    public function home()
-    {
-        return view('pages.home');
+    protected $users;
+    protected $clients;
+    protected $settings;
+    protected $tasks;
+    protected $leads;
+
+    public function __construct(
+        UserRepositoryContract $users,
+        ClientRepositoryContract $clients,
+        SettingRepositoryContract $settings,
+        taskRepositoryContract $tasks,
+        leadRepositoryContract $leads
+    ) {
+    
+        $this->users = $users;
+        $this->clients = $clients;
+        $this->settings = $settings;
+        $this->tasks = $tasks;
+        $this->leads = $leads;
     }
+
     public function dashboard()
     {
 
-        $settings = Settings::findOrFail(1);
-        $companyname = $settings->company;
+      /**
+         * Other Statistics
+         *
+         */
+        $companyname = $this->settings->getCompanyName();
+        $users = $this->users->getAllUsers();
+        $totalClients = $this->clients->getAllClientsCount();
+        $totalTimeSpent = $this->tasks->totalTimeSpent();
 
-        $users = User::all();
+     /**
+      * Statistics for all-time tasks.
+      *
+      */
+        $alltasks = $this->tasks->allTasks();
+        $allCompletedTasks = $this->tasks->allCompletedTasks();
+        $totalPercentageTasks = $this->tasks->percantageCompleted();
+
+     /**
+      * Statistics for today tasks.
+      *
+      */
+        $completedTasksToday =  $this->tasks->completedTasksToday();
+        $createdTasksToday = $this->tasks->createdTasksToday();
+
+     /**
+      * Statistics for tasks this month.
+      *
+      */
+         $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
+    
+
+     /**
+      * Statistics for tasks each month(For Charts).
+      *
+      */
+        $createdTasksMonthly = $this->tasks->createdTasksMothly();
+        $completedTasksMonthly = $this->tasks->completedTasksMothly();
+
+     /**
+      * Statistics for all-time Leads.
+      *
+      */
+     
+        $allleads = $this->leads->allLeads();
+        $allCompletedLeads = $this->leads->allCompletedLeads();
+        $totalPercentageLeads = $this->leads->percantageCompleted();
+     /**
+      * Statistics for today leads.
+      *
+      */
+        $completedLeadsToday = $this->leads->completedLeadsToday();
+        $createdLeadsToday = $this->leads->completedLeadsToday();
+
+     /**
+      * Statistics for leads this month.
+      *
+      */
+        $leadCompletedThisMonth = $this->leads->completedLeadsThisMonth();
+
+     /**
+      * Statistics for leads each month(For Charts).
+      *
+      */
+        $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
+
+        $createdLeadsMonthly = $this->leads->completedLeadsMonthly();
         
-        $totalClients = Client::all()->count();
-        $completedTasksToday = Tasks::whereRaw(
-            'date(updated_at) = ?',
-            [Carbon::now()->format('Y-m-d')]
-        )->where('status', 2)->count();
-        $createdTasksToday = Tasks::whereRaw(
-            'date(created_at) = ?',
-            [Carbon::now()->format('Y-m-d')]
-        )->count();
 
-        $completedLeadsToday = Leads::whereRaw(
-            'date(updated_at) = ?',
-            [Carbon::now()->format('Y-m-d')]
-        )->where('status', 2)->count();
-        $createdLeadsToday = Leads::whereRaw(
-            'date(created_at) = ?',
-            [Carbon::now()->format('Y-m-d')]
-        )->count();
-
-        $createdTasksMonthly = DB::table('tasks')
-                     ->select(DB::raw('count(*) as month, created_at'))
-                     ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
-                     ->get();
-        $completedTasksMonthly = DB::table('tasks')
-                     ->select(DB::raw('count(*) as month, updated_at'))
-                     ->where('status', 2)
-                     ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
-                     ->get();
-        $completedLeadsMonthly = DB::table('leads')
-             ->select(DB::raw('count(*) as month, updated_at'))
-             ->where('status', 2)
-             ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
-             ->get();
-
-        $createdLeadsMonthly = DB::table('leads')
-         ->select(DB::raw('count(*) as month, created_at'))
-         ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
-         ->get();
-
-        $taskCompletedThisMonth = DB::table('tasks')
-                     ->select(DB::raw('count(*) as total, updated_at'))
-                     ->where('status', 2)
-                     ->whereBetween('updated_at', array(Carbon::now()->startOfMonth(), Carbon::now()))->get();
-        $leadCompletedThisMonth = DB::table('leads')
-                     ->select(DB::raw('count(*) as total, updated_at'))
-                     ->where('status', 2)
-                     ->whereBetween('updated_at', array(Carbon::now()->startOfMonth(), Carbon::now()))->get();
-      
-        $totalTimeSpent = DB::table('tasks_time')
-         ->select(DB::raw('SUM(time)'))
-         ->get();
-
-        $alltasks = Tasks::all()->count();
-        $allCompletedTasks = Tasks::where('status', 2)->count();
-        if (!$alltasks || !$allCompletedTasks) {
-            $totalPercentageTasks = 0;
-        } else {
-            $totalPercentageTasks =  $allCompletedTasks / $alltasks * 100;
-        }
-
-        $allleads = Leads::all()->count();
-        $allCompletedLeads = Leads::where('status', 2)->count();
-        if (!$allleads || !$allCompletedLeads) {
-            $totalPercentageLeads = 0;
-        } else {
-            $totalPercentageLeads =   $allCompletedLeads / $allleads * 100;
-        }
 
        
         return view('pages.dashboard', compact(
