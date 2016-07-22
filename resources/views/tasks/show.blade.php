@@ -15,86 +15,10 @@ $(document).ready(function(){
 </script>
 
 <div class="row">
-<div class="col-md-6">   
+@include('partials.clientheader')
+@include('partials.userheader')
 
-<h1 class="moveup">{{$tasks->clientAssignee->name}} ({{$tasks->clientAssignee->company_name}})</h1>
-<!--Client info leftside-->
-<div class="contactleft">
-@if($tasks->clientAssignee->email != "") 
-<!--MAIL-->         
-<p> <span class="glyphicon glyphicon-envelope" aria-hidden="true" data-toggle="tooltip" title="Email" data-placement="left" > </span> 
-               <a href="mailto:{{$tasks->clientAssignee->email}}" data-toggle="tooltip" data-placement="left" >{{$tasks->clientAssignee->email}}</a></p>
-@endif
-@if($tasks->clientAssignee->primary_number != "") 
-<!--Work Phone-->            
-<p> <span class="glyphicon glyphicon-headphones" aria-hidden="true" data-toggle="tooltip" title="Primary number" data-placement="left"> </span> 
-               <a href="tel:{{$tasks->clientAssignee->work_number}}">{{$tasks->clientAssignee->primary_number}}</a></p>
-@endif
-@if($tasks->clientAssignee->secondary_number != "")           
-<!--Secondary Phone-->            
-<p> <span class="glyphicon glyphicon-phone" aria-hidden="true" data-toggle="tooltip" title="Secondary number" data-placement="left"> </span> 
-               <a href="tel:{{$tasks->clientAssignee->secondary_number}}">{{$tasks->clientAssignee->secondary_number}}</a></p>
-@endif
-@if($tasks->clientAssignee->address || $tasks->clientAssignee->zipcode || $tasks->clientAssignee->city != "")            
-<!--Address-->            
-<p> <span class="glyphicon glyphicon-home" aria-hidden="true" data-toggle="tooltip" title="Address/Zip code/city" data-placement="left"> </span>  {{$tasks->clientAssignee->address}} <br />{{$tasks->clientAssignee->zipcode}} {{$tasks->clientAssignee->city}}
-                </p>
-@endif
-          </div>
 
-<!--Client info leftside END-->
-<!--Client info rightside-->
- <div class="contactright">
- @if($tasks->clientAssignee->company_name != "")
-     <!--Company-->            
-    <p> <span class="glyphicon glyphicon-star" aria-hidden="true" data-toggle="tooltip" title="Company name" data-placement="left"> </span> {{$tasks->clientAssignee->company_name}}</p>
-@endif
- @if($tasks->clientAssignee->vat != "")
-     <!--Company-->            
-    <p> <span class="glyphicon glyphicon-cloud" aria-hidden="true" data-toggle="tooltip" title="VAT number" data-placement="left"> </span> {{$tasks->clientAssignee->vat}}</p>
-@endif
- @if($tasks->clientAssignee->industry != "")
-<!--Industry-->            
-<p> <span class="glyphicon glyphicon-briefcase" aria-hidden="true" data-toggle="tooltip" title="Industry" data-placement="left"> </span> {{$tasks->clientAssignee->industry}}</p>
-@endif
- @if($tasks->clientAssignee->company_type!= "")               
-<!--Company Type-->            
-<p> <span class="glyphicon glyphicon-globe" aria-hidden="true" data-toggle="tooltip" title="Company type" data-placement="left"> </span> 
-               {{$tasks->clientAssignee->company_type}}</p>
-  @endif             
-
-          </div>
-</div>
-
-<!--Client info rightside END-->
-
-<!--User info-->
-
-<div  class="col-md-6">   
-<div class="profilepic"><img class="profilepicsize" 
-  @if($tasks->assignee->image_path != "")
-      src="../images/{{$companyname}}/{{$tasks->assignee->image_path}}"
-  @else
-      src="../images/default_avatar.jpg"
-  @endif
-/></div>
-<h1 class="moveup">{{$tasks->assignee->name}}</h1>
-
-   
-<!--MAIL-->         
-<p> <span class="glyphicon glyphicon-envelope" aria-hidden="true"> </span> 
-               <a href="mailto:{{$tasks->assignee->email}}">{{$tasks->assignee->email}}</a></p>
-<!--Work Phone-->            
-<p> <span class="glyphicon glyphicon-headphones" aria-hidden="true"> </span> 
-               <a href="tel:{{$tasks->assignee->work_number}}">{{$tasks->assignee->work_number}}</a></p>
-               
-<!--Personal Phone-->            
-<p> <span class="glyphicon glyphicon-phone" aria-hidden="true"> </span> 
-               <a href="tel:{{$tasks->assignee->personal_number}}">{{$tasks->assignee->personal_number}}</a></p>
-               
-
-          </div>
-<!--User info END-->
 </div>
 
      <div class="row">

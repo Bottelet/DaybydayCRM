@@ -10,33 +10,7 @@
 @stop
 
 @section('content')
-<div>
-<div class="profilepic"><img class="profilepicsize"
-  @if($user->image_path != "")
-      src="../images/{{$companyname}}/{{$user->image_path}}"
-  @else
-      src="../images/default_avatar.jpg"
-  @endif />
-</div>
-
-<h1>{{ $user->name }} ({{$user->department->first()->name}}) </h1>
-
-         
-<!--MAIL-->         
-<p> <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> 
-               <a href="mailto:{{ $user->email }}">{{ $user->email }}</a></p>
-<!--Work Phone-->            
-<p> <span class="glyphicon glyphicon-headphones" aria-hidden="true"></span> 
-               <a href="tel:{{ $user->work_number }}">{{ $user->work_number }}</a></p>
-               
-<!--Personal Phone-->            
-<p> <span class="glyphicon glyphicon-phone" aria-hidden="true"></span> 
-               <a href="tel:{{ $user->personal_number }}">{{ $user->personal_number }}</a></p>
-               
-<!--Address-->            
-<p> <span class="glyphicon glyphicon-home" aria-hidden="true"></span> 
-               {{ $user->address }}  </p>
-  </div>
+@include('partials.userheader')
   <!-- *********************************************************************
      *                 Header end and top task start                   
      *********************************************************************-->

@@ -23,90 +23,10 @@ $('.popoverOption').each(function() {
 </script>
 
 <div class="row">
- <div class="col-md-6">
-    <h1 class="moveup">{{$client->name}} ({{$client->company_name}})</h1>         
-     {!! Form::open([
-          'method' => 'DELETE',
-          'route' => ['clients.destroy', $client->id],
-          ]) !!}
-        {!! Form::submit('Delete Client', ['class' => 'btn btn-danger  btn-xs', 'onclick' => 'return confirm("Are you sure?")']) !!}
-              {!! Form::close() !!}
+@include('partials.clientheader')
+@include('partials.userheader')
 
 
-
-    <!--Client info leftside-->
-    <div class="contactleft">
-      @if($client->email != "")
-      <!--MAIL-->
-      <p> <span class="glyphicon glyphicon-envelope" aria-hidden="true" data-toggle="tooltip" title="Email" data-placement="left" > </span>
-      <a href="mailto:{{$client->email}}" data-toggle="tooltip" data-placement="left">{{$client->email}}</a></p>
-      @endif
-      @if($client->primary_number != "")
-      <!--Work Phone-->
-      <p> <span class="glyphicon glyphicon-headphones" aria-hidden="true" data-toggle="tooltip" title="Primary number" data-placement="left"> </span>
-      <a href="tel:{{$client->work_number}}">{{$client->primary_number}}</a></p>
-      @endif
-      @if($client->secondary_number != "")
-      <!--Secondary Phone-->
-      <p> <span class="glyphicon glyphicon-phone" aria-hidden="true" data-toggle="tooltip" title="Secondary number" data-placement="left"> </span>
-      <a href="tel:{{$client->secondary_number}}">{{$client->secondary_number}}</a></p>
-      @endif
-      @if($client->address || $client->zipcode || $client->city != "")
-      <!--Address-->
-      <p> <span class="glyphicon glyphicon-home" aria-hidden="true" data-toggle="tooltip" title="Address/Zip code/city" data-placement="left"> </span>  {{$client->address}} <br />{{$client->zipcode}} {{$client->city}}
-    </p>
-    @endif
-  </div>
-
-  <!--Client info leftside END-->
-  <!--Client info rightside-->
-  <div class="contactright">
-    @if($client->company_name != "")
-    <!--Company-->
-    <p> <span class="glyphicon glyphicon-star" aria-hidden="true" data-toggle="tooltip" title="Company name" data-placement="left"> </span> {{$client->company_name}}</p>
-    @endif
-     @if($client->vat != "")
-     <!--Company-->            
-    <p> <span class="glyphicon glyphicon-cloud" aria-hidden="true" data-toggle="tooltip" title="VAT number" data-placement="left"> </span> {{$client->vat}}</p>
-@endif
-    @if($client->industry != "")
-    <!--Industry-->
-    <p> <span class="glyphicon glyphicon-briefcase" aria-hidden="true" data-toggle="tooltip" title="Industry" data-placement="left"> </span> {{$client->industry}}</p>
-    @endif
-    @if($client->company_type!= "")
-    <!--Company Type-->
-    <p> <span class="glyphicon glyphicon-globe" aria-hidden="true" data-toggle="tooltip" title="Company type" data-placement="left"> </span>
-  {{$client->company_type}}</p>
-  @endif
-</div>  
-</div>
-
-<!--Client info rightside END-->
-
-<!--User info-->
-<div  class="col-md-6">
-<div class="profilepic"><img class="profilepicsize" 
-  @if($client->userAssignee->image_path != "")
-      src="../images/{{$companyname}}/{{$client->userAssignee->image_path}}"
-  @else
-      src="../images/default_avatar.jpg"
-  @endif /></div>
-<h1 class="moveup">{{$client->userAssignee->name}}</h1>
-
-<!--MAIL-->
-<p> <span class="glyphicon glyphicon-envelope" aria-hidden="true"> </span>
-<a href="mailto:{{$client->userAssignee->email}}">{{$client->userAssignee->email}}</a></p>
-<!--Work Phone-->
-<p> <span class="glyphicon glyphicon-headphones" aria-hidden="true"> </span>
-<a href="tel:{{$client->userAssignee->work_number}}">{{$client->userAssignee->work_number}}</a></p>
-
-<!--Personal Phone-->
-<p> <span class="glyphicon glyphicon-phone" aria-hidden="true"> </span>
-<a href="tel:{{$client->userAssignee->personal_number}}">{{$client->userAssignee->personal_number}}</a></p>
-
-</div>
-</div>
-<!--User info END-->
 </div>
 <div class="row">
 
