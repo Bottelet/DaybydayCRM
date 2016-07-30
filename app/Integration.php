@@ -17,22 +17,16 @@ class Integration extends Model
     public static function getApi($type)
     {
         
-        $integration = Integration::find([
+        $integration = Integration::where([
             //'user_id' => $userId,
             'api_type' => $type
-        ]);
-        
-        if (!$integration) {
-            $integration = Integration::find([
-              //  'user_id' => null,
-                'api_type' => $type
-            ]);
-        }
+        ])->get();
+      
         if ($integration) {
-            $apiConfig = $integration->first();
-             
+            $apiConfig = $integration[0];
+            
             $className = $apiConfig->name;
-           
+            
             call_user_func_array(['App\\'.$className, 'initialize'], [$apiConfig]);
             $apiInstance = call_user_func_array(['App\\'.$className, 'getInstance'], []);
 

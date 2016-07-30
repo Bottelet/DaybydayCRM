@@ -20,6 +20,8 @@ use App\Repositories\Task\TaskRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\Invoice\InvoiceRepositoryContract;
+
 
 class TasksController extends Controller
 {
@@ -29,18 +31,22 @@ class TasksController extends Controller
     protected $clients;
     protected $settings;
     protected $users;
+    protected $invoices;
     
     public function __construct(
         TaskRepositoryContract $tasks,
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
+        InvoiceRepositoryContract $invoices,
         SettingRepositoryContract $settings
     ) {
     
         $this->tasks = $tasks;
         $this->users = $users;
         $this->clients = $clients;
+        $this->invoices = $invoices;
         $this->settings = $settings;
+
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
@@ -114,7 +120,8 @@ class TasksController extends Controller
     {
         $invoiceContacts = array();
         $apiConnected = false;
-        /*
+
+        
         $integrationCheck = Integration::first();       
         $api = Integration::getApi('billing');
      
@@ -127,7 +134,7 @@ class TasksController extends Controller
             $invoiceContacts = array();
         }
         
-		*/
+		
         
         return view('tasks.show')
         ->withTasks($this->tasks->find($id))
@@ -156,6 +163,9 @@ class TasksController extends Controller
 
     public function updateAssign($id, Request $request)
     {
+        $clientId = $this->tasks->getAssignedClient($id)->id;
+
+        
         $this->tasks->updateAssign($id, $request);
         Session()->flash('flash_message', 'New user is assigned');
         return redirect()->back();
