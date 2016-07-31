@@ -3,6 +3,8 @@ namespace App\Repositories\Client;
 
 use App\Client;
 use App\Industry;
+use App\Invoices;
+use App\TaskTime;
 
 class ClientRepository implements ClientRepositoryContract
 {
@@ -14,6 +16,14 @@ class ClientRepository implements ClientRepositoryContract
     public function listAllClients()
     {
         return Client::lists('name', 'id');
+    }
+
+    public function getInvoices($id)
+    {
+        $invoice = Client::findOrFail($id)->invoices()->with('tasktime')->get();
+
+        return $invoice;
+        
     }
 
     public function getAllClientsCount()

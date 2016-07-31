@@ -130,11 +130,11 @@ $(document).ready(function(){
        <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#ModalTimer">
   Add Time
 </button>
-@if($apiconnected)
+
        <button type="button" class="btn btn-primary form-control movedown" data-toggle="modal" data-target="#myModal">
-  Add to Invoice
+  Create Invoice
 </button>
-@endif
+
 <div class="activity-feed movedown">
           @foreach($tasks->activity as $activity)
           <div class="feed-item">
@@ -191,14 +191,14 @@ $(document).ready(function(){
 </div>
 
 
-@if($apiconnected)
+
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Choose Contact</h4>
+        <h4 class="modal-title" id="myModalLabel">Create Invoice</h4>
       </div>
 
       <div class="modal-body">
@@ -207,14 +207,15 @@ $(document).ready(function(){
           'method' => 'POST',
           'url' => ['tasks/invoice', $tasks->id],
           ]) !!}
-          
+     @if($apiconnected)     
                @foreach ($contacts as $key => $contact)
         {!! Form::radio('invoiceContact', $contact['guid']) !!}
         {{$contact['name']}}
     <br />
-@endforeach
+  @endforeach
             {!! Form::label('mail', 'Send mail with invoice to Customer?(Cheked = Yes):', ['class' => 'control-label']) !!}
         {!! Form::checkbox('sendMail', true) !!}
+               @endif
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
@@ -222,11 +223,12 @@ $(document).ready(function(){
         {!! Form::submit('Create Invoice', ['class' => 'btn btn-success form-control closebtn']) !!}
         </div>
        {!! Form::close() !!}
+
       </div>
     </div>
   </div>
 </div>
-@endif
+
 
              </div>
          

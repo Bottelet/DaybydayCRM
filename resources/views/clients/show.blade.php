@@ -27,6 +27,7 @@ $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
       <li class="active"><a data-toggle="tab" href="#task">Tasks</a></li>
       <li><a data-toggle="tab" href="#lead">Leads</a></li>
       <li><a data-toggle="tab" href="#docuemnt">Documents</a></li>
+      <li><a data-toggle="tab" href="#invoice">Invoices</a></li>
       
     </ul>
     <div class="tab-content">
@@ -34,6 +35,7 @@ $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
     </div>
     @include('clients.tabs.leadtab')
     @include('clients.tabs.documenttab')
+    @include('clients.tabs.invoicetab')
   </div>
 </div>
 <div class="col-md-4 currenttask">

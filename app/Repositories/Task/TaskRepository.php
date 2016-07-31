@@ -7,6 +7,7 @@ use Carbon;
 use App\Activity;
 use App\TaskTime;
 use DB;
+use App\Integration;
 
 class TaskRepository implements TaskRepositoryContract
 {
@@ -16,10 +17,25 @@ class TaskRepository implements TaskRepositoryContract
         return Tasks::findOrFail($id);
     }
 
+    public function getAssignedClient($id)
+    {
+        $tasks = Tasks::findOrFail($id);
+        $tasks->clientAssignee;
+        return $tasks;
+    }
+
+    public function GetTimeForTask($id)
+    {
+        $taskstime = Tasks::findOrFail($id);
+        $taskstime->allTime;
+        return $taskstime;
+    }
+
     public function getTaskTime($id)
     {
         return TaskTime::where('fk_task_id', $id)->get();
     }
+
 
     public function create($requestData)
     {
@@ -109,12 +125,13 @@ class TaskRepository implements TaskRepositoryContract
 
     public function invoice($id, $requestData)
     {
-        $contatGuid = $request->invoiceContact;
+        $contatGuid = $requestData->invoiceContact;
         
         $taskname = Tasks::find($id);
         $timemanger = TaskTime::where('fk_task_id', $id)->get();
-            $sendMail = $request->sendMail;
+        $sendMail = $requestData->sendMail;
         $productlines = [];
+
         foreach ($timemanger as $time) {
             $productlines[] = array(
               'Description' => $time->title,
@@ -125,7 +142,7 @@ class TaskRepository implements TaskRepositoryContract
               'Unit' => 'hours');
         }
 
-        $api = Integration::getApi(1, 'billing');
+        $api = Integration::getApi('billing');
 
         $results = $api->createInvoice([
             'Currency' => 'DKK',

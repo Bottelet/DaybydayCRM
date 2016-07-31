@@ -8,6 +8,8 @@ interface ClientRepositoryContract
     
     public function listAllClients();
 
+    public function getInvoices($id);
+
     public function getAllClientsCount();
 
     public function listAllIndustries();

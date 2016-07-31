@@ -114,6 +114,10 @@ h4 {
 .removeright {
   padding-right: 0; }
 
+.panel-header {
+  color: #fff !important;
+  background-color: #3A485C !important; }
+
 .dropdown {
   display: inline-block;
   margin-left: 20px;

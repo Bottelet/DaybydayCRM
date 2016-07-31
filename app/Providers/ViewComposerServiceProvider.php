@@ -22,6 +22,9 @@ class ViewComposerServiceProvider extends ServiceProvider
         view()->composer(
             ['tasks.show'], 'App\Http\ViewComposers\TaskHeaderComposer'
         );
+        view()->composer(
+            ['invoices.show'], 'App\Http\ViewComposers\InvoiceHeaderComposer'
+        );
 
 
     }

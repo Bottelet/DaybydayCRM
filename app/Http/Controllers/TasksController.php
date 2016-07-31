@@ -118,23 +118,16 @@ class TasksController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $invoiceContacts = array();
-        $apiConnected = false;
-
-        
         $integrationCheck = Integration::first();       
-        $api = Integration::getApi('billing');
-     
         
-        if($api){
+        if($integrationCheck){
+            $api = Integration::getApi('billing');
             $apiConnected = true;
             $invoiceContacts = $api->getContacts();
         }else{
             $apiConnected = false;
             $invoiceContacts = array();
         }
-        
-		
         
         return view('tasks.show')
         ->withTasks($this->tasks->find($id))
@@ -180,8 +173,16 @@ class TasksController extends Controller
 
     public function invoice($id, Request $request)
     {
-        
-        $this->tasks->invoice($id, $request);
+        $task = Tasks::findOrFail($id);
+        $clientId = $task->clientAssignee()->first()->id;
+        $timeTaskId = $task->allTime()->get();
+        $integrationCheck = Integration::first();  
+
+        if($integrationCheck)
+        {
+            $this->tasks->invoice($id, $request);
+        }
+        $this->invoices->create($clientId, $timeTaskId, $request->all());
         Session()->flash('flash_message', 'Invoice created');
         return redirect()->back();
     }

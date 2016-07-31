@@ -65,7 +65,11 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         Route::get('notifications/getall', 'NotificationsController@getAll')->name('notifications.get');
         Route::post('notifications/markread', 'NotificationsController@markRead');
         Route::get('notifications/markall', 'NotificationsController@markAll');
-
-
+        Route::resource('invoices', 'InvoicesController');
         Route::get('documents/import', 'DocumentsController@import');
+        Route::post('invoice/updatepayment/{id}', 'InvoicesController@updatePayment')->name('invoice.payment.date');
+        Route::post('invoice/reopenpayment/{id}', 'InvoicesController@reopenPayment')->name('invoice.payment.reopen');
+        Route::post('invoice/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
+        Route::post('invoice/reopensentinvoice/{id}', 'InvoicesController@updateSentReopen')->name('invoice.sent.reopen');
+        Route::post('invoice/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
 });

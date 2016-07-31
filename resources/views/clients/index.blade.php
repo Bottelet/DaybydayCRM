@@ -1,7 +1,8 @@
 @extends('layouts.master')
 @section('heading')
-<h1>All clients</h1>
+
 @stop
+
 @section('content')
 
    <table class="table table-hover " id="clients-table">

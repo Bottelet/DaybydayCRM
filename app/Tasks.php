@@ -54,6 +54,10 @@ class Tasks extends Model
     {
         return $this->hasOne('App\TaskTime', 'fk_task_id', 'id');
     }
+    public function allTime()
+    {
+        return $this->hasMany('App\TaskTime', 'fk_task_id', 'id');
+    }
     public function activity()
     {
         return $this->hasMany('App\Activity', 'type_id', 'id')->where('type', 'task');

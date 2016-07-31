@@ -38,8 +38,10 @@ class taskHeaderComposer
          * [User assigned the task]
          * @var contact
          */
+       
         $contact = $tasks->assignee;
         $client = $tasks->clientAssignee;
+        
         $view->with('contact', $contact);
         $view->with('client', $client);
 

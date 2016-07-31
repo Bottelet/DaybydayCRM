@@ -50,4 +50,9 @@ class Client extends Model
     {
         return $this->hasMany('App\Document', 'fk_client_id', 'id');
     }
+    public function invoices()
+    {
+        return $this->belongsToMany('App\Invoice');
+    }
+
 }

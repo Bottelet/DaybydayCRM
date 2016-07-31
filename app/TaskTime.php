@@ -21,4 +21,8 @@ class TaskTime extends Model
     {
         return $this->belongsTo('App\Tasks');
     }
+    public function invoices()
+    {
+        return $this->belongsToMany('App\Invoice');
+    }
 }

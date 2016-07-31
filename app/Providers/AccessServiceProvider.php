@@ -51,5 +51,9 @@ class AccessServiceProvider extends ServiceProvider
             \App\Repositories\Lead\LeadRepositoryContract::class,
             \App\Repositories\Lead\LeadRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Invoice\InvoiceRepositoryContract::class,
+            \App\Repositories\Invoice\InvoiceRepository::class
+        );
     }
 }
