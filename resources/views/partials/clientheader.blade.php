@@ -2,15 +2,6 @@
 
     <h1 class="moveup">{{$client->name}} ({{$client->company_name}})</h1>  
 
-     {!! Form::open([
-          'method' => 'DELETE',
-          'route' => ['clients.destroy', $client->id],
-          ]) !!}
-        {!! Form::submit('Delete Client', ['class' => 'btn btn-danger  btn-xs', 'onclick' => 'return confirm("Are you sure?")']) !!}
-              {!! Form::close() !!}
-
-
-
     <!--Client info leftside-->
     <div class="contactleft">
       @if($client->email != "")

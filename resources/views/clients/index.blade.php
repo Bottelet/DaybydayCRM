@@ -14,7 +14,7 @@
                 <th>Email</th>
                 <th>Number</th>
                 <th></th>
-                
+                <th></th>
             </tr>
         </thead>
     </table>
@@ -36,7 +36,10 @@ $(function() {
             { data: 'email', name: 'email' },
             { data: 'primary_number', name: 'primary_number' },
              @ifUserCan('client.update') 
-             { data: 'action', name: 'action', orderable: false, searchable: false},
+             { data: 'edit', name: 'edit', orderable: false, searchable: false},
+             @endif
+              @ifUserCan('client.delete') 
+             { data: 'delete', name: 'delete', orderable: false, searchable: false},
              @endif
            
         ]

@@ -52,11 +52,18 @@ class ClientsController extends Controller
         ->addColumn('namelink', function ($clients) {
                 return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
         })
-        ->addColumn('action', function ($clients) {
-                return '<a href="clients/'.$clients->id.'/edit" class="btn btn-success"> Edit</a>';
-        })->make(true);
-    }
+        ->add_column('edit','
+                <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
+        ->add_column('delete', '
+                <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
 
+            {{csrf_field()}}
+            </form>')
+        ->make(true);
+                
+    }
 
     /**
      * Show the form for creating a new resource.
