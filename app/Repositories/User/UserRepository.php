@@ -117,9 +117,17 @@ class UserRepository implements UserRepositoryContract
 
     public function destroy($id)
     {
-        $user = User::findorFail($id);
-        $user->delete();
-
-        return $user;
+        if ($id == 1) {
+            return Session()->flash('flash_message_warning', 'Not allowed to delete super admin');
+        }
+        try {
+            $user = User::findorFail($id);
+            $user->delete();
+            Session()->flash('flash_message', 'User successfully deleted');
+           
+        } catch (\Illuminate\Database\QueryException $e) {
+            Session()->flash('flash_message_warning', 'User can NOT have, leads, clients, or tasks assigned when deleted');
+        }
+        
     }
 }

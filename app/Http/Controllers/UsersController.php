@@ -59,9 +59,15 @@ class UsersController extends Controller
                 return '<a href="users/'.$users->id.'" ">'.$users->name.'</a>';
         })
 
-        ->addColumn('action', function ($users) {
-                return '<a href="users/'.$users->id.'/edit" class="btn btn-success"> Edit</a>';
-        })
+        ->add_column('edit','
+                <a href="{{ route(\'users.edit\', $id) }}" class="btn btn-success" >Edit</a>')
+        ->add_column('delete', '
+                <form action="{{ route(\'users.destroy\', $id) }}" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
+
+            {{csrf_field()}}
+            </form>')
         ->make(true);
     }
 
@@ -202,7 +208,7 @@ class UsersController extends Controller
     public function destroy($id)
     {
         $this->users->destroy($id);
-        Session()->flash('flash_message', 'User successfully deleted');
+        
         return redirect()->route('users.index');
     }
 }

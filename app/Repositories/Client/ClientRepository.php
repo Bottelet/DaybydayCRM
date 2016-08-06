@@ -49,8 +49,14 @@ class ClientRepository implements ClientRepositoryContract
 
     public function destroy($id)
     {
-        $client = Client::findorFail($id);
-        $client->delete();
+        try {
+                $client = Client::findorFail($id);
+                $client->delete();
+                Session()->flash('flash_message', 'Client successfully deleted');
+        } catch (\Illuminate\Database\QueryException $e) {
+            Session()->flash('flash_message_warning', 'Client can NOT have, leads, or tasks assigned when deleted');
+        }
+
     }
     public function vat($requestData)
     {

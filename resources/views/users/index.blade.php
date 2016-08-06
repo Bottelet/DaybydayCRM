@@ -13,6 +13,7 @@
                 <th>Email</th>
                 <th>Work number</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
     </table>
@@ -32,8 +33,11 @@ $(function() {
             { data: 'email', name: 'email' },
             { data: 'work_number', name: 'work_number' },
            @ifUserCan('user.update') 
-            {data: 'action', name: 'action', orderable: false, searchable: false  },
-        @endif
+            {data: 'edit', name: 'edit', orderable: false, searchable: false  },
+            @endif
+          @ifUserCan('user.delete') 
+            {data: 'delete', name: 'delete', orderable: false, searchable: false  },
+            @endif
         ]
     });
 });

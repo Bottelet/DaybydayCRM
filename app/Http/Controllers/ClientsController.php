@@ -144,7 +144,7 @@ class ClientsController extends Controller
     public function destroy($id)
     {
         $this->clients->destroy($id);
-        Session()->flash('flash_message', 'Client successfully deleted');
+        
         return redirect()->route('clients.index');
     }
 }
