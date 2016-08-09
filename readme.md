@@ -25,13 +25,28 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 - login in with these credentials  Mail: admin@admin.com Password: admin123 (Can be changed in the dashboard)
 - DONE
 
+**Insertion of dummy data**
+If you want to just play around and test the CRM, you can very easily insert dummy data after completeing the steps above, follow the commands below.
+
+```
+    php artisan db:seed --class=UsersDummyTableSeeder (Creates 5 extra users and are required)
+    php artisan db:seed --class=DepartmentsDummyTableSeeder (Creates 3 extra departments adnd are required)
+    php artisan db:seed --class=UserRoleDummyTableSeeder  (Assigns roles to the 5 users, and are required)
+    php artisan db:seed --class=ClientsDummyTableSeeder (Creates 50 new clients)
+    php artisan db:seed --class=TasksDummyTableSeeder (Creates 130, tasks requires clients & users seeding)
+    php artisan db:seed --class=LeadsDummyTableSeeder (Creates 30, leads requires clients & users seeding)
+    
+```
+
+All of these will fill the datbase with client, tasks, leads etc, to give a fast example of how the CRM works, it is important, that nothing else is done as some of the data is inserted to work with a speific ID.
+
 
 ## Features overview
 - Tasks management
 - Leads management
 - Easy & simple time management for each task
 - Role management (Create and update your own roles)
-- Role & global settings
+- Roles & global settings
 - Client overview (Keep easy track of open tasks for each client etc)
 - Upload documents to each clients (easy track of contracts and more)
 - Fast overview over your own open tasks, leads etc
@@ -46,7 +61,6 @@ Flarepoint is still under heavy development, so there are a lot on my to-do list
 - Different Color schemes
 - API
 - Excel Import/export
-- Change code style to a PSR-standard, and do a "clean-up"
 - Better cache
 - Even easier installation
 - User tagging
