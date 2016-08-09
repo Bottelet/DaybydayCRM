@@ -26,11 +26,12 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 - DONE
 
 **Insertion of dummy data**
+
 If you want to just play around and test the CRM, you can very easily insert dummy data after completeing the steps above, follow the commands below.
 
 ```
     php artisan db:seed --class=UsersDummyTableSeeder (Creates 5 extra users and are required)
-    php artisan db:seed --class=DepartmentsDummyTableSeeder (Creates 3 extra departments adnd are required)
+    php artisan db:seed --class=DepartmentsDummyTableSeeder (Creates 3 extra departments and are required)
     php artisan db:seed --class=UserRoleDummyTableSeeder  (Assigns roles to the 5 users, and are required)
     php artisan db:seed --class=ClientsDummyTableSeeder (Creates 50 new clients)
     php artisan db:seed --class=TasksDummyTableSeeder (Creates 130, tasks requires clients & users seeding)
