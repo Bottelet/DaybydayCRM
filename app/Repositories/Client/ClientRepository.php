@@ -23,7 +23,6 @@ class ClientRepository implements ClientRepositoryContract
         $invoice = Client::findOrFail($id)->invoices()->with('tasktime')->get();
 
         return $invoice;
-        
     }
 
     public function getAllClientsCount()
@@ -50,13 +49,12 @@ class ClientRepository implements ClientRepositoryContract
     public function destroy($id)
     {
         try {
-                $client = Client::findorFail($id);
-                $client->delete();
-                Session()->flash('flash_message', 'Client successfully deleted');
+            $client = Client::findorFail($id);
+            $client->delete();
+            Session()->flash('flash_message', 'Client successfully deleted');
         } catch (\Illuminate\Database\QueryException $e) {
             Session()->flash('flash_message_warning', 'Client can NOT have, leads, or tasks assigned when deleted');
         }
-
     }
     public function vat($requestData)
     {
@@ -70,9 +68,8 @@ class ClientRepository implements ClientRepositoryContract
         
         function cvrApi($vat)
         {
-       
             if (empty($vat)) {
-            // Print error message
+                // Print error message
                 return('Please insert VAT');
             } else {
                 // Start cURL

@@ -17,7 +17,7 @@ class Billy
     public static function getInstance()
     {
         if (!self::$instance) {
-              self::$instance = new self();
+            self::$instance = new self();
         }
         return self::$instance;
     }
@@ -64,9 +64,9 @@ class Billy
               );
         }
 
-           $res = self::request("POST", "/invoices", $realParams);
+        $res = self::request("POST", "/invoices", $realParams);
    
-           return $res;
+        return $res;
     }
 
     public function getContacts()

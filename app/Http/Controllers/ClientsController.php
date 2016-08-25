@@ -9,7 +9,6 @@ use Datatables;
 use Config;
 use Dinero;
 use App\Settings;
-
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Repositories\User\UserRepositoryContract;
@@ -28,7 +27,6 @@ class ClientsController extends Controller
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
     ) {
-    
         $this->users = $users;
         $this->clients = $clients;
         $this->settings = $settings;
@@ -52,7 +50,7 @@ class ClientsController extends Controller
         ->addColumn('namelink', function ($clients) {
                 return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
         })
-        ->add_column('edit','
+        ->add_column('edit', '
                 <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
         ->add_column('delete', '
                 <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
@@ -62,7 +60,6 @@ class ClientsController extends Controller
             {{csrf_field()}}
             </form>')
         ->make(true);
-                
     }
 
     /**
@@ -102,7 +99,7 @@ class ClientsController extends Controller
      */
     public function show($id)
     {
-          return view('clients.show')
+        return view('clients.show')
           ->withClient($this->clients->find($id))
           ->withCompanyname($this->settings->getCompanyName())
           ->withInvoices($this->clients->getInvoices($id));

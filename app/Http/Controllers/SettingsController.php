@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
-
 use App\Role;
 use App\Settings;
 use App\User;
@@ -25,7 +24,6 @@ class SettingsController extends Controller
         SettingRepositoryContract $settings,
         RoleRepositoryContract $roles
     ) {
-    
         $this->settings = $settings;
         $this->roles = $roles;
         $this->middleware('user.is.admin', ['only' => ['index']]);

@@ -32,7 +32,6 @@ class UsersController extends Controller
         DepartmentRepositoryContract $departments,
         SettingRepositoryContract $settings
     ) {
-    
         $this->users = $users;
         $this->roles = $roles;
         $this->departments = $departments;
@@ -59,7 +58,7 @@ class UsersController extends Controller
                 return '<a href="users/'.$users->id.'" ">'.$users->name.'</a>';
         })
 
-        ->add_column('edit','
+        ->add_column('edit', '
                 <a href="{{ route(\'users.edit\', $id) }}" class="btn btn-success" >Edit</a>')
         ->add_column('delete', '
                 <form action="{{ route(\'users.destroy\', $id) }}" method="POST">
@@ -73,7 +72,6 @@ class UsersController extends Controller
 
     public function taskData($id)
     {
-        
         $tasks = Tasks::select(
             ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
         )
@@ -95,7 +93,6 @@ class UsersController extends Controller
 
     public function closedTaskData($id)
     {
-        
         $tasks = Tasks::select(
             ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
         )
@@ -117,7 +114,6 @@ class UsersController extends Controller
 
     public function clientData($id)
     {
-        
         $clients = Client::select(['id', 'name', 'company_name', 'primary_number', 'email'])->where('fk_user_id', $id);
         return Datatables::of($clients)
         ->addColumn('clientlink', function ($clients) {
@@ -166,7 +162,6 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        
         return view('users.show')
         ->withUser($this->users->find($id))
         ->withCompanyname($this->settings->getCompanyName());

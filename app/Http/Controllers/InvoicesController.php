@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Repositories\Invoice\InvoiceRepositoryContract;
 use App\Repositories\Client\ClientRepositoryContract;
@@ -14,11 +13,10 @@ class InvoicesController extends Controller
     protected $clients;
     protected $invoices;
 
-     public function __construct(
+    public function __construct(
         InvoiceRepositoryContract $invoices,
         ClientRepositoryContract $clients
     ) {
-    
         $this->invoices = $invoices;
         $this->clients = $clients;
     }
@@ -39,7 +37,7 @@ class InvoicesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {   
+    {
         $this->invoices->create('test');
     }
 
@@ -91,31 +89,31 @@ class InvoicesController extends Controller
     public function updatePayment(Request $request, $id)
     {
         $this->invoices->updatePayment($id, $request);
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     public function reopenPayment(Request $request, $id)
     {
         $this->invoices->reopenPayment($id, $request);
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     public function updateSentStatus(Request $request, $id)
     {
         $this->invoices->updateSentStatus($id, $request);
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     public function updateSentReopen(Request $request, $id)
     {
         $this->invoices->updateSentReopen($id, $request);
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     public function newItem($id, Request $request)
     {
         $this->invoices->newItem($id, $request);
-        return redirect()->back(); 
+        return redirect()->back();
     }
 
     /**

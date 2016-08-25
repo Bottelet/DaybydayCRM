@@ -25,8 +25,6 @@ class ViewComposerServiceProvider extends ServiceProvider
         view()->composer(
             ['invoices.show'], 'App\Http\ViewComposers\InvoiceHeaderComposer'
         );
-
-
     }
 
     /**

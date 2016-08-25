@@ -54,5 +54,4 @@ class Client extends Model
     {
         return $this->belongsToMany('App\Invoice');
     }
-
 }

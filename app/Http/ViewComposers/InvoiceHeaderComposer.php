@@ -5,8 +5,7 @@ namespace App\Http\ViewComposers;
 use Illuminate\View\View;
 use App\Repositories\invoice\InvoiceRepositoryContract;
 
-
-class invoiceHeaderComposer
+class InvoiceHeaderComposer
 {
     /**
      * The invoice repository implementation.
@@ -34,12 +33,10 @@ class invoiceHeaderComposer
      */
     public function compose(View $view)
     {
-       
-        $invoices = $this->invoices->find($view->getData()['invoice']['id']);    
+        $invoices = $this->invoices->find($view->getData()['invoice']['id']);
 
         $client = $invoices->clients->first();
         
         $view->with('client', $client);
-
     }
 }

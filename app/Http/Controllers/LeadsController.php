@@ -34,7 +34,6 @@ class LeadsController extends Controller
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
     ) {
-    
         $this->users = $users;
         $this->settings = $settings;
         $this->clients = $clients;
@@ -55,7 +54,6 @@ class LeadsController extends Controller
     
     public function anyData()
     {
-
         $leads = Leads::select(
             ['id', 'title', 'fk_user_id_created', 'fk_client_id', 'fk_user_id_assign', 'contact_date']
         )->where('status', 1)->get();
@@ -95,9 +93,9 @@ class LeadsController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
-          $getInsertedId = $this->leads->create($request);
-          Session()->flash('flash_message', 'Lead is created');
-          return redirect()->route('leads.show', $getInsertedId);
+        $getInsertedId = $this->leads->create($request);
+        Session()->flash('flash_message', 'Lead is created');
+        return redirect()->route('leads.show', $getInsertedId);
     }
    
     public function updateAssign($id, Request $request)

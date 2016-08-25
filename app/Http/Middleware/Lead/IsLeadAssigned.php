@@ -26,7 +26,7 @@ class IsLeadAssigned
         }
         if ($settingscomplete == 1  && Auth()->user()->id == $lead->fk_user_id_assign) {
             Session()->flash('flash_message_warning', 'Not allowed to create lead');
-                return redirect()->back();
+            return redirect()->back();
         }
         return $next($request);
     }

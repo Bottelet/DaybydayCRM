@@ -22,7 +22,6 @@ use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
 use App\Repositories\Invoice\InvoiceRepositoryContract;
 
-
 class TasksController extends Controller
 {
 
@@ -40,7 +39,6 @@ class TasksController extends Controller
         InvoiceRepositoryContract $invoices,
         SettingRepositoryContract $settings
     ) {
-    
         $this->tasks = $tasks;
         $this->users = $users;
         $this->clients = $clients;
@@ -118,13 +116,13 @@ class TasksController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $integrationCheck = Integration::first();       
+        $integrationCheck = Integration::first();
         
-        if($integrationCheck){
+        if ($integrationCheck) {
             $api = Integration::getApi('billing');
             $apiConnected = true;
             $invoiceContacts = $api->getContacts();
-        }else{
+        } else {
             $apiConnected = false;
             $invoiceContacts = array();
         }
@@ -176,10 +174,9 @@ class TasksController extends Controller
         $task = Tasks::findOrFail($id);
         $clientId = $task->clientAssignee()->first()->id;
         $timeTaskId = $task->allTime()->get();
-        $integrationCheck = Integration::first();  
+        $integrationCheck = Integration::first();
 
-        if($integrationCheck)
-        {
+        if ($integrationCheck) {
             $this->tasks->invoice($id, $request);
         }
         $this->invoices->create($clientId, $timeTaskId, $request->all());

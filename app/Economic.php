@@ -32,8 +32,8 @@ class Economic
   
     public static function getContacts()
     {
-         $res = self::getClient()->request('GET', 'https://restapi.e-conomic.com/customers ');
+        $res = self::getClient()->request('GET', 'https://restapi.e-conomic.com/customers ');
 
-         return json_decode($res->getBody(), true);
+        return json_decode($res->getBody(), true);
     }
 }

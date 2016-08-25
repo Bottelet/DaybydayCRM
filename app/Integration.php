@@ -16,7 +16,6 @@ class Integration extends Model
      */
     public static function getApi($type)
     {
-        
         $integration = Integration::where([
             //'user_id' => $userId,
             'api_type' => $type

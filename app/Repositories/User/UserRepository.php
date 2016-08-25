@@ -32,8 +32,7 @@ class UserRepository implements UserRepositoryContract
 
     public function getAllUsersWithDepartments()
     {
-        return  User::select(array
-            ('users.name', 'users.id',
+        return  User::select(array('users.name', 'users.id',
                 DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
         ->join('department_user', 'users.id', '=', 'department_user.user_id')
         ->join('departments', 'department_user.department_id', '=', 'departments.id')
@@ -51,7 +50,7 @@ class UserRepository implements UserRepositoryContract
         $department = $requestData->departments;
         if ($requestData->hasFile('image_path')) {
             if (!is_dir(public_path(). '/images/'. $companyname)) {
-                      mkdir(public_path(). '/images/'. $companyname, 0777, true);
+                mkdir(public_path(). '/images/'. $companyname, 0777, true);
             }
             $settings = Settings::findOrFail(1);
             $companyname = $settings->company;
@@ -78,7 +77,6 @@ class UserRepository implements UserRepositoryContract
 
     public function update($id, $requestData)
     {
-        
         $user = User::findorFail($id);
         $password = bcrypt($requestData->password);
         $role = $requestData->roles;
@@ -124,10 +122,8 @@ class UserRepository implements UserRepositoryContract
             $user = User::findorFail($id);
             $user->delete();
             Session()->flash('flash_message', 'User successfully deleted');
-           
         } catch (\Illuminate\Database\QueryException $e) {
             Session()->flash('flash_message_warning', 'User can NOT have, leads, clients, or tasks assigned when deleted');
         }
-        
     }
 }

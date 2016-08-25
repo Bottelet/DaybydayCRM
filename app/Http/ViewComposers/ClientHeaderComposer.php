@@ -41,6 +41,5 @@ class ClientHeaderComposer
         $contact = $clients->userAssignee;
 
         $view->with('contact', $contact);
-
     }
 }

@@ -56,7 +56,7 @@ class TaskRepository implements TaskRepositoryContract
         ->expire(Carbon::now()->addDays(14))
         ->send();
 
-         $activityinput = array_merge(
+        $activityinput = array_merge(
              ['text' => 'Task ' . $task->title .
              ' was created by '. $task->taskCreator->name .
              ' and assigned to' . $task->assignee->name,

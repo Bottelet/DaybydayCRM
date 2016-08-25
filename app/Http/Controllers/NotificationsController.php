@@ -12,7 +12,7 @@ class NotificationsController extends Controller
     {
         $user = User::find(\Auth::id());
         $notread = $user->getNotificationsNotRead();
-            return $notread->toJson();
+        return $notread->toJson();
     }
     public function markRead(Request $request)
     {

@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use App\Tasks;
 use Carbon;
@@ -34,7 +33,6 @@ class PagesController extends Controller
         taskRepositoryContract $tasks,
         leadRepositoryContract $leads
     ) {
-    
         $this->users = $users;
         $this->clients = $clients;
         $this->settings = $settings;

@@ -5,7 +5,7 @@ namespace App\Http\ViewComposers;
 use Illuminate\View\View;
 use App\Repositories\Task\TaskRepositoryContract;
 
-class taskHeaderComposer
+class TaskHeaderComposer
 {
     /**
      * The task repository implementation.
@@ -44,6 +44,5 @@ class taskHeaderComposer
         
         $view->with('contact', $contact);
         $view->with('client', $client);
-
     }
 }

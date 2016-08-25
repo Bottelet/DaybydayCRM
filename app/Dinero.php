@@ -76,7 +76,7 @@ class Dinero
   
     public static function bookInvoice($invoiceGuid, $timestamp)
     {
-          $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/'
+        $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/'
           . self::$organizationId.'/invoices/'.$invoiceGuid.'/book', [
           'verify' => false,
           'headers' => [
@@ -85,7 +85,7 @@ class Dinero
           'json' => [
           'timestamp' => $timestamp]
             ]);
-           return self::convertJson($res);
+        return self::convertJson($res);
     }
 
     public static function sendInvoice($invoiceGuid, $timestamp)
@@ -117,9 +117,9 @@ class Dinero
         $results = [];
         $i = 0;
         foreach ($request['Collection'] as $contact) {
-               $results[$i]['name'] = $contact['name'];
-               $results[$i]['guid'] = $contact['contactGuid'];
-               $i++;
+            $results[$i]['name'] = $contact['name'];
+            $results[$i]['guid'] = $contact['contactGuid'];
+            $i++;
         }
 
         return $results;

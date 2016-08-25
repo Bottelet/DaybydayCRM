@@ -1,6 +1,6 @@
 <?php
 namespace App\Repositories\Department;
- 
+
 interface DepartmentRepositoryContract
 {
 

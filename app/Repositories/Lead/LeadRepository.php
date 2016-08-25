@@ -61,11 +61,11 @@ class LeadRepository implements LeadRepositoryContract
 
     public function updateFollowup($id, $requestData)
     {
-         $lead = Leads::findOrFail($id);
-         $input = $requestData->all();
-         $input = $requestData =
+        $lead = Leads::findOrFail($id);
+        $input = $requestData->all();
+        $input = $requestData =
          [ 'contact_date' => $requestData->contact_date ." " . $requestData->contact_time . ":00"];
-         $lead->fill($input)->save();
+        $lead->fill($input)->save();
 
         $activityinput = array_merge(
             ['text' => Auth()->user()->name.' Inserted a new time for this lead',
