@@ -66,6 +66,9 @@ Flarepoint is still under heavy development, so there are a lot on my to-do list
 
 And much more (in no particular order)
 
+### Contribution Guide
+Flarepoint CRM follows [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standard.
+
 ### Packages
 The packages used are the following...
 
