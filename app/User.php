@@ -1,19 +1,17 @@
 <?php
 namespace App;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use PHPZen\LaravelRbac\Traits\Rbac;
+
 use Fenos\Notifynder\Notifable;
+use Illuminate\Notifications\Notifiable;
 use Cache;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
 {
 
-    use Authenticatable, CanResetPassword, Rbac, Notifable;
+    use Notifiable;
 
     /**
      * The database table used by the model.
@@ -39,6 +37,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     
 
     protected $primaryKey ='id';
+
     public function tasksAssign()
     {
         return $this->hasMany('App\Tasks', 'fk_user_id_assign', 'id')
