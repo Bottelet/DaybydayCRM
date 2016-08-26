@@ -13,7 +13,7 @@ class StoreLeadRequest extends Request
      */
     public function authorize()
     {
-        return auth()->user()->canDo('lead.create');
+        return auth()->user()->can('lead-create');
     }
 
     /**

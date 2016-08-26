@@ -13,7 +13,7 @@ class StoreClientRequest extends Request
      */
     public function authorize()
     {
-        return auth()->user()->canDo('client.create');
+        return auth()->user()->can('client-create');
     }
 
     /**

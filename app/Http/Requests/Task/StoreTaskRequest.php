@@ -13,7 +13,7 @@ class StoreTaskRequest extends Request
      */
     public function authorize()
     {
-        return auth()->user()->canDo('task.create');
+        return auth()->user()->can('task-create');
     }
 
     /**

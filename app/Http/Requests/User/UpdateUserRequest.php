@@ -13,7 +13,7 @@ class UpdateUserRequest extends Request
      */
     public function authorize()
     {
-        return auth()->user()->canDo('user.update');
+        return auth()->user()->can('user-update');
     }
 
     /**

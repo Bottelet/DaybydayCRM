@@ -13,7 +13,7 @@ class UpdateClientRequest extends Request
      */
     public function authorize()
     {
-        return auth()->user()->canDo('client.update');
+        return auth()->user()->can('client-update');
     }
 
     /**
