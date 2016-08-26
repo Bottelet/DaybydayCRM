@@ -17,7 +17,8 @@
         "yajra/laravel-datatables-oracle": "~6.0",
         "guzzlehttp/guzzle": "^6.2",
         "pusher/pusher-php-server": "^2.3",
-        "fenos/notifynder": "3.1.*"
+        "fenos/notifynder": "3.1.*",
+        "zizaco/entrust": "5.2.x-dev"
         
     },
     "require-dev": {
