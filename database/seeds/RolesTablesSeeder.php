@@ -14,20 +14,20 @@ class RolesTablesSeeder extends Seeder
     {
         
         $adminRole = new Role;
-        $adminRole->name = 'Administrator';
-        $adminRole->slug = 'administrator';
+        $adminRole->display_name = 'Administrator';
+        $adminRole->name = 'administrator';
         $adminRole->description = 'System Administrator';
         $adminRole->save();
 
         $editorRole = new Role;
-        $editorRole->name = 'Manager';
-        $editorRole->slug = 'Manager';
+        $editorRole->display_name = 'Manager';
+        $editorRole->name = 'manager';
         $editorRole->description = 'System Manager';
         $editorRole->save();
 
         $employeeRole = new Role;
-        $employeeRole->name = 'Employee';
-        $employeeRole->slug = 'Employee';
+        $employeeRole->display_name = 'Employee';
+        $employeeRole->name = 'employee';
         $employeeRole->description = 'Employee';
         $employeeRole->save();
     }

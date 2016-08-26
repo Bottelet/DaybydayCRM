@@ -17,20 +17,20 @@ class PermissionsTableSeeder extends Seeder
          */
         
         $createUser = new Permissions;
-        $createUser->name = 'Create user';
-        $createUser->slug = 'user.create';
+        $createUser->display_name = 'Create user';
+        $createUser->name = 'user-create';
         $createUser->description = 'Permission to create user';
         $createUser->save();
 
         $updateUser = new Permissions;
-        $updateUser->name = 'Update user';
-        $updateUser->slug = 'user.update';
+        $updateUser->display_name = 'Update user';
+        $updateUser->name = 'user-update';
         $updateUser->description = 'Permission to update user';
         $updateUser->save();
 
         $deleteUser = new Permissions;
-        $deleteUser->name = 'Delete user';
-        $deleteUser->slug = 'user.delete';
+        $deleteUser->display_name = 'Delete user';
+        $deleteUser->name = 'user-delete';
         $deleteUser->description = 'Permission to update delete';
         $deleteUser->save();
 
@@ -40,20 +40,20 @@ class PermissionsTableSeeder extends Seeder
          */
         
         $createClient = new Permissions;
-        $createClient->name = 'Create client';
-        $createClient->slug = 'client.create';
+        $createClient->display_name = 'Create client';
+        $createClient->name = 'client-create';
         $createClient->description = 'Permission to create client';
         $createClient->save();
 
         $updateClient = new Permissions;
-        $updateClient->name = 'Update client';
-        $updateClient->slug = 'client.update';
+        $updateClient->display_name = 'Update client';
+        $updateClient->name = 'client-update';
         $updateClient->description = 'Permission to update client';
         $updateClient->save();
 
         $deleteClient = new Permissions;
-        $deleteClient->name = 'Delete client';
-        $deleteClient->slug = 'client.delete';
+        $deleteClient->display_name = 'Delete client';
+        $deleteClient->name = 'client-delete';
         $deleteClient->description = 'Permission to delete client';
         $deleteClient->save();
 
@@ -62,14 +62,14 @@ class PermissionsTableSeeder extends Seeder
          */
         
         $createTask = new Permissions;
-        $createTask->name = 'Create task';
-        $createTask->slug = 'task.create';
+        $createTask->display_name = 'Create task';
+        $createTask->name = 'task-create';
         $createTask->description = 'Permission to create task';
         $createTask->save();
 
         $updateTask = new Permissions;
-        $updateTask->name = 'Update task';
-        $updateTask->slug = 'task.update';
+        $updateTask->display_name = 'Update task';
+        $updateTask->name = 'task-update';
         $updateTask->description = 'Permission to update task';
         $updateTask->save();
 
@@ -78,14 +78,14 @@ class PermissionsTableSeeder extends Seeder
          */
         
         $createLead = new Permissions;
-        $createLead->name = 'Create lead';
-        $createLead->slug = 'lead.create';
+        $createLead->display_name = 'Create lead';
+        $createLead->name = 'lead-create';
         $createLead->description = 'Permission to create lead';
         $createLead->save();
 
         $updateLead = new Permissions;
-        $updateLead->name = 'Update lead';
-        $updateLead->slug = 'lead.update';
+        $updateLead->display_name = 'Update lead';
+        $updateLead->name = 'lead-update';
         $updateLead->description = 'Permission to update lead';
         $updateLead->save();
     }
