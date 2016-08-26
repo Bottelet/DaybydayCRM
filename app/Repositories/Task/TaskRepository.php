@@ -1,13 +1,13 @@
 <?php
 namespace App\Repositories\Task;
 
-use App\Tasks;
-use Notifynder;
+use App\Models\Tasks;
+use Fenos\Notifynder\Notifynder;
 use Carbon;
-use App\Activity;
-use App\TaskTime;
-use DB;
-use App\Integration;
+use App\Models\Activity;
+use App\Models\TaskTime;
+use Illuminate\Support\Facades\DB;
+use App\Models\Integration;
 
 class TaskRepository implements TaskRepositoryContract
 {
