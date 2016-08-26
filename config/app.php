@@ -147,11 +147,13 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
-        PHPZen\LaravelRbac\RbacServiceProvider::class,
+     
         Fenos\Notifynder\NotifynderServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -160,6 +162,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\AccessServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
        
 
@@ -214,7 +217,7 @@ return [
         'Carbon'     => Carbon\Carbon::class,
         'Notifynder' => Fenos\Notifynder\Facades\Notifynder::class,
         'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
-        
+        'Notifty'    => Illuminate\Support\Facades\Notification::class,
     ],
 
 ];
