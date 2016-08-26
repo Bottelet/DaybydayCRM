@@ -6,8 +6,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
 use Session;
-use App\Leads;
-use App\Note;
+use App\Models\Leads;
+use App\Models\Note;
 
 class NotesController extends Controller
 {

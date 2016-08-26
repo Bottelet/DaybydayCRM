@@ -2,17 +2,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Leads;
-use App\User;
-use App\Client;
+use App\Models\Leads;
+use App\Models\User;
+use App\Models\Client;
 use App\Http\Requests;
 use Session;
 use App\Http\Controllers\Controller;
-use App\Settings;
+use App\Models\Settings;
 use Auth;
 use Datatables;
 use Carbon;
-use App\Activity;
+use App\Models\Activity;
 use DB;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;

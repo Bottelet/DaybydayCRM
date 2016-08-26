@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Document;
+use App\Models\Document;
 use Session;
 use Excel;
 use Validator;
-use App\Client;
-use App\Settings;
+use App\Models\Client;
+use App\Models\Settings;
 
 class DocumentsController extends Controller
 {
