@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Task;
 
 use Closure;
-use App\Settings;
-use App\Tasks;
+use App\Models\Settings;
+use App\Models\Tasks;
 
 class CanTaskUpdateStatus
 {

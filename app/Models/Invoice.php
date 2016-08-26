@@ -12,11 +12,11 @@ class Invoice extends Model
     ];
     public function clients()
     {
-        return $this->belongsToMany('App\Client');
+        return $this->belongsToMany(Client::class);
     }
     public function tasktime()
     {
-        return $this->belongsToMany('App\TaskTime')
+        return $this->belongsToMany(TaskTime::class)
        ;
     }
 }

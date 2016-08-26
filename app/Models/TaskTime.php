@@ -19,10 +19,10 @@ class TaskTime extends Model
     protected $table = 'tasks_time';
     public function tasks()
     {
-        return $this->belongsTo('App\Tasks');
+        return $this->belongsTo(Tasks::class);
     }
     public function invoices()
     {
-        return $this->belongsToMany('App\Invoice');
+        return $this->belongsToMany(Invoice::class);
     }
 }

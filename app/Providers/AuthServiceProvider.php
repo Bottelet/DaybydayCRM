@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Tasks;
-use App\User;
+use App\Models\Tasks;
+use App\Models\User;
 use App\Policies\allowTaskComplete;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
