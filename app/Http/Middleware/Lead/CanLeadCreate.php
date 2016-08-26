@@ -15,7 +15,7 @@ class CanLeadCreate
      */
     public function handle($request, Closure $next)
     {
-        if (!auth()->user()->canDo('lead.create')) {
+        if (!auth()->user()->can('lead-create')) {
             Session()->flash('flash_message_warning', 'Not allowed to create lead');
             return redirect()->route('leads.index');
         }
