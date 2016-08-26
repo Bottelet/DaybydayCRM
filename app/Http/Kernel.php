@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\LogLastUserActivity::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
             ],
         'client.create' => [ \App\Http\Middleware\Client\CanClientCreate::class ],
         'client.update' => [ \App\Http\Middleware\Client\CanClientUpdate::class ],
@@ -44,6 +45,7 @@ class Kernel extends HttpKernel
         'user.is.admin' => [ \App\Http\Middleware\RedirectIfNotAdmin::class ],
         'api' => [
             'throttle:60,1',
+            'bindings',
         ],
     ];
 
@@ -55,11 +57,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'allowsRegistration' => \App\Http\Middleware\AllowsRegistration::class,
-        'rbac' => \PHPZen\LaravelRbac\Middleware\Rbac::class,
     ];
 }
