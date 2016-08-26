@@ -15,7 +15,7 @@ class ClientRepository implements ClientRepositoryContract
     }
     public function listAllClients()
     {
-        return Client::lists('name', 'id');
+        return Client::pluck('name', 'id');
     }
 
     public function getInvoices($id)
@@ -32,7 +32,7 @@ class ClientRepository implements ClientRepositoryContract
 
     public function listAllIndustries()
     {
-        return Industry::lists('name', 'id');
+        return Industry::pluck('name', 'id');
     }
 
     public function create($requestData)

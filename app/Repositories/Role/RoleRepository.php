@@ -9,7 +9,7 @@ class RoleRepository implements RoleRepositoryContract
 
     public function listAllRoles()
     {
-        return Role::lists('name', 'id');
+        return Role::pluck('name', 'id');
     }
 
     public function allPermissions()

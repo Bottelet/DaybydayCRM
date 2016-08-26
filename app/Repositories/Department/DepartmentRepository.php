@@ -13,7 +13,7 @@ class DepartmentRepository implements DepartmentRepositoryContract
 
     public function listAllDepartments()
     {
-        return Department::lists('name', 'id');
+        return Department::pluck('name', 'id');
     }
 
     public function create($requestData)
