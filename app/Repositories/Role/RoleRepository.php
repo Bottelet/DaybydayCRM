@@ -42,7 +42,8 @@ class RoleRepository implements RoleRepositoryContract
         $roleName = $requestData->name;
         $roleDescription = $requestData->description;
         Role::create([
-        'slug' => $roleName,
+            'name' => strtolower($roleName),
+            'display_name' => ucfirst($roleName),
              'description' => $roleDescription
              ]);
     }
