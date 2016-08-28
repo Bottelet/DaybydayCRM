@@ -2,7 +2,7 @@
 
 ![Flarepoint Logo](https://cloud.githubusercontent.com/assets/15610490/16813901/ebfd6d94-4933-11e6-9fee-655f6193f38e.png)
 ### Flarepoint CRM
-Flarepoint is a new customer relationship management system (CRM) which purpose is to help you keep track of your customers, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel PHP Framework.
+Flarepoint is a new customer relationship management system (CRM) which purpose is to help you keep track of your customers, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel 5.3 PHP Framework.
 
 ![page_design](https://cloud.githubusercontent.com/assets/15610490/16659700/903393ac-446b-11e6-969c-831fcd698a06.PNG)
 
@@ -43,9 +43,10 @@ All of these will fill the datbase with client, tasks, leads etc, to give a fast
 ## Features overview
 - Tasks management
 - Leads management
+- Simple invoice management
 - Easy & simple time management for each task
 - Role management (Create and update your own roles)
-- Roles & global settings
+- Easy configurable settings
 - Client overview (Keep easy track of open tasks for each client etc)
 - Upload documents to each clients (easy track of contracts and more)
 - Fast overview over your own open tasks, leads etc
@@ -54,7 +55,7 @@ All of these will fill the datbase with client, tasks, leads etc, to give a fast
 
 ### To-do
 
-Flarepoint is still under heavy development, so there are a lot on my to-do list.
+Flarepoint is still under development, so there are a lot on my to-do list.
 
 - Multiple integrations (Slack, e-conomic, Google Drive, dropbox etc.)
 - Different Color schemes
@@ -74,9 +75,9 @@ The packages used are the following...
 
 - [LaravelCollective](https://github.com/LaravelCollective/html)
 - [laravel-datatables](https://github.com/yajra/laravel-datatables)
-- [laravel-rbac](https://github.com/phpzen/laravel-rbac)
+- [Entrust](https://github.com/Zizaco/entrust)
 - [Notifynder](https://github.com/fenos/Notifynder)
-- [Laravel-Excel](https://github.com/Maatwebsite/Laravel-Excel)
+
 
 ### License
 
