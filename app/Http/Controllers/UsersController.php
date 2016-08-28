@@ -51,7 +51,7 @@ class UsersController extends Controller
 
     public function anyData()
     {
-        $canUpdateUser = auth()->user()->canDo('update.user');
+        $canUpdateUser = auth()->user()->can('update-user');
         $users = User::select(['id', 'name', 'email', 'work_number']);
         return Datatables::of($users)
         ->addColumn('namelink', function ($users) {

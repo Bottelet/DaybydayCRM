@@ -35,12 +35,12 @@ $(function() {
             { data: 'company_name', name: 'company_name' },
             { data: 'email', name: 'email' },
             { data: 'primary_number', name: 'primary_number' },
-             @ifUserCan('client.update') 
+          
              { data: 'edit', name: 'edit', orderable: false, searchable: false},
-             @endif
-              @ifUserCan('client.delete') 
+        
+            
              { data: 'delete', name: 'delete', orderable: false, searchable: false},
-             @endif
+         
            
         ]
     });

@@ -13,11 +13,11 @@
             <th></th>
             @foreach($permission as $perm)
           
-          <th>{{$perm->name}}</th>
+          <th>{{$perm->display_name}}</th>
 
             @endforeach  
   <th></th>
-            </tr>
+              </tr>
      
             
        </thead> 
@@ -31,7 +31,7 @@
   'url'    => 'settings/permissionsUpdate',
   ]) !!}
        
-  <th>{{$role->name}}</th>
+  <th>{{$role->display_name}}</th>
 
 
    

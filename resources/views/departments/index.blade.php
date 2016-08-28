@@ -10,7 +10,7 @@
       <tr>
         <th>Title</th>
         <th>Description</th>
-        @ifUserIs('administrator') 
+        @if(Entrust::hasRole('administrator')) 
 		<th>Action</th>
     @endif
       </tr>
@@ -22,7 +22,7 @@
        <tr>
 <td>{{$dep->name}}</td>
 <td>{{Str_limit($dep->description, 50)}}</td>
-@ifUserIs('administrator') 
+@if(Entrust::hasRole('administrator'))
 <td>   {!! Form::open([
             'method' => 'DELETE',
             'route' => ['departments.destroy', $dep->id]

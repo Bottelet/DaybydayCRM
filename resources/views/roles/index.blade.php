@@ -16,11 +16,8 @@
     <tbody>
 
 @foreach($roles as $role)
-
-
-
        <tr>
-<td>{{$role->name}}</td>
+<td>{{$role->display_name}}</td>
 <td>{{Str_limit($role->description, 50)}}</td>
 
 <td>   {!! Form::open([

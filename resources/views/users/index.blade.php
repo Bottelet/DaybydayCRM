@@ -8,7 +8,6 @@
    <table class="table table-hover " id="users-table">
         <thead>
             <tr>
-                
                 <th>Name</th>
                 <th>Email</th>
                 <th>Work number</th>
@@ -32,10 +31,10 @@ $(function() {
             { data: 'namelink', name: 'name' },
             { data: 'email', name: 'email' },
             { data: 'work_number', name: 'work_number' },
-           @ifUserCan('user.update') 
+            @if(Entrust::can('user-update'))  
             {data: 'edit', name: 'edit', orderable: false, searchable: false  },
             @endif
-          @ifUserCan('user.delete') 
+             @if(Entrust::can('user-delete')) 
             {data: 'delete', name: 'delete', orderable: false, searchable: false  },
             @endif
         ]

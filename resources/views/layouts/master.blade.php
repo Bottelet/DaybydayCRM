@@ -42,7 +42,6 @@
 
 </head>
 <body>
-
 <div id="wrapper">
 <div class="navbar navbar-default navbar-top">
 <!--NOTIFICATIONS START-->
@@ -132,8 +131,9 @@ $(function(){
             
                 <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="glyphicon glyphicon-tag"></i> Clients </i></a>
             <div class="collapse" id="clients">
+            
                 <a href="{{ route('clients.index')}}" class="list-group-item childlist">All Clients</a>
-                 @ifUserCan('client.create')   
+                 @if(Entrust::can('client-create'))   
                 <a href="{{ route('clients.create')}}" class="list-group-item childlist" >New Client</a>
                 @endif
             </div>
@@ -141,7 +141,7 @@ $(function(){
             <a href="#tasks" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="glyphicon glyphicon-tasks"></i> Tasks </a>
             <div class="collapse" id="tasks">
                 <a href="{{ route('tasks.index')}}" class="list-group-item childlist">All Tasks</a>
-             @ifUserCan('task.create')   
+             @if(Entrust::can('task-create'))   
                 <a href="{{ route('tasks.create')}}" class="list-group-item childlist" >New Task</a>
                 @endif
             </div>
@@ -149,7 +149,7 @@ $(function(){
                <a href="#user" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="fa fa-users"></i> Users </i></a>
             <div class="collapse" id="user">
                 <a href="{{ route('users.index')}}" class="list-group-item childlist">All Users</a>
-      @ifUserCan('user.create')        
+      @if(Entrust::can('user-create'))        
                 <a href="{{ route('users.create')}}" class="list-group-item childlist" >New User</i></a>
               @endif
             </div>
@@ -157,19 +157,19 @@ $(function(){
            <a href="#leads" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="glyphicon glyphicon-hourglass"></i> Leads </i></a>
             <div class="collapse" id="leads">
                 <a href="{{ route('leads.index')}}" class="list-group-item childlist">All Leads</a>
-                 @ifUserCan('lead.create')   
+                 @if(Entrust::can('lead-create'))   
                 <a href="{{ route('leads.create')}}" class="list-group-item childlist" >New Lead</i></a>
                 @endif
             </div>
             <a href="#departments" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="fa fa-object-group"></i> Departments </i></a>
             <div class="collapse" id="departments">
             <a href="{{ route('departments.index')}}" class="list-group-item childlist">All Departments</a>
-          @ifUserIs('administrator')  
+          @if(Entrust::hasRole('administrator'))  
             <a href="{{ route('departments.create')}}" class="list-group-item childlist" >New Department</i></a>
             @endif
             </div>
 
-@ifUserIs('administrator')
+@if(Entrust::hasRole('administrator'))
             <a href="#settings" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i class="glyphicon glyphicon-cog"></i> Settings </i></a>
             <div class="collapse" id="settings">
             <a href="{{ route('settings.index')}}" class="list-group-item childlist">Overall Settings</a>
@@ -207,6 +207,7 @@ $(function(){
                  
                 </div>
 
+            </div>
             </div>
 @if($errors->any())
     <div class="alert alert-danger">
