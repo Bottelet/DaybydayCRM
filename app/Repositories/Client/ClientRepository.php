@@ -1,10 +1,10 @@
 <?php
 namespace App\Repositories\Client;
 
-use App\Client;
-use App\Industry;
-use App\Invoices;
-use App\TaskTime;
+use App\Models\Client;
+use App\Models\Industry;
+use App\Models\Invoices;
+use App\Models\TaskTime;
 
 class ClientRepository implements ClientRepositoryContract
 {

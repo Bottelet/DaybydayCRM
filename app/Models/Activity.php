@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,10 +27,10 @@ class Activity extends model
      */
     public function task()
     {
-        return $this->belongsTo('App\Tasks', 'task_id', 'id');
+        return $this->belongsTo(Tasks::class, 'task_id', 'id');
     }
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

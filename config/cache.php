@@ -43,7 +43,7 @@ return [
         ],
 
         'file' => [
-            'driver' => 'file',
+            'driver' => 'array',
             'path'   => storage_path('framework/cache'),
         ],
 

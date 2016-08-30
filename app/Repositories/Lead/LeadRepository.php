@@ -1,10 +1,10 @@
 <?php
 namespace App\Repositories\Lead;
 
-use App\Leads;
+use App\Models\Leads;
 use Notifynder;
 use Carbon;
-use App\Activity;
+use App\Models\Activity;
 use DB;
 
 class LeadRepository implements LeadRepositoryContract

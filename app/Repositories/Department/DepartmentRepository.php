@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories\Department;
 
-use App\Department;
+use App\Models\Department;
 
 class DepartmentRepository implements DepartmentRepositoryContract
 {

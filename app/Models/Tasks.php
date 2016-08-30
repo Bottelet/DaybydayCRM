@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon;
@@ -21,22 +21,22 @@ class Tasks extends Model
 
     public function assignee()
     {
-        return $this->belongsTo('App\User', 'fk_user_id_assign');
+        return $this->belongsTo(User::class, 'fk_user_id_assign');
     }
 
     public function clientAssignee()
     {
-        return $this->belongsTo('App\Client', 'fk_client_id');
+        return $this->belongsTo(Client::class, 'fk_client_id');
     }
     
     public function taskCreator()
     {
-        return $this->belongsTo('App\User', 'fk_user_id_created');
+        return $this->belongsTo(User::class, 'fk_user_id_created');
     }
 
     public function comments()
     {
-        return $this->hasMany('App\Comment', 'fk_task_id', 'id');
+        return $this->hasMany(Comment::class, 'fk_task_id', 'id');
     }
 
     // create a virtual attribute to return the days until deadline
@@ -48,18 +48,18 @@ class Tasks extends Model
     }
     public function settings()
     {
-        return $this->hasMany('App\Settings');
+        return $this->hasMany(Settings::class);
     }
     public function time()
     {
-        return $this->hasOne('App\TaskTime', 'fk_task_id', 'id');
+        return $this->hasOne(TaskTime::class, 'fk_task_id', 'id');
     }
     public function allTime()
     {
-        return $this->hasMany('App\TaskTime', 'fk_task_id', 'id');
+        return $this->hasMany(TaskTime::class, 'fk_task_id', 'id');
     }
     public function activity()
     {
-        return $this->hasMany('App\Activity', 'type_id', 'id')->where('type', 'task');
+        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'task');
     }
 }

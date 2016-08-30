@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,10 +15,10 @@ class Note extends Model
 
     public function lead()
     {
-        return $this->belongsTo('App\Leads', 'fk_lead_id', 'id');
+        return $this->belongsTo(Leads::class, 'fk_lead_id', 'id');
     }
     public function user()
     {
-        return $this->belongsTo('App\User', 'fk_user_id', 'id');
+        return $this->belongsTo(User::class, 'fk_user_id', 'id');
     }
 }
