@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Zizaco\Entrust\EntrustRole;
@@ -14,7 +14,7 @@ class Role extends EntrustRole
       
     public function userRole()
     {
-        return $this->hasMany('Role', 'user_id', 'id');
+        return $this->hasMany(Role::class, 'user_id', 'id');
     }
 
     public function permissions()

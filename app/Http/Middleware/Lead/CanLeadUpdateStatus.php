@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Lead;
 
 use Closure;
-use App\Settings;
-use App\Leads;
+use App\Models\Settings;
+use App\Models\Leads;
 
 class CanLeadUpdateStatus
 {

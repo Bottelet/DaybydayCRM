@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon;
@@ -22,19 +22,19 @@ class Leads extends Model
     
     public function assignee()
     {
-        return $this->belongsTo('App\User', 'fk_user_id_assign');
+        return $this->belongsTo(User::class, 'fk_user_id_assign');
     }
     public function createdBy()
     {
-        return $this->belongsTo('App\User', 'fk_user_id_created');
+        return $this->belongsTo(User::class, 'fk_user_id_created');
     }
     public function clientAssignee()
     {
-        return $this->belongsTo('App\Client', 'fk_client_id');
+        return $this->belongsTo(Client::class, 'fk_client_id');
     }
     public function notes()
     {
-        return $this->hasMany('App\Note', 'fk_lead_id', 'id');
+        return $this->hasMany(Note::class, 'fk_lead_id', 'id');
     }
         // create a virtual attribute to return the days until deadline
     public function getDaysUntilContactAttribute()
@@ -43,6 +43,6 @@ class Leads extends Model
     }
     public function activity()
     {
-        return $this->hasMany('App\Activity', 'type_id', 'id')->where('type', 'lead');
+        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'lead');
     }
 }
