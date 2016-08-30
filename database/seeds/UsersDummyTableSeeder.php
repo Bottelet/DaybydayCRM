@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Seeder;
 
-use App\Department;
-use App\roleUser;
+use App\Models\Department;
+use App\Models\roleUser;
 
 class UsersDummyTableSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class UsersDummyTableSeeder extends Seeder
      */
     public function run()
     {
-     factory(App\User::class, 5)->create()->each(function($c){
+     factory(App\Models\User::class, 5)->create()->each(function($c){
            
           });
 

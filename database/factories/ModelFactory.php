@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(App\User::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
@@ -23,7 +23,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Client::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Client::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->email,
@@ -42,7 +42,7 @@ $factory->define(App\Client::class, function (Faker\Generator $faker) {
 
 
 
-$factory->define(App\Tasks::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Tasks::class, function (Faker\Generator $faker) {
     return [
 		'title' => $faker->sentence,
 		'description' => $faker->paragraph,
@@ -56,7 +56,7 @@ $factory->define(App\Tasks::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Leads::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Leads::class, function (Faker\Generator $faker) {
     return [
 		'title' => $faker->sentence,
 		'note' => $faker->paragraph,
