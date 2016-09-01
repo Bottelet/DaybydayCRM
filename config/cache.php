@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'file'),
+    'default' => env('CACHE_DRIVER', 'array'),
 
     /*
     |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ return [
         ],
 
         'file' => [
-            'driver' => 'array',
+            'driver' => 'file',
             'path'   => storage_path('framework/cache'),
         ],
 

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Role;
+use App\Models\Role;
 
 class RolesTablesSeeder extends Seeder
 {
