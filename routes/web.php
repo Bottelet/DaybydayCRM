@@ -11,6 +11,7 @@
 |
 */
 Route::auth();
+Route::group(['middleware' => ['auth']], function () {
  	/**
      * MAIN
      */
@@ -90,3 +91,5 @@ Route::auth();
      * IMPORT AND EXPORT
      */
         Route::get('documents/import', 'DocumentsController@import');
+
+    });
