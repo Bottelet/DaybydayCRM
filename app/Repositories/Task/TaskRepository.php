@@ -2,7 +2,8 @@
 namespace App\Repositories\Task;
 
 use App\Models\Tasks;
-use Fenos\Notifynder\Notifynder;
+use Notifynder;
+
 use Carbon;
 use App\Models\Activity;
 use App\Models\TaskTime;
