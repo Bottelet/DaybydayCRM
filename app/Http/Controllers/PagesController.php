@@ -1,21 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Tasks;
-use Carbon;
-use App\Models\Client;
 use DB;
+use Carbon;
 use App\Models\User;
-use App\Models\Settings;
 use App\Models\Leads;
+use App\Models\Tasks;
+use App\Models\Client;
+use App\Http\Requests;
+use App\Models\Settings;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Repositories\Task\TaskRepositoryContract;
+use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
-use App\Repositories\Task\TaskRepositoryContract;
-use App\Repositories\Lead\LeadRepositoryContract;
 
 class PagesController extends Controller
 {
