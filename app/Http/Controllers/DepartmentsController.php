@@ -1,11 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Models\Department;
 use Session;
+use App\Http\Requests;
+use App\Models\Department;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use App\Repositories\Department\DepartmentRepositoryContract;
 
