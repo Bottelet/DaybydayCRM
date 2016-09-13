@@ -1,14 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Models\Client;
-use Illuminate\Http\Request;
-use Datatables;
 use Config;
 use Dinero;
+use Datatables;
+use App\Models\Client;
+use App\Http\Requests;
 use App\Models\Settings;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Repositories\User\UserRepositoryContract;
