@@ -1,17 +1,17 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use Gate;
+use Carbon;
+use Datatables;
 use App\Models\User;
 use App\Models\Tasks;
+use App\Http\Requests;
+use App\Models\Client;
 use Illuminate\Http\Request;
-use Gate;
-use Datatables;
-use Carbon;
+use App\Http\Controllers\Controller;
 use PHPZen\LaravelRbac\Traits\Rbac;
 use Illuminate\Support\Facades\Input;
-use App\Models\Client;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Repositories\User\UserRepositoryContract;
