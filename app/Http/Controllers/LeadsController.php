@@ -1,23 +1,23 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Leads;
+use DB;
+use Auth;
+use Carbon;
+use Session;
+use Datatables;
 use App\Models\User;
+use App\Models\Leads;
 use App\Models\Client;
 use App\Http\Requests;
-use Session;
-use App\Http\Controllers\Controller;
 use App\Models\Settings;
-use Auth;
-use Datatables;
-use Carbon;
 use App\Models\Activity;
-use DB;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Lead\StoreLeadRequest;
-use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
 use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
+use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
 use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
 
