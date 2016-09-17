@@ -1,15 +1,15 @@
 <?php
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\Models\Document;
-use Session;
 use Excel;
+use Session;
 use Validator;
 use App\Models\Client;
+use App\Http\Requests;
 use App\Models\Settings;
+use App\Models\Document;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class DocumentsController extends Controller
 {
@@ -31,6 +31,7 @@ class DocumentsController extends Controller
         $size = $file->getClientSize();
         $mbsize = $size / 1048576;
         $totaltsize = substr($mbsize, 0, 4);
+        
         if ($totaltsize > 15) {
             Session::flash('flash_message', 'File Size can not be bigger then 15MB');
             return redirect()->back();
@@ -66,10 +67,10 @@ class DocumentsController extends Controller
                     }
                 });
 
-                \Session::flash('flash_message', 'Users uploaded successfully.');
+                Session::flash('flash_message', 'Users uploaded successfully.');
                // return redirect(route('clients.index'));
             } catch (\Exception $e) {
-                \Session::flash('flash_message_warning', $e->getMessage());
+                Session::flash('flash_message_warning', $e->getMessage());
                 //return redirect(route('clients.index'));
             }
         }

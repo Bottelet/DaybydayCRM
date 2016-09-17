@@ -1,22 +1,21 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use App\Models\Role;
-use App\Models\Settings;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
-use Session;
 use Auth;
-use App\Http\Requests\Setting\UpdateSettingOverallRequest;
+use Session;
+use App\Models\User;
+use App\Models\Role;
+use App\Http\Requests;
+use App\Models\Settings;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Input;
 use App\Repositories\Setting\SettingRepositoryContract;
 use App\Repositories\Role\RoleRepositoryContract;
+use App\Http\Requests\Setting\UpdateSettingOverallRequest;
 
 class SettingsController extends Controller
 {
-
     protected $settings;
     protected $roles;
 
