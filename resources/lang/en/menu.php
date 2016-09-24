@@ -4,12 +4,12 @@ return [
     /**
      * Dashboard menu translation
      */
-    'Dashboard' => 'Dashboard',
+    'dashboard' => 'Dashboard',
 
     /**
      * Profile menu translation
      */
-    'Profile' => 'Profile',
+    'profile' => 'Profile',
 
     /**
      * Client menu translation
