@@ -5,6 +5,7 @@ return [
     'titles' => [
         'all' => 'All users',
         'create' => 'Create user',
+        'edit' => 'Editing user',
     ],
 
     'headers' => [
@@ -18,6 +19,7 @@ return [
     	'assign_role' => 'Assign Role',
     	'assign_department' => 'Assign Department',
     	'image' => 'Choose an image',
-    	'submit' => 'Create new user',
+    	'create_submit' => 'Create new user',
+        'update_submit' => 'Update user'
     ],
 ];

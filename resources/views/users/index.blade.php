@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-<h1>All Users</h1>
+<h1>@lang('user.titles.all')</h1>
 @stop
 
 @section('content')
@@ -8,9 +8,9 @@
    <table class="table table-hover " id="users-table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Work number</th>
+                <th>@lang('user.headers.name')</th>
+                <th>@lang('user.headers.mail')</th>
+                <th>@lang('user.headers.work_number')</th>
                 <th></th>
                 <th></th>
             </tr>

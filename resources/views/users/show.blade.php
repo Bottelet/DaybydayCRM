@@ -19,13 +19,13 @@
           
 
    <table class="table table-hover" id="opentask-table">
-   <h3>Open Tasks</h3>
+   <h3>@lang('task.status.open')</h3>
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Created at</th>
-                <th>Deadline</th>
+                <th>@lang('task.headers.title')</th>
+                <th>@lang('task.headers.created_at')</th>
+                <th>@lang('task.headers.deadline')</th>
                 
             </tr>
         </thead>
@@ -40,13 +40,13 @@
           
 
    <table class="table table-hover" id="closedtask-table">
-   <h3>Closed Tasks</h3>
+   <h3>@lang('task.status.closed')</h3>
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Created at</th>
-                <th>Deadline</th>
+                <th>@lang('task.headers.title')</th>
+                <th>@lang('task.headers.created_at')</th>
+                <th>@lang('task.headers.deadline')</th>
                 
             </tr>
         </thead>
@@ -65,13 +65,13 @@
               
         
 <table class="table table-hover" id="clients-table">
-   <h3>Assigned Clients</h3>
+   <h3>@lang('client.status.assigned')</h3>
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Company</th>
-                <th>Number</th>
+                <th>@lang('client.headers.name')</th>
+                <th>@lang('client.headers.company')</th>
+                <th>@lang('client.headers.primary_number')</th>
               
                 
             </tr>
@@ -85,13 +85,13 @@
                 <div class="col-lg-4 currenttask">
           
                     <table class="table table-hover">
-         <h3>Last 10 created tasks</h3>
+         <h3>@lang('task.status.created')</h3>
             <thead>
     <thead>
       <tr>
-        <th>Title</th>
-        <th>Created at</th>
-        <th>Deadline</th> 
+        <th>@lang('task.headers.title')</th>
+        <th>@lang('task.headers.created_at')</th>
+        <th>@lang('task.headers.deadline')</th> 
       </tr>
     </thead>
     <tbody>
