@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-{{app()->setLocale('dk')}}
     <meta charset="UTF-8">
     <title>Flarepoint CRM</title>
         
