@@ -32,12 +32,12 @@ $('.popoverOption').each(function() {
 				@endforeach
 				</h3>
 
-              <p>Tasks completed this month</p>
+              <p>@lang('dashboard.tasks.completed_month')</p>
             </div>
             <div class="icon">
               <i class="ion ion-ios-book-outline"></i>
             </div>
-            <a href="{{route('tasks.index')}}" class="small-box-footer">All tasks <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{route('tasks.index')}}" class="small-box-footer">@lang('dashboard.tasks.all') <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -51,12 +51,12 @@ $('.popoverOption').each(function() {
 				@endforeach
 				</h3>
 
-              <p>Leads completed this month</p>
+              <p>@lang('dashboard.leads.completed_month')</p>
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
             </div>
-            <a href="{{route('leads.index')}}" class="small-box-footer">All leads <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{route('leads.index')}}" class="small-box-footer">@lang('dashboard.leads.all') <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -66,12 +66,12 @@ $('.popoverOption').each(function() {
             <div class="inner">
               <h3>{{$totalClients}}</h3>
 
-              <p>All Clients</p>
+              <p>@lang('dashboard.clients.all')</p>
             </div>
             <div class="icon">
               <i class="ion ion-person"></i>
             </div>
-            <a href="{{route('clients.index')}}" class="small-box-footer">All clients <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{route('clients.index')}}" class="small-box-footer">@lang('dashboard.clients.all') <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
@@ -88,12 +88,12 @@ $('.popoverOption').each(function() {
         0
         @endif</h3>
 
-              <p>Total hours registered</p>
+              <p>@lang('dashboard.time.total')</p>
             </div>
             <div class="icon">
               <i class="ion ion-pie-graph"></i>
             </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="#" class="small-box-footer">@lang('dashboard.time.info') <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
         <!-- ./col -->
