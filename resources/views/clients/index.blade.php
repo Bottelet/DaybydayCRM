@@ -9,10 +9,10 @@
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Company</th>
-                <th>Email</th>
-                <th>Number</th>
+                <th>@lang('client.headers.name')</th>
+                <th>@lang('client.headers.company')</th>
+                <th>@lang('client.headers.mail')</th>
+                <th>@lang('client.headers.primary_number')</th>
                 <th></th>
                 <th></th>
             </tr>
