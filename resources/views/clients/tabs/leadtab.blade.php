@@ -1,16 +1,16 @@
 <div id="lead" class="tab-pane fade">
   <div class="boxspace">
     <table class="table table-hover">
-      <h4>All Leads</h4>
+      <h4>@lang('client.tabs.all_leads')</h4>
       <thead>
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Assigned user</th>
-            <th>Created date</th>
-            <th>Contact at</th>
+            <th>@lang('client.tabs.headers.title')</th>
+            <th>@lang('client.tabs.headers.assigned')</th>
+            <th>@lang('client.tabs.headers.created_at')</th>
+            <th>@lang('client.tabs.headers.deadline')</th>
             
-            <th><a href="{{ route('leads.create', ['client' => $client->id])}}"><button class="btn btn-success">Add new lead</button> </a></th>
+            <th><a href="{{ route('leads.create', ['client' => $client->id])}}"><button class="btn btn-success">@lang('client.tabs.headers.new_lead')</button> </a></th>
             
           </tr>
         </thead>

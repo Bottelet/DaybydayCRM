@@ -24,10 +24,10 @@ $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
 <div class="row">
   <div class="col-md-8 currenttask">
     <ul class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#task">Tasks</a></li>
-      <li><a data-toggle="tab" href="#lead">Leads</a></li>
-      <li><a data-toggle="tab" href="#docuemnt">Documents</a></li>
-      <li><a data-toggle="tab" href="#invoice">Invoices</a></li>
+      <li class="active"><a data-toggle="tab" href="#task">@lang('client.tabs.tasks')</a></li>
+      <li><a data-toggle="tab" href="#lead">@lang('client.tabs.leads')</a></li>
+      <li><a data-toggle="tab" href="#docuemnt">@lang('client.tabs.documents')</a></li>
+      <li><a data-toggle="tab" href="#invoice">@lang('client.tabs.invoices')</a></li>
       
     </ul>
     <div class="tab-content">

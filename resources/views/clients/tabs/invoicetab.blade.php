@@ -3,11 +3,11 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Hours</th>
-          <th>Total amount</th>
-          <th>Invoice sent</th>
-          <th>Payment received</th>
+          <th>@lang('client.tabs.headers.id')</th>
+          <th>@lang('client.tabs.headers.hours')</th>
+          <th>@lang('client.tabs.headers.total_amount')</th>
+          <th>@lang('client.tabs.headers.invoice_sent')</th>
+          <th>@lang('client.tabs.headers.payment_received')</th>
         </tr>
       </thead>
       <tbody>
