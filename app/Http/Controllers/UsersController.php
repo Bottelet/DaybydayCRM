@@ -178,7 +178,7 @@ class UsersController extends Controller
         return view('users.edit')
         ->withUser($this->users->find($id))
         ->withRoles($this->roles->listAllRoles())
-        ->withDepartment($this->departments->listAllDepartments());
+        ->withDepartments($this->departments->listAllDepartments());
     }
 
     /**

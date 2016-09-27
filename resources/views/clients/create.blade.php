@@ -49,76 +49,7 @@ $data = Session::get('data');
         'route' => 'clients.store',
         'class' => 'ui-form'
         ]) !!}
-
-<div class="form-group">
-    {!! Form::label('name', 'Name:', ['class' => 'control-label']) !!}
-    {!! Form::text('name', $data['owners'][0]['name'], ['class' => 'form-control']) !!}
-</div>
-
-<div class="form-inline">
-    <div class="form-group col-sm-6 removeleft">
-        {!! Form::label('vat', 'Vat:', ['class' => 'control-label']) !!}
-        {!! Form::text('vat',  $data['vat'], ['class' => 'form-control']) !!}
-    </div>  
-
-    <div class="form-group col-sm-6 removeleft removeright">
-        {!! Form::label('company_name', 'Company name:', ['class' => 'control-label']) !!}
-        {!! Form::text('company_name',  $data['name'], ['class' => 'form-control']) !!}
-    </div>  
-</div>
-
-<div class="form-group">
-    {!! Form::label('email', 'Email:', ['class' => 'control-label']) !!}
-    {!! Form::email('email', $data['email'], ['class' => 'form-control']) !!}
-</div>
-
-<div class="form-group">
-    {!! Form::label('address', 'Address:', ['class' => 'control-label']) !!}
-    {!! Form::text('address', $data['address'], ['class' => 'form-control']) !!}
-</div>
-
-<div class="form-inline">
-    <div class="form-group col-sm-4 removeleft">
-        {!! Form::label('zipcode', 'Zipcode:', ['class' => 'control-label']) !!}
-        {!! Form::text('zipcode', $data['zipcode'], ['class' => 'form-control']) !!}
-    </div>
-
-    <div class="form-group col-sm-8 removeleft removeright">
-        {!! Form::label('city', 'City:', ['class' => 'control-label']) !!}
-        {!! Form::text('city', $data['city'], ['class' => 'form-control']) !!}
-    </div>
-</div>
-
-<div class="form-inline">
-    <div class="form-group col-sm-6 removeleft">
-        {!! Form::label('primary_number', 'Primary Number:', ['class' => 'control-label']) !!}
-        {!! Form::text('primary_number',  $data['phone'], ['class' => 'form-control']) !!}
-    </div>
-
-    <div class="form-group col-sm-6 removeleft removeright">
-        {!! Form::label('secondary_number', 'Secondary Number:', ['class' => 'control-label']) !!}
-        {!! Form::text('secondary_number',  null, ['class' => 'form-control']) !!}
-    </div>  
-</div>
-<div class="form-group">
-
-{!! Form::label('company_type', 'Company type:', ['class' => 'control-label']) !!}
-{!! Form::text('company_type',  $data['companydesc'], ['class' => 'form-control']) !!}
-</div>  
-<div class="form-group">
-    {!! Form::label('industry', 'Industry:', ['class' => 'control-label']) !!} 
-{!! Form::select('industry_id', $industries, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!} 
-</div>  
-
-
-<div class="form-group">
-{!! Form::label('fk_user_id', 'Assign user:', ['class' => 'control-label']) !!} 
-{!! Form::select('fk_user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-
-</div> 
-
-
-{!! Form::submit('Create New Client', ['class' => 'btn btn-primary']) !!}
+@include('clients.form', ['submitButtonText' => 'Create New Client'])
 
 {!! Form::close() !!}
 
