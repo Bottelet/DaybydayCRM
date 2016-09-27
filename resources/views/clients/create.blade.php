@@ -49,7 +49,7 @@ $data = Session::get('data');
         'route' => 'clients.store',
         'class' => 'ui-form'
         ]) !!}
-@include('clients.form', ['submitButtonText' => 'Create New Client'])
+@include('clients.form', ['submitButtonText' => Lang::get('client.titles.create')])
 
 {!! Form::close() !!}
 

@@ -8,7 +8,7 @@ Edit Client ({{$client->name}})
         'method' => 'PATCH',
         'route' => ['clients.update', $client->id],
         ]) !!}
-@include('clients.form', ['submitButtonText' => 'Update client'])
+@include('clients.form', ['submitButtonText' => Lang::get('client.titles.update')])
 
 {!! Form::close() !!}
 

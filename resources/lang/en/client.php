@@ -6,6 +6,11 @@ return [
         'assigned' => 'Assigned Clients',
     ],
 
+    'titles' => [
+    	'create' => 'Create New Client',
+    	'update' => 'Update client',
+    ],
+
     'headers' => [
         'name' => 'Name',
         'company' => 'Company',
