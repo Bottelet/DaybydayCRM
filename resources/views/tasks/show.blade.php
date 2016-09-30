@@ -28,10 +28,10 @@ $(document).ready(function(){
           <h3>{{$tasks->title}}</h3>
           <hr class="grey">
           <p>{{$tasks->description}}</p>
-          <p class="smalltext">Created at: 
+          <p class="smalltext">@lang('task.headers.created_at'): 
           {{ date('d F, Y, H:i:s', strtotime($tasks->created_at))}} 
           @if($tasks->updated_at != $tasks->created_at) 
-          <br/>Modified at: {{date('d F, Y, H:i:s', strtotime($tasks->updated_at))}}
+          <br/>@lang('task.status.modified'): {{date('d F, Y, H:i:s', strtotime($tasks->updated_at))}}
           @endif</p>
           
 
@@ -45,11 +45,11 @@ $(document).ready(function(){
           <div class="taskcase" style="margin-top:15px; padding-top:10px;">
                   <p  class="smalltext">#{{$i++}}</p>
                   <p>  {{$comment->description}}</p>
-                  <p class="smalltext">Comment by: <a href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a></p>
-                            <p class="smalltext">Created at: 
+                  <p class="smalltext">@lang('task.titles.comment_by'): <a href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a></p>
+                            <p class="smalltext">@lang('task.headers.created_at'): 
           {{ date('d F, Y, H:i:s', strtotime($comment->created_at))}} 
           @if($comment->updated_at != $comment->created_at) 
-          <br/>Modified at: {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
+          <br/>@lang('task.status.modified'): {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
           @endif</p>
                   </div>
           @endforeach
@@ -58,36 +58,36 @@ $(document).ready(function(){
           <div class="form-group">
     {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
     
-    {!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
+    {!! Form::submit(Lang::get('task.titles.add_comment'), ['class' => 'btn btn-primary']) !!}
 </div>
         {!! Form::close() !!}
 
           </div>
           <div class="col-md-3">
           <div class="sidebarheader">
-            <p>Task information</p>
+            <p>@lang('task.titles.task_information')</p>
              </div>
           <div class="sidebarbox">
-            <p>Assigned to:
+            <p>@lang('task.headers.assigned'):
             <a href="{{route('users.show', $tasks->assignee->id)}}">
              {{$tasks->assignee->name}}</a></p>
-            <p>Created at: {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
+            <p>@lang('task.headers.created_at'): {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
            
             @if($tasks->days_until_deadline)
-             <p >Deadline: <span style="color:red;">{{date('d, F Y', strTotime($tasks->deadline))}}
+             <p >@lang('task.headers.deadline'): <span style="color:red;">{{date('d, F Y', strTotime($tasks->deadline))}}
 
               @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p><!--Remove days left if tasks is completed-->
 
              @else
-             <p >Deadline: <span style="color:green;">{{date('d, F Y', strTotime($tasks->deadline))}}
+             <p >@lang('task.headers.deadline'): <span style="color:green;">{{date('d, F Y', strTotime($tasks->deadline))}}
 
              @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p> <!--Remove days left if tasks is completed-->
              @endif
        
             @if($tasks->status == 1)
-            Task status: Open
+            @lang('task.headers.status'): Open
             @else
-            Task status: Closed
+            @lang('task.headers.status'): Closed
             @endif
             </div>   
             @if($tasks->status == 1)
@@ -97,7 +97,7 @@ $(document).ready(function(){
           'url' => ['tasks/updateassign', $tasks->id],
           ]) !!}
            {!! Form::select('fk_user_id_assign', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-          {!! Form::submit('Assign new user', ['class' => 'btn btn-primary form-control closebtn']) !!}
+          {!! Form::submit(Lang::get('task.titles.assign_user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
        {!! Form::close() !!}
 
                 {!! Form::model($tasks, [
@@ -105,17 +105,17 @@ $(document).ready(function(){
           'url' => ['tasks/updatestatus', $tasks->id],
           ]) !!}
             
-          {!! Form::submit('Close task', ['class' => 'btn btn-success form-control closebtn']) !!}
+          {!! Form::submit(Lang::get('task.titles.close_task'), ['class' => 'btn btn-success form-control closebtn']) !!}
        {!! Form::close() !!}
 
             @endif
              <div class="sidebarheader">
-            <p>Time Managment</p>
+            <p>@lang('task.invoices.time_managment')</p>
             </div>
          <table class="table table_wrapper ">
            <tr>
-             <th>Title</th>
-             <th>Time</th>
+             <th>@lang('task.invoices.title')</th>
+             <th>@lang('task.invoices.time')</th>
            </tr>
            <tbody>
             @foreach($tasktimes as $tasktime)
@@ -128,11 +128,11 @@ $(document).ready(function(){
          </table>
   <br/>
        <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#ModalTimer">
-  Add Time
+  @lang('task.invoices.add_time')
 </button>
 
        <button type="button" class="btn btn-primary form-control movedown" data-toggle="modal" data-target="#myModal">
-  Create Invoice
+  @lang('task.invoices.create')
 </button>
 
 <div class="activity-feed movedown">
@@ -149,7 +149,7 @@ $(document).ready(function(){
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Time Managment For This Task  ({{$tasks->title}})</h4>
+        <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.modal.header_title')  ({{$tasks->title}})</h4>
       </div>
 
       <div class="modal-body">
@@ -160,19 +160,19 @@ $(document).ready(function(){
           ]) !!}
 
 <div class="form-group">
-    {!! Form::label('title', 'Title:', ['class' => 'control-label']) !!}
-    {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' => 'Fx Consultation Meeting']) !!}
+    {!! Form::label('title', Lang::get('task.invoices.modal.title'), ['class' => 'control-label']) !!}
+    {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' =>  Lang::get('task.invoices.modal.title_placerholder')]) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('comment', 'Description:', ['class' => 'control-label']) !!}
-    {!! Form::textarea('comment', null, ['class' => 'form-control', 'placeholder' => 'Short Comment about whats done(Will show on Invoice)']) !!}
+    {!! Form::label('comment',  Lang::get('task.invoices.modal.description'), ['class' => 'control-label']) !!}
+    {!! Form::textarea('comment', null, ['class' => 'form-control', 'placeholder' => Lang::get('task.invoices.modal.description_placerholder')]) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('value', 'Hourly price(DKK):', ['class' => 'control-label']) !!}
+    {!! Form::label('value', Lang::get('task.invoices.modal.hourly_price'), ['class' => 'control-label']) !!}
     {!! Form::text('value', null, ['class' => 'form-control', 'placeholder' => '300']) !!}
 </div>
 <div class="form-group">
-    {!! Form::label('time', 'Time spend (Hours):', ['class' => 'control-label']) !!}
+    {!! Form::label('time', Lang::get('task.invoices.modal.time_spend'), ['class' => 'control-label']) !!}
     {!! Form::text('time', null, ['class' => 'form-control', 'placeholder' => '3']) !!}
 </div>
     
@@ -180,9 +180,9 @@ $(document).ready(function(){
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">@lang('task.invoices.modal.close')</button>
     <div class="col-lg-6">
-        {!! Form::submit('Register time', ['class' => 'btn btn-success form-control closebtn']) !!}
+        {!! Form::submit(Lang::get('task.invoices.modal.register_time'), ['class' => 'btn btn-success form-control closebtn']) !!}
         </div>
        {!! Form::close() !!}
       </div>
@@ -198,7 +198,7 @@ $(document).ready(function(){
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Create Invoice</h4>
+        <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.create') </h4>
       </div>
 
       <div class="modal-body">
@@ -218,9 +218,9 @@ $(document).ready(function(){
                @endif
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">@lang('task.invoices.modal.close')</button>
     <div class="col-lg-6">
-        {!! Form::submit('Create Invoice', ['class' => 'btn btn-success form-control closebtn']) !!}
+        {!! Form::submit(Lang::get('task.invoices.create'), ['class' => 'btn btn-success form-control closebtn']) !!}
         </div>
        {!! Form::close() !!}
 
