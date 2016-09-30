@@ -8,10 +8,10 @@
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Created at</th>
-                <th>Deadline</th>
-                <th>Assigned</th>
+                <th>@lang('task.headers.title')</th>
+                <th>@lang('task.headers.created_at')</th>
+                <th>@lang('task.headers.deadline')</th>
+                <th>@lang('task.headers.assigned')</th>
                
             </tr>
         </thead>
