@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-<h1>All tasks</h1>
+<h1>@lang('lead.titles.all_leads')</h1>
 @stop
 
 @section('content')
@@ -8,10 +8,10 @@
         <thead>
             <tr>
                 
-                <th>Name</th>
-                <th>Created by</th>
-                <th>Deadline</th>
-                <th>Assigned</th>
+                <th>@lang('lead.headers.title')</th>
+                <th>@lang('lead.headers.created_by')</th>
+                <th>@lang('lead.headers.deadline')</th>
+                <th>@lang('lead.headers.assigned')</th>
                
             </tr>
         </thead>
