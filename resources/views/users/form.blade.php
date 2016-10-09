@@ -48,7 +48,7 @@
 {!! Form::label('departments', Lang::get('user.headers.assign_department'), ['class' => 'control-label']) !!}
 
 {!! 
-    Form::select('department',
+    Form::select('departments',
     $departments,
     isset($user) 
     ? $user->departmentOne->first()->id : null,
