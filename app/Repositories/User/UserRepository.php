@@ -43,17 +43,17 @@ class UserRepository implements UserRepositoryContract
 
     public function create($requestData)
     {
-        $settings = Settings::all();
-
+        $settings = Settings::first();
         $password =  bcrypt($requestData->password);
         $role = $requestData->roles;
         $department = $requestData->departments;
+        $companyname = $settings->company;
+
         if ($requestData->hasFile('image_path')) {
             if (!is_dir(public_path(). '/images/'. $companyname)) {
                 mkdir(public_path(). '/images/'. $companyname, 0777, true);
             }
             $settings = Settings::findOrFail(1);
-            $companyname = $settings->company;
             $file =  $requestData->file('image_path');
 
             $destinationPath = public_path(). '/images/'. $companyname;
@@ -77,10 +77,12 @@ class UserRepository implements UserRepositoryContract
 
     public function update($id, $requestData)
     {
+        $settings = Settings::first();
+        $companyname = $settings->company;
         $user = User::findorFail($id);
         $password = bcrypt($requestData->password);
         $role = $requestData->roles;
-        $department = $requestData->department;
+        $department = $requestData->departments;
 
         if ($requestData->hasFile('image_path')) {
             $settings = Settings::findOrFail(1);
@@ -106,7 +108,7 @@ class UserRepository implements UserRepositoryContract
 
         $user->fill($input)->save();
         $user->roles()->sync([$role]);
-        $user->department()->sync([$department]);
+        $user->department()->sync([$department], false);
 
         Session::flash('flash_message', 'User successfully updated!');
 
