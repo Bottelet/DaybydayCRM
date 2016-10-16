@@ -108,7 +108,7 @@ class UserRepository implements UserRepositoryContract
 
         $user->fill($input)->save();
         $user->roles()->sync([$role]);
-        $user->department()->sync([$department], false);
+        $user->department()->sync([$department]);
 
         Session::flash('flash_message', 'User successfully updated!');
 
