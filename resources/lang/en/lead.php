@@ -6,6 +6,21 @@ return [
         'update' => 'Update Lead',
         'all_leads' => 'All Leads',
         'comment_by' => 'Comment By',
+        'lead_information' => 'Lead Information',
+        'assigned_to' => 'Assigned to',
+        'follow_up' => 'Follow up',
+        'change_deadline' => 'Change Deadline',
+        'next_follow_up' => 'Next follow up',
+        'update_follow_up' => 'Update follow up',
+        'close' => 'Close',
+    ],
+
+        'status' =>  [
+        'status' => 'Status',
+        'contact' => 'Contact client',
+        'completed' => 'Completed',
+        'not_intersted' => 'Client not Interested',
+        'modified' => 'Modified',
     ],
 
     'headers' => [
@@ -20,4 +35,5 @@ return [
         'created_by' => 'Created by',
         'time' => 'Time',
     ],
+
 ];
