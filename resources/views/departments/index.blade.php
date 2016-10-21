@@ -8,10 +8,10 @@
             <thead>
     <thead>
       <tr>
-        <th>Title</th>
-        <th>Description</th>
+        <th>@lang('department.headers.title')</th>
+        <th>@lang('department.headers.description')</th>
         @if(Entrust::hasRole('administrator')) 
-		<th>Action</th>
+		<th>@lang('department.headers.action')</th>
     @endif
       </tr>
     </thead>
@@ -28,7 +28,7 @@
             'route' => ['departments.destroy', $dep->id]
         ]); !!}
 
-            {!! Form::submit('Delete', ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
+            {!! Form::submit(Lang::get('department.titles.delete'), ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
 
         {!! Form::close(); !!}</td></td>
         @endif
