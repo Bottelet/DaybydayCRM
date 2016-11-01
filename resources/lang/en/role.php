@@ -9,12 +9,4 @@ return [
         'delete' => 'Delete',
         'roles' => 'Role Managment',
     ],
-
-    'titles' => [
-    	'delete' => 'Delete',
-    	'create' => 'Create New Department',
-    	'name' => 'Department name',
-    	'description' => 'Department description'
-    ],
-
 ];
