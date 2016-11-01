@@ -25,10 +25,16 @@ class RoleRepository implements RoleRepositoryContract
     public function permissionsUpdate($requestData)
     {
         $allowed_permissions = [];
-        foreach ($requestData->input('permissions') as $permissionId => $permission) {
-            if ($permission === '1') {
-                $allowed_permissions[] = (int)$permissionId;
+
+        if ($requestData->input('permissions') != null) {
+            foreach ($requestData->input('permissions')
+            as $permissionId => $permission) {
+                if ($permission === '1') {
+                    $allowed_permissions[] = (int)$permissionId;
+                }
             }
+        } else {
+            $allowed_permissions = [];
         }
        
         $role = Role::find($requestData->input('role_id'));
