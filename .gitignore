@@ -5,3 +5,5 @@ Homestead.yaml
 Homestead.json
 .env
 bower_components
+
+.docker/flarepoint-db/*
