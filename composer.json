@@ -18,7 +18,7 @@
         "guzzlehttp/guzzle": "^6.2",
         "pusher/pusher-php-server": "^2.3",
         "fenos/notifynder": "3.1.*",
-        "zizaco/entrust": "5.2.x-dev"
+        "zizaco/entrust": "1.7.*"
         
     },
     "require-dev": {
