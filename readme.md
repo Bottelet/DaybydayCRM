@@ -26,6 +26,17 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 - login in with these credentials  Mail: admin@admin.com Password: admin123 (Can be changed in the dashboard)
 - DONE
 
+**Connect to Database**
+
+If you want to browse database from host use information below
+```
+host: 127.0.0.1
+port: 3307 # IMPORTANT
+database: flarepoint
+username: root
+password: root
+```
+
 **Insertion of dummy data**
 
 If you want to just play around and test the CRM, you can very easily insert dummy data after completeing the steps above, follow the commands below.
