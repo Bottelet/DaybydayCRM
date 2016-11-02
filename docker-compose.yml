@@ -1,0 +1,57 @@
+version: "2"
+
+services:
+  php:
+    container_name: flarepoint-php
+    build:
+      context: .
+      dockerfile: .docker/flarepoint-php/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=i53weLzCSdunQzNc2SXR2AE9XJVDuNaq
+      - DB_HOST=db
+      - DB_DATABASE=flarepoint
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    ports:
+      - 9000
+    depends_on:
+      - db
+
+  db:
+    container_name: flarepoint-db
+    image: mysql:latest
+    volumes:
+      - .docker/flarepoint-db/mysql:/var/lib/mysql
+      - .docker/flarepoint-db/db/:/docker-entrypoint-initdb.d/
+    ports:
+      - 3307:3306
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=flarepoint
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+
+  nginx:
+    container_name: flarepoint-nginx
+    image: nginx:latest
+    links:
+      - php
+    ports:
+      - 8000:80
+    volumes:
+      - .docker/flarepoint-nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.0.0/16
+          gateway: 172.16.0.1
