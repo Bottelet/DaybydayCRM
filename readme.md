@@ -12,41 +12,28 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 
 
 **How to**
-- You will need `docker` and `docker-compose`
+
 - Insert project into empty folder / git clone https://github.com/Bottelet/Flarepoint-crm.git
 - Create a empty database table
 - Copy the .env.example to .env and insert the Database config
 - Run the following commands
 ```
-    docker-compose build
-    docker exec -it flarepoint-php composer install
-    docker exec -it flarepoint-php php artisan migrate --seed
-    docker exec -it flarepoint-php php artisan key:generate
+    composer install
+    php artisan migrate --seed
+    php artisan key:generate
 ```
-- Go to this url `http://127.0.0.1:8000`
 - login in with these credentials  Mail: admin@admin.com Password: admin123 (Can be changed in the dashboard)
 - DONE
-
-**Connect to Database**
-
-If you want to browse database from host use information below
-```
-host: 127.0.0.1
-port: 3307 # IMPORTANT
-database: flarepoint
-username: root
-password: root
-```
 
 **Insertion of dummy data**
 
 If you want to just play around and test the CRM, you can very easily insert dummy data after completeing the steps above, follow the commands below.
 
 ```
-    docker exec -it flarepoint-php php artisan db:seed --class=UsersDummyTableSeeder (Creates 5 extra users and are required)
-    docker exec -it flarepoint-php php artisan db:seed --class=ClientsDummyTableSeeder (Creates 50 new clients)
-    docker exec -it flarepoint-php php artisan db:seed --class=TasksDummyTableSeeder (Creates 130 tasks, requires clients & users seeding)
-    docker exec -it flarepoint-php php artisan db:seed --class=LeadsDummyTableSeeder (Creates 30 leads, requires clients & users seeding)
+    php artisan db:seed --class=UsersDummyTableSeeder (Creates 5 extra users and are required)
+    php artisan db:seed --class=ClientsDummyTableSeeder (Creates 50 new clients)
+    php artisan db:seed --class=TasksDummyTableSeeder (Creates 130 tasks, requires clients & users seeding)
+    php artisan db:seed --class=LeadsDummyTableSeeder (Creates 30 leads, requires clients & users seeding)
     
 ```
 
