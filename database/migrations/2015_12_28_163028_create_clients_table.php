@@ -18,13 +18,13 @@ class CreateClientsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
-            $table->integer('primary_number');
-            $table->integer('secondary_number');
+            $table->string('primary_number');
+            $table->string('secondary_number');
             $table->string('address');
-            $table->integer('zipcode');
+            $table->string('zipcode');
             $table->string('city');
             $table->string('company_name');
-            $table->integer('vat');
+            $table->string('vat');
             $table->string('industry');
             $table->string('company_type');
             $table->integer('fk_user_id')->unsigned();

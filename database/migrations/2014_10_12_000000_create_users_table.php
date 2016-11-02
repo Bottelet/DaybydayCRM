@@ -20,8 +20,8 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password', 60);
             $table->string('address');
-            $table->integer('work_number');
-            $table->integer('personal_number');
+            $table->string('work_number');
+            $table->string('personal_number');
             $table->string('image_path');
             $table->rememberToken();
             $table->timestamps();
