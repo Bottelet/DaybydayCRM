@@ -9,7 +9,7 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
 
 ## Get started
 
-I would like to refer to the wiki, on help on getting started
+I would like to refer to the wiki, for help on getting started
 
 * [Installation](https://github.com/Bottelet/Flarepoint-crm/wiki/Install)
 * [Installation with Docker](https://github.com/Bottelet/Flarepoint-crm/wiki/Install-using-Docker)
@@ -44,6 +44,8 @@ And much more (in no particular order)
 
 ### Contribution Guide
 Flarepoint CRM follows [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standard.
+
+Translation... You can help translating Flarepoint-crm into other languages, by copying the resources/lang/en folder into for example resources/lang/de and translate the files, found inside the folder.
 
 ### Packages
 The packages used are the following...
