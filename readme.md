@@ -23,6 +23,7 @@ Flarepoint is a new customer relationship management system (CRM) which purpose 
     docker exec -it flarepoint-php php artisan migrate --seed
     docker exec -it flarepoint-php php artisan key:generate
 ```
+- Go to this url `http://127.0.0.1:8000`
 - login in with these credentials  Mail: admin@admin.com Password: admin123 (Can be changed in the dashboard)
 - DONE
 
