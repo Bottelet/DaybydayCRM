@@ -40,6 +40,7 @@ class TaskRepository implements TaskRepositoryContract
 
     public function create($requestData)
     {
+
         $fk_client_id = $requestData->get('fk_client_id');
         $input = $requestData = array_merge(
             $requestData->all(),
@@ -47,6 +48,8 @@ class TaskRepository implements TaskRepositoryContract
         );
 
         $task = Tasks::create($input);
+
+        
         $insertedId = $task->id;
 
         Session()->flash('flash_message', 'Task successfully added!'); //Snippet in Master.blade.php
@@ -57,16 +60,7 @@ class TaskRepository implements TaskRepositoryContract
         ->expire(Carbon::now()->addDays(14))
         ->send();
 
-        $activityinput = array_merge(
-             ['text' => 'Task ' . $task->title .
-             ' was created by '. $task->taskCreator->name .
-             ' and assigned to' . $task->assignee->name,
-             'user_id' => Auth()->id(),
-             'type' => 'task',
-             'type_id' =>  $insertedId]
-         );
-        
-        Activity::create($activityinput);
+        event(new \App\Events\TaskCreate($task));
 
         return $insertedId;
     }
