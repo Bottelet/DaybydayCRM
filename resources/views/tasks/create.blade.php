@@ -39,7 +39,7 @@
  @if(Request::get('client') != "")
  {!! Form::hidden('fk_client_id', Request::get('client')) !!}
  @else
-{!! Form::label('fk_client_id', Lang::Get('task.headers.client'), ['class' => 'control-label']) !!}
+{!! Form::label('fk_client_id', Lang::Get('task.headers.assign_client'), ['class' => 'control-label']) !!}
 {!! Form::select('fk_client_id', $clients, null, ['class' => 'form-control']) !!}
 @endif
 </div>
