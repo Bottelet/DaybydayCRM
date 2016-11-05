@@ -53,13 +53,6 @@ class TaskRepository implements TaskRepositoryContract
         $insertedId = $task->id;
 
         Session()->flash('flash_message', 'Task successfully added!'); //Snippet in Master.blade.php
-        Notifynder::category('task.assign')
-        ->from(auth()->id())
-        ->to($task->fk_user_id_assign)
-        ->url(url('tasks', $insertedId))
-        ->expire(Carbon::now()->addDays(14))
-        ->send();
-
         event(new \App\Events\TaskCreate($task));
 
         return $insertedId;
