@@ -6,6 +6,7 @@ use Carbon;
 
 class Tasks extends Model
 {
+
     protected $fillable = [
         'title',
         'description',
@@ -46,6 +47,17 @@ class Tasks extends Model
         ->startOfDay()
         ->diffInDays($this->deadline, false); // if you are past your deadline, the value returned will be negative.
     }
+
+    public function getAssignedUserAttribute()
+    {
+        return User::findOrFail($this->fk_user_id_assign);
+    }
+
+    public function getCreatorUserAttribute()
+    {
+        return User::findOrFail($this->fk_user_id_assign);
+    }
+
     public function settings()
     {
         return $this->hasMany(Settings::class);
@@ -62,4 +74,5 @@ class Tasks extends Model
     {
         return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'task');
     }
+
 }
