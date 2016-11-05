@@ -61,6 +61,10 @@ class TaskCreateNotification extends Notification
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->task->fk_user_id_created,
             'message' => $notifiable->name . ' assigned a task to you',
+            'task_id' => $this->task->id,
+            'type' => 'task',
+            'type_id' =>  $this->task->id,
+            'action' => url('tasks/' . $this->task->id),
         ];
     }
 }
