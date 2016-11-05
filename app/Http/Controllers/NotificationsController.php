@@ -11,8 +11,9 @@ class NotificationsController extends Controller
     public function getAll()
     {
         $user = User::find(\Auth::id());
-        $notread = $user->getNotificationsNotRead();
-        return $notread->toJson();
+       
+        return $user->notifications;
+        
     }
     public function markRead(Request $request)
     {
