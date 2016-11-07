@@ -6,22 +6,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Auth;
 
-class TaskCreateNotification extends Notification
+class ClientCreateNotification extends Notification
 {
     use Queueable;
 
-
-    private $task;
-
+    private $client;
+    
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($task)
+    public function __construct($client)
     {
-        $this->task = $task;
+        $this->client = $client;
     }
 
     /**
@@ -43,7 +43,7 @@ class TaskCreateNotification extends Notification
      */
     public function toMail($notifiable)
     {
-       /* return (new MailMessage)
+        /*return (new MailMessage)
                     ->line('The introduction to the notification.')
                     ->action('Notification Action', 'https://laravel.com')
                     ->line('Thank you for using our application!'); */
@@ -57,13 +57,14 @@ class TaskCreateNotification extends Notification
      */
     public function toArray($notifiable)
     {
+       
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
-            'created_user' => $this->task->fk_user_id_created,
-            'message' => $notifiable->name . ' assigned a task to you',
-            'type' => 'task',
-            'type_id' =>  $this->task->id,
-            'action' => url('tasks/' . $this->task->id),
+            'created_user' => auth()->user()->id,
+            'message' => auth()->user()->name . ' assigned a client to you',
+            'type' => 'client',
+            'type_id' =>  $this->client->id,
+            'action' => url('clients/' . $this->client->id),
         ];
     }
 }
