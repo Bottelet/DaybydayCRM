@@ -37,7 +37,9 @@ class ClientRepository implements ClientRepositoryContract
 
     public function create($requestData)
     {
-        Client::create($requestData);
+        $client = Client::create($requestData);
+        Session()->flash('flash_message', 'Client successfully added');
+        event(new \App\Events\ClientCreate($client));
     }
 
     public function update($id, $requestData)

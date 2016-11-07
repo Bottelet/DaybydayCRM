@@ -54,4 +54,10 @@ class Client extends Model
     {
         return $this->belongsToMany(Invoice::class);
     }
+
+    public function getAssignedUserAttribute()
+    {
+        return User::findOrFail($this->fk_user_id);
+    }
+
 }

@@ -82,7 +82,6 @@ class ClientsController extends Controller
     public function store(StoreClientRequest $request)
     {
         $this->clients->create($request->all());
-        Session()->flash('flash_message', 'Client successfully added');
         return redirect()->route('clients.index');
     }
 
