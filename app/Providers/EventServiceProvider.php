@@ -17,9 +17,9 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\ClientCreateNotify',
             'App\Listeners\ClientCreateLog',
         ],
-         'App\Events\TaskCreate' => [
-            'App\Listeners\TaskCreateNotify',
-            'App\Listeners\TaskCreateLog',
+         'App\Events\TaskAction' => [
+            'App\Listeners\TaskActionNotify',
+            'App\Listeners\TaskActionLog',
         ],
         'App\Events\LeadCreate' => [
             'App\Listeners\LeadCreateNotify',
