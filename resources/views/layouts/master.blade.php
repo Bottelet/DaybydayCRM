@@ -86,7 +86,7 @@ $(function(){
       {
         count++;
         var id = notification['id'];
-        var url = notification['data']['action'];
+        var url = notification['data']['url'];
         
         msg += `<div> 
         <a class="content" onclick="postRead(\`+id+\`)" href="`+url+`">
