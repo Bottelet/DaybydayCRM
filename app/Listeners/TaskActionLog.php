@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\TaskCreate;
+use App\Events\TaskAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 
-class TaskCreateLog
+class TaskActionLog
 {
     /**
      * Create the event listener.
@@ -25,17 +25,15 @@ class TaskCreateLog
      * @param  TaskCreate  $event
      * @return void
      */
-    public function handle(TaskCreate $event)
+    public function handle(TaskAction $event)
     {
-        $task = $event->getTask();
         $activityinput = array_merge(
             [
-                'text' => 'Task ' . $task->title .
-                ' was created by '. $task->taskCreator->name .
-                ' and assigned to ' . $task->assignee->name,
+                'text' => $event->getText(),
                 'user_id' => Auth()->id(),
                 'type' => 'task',
-                'type_id' =>  $task->id
+                'type_id' =>  $event->getTask()->id,
+                'action' => $event->getAction()
             ]);
         
         Activity::create($activityinput);

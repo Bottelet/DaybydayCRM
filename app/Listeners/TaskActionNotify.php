@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\TaskCreate;
+use App\Events\TaskAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Notifications\TaskCreateNotification;
+use App\Notifications\TaskActionNotification;
 
-class TaskCreateNotify
+class TaskActionNotify
 {
     /**
      * Create the event listener.
@@ -25,9 +25,15 @@ class TaskCreateNotify
      * @param  TaskCreate  $event
      * @return void
      */
-    public function handle(TaskCreate $event)
+    public function handle(TaskAction $event)
     {
         $task = $event->getTask();
-        $task->assignedUser->notify(new TaskCreateNotification($task));
+        $action = $event->getAction();
+        $text = $event->getText();
+        $task->assignedUser->notify(new TaskActionNotification(
+            $task,
+            $action,
+            $text
+            ));
     }
 }

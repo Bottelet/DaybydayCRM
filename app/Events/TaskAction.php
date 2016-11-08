@@ -10,9 +10,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Tasks;
 
-class TaskCreate
+class TaskAction
 {
     private $task;
+    private $action;
+    private $text;
 
     use InteractsWithSockets, SerializesModels;
 
@@ -20,15 +22,25 @@ class TaskCreate
     {
         return $this->task;
     }
+    public function getAction()
+    {
+        return $this->action;
+    }
+    public function getText()
+    {   
+        return $this->text;
+    }
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Tasks $task)
+    public function __construct(Tasks $task, $action, $text)
     {
         $this->task = $task;
+        $this->action = $action;
+        $this->text = $text;
     }
 
     /**

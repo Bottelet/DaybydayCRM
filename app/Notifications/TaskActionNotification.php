@@ -7,21 +7,25 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class TaskCreateNotification extends Notification
+class TaskActionNotification extends Notification
 {
     use Queueable;
 
 
     private $task;
+    private $action;
+    private $text;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($task)
+    public function __construct($task, $action, $text)
     {
         $this->task = $task;
+        $this->action = $action;
+        $this->text = $text;
     }
 
     /**
@@ -60,10 +64,11 @@ class TaskCreateNotification extends Notification
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->task->fk_user_id_created,
-            'message' => $notifiable->name . ' assigned a task to you',
+            'message' => $this->text,
             'type' => 'task',
             'type_id' =>  $this->task->id,
-            'action' => url('tasks/' . $this->task->id),
+            'url' => url('tasks/' . $this->task->id),
+            'action' => $this->action
         ];
     }
 }
