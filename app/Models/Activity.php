@@ -16,7 +16,8 @@ class Activity extends model
         'user_id',
         'text',
         'type',
-        'type_id'
+        'type_id',
+        'action',
         ];
     protected $guarded = ['id'];
 
