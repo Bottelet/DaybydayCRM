@@ -14,18 +14,16 @@ class TaskActionNotification extends Notification
 
     private $task;
     private $action;
-    private $text;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($task, $action, $text)
+    public function __construct($task, $action)
     {
         $this->task = $task;
         $this->action = $action;
-        $this->text = $text;
     }
 
     /**
@@ -61,10 +59,28 @@ class TaskActionNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        switch ($this->action) {
+            case 'created':
+                $text = $this->task->title .
+                ' was created by '. $this->task->taskCreator->name .
+                ' and assigned to you';
+                break;
+            case 'updated_status':
+                $text = 'Task was completed by '. Auth()->user()->name;
+                break;
+            case 'updated_time':
+                $text = Auth()->user()->name.' Inserted a new time for ' . $this->task->title;
+                break;
+            case 'updated_assign':
+                $text = auth()->user()->name.' Assigned a task to you';
+                break;
+            default:
+                break;
+        }
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->task->fk_user_id_created,
-            'message' => $this->text,
+            'message' => $text,
             'type' => 'task',
             'type_id' =>  $this->task->id,
             'url' => url('tasks/' . $this->task->id),

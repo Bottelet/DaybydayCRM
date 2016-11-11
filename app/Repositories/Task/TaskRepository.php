@@ -53,13 +53,10 @@ class TaskRepository implements TaskRepositoryContract
 
         $task = Tasks::create($input);
 
-        $text = $task->title .
-                ' was created by '. $task->taskCreator->name .
-                ' and assigned to ' . $task->assignee->name;
-        $insertedId = $task->id;
 
+        $insertedId = $task->id;
         Session()->flash('flash_message', 'Task successfully added!');
-        event(new \App\Events\TaskAction($task, self::CREATED, $text));
+        event(new \App\Events\TaskAction($task, self::CREATED));
 
         return $insertedId;
     }
@@ -70,22 +67,18 @@ class TaskRepository implements TaskRepositoryContract
         $input = $requestData->get('status');
         $input = array_replace($requestData->all(), ['status' => 2]);
         $task->fill($input)->save();
-        $text = 'Task was completed by '. Auth()->user()->name;
-
-        event(new \App\Events\TaskAction($task, self::UPDATED_STATUS, $text));
+        event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
         
     }
 
     public function updateTime($id, $requestData)
     {
         $task = Tasks::findOrFail($id);
-
         $input = array_replace($requestData->all(), ['fk_task_id'=>"$task->id"]);
         
         TaskTime::create($input);
 
-        $text = Auth()->user()->name.' Inserted a new time for this task';
-        event(new \App\Events\TaskAction($task, self::UPDATED_TIME, $text));
+        event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
     }
 
     public function updateAssign($id, $requestData)
@@ -98,8 +91,7 @@ class TaskRepository implements TaskRepositoryContract
         $task->fill($input)->save();
         $task = $task->fresh();
       
-        $text = auth()->user()->name.' assigned task to '. $task->assignee->name;
-        event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN, $text));
+        event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
     }
 
     public function invoice($id, $requestData)

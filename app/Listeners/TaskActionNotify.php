@@ -29,11 +29,9 @@ class TaskActionNotify
     {
         $task = $event->getTask();
         $action = $event->getAction();
-        $text = $event->getText();
         $task->assignedUser->notify(new TaskActionNotification(
             $task,
-            $action,
-            $text
+            $action
             ));
     }
 }

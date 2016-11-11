@@ -14,7 +14,6 @@ class TaskAction
 {
     private $task;
     private $action;
-    private $text;
 
     use InteractsWithSockets, SerializesModels;
 
@@ -26,21 +25,16 @@ class TaskAction
     {
         return $this->action;
     }
-    public function getText()
-    {   
-        return $this->text;
-    }
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Tasks $task, $action, $text)
+    public function __construct(Tasks $task, $action)
     {
         $this->task = $task;
         $this->action = $action;
-        $this->text = $text;
     }
 
     /**

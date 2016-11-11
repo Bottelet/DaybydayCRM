@@ -27,9 +27,28 @@ class TaskActionLog
      */
     public function handle(TaskAction $event)
     {
+        switch ($event->getAction()) {
+            case 'created':
+                $text = $event->getTask()->title .
+                ' was created by '. $event->getTask()->taskCreator->name .
+                ' and assigned to ' . $event->getTask()->assignee->name;
+                break;
+            case 'updated_status':
+                $text = 'Task was completed by '. Auth()->user()->name;
+                break;
+            case 'updated_time':
+                $text = Auth()->user()->name.' Inserted a new time for this task';
+                break;
+            case 'updated_assign':
+                $text = auth()->user()->name.' assigned task to '. $event->getTask()->assignee->name;
+                break;
+            default:
+                break;
+        }
+
         $activityinput = array_merge(
             [
-                'text' => $event->getText(),
+                'text' => $text,
                 'user_id' => Auth()->id(),
                 'type' => 'task',
                 'type_id' =>  $event->getTask()->id,
