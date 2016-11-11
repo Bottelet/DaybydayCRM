@@ -22,7 +22,7 @@ class TaskActionLog
     /**
      * Handle the event.
      *
-     * @param  TaskCreate  $event
+     * @param  TaskAction  $event
      * @return void
      */
     public function handle(TaskAction $event)
