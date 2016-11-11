@@ -66,7 +66,7 @@ class TaskActionNotification extends Notification
                 ' and assigned to you';
                 break;
             case 'updated_status':
-                $text = 'Task was completed by '. Auth()->user()->name;
+                $text = $this->task->title . ' was completed by '. Auth()->user()->name;
                 break;
             case 'updated_time':
                 $text = Auth()->user()->name.' Inserted a new time for ' . $this->task->title;
