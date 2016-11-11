@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use App\Models\Client;
 
-class ClientCreateLog
+class ClientActionLog
 {
     /**
      * Create the event listener.
@@ -29,13 +29,15 @@ class ClientCreateLog
     public function handle(ClientCreate $event)
     {
         $client = $event->getClient();
+        
         $activityinput = array_merge(
             [
                 'text' => 'Client ' . $client->company_name .
                 ' was assigned to '. $client->AssignedUser->name,
                 'user_id' => Auth()->id(),
                 'type' => Client::class,
-                'type_id' =>  $client->id
+                'type_id' =>  $client->id,
+                'action' => $event->getAction()
             ]);
         
         Activity::create($activityinput);

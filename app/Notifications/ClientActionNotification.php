@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Auth;
 
-class ClientCreateNotification extends Notification
+class ClientActionNotification extends Notification
 {
     use Queueable;
 

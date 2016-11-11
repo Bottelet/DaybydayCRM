@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Notifications\ClientCreateNotification;
 
-class ClientCreateNotify
+class ClientActionNotify
 {
     /**
      * Create the event listener.
@@ -28,6 +28,7 @@ class ClientCreateNotify
     public function handle(clientCreate $event)
     {
         $client = $event->getClient();
+
         $client->assignedUser->notify(new clientCreateNotification($client));
     }
 }

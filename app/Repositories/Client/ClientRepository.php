@@ -39,7 +39,7 @@ class ClientRepository implements ClientRepositoryContract
     {
         $client = Client::create($requestData);
         Session()->flash('flash_message', 'Client successfully added');
-        event(new \App\Events\ClientCreate($client));
+        event(new \App\Events\ClientCreate($client, 'create'));
     }
 
     public function update($id, $requestData)

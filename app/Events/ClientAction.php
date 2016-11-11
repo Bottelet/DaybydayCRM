@@ -10,9 +10,10 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Client;
 
-class ClientCreate
+class ClientAction
 {
     private $client;
+    private $action;
 
     use InteractsWithSockets, SerializesModels;
 
@@ -20,14 +21,19 @@ class ClientCreate
     {
         return $this->client;
     }
+    public function getAction()
+    {
+        return $this->action;
+    }
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client, $action)
     {
         $this->client = $client;
+        $this->action = $action;
     }
 
     /**
