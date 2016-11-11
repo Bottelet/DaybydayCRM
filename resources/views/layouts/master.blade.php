@@ -59,25 +59,24 @@
      <span id="notification-item"></span>
 
 <script>
+id = {};
 function postRead(id) {
-
+  console.log(id);
    $.ajax({
         type: 'post',
         url: '{{url('/notifications/markread')}}',
         data: {
-          Id : id
+          id : id,
         },
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
     });
 
 }
 
 $(function(){
-  console.log($('meta[name="csrf-token"]').attr('content'));
- $.get('{{url('/notifications/getall')}}', function(notifications){
+ $.get("{{url('/notifications/getall')}}", function(notifications){
       var notifyItem = document.getElementById('notification-item');
       var bell = document.getElementById('notifycount');
       var msg = "";
@@ -89,18 +88,23 @@ $(function(){
         var url = notification['data']['url'];
         
         msg += `<div> 
-        <a class="content" onclick="postRead(\`+id+\`)" href="`+url+`">
+        <a class="content"  id="notify" href="{{url('notification')}}/`+id+`">
         ` 
         + notification['data']['message'] + 
         ` </a></div> 
         <hr class="notify-line"/>`;
          notifyItem.innerHTML = msg;
+
+/**         notifyItem.onclick = (function(id){
+             return function(){
+                 postRead(id);
+             }})(id); **/
+  
      });
         bell.innerHTML = count;
     })
 
 });
-    
 
 </script>
 
