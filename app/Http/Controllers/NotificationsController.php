@@ -24,12 +24,15 @@ class NotificationsController extends Controller
         $user = User::find(\Auth::id());
         $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
 
-        return redirect(($user->notifications()->where('id', $request->id)->first()->data['url']));
+   
     }
     public function markAll()
     {
-        $user = \Auth::id();
-        Notifynder::readAll($user);
+        $user = User::find(\Auth::id());
+    
+        foreach ($user->unreadNotifications as $notification) {
+            $notification->markAsRead();
+        }
         return redirect()->back();
     }
 }

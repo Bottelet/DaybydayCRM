@@ -51,7 +51,7 @@
   
   <ul class="dropdown-menu notify-drop  notifications" role="menu" aria-labelledby="dLabel">
     
-    <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4 class="menu-title pull-right"><a href="notifications/markall">Mark all as read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
+    <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4 class="menu-title pull-right"><a href="{{url('notifications/markall')}}">Mark all as read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
     </div>
     <li class="divider"></li>
    <div class="notifications-wrapper">
