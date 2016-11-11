@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Events\ClientCreate;
+use App\Events\ClientAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Notifications\ClientCreateNotification;
+use App\Notifications\ClientActionNotification;
 
 class ClientActionNotify
 {
@@ -22,13 +22,16 @@ class ClientActionNotify
     /**
      * Handle the event.
      *
-     * @param  ClientCreate  $event
+     * @param  ClientAction  $event
      * @return void
      */
-    public function handle(clientCreate $event)
+    public function handle(clientAction $event)
     {
         $client = $event->getClient();
-
-        $client->assignedUser->notify(new clientCreateNotification($client));
+        $action = $event->getAction();
+        
+        $client->assignedUser->notify(new clientActionNotification(
+            $client,
+            $action));
     }
 }

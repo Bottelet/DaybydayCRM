@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\ClientCreate;
+use App\Events\ClientAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
@@ -23,17 +23,25 @@ class ClientActionLog
     /**
      * Handle the event.
      *
-     * @param  ClientCreate  $event
+     * @param  ClientAction  $event
      * @return void
      */
-    public function handle(ClientCreate $event)
+    public function handle(ClientAction $event)
     {
         $client = $event->getClient();
-        
+
+        switch ($event->getAction()) {
+            case 'created':
+                $text = 'Client ' . $client->company_name .
+                ' was assigned to '. $client->AssignedUser->name;
+                break;
+            default:
+                break;
+        }
+    
         $activityinput = array_merge(
             [
-                'text' => 'Client ' . $client->company_name .
-                ' was assigned to '. $client->AssignedUser->name,
+                'text' => $text,
                 'user_id' => Auth()->id(),
                 'type' => Client::class,
                 'type_id' =>  $client->id,

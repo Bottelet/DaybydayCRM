@@ -13,15 +13,17 @@ class ClientActionNotification extends Notification
     use Queueable;
 
     private $client;
+    private $action;
     
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($client)
+    public function __construct($client, $action)
     {
         $this->client = $client;
+        $this->action = $action;
     }
 
     /**
@@ -57,14 +59,23 @@ class ClientActionNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        switch ($this->action) {
+            case 'created':
+                $text = 'Client ' . $this->client->company_name .
+                ' was assigned to you';
+                break;
+            default:
+                break;
+        }
        
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => auth()->user()->id,
-            'message' => auth()->user()->name . ' assigned a client to you',
+            'message' => $text,
             'type' => 'client',
             'type_id' =>  $this->client->id,
-            'action' => url('clients/' . $this->client->id),
+            'url' =>  url('clients/' . $this->client->id),
+            'action' => $this->action
         ];
     }
 }
