@@ -10,6 +10,11 @@ use DB;
 class LeadRepository implements LeadRepositoryContract
 {
 
+    CONST CREATED = 'created';
+    CONST UPDATED_STATUS = 'updated_status';
+    CONST UPDATED_DEADLINE = 'updated_deadline';
+    CONST UPDATED_ASSIGN = 'updated_assign';
+
     public function find($id)
     {
         return Leads::findOrFail($id);
@@ -26,17 +31,9 @@ class LeadRepository implements LeadRepositoryContract
 
         $lead = Leads::create($input);
         $insertedId = $lead->id;
-        Session()->flash('flash_message', 'Lead successfully added!'); //Snippet in Master.blade.php
-        $activityinput = array_merge(
-            ['text' => 'Lead ' . $lead->title .
-            ' was created by '. $lead->createdBy->name .
-            ' and assigned to' . $lead->assignee->name,
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $insertedId]
-        );
+        Session()->flash('flash_message', 'Lead successfully added!'); 
 
-        Activity::create($activityinput);
+        event(new \App\Events\LeadAction($lead, self::CREATED));
 
         return $insertedId;
     }
@@ -48,15 +45,7 @@ class LeadRepository implements LeadRepositoryContract
         $input = $requestData->get('status');
         $input = array_replace($requestData->all(), ['status' => 2]);
         $lead->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => 'Lead was completed by '. Auth()->user()->name,
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-
-        Activity::create($activityinput);
+        event(new \App\Events\LeadAction($lead, self::UPDATED_STATUS));
     }
 
     public function updateFollowup($id, $requestData)
@@ -66,14 +55,7 @@ class LeadRepository implements LeadRepositoryContract
         $input = $requestData =
          [ 'contact_date' => $requestData->contact_date ." " . $requestData->contact_time . ":00"];
         $lead->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => Auth()->user()->name.' Inserted a new time for this lead',
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+        event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
     }
 
     public function updateAssign($id, $requestData)
@@ -85,13 +67,7 @@ class LeadRepository implements LeadRepositoryContract
         $lead->fill($input)->save();
         $insertedName = $lead->assignee->name;
 
-        $activityinput = array_merge(
-            ['text' => auth()->user()->name.' assigned lead to '. $insertedName,
-            'user_id' => Auth()->id(),
-            'type' => 'lead',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+        event(new \App\Events\LeadAction($lead, self::UPDATED_ASSIGN));
     }
 
     public function allLeads()
