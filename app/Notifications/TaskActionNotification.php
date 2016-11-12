@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Lang;
 
 class TaskActionNotification extends Notification
 {
@@ -61,18 +62,28 @@ class TaskActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = $this->task->title .
-                ' was created by '. $this->task->taskCreator->name .
-                ' and assigned to you';
+                $text = lang::get('misc.notifications.task.created', [
+                    'title' =>  $this->task->title,
+                    'creator' => $this->task->taskCreator->name,
+                    ]);
                 break;
             case 'updated_status':
-                $text = $this->task->title . ' was completed by '. Auth()->user()->name;
+                $text = lang::get('misc.notifications.task.status', [
+                    'title' =>  $this->task->title,
+                    'username' =>  Auth()->user()->name,
+                    ]); 
                 break;
             case 'updated_time':
-                $text = Auth()->user()->name.' Inserted a new time for ' . $this->task->title;
+                $text = lang::get('misc.notifications.task.time', [
+                    'title' =>  $this->task->title,
+                    'username' =>  Auth()->user()->name,
+                    ]);
                 break;
             case 'updated_assign':
-                $text = auth()->user()->name.' Assigned a task to you';
+                $text = lang::get('misc.notifications.task.assign', [
+                    'title' =>  $this->task->title,
+                    'username' =>  Auth()->user()->name,
+                    ]);
                 break;
             default:
                 break;

@@ -6,6 +6,7 @@ use App\Events\TaskAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
+use Lang;
 
 class TaskActionLog
 {
@@ -29,18 +30,27 @@ class TaskActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-                $text = $event->getTask()->title .
-                ' was created by '. $event->getTask()->taskCreator->name .
-                ' and assigned to ' . $event->getTask()->assignee->name;
+              $text = Lang::get('misc.log.task.created', [
+                        'title' => $event->getTask()->title,
+                        'creator' => $event->getTask()->taskCreator->name,
+                        'assignee' => $event->getTask()->assignee->name
+                    ]);
                 break;
             case 'updated_status':
-                $text = 'Task was completed by '. Auth()->user()->name;
+              $text = Lang::get('misc.log.task.status', [
+                        'username' => Auth()->user()->name,
+                    ]);
                 break;
             case 'updated_time':
-                $text = Auth()->user()->name.' Inserted a new time for this task';
+                $text = Lang::get('misc.log.task.time', [
+                        'username' => Auth()->user()->name,
+                    ]);;
                 break;
             case 'updated_assign':
-                $text = auth()->user()->name.' assigned task to '. $event->getTask()->assignee->name;
+               $text = Lang::get('misc.log.task.assign', [
+                        'username' => Auth()->user()->name,
+                        'assignee' => $event->getTask()->assignee->name
+                    ]);
                 break;
             default:
                 break;
