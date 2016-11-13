@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Auth;
 use Lang;
+use App\Models\Leads;
 
 class LeadActionNotification extends Notification
 {
@@ -91,7 +92,7 @@ class LeadActionNotification extends Notification
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->lead->fk_user_id_created,
             'message' => $text,
-            'type' => 'lead',
+            'type' => Leads::class,
             'type_id' =>  $this->lead->id,
             'url' => url('leads/' . $this->lead->id),
             'action' => $this->action

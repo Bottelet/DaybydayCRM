@@ -7,6 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use Lang;
+use App\Models\Leads;
 
 class LeadActionLog
 {
@@ -60,7 +61,7 @@ class LeadActionLog
             [
                 'text' => $text,
                 'user_id' => Auth()->id(),
-                'type' => 'lead',
+                'type' => Leads::class,
                 'type_id' =>  $event->getLead()->id,
                 'action' => $event->getAction()
             ]);

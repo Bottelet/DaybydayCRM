@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Auth;
 use Lang;
+use App\Models\Client;
 
 class ClientActionNotification extends Notification
 {
@@ -74,7 +75,7 @@ class ClientActionNotification extends Notification
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => auth()->user()->id,
             'message' => $text,
-            'type' => 'client',
+            'type' => Client::class,
             'type_id' =>  $this->client->id,
             'url' =>  url('clients/' . $this->client->id),
             'action' => $this->action

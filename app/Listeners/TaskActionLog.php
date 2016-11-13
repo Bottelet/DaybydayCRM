@@ -7,6 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use Lang;
+use App\Models\Tasks;
 
 class TaskActionLog
 {
@@ -60,7 +61,7 @@ class TaskActionLog
             [
                 'text' => $text,
                 'user_id' => Auth()->id(),
-                'type' => 'task',
+                'type' =>  Tasks::class,
                 'type_id' =>  $event->getTask()->id,
                 'action' => $event->getAction()
             ]);
