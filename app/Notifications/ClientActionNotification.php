@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Auth;
+use Lang;
 
 class ClientActionNotification extends Notification
 {
@@ -61,8 +62,9 @@ class ClientActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = 'Client ' . $this->client->company_name .
-                ' was assigned to you';
+            $text = Lang::get('misc.notifications.client.created', [
+                    'company' => $this->client->company_name,
+                ]);
                 break;
             default:
                 break;

@@ -14,6 +14,9 @@ return [
             'status' => ':title was completed by :username',
             'deadline' => ':username updated the deadline for this :title',
             'assign' => ':username assigned a lead to you',
+        ],
+        'client' => [
+            'created' => 'Client :company was assigned to you',
         ]
     ],
     'log' => [
@@ -29,5 +32,8 @@ return [
             'deadline' => ':username updated the deadline for this lead',
             'assign' => ':username assigned lead to :assignee',
         ],
+        'client' => [
+            'created' => 'Client :company was assigned to :assignee',
+        ]
     ]
 ];

@@ -7,6 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use App\Models\Client;
+use Lang;
 
 class ClientActionLog
 {
@@ -32,8 +33,10 @@ class ClientActionLog
 
         switch ($event->getAction()) {
             case 'created':
-                $text = 'Client ' . $client->company_name .
-                ' was assigned to '. $client->AssignedUser->name;
+            $text = Lang::get('misc.log.client.created', [
+                    'company' => $client->company_name,
+                    'assignee' => $client->AssignedUser->name,
+                ]);
                 break;
             default:
                 break;
