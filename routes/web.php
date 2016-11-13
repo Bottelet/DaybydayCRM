@@ -79,6 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('notifications/getall', 'NotificationsController@getAll')->name('notifications.get');
         Route::post('notifications/markread', 'NotificationsController@markRead');
         Route::get('notifications/markall', 'NotificationsController@markAll');
+        Route::get('notification/{id}', 'NotificationsController@markRead');
     /**
      * INVOICES
      */

@@ -151,7 +151,6 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
      
-        Fenos\Notifynder\NotifynderServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
@@ -216,7 +215,6 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Datatables' => Yajra\Datatables\Datatables::class,
         'Carbon'     => Carbon\Carbon::class,
-        'Notifynder' => Fenos\Notifynder\Facades\Notifynder::class,
         'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
         'Notifty'    => Illuminate\Support\Facades\Notification::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,

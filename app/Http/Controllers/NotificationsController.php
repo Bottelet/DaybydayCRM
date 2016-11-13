@@ -5,24 +5,33 @@ use Notifynder;
 use App\Models\User;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Log;
 
 class NotificationsController extends Controller
 {
     public function getAll()
     {
         $user = User::find(\Auth::id());
-        $notread = $user->getNotificationsNotRead();
-        return $notread->toJson();
+       
+        return $user->unreadNotifications;
+        
     }
     public function markRead(Request $request)
-    {
-        $notifyId = $request->Id;
-        Notifynder::readOne($notifyId);
+    {       
+        $user = User::find(\Auth::id());
+        $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
+
+        return redirect($user->notifications->where('id', $request->id)->first()->data['url']);
+   
     }
     public function markAll()
     {
-        $user = \Auth::id();
-        Notifynder::readAll($user);
+        $user = User::find(\Auth::id());
+    
+        foreach ($user->unreadNotifications as $notification) {
+            $notification->markAsRead();
+        }
         return redirect()->back();
     }
 }

@@ -12,6 +12,10 @@ use App\Models\Integration;
 
 class TaskRepository implements TaskRepositoryContract
 {
+    CONST CREATED = 'created';
+    CONST UPDATED_STATUS = 'updated_status';
+    CONST UPDATED_TIME = 'updated_time';
+    CONST UPDATED_ASSIGN = 'updated_assign';
 
     public function find($id)
     {
@@ -40,6 +44,7 @@ class TaskRepository implements TaskRepositoryContract
 
     public function create($requestData)
     {
+
         $fk_client_id = $requestData->get('fk_client_id');
         $input = $requestData = array_merge(
             $requestData->all(),
@@ -47,26 +52,11 @@ class TaskRepository implements TaskRepositoryContract
         );
 
         $task = Tasks::create($input);
+
+
         $insertedId = $task->id;
-
-        Session()->flash('flash_message', 'Task successfully added!'); //Snippet in Master.blade.php
-        Notifynder::category('task.assign')
-        ->from(auth()->id())
-        ->to($task->fk_user_id_assign)
-        ->url(url('tasks', $insertedId))
-        ->expire(Carbon::now()->addDays(14))
-        ->send();
-
-        $activityinput = array_merge(
-             ['text' => 'Task ' . $task->title .
-             ' was created by '. $task->taskCreator->name .
-             ' and assigned to' . $task->assignee->name,
-             'user_id' => Auth()->id(),
-             'type' => 'task',
-             'type_id' =>  $insertedId]
-         );
-        
-        Activity::create($activityinput);
+        Session()->flash('flash_message', 'Task successfully added!');
+        event(new \App\Events\TaskAction($task, self::CREATED));
 
         return $insertedId;
     }
@@ -77,30 +67,18 @@ class TaskRepository implements TaskRepositoryContract
         $input = $requestData->get('status');
         $input = array_replace($requestData->all(), ['status' => 2]);
         $task->fill($input)->save();
-
-        $activityinput = array_merge(
-            ['text' => 'Task was completed by '. Auth()->user()->name,
-            'user_id' => Auth()->id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+        event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
+        
     }
 
     public function updateTime($id, $requestData)
     {
         $task = Tasks::findOrFail($id);
-
         $input = array_replace($requestData->all(), ['fk_task_id'=>"$task->id"]);
         
         TaskTime::create($input);
-        $activityinput = array_merge(
-            ['text' => Auth()->user()->name.' Inserted a new time for this task',
-            'user_id' => Auth()->id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+
+        event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
     }
 
     public function updateAssign($id, $requestData)
@@ -112,16 +90,8 @@ class TaskRepository implements TaskRepositoryContract
         $input = array_replace($requestData->all());
         $task->fill($input)->save();
         $task = $task->fresh();
-        $insertedName = $task->assignee->name;
-        
-
-        $activityinput = array_merge(
-            ['text' => auth()->user()->name.' assigned task to '. $insertedName,
-            'user_id' => auth()->id(),
-            'type' => 'task',
-            'type_id' =>  $id]
-        );
-        Activity::create($activityinput);
+      
+        event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
     }
 
     public function invoice($id, $requestData)

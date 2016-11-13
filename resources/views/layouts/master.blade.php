@@ -36,12 +36,11 @@
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>-->
  <script type="text/javascript" src="{{ URL::asset('js/jquery-2.2.3.min.js') }}"></script>
 
-
-
-
-
+<meta name="csrf-token" content="{{ csrf_token() }}" />
 </head>
 <body>
+
+
 <div id="wrapper">
 <div class="navbar navbar-default navbar-top">
 <!--NOTIFICATIONS START-->
@@ -52,7 +51,7 @@
   
   <ul class="dropdown-menu notify-drop  notifications" role="menu" aria-labelledby="dLabel">
     
-    <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4 class="menu-title pull-right"><a href="notifications/markall">Mark all as read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
+    <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4 class="menu-title pull-right"><a href="{{url('notifications/markall')}}">Mark all as read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
     </div>
     <li class="divider"></li>
    <div class="notifications-wrapper">
@@ -60,44 +59,51 @@
      <span id="notification-item"></span>
 
 <script>
+id = {};
 function postRead(id) {
-
    $.ajax({
         type: 'post',
-        url: 'notifications/markread',
-        data: {Id : id}
+        url: '{{url('/notifications/markread')}}',
+        data: {
+          id : id,
+        },
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
 
-
 }
+
 $(function(){
-
-
- $.get('{{url('/notifications/getall')}}', function(notifications){
-      var obj = $.parseJSON(notifications);
+ $.get("{{url('/notifications/getall')}}", function(notifications){
       var notifyItem = document.getElementById('notification-item');
       var bell = document.getElementById('notifycount');
       var msg = "";
       var count = 0;
-      $.each(obj, function(index, notification)
+      $.each(notifications, function(index, notification)
       {
         count++;
         var id = notification['id'];
-        var url = notification['url'];
+        var url = notification['data']['url'];
         
         msg += `<div> 
-        <a class="content" onclick="postRead(`+id+`)" href="`+url+`">
+        <a class="content"  id="notify" href="{{url('notification')}}/`+id+`">
         ` 
-        + notification['text'] + 
+        + notification['data']['message'] + 
         ` </a></div> 
         <hr class="notify-line"/>`;
          notifyItem.innerHTML = msg;
+
+/**         notifyItem.onclick = (function(id){
+             return function(){
+                 postRead(id);
+             }})(id); **/
+  
      });
         bell.innerHTML = count;
     })
 
 });
-    
 
 </script>
 

@@ -8,6 +8,8 @@ use App\Models\TaskTime;
 
 class ClientRepository implements ClientRepositoryContract
 {
+    CONST CREATED = 'created';
+    CONST UPDATED_ASSIGN = 'updated_assign';
 
     public function find($id)
     {
@@ -37,7 +39,9 @@ class ClientRepository implements ClientRepositoryContract
 
     public function create($requestData)
     {
-        Client::create($requestData);
+        $client = Client::create($requestData);
+        Session()->flash('flash_message', 'Client successfully added');
+        event(new \App\Events\ClientAction($client, self::CREATED));
     }
 
     public function update($id, $requestData)
