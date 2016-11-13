@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Auth;
+use Lang;
 
 class LeadActionNotification extends Notification
 {
@@ -61,18 +62,27 @@ class LeadActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = $this->lead->title .
-                ' was created by '. $this->lead->createdBy->name .
-                ' and assigned to you';
+            $text = Lang::get('misc.notifications.lead.created', [
+                'title' => $this->lead->title,
+                'creator' => $this->lead->createdBy->name
+                ]);
                 break;
             case 'updated_status':
-                $text = $this->lead->title . ' was completed by '. Auth()->user()->name;
+            $text = Lang::get('misc.notifications.lead.status', [
+                'title' => $this->lead->title,
+                'username' =>  Auth()->user()->name
+                ]);
                 break;
             case 'updated_deadline':
-                $text = Auth()->user()->name.' updated the deadline for ' . $this->lead->title;
+            $text = Lang::get('misc.notifications.lead.deadline', [
+                'title' => $this->lead->title,
+                'username' =>  Auth()->user()->name
+                ]);
                 break;
             case 'updated_assign':
-                $text = auth()->user()->name.' Assigned a lead to you';
+            $text = Lang::get('misc.notifications.lead.assign', [
+                'username' =>  Auth()->user()->name
+                ]);
                 break;
             default:
                 break;

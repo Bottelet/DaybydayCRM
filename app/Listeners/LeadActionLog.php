@@ -6,6 +6,7 @@ use App\Events\LeadAction;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
+use Lang;
 
 class LeadActionLog
 {
@@ -29,18 +30,27 @@ class LeadActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-                $text = $event->getLead()->title .
-                ' was created by '. $event->getLead()->createdBy->name .
-                ' and assigned to ' . $event->getLead()->assignee->name;
+            $text = Lang::get('misc.log.lead.created', [
+                    'title' => $event->getLead()->title,
+                    'creator' => $event->getLead()->createdBy->name,
+                    'assignee' => $event->getLead()->assignee->name
+                ]);
                 break;
             case 'updated_status':
-                $text = 'Lead was completed by '. Auth()->user()->name;
+            $text = Lang::get('misc.log.lead.status', [
+                    'username' => Auth()->user()->name,
+                ]);
                 break;
             case 'updated_deadline':
-                $text = Auth()->user()->name.' updated the deadline for this lead';
+            $text = Lang::get('misc.log.lead.deadline', [
+                    'username' => Auth()->user()->name,
+                ]);
                 break;
             case 'updated_assign':
-                $text = auth()->user()->name.' assigned lead to '. $event->getLead()->assignee->name;
+            $text = Lang::get('misc.log.lead.assign', [
+                    'username' => Auth()->user()->name,
+                    'assignee' => $event->getLead()->assignee->name
+                ]);
                 break;
             default:
                 break;
