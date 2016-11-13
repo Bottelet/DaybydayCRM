@@ -61,7 +61,6 @@
 <script>
 id = {};
 function postRead(id) {
-  console.log(id);
    $.ajax({
         type: 'post',
         url: '{{url('/notifications/markread')}}',
@@ -70,7 +69,7 @@ function postRead(id) {
         },
         headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
+        }
     });
 
 }
