@@ -47,10 +47,10 @@ class DocumentsController extends Controller
 
     public function import(Request $request)
     {
-        $rules = array(
+        $rules = [
         'file' => 'required',
         'num_records' => 'required',
-        );
+        ];
 
         $validator = Validator::make($request->all(), $rules);
         // process the form

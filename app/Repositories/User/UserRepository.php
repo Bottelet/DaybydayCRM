@@ -32,8 +32,8 @@ class UserRepository implements UserRepositoryContract
 
     public function getAllUsersWithDepartments()
     {
-        return  User::select(array('users.name', 'users.id',
-                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')))
+        return  User::select(['users.name', 'users.id',
+                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')])
         ->join('department_user', 'users.id', '=', 'department_user.user_id')
         ->join('departments', 'department_user.department_id', '=', 'departments.id')
         ->pluck('full_name', 'id');

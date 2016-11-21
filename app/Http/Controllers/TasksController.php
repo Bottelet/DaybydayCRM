@@ -124,7 +124,7 @@ class TasksController extends Controller
             $invoiceContacts = $api->getContacts();
         } else {
             $apiConnected = false;
-            $invoiceContacts = array();
+            $invoiceContacts = [];
         }
         
         return view('tasks.show')

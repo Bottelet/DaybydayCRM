@@ -103,13 +103,13 @@ class TaskRepository implements TaskRepositoryContract
         $productlines = [];
 
         foreach ($timemanger as $time) {
-            $productlines[] = array(
+            $productlines[] = [
               'Description' => $time->title,
               'Comments' => $time->comment,
               'BaseAmountValue' => $time->value,
               'Quantity' => $time->time,
               'AccountNumber' => 1000,
-              'Unit' => 'hours');
+              'Unit' => 'hours'];
         }
 
         $api = Integration::getApi('billing');
@@ -190,7 +190,7 @@ class TaskRepository implements TaskRepositoryContract
         return DB::table('tasks')
                  ->select(DB::raw('count(*) as total, updated_at'))
                  ->where('status', 2)
-                 ->whereBetween('updated_at', array(Carbon::now()->startOfMonth(), Carbon::now()))->get();
+                 ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
     public function totalTimeSpent()

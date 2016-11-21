@@ -112,7 +112,7 @@ class LeadRepository implements LeadRepositoryContract
         return DB::table('leads')
                  ->select(DB::raw('count(*) as total, updated_at'))
                  ->where('status', 2)
-                 ->whereBetween('updated_at', array(Carbon::now()->startOfMonth(), Carbon::now()))->get();
+                 ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
     public function createdLeadsMonthly()
