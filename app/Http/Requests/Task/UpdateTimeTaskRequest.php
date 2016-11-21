@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Task;
 
-use App\Http\Requests\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTimeTaskRequest extends Request
+class UpdateTimeTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

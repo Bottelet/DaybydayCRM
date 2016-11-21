@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Lead;
 
-use App\Http\Requests\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateLeadFollowUpRequest extends Request
+class UpdateLeadFollowUpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

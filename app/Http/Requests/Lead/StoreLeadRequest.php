@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Lead;
 
-use App\Http\Requests\Request;
+use Illuminate\Foundation\Http\FormRequest;
 
-class StoreLeadRequest extends Request
+class StoreLeadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
