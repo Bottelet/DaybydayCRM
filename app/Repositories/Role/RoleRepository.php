@@ -28,7 +28,7 @@ class RoleRepository implements RoleRepositoryContract
 
         if ($requestData->input('permissions') != null) {
             foreach ($requestData->input('permissions')
-            as $permissionId => $permission) {
+ as $permissionId => $permission) {
                 if ($permission === '1') {
                     $allowed_permissions[] = (int)$permissionId;
                 }

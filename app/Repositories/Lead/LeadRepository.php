@@ -10,10 +10,10 @@ use DB;
 class LeadRepository implements LeadRepositoryContract
 {
 
-    CONST CREATED = 'created';
-    CONST UPDATED_STATUS = 'updated_status';
-    CONST UPDATED_DEADLINE = 'updated_deadline';
-    CONST UPDATED_ASSIGN = 'updated_assign';
+    const CREATED = 'created';
+    const UPDATED_STATUS = 'updated_status';
+    const UPDATED_DEADLINE = 'updated_deadline';
+    const UPDATED_ASSIGN = 'updated_assign';
 
     public function find($id)
     {
@@ -31,7 +31,7 @@ class LeadRepository implements LeadRepositoryContract
 
         $lead = Leads::create($input);
         $insertedId = $lead->id;
-        Session()->flash('flash_message', 'Lead successfully added!'); 
+        Session()->flash('flash_message', 'Lead successfully added!');
 
         event(new \App\Events\LeadAction($lead, self::CREATED));
 

@@ -32,6 +32,7 @@ class ClientActionNotify
         
         $client->assignedUser->notify(new clientActionNotification(
             $client,
-            $action));
+            $action
+        ));
     }
 }

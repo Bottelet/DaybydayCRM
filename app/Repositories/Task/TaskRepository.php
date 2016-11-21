@@ -12,10 +12,10 @@ use App\Models\Integration;
 
 class TaskRepository implements TaskRepositoryContract
 {
-    CONST CREATED = 'created';
-    CONST UPDATED_STATUS = 'updated_status';
-    CONST UPDATED_TIME = 'updated_time';
-    CONST UPDATED_ASSIGN = 'updated_assign';
+    const CREATED = 'created';
+    const UPDATED_STATUS = 'updated_status';
+    const UPDATED_TIME = 'updated_time';
+    const UPDATED_ASSIGN = 'updated_assign';
 
     public function find($id)
     {
@@ -68,7 +68,6 @@ class TaskRepository implements TaskRepositoryContract
         $input = array_replace($requestData->all(), ['status' => 2]);
         $task->fill($input)->save();
         event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
-        
     }
 
     public function updateTime($id, $requestData)

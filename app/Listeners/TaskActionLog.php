@@ -18,7 +18,6 @@ class TaskActionLog
      */
     public function __construct()
     {
-
     }
 
     /**
@@ -31,24 +30,25 @@ class TaskActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-              $text = Lang::get('misc.log.task.created', [
+                $text = Lang::get('misc.log.task.created', [
                         'title' => $event->getTask()->title,
                         'creator' => $event->getTask()->taskCreator->name,
                         'assignee' => $event->getTask()->assignee->name
                     ]);
                 break;
             case 'updated_status':
-              $text = Lang::get('misc.log.task.status', [
+                $text = Lang::get('misc.log.task.status', [
                         'username' => Auth()->user()->name,
                     ]);
                 break;
             case 'updated_time':
                 $text = Lang::get('misc.log.task.time', [
                         'username' => Auth()->user()->name,
-                    ]);;
+                    ]);
+                ;
                 break;
             case 'updated_assign':
-               $text = Lang::get('misc.log.task.assign', [
+                $text = Lang::get('misc.log.task.assign', [
                         'username' => Auth()->user()->name,
                         'assignee' => $event->getTask()->assignee->name
                     ]);
@@ -64,7 +64,8 @@ class TaskActionLog
                 'type' =>  Tasks::class,
                 'type_id' =>  $event->getTask()->id,
                 'action' => $event->getAction()
-            ]);
+            ]
+        );
         
         Activity::create($activityinput);
     }

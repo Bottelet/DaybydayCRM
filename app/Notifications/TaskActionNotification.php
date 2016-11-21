@@ -72,7 +72,7 @@ class TaskActionNotification extends Notification
                 $text = lang::get('misc.notifications.task.status', [
                     'title' =>  $this->task->title,
                     'username' =>  Auth()->user()->name,
-                    ]); 
+                    ]);
                 break;
             case 'updated_time':
                 $text = lang::get('misc.notifications.task.time', [

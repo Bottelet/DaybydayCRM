@@ -44,8 +44,8 @@ $factory->define(App\Models\Client::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\Tasks::class, function (Faker\Generator $faker) {
     return [
-		'title' => $faker->sentence,
-		'description' => $faker->paragraph,
+        'title' => $faker->sentence,
+        'description' => $faker->paragraph,
         'fk_user_id_created' => $faker->numberBetween($min = 1, $max = 3),
         'fk_user_id_assign' => $faker->numberBetween($min = 1, $max = 3),
         'fk_client_id' => $faker->numberBetween($min = 1, $max = 50),
@@ -58,8 +58,8 @@ $factory->define(App\Models\Tasks::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Models\Leads::class, function (Faker\Generator $faker) {
     return [
-		'title' => $faker->sentence,
-		'note' => $faker->paragraph,
+        'title' => $faker->sentence,
+        'note' => $faker->paragraph,
         'fk_user_id_created' => $faker->numberBetween($min = 1, $max = 3),
         'fk_user_id_assign' => $faker->numberBetween($min = 1, $max = 3),
         'fk_client_id' => $faker->numberBetween($min = 1, $max = 50),
@@ -69,4 +69,3 @@ $factory->define(App\Models\Leads::class, function (Faker\Generator $faker) {
         'updated_at' => $faker->dateTimeThisYear($max = 'now'),
     ];
 });
-
