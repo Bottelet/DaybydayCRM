@@ -1,7 +1,13 @@
 {
     "name": "bottelet/flarepoint",
     "description": "Flarepoint is a free, open-source and self-hosted CRM platform based of Laravel 5",
-    "keywords": ["laravel", "CRM", "customer management", "Lead management", "customer relationship management"],
+    "keywords": [
+        "laravel",
+        "CRM",
+        "customer management",
+        "Lead management",
+        "customer relationship management"
+    ],
     "authors": [
         {
             "name": "Casper Bottelet",
@@ -18,7 +24,6 @@
         "guzzlehttp/guzzle": "^6.2",
         "pusher/pusher-php-server": "^2.3",
         "zizaco/entrust": "1.7.*"
-        
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
