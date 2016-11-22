@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Repositories\Invoice;
 
 use App\Models\Invoice;

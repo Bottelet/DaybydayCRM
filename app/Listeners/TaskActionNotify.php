@@ -32,6 +32,6 @@ class TaskActionNotify
         $task->assignedUser->notify(new TaskActionNotification(
             $task,
             $action
-            ));
+        ));
     }
 }

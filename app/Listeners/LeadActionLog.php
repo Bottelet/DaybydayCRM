@@ -31,24 +31,24 @@ class LeadActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-            $text = Lang::get('misc.log.lead.created', [
+                $text = Lang::get('misc.log.lead.created', [
                     'title' => $event->getLead()->title,
                     'creator' => $event->getLead()->createdBy->name,
                     'assignee' => $event->getLead()->assignee->name
                 ]);
                 break;
             case 'updated_status':
-            $text = Lang::get('misc.log.lead.status', [
+                $text = Lang::get('misc.log.lead.status', [
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_deadline':
-            $text = Lang::get('misc.log.lead.deadline', [
+                $text = Lang::get('misc.log.lead.deadline', [
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_assign':
-            $text = Lang::get('misc.log.lead.assign', [
+                $text = Lang::get('misc.log.lead.assign', [
                     'username' => Auth()->user()->name,
                     'assignee' => $event->getLead()->assignee->name
                 ]);
@@ -64,7 +64,8 @@ class LeadActionLog
                 'type' => Leads::class,
                 'type_id' =>  $event->getLead()->id,
                 'action' => $event->getAction()
-            ]);
+            ]
+        );
         
         Activity::create($activityinput);
     }

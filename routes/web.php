@@ -13,7 +13,7 @@
 Route::auth();
 Route::get('/logout', 'Auth\LoginController@logout');
 Route::group(['middleware' => ['auth']], function () {
- 	/**
+    /**
      * MAIN
      */
         Route::get('/', 'PagesController@dashboard');
@@ -93,5 +93,4 @@ Route::group(['middleware' => ['auth']], function () {
      * IMPORT AND EXPORT
      */
         Route::get('documents/import', 'DocumentsController@import');
-
-    });
+});

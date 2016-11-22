@@ -8,8 +8,8 @@ use App\Models\TaskTime;
 
 class ClientRepository implements ClientRepositoryContract
 {
-    CONST CREATED = 'created';
-    CONST UPDATED_ASSIGN = 'updated_assign';
+    const CREATED = 'created';
+    const UPDATED_ASSIGN = 'updated_assign';
 
     public function find($id)
     {

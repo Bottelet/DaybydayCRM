@@ -32,6 +32,6 @@ class LeadActionNotify
         $lead->assignee->notify(new LeadActionNotification(
             $lead,
             $action
-            ));
+        ));
     }
 }

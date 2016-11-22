@@ -59,5 +59,4 @@ class Client extends Model
     {
         return User::findOrFail($this->fk_user_id);
     }
-
 }

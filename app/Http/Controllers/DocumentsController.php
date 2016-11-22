@@ -38,19 +38,19 @@ class DocumentsController extends Controller
         }
             
         $input =  array_replace(
-                $request->all(),
-                ['path'=>"$filename", 'size'=>"$totaltsize", 'file_display'=>"$fileOrginal", 'fk_client_id'=>$id]
-            );
+            $request->all(),
+            ['path'=>"$filename", 'size'=>"$totaltsize", 'file_display'=>"$fileOrginal", 'fk_client_id'=>$id]
+        );
         $document = Document::create($input);
         Session::flash('flash_message', 'File successfully uploaded');
     }
 
     public function import(Request $request)
     {
-        $rules = array(
+        $rules = [
         'file' => 'required',
         'num_records' => 'required',
-        );
+        ];
 
         $validator = Validator::make($request->all(), $rules);
         // process the form

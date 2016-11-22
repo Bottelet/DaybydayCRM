@@ -33,7 +33,7 @@ class ClientActionLog
 
         switch ($event->getAction()) {
             case 'created':
-            $text = Lang::get('misc.log.client.created', [
+                $text = Lang::get('misc.log.client.created', [
                     'company' => $client->company_name,
                     'assignee' => $client->AssignedUser->name,
                 ]);
@@ -49,7 +49,8 @@ class ClientActionLog
                 'type' => Client::class,
                 'type_id' =>  $client->id,
                 'action' => $event->getAction()
-            ]);
+            ]
+        );
         
         Activity::create($activityinput);
     }

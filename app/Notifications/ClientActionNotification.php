@@ -63,7 +63,7 @@ class ClientActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-            $text = Lang::get('misc.notifications.client.created', [
+                $text = Lang::get('misc.notifications.client.created', [
                     'company' => $this->client->company_name,
                 ]);
                 break;

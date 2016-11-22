@@ -17,6 +17,6 @@ class Invoice extends Model
     public function tasktime()
     {
         return $this->belongsToMany(TaskTime::class)
-       ;
+        ;
     }
 }

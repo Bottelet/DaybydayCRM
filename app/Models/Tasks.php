@@ -74,5 +74,4 @@ class Tasks extends Model
     {
         return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'task');
     }
-
 }

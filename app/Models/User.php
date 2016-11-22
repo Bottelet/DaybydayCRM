@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-
 use Fenos\Notifynder\Notifable;
 use Illuminate\Notifications\Notifiable;
 use Cache;

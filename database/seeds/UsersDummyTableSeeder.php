@@ -14,9 +14,8 @@ class UsersDummyTableSeeder extends Seeder
      */
     public function run()
     {
-     factory(App\Models\User::class, 5)->create()->each(function($c){
-           
-          });
+        factory(App\Models\User::class, 5)->create()->each(function ($c) {
+        });
 
         $createDep = new Department;
         $createDep->id = '2';
