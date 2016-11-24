@@ -87,7 +87,7 @@ $(function(){
         var url = notification['data']['url'];
         
         msg += `<div> 
-        <a class="content"  id="notify" href="{{url('notification')}}/`+id+`">
+        <a class="content"  id="notify" href="{{url('notifications')}}/`+id+`">
         ` 
         + notification['data']['message'] + 
         ` </a></div> 
