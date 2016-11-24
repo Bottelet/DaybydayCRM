@@ -3,7 +3,7 @@
 use Illuminate\Database\Seeder;
 
 use App\Models\Department;
-use App\Models\roleUser;
+use App\Models\RoleUser;
 
 class UsersDummyTableSeeder extends Seeder
 {
