@@ -53,7 +53,6 @@ The packages used are the following...
 - [LaravelCollective](https://github.com/LaravelCollective/html)
 - [laravel-datatables](https://github.com/yajra/laravel-datatables)
 - [Entrust](https://github.com/Zizaco/entrust)
-- [Notifynder](https://github.com/fenos/Notifynder)
 
 
 ### License
