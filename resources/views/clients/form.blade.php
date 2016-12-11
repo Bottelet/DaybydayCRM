@@ -1,4 +1,3 @@
-
 <div class="form-group">
     {!! Form::label('name', 'Name:', ['class' => 'control-label']) !!}
     {!! 
@@ -16,7 +15,7 @@
             isset($data['vat']) ?$data['vat'] : null,
             ['class' => 'form-control']) 
         !!}
-    </div>  
+    </div>
 
     <div class="form-group col-sm-6 removeleft removeright">
         {!! Form::label('company_name', 'Company name:', ['class' => 'control-label']) !!}
@@ -25,7 +24,7 @@
             isset($data['name']) ? $data['name'] : null, 
             ['class' => 'form-control']) 
         !!}
-    </div>  
+    </div>
 </div>
 
 <div class="form-group">
@@ -83,34 +82,34 @@
             null, 
             ['class' => 'form-control']) 
         !!}
-    </div>  
+    </div>
 </div>
 <div class="form-group">
 
-{!! Form::label('company_type', 'Company type:', ['class' => 'control-label']) !!}
-{!! 
-    Form::text('company_type',
-    isset($data['companydesc']) ? $data['companydesc'] : null,
-    ['class' => 'form-control']) 
-!!}
-</div>  
+    {!! Form::label('company_type', 'Company type:', ['class' => 'control-label']) !!}
+    {!!
+        Form::text('company_type',
+        isset($data['companydesc']) ? $data['companydesc'] : null,
+        ['class' => 'form-control'])
+    !!}
+</div>
 <div class="form-group">
-    {!! Form::label('industry', 'Industry:', ['class' => 'control-label']) !!} 
-{!! 
-    Form::select('industry_id',
-    $industries,
-    null,
-    ['class' => 'form-control ui search selection top right pointing search-select',
-    'id' => 'search-select']) 
-!!} 
-</div>  
+    {!! Form::label('industry', 'Industry:', ['class' => 'control-label']) !!}
+    {!!
+        Form::select('industry_id',
+        $industries,
+        null,
+        ['class' => 'form-control ui search selection top right pointing search-select',
+        'id' => 'search-select'])
+    !!}
+</div>
 
 
 <div class="form-group">
-{!! Form::label('fk_user_id', 'Assign user:', ['class' => 'control-label']) !!} 
-{!! Form::select('fk_user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+    {!! Form::label('fk_user_id', 'Assign user:', ['class' => 'control-label']) !!}
+    {!! Form::select('fk_user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
 
-</div> 
+</div>
 
 
 {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary']) !!}
