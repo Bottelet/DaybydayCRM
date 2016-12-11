@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Models\Integration;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class IntegrationsController extends Controller
 {
@@ -12,6 +11,7 @@ class IntegrationsController extends Controller
     {
         $this->middleware('user.is.admin', ['only' => ['index']]);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +26,7 @@ class IntegrationsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -34,11 +34,11 @@ class IntegrationsController extends Controller
         $input = $request->all();
 
         $existing = Integration::where([
-           // 'user_id' => $request->post['user_id'] ? $userId : null,
-            'api_type'  => $request->api_type
+            // 'user_id' => $request->post['user_id'] ? $userId : null,
+            'api_type' => $request->api_type
         ])->get();
         $existing = isset($existing[0]) ? $existing[0] : null;
-        
+
         if ($existing) {
             $existing->fill($input)->save();
         } else {

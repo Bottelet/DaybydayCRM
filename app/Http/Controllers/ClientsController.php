@@ -6,9 +6,7 @@ use Dinero;
 use Datatables;
 use App\Models\Client;
 use App\Http\Requests;
-use App\Models\Settings;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Repositories\User\UserRepositoryContract;
@@ -26,40 +24,44 @@ class ClientsController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
-    ) {
+    )
+    {
         $this->users = $users;
         $this->clients = $clients;
         $this->settings = $settings;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
     }
+
     /**
      * Display a listing of the resource.
-     *
-     * @return Response
      */
     public function index()
     {
         return view('clients.index');
     }
 
+    /**
+     * Make json respnse for datatables
+     * @return mixed
+     */
     public function anyData()
     {
         $clients = Client::select(['id', 'name', 'company_name', 'email', 'primary_number']);
         return Datatables::of($clients)
-        ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
-        })
-        ->add_column('edit', '
+            ->addColumn('namelink', function ($clients) {
+                return '<a href="clients/' . $clients->id . '" ">' . $clients->name . '</a>';
+            })
+            ->add_column('edit', '
                 <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
-        ->add_column('delete', '
+            ->add_column('delete', '
                 <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
 
             {{csrf_field()}}
             </form>')
-        ->make(true);
+            ->make(true);
     }
 
     /**
@@ -70,8 +72,8 @@ class ClientsController extends Controller
     public function create()
     {
         return view('clients.create')
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withIndustries($this->clients->listAllIndustries());
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withIndustries($this->clients->listAllIndustries());
     }
 
     /**
@@ -88,40 +90,41 @@ class ClientsController extends Controller
     public function cvrapiStart(Request $vatRequest)
     {
         return redirect()->back()
-        ->with('data', $this->clients->vat($vatRequest));
+            ->with('data', $this->clients->vat($vatRequest));
     }
+
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function show($id)
     {
         return view('clients.show')
-          ->withClient($this->clients->find($id))
-          ->withCompanyname($this->settings->getCompanyName())
-          ->withInvoices($this->clients->getInvoices($id));
+            ->withClient($this->clients->find($id))
+            ->withCompanyname($this->settings->getCompanyName())
+            ->withInvoices($this->clients->getInvoices($id));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function edit($id)
     {
         return view('clients.edit')
-        ->withClient($this->clients->find($id))
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withIndustries($this->clients->listAllIndustries());
+            ->withClient($this->clients->find($id))
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withIndustries($this->clients->listAllIndustries());
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function update($id, UpdateClientRequest $request)
@@ -134,13 +137,13 @@ class ClientsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function destroy($id)
     {
         $this->clients->destroy($id);
-        
+
         return redirect()->route('clients.index');
     }
 }

@@ -16,7 +16,8 @@ class InvoicesController extends Controller
     public function __construct(
         InvoiceRepositoryContract $invoices,
         ClientRepositoryContract $clients
-    ) {
+    )
+    {
         $this->invoices = $invoices;
         $this->clients = $clients;
     }
@@ -44,7 +45,7 @@ class InvoicesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -55,19 +56,19 @@ class InvoicesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         return view('invoices.show')
-        ->withInvoice($this->invoices->find($id));
+            ->withInvoice($this->invoices->find($id));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -78,14 +79,15 @@ class InvoicesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
         //
     }
+
     public function updatePayment(Request $request, $id)
     {
         $this->invoices->updatePayment($id, $request);
@@ -119,7 +121,7 @@ class InvoicesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

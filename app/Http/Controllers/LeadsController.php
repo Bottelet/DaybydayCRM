@@ -6,14 +6,9 @@ use Auth;
 use Carbon;
 use Session;
 use Datatables;
-use App\Models\User;
 use App\Models\Leads;
-use App\Models\Client;
 use App\Http\Requests;
-use App\Models\Settings;
-use App\Models\Activity;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -33,7 +28,8 @@ class LeadsController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
-    ) {
+    )
+    {
         $this->users = $users;
         $this->settings = $settings;
         $this->clients = $clients;
@@ -42,6 +38,7 @@ class LeadsController extends Controller
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -51,26 +48,26 @@ class LeadsController extends Controller
     {
         return view('leads.index');
     }
-    
+
     public function anyData()
     {
         $leads = Leads::select(
             ['id', 'title', 'fk_user_id_created', 'fk_client_id', 'fk_user_id_assign', 'contact_date']
         )->where('status', 1)->get();
         return Datatables::of($leads)
-        ->addColumn('titlelink', function ($leads) {
-                return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
-        })
-        ->editColumn('fk_user_id_created', function ($leads) {
+            ->addColumn('titlelink', function ($leads) {
+                return '<a href="leads/' . $leads->id . '" ">' . $leads->title . '</a>';
+            })
+            ->editColumn('fk_user_id_created', function ($leads) {
                 return $leads->createdBy->name;
-        })
-        ->editColumn('contact_date', function ($leads) {
+            })
+            ->editColumn('contact_date', function ($leads) {
                 return $leads->contact_date ? with(new Carbon($leads->created_at))
-                ->format('d/m/Y') : '';
-        })
-        ->editColumn('fk_user_id_assign', function ($leads) {
+                    ->format('d/m/Y') : '';
+            })
+            ->editColumn('fk_user_id_assign', function ($leads) {
                 return $leads->assignee->name;
-        })->make(true);
+            })->make(true);
     }
 
     /**
@@ -81,14 +78,14 @@ class LeadsController extends Controller
     public function create()
     {
         return view('leads.create')
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withClients($this->clients->listAllClients());
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withClients($this->clients->listAllClients());
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreLeadRequest $request)
@@ -97,7 +94,7 @@ class LeadsController extends Controller
         Session()->flash('flash_message', 'Lead is created');
         return redirect()->route('leads.show', $getInsertedId);
     }
-   
+
     public function updateAssign($id, Request $request)
     {
         $this->leads->updateAssign($id, $request);
@@ -115,15 +112,15 @@ class LeadsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         return view('leads.show')
-        ->withLeads($this->leads->find($id))
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withCompanyname($this->settings->getCompanyName());
+            ->withLeads($this->leads->find($id))
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withCompanyname($this->settings->getCompanyName());
     }
 
     public function updateStatus($id, Request $request)

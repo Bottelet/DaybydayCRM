@@ -3,14 +3,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Carbon;
-use App\Models\User;
-use App\Models\Leads;
-use App\Models\Tasks;
-use App\Models\Client;
 use App\Http\Requests;
-use App\Models\Settings;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Repositories\Task\TaskRepositoryContract;
 use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -30,8 +23,8 @@ class PagesController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings,
-        taskRepositoryContract $tasks,
-        leadRepositoryContract $leads
+        TaskRepositoryContract $tasks,
+        LeadRepositoryContract $leads
     ) {
         $this->users = $users;
         $this->clients = $clients;
@@ -107,11 +100,7 @@ class PagesController extends Controller
       *
       */
         $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
-
         $createdLeadsMonthly = $this->leads->completedLeadsMonthly();
-        
-
-
        
         return view('pages.dashboard', compact(
             'completedTasksToday',

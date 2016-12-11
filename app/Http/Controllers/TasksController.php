@@ -3,19 +3,12 @@ namespace App\Http\Controllers;
 
 use Gate;
 use Carbon;
-use App\Billy;
 use Datatables;
-use App\Dinero;
-use App\Models\User;
 use App\Models\Tasks;
-use App\Models\Client;
 use App\Http\Requests;
-use App\Models\TaskTime;
 use App\Models\Integration;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\StoreTaskRequest;
-use App\Http\Requests\Task\UpdateTimeTaskRequest;
 use App\Repositories\Task\TaskRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Client\ClientRepositoryContract;
@@ -31,14 +24,15 @@ class TasksController extends Controller
     protected $settings;
     protected $users;
     protected $invoices;
-    
+
     public function __construct(
         TaskRepositoryContract $tasks,
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         InvoiceRepositoryContract $invoices,
         SettingRepositoryContract $settings
-    ) {
+    )
+    {
         $this->tasks = $tasks;
         $this->users = $users;
         $this->clients = $clients;
@@ -49,6 +43,7 @@ class TasksController extends Controller
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -64,22 +59,22 @@ class TasksController extends Controller
         $tasks = Tasks::select(
             ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
         )
-        ->where('status', 1)->get();
+            ->where('status', 1)->get();
         return Datatables::of($tasks)
-        ->addColumn('titlelink', function ($tasks) {
-                return '<a href="tasks/'.$tasks->id.'" ">'.$tasks->title.'</a>';
-        })
-        ->editColumn('created_at', function ($tasks) {
+            ->addColumn('titlelink', function ($tasks) {
+                return '<a href="tasks/' . $tasks->id . '" ">' . $tasks->title . '</a>';
+            })
+            ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                ->format('d/m/Y') : '';
-        })
-        ->editColumn('deadline', function ($tasks) {
+                    ->format('d/m/Y') : '';
+            })
+            ->editColumn('deadline', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                ->format('d/m/Y') : '';
-        })
-        ->editColumn('fk_user_id_assign', function ($tasks) {
+                    ->format('d/m/Y') : '';
+            })
+            ->editColumn('fk_user_id_assign', function ($tasks) {
                 return $tasks->assignee->name;
-        })->make(true);
+            })->make(true);
     }
 
 
@@ -91,8 +86,8 @@ class TasksController extends Controller
     public function create()
     {
         return view('tasks.create')
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withClients($this->clients->listAllClients());
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withClients($this->clients->listAllClients());
     }
 
     /**
@@ -106,18 +101,17 @@ class TasksController extends Controller
         return redirect()->route("tasks.show", $getInsertedId);
     }
 
-   
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function show(Request $request, $id)
     {
         $integrationCheck = Integration::first();
-        
+
         if ($integrationCheck) {
             $api = Integration::getApi('billing');
             $apiConnected = true;
@@ -126,23 +120,23 @@ class TasksController extends Controller
             $apiConnected = false;
             $invoiceContacts = [];
         }
-        
+
         return view('tasks.show')
-        ->withTasks($this->tasks->find($id))
-        ->withUsers($this->users->getAllUsersWithDepartments())
-        ->withContacts($invoiceContacts)
-        ->withTasktimes($this->tasks->getTaskTime($id))
-        ->withCompanyname($this->settings->getCompanyName())
-        ->withApiconnected($apiConnected);
+            ->withTasks($this->tasks->find($id))
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withContacts($invoiceContacts)
+            ->withTasktimes($this->tasks->getTaskTime($id))
+            ->withCompanyname($this->settings->getCompanyName())
+            ->withApiconnected($apiConnected);
     }
 
 
-/**
- * Sees if the Settings from backend allows all to complete taks
- * or only assigned user. if only assigned user:
- * @param  [Auth]  $id Checks Logged in users id
- * @param  [Model] $task->fk_user_id_assign Checks the id of the user assigned to the task
- * If Auth and fk_user_id allow complete else redirect back if all allowed excute
+    /**
+     * Sees if the Settings from backend allows all to complete taks
+     * or only assigned user. if only assigned user:
+     * @param  [Auth]  $id Checks Logged in users id
+     * @param  [Model] $task->fk_user_id_assign Checks the id of the user assigned to the task
+     * If Auth and fk_user_id allow complete else redirect back if all allowed excute
      * else stmt*/
     public function updateStatus($id, Request $request)
     {
@@ -156,7 +150,7 @@ class TasksController extends Controller
     {
         $clientId = $this->tasks->getAssignedClient($id)->id;
 
-        
+
         $this->tasks->updateAssign($id, $request);
         Session()->flash('flash_message', 'New user is assigned');
         return redirect()->back();
@@ -187,7 +181,7 @@ class TasksController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return Response
      */
     public function marked()
