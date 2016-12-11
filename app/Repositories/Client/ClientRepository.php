@@ -4,7 +4,6 @@ namespace App\Repositories\Client;
 use App\Models\Client;
 use App\Models\Industry;
 use App\Models\Invoices;
-use App\Models\TaskTime;
 
 class ClientRepository implements ClientRepositoryContract
 {
@@ -15,6 +14,7 @@ class ClientRepository implements ClientRepositoryContract
     {
         return Client::findOrFail($id);
     }
+
     public function listAllClients()
     {
         return Client::pluck('name', 'id');
@@ -60,6 +60,7 @@ class ClientRepository implements ClientRepositoryContract
             Session()->flash('flash_message_warning', 'Client can NOT have, leads, or tasks assigned when deleted');
         }
     }
+
     public function vat($requestData)
     {
         $vat = $requestData->input('vat');
@@ -69,12 +70,12 @@ class ClientRepository implements ClientRepositoryContract
 
         // Strip all other characters than numbers
         $vat = preg_replace('/[^0-9]/', '', $vat);
-        
+
         function cvrApi($vat)
         {
             if (empty($vat)) {
                 // Print error message
-                return('Please insert VAT');
+                return ('Please insert VAT');
             } else {
                 // Start cURL
                 $ch = curl_init();
@@ -94,6 +95,7 @@ class ClientRepository implements ClientRepositoryContract
                 return json_decode($result, 1);
             }
         }
+
         $result = cvrApi($vat, 'dk');
 
         return $result;

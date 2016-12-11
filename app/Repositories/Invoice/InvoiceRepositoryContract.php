@@ -3,7 +3,6 @@ namespace App\Repositories\Invoice;
 
 interface InvoiceRepositoryContract
 {
-
     public function getAllInvoices();
 
     public function getAllOpenInvoices();

@@ -5,7 +5,6 @@ use App\Models\Settings;
 
 class SettingRepository implements SettingRepositoryContract
 {
-
     public function getCompanyName()
     {
         return Settings::findOrFail(1)->company;

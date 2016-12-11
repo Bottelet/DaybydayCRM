@@ -3,7 +3,6 @@ namespace App\Repositories\Lead;
 
 interface LeadRepositoryContract
 {
-
     public function find($id);
     
     public function create($requestData);

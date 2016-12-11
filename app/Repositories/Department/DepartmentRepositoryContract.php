@@ -3,7 +3,6 @@ namespace App\Repositories\Department;
 
 interface DepartmentRepositoryContract
 {
-
     public function getAllDepartments();
     
     public function listAllDepartments();

@@ -2,10 +2,7 @@
 namespace App\Repositories\Task;
 
 use App\Models\Tasks;
-use Notifynder;
-
 use Carbon;
-use App\Models\Activity;
 use App\Models\TaskTime;
 use Illuminate\Support\Facades\DB;
 use App\Models\Integration;
@@ -44,11 +41,10 @@ class TaskRepository implements TaskRepositoryContract
 
     public function create($requestData)
     {
-
         $fk_client_id = $requestData->get('fk_client_id');
         $input = $requestData = array_merge(
             $requestData->all(),
-            ['fk_user_id_created' => auth()->id(), ]
+            ['fk_user_id_created' => auth()->id(),]
         );
 
         $task = Tasks::create($input);
@@ -73,8 +69,8 @@ class TaskRepository implements TaskRepositoryContract
     public function updateTime($id, $requestData)
     {
         $task = Tasks::findOrFail($id);
-        $input = array_replace($requestData->all(), ['fk_task_id'=>"$task->id"]);
-        
+        $input = array_replace($requestData->all(), ['fk_task_id' => "$task->id"]);
+
         TaskTime::create($input);
 
         event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
@@ -89,14 +85,14 @@ class TaskRepository implements TaskRepositoryContract
         $input = array_replace($requestData->all());
         $task->fill($input)->save();
         $task = $task->fresh();
-      
+
         event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
     }
 
     public function invoice($id, $requestData)
     {
         $contatGuid = $requestData->invoiceContact;
-        
+
         $taskname = Tasks::find($id);
         $timemanger = TaskTime::where('fk_task_id', $id)->get();
         $sendMail = $requestData->sendMail;
@@ -104,12 +100,12 @@ class TaskRepository implements TaskRepositoryContract
 
         foreach ($timemanger as $time) {
             $productlines[] = [
-              'Description' => $time->title,
-              'Comments' => $time->comment,
-              'BaseAmountValue' => $time->value,
-              'Quantity' => $time->time,
-              'AccountNumber' => 1000,
-              'Unit' => 'hours'];
+                'Description' => $time->title,
+                'Comments' => $time->comment,
+                'BaseAmountValue' => $time->value,
+                'Quantity' => $time->time,
+                'AccountNumber' => 1000,
+                'Unit' => 'hours'];
         }
 
         $api = Integration::getApi('billing');
@@ -130,7 +126,7 @@ class TaskRepository implements TaskRepositoryContract
     /**
      * Statistics for Dashboard
      */
-    
+
     public function allTasks()
     {
         return Tasks::all()->count();
@@ -146,7 +142,7 @@ class TaskRepository implements TaskRepositoryContract
         if (!$this->allTasks() || !$this->allCompletedTasks()) {
             $totalPercentageTasks = 0;
         } else {
-            $totalPercentageTasks =  $this->allCompletedTasks() / $this->allTasks() * 100;
+            $totalPercentageTasks = $this->allCompletedTasks() / $this->allTasks() * 100;
         }
 
         return $totalPercentageTasks;
@@ -155,18 +151,18 @@ class TaskRepository implements TaskRepositoryContract
     public function createdTasksMothly()
     {
         return DB::table('tasks')
-                 ->select(DB::raw('count(*) as month, created_at'))
-                 ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
-                 ->get();
+            ->select(DB::raw('count(*) as month, created_at'))
+            ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
+            ->get();
     }
 
     public function completedTasksMothly()
     {
         return DB::table('tasks')
-                 ->select(DB::raw('count(*) as month, updated_at'))
-                 ->where('status', 2)
-                 ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
-                 ->get();
+            ->select(DB::raw('count(*) as month, updated_at'))
+            ->where('status', 2)
+            ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
+            ->get();
     }
 
     public function createdTasksToday()
@@ -188,15 +184,15 @@ class TaskRepository implements TaskRepositoryContract
     public function completedTasksThisMonth()
     {
         return DB::table('tasks')
-                 ->select(DB::raw('count(*) as total, updated_at'))
-                 ->where('status', 2)
-                 ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
+            ->select(DB::raw('count(*) as total, updated_at'))
+            ->where('status', 2)
+            ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
     public function totalTimeSpent()
     {
         return DB::table('tasks_time')
-         ->select(DB::raw('SUM(time)'))
-         ->get();
+            ->select(DB::raw('SUM(time)'))
+            ->get();
     }
 }

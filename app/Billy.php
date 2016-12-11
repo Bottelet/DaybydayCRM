@@ -44,35 +44,35 @@ class Billy
 
     public static function createInvoice($params)
     {
-        $realParams =  [
-        'invoice' => [
-        'organizationId' =>'ACx42GkURdCdQFFweX7VDQ',
-        'contactId' => $params['contactId'],
-        'paymentTermsDays' => 8,
-        'currencyId' => $params['Currency'],
-        'entryDate' => Carbon::now()->format('Y-m-d'),
-        'lines' => [
-                      
-          ]
+        $realParams = [
+            'invoice' => [
+                'organizationId' => 'ACx42GkURdCdQFFweX7VDQ',
+                'contactId' => $params['contactId'],
+                'paymentTermsDays' => 8,
+                'currencyId' => $params['Currency'],
+                'entryDate' => Carbon::now()->format('Y-m-d'),
+                'lines' => [
+
+                ]
             ]
         ];
         foreach ($params['ProductLines'] as $productLine) {
             $realParams['invoice']['lines'][] = [
-            'unitPrice' => $productLine['BaseAmountValue'],
-            'productId' => 'Ccx9WbbORtGTQtRX48Sdtg',
-            'description' => $productLine['Description']
-              ];
+                'unitPrice' => $productLine['BaseAmountValue'],
+                'productId' => 'Ccx9WbbORtGTQtRX48Sdtg',
+                'description' => $productLine['Description']
+            ];
         }
 
         $res = self::request("POST", "/invoices", $realParams);
-   
+
         return $res;
     }
 
     public function getContacts()
     {
         $res = self::request("GET", "/contacts");
-    
+
         $results = [];
         $i = 0;
         foreach ($res->body->contacts as $contact) {

@@ -5,7 +5,6 @@ use App\Models\Department;
 
 class DepartmentRepository implements DepartmentRepositoryContract
 {
-
     public function getAllDepartments()
     {
         return Department::all();

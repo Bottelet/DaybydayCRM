@@ -6,7 +6,6 @@ use App\Models\Permissions;
 
 class RoleRepository implements RoleRepositoryContract
 {
-
     public function listAllRoles()
     {
         return Role::pluck('name', 'id');
@@ -28,7 +27,7 @@ class RoleRepository implements RoleRepositoryContract
 
         if ($requestData->input('permissions') != null) {
             foreach ($requestData->input('permissions')
-            as $permissionId => $permission) {
+                     as $permissionId => $permission) {
                 if ($permission === '1') {
                     $allowed_permissions[] = (int)$permissionId;
                 }
@@ -36,7 +35,7 @@ class RoleRepository implements RoleRepositoryContract
         } else {
             $allowed_permissions = [];
         }
-       
+
         $role = Role::find($requestData->input('role_id'));
 
         $role->permissions()->sync($allowed_permissions);
@@ -50,8 +49,8 @@ class RoleRepository implements RoleRepositoryContract
         Role::create([
             'name' => strtolower($roleName),
             'display_name' => ucfirst($roleName),
-             'description' => $roleDescription
-             ]);
+            'description' => $roleDescription
+        ]);
     }
 
     public function destroy($id)

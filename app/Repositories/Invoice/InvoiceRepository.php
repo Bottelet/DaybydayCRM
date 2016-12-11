@@ -7,26 +7,25 @@ use App\Models\TaskTime;
 
 class InvoiceRepository implements InvoiceRepositoryContract
 {
-    
     public function getAllInvoices()
     {
         return Invoice::all();
     }
-    
+
     public function find($id)
     {
         return Invoice::findOrFail($id);
     }
-    
+
     public function create($clientid, $timetaskid, $requestData)
     {
         $invoice = Invoice::create();
         $invoice->clients()->attach($clientid);
-       
+
         foreach ($timetaskid as $tk) {
             $testid[] = $tk->id;
         }
-           
+
         $invoice->tasktime()->attach($testid);
         $invoice->save();
     }
@@ -65,21 +64,21 @@ class InvoiceRepository implements InvoiceRepositoryContract
         $invoice = invoice::findOrFail($id);
 
         $tasktimeId = $invoice->tasktime()->first()->fk_task_id;
-        
+
         $clientid = $invoice->clients()->first()->id;
 
-        $input = array_replace($requestData->all(), ['fk_task_id'=>"$tasktimeId"]);
+        $input = array_replace($requestData->all(), ['fk_task_id' => "$tasktimeId"]);
 
         $tasktime = TaskTime::create($input);
         $insertedId = $tasktime->id;
-        
+
         $invoice->tasktime()->attach($insertedId);
         $invoice->clients()->attach($clientid);
     }
-    
+
     public function destroy($id)
     {
-        return  Invoice::destroy($id);
+        return Invoice::destroy($id);
     }
 
     public function getAllOpenInvoices()
@@ -97,7 +96,7 @@ class InvoiceRepository implements InvoiceRepositoryContract
     public function GetAllNotSentInvoices()
     {
     }
-     
+
     public function GetAllInvoicesPaymentNotReceived()
     {
     }

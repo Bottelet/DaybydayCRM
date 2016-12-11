@@ -4,12 +4,10 @@ namespace App\Repositories\Lead;
 use App\Models\Leads;
 use Notifynder;
 use Carbon;
-use App\Models\Activity;
 use DB;
 
 class LeadRepository implements LeadRepositoryContract
 {
-
     const CREATED = 'created';
     const UPDATED_STATUS = 'updated_status';
     const UPDATED_DEADLINE = 'updated_deadline';
@@ -26,7 +24,7 @@ class LeadRepository implements LeadRepositoryContract
         $input = $requestData = array_merge(
             $requestData->all(),
             ['fk_user_id_created' => \Auth::id(),
-             'contact_date' => $requestData->contact_date ." " . $requestData->contact_time . ":00"]
+                'contact_date' => $requestData->contact_date . " " . $requestData->contact_time . ":00"]
         );
 
         $lead = Leads::create($input);
@@ -53,7 +51,7 @@ class LeadRepository implements LeadRepositoryContract
         $lead = Leads::findOrFail($id);
         $input = $requestData->all();
         $input = $requestData =
-         [ 'contact_date' => $requestData->contact_date ." " . $requestData->contact_time . ":00"];
+            ['contact_date' => $requestData->contact_date . " " . $requestData->contact_time . ":00"];
         $lead->fill($input)->save();
         event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
     }
@@ -85,7 +83,7 @@ class LeadRepository implements LeadRepositoryContract
         if (!$this->allLeads() || !$this->allCompletedLeads()) {
             $totalPercentageLeads = 0;
         } else {
-            $totalPercentageLeads =  $this->allCompletedLeads() / $this->allLeads() * 100;
+            $totalPercentageLeads = $this->allCompletedLeads() / $this->allLeads() * 100;
         }
 
         return $totalPercentageLeads;
@@ -110,25 +108,25 @@ class LeadRepository implements LeadRepositoryContract
     public function completedLeadsThisMonth()
     {
         return DB::table('leads')
-                 ->select(DB::raw('count(*) as total, updated_at'))
-                 ->where('status', 2)
-                 ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
+            ->select(DB::raw('count(*) as total, updated_at'))
+            ->where('status', 2)
+            ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
     public function createdLeadsMonthly()
     {
         return DB::table('leads')
-             ->select(DB::raw('count(*) as month, updated_at'))
-             ->where('status', 2)
-             ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
-             ->get();
+            ->select(DB::raw('count(*) as month, updated_at'))
+            ->where('status', 2)
+            ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
+            ->get();
     }
 
     public function completedLeadsMonthly()
     {
         return DB::table('leads')
-         ->select(DB::raw('count(*) as month, created_at'))
-         ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
-         ->get();
+            ->select(DB::raw('count(*) as month, created_at'))
+            ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
+            ->get();
     }
 }
