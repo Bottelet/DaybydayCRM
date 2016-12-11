@@ -7,11 +7,11 @@ use Zizaco\Entrust\EntrustRole;
 class Role extends EntrustRole
 {
     protected $fillable = [
-    'name',
-    'display_name',
-    'description'
-      ];
-      
+        'name',
+        'display_name',
+        'description'
+    ];
+
     public function userRole()
     {
         return $this->hasMany(Role::class, 'user_id', 'id');

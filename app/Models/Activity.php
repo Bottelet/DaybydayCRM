@@ -18,7 +18,7 @@ class Activity extends model
         'type',
         'type_id',
         'action',
-        ];
+    ];
     protected $guarded = ['id'];
 
     /**
@@ -30,6 +30,7 @@ class Activity extends model
     {
         return $this->belongsTo(Tasks::class, 'task_id', 'id');
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');

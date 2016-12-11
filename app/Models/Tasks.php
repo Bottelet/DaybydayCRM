@@ -29,7 +29,7 @@ class Tasks extends Model
     {
         return $this->belongsTo(Client::class, 'fk_client_id');
     }
-    
+
     public function taskCreator()
     {
         return $this->belongsTo(User::class, 'fk_user_id_created');
@@ -44,8 +44,8 @@ class Tasks extends Model
     public function getDaysUntilDeadlineAttribute()
     {
         return Carbon\Carbon::now()
-        ->startOfDay()
-        ->diffInDays($this->deadline, false); // if you are past your deadline, the value returned will be negative.
+            ->startOfDay()
+            ->diffInDays($this->deadline, false); // if you are past your deadline, the value returned will be negative.
     }
 
     public function getAssignedUserAttribute()
@@ -62,14 +62,17 @@ class Tasks extends Model
     {
         return $this->hasMany(Settings::class);
     }
+
     public function time()
     {
         return $this->hasOne(TaskTime::class, 'fk_task_id', 'id');
     }
+
     public function allTime()
     {
         return $this->hasMany(TaskTime::class, 'fk_task_id', 'id');
     }
+
     public function activity()
     {
         return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'task');

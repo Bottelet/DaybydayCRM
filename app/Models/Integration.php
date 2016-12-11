@@ -8,7 +8,7 @@ class Integration extends Model
 {
     protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type'];
 
-   /**
+    /**
      * Get the api class name
      *
      * @param  [string] $type [description]
@@ -20,14 +20,14 @@ class Integration extends Model
             //'user_id' => $userId,
             'api_type' => $type
         ])->get();
-      
+
         if ($integration) {
             $apiConfig = $integration[0];
-            
+
             $className = $apiConfig->name;
-            
-            call_user_func_array(['App\\'.$className, 'initialize'], [$apiConfig]);
-            $apiInstance = call_user_func_array(['App\\'.$className, 'getInstance'], []);
+
+            call_user_func_array(['App\\' . $className, 'initialize'], [$apiConfig]);
+            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
 
             return $apiInstance;
         }

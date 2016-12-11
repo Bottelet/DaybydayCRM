@@ -17,10 +17,12 @@ class TaskTime extends Model
     protected $hidden = ['remember_token'];
 
     protected $table = 'tasks_time';
+
     public function tasks()
     {
         return $this->belongsTo(Tasks::class);
     }
+
     public function invoices()
     {
         return $this->belongsToMany(Invoice::class);

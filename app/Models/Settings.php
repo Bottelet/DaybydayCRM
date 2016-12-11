@@ -10,12 +10,13 @@ class Settings extends Model
         'task_assign_allowed',
         'lead_complete_allowed',
         'lead_assign_allowed'
-        ];
+    ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
+
     public function tasks()
     {
         return $this->belongsTo(Tasks::class);

@@ -10,13 +10,14 @@ class Invoice extends Model
         'sent',
         'payment_date'
     ];
+
     public function clients()
     {
         return $this->belongsToMany(Client::class);
     }
+
     public function tasktime()
     {
-        return $this->belongsToMany(TaskTime::class)
-        ;
+        return $this->belongsToMany(TaskTime::class);
     }
 }
