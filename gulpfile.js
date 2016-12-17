@@ -1,4 +1,6 @@
-var elixir = require('laravel-elixir');
+const elixir = require('laravel-elixir');
+
+require('laravel-elixir-vue-2');
 
 /*
  |--------------------------------------------------------------------------
@@ -14,5 +16,8 @@ var elixir = require('laravel-elixir');
 elixir(function(mix) {
     mix.sass('app.scss')
     .version('public/css/app.css')
-    .browserSync({proxy : 'localhost:1337/rockcrm_final/public/tasks'});
+    .webpack('app.js')
+    .version('public/js/app.js')
+    .copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/bootstrap')
+    //.browserSync({proxy : 'localhost:1337/Flarepoint-crm/public/tasks'});
 });
