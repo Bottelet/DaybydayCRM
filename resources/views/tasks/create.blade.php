@@ -44,11 +44,6 @@
         @endif
     </div>
 
-
-
-
-    </div>
-
     {!! Form::submit(Lang::Get('task.titles.create'), ['class' => 'btn btn-primary']) !!}
 
     {!! Form::close() !!}

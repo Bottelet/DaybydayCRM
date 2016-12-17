@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('content')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
@@ -17,7 +18,7 @@
             });
         });
     </script>
-
+@endpush
     <div class="div">
 
         <!-- Small boxes (Stat box) -->

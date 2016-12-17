@@ -1,15 +1,10 @@
 @extends('layouts.master')
-@section('heading')
-    <script>$('#pagination a').on('click', function (e) {
-            e.preventDefault();
-            var url = $('#search').attr('action') + '?page=' + page;
-            $.post(url, $('#search').serialize(), function (data) {
-                $('#posts').html(data);
-            });
-        });</script>
-    @stop
 
     @section('content')
+    <script>
+
+        </script>
+
     @include('partials.userheader')
             <!-- *********************************************************************
      *                 Header end and top task start                   
@@ -113,6 +108,14 @@
         @stop
         @push('scripts')
         <script>
+        $('#pagination a').on('click', function (e) {
+            e.preventDefault();
+            var url = $('#search').attr('action') + '?page=' + page;
+            $.post(url, $('#search').serialize(), function (data) {
+                $('#posts').html(data);
+            });
+        });
+            
             $(function () {
                 $('#opentask-table').DataTable({
                     processing: true,
