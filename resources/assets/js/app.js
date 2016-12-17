@@ -6,8 +6,7 @@
 
 require('./bootstrap');
 import ElementUI from 'element-ui';
-import Example from './components/Example.vue';
-import 'element-ui/lib/theme-default/index.css';
+import graphline from './components/Graphline.vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -17,7 +16,7 @@ import 'element-ui/lib/theme-default/index.css';
 
 Vue.use(ElementUI);
 
-//Vue.component('graphline', require('./components/Example.vue'));
+//Vue.component('graphline', require('./components/Graphline.vue'));
 
 
 $("#menu-toggle").click(function(e) {
@@ -90,6 +89,6 @@ $('.search-select')
 var app = new Vue({
     el: '#wrapper',
     components: {
-      Example
+      graphline
     }
 });
