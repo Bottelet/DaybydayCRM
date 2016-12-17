@@ -5,6 +5,9 @@
  */
 
 require('./bootstrap');
+import ElementUI from 'element-ui';
+import Example from './components/Example.vue';
+import 'element-ui/lib/theme-default/index.css';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -12,7 +15,9 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('graphline', require('./components/Example.vue'));
+Vue.use(ElementUI);
+
+//Vue.component('graphline', require('./components/Example.vue'));
 
 
 $("#menu-toggle").click(function(e) {
@@ -21,8 +26,8 @@ $("#menu-toggle").click(function(e) {
         $(".sidebar-brand").toggleClass("shownone");
     });
         
-        $(document).ready( function() {
-$('.dropdown-toggle').dropdown();
+$(document).ready( function() {
+  $('.dropdown-toggle').dropdown();
 });
         
 $('.dropdown.keep-open').on({
@@ -84,5 +89,7 @@ $('.search-select')
 ;
 var app = new Vue({
     el: '#wrapper',
-    components: ['graphbar', 'graphline']
+    components: {
+      Example
+    }
 });
