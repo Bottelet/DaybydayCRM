@@ -5,12 +5,13 @@
 @stop
 
 @section('content')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
-
+@endpush
     <div class="row">
         @include('partials.clientheader')
         @include('partials.userheader')

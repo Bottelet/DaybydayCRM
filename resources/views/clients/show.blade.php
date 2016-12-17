@@ -2,6 +2,7 @@
 @section('heading')
 @stop
 @section('content')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
@@ -17,6 +18,7 @@
             });
         });
     </script>
+@endpush
     <div class="row">
         @include('partials.clientheader')
         @include('partials.userheader')

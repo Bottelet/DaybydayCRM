@@ -4,27 +4,11 @@
     <meta charset="UTF-8">
     <title>Flarepoint CRM</title>
     <link href="{{ URL::asset('css/jasny-bootstrap.css') }}" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Lato:400,700, 300' rel='stylesheet' type='text/css'>
-
-
-
-
-    
-    <link rel="stylesheet" type="text/css" href="{{ URL::asset('css/semantic.css') }}">
-
     <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-    <!---    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> -->
-
-    
-
     <link href="{{ URL::asset('css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
-    <!---   <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css"> -->
     <link href="{{ URL::asset('css/dropzone.css') }}" rel="stylesheet" type="text/css">
 
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
-    <!-- <script type="text/javascript" src="https://js.stripe.com/v2/"></script>-->
-    <!---  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js"> -->
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 
 
@@ -231,14 +215,7 @@
     <!-- /#page-content-wrapper -->
 </div>
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/bootstrap-paginator.js') }}"></script>
-    <script src="//js.pusher.com/3.0/pusher.min.js"></script>
-
     <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
-    <script src="{{ URL::asset('js/semantic.min.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/custom.js') }}"></script>
-    <script type="text/javascript" src="{{ URL::asset('js/sorttable.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
 
