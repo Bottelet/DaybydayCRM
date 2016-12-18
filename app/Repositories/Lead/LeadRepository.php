@@ -129,4 +129,16 @@ class LeadRepository implements LeadRepositoryContract
             ->groupBy(DB::raw('YEAR(created_at), MONTH(created_at)'))
             ->get();
     }
+
+    public function totalOpenAndClosedLeads($id)
+    {
+        $open_leads = leads::where('status', 1)
+        ->where('fk_user_id_assign', $id)
+        ->count();
+
+        $closed_leads = leads::where('status', 2)
+        ->where('fk_user_id_assign', $id)->count();
+
+        return collect([$open_leads, $closed_leads]);
+    }
 }

@@ -195,4 +195,16 @@ class TaskRepository implements TaskRepositoryContract
             ->select(DB::raw('SUM(time)'))
             ->get();
     }
+    
+    public function totalOpenAndClosedTasks($id)
+    {
+        $open_tasks = Tasks::where('status', 1)
+        ->where('fk_user_id_assign', $id)
+        ->count();
+
+        $closed_tasks = Tasks::where('status', 2)
+        ->where('fk_user_id_assign', $id)->count();
+
+        return collect([$open_tasks, $closed_tasks]);
+    }
 }

@@ -32,8 +32,6 @@ class UserRepository implements UserRepositoryContract
         ->pluck('full_name', 'id');
     }
 
-
-
     public function create($requestData)
     {
         $settings = Settings::first();

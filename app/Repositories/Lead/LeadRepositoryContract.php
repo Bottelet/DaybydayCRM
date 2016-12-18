@@ -28,4 +28,6 @@ interface LeadRepositoryContract
     public function createdLeadsMonthly();
 
     public function completedLeadsMonthly();
+
+    public function totalOpenAndClosedLeads($id);
 }

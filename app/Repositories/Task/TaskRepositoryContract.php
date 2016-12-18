@@ -35,4 +35,6 @@ interface TaskRepositoryContract
     public function completedTasksThisMonth();
 
     public function totalTimeSpent();
+
+    public function totalOpenAndClosedTasks($id);
 }
