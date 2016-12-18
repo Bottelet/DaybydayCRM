@@ -1,112 +1,69 @@
 @extends('layouts.master')
 
     @section('content')
-    <script>
-
-        </script>
-
     @include('partials.userheader')
-            <!-- *********************************************************************
-     *                 Header end and top task start                   
-     *********************************************************************-->
-    <div class="row">
-        <div class="col-lg-6 currenttask">
-
-
-            <table class="table table-hover" id="opentask-table">
-                <h3>@lang('task.status.open')</h3>
-                <thead>
-                <tr>
-
+<div class="row">
+<div class="col-sm-8">
+  <el-tabs active-name="tasks" style="width:100%">
+    <el-tab-pane label="Tasks" name="tasks">
+        <table class="table table-hover" id="opentask-table">
+        <h3>@lang('task.headers.tasks_assigned')</h3>
+            <thead>
                     <th>@lang('task.headers.title')</th>
+                    <th>@lang('task.headers.client')</th>
                     <th>@lang('task.headers.created_at')</th>
                     <th>@lang('task.headers.deadline')</th>
-
+                    <th>
+                        <select name="status" id="status-task">
+                        <option value="" disabled selected>@lang('Status')</option>
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                            <option value="all">All</option>
+                        </select>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </el-tab-pane>
+    <el-tab-pane label="Leads" name="leads">
+      <table class="table table-hover">
+        <table class="table table-hover" id="leads-table">
+                <h3>@lang('lead.headers.leads_assigned')</h3>
+                <thead>
+                <tr>
+                    <th>@lang('lead.headers.title')</th>
+                    <th>@lang('lead.headers.client')</th>
+                    <th>@lang('lead.headers.created_at')</th>
+                    <th>@lang('lead.headers.deadline')</th>
+                    <th>
+                        <select name="status" id="status-lead">
+                        <option value="" disabled selected>@lang('Status')</option>
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                            <option value="all">All</option>
+                        </select>
+                    </th>
                 </tr>
                 </thead>
             </table>
-
-
-        </div>
-        <!-- *********************************************************************
-           *                     Open task end, Closed task start
-           *********************************************************************-->
-        <div class="col-lg-6 currenttask">
-
-
-            <table class="table table-hover" id="closedtask-table">
-                <h3>@lang('task.status.closed')</h3>
-                <thead>
-                <tr>
-
-                    <th>@lang('task.headers.title')</th>
-                    <th>@lang('task.headers.created_at')</th>
-                    <th>@lang('task.headers.deadline')</th>
-
-                </tr>
-                </thead>
-            </table>
-
-        </div>
-        <!-- *********************************************************************
-           *               Closed task end assigned clients start
-           *********************************************************************-->
-
-
-        <div class="col-lg-8 currenttask">
-
-
-            <table class="table table-hover" id="clients-table">
+    </el-tab-pane>
+    <el-tab-pane label="Clients" name="clients">
+         <table class="table table-hover" id="clients-table">
                 <h3>@lang('client.status.assigned')</h3>
                 <thead>
                 <tr>
-
                     <th>@lang('client.headers.name')</th>
                     <th>@lang('client.headers.company')</th>
                     <th>@lang('client.headers.primary_number')</th>
-
-
                 </tr>
                 </thead>
             </table>
-        </div>
-        <!-- *********************************************************************
-      *               assigned clients end, Last 10 created task start
-      *********************************************************************-->
-
-        <div class="col-lg-4 currenttask">
-
-            <table class="table table-hover">
-                <h3>@lang('task.status.created')</h3>
-                <thead>
-                <thead>
-                <tr>
-                    <th>@lang('task.headers.title')</th>
-                    <th>@lang('task.headers.created_at')</th>
-                    <th>@lang('task.headers.deadline')</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                @foreach($user->tasksCreated as $task)
-
-                    <tr>
-                        <td>
-                            <a href="{{ route('tasks.show', $task->id)}}">
-                                {{ $task->title }}
-                            </a></td>
-                        <td>{{date('d, M Y', strTotime($task->created_at))}} </td>
-                        <td>{{date('d, M Y', strTotime($task->deadline))}}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-
-        </div>
-
-
-        @stop
-        @push('scripts')
+    </el-tab-pane>
+  </el-tabs>
+  </div>
+</div>
+   @stop 
+@push('scripts')
         <script>
         $('#pagination a').on('click', function (e) {
             e.preventDefault();
@@ -115,23 +72,34 @@
                 $('#posts').html(data);
             });
         });
-            
+
             $(function () {
-                $('#opentask-table').DataTable({
+              var table = $('#opentask-table').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: '{!! route('users.taskdata', ['id' => $user->id]) !!}',
                     columns: [
 
                         {data: 'titlelink', name: 'title'},
+                        {data: 'fk_client_id', name: 'Client', orderable: false, searchable: false},
                         {data: 'created_at', name: 'created_at'},
                         {data: 'deadline', name: 'deadline'},
+                        {data: 'status', name: 'status', orderable: false},
                     ]
                 });
-            });
-        </script>
 
-        <script>
+                $('#status-task').change(function() {
+                selected = $("#status-task option:selected").val();
+                    if(selected == 'open') {
+                        table.columns(4).search(1).draw();
+                    } else if(selected == 'closed') {
+                        table.columns(4).search(2).draw();
+                    } else {
+                         table.columns(4).search( '' ).draw();
+                    }
+              });  
+
+          });
             $(function () {
                 $('#clients-table').DataTable({
                     processing: true,
@@ -146,20 +114,34 @@
                     ]
                 });
             });
-        </script>
-        <script>
+
             $(function () {
-                $('#closedtask-table').DataTable({
+              var table = $('#leads-table').DataTable({
                     processing: true,
                     serverSide: true,
-                    ajax: '{!! route('users.closedtaskdata', ['id' => $user->id]) !!}',
+                    ajax: '{!! route('users.leaddata', ['id' => $user->id]) !!}',
                     columns: [
 
                         {data: 'titlelink', name: 'title'},
+                        {data: 'fk_client_id', name: 'Client', orderable: false, searchable: false},
                         {data: 'created_at', name: 'created_at'},
-                        {data: 'deadline', name: 'deadline'},
+                        {data: 'contact_date', name: 'contact_date'},
+                        {data: 'status', name: 'status', orderable: false},
                     ]
                 });
-            });
+
+              $('#status-lead').change(function() {
+                selected = $("#status-lead option:selected").val();
+                    if(selected == 'open') {
+                        table.columns(4).search(1).draw();
+                    } else if(selected == 'closed') {
+                        table.columns(4).search(2).draw();
+                    } else {
+                         table.columns(4).search( '' ).draw();
+                    }
+              });  
+          });
         </script>
-    @endpush
+@endpush
+
+

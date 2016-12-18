@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Tasks;
 use App\Http\Requests;
 use App\Models\Client;
+use App\Models\Leads;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Repositories\User\UserRepositoryContract;
@@ -74,7 +75,7 @@ class UsersController extends Controller
     public function taskData($id)
     {
         $tasks = Tasks::select(
-            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign', 'status']
+            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign', 'fk_client_id', 'status']
         )
             ->where('fk_user_id_assign', $id);
         return Datatables::of($tasks)
@@ -91,6 +92,41 @@ class UsersController extends Controller
             })
             ->editColumn('status', function ($tasks) {
                 return $tasks->status == 1 ? '<span class="label label-success">Open</span>' : '<span class="label label-danger">Closed</span>';
+            })
+            ->editColumn('fk_client_id', function ($tasks) {
+                return $tasks->clientAssignee->name;
+            })
+            ->make(true);
+    }
+
+        /**
+     * Json for Data tables
+     * @param $id
+     * @return mixed
+     */
+    public function leadData($id)
+    {
+        $leads = Leads::select(
+            ['id', 'title', 'created_at', 'contact_date', 'fk_user_id_assign', 'fk_client_id', 'status']
+        )
+            ->where('fk_user_id_assign', $id);
+        return Datatables::of($leads)
+            ->addColumn('titlelink', function ($leads) {
+                return '<a href="' . route('leads.show', $leads->id) . '">' . $leads->title . '</a>';
+            })
+            ->editColumn('created_at', function ($leads) {
+                return $leads->created_at ? with(new Carbon($leads->created_at))
+                    ->format('d/m/Y') : '';
+            })
+            ->editColumn('contact_date', function ($leads) {
+                return $leads->created_at ? with(new Carbon($leads->created_at))
+                    ->format('d/m/Y') : '';
+            })
+            ->editColumn('status', function ($leads) {
+                return $leads->status == 1 ? '<span class="label label-success">Open</span>' : '<span class="label label-danger">Closed</span>';
+            })
+            ->editColumn('fk_client_id', function ($tasks) {
+                return $tasks->clientAssignee->name;
             })
             ->make(true);
     }

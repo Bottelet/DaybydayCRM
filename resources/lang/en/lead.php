@@ -34,6 +34,8 @@ return [
         'assign_client' => 'Assign Client',
         'created_by' => 'Created by',
         'time' => 'Time',
+        'leads_assigned' => 'Assigned Leads',
+        'client' => 'Client',
     ],
 
 ];

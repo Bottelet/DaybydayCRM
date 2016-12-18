@@ -28,6 +28,8 @@ return [
         'status' => 'Status',
         'assign_user' => 'Assign User',
         'assign_client' => 'Assign Client',
+        'client' => 'Client',
+        'tasks_assigned' => 'Assigned Tasks',
     ],
 
     'invoices' => [
