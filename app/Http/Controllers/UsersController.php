@@ -15,6 +15,8 @@ use App\Repositories\User\UserRepositoryContract;
 use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\Department\DepartmentRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\Task\TaskRepositoryContract;
+use App\Repositories\Lead\LeadRepositoryContract;
 
 class UsersController extends Controller
 {
@@ -27,13 +29,17 @@ class UsersController extends Controller
         UserRepositoryContract $users,
         RoleRepositoryContract $roles,
         DepartmentRepositoryContract $departments,
-        SettingRepositoryContract $settings
+        SettingRepositoryContract $settings,
+        TaskRepositoryContract $tasks,
+        LeadRepositoryContract $leads
     )
     {
         $this->users = $users;
         $this->roles = $roles;
         $this->departments = $departments;
         $this->settings = $settings;
+        $this->tasks = $tasks;
+        $this->leads = $leads;
         $this->middleware('user.create', ['only' => ['create']]);
     }
 
@@ -188,7 +194,9 @@ class UsersController extends Controller
     {
         return view('users.show')
             ->withUser($this->users->find($id))
-            ->withCompanyname($this->settings->getCompanyName());
+            ->withCompanyname($this->settings->getCompanyName())
+            ->withTaskStatistics($this->tasks->totalOpenAndClosedTasks($id))
+            ->withLeadStatistics($this->leads->totalOpenAndClosedLeads($id));
     }
 
     /**
