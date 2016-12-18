@@ -74,9 +74,9 @@ class UsersController extends Controller
     public function taskData($id)
     {
         $tasks = Tasks::select(
-            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
+            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign', 'status']
         )
-            ->where('fk_user_id_assign', $id)->where('status', 1);
+            ->where('fk_user_id_assign', $id);
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
                 return '<a href="' . route('tasks.show', $tasks->id) . '">' . $tasks->title . '</a>';
@@ -89,31 +89,8 @@ class UsersController extends Controller
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format('d/m/Y') : '';
             })
-            ->make(true);
-    }
-
-    /**
-     * Json for Data tables
-     * @param $id
-     * @return mixed
-     */
-    public function closedTaskData($id)
-    {
-        $tasks = Tasks::select(
-            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
-        )
-            ->where('fk_user_id_assign', $id)->where('status', 2);
-        return Datatables::of($tasks)
-            ->addColumn('titlelink', function ($tasks) {
-                return '<a href="' . route('tasks.show', $tasks->id) . '">' . $tasks->title . '</a>';
-            })
-            ->editColumn('created_at', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                    ->format('d/m/Y') : '';
-            })
-            ->editColumn('deadline', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                    ->format('d/m/Y') : '';
+            ->editColumn('status', function ($tasks) {
+                return $tasks->status == 1 ? '<span class="label label-success">Open</span>' : '<span class="label label-danger">Closed</span>';
             })
             ->make(true);
     }
