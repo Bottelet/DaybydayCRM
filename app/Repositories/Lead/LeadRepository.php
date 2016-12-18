@@ -139,6 +139,6 @@ class LeadRepository implements LeadRepositoryContract
         $closed_leads = leads::where('status', 2)
         ->where('fk_user_id_assign', $id)->count();
 
-        return collect([$open_leads, $closed_leads]);
+        return collect([$closed_leads, $open_leads]);
     }
 }
