@@ -1,4 +1,4 @@
-<div>
+<div class="col-lg-6">
     <div class="profilepic"><img class="profilepicsize"
                                  @if($contact->image_path != "")
                                  src="../images/{{$companyname}}/{{$contact->image_path}}"

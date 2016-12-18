@@ -1,8 +1,6 @@
 @extends('layouts.master')
-
     @section('content')
     @include('partials.userheader')
-<div class="row">
 <div class="col-sm-8">
   <el-tabs active-name="tasks" style="width:100%">
     <el-tab-pane label="Tasks" name="tasks">
@@ -61,7 +59,13 @@
     </el-tab-pane>
   </el-tabs>
   </div>
-</div>
+  <div class="col-sm-4">
+  <h4>Tasks</h4>
+<doughnut :statistics="{{$task_statistics}}"></doughnut>
+<h4>Leads</h4>
+<doughnut :statistics="{{$lead_statistics}}"></doughnut>
+  </div>
+
    @stop 
 @push('scripts')
         <script>
