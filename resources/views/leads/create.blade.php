@@ -51,12 +51,6 @@
         @endif
     </div>
 
-
-
-
-
-    </div>
-
     {!! Form::submit(lang::get('lead.titles.create'), ['class' => 'btn btn-primary']) !!}
 
     {!! Form::close() !!}

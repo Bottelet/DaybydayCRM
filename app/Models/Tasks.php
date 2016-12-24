@@ -75,6 +75,6 @@ class Tasks extends Model
 
     public function activity()
     {
-        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'task');
+        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'App\Models\Tasks');
     }
 }

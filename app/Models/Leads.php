@@ -48,6 +48,6 @@ class Leads extends Model
 
     public function activity()
     {
-        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'lead');
+        return $this->hasMany(Activity::class, 'type_id', 'id')->where('type', 'App\Models\Leads');
     }
 }
