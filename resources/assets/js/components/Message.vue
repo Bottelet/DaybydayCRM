@@ -8,7 +8,9 @@
       openNotification() {
         this.$message({
           message: this.message,
-          type: this.type
+          type: this.type,
+          duration: 5000,
+          showClose:true
         });
       }
     },
