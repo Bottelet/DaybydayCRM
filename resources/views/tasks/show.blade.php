@@ -16,8 +16,6 @@
     <div class="row">
         @include('partials.clientheader')
         @include('partials.userheader')
-
-
     </div>
 
     <div class="row">
@@ -137,7 +135,7 @@
                     data-target="#myModal">
                 @lang('task.invoices.create')
             </button>
-
+            
             <div class="activity-feed movedown">
                 @foreach($tasks->activity as $activity)
                     <div class="feed-item">
@@ -156,13 +154,13 @@
                             <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.modal.header_title')
                                 ({{$tasks->title}})</h4>
                         </div>
-
-                        <div class="modal-body">
-
-                            {!! Form::open([
+                       {!! Form::open([
                             'method' => 'post',
                             'url' => ['tasks/updatetime', $tasks->id],
-                            ]) !!}
+                        ]) !!}
+                        <div class="modal-body">
+
+                 
 
                             <div class="form-group">
                                 {!! Form::label('title', Lang::get('task.invoices.modal.title'), ['class' => 'control-label']) !!}
@@ -189,8 +187,9 @@
                             <div class="col-lg-6">
                                 {!! Form::submit(Lang::get('task.invoices.modal.register_time'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>
-                            {!! Form::close() !!}
+                          
                         </div>
+                          {!! Form::close() !!}
                     </div>
                 </div>
             </div>
@@ -204,13 +203,11 @@
                                         aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.create') </h4>
                         </div>
-
+                        {!! Form::model($tasks, [
+                           'method' => 'POST',
+                           'url' => ['tasks/invoice', $tasks->id],
+                        ]) !!}
                         <div class="modal-body">
-
-                            {!! Form::model($tasks, [
-                       'method' => 'POST',
-                       'url' => ['tasks/invoice', $tasks->id],
-                       ]) !!}
                             @if($apiconnected)
                                 @foreach ($contacts as $key => $contact)
                                     {!! Form::radio('invoiceContact', $contact['guid']) !!}
@@ -227,9 +224,8 @@
                             <div class="col-lg-6">
                                 {!! Form::submit(Lang::get('task.invoices.create'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>
-                            {!! Form::close() !!}
-
                         </div>
+                      {!! Form::close() !!}
                     </div>
                 </div>
             </div>
@@ -238,10 +234,4 @@
         </div>
 
     </div>
-    </div>
-
-    </div>
-
-
-
 @stop
