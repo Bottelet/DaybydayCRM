@@ -8,6 +8,7 @@ require('./bootstrap');
 import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
+import message from './components/Message.vue';
 import 'element-ui/lib/theme-default/index.css';
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -91,6 +92,7 @@ var app = new Vue({
     el: '#wrapper',
     components: {
       graphline,
-      doughnut
+      doughnut,
+      message
     }
 });
