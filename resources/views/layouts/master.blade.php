@@ -198,18 +198,10 @@
 
         @endif
         @if(Session::has('flash_message_warning'))
-            <div class="notification-warning navbar-fixed-bottom ">
-                <div class="notification-icon ion-close-circled"></div>
-                <div class="notification-text">
-                    <span>{{ Session::get('flash_message_warning') }} </span></div>
-            </div>
-            @endif
+             <message message="{{ Session::get('flash_message_warning') }}" type="warning"></message>
+        @endif
         @if(Session::has('flash_message'))
-            <div class="notification-success navbar-fixed-bottom ">
-                <div class="notification-icon ion-checkmark-round"></div>
-                <div class="notification-text">
-                    <span>{{ Session::get('flash_message') }} </span></div>
-            </div>
+            <message message="{{ Session::get('flash_message') }}" type="success"></message>
         @endif
     </div>
     <!-- /#page-content-wrapper -->
