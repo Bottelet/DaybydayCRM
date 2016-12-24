@@ -80,9 +80,6 @@ $(function () {
 });
 
 
-$('.notification-warning').delay(5000).fadeOut(2500);
-$('.notification-success').delay(5000).fadeOut(2500);
-
 $('.search-select')
   .dropdown({
     direction: 'upward'
