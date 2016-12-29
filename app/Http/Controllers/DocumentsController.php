@@ -5,15 +5,20 @@ use Excel;
 use Session;
 use Validator;
 use App\Http\Requests;
-use App\Models\Settings;
+use App\Models\Setting;
 use App\Models\Document;
 use Illuminate\Http\Request;
 
 class DocumentsController extends Controller
 {
+    /**
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
     public function upload(Request $request, $id)
     {
-        $settings = Settings::findOrFail(1);
+        $settings = Setting::findOrFail(1);
         $companyname = $settings->company;
 
         if (!is_dir(public_path() . '/files/' . $companyname)) {
@@ -37,12 +42,16 @@ class DocumentsController extends Controller
 
         $input = array_replace(
             $request->all(),
-            ['path' => "$filename", 'size' => "$totaltsize", 'file_display' => "$fileOrginal", 'fk_client_id' => $id]
+            ['path' => "$filename", 'size' => "$totaltsize", 'file_display' => "$fileOrginal", 'client_id' => $id]
         );
         $document = Document::create($input);
         Session::flash('flash_message', 'File successfully uploaded');
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function import(Request $request)
     {
         $rules = [

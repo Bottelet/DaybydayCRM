@@ -14,7 +14,6 @@ class ClientActionLog
     /**
      * Create the event listener.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -46,8 +45,8 @@ class ClientActionLog
             [
                 'text' => $text,
                 'user_id' => Auth()->id(),
-                'type' => Client::class,
-                'type_id' =>  $client->id,
+                'source_type' => Client::class,
+                'source_id' =>  $client->id,
                 'action' => $event->getAction()
             ]
         );

@@ -20,8 +20,8 @@ class Settings extends Migration
             $table->integer('lead_assign_allowed');
             $table->integer('time_change_allowed');
             $table->integer('comment_allowed');
-            $table->string('country');
-            $table->string('company');
+            $table->string('country')->nullable();
+            $table->string('company')->nullable();
             $table->timestamps();
         });
     }

@@ -35,7 +35,7 @@ class StoreClientRequest extends FormRequest
             'secondary_number' => 'max:10',
             'industry' => '',
             'company_type' => '',
-            'fk_user_id' => 'required'
+            'user_id' => 'required'
         ];
     }
 }

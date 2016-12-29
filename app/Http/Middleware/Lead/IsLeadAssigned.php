@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Lead;
 
 use Closure;
-use App\Models\Settings;
-use App\Models\Leads;
+use App\Models\Setting;
+use App\Models\Lead;
 
 class IsLeadAssigned
 {
@@ -17,8 +17,8 @@ class IsLeadAssigned
      */
     public function handle($request, Closure $next)
     {
-        $lead = Leads::findOrFail($request->id);
-        $settings = Settings::all();
+        $lead = Lead::findOrFail($request->id);
+        $settings = Setting::all();
         $isAdmin = Auth()->user()->hasRole('administrator');
         $settingscomplete = $settings[0]['lead_assign_allowed'];
         if ($isAdmin) {

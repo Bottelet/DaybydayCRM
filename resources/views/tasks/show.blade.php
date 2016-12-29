@@ -67,8 +67,8 @@
             </div>
             <div class="sidebarbox">
                 <p>@lang('task.headers.assigned'):
-                    <a href="{{route('users.show', $tasks->assignee->id)}}">
-                        {{$tasks->assignee->name}}</a></p>
+                    <a href="{{route('users.show', $tasks->user->id)}}">
+                        {{$tasks->user->name}}</a></p>
                 <p>@lang('task.headers.created_at'): {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
 
                 @if($tasks->days_until_deadline)
@@ -96,7 +96,7 @@
                'method' => 'PATCH',
                 'url' => ['tasks/updateassign', $tasks->id],
                 ]) !!}
-                {!! Form::select('fk_user_id_assign', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+                {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
                 {!! Form::submit(Lang::get('task.titles.assign_user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
                 {!! Form::close() !!}
 

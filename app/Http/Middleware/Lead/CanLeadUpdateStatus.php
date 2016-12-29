@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Lead;
 
 use Closure;
-use App\Models\Settings;
-use App\Models\Leads;
+use App\Models\Setting;
+use App\Models\Lead;
 
 class CanLeadUpdateStatus
 {
@@ -17,10 +17,10 @@ class CanLeadUpdateStatus
      */
     public function handle($request, Closure $next)
     {
-        $lead = Leads::findOrFail($request->id);
+        $lead = Lead::findOrFail($request->id);
         $isAdmin = Auth()->user()->hasRole('administrator');
 
-        $settings = Settings::all();
+        $settings = Setting::all();
         if ($isAdmin) {
             return $next($request);
         }

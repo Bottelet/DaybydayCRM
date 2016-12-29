@@ -26,6 +26,7 @@ class SettingsTableSeeder extends Seeder
                 'lead_assign_allowed' => 2,
                 'time_change_allowed' => 2,
                 'comment_allowed' => 2,
+                'country' => 'en',
                 'company' => 'Media',
                 'created_at' => null,
                 'updated_at' => null,

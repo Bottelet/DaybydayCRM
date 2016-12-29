@@ -37,56 +37,24 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id';
 
-    public function tasksAssign()
+    public function tasks()
     {
-        return $this->hasMany(Tasks::class, 'fk_user_id_assign', 'id')
-            ->where('status', 1)
-            ->orderBy('deadline', 'asc');
+        return $this->hasMany(Task::class, 'user_assigned_id', 'id');
     }
 
-    public function tasksCreated()
+    public function leads()
     {
-        return $this->hasMany(Tasks::class, 'fk_user_id_created', 'id')->limit(10);
+        return $this->hasMany(Lead::class, 'user_id', 'id');
     }
-
-    public function tasksCompleted()
+    
+    public function department()
     {
-        return $this->hasMany(Tasks::class, 'fk_user_id_assign', 'id')->where('status', 2);
-    }
-
-    public function tasksAll()
-    {
-        return $this->hasMany(Tasks::class, 'fk_user_id_assign', 'id')->whereIn('status', [1, 2]);
-    }
-
-    public function leadsAll()
-    {
-        return $this->hasMany(Leads::class, 'fk_user_id', 'id');
-    }
-
-    public function settings()
-    {
-        return $this->belongsTo(Settings::class);
-    }
-
-    public function clientsAssign()
-    {
-        return $this->hasMany(Client::class, 'fk_user_id', 'id');
+        return $this->belongsToMany(Department::class, 'department_user')->withPivot('department_id');
     }
 
     public function userRole()
     {
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
-    }
-
-    public function department()
-    {
-        return $this->belongsToMany(Department::class, 'department_user');
-    }
-
-    public function departmentOne()
-    {
-        return $this->belongsToMany(Department::class, 'department_user')->withPivot('Department_id');
     }
 
     public function isOnline()

@@ -14,7 +14,7 @@ class PermissionRole extends Model
 
     public function settings()
     {
-        return $this->belongsTo(Settings::class);
+        return $this->belongsTo(Setting::class);
     }
 
     public function employee()

@@ -33,6 +33,10 @@ class PagesController extends Controller
         $this->leads = $leads;
     }
 
+    /**
+     * Dashobard view
+     * @return mixed
+     */
     public function dashboard()
     {
 
@@ -49,7 +53,7 @@ class PagesController extends Controller
       * Statistics for all-time tasks.
       *
       */
-        $alltasks = $this->tasks->allTasks();
+        $alltasks = $this->tasks->tasks();
         $allCompletedTasks = $this->tasks->allCompletedTasks();
         $totalPercentageTasks = $this->tasks->percantageCompleted();
 
@@ -79,7 +83,7 @@ class PagesController extends Controller
       *
       */
      
-        $allleads = $this->leads->allLeads();
+        $allleads = $this->leads->leads();
         $allCompletedLeads = $this->leads->allCompletedLeads();
         $totalPercentageLeads = $this->leads->percantageCompleted();
      /**

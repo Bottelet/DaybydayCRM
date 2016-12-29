@@ -7,14 +7,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use Lang;
-use App\Models\Tasks;
+use App\Models\Task;
 
 class TaskActionLog
 {
     /**
      * Create the event listener.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -32,8 +31,8 @@ class TaskActionLog
             case 'created':
                 $text = Lang::get('misc.log.task.created', [
                         'title' => $event->getTask()->title,
-                        'creator' => $event->getTask()->taskCreator->name,
-                        'assignee' => $event->getTask()->assignee->name
+                        'creator' => $event->getTask()->creator->name,
+                        'assignee' => $event->getTask()->user->name
                     ]);
                 break;
             case 'updated_status':
@@ -50,7 +49,7 @@ class TaskActionLog
             case 'updated_assign':
                 $text = Lang::get('misc.log.task.assign', [
                         'username' => Auth()->user()->name,
-                        'assignee' => $event->getTask()->assignee->name
+                        'assignee' => $event->getTask()->user->name
                     ]);
                 break;
             default:
@@ -61,8 +60,8 @@ class TaskActionLog
             [
                 'text' => $text,
                 'user_id' => Auth()->id(),
-                'type' =>  Tasks::class,
-                'type_id' =>  $event->getTask()->id,
+                'source_type' =>  Task::class,
+                'source_id' =>  $event->getTask()->id,
                 'action' => $event->getAction()
             ]
         );

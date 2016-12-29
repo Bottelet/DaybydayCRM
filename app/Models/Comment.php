@@ -7,18 +7,18 @@ class Comment extends Model
 {
     protected $fillable = [
         'description',
-        'fk_task_id',
-        'fk_user_id'
+        'task_id',
+        'user_id'
     ];
     protected $hidden = ['remember_token'];
 
     public function task()
     {
-        return $this->belongsTo(Tasks::class, 'fk_task_id', 'id');
+        return $this->belongsTo(Task::class, 'task_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'fk_user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

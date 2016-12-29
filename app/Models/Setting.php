@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Settings extends Model
+class Setting extends Model
 {
     protected $fillable = [
         'task_complete_allowed',
@@ -19,6 +19,6 @@ class Settings extends Model
 
     public function tasks()
     {
-        return $this->belongsTo(Tasks::class);
+        return $this->belongsTo(Task::class);
     }
 }

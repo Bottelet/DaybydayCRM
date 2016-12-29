@@ -25,10 +25,12 @@ class ClientAction
     {
         return $this->action;
     }
+
     /**
      * Create a new event instance.
-     *
-     * @return void
+     * ClientAction constructor.
+     * @param Client $client
+     * @param $action
      */
     public function __construct(Client $client, $action)
     {

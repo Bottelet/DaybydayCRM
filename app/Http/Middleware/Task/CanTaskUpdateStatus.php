@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Task;
 
 use Closure;
-use App\Models\Settings;
-use App\Models\Tasks;
+use App\Models\Setting;
+use App\Models\Task;
 
 class CanTaskUpdateStatus
 {
@@ -17,9 +17,9 @@ class CanTaskUpdateStatus
      */
     public function handle($request, Closure $next)
     {
-        $task = Tasks::findOrFail($request->id);
+        $task = Task::findOrFail($request->id);
         $isAdmin = auth()->user()->hasRole('administrator');
-        $settings = Settings::all();
+        $settings = Setting::all();
         $settingscomplete = $settings[0]['task_complete_allowed'];
         if ($isAdmin) {
             return $next($request);

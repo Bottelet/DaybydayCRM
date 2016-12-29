@@ -8,7 +8,7 @@ class TaskTime extends Model
     protected $fillable = [
         'time',
         'overtime',
-        'fk_task_id',
+        'task_id',
         'title',
         'comment',
         'value'
@@ -20,7 +20,7 @@ class TaskTime extends Model
 
     public function tasks()
     {
-        return $this->belongsTo(Tasks::class);
+        return $this->belongsTo(Task::class);
     }
 
     public function invoices()

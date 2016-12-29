@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\Tasks;
+use App\Models\Task;
 use App\Models\User;
 use App\Policies\allowTaskComplete;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
@@ -17,7 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-        Tasks::class => allowTaskComplete::class,
+        Task::class => allowTaskComplete::class,
     ];
 
     /**

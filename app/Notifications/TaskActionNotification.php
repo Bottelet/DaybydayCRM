@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Lang;
-use App\Models\Tasks;
+use App\Models\Task;
 
 class TaskActionNotification extends Notification
 {
@@ -19,8 +19,9 @@ class TaskActionNotification extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @return void
+     * TaskActionNotification constructor.
+     * @param $task
+     * @param $action
      */
     public function __construct($task, $action)
     {
@@ -65,7 +66,7 @@ class TaskActionNotification extends Notification
             case 'created':
                 $text = lang::get('misc.notifications.task.created', [
                     'title' =>  $this->task->title,
-                    'creator' => $this->task->taskCreator->name,
+                    'creator' => $this->task->creator->name,
                     ]);
                 break;
             case 'updated_status':
@@ -93,7 +94,7 @@ class TaskActionNotification extends Notification
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->task->fk_user_id_created,
             'message' => $text,
-            'type' =>  Tasks::class,
+            'type' =>  Task::class,
             'type_id' =>  $this->task->id,
             'url' => url('tasks/' . $this->task->id),
             'action' => $this->action

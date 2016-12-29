@@ -12,17 +12,16 @@ class LeadHeaderComposer
      *
      * @var taskRepository
      */
-    protected $leads;
+    protected $lead;
 
     /**
      * Create a new profile composer.
-     *
-     * @param  taskRepository  $leads
-     * @return void
+     * LeadHeaderComposer constructor.
+     * @param LeadRepositoryContract $lead
      */
-    public function __construct(LeadRepositoryContract $leads)
+    public function __construct(LeadRepositoryContract $lead)
     {
-        $this->leads = $leads;
+        $this->lead = $lead;
     }
 
     /**
@@ -33,14 +32,14 @@ class LeadHeaderComposer
      */
     public function compose(View $view)
     {
-        $leads = $this->leads->find($view->getData()['leads']['id']);
+        $lead = $this->lead->find($view->getData()['lead']['id']);
         /**
          * [User assigned the task]
          * @var contact
          */
        
-        $contact = $leads->assignee;
-        $client = $leads->clientAssignee;
+        $contact = $lead->user;
+        $client = $lead->client;
         
         $view->with('contact', $contact);
         $view->with('client', $client);

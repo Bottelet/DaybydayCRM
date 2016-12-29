@@ -3,8 +3,8 @@
 namespace App\Http\Middleware\Task;
 
 use Closure;
-use App\Models\Settings;
-use App\Models\Tasks;
+use App\Models\Setting;
+use App\Models\Task;
 
 class IsTaskAssigned
 {
@@ -17,8 +17,8 @@ class IsTaskAssigned
      */
     public function handle($request, Closure $next)
     {
-        $task = Tasks::findOrFail($request->id);
-        $settings = Settings::all();
+        $task = Task::findOrFail($request->id);
+        $settings = Setting::all();
         $isAdmin = Auth()->user()->hasRole('administrator');
         $settingscomplete = $settings[0]['task_assign_allowed'];
 

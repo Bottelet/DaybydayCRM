@@ -8,18 +8,18 @@ class Note extends Model
     protected $fillable = [
         'note',
         'status',
-        'fk_lead_id',
-        'fk_user_id'
+        'lead_id',
+        'user_id'
     ];
     protected $hidden = ['remember_token'];
 
     public function lead()
     {
-        return $this->belongsTo(Leads::class, 'fk_lead_id', 'id');
+        return $this->belongsTo(Lead::class, 'lead_id', 'id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'fk_user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }

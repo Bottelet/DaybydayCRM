@@ -42,7 +42,7 @@
     {!!
         Form::select('roles',
         $roles,
-        isset($user->userRole->role_id) ? $user->userRole->role_id : null,
+        isset($user->role->role_id) ? $user->role->role_id : null,
         ['class' => 'form-control']) !!}
 
     {!! Form::label('departments', Lang::get('user.headers.assign_department'), ['class' => 'control-label']) !!}
@@ -51,7 +51,7 @@
         Form::select('departments',
         $departments,
         isset($user)
-        ? $user->departmentOne->first()->id : null,
+        ? $user->department->first()->id : null,
         ['class' => 'form-control']) !!}
 </div>
 

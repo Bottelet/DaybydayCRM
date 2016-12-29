@@ -26,16 +26,16 @@ class UpdateClientRequest extends FormRequest
         return [
             'name' => 'required',
             'company_name' => 'required',
-            'vat' => 'max:8',
+            'vat' => 'max:12',
             'email' => 'required',
             'address' => '',
-            'zipcode' => 'max:4',
+            'zipcode' => 'max:6',
             'city' => '',
             'primary_number' => 'max:10',
             'secondary_number' => 'max:10',
             'industry' => '',
             'company_type' => '',
-            'fk_user_id' => 'required'
+            'user_id' => 'required'
         ];
     }
 }

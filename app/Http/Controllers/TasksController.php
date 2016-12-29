@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use Gate;
 use Carbon;
 use Datatables;
-use App\Models\Tasks;
+use App\Models\Task;
 use App\Http\Requests;
 use App\Models\Integration;
 use Illuminate\Http\Request;
@@ -56,8 +56,8 @@ class TasksController extends Controller
 
     public function anyData()
     {
-        $tasks = Tasks::select(
-            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign']
+        $tasks = Task::select(
+            ['id', 'title', 'created_at', 'deadline', 'user_assigned_id']
         )
             ->where('status', 1)->get();
         return Datatables::of($tasks)
@@ -72,8 +72,8 @@ class TasksController extends Controller
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format('d/m/Y') : '';
             })
-            ->editColumn('fk_user_id_assign', function ($tasks) {
-                return $tasks->assignee->name;
+            ->editColumn('user_assigned_id', function ($tasks) {
+                return $tasks->user->name;
             })->make(true);
     }
 
@@ -81,7 +81,7 @@ class TasksController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return mixed
      */
     public function create()
     {
@@ -91,9 +91,8 @@ class TasksController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
+     * @param StoreTaskRequest $request
+     * @return mixed
      */
     public function store(StoreTaskRequest $request) // uses __contrust request
     {
@@ -103,10 +102,10 @@ class TasksController extends Controller
 
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     * @throws \Exception
      */
     public function show(Request $request, $id)
     {
@@ -134,10 +133,14 @@ class TasksController extends Controller
     /**
      * Sees if the Settings from backend allows all to complete taks
      * or only assigned user. if only assigned user:
-     * @param  [Auth]  $id Checks Logged in users id
-     * @param  [Model] $task->fk_user_id_assign Checks the id of the user assigned to the task
-     * If Auth and fk_user_id allow complete else redirect back if all allowed excute
-     * else stmt*/
+     * @param $id
+     * @param Request $request
+     * @return
+     * @internal param $ [Auth]  $id Checks Logged in users id
+     * @internal param $ [Model] $task->user_assigned_id Checks the id of the user assigned to the task
+     * If Auth and user_id allow complete else redirect back if all allowed excute
+     * else stmt
+     */
     public function updateStatus($id, Request $request)
     {
         $this->tasks->updateStatus($id, $request);
@@ -145,7 +148,11 @@ class TasksController extends Controller
         return redirect()->back();
     }
 
-
+    /**
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function updateAssign($id, Request $request)
     {
         $clientId = $this->tasks->getAssignedClient($id)->id;
@@ -156,6 +163,11 @@ class TasksController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function updateTime($id, Request $request)
     {
         $this->tasks->updateTime($id, $request);
@@ -163,11 +175,16 @@ class TasksController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function invoice($id, Request $request)
     {
-        $task = Tasks::findOrFail($id);
-        $clientId = $task->clientAssignee()->first()->id;
-        $timeTaskId = $task->allTime()->get();
+        $task = Task::findOrFail($id);
+        $clientId = $task->client()->first()->id;
+        $timeTaskId = $task->time()->get();
         $integrationCheck = Integration::first();
 
         if ($integrationCheck) {
@@ -180,9 +197,8 @@ class TasksController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
+     * @return mixed
+     * @internal param int $id
      */
     public function marked()
     {

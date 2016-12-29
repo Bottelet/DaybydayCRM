@@ -67,7 +67,7 @@ class ClientsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return mixed
      */
     public function create()
     {
@@ -77,9 +77,8 @@ class ClientsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
+     * @param StoreClientRequest $request
+     * @return mixed
      */
     public function store(StoreClientRequest $request)
     {
@@ -87,6 +86,10 @@ class ClientsController extends Controller
         return redirect()->route('clients.index');
     }
 
+    /**
+     * @param Request $vatRequest
+     * @return mixed
+     */
     public function cvrapiStart(Request $vatRequest)
     {
         return redirect()->back()
@@ -97,7 +100,7 @@ class ClientsController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
-     * @return Response
+     * @return mixed
      */
     public function show($id)
     {
@@ -111,7 +114,7 @@ class ClientsController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int $id
-     * @return Response
+     * @return mixed
      */
     public function edit($id)
     {
@@ -122,10 +125,9 @@ class ClientsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @param UpdateClientRequest $request
+     * @return mixed
      */
     public function update($id, UpdateClientRequest $request)
     {
@@ -135,10 +137,8 @@ class ClientsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @return mixed
      */
     public function destroy($id)
     {

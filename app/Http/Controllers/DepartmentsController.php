@@ -11,23 +11,37 @@ class DepartmentsController extends Controller
 
     protected $departments;
 
+    /**
+     * DepartmentsController constructor.
+     * @param DepartmentRepositoryContract $departments
+     */
     public function __construct(DepartmentRepositoryContract $departments)
     {
         $this->departments = $departments;
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
     }
 
+    /**
+     * @return mixed
+     */
     public function index()
     {
         return view('departments.index')
             ->withDepartment($this->departments->getAllDepartments());
     }
 
+    /**
+     * @return mixed
+     */
     public function create()
     {
         return view('departments.create');
     }
 
+    /**
+     * @param StoreDepartmentRequest $request
+     * @return mixed
+     */
     public function store(StoreDepartmentRequest $request)
     {
         $this->departments->create($request);
@@ -35,6 +49,10 @@ class DepartmentsController extends Controller
         return redirect()->route('departments.index');
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function destroy($id)
     {
         $this->departments->destroy($id);

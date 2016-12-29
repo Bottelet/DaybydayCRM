@@ -27,9 +27,9 @@ class StoreTaskRequest extends FormRequest
             'title' => 'required',
             'description' => 'required',
             'status' => 'required',
-            'fk_user_id_assign' => 'required',
-            'fk_user_id_created' => '',
-            'fk_client_id' => '',
+            'user_assigned_id' => 'required',
+            'user_created_id' => '',
+            'client_id' => '',
             'deadline' => ''
         ];
     }

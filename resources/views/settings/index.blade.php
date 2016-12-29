@@ -3,16 +3,12 @@
     <h1>@lang('setting.headers.settings')</h1>
 @stop
 @section('content')
-
-
-
     <div class="row">
         <table class="table table-responsive table-hover table_wrapper" id="clients-table">
             <thead>
             <tr>
                 <th></th>
                 @foreach($permission as $perm)
-
                     <th>{{$perm->display_name}}</th>
 
                 @endforeach
@@ -21,7 +17,7 @@
 
 
             </thead>
-
+            <tbody>
 
             @foreach($roles as $role)
                 <tr>
@@ -50,20 +46,18 @@
                                        value="1">
                                 <span class="perm-name"></span><br/></td>
 
-
+                
                     @endforeach
-
-                </tr>
-    </div>
+                    </div>
+                
+        
     <td>{!! Form::submit(Lang::get('setting.headers.save_role'), ['class' => 'btn btn-primary']) !!}</td>
     {!! Form::close() !!}
+    </tr>
     @endforeach
-
-
     </tbody>
     </table>
-    </div>
-
+</div>
 
 
 
@@ -130,7 +124,6 @@
             {!! Form::submit(Lang::get('setting.headers.save_overall'), ['class' => 'btn btn-primary']) !!}
             {!! Form::close() !!}
         </div>
-    </div>
     </div>
 
 @stop

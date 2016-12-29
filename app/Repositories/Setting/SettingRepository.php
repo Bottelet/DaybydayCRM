@@ -1,24 +1,37 @@
 <?php
 namespace App\Repositories\Setting;
 
-use App\Models\Settings;
+use App\Models\Setting;
 
+/**
+ * Class SettingRepository
+ * @package App\Repositories\Setting
+ */
 class SettingRepository implements SettingRepositoryContract
 {
+    /**
+     * @return mixed
+     */
     public function getCompanyName()
     {
-        return Settings::findOrFail(1)->company;
+        return Setting::findOrFail(1)->company;
     }
 
+    /**
+     * @param $requestData
+     */
     public function updateOverall($requestData)
     {
-        $setting = Settings::findOrFail(1);
+        $setting = Setting::findOrFail(1);
 
         $setting->fill($requestData->all())->save();
     }
 
+    /**
+     * @return mixed
+     */
     public function getSetting()
     {
-        return Settings::findOrFail(1);
+        return Setting::findOrFail(1);
     }
 }

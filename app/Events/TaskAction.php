@@ -8,7 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\Models\Tasks;
+use App\Models\Task;
 
 class TaskAction
 {
@@ -28,10 +28,11 @@ class TaskAction
 
     /**
      * Create a new event instance.
-     *
-     * @return void
+     * TaskAction constructor.
+     * @param Task $task
+     * @param $action
      */
-    public function __construct(Tasks $task, $action)
+    public function __construct(Task $task, $action)
     {
         $this->task = $task;
         $this->action = $action;

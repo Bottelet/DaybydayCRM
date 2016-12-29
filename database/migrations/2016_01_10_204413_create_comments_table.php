@@ -17,10 +17,10 @@ class CreateCommentsTable extends Migration
         
             $table->increments('id');
             $table->text('description');
-            $table->integer('fk_user_id')->unsigned();
-            $table->foreign('fk_user_id')->references('id')->on('users');
-            $table->integer('fk_task_id')->unsigned();
-            $table->foreign('fk_task_id')->references('id')->on('tasks');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('task_id')->unsigned();
+            $table->foreign('task_id')->references('id')->on('tasks');
             $table->timestamps();
         });
     }

@@ -28,9 +28,9 @@
             columns: [
 
                 {data: 'titlelink', name: 'title'},
-                {data: 'fk_user_id_created', name: 'fk_user_id_created'},
+                {data: 'user_created_id', name: 'user_created_id'},
                 {data: 'contact_date', name: 'contact_date',},
-                {data: 'fk_user_id_assign', name: 'fk_user_id_assign'},
+                {data: 'user_assigned_id', name: 'user_assigned_id'},
 
 
             ]

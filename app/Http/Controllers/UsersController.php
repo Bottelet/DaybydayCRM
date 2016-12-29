@@ -5,10 +5,10 @@ use Gate;
 use Carbon;
 use Datatables;
 use App\Models\User;
-use App\Models\Tasks;
+use App\Models\Task;
 use App\Http\Requests;
 use App\Models\Client;
-use App\Models\Leads;
+use App\Models\Lead;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Repositories\User\UserRepositoryContract;
@@ -44,9 +44,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
+     * @return mixed
      */
     public function index()
     {
@@ -80,10 +78,10 @@ class UsersController extends Controller
      */
     public function taskData($id)
     {
-        $tasks = Tasks::select(
-            ['id', 'title', 'created_at', 'deadline', 'fk_user_id_assign', 'fk_client_id', 'status']
+        $tasks = Task::select(
+            ['id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status']
         )
-            ->where('fk_user_id_assign', $id);
+            ->where('user_assigned_id', $id);
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
                 return '<a href="' . route('tasks.show', $tasks->id) . '">' . $tasks->title . '</a>';
@@ -99,8 +97,8 @@ class UsersController extends Controller
             ->editColumn('status', function ($tasks) {
                 return $tasks->status == 1 ? '<span class="label label-success">Open</span>' : '<span class="label label-danger">Closed</span>';
             })
-            ->editColumn('fk_client_id', function ($tasks) {
-                return $tasks->clientAssignee->name;
+            ->editColumn('client_id', function ($tasks) {
+                return $tasks->client->name;
             })
             ->make(true);
     }
@@ -112,10 +110,10 @@ class UsersController extends Controller
      */
     public function leadData($id)
     {
-        $leads = Leads::select(
-            ['id', 'title', 'created_at', 'contact_date', 'fk_user_id_assign', 'fk_client_id', 'status']
+        $leads = Lead::select(
+            ['id', 'title', 'created_at', 'contact_date', 'user_assigned_id', 'client_id', 'status']
         )
-            ->where('fk_user_id_assign', $id);
+            ->where('user_assigned_id', $id);
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
                 return '<a href="' . route('leads.show', $leads->id) . '">' . $leads->title . '</a>';
@@ -131,8 +129,8 @@ class UsersController extends Controller
             ->editColumn('status', function ($leads) {
                 return $leads->status == 1 ? '<span class="label label-success">Open</span>' : '<span class="label label-danger">Closed</span>';
             })
-            ->editColumn('fk_client_id', function ($tasks) {
-                return $tasks->clientAssignee->name;
+            ->editColumn('client_id', function ($tasks) {
+                return $tasks->client->name;
             })
             ->make(true);
     }
@@ -144,7 +142,7 @@ class UsersController extends Controller
      */
     public function clientData($id)
     {
-        $clients = Client::select(['id', 'name', 'company_name', 'primary_number', 'email'])->where('fk_user_id', $id);
+        $clients = Client::select(['id', 'name', 'company_name', 'primary_number', 'email'])->where('user_id', $id);
         return Datatables::of($clients)
             ->addColumn('clientlink', function ($clients) {
                 return '<a href="' . route('clients.show', $clients->id) . '">' . $clients->name . '</a>';
@@ -162,9 +160,7 @@ class UsersController extends Controller
 
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
+     * @return mixed
      */
     public function create()
     {
@@ -174,9 +170,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     * @param User $user
-     * @return Response
+     * @param StoreUserRequest $userRequest
+     * @return mixed
      */
     public function store(StoreUserRequest $userRequest)
     {
@@ -185,10 +180,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @return mixed
      */
     public function show($id)
     {
@@ -200,10 +193,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @return mixed
      */
     public function edit($id)
     {
@@ -214,10 +205,9 @@ class UsersController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @param UpdateUserRequest $request
+     * @return mixed
      */
     public function update($id, UpdateUserRequest $request)
     {
@@ -227,10 +217,8 @@ class UsersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
+     * @param $id
+     * @return mixed
      */
     public function destroy($id)
     {

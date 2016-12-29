@@ -17,8 +17,8 @@ class TaskTimeTable extends Migration
             $table->string('title');
             $table->text('comment');
             $table->integer('value');
-            $table->integer('fk_task_id')->unsigned();
-            $table->foreign('fk_task_id')->references('id')->on('tasks');
+            $table->integer('task_id')->unsigned();
+            $table->foreign('task_id')->references('id')->on('tasks');
             $table->integer('time')->nullable();
             $table->integer('overtime')->nullable();
             $table->integer('weekendOvertime')->nullable();

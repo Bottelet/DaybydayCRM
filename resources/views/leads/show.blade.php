@@ -21,18 +21,18 @@
         <div class="col-md-9">
             <div class="taskcase">
 
-                <h3>{{$leads->title}}</h3>
+                <h3>{{$lead->title}}</h3>
                 <hr class="grey">
-                <p>{{$leads->note}}</p><br/>
+                <p>{{$lead->note}}</p><br/>
                 <p class="smalltext">@lang('lead.headers.created_at'):
-                    {{ date('d F, Y, H:i:s', strtotime($leads->created_at))}}
-                    @if($leads->updated_at != $leads->created_at)
-                        <br/> @lang('lead.status.modified'): {{date('d F, Y, H:i:s', strtotime($leads->updated_at))}}
+                    {{ date('d F, Y, H:i:s', strtotime($lead->created_at))}}
+                    @if($lead->updated_at != $lead->created_at)
+                        <br/> @lang('lead.status.modified'): {{date('d F, Y, H:i:s', strtotime($lead->updated_at))}}
                     @endif</p>
             </div>
             <?php $i = 1 ?>
 
-            @foreach($leads->notes as $note)
+            @foreach($lead->notes as $note)
                 <div class="taskcase" style="margin-top:15px; padding-top:10px;">
                     <p class="smalltext">#{{$i++}}</p>
                     <p>  {{$note->note}}</p>
@@ -46,7 +46,7 @@
                 </div>
             @endforeach
             <br/>
-            {!! Form::open(array('url' => array('/leads/notes',$leads->id, ))) !!}
+            {!! Form::open(array('url' => array('/leads/notes',$lead->id, ))) !!}
             <div class="form-group">
                 {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
 
@@ -61,44 +61,44 @@
             </div>
             <div class="sidebarbox">
                 <p>@lang('lead.titles.assigned_to'):
-                    <a href="{{route('leads.show', $leads->assignee->id)}}">
-                        {{$leads->assignee->name}}</a></p>
-                <p>@lang('lead.headers.created_at'): {{ date('d F, Y, H:i', strtotime($leads->created_at))}} </p>
-                @if($leads->days_until_contact < 2)
-                    <p>@lang('lead.titles.follow_up'): <span style="color:red;">{{date('d, F Y, H:i', strTotime($leads->contact_date))}}
+                    <a href="{{route('leads.show', $lead->user->id)}}">
+                        {{$lead->user->name}}</a></p>
+                <p>@lang('lead.headers.created_at'): {{ date('d F, Y, H:i', strtotime($lead->created_at))}} </p>
+                @if($lead->days_until_contact < 2)
+                    <p>@lang('lead.titles.follow_up'): <span style="color:red;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
 
-                            @if($leads->status == 1) ({!! $leads->days_until_contact !!}) @endif</span> <i
+                            @if($lead->status == 1) ({!! $lead->days_until_contact !!}) @endif</span> <i
                                 class="glyphicon glyphicon-calendar" data-toggle="modal"
                                 data-target="#ModalFollowUp"></i></p> <!--Remove days left if lead is completed-->
 
                 @else
-                    <p>@lang('lead.titles.follow_up'): <span style="color:green;">{{date('d, F Y, H:i', strTotime($leads->contact_date))}}
+                    <p>@lang('lead.titles.follow_up'): <span style="color:green;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
 
-                            @if($leads->status == 1) ({!! $leads->days_until_contact !!})<i
+                            @if($lead->status == 1) ({!! $lead->days_until_contact !!})<i
                                     class="glyphicon glyphicon-calendar" data-toggle="modal"
                                     data-target="#ModalFollowUp"></i>@endif</span></p>
                     <!--Remove days left if lead is completed-->
                 @endif
-                @if($leads->status == 1)
+                @if($lead->status == 1)
                     @lang('lead.status.status'): @lang('lead.status.contact')
-                @elseif($leads->status == 2)
+                @elseif($lead->status == 2)
                     @lang('lead.status.status'): @lang('lead.status.completed')
-                @elseif($leads->status == 3)
+                @elseif($lead->status == 3)
                     @lang('lead.status.status'): @lang('lead.status.not_intersted')
                 @endif
 
             </div>
-            @if($leads->status == 1)
-                {!! Form::model($leads, [
+            @if($lead->status == 1)
+                {!! Form::model($lead, [
                'method' => 'PATCH',
-                'url' => ['leads/updateassign', $leads->id],
+                'url' => ['leads/updateassign', $lead->id],
                 ]) !!}
-                {!! Form::select('fk_user_id_assign', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+                {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
                 {!! Form::submit('Assign new user', ['class' => 'btn btn-primary form-control closebtn']) !!}
                 {!! Form::close() !!}
-                {!! Form::model($leads, [
+                {!! Form::model($lead, [
                'method' => 'PATCH',
-               'url' => ['leads/updatestatus', $leads->id],
+               'url' => ['leads/updatestatus', $lead->id],
                ]) !!}
 
                 {!! Form::submit('Complete Lead', ['class' => 'btn btn-success form-control closebtn movedown']) !!}
@@ -106,7 +106,8 @@
             @endif
 
             <div class="activity-feed movedown">
-                @foreach($leads->activity as $activity)
+                @foreach($lead->activity as $activity)
+
                     <div class="feed-item">
                         <div class="activity-date">{{date('d, F Y H:i', strTotime($activity->created_at))}}</div>
                         <div class="activity-text">{{$activity->text}}</div>
@@ -130,9 +131,9 @@
 
                 <div class="modal-body">
 
-                    {!! Form::model($leads, [
+                    {!! Form::model($lead, [
                       'method' => 'PATCH',
-                      'route' => ['leads.followup', $leads->id],
+                      'route' => ['leads.followup', $lead->id],
                       ]) !!}
                     {!! Form::label('contact_date', Lang::get('lead.titles.next_follow_up'), ['class' => 'control-label']) !!}
                     {!! Form::date('contact_date', \Carbon\Carbon::now()->addDays(7), ['class' => 'form-control']) !!}

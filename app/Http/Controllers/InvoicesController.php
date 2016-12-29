@@ -43,17 +43,6 @@ class InvoicesController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  int $id
@@ -66,66 +55,61 @@ class InvoicesController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * Closed open payment
+     * @param Request $request
+     * @param $id
+     * @return mixed
      */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
     public function updatePayment(Request $request, $id)
     {
         $this->invoices->updatePayment($id, $request);
         return redirect()->back();
     }
 
+    /**
+     * Reopen closed payment
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
     public function reopenPayment(Request $request, $id)
     {
         $this->invoices->reopenPayment($id, $request);
         return redirect()->back();
     }
 
+    /**
+     * Update the sent status
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
     public function updateSentStatus(Request $request, $id)
     {
         $this->invoices->updateSentStatus($id, $request);
         return redirect()->back();
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
     public function updateSentReopen(Request $request, $id)
     {
         $this->invoices->updateSentReopen($id, $request);
         return redirect()->back();
     }
 
+    /**
+     * Add new invoice line
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function newItem($id, Request $request)
     {
         $this->invoices->newItem($id, $request);
         return redirect()->back();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

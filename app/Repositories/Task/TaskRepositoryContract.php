@@ -18,7 +18,7 @@ interface TaskRepositoryContract
 
     public function invoice($id, $requestData);
 
-    public function allTasks();
+    public function tasks();
 
     public function allCompletedTasks();
 

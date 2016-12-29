@@ -1,53 +1,89 @@
 <?php
 namespace App\Repositories\Task;
 
-use App\Models\Tasks;
+use App\Models\Task;
 use Carbon;
 use App\Models\TaskTime;
 use Illuminate\Support\Facades\DB;
 use App\Models\Integration;
 
+/**
+ * Class TaskRepository
+ * @package App\Repositories\Task
+ */
 class TaskRepository implements TaskRepositoryContract
 {
+    /**
+     *
+     */
     const CREATED = 'created';
+    /**
+     *
+     */
     const UPDATED_STATUS = 'updated_status';
+    /**
+     *
+     */
     const UPDATED_TIME = 'updated_time';
+    /**
+     *
+     */
     const UPDATED_ASSIGN = 'updated_assign';
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function find($id)
     {
-        return Tasks::findOrFail($id);
+        return Task::findOrFail($id);
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getAssignedClient($id)
     {
-        $tasks = Tasks::findOrFail($id);
-        $tasks->clientAssignee;
+        $tasks = Task::findOrFail($id);
+        $tasks->client;
         return $tasks;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function GetTimeForTask($id)
     {
-        $taskstime = Tasks::findOrFail($id);
-        $taskstime->allTime;
+        $taskstime = Task::findOrFail($id);
+        $taskstime->time;
         return $taskstime;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getTaskTime($id)
     {
-        return TaskTime::where('fk_task_id', $id)->get();
+        return TaskTime::where('task_id', $id)->get();
     }
 
 
+    /**
+     * @param $requestData
+     * @return mixed
+     */
     public function create($requestData)
     {
-        $fk_client_id = $requestData->get('fk_client_id');
+        $client_id = $requestData->get('client_id');
         $input = $requestData = array_merge(
             $requestData->all(),
-            ['fk_user_id_created' => auth()->id(),]
+            ['user_created_id' => auth()->id(),]
         );
 
-        $task = Tasks::create($input);
+        $task = Task::create($input);
 
 
         $insertedId = $task->id;
@@ -57,30 +93,42 @@ class TaskRepository implements TaskRepositoryContract
         return $insertedId;
     }
 
+    /**
+     * @param $id
+     * @param $requestData
+     */
     public function updateStatus($id, $requestData)
     {
-        $task = Tasks::findOrFail($id);
+        $task = Task::findOrFail($id);
         $input = $requestData->get('status');
         $input = array_replace($requestData->all(), ['status' => 2]);
         $task->fill($input)->save();
         event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
     }
 
+    /**
+     * @param $id
+     * @param $requestData
+     */
     public function updateTime($id, $requestData)
     {
-        $task = Tasks::findOrFail($id);
-        $input = array_replace($requestData->all(), ['fk_task_id' => "$task->id"]);
+        $task = Task::findOrFail($id);
+        $input = array_replace($requestData->all(), ['task_id' => "$task->id"]);
 
         TaskTime::create($input);
 
         event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
     }
 
+    /**
+     * @param $id
+     * @param $requestData
+     */
     public function updateAssign($id, $requestData)
     {
-        $task = Tasks::with('assignee')->findOrFail($id);
+        $task = Task::with('user')->findOrFail($id);
 
-        $input = $requestData->get('fk_user_id_assign');
+        $input = $requestData->get('user_assigned_id');
 
         $input = array_replace($requestData->all());
         $task->fill($input)->save();
@@ -89,12 +137,17 @@ class TaskRepository implements TaskRepositoryContract
         event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
     }
 
+    /**
+     * @param $id
+     * @param $requestData
+     * @throws \Exception
+     */
     public function invoice($id, $requestData)
     {
         $contatGuid = $requestData->invoiceContact;
 
-        $taskname = Tasks::find($id);
-        $timemanger = TaskTime::where('fk_task_id', $id)->get();
+        $taskname = Task::find($id);
+        $timemanger = TaskTime::where('task_id', $id)->get();
         $sendMail = $requestData->sendMail;
         $productlines = [];
 
@@ -127,27 +180,36 @@ class TaskRepository implements TaskRepositoryContract
      * Statistics for Dashboard
      */
 
-    public function allTasks()
+    public function tasks()
     {
-        return Tasks::all()->count();
+        return Task::all()->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function allCompletedTasks()
     {
-        return Tasks::where('status', 2)->count();
+        return Task::where('status', 2)->count();
     }
 
+    /**
+     * @return float|int
+     */
     public function percantageCompleted()
     {
-        if (!$this->allTasks() || !$this->allCompletedTasks()) {
+        if (!$this->tasks() || !$this->allCompletedTasks()) {
             $totalPercentageTasks = 0;
         } else {
-            $totalPercentageTasks = $this->allCompletedTasks() / $this->allTasks() * 100;
+            $totalPercentageTasks = $this->allCompletedTasks() / $this->tasks() * 100;
         }
 
         return $totalPercentageTasks;
     }
 
+    /**
+     * @return mixed
+     */
     public function createdTasksMothly()
     {
         return DB::table('tasks')
@@ -156,6 +218,9 @@ class TaskRepository implements TaskRepositoryContract
             ->get();
     }
 
+    /**
+     * @return mixed
+     */
     public function completedTasksMothly()
     {
         return DB::table('tasks')
@@ -165,22 +230,31 @@ class TaskRepository implements TaskRepositoryContract
             ->get();
     }
 
+    /**
+     * @return mixed
+     */
     public function createdTasksToday()
     {
-        return Tasks::whereRaw(
+        return Task::whereRaw(
             'date(created_at) = ?',
             [Carbon::now()->format('Y-m-d')]
         )->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function completedTasksToday()
     {
-        return Tasks::whereRaw(
+        return Task::whereRaw(
             'date(updated_at) = ?',
             [Carbon::now()->format('Y-m-d')]
         )->where('status', 2)->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function completedTasksThisMonth()
     {
         return DB::table('tasks')
@@ -189,21 +263,28 @@ class TaskRepository implements TaskRepositoryContract
             ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
+    /**
+     * @return mixed
+     */
     public function totalTimeSpent()
     {
         return DB::table('tasks_time')
             ->select(DB::raw('SUM(time)'))
             ->get();
     }
-    
+
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function totalOpenAndClosedTasks($id)
     {
-        $open_tasks = Tasks::where('status', 1)
-        ->where('fk_user_id_assign', $id)
+        $open_tasks = Task::where('status', 1)
+        ->where('user_assigned_id', $id)
         ->count();
 
-        $closed_tasks = Tasks::where('status', 2)
-        ->where('fk_user_id_assign', $id)->count();
+        $closed_tasks = Task::where('status', 2)
+        ->where('user_assigned_id', $id)->count();
 
         return collect([$closed_tasks, $open_tasks]);
     }

@@ -19,12 +19,12 @@ class TasksTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->integer('status');
-            $table->integer('fk_user_id_assign')->unsigned();
-            $table->foreign('fk_user_id_assign')->references('id')->on('users');
-            $table->integer('fk_user_id_created')->unsigned();
-            $table->foreign('fk_user_id_created')->references('id')->on('users');
-            $table->integer('fk_client_id')->unsigned();
-            $table->foreign('fk_client_id')->references('id')->on('clients');
+            $table->integer('user_assigned_id')->unsigned();
+            $table->foreign('user_assigned_id')->references('id')->on('users');
+            $table->integer('user_created_id')->unsigned();
+            $table->foreign('user_created_id')->references('id')->on('users');
+            $table->integer('client_id')->unsigned();
+            $table->foreign('client_id')->references('id')->on('clients');
             $table->date('deadline');
             $table->timestamps();
         });

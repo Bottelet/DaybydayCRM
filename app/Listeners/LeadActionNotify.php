@@ -12,7 +12,6 @@ class LeadActionNotify
     /**
      * Action the event listener.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -29,7 +28,7 @@ class LeadActionNotify
     {
         $lead = $event->getLead();
         $action = $event->getAction();
-        $lead->assignee->notify(new LeadActionNotification(
+        $lead->user->notify(new LeadActionNotification(
             $lead,
             $action
         ));

@@ -5,21 +5,42 @@ use App\Models\Client;
 use App\Models\Industry;
 use App\Models\Invoices;
 
+/**
+ * Class ClientRepository
+ * @package App\Repositories\Client
+ */
 class ClientRepository implements ClientRepositoryContract
 {
+    /**
+     *
+     */
     const CREATED = 'created';
+    /**
+     *
+     */
     const UPDATED_ASSIGN = 'updated_assign';
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function find($id)
     {
         return Client::findOrFail($id);
     }
 
+    /**
+     * @return mixed
+     */
     public function listAllClients()
     {
         return Client::pluck('name', 'id');
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function getInvoices($id)
     {
         $invoice = Client::findOrFail($id)->invoices()->with('tasktime')->get();
@@ -27,16 +48,25 @@ class ClientRepository implements ClientRepositoryContract
         return $invoice;
     }
 
+    /**
+     * @return int
+     */
     public function getAllClientsCount()
     {
         return Client::all()->count();
     }
 
+    /**
+     * @return mixed
+     */
     public function listAllIndustries()
     {
         return Industry::pluck('name', 'id');
     }
 
+    /**
+     * @param $requestData
+     */
     public function create($requestData)
     {
         $client = Client::create($requestData);
@@ -44,12 +74,19 @@ class ClientRepository implements ClientRepositoryContract
         event(new \App\Events\ClientAction($client, self::CREATED));
     }
 
+    /**
+     * @param $id
+     * @param $requestData
+     */
     public function update($id, $requestData)
     {
         $client = Client::findOrFail($id);
         $client->fill($requestData->all())->save();
     }
 
+    /**
+     * @param $id
+     */
     public function destroy($id)
     {
         try {
@@ -61,6 +98,10 @@ class ClientRepository implements ClientRepositoryContract
         }
     }
 
+    /**
+     * @param $requestData
+     * @return string
+     */
     public function vat($requestData)
     {
         $vat = $requestData->input('vat');

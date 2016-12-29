@@ -16,11 +16,12 @@ class ClientActionNotification extends Notification
 
     private $client;
     private $action;
-    
+
     /**
      * Create a new notification instance.
-     *
-     * @return void
+     * ClientActionNotification constructor.
+     * @param $client
+     * @param $action
      */
     public function __construct($client, $action)
     {

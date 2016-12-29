@@ -2,7 +2,7 @@
 namespace App\Repositories\Invoice;
 
 use App\Models\Invoice;
-use App\Models\Clients;
+use App\Models\Client;
 use App\Models\TaskTime;
 
 class InvoiceRepository implements InvoiceRepositoryContract
@@ -63,11 +63,11 @@ class InvoiceRepository implements InvoiceRepositoryContract
     {
         $invoice = invoice::findOrFail($id);
 
-        $tasktimeId = $invoice->tasktime()->first()->fk_task_id;
+        $tasktimeId = $invoice->tasktime()->first()->task_id;
 
         $clientid = $invoice->clients()->first()->id;
 
-        $input = array_replace($requestData->all(), ['fk_task_id' => "$tasktimeId"]);
+        $input = array_replace($requestData->all(), ['task_id' => "$tasktimeId"]);
 
         $tasktime = TaskTime::create($input);
         $insertedId = $tasktime->id;

@@ -17,8 +17,7 @@ class ClientHeaderComposer
     /**
      * Create a new profile composer.
      *
-     * @param  ClientRepository  $clients
-     * @return void
+     * @param ClientRepository|ClientRepositoryContract $clients
      */
     public function __construct(ClientRepositoryContract $clients)
     {
@@ -38,7 +37,7 @@ class ClientHeaderComposer
          * [User assigned the client]
          * @var contact
          */
-        $contact = $clients->userAssignee;
+        $contact = $clients->user;
 
         $view->with('contact', $contact);
     }

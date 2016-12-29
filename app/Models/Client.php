@@ -18,40 +18,30 @@ class Client extends Model
         'secondary_number',
         'industry_id',
         'company_type',
-        'fk_user_id'];
+        'user_id'];
 
-    public function userAssignee()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'fk_user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function alltasks()
+   public function tasks()
     {
-        return $this->hasMany(Tasks::class, 'fk_client_id', 'id')
+        return $this->hasMany(Task::class, 'client_id', 'id')
             ->orderBy('status', 'asc')
             ->orderBy('created_at', 'desc');
-    }
-
-    public function allleads()
-    {
-        return $this->hasMany(Leads::class, 'fk_client_id', 'id')
-            ->orderBy('status', 'asc')
-            ->orderBy('created_at', 'desc');
-    }
-
-    public function tasks()
-    {
-        return $this->hasMany(Tasks::class, 'fk_client_id', 'id');
     }
 
     public function leads()
     {
-        return $this->hasMany(Tasks::class, 'fk_client_id', 'id');
+        return $this->hasMany(Lead::class, 'client_id', 'id')
+            ->orderBy('status', 'asc')
+            ->orderBy('created_at', 'desc');
     }
 
     public function documents()
     {
-        return $this->hasMany(Document::class, 'fk_client_id', 'id');
+        return $this->hasMany(Document::class, 'client_id', 'id');
     }
 
     public function invoices()
@@ -61,6 +51,6 @@ class Client extends Model
 
     public function getAssignedUserAttribute()
     {
-        return User::findOrFail($this->fk_user_id);
+        return User::findOrFail($this->user_id);
     }
 }

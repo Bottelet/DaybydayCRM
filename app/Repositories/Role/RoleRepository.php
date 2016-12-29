@@ -4,23 +4,39 @@ namespace App\Repositories\Role;
 use App\Models\Role;
 use App\Models\Permissions;
 
+/**
+ * Class RoleRepository
+ * @package App\Repositories\Role
+ */
 class RoleRepository implements RoleRepositoryContract
 {
+    /**
+     * @return mixed
+     */
     public function listAllRoles()
     {
         return Role::pluck('name', 'id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function allPermissions()
     {
         return Permissions::all();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function allRoles()
     {
         return Role::all();
     }
 
+    /**
+     * @param $requestData
+     */
     public function permissionsUpdate($requestData)
     {
         $allowed_permissions = [];
@@ -42,6 +58,9 @@ class RoleRepository implements RoleRepositoryContract
         $role->save();
     }
 
+    /**
+     * @param $requestData
+     */
     public function create($requestData)
     {
         $roleName = $requestData->name;
@@ -53,6 +72,9 @@ class RoleRepository implements RoleRepositoryContract
         ]);
     }
 
+    /**
+     * @param $id
+     */
     public function destroy($id)
     {
         $role = Role::findorFail($id);

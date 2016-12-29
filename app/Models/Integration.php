@@ -9,10 +9,9 @@ class Integration extends Model
     protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type'];
 
     /**
-     * Get the api class name
-     *
-     * @param  [string] $type [description]
-     * @return [type]       [description]
+     * @param $type
+     * @return mixed
+     * @throws \Exception
      */
     public static function getApi($type)
     {
@@ -27,7 +26,7 @@ class Integration extends Model
             $className = $apiConfig->name;
 
             call_user_func_array(['App\\' . $className, 'initialize'], [$apiConfig]);
-            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
+            $apiInstance = call_user_func_array(['App\\Models\\' . $className, 'getInstance'], []);
 
             return $apiInstance;
         }

@@ -106,8 +106,8 @@
 
 
 <div class="form-group">
-    {!! Form::label('fk_user_id', 'Assign user:', ['class' => 'control-label']) !!}
-    {!! Form::select('fk_user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+    {!! Form::label('user_id', 'Assign user:', ['class' => 'control-label']) !!}
+    {!! Form::select('user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
 
 </div>
 

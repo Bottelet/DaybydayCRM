@@ -16,8 +16,7 @@ class UserHeaderComposer
     /**
      * Create a new profile composer.
      *
-     * @param  UserRepository  $users
-     * @return void
+     * @param UserRepository|UserRepositoryContract $users
      */
     public function __construct(UserRepositoryContract $users)
     {

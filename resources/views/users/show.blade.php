@@ -85,7 +85,7 @@
                     columns: [
 
                         {data: 'titlelink', name: 'title'},
-                        {data: 'fk_client_id', name: 'Client', orderable: false, searchable: false},
+                        {data: 'client_id', name: 'Client', orderable: false, searchable: false},
                         {data: 'created_at', name: 'created_at'},
                         {data: 'deadline', name: 'deadline'},
                         {data: 'status', name: 'status', orderable: false},
@@ -127,7 +127,7 @@
                     columns: [
 
                         {data: 'titlelink', name: 'title'},
-                        {data: 'fk_client_id', name: 'Client', orderable: false, searchable: false},
+                        {data: 'client_id', name: 'Client', orderable: false, searchable: false},
                         {data: 'created_at', name: 'created_at'},
                         {data: 'contact_date', name: 'contact_date'},
                         {data: 'status', name: 'status', orderable: false},

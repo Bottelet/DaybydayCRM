@@ -8,7 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\Models\Leads;
+use App\Models\Lead;
 
 class LeadAction
 {
@@ -25,12 +25,14 @@ class LeadAction
     {
         return $this->action;
     }
+
     /**
      * Create a new event instance.
-     *
-     * @return void
+     * LeadAction constructor.
+     * @param Lead $lead
+     * @param $action
      */
-    public function __construct(Leads $lead, $action)
+    public function __construct(Lead $lead, $action)
     {
         $this->lead = $lead;
         $this->action = $action;

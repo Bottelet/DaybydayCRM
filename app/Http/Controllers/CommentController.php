@@ -9,16 +9,22 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
+    /**
+     * Create a comment for tasks
+     * @param Request $commentRequest
+     * @param $id
+     * @return mixed
+     */
     public function store(Request $commentRequest, $id)
     {
         $this->validate($commentRequest, [
             'description' => 'required',
-            'fk_task_id' => '',
-            'fk_user_id' => '']);
+            'task_id' => '',
+            'user_id' => '']);
 
         $input = $commentRequest = array_merge(
             $commentRequest->all(),
-            ['fk_task_id' => $id, 'fk_user_id' => Auth::id()]
+            ['task_id' => $id, 'user_id' => Auth::id()]
         );
         Comment::create($input);
         Session::flash('flash_message', 'Comment successfully added!'); //Snippet in Master.blade.php

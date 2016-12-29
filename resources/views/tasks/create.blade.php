@@ -34,13 +34,13 @@
 
     </div>
     <div class="form-group form-inline">
-        {!! Form::label('fk_user_id_assign', Lang::Get('task.headers.assign_user'), ['class' => 'control-label']) !!}
-        {!! Form::select('fk_user_id_assign', $users, null, ['class' => 'form-control']) !!}
+        {!! Form::label('user_assigned_id', Lang::Get('task.headers.assign_user'), ['class' => 'control-label']) !!}
+        {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control']) !!}
         @if(Request::get('client') != "")
-            {!! Form::hidden('fk_client_id', Request::get('client')) !!}
+            {!! Form::hidden('client_id', Request::get('client')) !!}
         @else
-            {!! Form::label('fk_client_id', Lang::Get('task.headers.assign_client'), ['class' => 'control-label']) !!}
-            {!! Form::select('fk_client_id', $clients, null, ['class' => 'form-control']) !!}
+            {!! Form::label('client_id', Lang::Get('task.headers.assign_client'), ['class' => 'control-label']) !!}
+            {!! Form::select('client_id', $clients, null, ['class' => 'form-control']) !!}
         @endif
     </div>
 

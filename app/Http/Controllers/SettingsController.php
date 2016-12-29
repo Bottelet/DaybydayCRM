@@ -14,6 +14,11 @@ class SettingsController extends Controller
     protected $settings;
     protected $roles;
 
+    /**
+     * SettingsController constructor.
+     * @param SettingRepositoryContract $settings
+     * @param RoleRepositoryContract $roles
+     */
     public function __construct(
         SettingRepositoryContract $settings,
         RoleRepositoryContract $roles
@@ -24,6 +29,9 @@ class SettingsController extends Controller
         $this->middleware('user.is.admin', ['only' => ['index']]);
     }
 
+    /**
+     * @return mixed
+     */
     public function index()
     {
         return view('settings.index')
@@ -32,6 +40,10 @@ class SettingsController extends Controller
             ->withRoles($this->roles->allRoles());
     }
 
+    /**
+     * @param UpdateSettingOverallRequest $request
+     * @return mixed
+     */
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
         $this->settings->updateOverall($request);
@@ -39,6 +51,10 @@ class SettingsController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * @param Request $request
+     * @return mixed
+     */
     public function permissionsUpdate(Request $request)
     {
         $this->roles->permissionsUpdate($request);

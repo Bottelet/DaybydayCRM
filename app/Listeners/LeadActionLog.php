@@ -7,14 +7,13 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Activity;
 use Lang;
-use App\Models\Leads;
+use App\Models\Lead;
 
 class LeadActionLog
 {
     /**
      * Action the event listener.
      *
-     * @return void
      */
     public function __construct()
     {
@@ -33,8 +32,8 @@ class LeadActionLog
             case 'created':
                 $text = Lang::get('misc.log.lead.created', [
                     'title' => $event->getLead()->title,
-                    'creator' => $event->getLead()->createdBy->name,
-                    'assignee' => $event->getLead()->assignee->name
+                    'creator' => $event->getLead()->creator->name,
+                    'assignee' => $event->getLead()->user->name
                 ]);
                 break;
             case 'updated_status':
@@ -50,7 +49,7 @@ class LeadActionLog
             case 'updated_assign':
                 $text = Lang::get('misc.log.lead.assign', [
                     'username' => Auth()->user()->name,
-                    'assignee' => $event->getLead()->assignee->name
+                    'assignee' => $event->getLead()->user->name
                 ]);
                 break;
             default:
@@ -61,8 +60,8 @@ class LeadActionLog
             [
                 'text' => $text,
                 'user_id' => Auth()->id(),
-                'type' => Leads::class,
-                'type_id' =>  $event->getLead()->id,
+                'source_type' => Lead::class,
+                'source_id' =>  $event->getLead()->id,
                 'action' => $event->getAction()
             ]
         );

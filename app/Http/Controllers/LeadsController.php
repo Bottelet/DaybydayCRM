@@ -6,7 +6,7 @@ use Auth;
 use Carbon;
 use Session;
 use Datatables;
-use App\Models\Leads;
+use App\Models\Lead;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Requests\Lead\StoreLeadRequest;
@@ -49,24 +49,28 @@ class LeadsController extends Controller
         return view('leads.index');
     }
 
+    /**
+     * Data for Data tables
+     * @return mixed
+     */
     public function anyData()
     {
-        $leads = Leads::select(
-            ['id', 'title', 'fk_user_id_created', 'fk_client_id', 'fk_user_id_assign', 'contact_date']
+        $leads = Lead::select(
+            ['id', 'title', 'user_created_id', 'client_id', 'user_assigned_id', 'contact_date']
         )->where('status', 1)->get();
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
                 return '<a href="leads/' . $leads->id . '" ">' . $leads->title . '</a>';
             })
-            ->editColumn('fk_user_id_created', function ($leads) {
-                return $leads->createdBy->name;
+            ->editColumn('user_created_id', function ($leads) {
+                return $leads->creator->name;
             })
             ->editColumn('contact_date', function ($leads) {
                 return $leads->contact_date ? with(new Carbon($leads->created_at))
                     ->format('d/m/Y') : '';
             })
-            ->editColumn('fk_user_id_assign', function ($leads) {
-                return $leads->assignee->name;
+            ->editColumn('user_assigned_id', function ($leads) {
+                return $leads->user->name;
             })->make(true);
     }
 
@@ -85,7 +89,7 @@ class LeadsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param StoreLeadRequest|Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreLeadRequest $request)
@@ -102,6 +106,12 @@ class LeadsController extends Controller
         return redirect()->back();
     }
 
+    /**
+     * Update the follow up date (Deadline)
+     * @param UpdateLeadFollowUpRequest $request
+     * @param $id
+     * @return mixed
+     */
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
     {
         $this->leads->updateFollowup($id, $request);
@@ -118,11 +128,17 @@ class LeadsController extends Controller
     public function show($id)
     {
         return view('leads.show')
-            ->withLeads($this->leads->find($id))
+            ->withLead($this->leads->find($id))
             ->withUsers($this->users->getAllUsersWithDepartments())
             ->withCompanyname($this->settings->getCompanyName());
     }
 
+    /**
+     * Complete lead
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
     public function updateStatus($id, Request $request)
     {
         $this->leads->updateStatus($id, $request);

@@ -16,10 +16,10 @@ class CreateNotesTable extends Migration
             $table->increments('id');
             $table->text('note');
             $table->integer('status');
-            $table->integer('fk_user_id')->unsigned();
-            $table->foreign('fk_user_id')->references('id')->on('users');
-            $table->integer('fk_lead_id')->unsigned();
-            $table->foreign('fk_lead_id')->references('id')->on('leads');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->integer('lead_id')->unsigned();
+            $table->foreign('lead_id')->references('id')->on('leads');
             $table->timestamps();
         });
     }

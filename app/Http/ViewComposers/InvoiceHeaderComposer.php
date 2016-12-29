@@ -17,8 +17,7 @@ class InvoiceHeaderComposer
     /**
      * Create a new profile composer.
      *
-     * @param  invoiceRepository  $invoices
-     * @return void
+     * @param invoiceRepository|InvoiceRepositoryContract $invoices
      */
     public function __construct(InvoiceRepositoryContract $invoices)
     {

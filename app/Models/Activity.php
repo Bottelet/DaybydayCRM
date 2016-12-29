@@ -15,8 +15,8 @@ class Activity extends model
     protected $fillable = [
         'user_id',
         'text',
-        'type',
-        'type_id',
+        'source_type',
+        'source_id',
         'action',
     ];
     protected $guarded = ['id'];
@@ -28,11 +28,15 @@ class Activity extends model
      */
     public function task()
     {
-        return $this->belongsTo(Tasks::class, 'task_id', 'id');
+        return $this->belongsTo(Task::class, 'task_id', 'id');
     }
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function source() {
+        return $this->morphTo();
     }
 }
