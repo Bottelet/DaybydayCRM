@@ -29,6 +29,11 @@ h4{
     margin: 0;
     font-weight: normal; 
 }
+
+body {
+  background-color: #edf0fd;
+
+}
 .smalltext
 {
     font-size: 10px;
@@ -61,9 +66,7 @@ h4{
 
 }
 #wrapper {
-   
-
-    @media(min-width:992px){
+      @media(min-width:992px){
     	 padding-left: 250px;
     }
 
@@ -145,4 +148,26 @@ h4{
 {
     color:#fff !important;
     background-color:#3A485C !important; 
+}
+
+.panel-heading
+{
+    padding: 1px 1px 1px 15px;
+    p
+    {
+      margin-top:8px;
+      font-size:16px;
+    }
+}
+
+.navmenu-fixed-left, .navbar-offcanvas.navmenu-fixed-left
+{
+  border-width: 0 0px 0 0;
+}
+
+.navbar-default
+{
+  background-color: $primary-color;
+  border:none;
+  border-radius:0px;
 }

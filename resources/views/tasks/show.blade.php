@@ -20,46 +20,7 @@
 
     <div class="row">
         <div class="col-md-9">
-            <div class="taskcase">
-
-                <h3>{{$tasks->title}}</h3>
-                <hr class="grey">
-                <p>{{$tasks->description}}</p>
-                <p class="smalltext">@lang('task.headers.created_at'):
-                    {{ date('d F, Y, H:i:s', strtotime($tasks->created_at))}}
-                    @if($tasks->updated_at != $tasks->created_at)
-                        <br/>@lang('task.status.modified'): {{date('d F, Y, H:i:s', strtotime($tasks->updated_at))}}
-                    @endif</p>
-
-
-            </div>
-
-            <?php $count = 0;?>
-
-            <?php $i = 1 ?>
-            @foreach($tasks->comments as $comment)
-                <div class="taskcase" style="margin-top:15px; padding-top:10px;">
-                    <p class="smalltext">#{{$i++}}</p>
-                    <p>  {{$comment->description}}</p>
-                    <p class="smalltext">@lang('task.titles.comment_by'): <a
-                                href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a></p>
-                    <p class="smalltext">@lang('task.headers.created_at'):
-                        {{ date('d F, Y, H:i:s', strtotime($comment->created_at))}}
-                        @if($comment->updated_at != $comment->created_at)
-                            <br/>@lang('task.status.modified')
-                            : {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
-                        @endif</p>
-                </div>
-            @endforeach
-            <br/>
-            {!! Form::open(array('url' => array('/tasks/comments',$tasks->id, ))) !!}
-            <div class="form-group">
-                {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
-
-                {!! Form::submit(Lang::get('task.titles.add_comment'), ['class' => 'btn btn-primary']) !!}
-            </div>
-            {!! Form::close() !!}
-
+            @include('partials.comments', ['subject' => $tasks])
         </div>
         <div class="col-md-3">
             <div class="sidebarheader">

@@ -59,6 +59,13 @@ a.list-group-item:focus
     box-shadow: 0 0px 0px rgba(0, 0, 0, 0.05);
 }
 
+.shadow
+{
+    -webkit-box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 1px 1px 10px 0px rgba(0, 0, 0, 0.3);
+}
+
 .logospace
 {
    font-size: 18px;

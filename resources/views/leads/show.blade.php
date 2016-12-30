@@ -19,41 +19,7 @@
 
     <div class="row">
         <div class="col-md-9">
-            <div class="taskcase">
-
-                <h3>{{$lead->title}}</h3>
-                <hr class="grey">
-                <p>{{$lead->note}}</p><br/>
-                <p class="smalltext">@lang('lead.headers.created_at'):
-                    {{ date('d F, Y, H:i:s', strtotime($lead->created_at))}}
-                    @if($lead->updated_at != $lead->created_at)
-                        <br/> @lang('lead.status.modified'): {{date('d F, Y, H:i:s', strtotime($lead->updated_at))}}
-                    @endif</p>
-            </div>
-            <?php $i = 1 ?>
-
-            @foreach($lead->notes as $note)
-                <div class="taskcase" style="margin-top:15px; padding-top:10px;">
-                    <p class="smalltext">#{{$i++}}</p>
-                    <p>  {{$note->note}}</p>
-                    <p class="smalltext">@lang('lead.titles.comment_by'): <a
-                                href="{{route('users.show', $note->user->id)}}"> {{$note->user->name}} </a></p>
-                    <p class="smalltext">@lang('lead.headers.created_at'):
-                        {{ date('d F, Y, H:i:s', strtotime($note->created_at))}}
-                        @if($note->updated_at != $note->created_at)
-                            <br/>@lang('lead.status.modified'): {{date('d F, Y, H:i:s', strtotime($note->updated_at))}}
-                        @endif</p>
-                </div>
-            @endforeach
-            <br/>
-            {!! Form::open(array('url' => array('/leads/notes',$lead->id, ))) !!}
-            <div class="form-group">
-                {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
-
-                {!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
-            </div>
-            {!! Form::close() !!}
-
+            @include('partials.comments', ['subject' => $lead])
         </div>
         <div class="col-md-3">
             <div class="sidebarheader">
