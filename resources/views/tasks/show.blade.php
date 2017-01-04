@@ -88,7 +88,7 @@
                 </tbody>
             </table>
             <br/>
-            <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#ModalTimer">
+            <button type="button" class="btn btn-primary form-control" value="add_time_modal" data-toggle="modal" data-target="#ModalTimer">
                 @lang('task.invoices.add_time')
             </button>
 

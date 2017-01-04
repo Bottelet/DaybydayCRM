@@ -34,8 +34,12 @@
                 {data: 'company_name', name: 'company_name'},
                 {data: 'email', name: 'email'},
                 {data: 'primary_number', name: 'primary_number'},
-                {data: 'edit', name: 'edit', orderable: false, searchable: false},
-                {data: 'delete', name: 'delete', orderable: false, searchable: false},
+                @if(Entrust::can('client-update'))   
+                { data: 'edit', name: 'edit', orderable: false, searchable: false},
+                @endif
+                @if(Entrust::can('client-delete'))   
+                { data: 'delete', name: 'delete', orderable: false, searchable: false},
+                @endif
 
             ]
         });

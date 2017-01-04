@@ -4,7 +4,7 @@
 <div class="col-sm-8">
   <el-tabs active-name="tasks" style="width:100%">
     <el-tab-pane label="Tasks" name="tasks">
-        <table class="table table-hover" id="opentask-table">
+        <table class="table table-hover" id="tasks-table">
         <h3>@lang('task.headers.tasks_assigned')</h3>
             <thead>
                     <th>@lang('task.headers.title')</th>
@@ -78,7 +78,7 @@
         });
 
             $(function () {
-              var table = $('#opentask-table').DataTable({
+              var table = $('#tasks-table').DataTable({
                     processing: true,
                     serverSide: true,
                     ajax: '{!! route('users.taskdata', ['id' => $user->id]) !!}',
