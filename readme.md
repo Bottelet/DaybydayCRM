@@ -1,7 +1,7 @@
 
 
 ![Flarepoint Logo](https://cloud.githubusercontent.com/assets/15610490/16813901/ebfd6d94-4933-11e6-9fee-655f6193f38e.png)
-### Flarepoint CRM
+### Flarepoint CRM [![Build Status](https://travis-ci.org/Bottelet/Flarepoint-crm.svg?branch=develop)](https://travis-ci.org/Bottelet/Flarepoint-crm)
 Flarepoint is a new customer relationship management system (CRM) which purpose is to help you keep track of your customers, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel 5.3 PHP Framework.
 
 ![page_design](https://cloud.githubusercontent.com/assets/15610490/16659700/903393ac-446b-11e6-969c-831fcd698a06.PNG)
@@ -44,6 +44,8 @@ And much more (in no particular order)
 
 ### Contribution Guide
 Flarepoint CRM follows [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standard.
+
+All test should pass on Travis, or the failed test should be rewritten to fit new changes 
 
 Translation... You can help translating Flarepoint-crm into other languages, by copying the resources/lang/en folder into for example resources/lang/de and translate the files, found inside the folder.
 
