@@ -19,15 +19,16 @@
 
 
 <div id="wrapper">
-    <div class="navbar navbar-default navbar-top">
+    <div class="navbar navbar-default navbar-top ">
         <!--NOTIFICATIONS START-->
-        <div class="dropdown">
+        <div class="pull-notif-right">
+        <div class="dropdown ">
             <a id="dLabel" role="button" data-toggle="dropdown"  href="/page.html">
                 <i class="glyphicon glyphicon-bell"><span id="notifycount"></span></i>
             </a>
             <ul class="dropdown-menu notify-drop  notifications" role="menu" aria-labelledby="dLabel">
                 <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4
-                            class="menu-title pull-right"><a href="{{url('notifications/markall')}}">Mark all as
+                            class="menu-title"><a href="{{url('notifications/markall')}}">Mark all as
                             read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
                 </div>
                 <li class="divider"></li>
@@ -86,12 +87,14 @@
 
             </ul>
         </div>
+        </div>
         <!--NOTIFICATIONS END-->
         <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
+
     </div>
 
 
