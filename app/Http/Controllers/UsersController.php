@@ -53,7 +53,7 @@ class UsersController extends Controller
 
     public function anyData()
     {
-        $canUpdateUser = auth()->user()->can('update-user');
+        auth()->user()->can('update-user');
         $users = User::select(['id', 'name', 'email', 'work_number']);
         return Datatables::of($users)
             ->addColumn('namelink', function ($users) {
@@ -175,7 +175,7 @@ class UsersController extends Controller
      */
     public function store(StoreUserRequest $userRequest)
     {
-        $getInsertedId = $this->users->create($userRequest);
+        $this->users->create($userRequest);
         return redirect()->route('users.index');
     }
 
