@@ -103,7 +103,7 @@ class UserRepository implements UserRepositoryContract
             $companyname = $settings->company;
             $file =  $requestData->file('image_path');
 
-            $destinationPath = public_path(). '\\images\\'. $companyname;
+            $destinationPath =  public_path(). '/images/'. $companyname;
             $filename = str_random(8) . '_' . $file->getClientOriginalName() ;
 
             $file->move($destinationPath, $filename);
