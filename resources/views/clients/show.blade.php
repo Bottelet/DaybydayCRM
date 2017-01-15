@@ -28,7 +28,7 @@
             <ul class="nav nav-tabs">
                 <li class="active"><a data-toggle="tab" href="#task">@lang('client.tabs.tasks')</a></li>
                 <li><a data-toggle="tab" href="#lead">@lang('client.tabs.leads')</a></li>
-                <li><a data-toggle="tab" href="#docuemnt">@lang('client.tabs.documents')</a></li>
+                <li><a data-toggle="tab" href="#document">@lang('client.tabs.documents')</a></li>
                 <li><a data-toggle="tab" href="#invoice">@lang('client.tabs.invoices')</a></li>
 
             </ul>
