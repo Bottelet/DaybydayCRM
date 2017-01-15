@@ -4,33 +4,32 @@
 @stop
 @section('content')
     <div class="row">
-        <table class="table table-responsive table-hover table_wrapper" id="clients-table">
+    <div class="col-lg-12">
+        
+    </div>
+    @foreach($roles as $role) 
+    <div class="col-lg-12">
+    {!! Form::model($permission, [
+        'method' => 'PATCH',
+        'url'    => 'settings/permissionsUpdate',
+    ]) !!}
+
+        <table class="table table-responsive table-hover table_wrapper" id="permissions-table">
             <thead>
             <tr>
-                <th></th>
+            <th></th>
                 @foreach($permission as $perm)
-                    <th>{{$perm->display_name}}</th>
+             <th>{{$perm->display_name}}</th>
 
                 @endforeach
                 <th></th>
             </tr>
 
-
             </thead>
             <tbody>
-
-            @foreach($roles as $role)
+        <input type="hidden" name="role_id" value="{{ $role->id }}"/>
                 <tr>
-                    <div class="col-lg-4">
-                        {!! Form::model($permission, [
-                        'method' => 'PATCH',
-                        'url'    => 'settings/permissionsUpdate',
-                        ]) !!}
-
                         <th>{{$role->display_name}}</th>
-
-
-                        <input type="hidden" name="role_id" value="{{ $role->id }}"/>
                         @foreach($permission as $perm)
                             <?php $isEnabled = !current(
                                     array_filter(
@@ -43,20 +42,19 @@
 
                             <td><input type="checkbox"
                                        <?php if (!$isEnabled) echo 'checked' ?> name="permissions[ {{ $perm->id }} ]"
-                                       value="1">
+                                       value="1" data-role="{{ $role->id }}">
                                 <span class="perm-name"></span><br/></td>
 
                 
-                    @endforeach
-                    </div>
-                
-        
+                    @endforeach        
     <td>{!! Form::submit(Lang::get('setting.headers.save_role'), ['class' => 'btn btn-primary']) !!}</td>
-    {!! Form::close() !!}
-    </tr>
-    @endforeach
-    </tbody>
+   
+            </tr>
+      </tbody>
     </table>
+     {!! Form::close() !!}
+     </div>
+     @endforeach
 </div>
 
 
