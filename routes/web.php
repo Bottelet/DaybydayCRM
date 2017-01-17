@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,7 +18,6 @@ Route::group(['middleware' => ['auth']], function () {
      */
         Route::get('/', 'PagesController@dashboard');
         Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
-
     /**
      * Users
      */
@@ -30,12 +28,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
     });
         Route::resource('users', 'UsersController');
-
-    /**
+	    /**
      * Roles
      */
         Route::resource('roles', 'RolesController');
-
     /**
      * Clients
      */
@@ -43,9 +39,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/data', 'ClientsController@anyData')->name('clients.data');
         Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
         Route::post('/upload/{id}', 'DocumentsController@upload');
+		
     });
         Route::resource('clients', 'ClientsController');
-
+	    Route::resource('documents', 'DocumentsController');
+	
+      
     /**
      * Tasks
      */
@@ -58,7 +57,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/comments/{id}', 'CommentController@store');
     });
         Route::resource('tasks', 'TasksController');
-
     /**
      * Leads
      */
@@ -70,7 +68,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
     });
         Route::resource('leads', 'LeadsController');
-
     /**
      * Settings
      */
@@ -79,12 +76,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/permissionsUpdate', 'SettingsController@permissionsUpdate');
         Route::patch('/overall', 'SettingsController@updateOverall');
     });
-
     /**
      * Departments
      */
         Route::resource('departments', 'DepartmentsController'); 
-
     /**
      * Integrations
      */
@@ -92,7 +87,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('Integration/slack', 'IntegrationsController@slack');
     });
         Route::resource('integrations', 'IntegrationsController');
-
     /**
      * Notifications
      */
@@ -102,7 +96,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/markall', 'NotificationsController@markAll');
         Route::get('/{id}', 'NotificationsController@markRead');
     });
-
     /**
      * Invoices
      */
