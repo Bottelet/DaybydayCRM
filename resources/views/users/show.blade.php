@@ -60,10 +60,10 @@
   </el-tabs>
   </div>
   <div class="col-sm-4">
-  <h4>Tasks</h4>
-<doughnut :statistics="{{$task_statistics}}"></doughnut>
-<h4>Leads</h4>
-<doughnut :statistics="{{$lead_statistics}}"></doughnut>
+  <h4>Задачи</h4>
+<doughnut :statistics="{{$task_statistics}} or 'Задач нет'"></doughnut>
+<h4>Лиды</h4>
+<doughnut :statistics="{{$lead_statistics}} or 'Лидов нет'"></doughnut>
   </div>
 
    @stop 
