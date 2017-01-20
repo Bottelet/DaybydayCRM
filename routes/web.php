@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/data', 'ClientsController@anyData')->name('clients.data');
         Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
         Route::post('/upload/{id}', 'DocumentsController@upload');
+        Route::patch('/updateassign/{id}', 'ClientsController@updateAssign');
     });
         Route::resource('clients', 'ClientsController');
 

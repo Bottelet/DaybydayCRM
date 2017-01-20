@@ -17,6 +17,7 @@ return [
         ],
         'client' => [
             'created' => 'Client :company was assigned to you',
+            'assign' => ':username assigned :company to you',
         ]
     ],
     'log' => [
@@ -34,6 +35,7 @@ return [
         ],
         'client' => [
             'created' => 'Client :company was assigned to :assignee',
+            'assign' => ':username assigned client to :assignee',
         ]
     ]
 ];

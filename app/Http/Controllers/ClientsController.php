@@ -107,7 +107,8 @@ class ClientsController extends Controller
         return view('clients.show')
             ->withClient($this->clients->find($id))
             ->withCompanyname($this->settings->getCompanyName())
-            ->withInvoices($this->clients->getInvoices($id));
+            ->withInvoices($this->clients->getInvoices($id))
+            ->withUsers($this->clients->getAllUsersWithDepartments());
     }
 
     /**
@@ -146,4 +147,17 @@ class ClientsController extends Controller
 
         return redirect()->route('clients.index');
     }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return mixed
+     */
+    public function updateAssign($id, Request $request)
+    {
+        $this->clients->updateAssign($id, $request);
+        Session()->flash('flash_message', 'New user is assigned');
+        return redirect()->back();
+    }
+
 }

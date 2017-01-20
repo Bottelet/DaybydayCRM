@@ -41,9 +41,13 @@
         </div>
     </div>
     <div class="col-md-4 currenttask">
-        <div class="boxspace">
-            <!--Tasks stats at some point-->
-        </div>
+                {!! Form::model($client, [
+               'method' => 'PATCH',
+                'url' => ['clients/updateassign', $client->id],
+                ]) !!}
+                {!! Form::select('user_assigned_id', $users, $client->user->id, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+                {!! Form::submit(Lang::get('task.titles.assign_user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
+                {!! Form::close() !!}
     </div>
     </div>
     </div>

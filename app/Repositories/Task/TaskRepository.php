@@ -13,21 +13,9 @@ use App\Models\Integration;
  */
 class TaskRepository implements TaskRepositoryContract
 {
-    /**
-     *
-     */
     const CREATED = 'created';
-    /**
-     *
-     */
     const UPDATED_STATUS = 'updated_status';
-    /**
-     *
-     */
     const UPDATED_TIME = 'updated_time';
-    /**
-     *
-     */
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**

@@ -37,6 +37,12 @@ class ClientActionLog
                     'assignee' => $client->AssignedUser->name,
                 ]);
                 break;
+            case 'updated_assign':
+                $text = Lang::get('misc.log.client.assign', [
+                    'username' => Auth()->user()->name,
+                    'assignee' => $client->AssignedUser->name,
+                ]);
+                break;
             default:
                 break;
         }

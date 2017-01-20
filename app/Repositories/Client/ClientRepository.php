@@ -4,20 +4,15 @@ namespace App\Repositories\Client;
 use App\Models\Client;
 use App\Models\Industry;
 use App\Models\Invoices;
-
+use App\Models\User;
+use DB;
 /**
  * Class ClientRepository
  * @package App\Repositories\Client
  */
 class ClientRepository implements ClientRepositoryContract
 {
-    /**
-     *
-     */
     const CREATED = 'created';
-    /**
-     *
-     */
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**
@@ -65,6 +60,18 @@ class ClientRepository implements ClientRepositoryContract
     }
 
     /**
+     * @return mixed
+     */
+    public function getAllUsersWithDepartments()
+    {
+        return  User::select(['users.name', 'users.id',
+                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')])
+        ->join('department_user', 'users.id', '=', 'department_user.user_id')
+        ->join('departments', 'department_user.department_id', '=', 'departments.id')
+        ->pluck('full_name', 'id');
+    }
+
+    /**
      * @param $requestData
      */
     public function create($requestData)
@@ -96,6 +103,19 @@ class ClientRepository implements ClientRepositoryContract
         } catch (\Illuminate\Database\QueryException $e) {
             Session()->flash('flash_message_warning', 'Client can NOT have, leads, or tasks assigned when deleted');
         }
+    }
+
+    /**
+     * @param $id
+     * @param $requestData
+     */
+    public function updateAssign($id, $requestData)
+    {
+        $client = Client::with('user')->findOrFail($id);
+        $client->user_id = $requestData->get('user_assigned_id');
+        $client->save();
+
+        event(new \App\Events\ClientAction($client, self::UPDATED_ASSIGN));
     }
 
     /**

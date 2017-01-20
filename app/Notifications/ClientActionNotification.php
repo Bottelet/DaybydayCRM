@@ -68,6 +68,12 @@ class ClientActionNotification extends Notification
                     'company' => $this->client->company_name,
                 ]);
                 break;
+            case 'updated_assign':
+                $text = Lang::get('misc.notifications.client.assign', [
+                    'company' => $this->client->company_name,
+                    'username' => Auth()->user()->name
+                ]);
+                break;
             default:
                 break;
         }
