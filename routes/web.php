@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,7 +18,7 @@ Route::group(['middleware' => ['auth']], function () {
      */
         Route::get('/', 'PagesController@dashboard');
         Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
-
+        
     /**
      * Users
      */
@@ -31,11 +30,10 @@ Route::group(['middleware' => ['auth']], function () {
     });
         Route::resource('users', 'UsersController');
 
-    /**
+	 /**
      * Roles
      */
         Route::resource('roles', 'RolesController');
-
     /**
      * Clients
      */
@@ -46,7 +44,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{id}', 'ClientsController@updateAssign');
     });
         Route::resource('clients', 'ClientsController');
-
+	    Route::resource('documents', 'DocumentsController');
+	
+      
     /**
      * Tasks
      */

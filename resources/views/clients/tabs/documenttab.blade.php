@@ -17,7 +17,6 @@
             <th>@lang('client.tabs.headers.file')</th>
             <th>@lang('client.tabs.headers.size')</th>
             <th>@lang('client.tabs.headers.created_at')</th>
-
         </tr>
         </thead>
         <tbody>
@@ -27,6 +26,14 @@
                        target="_blank">{{$document->file_display}}</a></td>
                 <td>{{$document->size}} <span class="moveright"> MB</span></td>
                 <td>{{$document->created_at}}</td>
+		
+                <td>
+		<form method="POST" action="{{action('DocumentsController@destroy', $document->id)}}">
+		<input type="hidden" name="_method" value="delete"/>
+		<input type="hidden" name="_token" value="{{csrf_token()}}"/>
+		<input type="submit" class="btn btn-danger" value="Delete"/>
+		</form>
+                </td>
             </tr>
         @endforeach
         </tbody>
