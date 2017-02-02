@@ -14,6 +14,7 @@ class FormValidationErrorTaskTest extends TestCase
         $this->createUser();
         $this->createRole();
         $this->createTaskPermission();
+        $this->createDepartment();
     }
 
     /**

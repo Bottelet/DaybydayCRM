@@ -13,7 +13,7 @@ class CreateTaskTest extends TestCase
 
         $this->createUser();
         $this->createRole();
-
+        $this->createDepartment();
     }
 
     /**

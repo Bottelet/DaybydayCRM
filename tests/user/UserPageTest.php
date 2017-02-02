@@ -15,7 +15,6 @@ class UserPageTest extends TestCase
         $this->createClient();
         $this->createRole();
         $this->createDepartment();
-
 	}
 
     /**

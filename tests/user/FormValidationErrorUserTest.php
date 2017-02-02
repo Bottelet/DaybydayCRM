@@ -13,6 +13,7 @@ class FormValidationErrorUserTest extends TestCase
         $this->createUser();
         $this->createRole();
         $this->createUserPermission();
+        $this->createDepartment();
     }
 
     /**

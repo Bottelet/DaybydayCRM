@@ -13,6 +13,7 @@ class CreateLeadTest extends TestCase
 
         $this->createUser();
         $this->createRole();
+        $this->createDepartment();
 
     }
 

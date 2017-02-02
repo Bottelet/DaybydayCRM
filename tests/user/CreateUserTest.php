@@ -12,6 +12,7 @@ class CreateUserTest extends TestCase
 
         $this->createUser();
         $this->createRole();
+        $this->createDepartment();
 
     }
 

@@ -14,6 +14,7 @@ class FormValidationErrorLeadTest extends TestCase
         $this->createUser();
         $this->createRole();
         $this->createLeadPermission();
+        $this->createDepartment();
     }
 
     /**

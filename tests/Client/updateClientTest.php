@@ -14,6 +14,7 @@ class UpdateClientTest extends TestCase
         $this->createUser();
         $this->createClient();
         $this->createRole();
+        $this->createDepartment();
     }
     /**
      * User can not update client with out permission

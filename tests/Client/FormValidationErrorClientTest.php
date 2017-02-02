@@ -15,6 +15,7 @@ class FormValidationErrorClientTest extends TestCase
         $this->createClient();
         $this->createRole();
         $this->createClientPermission();
+        $this->createDepartment();
     }
 
     /**
