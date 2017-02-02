@@ -108,7 +108,7 @@ class ClientsController extends Controller
             ->withClient($this->clients->find($id))
             ->withCompanyname($this->settings->getCompanyName())
             ->withInvoices($this->clients->getInvoices($id))
-            ->withUsers($this->clients->getAllUsersWithDepartments());
+            ->withUsers($this->users->getAllUsersWithDepartments());
     }
 
     /**

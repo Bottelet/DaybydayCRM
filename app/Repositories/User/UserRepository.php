@@ -39,11 +39,8 @@ class UserRepository implements UserRepositoryContract
      */
     public function getAllUsersWithDepartments()
     {
-        return  User::select(['users.name', 'users.id',
-                DB::raw('CONCAT(users.name, " (", departments.name, ")") AS full_name')])
-        ->join('department_user', 'users.id', '=', 'department_user.user_id')
-        ->join('departments', 'department_user.department_id', '=', 'departments.id')
-        ->pluck('full_name', 'id');
+        return User::all()
+        ->pluck('nameAndDepartment', 'id');
     }
 
     /**
@@ -52,32 +49,30 @@ class UserRepository implements UserRepositoryContract
      */
     public function create($requestData)
     {
-        $settings = Setting::first();
-        $password =  bcrypt($requestData->password);
-        $role = $requestData->roles;
-        $department = $requestData->departments;
-        $companyname = $settings->company;
-
+        $companyname = Setting::first()->company;
+        $filename = null;
         if ($requestData->hasFile('image_path')) {
             if (!is_dir(public_path(). '/images/'. $companyname)) {
                 mkdir(public_path(). '/images/'. $companyname, 0777, true);
             }
-            $settings = Setting::findOrFail(1);
             $file =  $requestData->file('image_path');
 
             $destinationPath = public_path(). '/images/'. $companyname;
             $filename = str_random(8) . '_' . $file->getClientOriginalName() ;
-
             $file->move($destinationPath, $filename);
-            
-            $input =  array_replace($requestData->all(), ['image_path'=>"$filename", 'password'=>"$password"]);
-        } else {
-            $input =  array_replace($requestData->all(), ['password'=>"$password"]);
         }
 
-        $user = User::create($input);
-        $user->roles()->attach($role);
-        $user->department()->attach($department);
+        $user = New User();
+        $user->name = $requestData->name;
+        $user->email = $requestData->email;
+        $user->address = $requestData->address;
+        $user->work_number = $requestData->work_number;
+        $user->personal_number = $requestData->personal_number;
+        $user->password = bcrypt($requestData->password);
+        $user->image_path = $filename;
+        $user->save();
+        $user->roles()->attach($requestData->roles);
+        $user->department()->attach($requestData->departments);
         $user->save();
 
         Session::flash('flash_message', 'User successfully added!'); //Snippet in Master.blade.php

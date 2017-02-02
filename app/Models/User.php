@@ -9,7 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-
     use Notifiable, EntrustUserTrait;
 
     /**
@@ -60,5 +59,10 @@ class User extends Authenticatable
     public function isOnline()
     {
         return Cache::has('user-is-online-' . $this->id);
+    }
+
+    public function getNameAndDepartmentAttribute()
+    {
+        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
     }
 }
