@@ -1,16 +1,16 @@
 <div id="task" class="tab-pane fade in active">
     <div class="boxspace">
         <table class="table table-hover">
-            <h4>@lang('client.tabs.all_tasks')</h4>
+            <h4>{{ __('All Tasks') }}</h4>
             <thead>
             <thead>
             <tr>
-                <th>@lang('client.tabs.headers.title')</th>
-                <th>@lang('client.tabs.headers.assigned')</th>
-                <th>@lang('client.tabs.headers.created_at')</th>
-                <th>@lang('client.tabs.headers.deadline')</th>
+                <th>{{ __('Title') }}/th>
+                <th>{{ __('Assigned') }}</th>
+                <th>{{ __('Created at') }}</th>
+                <th>{{ __('Deadline') }}</th>
                 <th><a href="{{ route('tasks.create', ['client' => $client->id])}}">
-                        <button class="btn btn-success">@lang('client.tabs.headers.new_task')</button>
+                        <button class="btn btn-success">{{ __('New task') }}</button>
                     </a></th>
 
             </tr>

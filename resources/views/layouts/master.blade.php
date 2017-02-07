@@ -102,78 +102,78 @@
         <div class="list-group panel">
             <p class=" list-group-item" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
             <a href="{{route('dashboard', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-dashboard"></i> @lang('menu.dashboard') </a>
+                        class="glyphicon glyphicon-dashboard"></i> {{ __('Dashboard') }} </a>
             <a href="{{route('users.show', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-user"></i> @lang('menu.profile') </a>
+                        class="glyphicon glyphicon-user"></i> {{ __('Profile') }} </a>
 
 
             <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tag"></i> @lang('menu.clients.title') </a>
+                        class="glyphicon glyphicon-tag"></i> {{ __('Clients') }}</a>
             <div class="collapse" id="clients">
 
-                <a href="{{ route('clients.index')}}" class="list-group-item childlist">@lang('menu.clients.all')</a>
+                <a href="{{ route('clients.index')}}" class="list-group-item childlist">{{ __('All Clients') }}</a>
                 @if(Entrust::can('client-create'))
                     <a href="{{ route('clients.create')}}"
-                       class="list-group-item childlist">@lang('menu.clients.new')</a>
+                       class="list-group-item childlist">{{ __('New Client') }}</a>
                 @endif
             </div>
 
             <a href="#tasks" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tasks"></i> @lang('menu.tasks.title') </a>
+                        class="glyphicon glyphicon-tasks"></i> {{ __('Tasks') }} </a>
             <div class="collapse" id="tasks">
-                <a href="{{ route('tasks.index')}}" class="list-group-item childlist">@lang('menu.tasks.all')</a>
+                <a href="{{ route('tasks.index')}}" class="list-group-item childlist">{{ __('All Tasks') }}</a>
                 @if(Entrust::can('task-create'))
-                    <a href="{{ route('tasks.create')}}" class="list-group-item childlist">@lang('menu.tasks.new')</a>
+                    <a href="{{ route('tasks.create')}}" class="list-group-item childlist">{{ __('New Task') }}</a>
                 @endif
             </div>
 
             <a href="#user" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-users"></i> @lang('menu.users.title') </a>
+                        class="fa fa-users"></i> {{ __('Users') }} </a>
             <div class="collapse" id="user">
-                <a href="{{ route('users.index')}}" class="list-group-item childlist">@lang('menu.users.all')</a>
+                <a href="{{ route('users.index')}}" class="list-group-item childlist">{{ __('Users All') }}</a>
                 @if(Entrust::can('user-create'))
                     <a href="{{ route('users.create')}}"
-                       class="list-group-item childlist">@lang('menu.users.new')</a>
+                       class="list-group-item childlist">{{ __('New User') }}</a>
                 @endif
             </div>
 
             <a href="#leads" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-hourglass"></i> @lang('menu.leads.title')</a>
+                        class="glyphicon glyphicon-hourglass"></i> {{ __('Leads') }}</a>
             <div class="collapse" id="leads">
-                <a href="{{ route('leads.index')}}" class="list-group-item childlist">@lang('menu.leads.all')</a>
+                <a href="{{ route('leads.index')}}" class="list-group-item childlist">{{ __('All Leads') }}</a>
                 @if(Entrust::can('lead-create'))
                     <a href="{{ route('leads.create')}}"
-                       class="list-group-item childlist">@lang('menu.leads.new')</a>
+                       class="list-group-item childlist">{{ __('New Lead') }}</a>
                 @endif
             </div>
             <a href="#departments" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-object-group"></i> @lang('menu.departments.title')</a>
+                        class="fa fa-object-group"></i> {{ __('Departments') }}</a>
             <div class="collapse" id="departments">
                 <a href="{{ route('departments.index')}}"
-                   class="list-group-item childlist">@lang('menu.departments.all')</a>
+                   class="list-group-item childlist">{{ __('All Departments') }}</a>
                 @if(Entrust::hasRole('administrator'))
                     <a href="{{ route('departments.create')}}"
-                       class="list-group-item childlist">@lang('menu.departments.new')</a>
+                       class="list-group-item childlist">{{ __('New Department') }}</a>
                 @endif
             </div>
 
             @if(Entrust::hasRole('administrator'))
                 <a href="#settings" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                            class="glyphicon glyphicon-cog"></i> @lang('menu.settings.title')</a>
+                            class="glyphicon glyphicon-cog"></i> {{ __('Settings') }}</a>
                 <div class="collapse" id="settings">
                     <a href="{{ route('settings.index')}}"
-                       class="list-group-item childlist">@lang('menu.settings.overall')</a>
+                       class="list-group-item childlist">{{ __('Overall Settings') }}</a>
 
                     <a href="{{ route('roles.index')}}"
-                       class="list-group-item childlist">@lang('menu.settings.roles')</a>
+                       class="list-group-item childlist">{{ __('Role Management') }}</a>
                     <a href="{{ route('integrations.index')}}"
-                       class="list-group-item childlist">@lang('menu.settings.integrations')</a>
+                       class="list-group-item childlist">{{ __('Integrations') }}</a>
                 </div>
 
 
             @endif
             <a href="{{ url('/logout') }}" class=" list-group-item impmenu" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-log-out"></i> @lang('menu.signout') </a>
+                        class="glyphicon glyphicon-log-out"></i> {{ __('Sign Out') }} </a>
 
         </div>
     </nav>

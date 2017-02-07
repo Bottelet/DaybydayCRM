@@ -1,6 +1,6 @@
 <div id="document" class="tab-pane fade">
     <table class="table">
-        <h4>@lang('client.tabs.all_documents')</h4>
+        <h4>{{ __('All Documents') }}</h4>
         <div class="col-xs-10">
             <div class="form-group">
                 <form method="POST" action="{{ url('/clients/upload', $client->id)}}" class="dropzone" id="dropzone"
@@ -9,14 +9,14 @@
                 >
                     <meta name="csrf-token" content="{{ csrf_token() }}">
                 </form>
-                <p><b>@lang('client.tabs.max_size')</b></p>
+                <p><b>{{ __('Max size') }}</b></p>
             </div>
         </div>
         <thead>
         <tr>
-            <th>@lang('client.tabs.headers.file')</th>
-            <th>@lang('client.tabs.headers.size')</th>
-            <th>@lang('client.tabs.headers.created_at')</th>
+            <th>{{ __('File') }}</th>
+            <th>{{ __('Size') }}</th>
+            <th>{{ __('Created at') }}</th>
         </tr>
         </thead>
         <tbody>

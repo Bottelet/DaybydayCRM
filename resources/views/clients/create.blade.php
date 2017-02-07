@@ -50,7 +50,7 @@
             'route' => 'clients.store',
             'class' => 'ui-form'
             ]) !!}
-    @include('clients.form', ['submitButtonText' => Lang::get('client.titles.create')])
+    @include('clients.form', ['submitButtonText' => __('Create New Client')])
 
     {!! Form::close() !!}
 

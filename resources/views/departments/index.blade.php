@@ -7,10 +7,10 @@
             <thead>
             <thead>
             <tr>
-                <th>@lang('department.headers.title')</th>
-                <th>@lang('department.headers.description')</th>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Description') }}</th>
                 @if(Entrust::hasRole('administrator'))
-                    <th>@lang('department.headers.action')</th>
+                    <th>{{ __('Action') }}/th>
                 @endif
             </tr>
             </thead>
@@ -25,7 +25,7 @@
             'method' => 'DELETE',
             'route' => ['departments.destroy', $dep->id]
         ]); !!}
-                            {!! Form::submit(Lang::get('department.titles.delete'), ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
+                            {!! Form::submit( __('Delete'), ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
 
                             {!! Form::close(); !!}</td></td>
                     @endif
