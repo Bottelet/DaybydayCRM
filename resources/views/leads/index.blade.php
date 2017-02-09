@@ -8,10 +8,10 @@
         <thead>
         <tr>
 
-            <th>@lang('lead.headers.title')</th>
-            <th>@lang('lead.headers.created_by')</th>
-            <th>@lang('lead.headers.deadline')</th>
-            <th>@lang('lead.headers.assigned')</th>
+            <th>{{ __('Title') }}</th>
+            <th>{{ __('Created by') }}</th>
+            <th>{{ __('Deadline') }}</th>
+            <th>{{ __('Assigned') }}</th>
 
         </tr>
         </thead>

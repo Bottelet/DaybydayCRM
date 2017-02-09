@@ -23,22 +23,22 @@
         </div>
         <div class="col-md-3">
             <div class="sidebarheader">
-                <p> @lang('lead.titles.lead_information')</p>
+                <p> {{ __('Lead information') }}</p>
             </div>
             <div class="sidebarbox">
-                <p>@lang('lead.titles.assigned_to'):
+                <p>{{ __('Assigned to') }}:
                     <a href="{{route('leads.show', $lead->user->id)}}">
                         {{$lead->user->name}}</a></p>
-                <p>@lang('lead.headers.created_at'): {{ date('d F, Y, H:i', strtotime($lead->created_at))}} </p>
+                <p>{{ __('Created at') }}: {{ date('d F, Y, H:i', strtotime($lead->created_at))}} </p>
                 @if($lead->days_until_contact < 2)
-                    <p>@lang('lead.titles.follow_up'): <span style="color:red;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
+                    <p>{{ __('Follow up') }}: <span style="color:red;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
 
                             @if($lead->status == 1) ({!! $lead->days_until_contact !!}) @endif</span> <i
                                 class="glyphicon glyphicon-calendar" data-toggle="modal"
                                 data-target="#ModalFollowUp"></i></p> <!--Remove days left if lead is completed-->
 
                 @else
-                    <p>@lang('lead.titles.follow_up'): <span style="color:green;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
+                    <p>{{ __('Follow up') }}: <span style="color:green;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
 
                             @if($lead->status == 1) ({!! $lead->days_until_contact !!})<i
                                     class="glyphicon glyphicon-calendar" data-toggle="modal"
