@@ -8,9 +8,9 @@
     <table class="table table-hover " id="users-table">
         <thead>
         <tr>
-            <th>@lang('user.headers.name')</th>
-            <th>@lang('user.headers.mail')</th>
-            <th>@lang('user.headers.work_number')</th>
+            <th>{{ __('Name') }}</th>
+            <th>{{ __('Mail') }}</th>
+            <th>{{ __('Work number') }}</th>
             <th></th>
             <th></th>
         </tr>

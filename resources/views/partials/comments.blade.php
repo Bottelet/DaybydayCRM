@@ -4,10 +4,10 @@
     <div class="panel-heading"><p>{{$subject->title}}</p></div>
     <div class="panel-body">
         <p>{{$instance == 'task' ? $subject->description : $subject->note}}</p>
-        <p class="smalltext">@lang('task.headers.created_at'):
+        <p class="smalltext">{{ __('Created at') }}:
             {{ date('d F, Y, H:i:s', strtotime($subject->created_at))}}
             @if($subject->updated_at != $subject->created_at)
-                <br/>@lang('task.status.modified'): {{date('d F, Y, H:i:s', strtotime($subject->updated_at))}}
+                <br/>{{ __('Modified') }}: {{date('d F, Y, H:i:s', strtotime($subject->updated_at))}}
             @endif</p>
     </div>
 </div>
@@ -19,16 +19,16 @@
         <div class="panel-body">
             <p class="smalltext">#{{$i++}}</p>
             <p>  {{$instance == 'task' ? $comment->description : $comment->note}}</p>
-            <p class="smalltext">@lang('task.titles.comment_by'): <a
+            <p class="smalltext">{{ __('Comment by') }}: <a
                         href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a>
             </p>
-            <p class="smalltext">@lang('task.headers.created_at'):
+            <p class="smalltext">{{ __('Created at') }}:
                 {{ date('d F, Y, H:i:s', strtotime($comment->created_at))}}
                 @if($comment->updated_at != $comment->created_at)
                     @if($instance == 'task')
-                        <br/>@lang('task.status.modified') : {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
+                        <br/>{{ __('Modified') }} : {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
                     @else
-                        <br/> @lang('lead.status.modified'): {{date('d F, Y, H:i:s', strtotime($lead->updated_at))}}
+                        <br/> {{ __('Modified') }}: {{date('d F, Y, H:i:s', strtotime($lead->updated_at))}}
                     @endif
                 @endif</p>
         </div>
@@ -40,7 +40,7 @@
     <div class="form-group">
         {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 
-        {!! Form::submit(Lang::get('task.titles.add_comment'), ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit({{ __('Add Comment') }}, ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @else
@@ -48,7 +48,7 @@
     <div class="form-group">
         {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
 
-        {!! Form::submit('Submit', ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit({{ __('Add Note') }}, ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @endif

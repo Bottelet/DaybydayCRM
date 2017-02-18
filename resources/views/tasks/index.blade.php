@@ -8,10 +8,10 @@
         <thead>
         <tr>
 
-            <th>@lang('task.headers.title')</th>
-            <th>@lang('task.headers.created_at')</th>
-            <th>@lang('task.headers.deadline')</th>
-            <th>@lang('task.headers.assigned')</th>
+            <th>{{ __('Title') }}</th>
+            <th>{{ __('Created at') }}</th>
+            <th>{{ __('Deadline') }}</th>
+            <th>{{ __('Assigned') }}</th>
 
         </tr>
         </thead>

@@ -5,7 +5,7 @@
         <div class="box-header with-border">
             <h4 class="box-title"
             >
-                @lang('dashboard.tasks.each_month')
+                {{ __('Tasks each month') }}
             </h4>
             <div class="box-tools pull-right">
                 <button type="button" id="collapse1" class="btn btn-box-tool" data-toggle="collapse"
@@ -27,7 +27,7 @@
         <div class="box-header with-border">
             <h4 class="box-title"
             >
-                @lang('dashboard.leads.each_month')
+               {{ __('Lead each month') }}
             </h4>
             <div class="box-tools pull-right">
                 <button type="button" id="collapse2" class="btn btn-box-tool" data-toggle="collapse"
@@ -55,14 +55,14 @@
             <span class="info-box-icon"><i class="ion ion-ios-book-outline"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">@lang('dashboard.tasks.all')</span>
+                <span class="info-box-text"> {{ __('All Tasks') }} </span>
                 <span class="info-box-number">{{$allCompletedTasks}} / {{$alltasks}}</span>
 
                 <div class="progress">
                     <div class="progress-bar" style="width: {{$totalPercentageTasks}}%"></div>
                 </div>
                   <span class="progress-description">
-                    {{number_format($totalPercentageTasks, 0)}}% @lang('dashboard.completed')
+                    {{number_format($totalPercentageTasks, 0)}}% {{ __('Completed') }}
                   </span>
             </div>
             <!-- /.info-box-content -->
@@ -74,14 +74,14 @@
             <span class="info-box-icon"><i class="ion ion-stats-bars"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">All Leads</span>
+                <span class="info-box-text">{{ __('All Leads') }}</span>
                 <span class="info-box-number">{{$allCompletedLeads}} / {{$allleads}}</span>
 
                 <div class="progress">
                     <div class="progress-bar" style="width: {{$totalPercentageLeads}}%"></div>
                 </div>
                   <span class="progress-description">
-                    {{number_format($totalPercentageLeads, 0)}}% @lang('dashboard.completed')
+                    {{number_format($totalPercentageLeads, 0)}}% {{ __('Completed') }}
                   </span>
             </div>
             <!-- /.info-box-content -->
@@ -94,7 +94,7 @@
             <div class="box-header with-border">
                 <h4 class="box-title"
                 >
-                    @lang('dashboard.users')
+                    {{ __('Users') }}
                 </h4>
                 <div class="box-tools pull-right">
 
@@ -139,7 +139,7 @@
             <span class="info-box-icon bg-aqua"><i class="ion ion-ios-book-outline"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">@lang('dashboard.tasks.completed_today')</span>
+                <span class="info-box-text">{{ __('Tasks completed today') }}</span>
                 <span class="info-box-number">{{$completedTasksToday}}
                     <small></small></span>
             </div>
@@ -153,7 +153,7 @@
             <span class="info-box-icon bg-red"><i class="ion ion-ios-book-outline"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">@lang('dashboard.tasks.created_today')</span>
+                <span class="info-box-text">{{ __('Tasks created today') }}</span>
                 <span class="info-box-number">{{$createdTasksToday}}</span>
             </div>
             <!-- /.info-box-content -->
@@ -170,7 +170,7 @@
             <span class="info-box-icon bg-green"><i class="ion ion-stats-bars"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">@lang('dashboard.leads.completed_today')</span>
+                <span class="info-box-text">{{ __('Leads completed today') }}</span>
                 <span class="info-box-number">{{$completedLeadsToday}}</span>
             </div>
             <!-- /.info-box-content -->
@@ -183,7 +183,7 @@
             <span class="info-box-icon bg-yellow"><i class="ion ion-stats-bars"></i></span>
 
             <div class="info-box-content">
-                <span class="info-box-text">@lang('dashboard.leads.created_today')</span>
+                <span class="info-box-text">{{ __('Leads created today') }}</span>
                 <span class="info-box-number">{{$createdLeadsToday}}</span>
             </div>
             <!-- /.info-box-content -->

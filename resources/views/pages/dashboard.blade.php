@@ -33,12 +33,12 @@
                             @endforeach
                         </h3>
 
-                        <p>@lang('dashboard.tasks.completed_month')</p>
+                        <p>{{ __('Tasks completed this month') }}</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-ios-book-outline"></i>
                     </div>
-                    <a href="{{route('tasks.index')}}" class="small-box-footer">@lang('dashboard.tasks.all') <i
+                    <a href="{{route('tasks.index')}}" class="small-box-footer">{{ __('All Tasks') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -53,12 +53,12 @@
                             @endforeach
                         </h3>
 
-                        <p>@lang('dashboard.leads.completed_month')</p>
+                        <p>{{ __('Leads completed this month') }}</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-stats-bars"></i>
                     </div>
-                    <a href="{{route('leads.index')}}" class="small-box-footer">@lang('dashboard.leads.all') <i
+                    <a href="{{route('leads.index')}}" class="small-box-footer">{{ __('All Leads') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -69,12 +69,12 @@
                     <div class="inner">
                         <h3>{{$totalClients}}</h3>
 
-                        <p>@lang('dashboard.clients.all')</p>
+                        <p>{{ __('All Clients') }}</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-person"></i>
                     </div>
-                    <a href="{{route('clients.index')}}" class="small-box-footer">@lang('dashboard.clients.all') <i
+                    <a href="{{route('clients.index')}}" class="small-box-footer">{{ __('All clients') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
@@ -92,12 +92,12 @@
                                 0
                             @endif</h3>
 
-                        <p>@lang('dashboard.time.total')</p>
+                        <p>{{ __('Total hours registered') }}</p>
                     </div>
                     <div class="icon">
                         <i class="ion ion-pie-graph"></i>
                     </div>
-                    <a href="#" class="small-box-footer">@lang('dashboard.time.info') <i
+                    <a href="#" class="small-box-footer"> {{ __('More info') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>

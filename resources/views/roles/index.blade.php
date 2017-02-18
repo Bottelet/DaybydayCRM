@@ -4,13 +4,13 @@
     <div class="col-lg-12 currenttask">
 
         <table class="table table-hover">
-            <h3>@lang('role.headers.roles')</h3>
+            <h3>{{ __('All Roles') }}</h3>
             <thead>
             <thead>
             <tr>
-                <th>@lang('role.headers.name')</th>
-                <th>@lang('role.headers.description')</th>
-                <th>@lang('role.headers.action')</th>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Description') }}</th>
+                <th>{{ __('Action') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -36,7 +36,7 @@
         </table>
 
         <a href="{{ route('roles.create')}}">
-            <button class="btn btn-success">@lang('role.headers.add_new')e</button>
+            <button class="btn btn-success">{{ __('Add new Role') }}e</button>
         </a>
 
     </div>

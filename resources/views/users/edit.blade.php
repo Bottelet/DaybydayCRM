@@ -15,7 +15,7 @@
             'enctype' => 'multipart/form-data'
             ]) !!}
 
-    @include('users.form', ['submitButtonText' => Lang::get('user.headers.update_submit')])
+    @include('users.form', ['submitButtonText' =>  __('Update user')])
 
     {!! Form::close() !!}
 

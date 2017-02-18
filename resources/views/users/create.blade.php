@@ -10,7 +10,7 @@
             'enctype' => 'multipart/form-data'
 
             ]) !!}
-    @include('users.form', ['submitButtonText' => Lang::get('user.headers.create_submit')])
+    @include('users.form', ['submitButtonText' => __('Create user')])
 
     {!! Form::close() !!}
 
