@@ -46,11 +46,11 @@
                     <!--Remove days left if lead is completed-->
                 @endif
                 @if($lead->status == 1)
-                    @lang('lead.status.status'): @lang('lead.status.contact')
+                    {{ __('Status') }}: {{ __('Contact') }}
                 @elseif($lead->status == 2)
-                    @lang('lead.status.status'): @lang('lead.status.completed')
+                    {{ __('Status') }}: {{ __('Completed') }}
                 @elseif($lead->status == 3)
-                    @lang('lead.status.status'): @lang('lead.status.not_intersted')
+                    {{ __('Status') }}: {{ __('Not interested') }}
                 @endif
 
             </div>
@@ -60,14 +60,14 @@
                 'url' => ['leads/updateassign', $lead->id],
                 ]) !!}
                 {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-                {!! Form::submit('Assign new user', ['class' => 'btn btn-primary form-control closebtn']) !!}
+                {!! Form::submit(__('Assign new user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
                 {!! Form::close() !!}
                 {!! Form::model($lead, [
                'method' => 'PATCH',
                'url' => ['leads/updatestatus', $lead->id],
                ]) !!}
 
-                {!! Form::submit('Complete Lead', ['class' => 'btn btn-success form-control closebtn movedown']) !!}
+                {!! Form::submit(__('Complete Lead'), ['class' => 'btn btn-success form-control closebtn movedown']) !!}
                 {!! Form::close() !!}
             @endif
 
@@ -92,7 +92,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">@lang('lead.titles.change_deadline')</h4>
+                    <h4 class="modal-title" id="myModalLabel">{{ __('Change deadline') }}</h4>
                 </div>
 
                 <div class="modal-body">
@@ -101,16 +101,16 @@
                       'method' => 'PATCH',
                       'route' => ['leads.followup', $lead->id],
                       ]) !!}
-                    {!! Form::label('contact_date', Lang::get('lead.titles.next_follow_up'), ['class' => 'control-label']) !!}
+                    {!! Form::label('contact_date', __('Next follow up'), ['class' => 'control-label']) !!}
                     {!! Form::date('contact_date', \Carbon\Carbon::now()->addDays(7), ['class' => 'form-control']) !!}
                     {!! Form::time('contact_time', '11:00', ['class' => 'form-control']) !!}
 
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default col-lg-6"
-                                data-dismiss="modal">@lang('lead.titles.close')</button>
+                                data-dismiss="modal">{{ __('Close') }}</button>
                         <div class="col-lg-6">
-                            {!! Form::submit(Lang::get('lead.titles.update_follow_up'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                            {!! Form::submit( __('Update follow up'), ['class' => 'btn btn-success form-control closebtn']) !!}
                         </div>
                         {!! Form::close() !!}
                     </div>

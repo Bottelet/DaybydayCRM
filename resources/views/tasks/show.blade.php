@@ -24,31 +24,31 @@
         </div>
         <div class="col-md-3">
             <div class="sidebarheader">
-                <p>@lang('task.titles.task_information')</p>
+                <p>{{ __('Task information') }}</p>
             </div>
             <div class="sidebarbox">
-                <p>@lang('task.headers.assigned'):
+                <p>{{ __('Assigned') }}:
                     <a href="{{route('users.show', $tasks->user->id)}}">
                         {{$tasks->user->name}}</a></p>
-                <p>@lang('task.headers.created_at'): {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
+                <p>{{ __('Created at') }}: {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
 
                 @if($tasks->days_until_deadline)
-                    <p>@lang('task.headers.deadline'): <span style="color:red;">{{date('d, F Y', strTotime($tasks->deadline))}}
+                    <p>{{ __('Deadline') }}: <span style="color:red;">{{date('d, F Y', strTotime($tasks->deadline))}}
 
                             @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p>
                     <!--Remove days left if tasks is completed-->
 
                 @else
-                    <p>@lang('task.headers.deadline'): <span style="color:green;">{{date('d, F Y', strTotime($tasks->deadline))}}
+                    <p>{{ __('Deadline') }}: <span style="color:green;">{{date('d, F Y', strTotime($tasks->deadline))}}
 
                             @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p>
                     <!--Remove days left if tasks is completed-->
                 @endif
 
                 @if($tasks->status == 1)
-                    @lang('task.headers.status'): Open
+                    {{ __('Status') }}: {{ __('Open') }}
                 @else
-                    @lang('task.headers.status'): Closed
+                    {{ __('Status') }}: {{ __('Closed') }}
                 @endif
             </div>
             @if($tasks->status == 1)
@@ -71,12 +71,12 @@
 
             @endif
             <div class="sidebarheader">
-                <p>@lang('task.invoices.time_managment')</p>
+                <p>{{ __('Time management') }}</p>
             </div>
             <table class="table table_wrapper ">
                 <tr>
-                    <th>@lang('task.invoices.title')</th>
-                    <th>@lang('task.invoices.time')</th>
+                    <th>{{ __('Title') }}</th>
+                    <th>{{ __('Time') }}</th>
                 </tr>
                 <tbody>
                 @foreach($tasktimes as $tasktime)
@@ -89,7 +89,7 @@
             </table>
             <br/>
             <button type="button" class="btn btn-primary form-control" value="add_time_modal" data-toggle="modal" data-target="#ModalTimer">
-                @lang('task.invoices.add_time')
+                {{ __('Add time') }}
             </button>
 
             <button type="button" class="btn btn-primary form-control movedown" data-toggle="modal"
@@ -124,19 +124,19 @@
                  
 
                             <div class="form-group">
-                                {!! Form::label('title', Lang::get('task.invoices.modal.title'), ['class' => 'control-label']) !!}
+                                {!! Form::label('title', __('Title'), ['class' => 'control-label']) !!}
                                 {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' =>  Lang::get('task.invoices.modal.title_placerholder')]) !!}
                             </div>
                             <div class="form-group">
-                                {!! Form::label('comment',  Lang::get('task.invoices.modal.description'), ['class' => 'control-label']) !!}
+                                {!! Form::label('comment',  __('Description'), ['class' => 'control-label']) !!}
                                 {!! Form::textarea('comment', null, ['class' => 'form-control', 'placeholder' => Lang::get('task.invoices.modal.description_placerholder')]) !!}
                             </div>
                             <div class="form-group">
-                                {!! Form::label('value', Lang::get('task.invoices.modal.hourly_price'), ['class' => 'control-label']) !!}
+                                {!! Form::label('value', __('Hourly price'), ['class' => 'control-label']) !!}
                                 {!! Form::text('value', null, ['class' => 'form-control', 'placeholder' => '300']) !!}
                             </div>
                             <div class="form-group">
-                                {!! Form::label('time', Lang::get('task.invoices.modal.time_spend'), ['class' => 'control-label']) !!}
+                                {!! Form::label('time', __('Time spend'), ['class' => 'control-label']) !!}
                                 {!! Form::text('time', null, ['class' => 'form-control', 'placeholder' => '3']) !!}
                             </div>
 
@@ -144,9 +144,9 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
-                                    data-dismiss="modal">@lang('task.invoices.modal.close')</button>
+                                    data-dismiss="modal">{{ __('Close') }}</button>
                             <div class="col-lg-6">
-                                {!! Form::submit(Lang::get('task.invoices.modal.register_time'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                                {!! Form::submit__('Register time'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>
                           
                         </div>
@@ -175,13 +175,13 @@
                                     {{$contact['name']}}
                                     <br/>
                                 @endforeach
-                                {!! Form::label('mail', 'Send mail with invoice to Customer?(Cheked = Yes):', ['class' => 'control-label']) !!}
+                                {!! Form::label('mail', __('Send mail with invoice to Customer?(Cheked = Yes):'), ['class' => 'control-label']) !!}
                                 {!! Form::checkbox('sendMail', true) !!}
                             @endif
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
-                                    data-dismiss="modal">@lang('task.invoices.modal.close')</button>
+                                    data-dismiss="modal">{{ __('Close') }}</button>
                             <div class="col-lg-6">
                                 {!! Form::submit(Lang::get('task.invoices.create'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>

@@ -64,25 +64,25 @@ class LeadActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = Lang::get('misc.notifications.lead.created', [
+                $text = __(':title was created by :creator and assigned to you', [
                 'title' => $this->lead->title,
                 'creator' => $this->lead->creator->name
                 ]);
                 break;
             case 'updated_status':
-                $text = Lang::get('misc.notifications.lead.status', [
+                $text = __(':title was completed by :username', [
                 'title' => $this->lead->title,
                 'username' =>  Auth()->user()->name
                 ]);
                 break;
             case 'updated_deadline':
-                $text = Lang::get('misc.notifications.lead.deadline', [
+                $text = __(':username updated the deadline for this :title', [
                 'title' => $this->lead->title,
                 'username' =>  Auth()->user()->name
                 ]);
                 break;
             case 'updated_assign':
-                $text = Lang::get('misc.notifications.lead.assign', [
+                $text = __(':username assigned a lead to you', [
                 'username' =>  Auth()->user()->name
                 ]);
                 break;

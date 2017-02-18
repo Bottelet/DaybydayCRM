@@ -30,24 +30,24 @@ class LeadActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-                $text = Lang::get('misc.log.lead.created', [
+                $text = __(':title was created by :creator and assigned to :assignee', [
                     'title' => $event->getLead()->title,
                     'creator' => $event->getLead()->creator->name,
                     'assignee' => $event->getLead()->user->name
                 ]);
                 break;
             case 'updated_status':
-                $text = Lang::get('misc.log.lead.status', [
+                $text = __('Lead was completed by :username', [
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_deadline':
-                $text = Lang::get('misc.log.lead.deadline', [
+                $text = __(':username updated the deadline for this lead', [
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_assign':
-                $text = Lang::get('misc.log.lead.assign', [
+                $text = __(':username assigned lead to :assignee', [
                     'username' => Auth()->user()->name,
                     'assignee' => $event->getLead()->user->name
                 ]);

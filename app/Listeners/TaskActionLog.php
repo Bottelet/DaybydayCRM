@@ -29,25 +29,25 @@ class TaskActionLog
     {
         switch ($event->getAction()) {
             case 'created':
-                $text = Lang::get('misc.log.task.created', [
+                $text = __(':title was created by :creator and assigned to :assignee', [
                         'title' => $event->getTask()->title,
                         'creator' => $event->getTask()->creator->name,
                         'assignee' => $event->getTask()->user->name
                     ]);
                 break;
             case 'updated_status':
-                $text = Lang::get('misc.log.task.status', [
+                $text = __('Task was completed by :username', [
                         'username' => Auth()->user()->name,
                     ]);
                 break;
             case 'updated_time':
-                $text = Lang::get('misc.log.task.time', [
+                $text = __(':username inserted a new time for this task', [
                         'username' => Auth()->user()->name,
                     ]);
                 ;
                 break;
             case 'updated_assign':
-                $text = Lang::get('misc.log.task.assign', [
+                $text = __(':username assigned task to :assignee', [
                         'username' => Auth()->user()->name,
                         'assignee' => $event->getTask()->user->name
                     ]);

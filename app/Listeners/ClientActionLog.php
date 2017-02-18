@@ -32,13 +32,13 @@ class ClientActionLog
 
         switch ($event->getAction()) {
             case 'created':
-                $text = Lang::get('misc.log.client.created', [
+                $text = __('Client :company was assigned to :assignee', [
                     'company' => $client->company_name,
                     'assignee' => $client->AssignedUser->name,
                 ]);
                 break;
             case 'updated_assign':
-                $text = Lang::get('misc.log.client.assign', [
+                $text =  __(':username assigned client to :assignee', [
                     'username' => Auth()->user()->name,
                     'assignee' => $client->AssignedUser->name,
                 ]);

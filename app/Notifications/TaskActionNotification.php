@@ -64,25 +64,25 @@ class TaskActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = lang::get('misc.notifications.task.created', [
+                $text = __(':title was created by :creator, and assigned to you', [
                     'title' =>  $this->task->title,
                     'creator' => $this->task->creator->name,
                     ]);
                 break;
             case 'updated_status':
-                $text = lang::get('misc.notifications.task.status', [
+                $text = __(':title was completed by :username', [
                     'title' =>  $this->task->title,
                     'username' =>  Auth()->user()->name,
                     ]);
                 break;
             case 'updated_time':
-                $text = lang::get('misc.notifications.task.time', [
+                $text = __(':username inserted a new time for :title', [
                     'title' =>  $this->task->title,
                     'username' =>  Auth()->user()->name,
                     ]);
                 break;
             case 'updated_assign':
-                $text = lang::get('misc.notifications.task.assign', [
+                $text = __(':username assigned a task to you', [
                     'title' =>  $this->task->title,
                     'username' =>  Auth()->user()->name,
                     ]);

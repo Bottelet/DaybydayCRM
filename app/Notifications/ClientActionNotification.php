@@ -64,12 +64,12 @@ class ClientActionNotification extends Notification
     {
         switch ($this->action) {
             case 'created':
-                $text = Lang::get('misc.notifications.client.created', [
+                $text = __('Client :company was assigned to you', [
                     'company' => $this->client->company_name,
                 ]);
                 break;
             case 'updated_assign':
-                $text = Lang::get('misc.notifications.client.assign', [
+                $text = __(':username assigned :company to you', [
                     'company' => $this->client->company_name,
                     'username' => Auth()->user()->name
                 ]);

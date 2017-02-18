@@ -5,15 +5,15 @@
   <el-tabs active-name="tasks" style="width:100%">
     <el-tab-pane label="Tasks" name="tasks">
         <table class="table table-hover" id="tasks-table">
-        <h3>@lang('task.headers.tasks_assigned')</h3>
+        <h3>{{ __('Tasks assigned') }}</h3>
             <thead>
-                    <th>@lang('task.headers.title')</th>
-                    <th>@lang('task.headers.client')</th>
-                    <th>@lang('task.headers.created_at')</th>
-                    <th>@lang('task.headers.deadline')</th>
+                    <th>{{ __('Title') }}</th>
+                    <th>{{ __('Client') }}</th>
+                    <th>{{ __('Created at') }}</th>
+                    <th>{{ __('Deadline') }}</th>
                     <th>
                         <select name="status" id="status-task">
-                        <option value="" disabled selected>@lang('Status')</option>
+                        <option value="" disabled selected>{{ __('Status') }}</option>
                             <option value="open">Open</option>
                             <option value="closed">Closed</option>
                             <option value="all">All</option>
@@ -29,13 +29,13 @@
                 <h3>@lang('lead.headers.leads_assigned')</h3>
                 <thead>
                 <tr>
-                    <th>@lang('lead.headers.title')</th>
-                    <th>@lang('lead.headers.client')</th>
-                    <th>@lang('lead.headers.created_at')</th>
-                    <th>@lang('lead.headers.deadline')</th>
+                    <th>{{ __('Title') }}</th>
+                    <th>{{ __('Client') }}</th>
+                    <th>{{ __('Created at') }}</th>
+                    <th>{{ __('Deadline') }}</th>
                     <th>
                         <select name="status" id="status-lead">
-                        <option value="" disabled selected>@lang('Status')</option>
+                        <option value="" disabled selected>{{ __('Status') }}</option>
                             <option value="open">Open</option>
                             <option value="closed">Closed</option>
                             <option value="all">All</option>
@@ -50,9 +50,9 @@
                 <h3>@lang('client.status.assigned')</h3>
                 <thead>
                 <tr>
-                    <th>@lang('client.headers.name')</th>
-                    <th>@lang('client.headers.company')</th>
-                    <th>@lang('client.headers.primary_number')</th>
+                    <th>{{ __('Name') }}</th>
+                    <th>{{ __('Company') }}</th>
+                    <th>{{ __('Primary number') }}</th>
                 </tr>
                 </thead>
             </table>
@@ -60,9 +60,9 @@
   </el-tabs>
   </div>
   <div class="col-sm-4">
-  <h4>Tasks</h4>
+  <h4>{{ __('Tasks') }}</h4>
 <doughnut :statistics="{{$task_statistics}}"></doughnut>
-<h4>Leads</h4>
+<h4>{{ __('Leads') }}</h4>
 <doughnut :statistics="{{$lead_statistics}}"></doughnut>
   </div>
 

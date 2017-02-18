@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>@lang('user.titles.all')</h1>
+    <h1>{{ __('All users') }}</h1>
 @stop
 
 @section('content')
