@@ -1,4 +1,6 @@
 /vendor
+/storage/*
+/bootstrap/*
 .idea/*
 /node_modules
 Homestead.yaml
