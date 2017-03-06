@@ -44,6 +44,7 @@
                 </tr>
                 </thead>
             </table>
+         </table>
     </el-tab-pane>
     <el-tab-pane label="Clients" name="clients">
          <table class="table table-hover" id="clients-table">
