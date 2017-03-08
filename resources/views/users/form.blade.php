@@ -5,7 +5,7 @@
 
 
 <div class="form-group">
-    {!! Form::label('name', __('Name')), ['class' => 'control-label']) !!}
+    {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}
     {!! Form::text('name', null, ['class' => 'form-control']) !!}
 </div>
 
@@ -56,3 +56,4 @@
 </div>
 
 {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary']) !!}
+
