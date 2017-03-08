@@ -40,7 +40,7 @@
     <div class="form-group">
         {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 
-        {!! Form::submit({{ __('Add Comment') }}, ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit( __('Add Comment') , ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @else
@@ -48,7 +48,7 @@
     <div class="form-group">
         {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
 
-        {!! Form::submit({{ __('Add Note') }}, ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit( __('Add Note') , ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @endif
