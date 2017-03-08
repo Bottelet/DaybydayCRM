@@ -26,7 +26,7 @@
     <el-tab-pane label="Leads" name="leads">
       <table class="table table-hover">
         <table class="table table-hover" id="leads-table">
-                <h3>@lang('lead.headers.leads_assigned')</h3>
+                <h3>{{ __('Leads assigned') }}</h3>
                 <thead>
                 <tr>
                     <th>{{ __('Title') }}</th>
@@ -47,7 +47,7 @@
     </el-tab-pane>
     <el-tab-pane label="Clients" name="clients">
          <table class="table table-hover" id="clients-table">
-                <h3>@lang('client.status.assigned')</h3>
+                <h3>{{ __('Clients assigned') }}</h3>
                 <thead>
                 <tr>
                     <th>{{ __('Name') }}</th>

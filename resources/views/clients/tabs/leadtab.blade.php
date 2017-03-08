@@ -1,7 +1,7 @@
 <div id="lead" class="tab-pane fade">
     <div class="boxspace">
         <table class="table table-hover">
-            <h4>{{ __('All Lseads') }}</h4>
+            <h4>{{ __('All Leads') }}</h4>
             <thead>
             <thead>
             <tr>

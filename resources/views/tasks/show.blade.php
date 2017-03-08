@@ -58,7 +58,7 @@
                 'url' => ['tasks/updateassign', $tasks->id],
                 ]) !!}
                 {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-                {!! Form::submit(Lang::get('task.titles.assign_user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
+                {!! Form::submit(__('Assign user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
                 {!! Form::close() !!}
 
                 {!! Form::model($tasks, [
@@ -66,7 +66,7 @@
           'url' => ['tasks/updatestatus', $tasks->id],
           ]) !!}
 
-                {!! Form::submit(Lang::get('task.titles.close_task'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                {!! Form::submit(__('Close task'), ['class' => 'btn btn-success form-control closebtn']) !!}
                 {!! Form::close() !!}
 
             @endif
@@ -94,7 +94,7 @@
 
             <button type="button" class="btn btn-primary form-control movedown" data-toggle="modal"
                     data-target="#myModal">
-                @lang('task.invoices.create')
+                {{ __('Create invoice') }}
             </button>
             
             <div class="activity-feed movedown">
@@ -112,8 +112,11 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.modal.header_title')
+                            <h4 class="modal-title" id="myModalLabel">
+                            {{ __('Time management') }}
                                 ({{$tasks->title}})</h4>
+                            
+                            }
                         </div>
                        {!! Form::open([
                             'method' => 'post',
@@ -146,7 +149,7 @@
                             <button type="button" class="btn btn-default col-lg-6"
                                     data-dismiss="modal">{{ __('Close') }}</button>
                             <div class="col-lg-6">
-                                {!! Form::submit__('Register time'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                                {!! Form::submit( __('Register time'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>
                           
                         </div>
@@ -162,7 +165,7 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">@lang('task.invoices.create') </h4>
+                            <h4 class="modal-title" id="myModalLabel">{{ __('Create invoice')}} </h4>
                         </div>
                         {!! Form::model($tasks, [
                            'method' => 'POST',
@@ -183,7 +186,7 @@
                             <button type="button" class="btn btn-default col-lg-6"
                                     data-dismiss="modal">{{ __('Close') }}</button>
                             <div class="col-lg-6">
-                                {!! Form::submit(Lang::get('task.invoices.create'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                                {!! Form::submit(__('Create'), ['class' => 'btn btn-success form-control closebtn']) !!}
                             </div>
                         </div>
                       {!! Form::close() !!}

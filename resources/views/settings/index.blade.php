@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>@lang('setting.headers.settings')</h1>
+    <h1>{{ __('Settings') }}</h1>
 @stop
 @section('content')
     <div class="row">

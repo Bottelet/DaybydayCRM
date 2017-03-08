@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>@lang('lead.titles.create')</h1>
+    <h1>{{ __('Create lead') }}</h1>
 @stop
 
 @section('content')

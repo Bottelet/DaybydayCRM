@@ -5,7 +5,7 @@
             <thead>
             <thead>
             <tr>
-                <th>{{ __('Title') }}/th>
+                <th>{{ __('Title') }}</th>
                 <th>{{ __('Assigned') }}</th>
                 <th>{{ __('Created at') }}</th>
                 <th>{{ __('Deadline') }}</th>
