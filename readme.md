@@ -15,6 +15,12 @@ I would like to refer to the wiki, for help on getting started
 * [Installation with Docker](https://github.com/Bottelet/Flarepoint-crm/wiki/Install-using-Docker)
 * [Insertion of dummy data](https://github.com/Bottelet/Flarepoint-crm/wiki/Insertion-of-dummy-data)
 
+## Demo site
+Flarepoint can be "browsed/tested" on 138.68.80.242.. Database is reseeded every 24 hr. 
+login: 
+admin@admin.com
+admin123
+
 ## Features overview
 - Tasks management
 - Leads management
