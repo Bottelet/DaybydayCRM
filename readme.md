@@ -17,8 +17,11 @@ I would like to refer to the wiki, for help on getting started
 
 ## Demo site
 Flarepoint can be "browsed/tested" on 138.68.80.242.. Database is reseeded every 24 hr. 
-login: 
+
+login:
+
 admin@admin.com
+
 admin123
 
 ## Features overview
