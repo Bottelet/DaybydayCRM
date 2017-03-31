@@ -64,6 +64,7 @@ class ClientRepository implements ClientRepositoryContract
      */
     public function create($requestData)
     {
+        can();
         $client = Client::create($requestData);
         Session()->flash('flash_message', 'Client successfully added');
         event(new \App\Events\ClientAction($client, self::CREATED));
