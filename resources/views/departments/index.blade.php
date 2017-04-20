@@ -10,7 +10,7 @@
                 <th>{{ __('Name') }}</th>
                 <th>{{ __('Description') }}</th>
                 @if(Entrust::hasRole('administrator'))
-                    <th>{{ __('Action') }}/th>
+                    <th>{{ __('Action') }}</th>
                 @endif
             </tr>
             </thead>
