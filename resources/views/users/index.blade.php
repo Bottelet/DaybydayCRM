@@ -24,7 +24,7 @@
       <div class="modal-content">
         <div class="modal-header" style="padding:35px 50px;">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+          <h4><span class="glyphicon glyphicon-lock"></span> Handle deletion of user</h4>
         </div>
         <div class="modal-body" style="padding:40px 50px;">
           <form role="form">
@@ -38,7 +38,7 @@
         </select>   
      </div>
             <div class="form-group" id="assign_tasks" style="display:none">
-          <label for="user_tasks"><span class="glyphicon glyphicon-document"></span> {{ __('Choose a new user to assign the tasks') }}</label>
+          <label for="user_tasks"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the tasks') }}</label>
         <select name="user_tasks" id="user_tasks" class="form-control">
             <option value="null" disabled selected> {{ __('Select a user') }} </option>
             @foreach ($users as $user)
@@ -49,7 +49,7 @@
 
              <!--HANDLE LEADS-->
             <div class="form-group">
-          <label for="handle_leads"><span class="glyphicon glyphicon-document"></span> {{ __('How to handle the user leads?') }}</label>
+          <label for="handle_leads"><span class="glyphicon glyphicon-user"></span> {{ __('How to handle the user leads?') }}</label>
         <select name="leads" id="handle_leads" class="form-control">
             <option value="delete_all_leads">{{ __('Delete all leads') }}</option>
             <option value="move_all_leads"> {{ __('Move all leads') }}</option>
