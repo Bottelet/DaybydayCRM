@@ -31,7 +31,7 @@
 
            <!--HANDLE TASKS-->
             <div class="form-group">
-          <label for="tasks"><span class="glyphicon glyphicon-user"></span> {{ __('How to handle the user tasks?') }}</label>
+          <label for="tasks"><span class=""></span> {{ __('How to handle the user tasks?') }}</label>
         <select name="handle_tasks" id="handle_tasks" class="form-control">
             <option value="delete_all_tasks">{{ __('Delete all tasks') }}</option>
             <option value="move_all_tasks"> {{ __('Move all tasks') }}</option>
@@ -49,14 +49,14 @@
 
              <!--HANDLE LEADS-->
             <div class="form-group">
-          <label for="handle_leads"><span class="glyphicon glyphicon-user"></span> {{ __('How to handle the user leads?') }}</label>
+          <label for="handle_leads"><span class=""></span> {{ __('How to handle the user leads?') }}</label>
         <select name="leads" id="handle_leads" class="form-control">
             <option value="delete_all_leads">{{ __('Delete all leads') }}</option>
             <option value="move_all_leads"> {{ __('Move all leads') }}</option>
         </select>   
         </div>
             <div class="form-group" id="assign_leads" style="display:none">
-          <label for="user_leads"><span class="glyphicon glyphicon-document"></span> {{ __('Choose a new user to assign the leads') }}</label>
+          <label for="user_leads"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the leads') }}</label>
         <select name="user_leads" id="user_leads" class="form-control">
             <option value="null" disabled selected> {{ __('Select a user') }} </option>
             @foreach ($users as $user)
@@ -67,14 +67,14 @@
 
             <!--HANDLE CLIENTS-->
         <div class="form-group">
-          <label for="handle_clients"><span class="glyphicon glyphicon-document"></span> {{ __('How to handle the user clients?') }}</label>
+          <label for="handle_clients"><span class=""></span> {{ __('How to handle the user clients?') }}</label>
         <select name="clients" id="handle_clients" class="form-control">
             <option value="delete_all_clients">{{ __('Delete all clients') }}</option>
             <option value="move_all_clients"> {{ __('Move all clients') }}</option>
         </select>   
         </div>
             <div class="form-group" id="assign_clients" style="display:none">
-          <label for="user_clients"><span class="glyphicon glyphicon-document"></span> {{ __('Choose a new user to assign the clients') }}</label>
+          <label for="user_clients"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the clients') }}</label>
         <select name="user_clients" id="user_clients" class="form-control">
             <option value="null" disabled selected> {{ __('Select a user') }} </option>
             @foreach ($users as $user)
