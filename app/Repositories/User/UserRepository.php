@@ -128,16 +128,28 @@ class UserRepository implements UserRepositoryContract
      * @param $id
      * @return mixed
      */
-    public function destroy($id)
+    public function destroy($request, $id)
     {
-        if ($id == 1) {
+        $user = User::findorFail($id);
+        if ($user->hasRole('super_administrator')) {
             return Session()->flash('flash_message_warning', 'Not allowed to delete super admin');
         }
+
+        if ($request->tasks == "move_all_tasks" && $request->task_user != "" ) {
+            $user->moveTasks($request->task_user);
+        }
+        if($request->leads == "move_all_leads" && $request->lead_user != "") {
+            $user->moveLeads($request->lead_user);
+        }
+        if($request->clients == "move_all_clients" && $request->client_user != "") {
+            $user->moveClients($request->client_user);
+        }
+
         try {
-            $user = User::findorFail($id);
             $user->delete();
             Session()->flash('flash_message', 'User successfully deleted');
         } catch (\Illuminate\Database\QueryException $e) {
+            dd($e);
             Session()->flash('flash_message_warning', 'User can NOT have, leads, clients, or tasks assigned when deleted');
         }
     }

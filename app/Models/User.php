@@ -65,4 +65,31 @@ class User extends Authenticatable
     {
         return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
     }
+    
+    public function moveTasks($user_id)
+    {
+        $tasks = $this->tasks()->get();
+        foreach ($tasks as $task) {
+            $task->user_assigned_id = $user_id;
+            $task->save();
+        }
+    }
+
+    public function moveLeads($user_id)
+    {
+        $leads = $this->leads()->get();
+        foreach ($leads as $lead) {
+            $lead->user_assigned_id = $user_id;
+            $lead->save();
+        }
+    }
+
+    public function moveClients($user_id)
+    {
+        $clients = $this->clients()->get();
+        foreach ($clients as $client) {
+            $client->user_id = $user_id;
+            $client->save();
+        }
+    }
 }

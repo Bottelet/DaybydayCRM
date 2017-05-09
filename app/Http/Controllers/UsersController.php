@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Http\Requests;
 use App\Models\Client;
 use App\Models\Lead;
+use Illuminate\Http\Request;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Repositories\User\UserRepositoryContract;
@@ -59,16 +60,12 @@ class UsersController extends Controller
             ->addColumn('namelink', function ($users) {
                 return '<a href="users/' . $users->id . '" ">' . $users->name . '</a>';
             })
-            ->add_column('edit', '
-                <a href="{{ route(\'users.edit\', $id) }}" class="btn btn-success" >Edit</a>')
-            ->add_column('delete', '
-                <form action="{{ route(\'users.destroy\', $id) }}" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
-
-            {{csrf_field()}}
-            </form>')
-            ->make(true);
+            ->addColumn('edit', function ($user) {
+                return '<a href="' . route("users.edit", $user->id) . '" class="btn btn-success"> Edit</a>';
+            })
+            ->add_column('delete', function ($user) { 
+                return '<button type="button" class="btn btn-danger delete_client" data-client_id="' . $user->id . '" onClick="openModal(' . $user->id. ')" id="myBtn">Delete</button>';
+            })->make(true);
     }
 
     /**
@@ -220,9 +217,9 @@ class UsersController extends Controller
      * @param $id
      * @return mixed
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $this->users->destroy($id);
+        $this->users->destroy($request, $id);
 
         return redirect()->route('users.index');
     }
