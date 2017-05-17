@@ -6,7 +6,7 @@
         <div class="col-md-8">
             <div class="panel panel-default">
                 <div class="panel-heading panel-header">
-                    <h3 class="text-center"><strong>Order summary</strong></h3>
+                    <h3 class="text-center"><strong>{{ __('Order summary') }}</strong></h3>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -14,10 +14,10 @@
                             <thead>
 
                             <tr>
-                                <td><strong>Item Name</strong></td>
-                                <td class="text-center"><strong>Item Price</strong></td>
-                                <td class="text-center"><strong>Hours used</strong></td>
-                                <td class="text-right"><strong>Total</strong></td>
+                                <td><strong>{{ __('Item name') }}</strong></td>
+                                <td class="text-center"><strong>{{ __('Item price') }}</strong></td>
+                                <td class="text-center"><strong>{{ __('Hours used') }}</strong></td>
+                                <td class="text-right"><strong>{{ __('Total') }}</strong></td>
                             </tr>
 
                             </thead>
@@ -37,7 +37,7 @@
                             <tr>
                                 <td class="emptyrow"></i></td>
                                 <td class="emptyrow"></td>
-                                <td class="emptyrow text-center"><strong>Total</strong></td>
+                                <td class="emptyrow text-center"><strong>{{ __('Total') }}</strong></td>
                                 <td class="emptyrow text-right">{{$finalPrice}},-</td>
                             </tr>
                             </tbody>
@@ -48,7 +48,8 @@
             @if(!$invoice->sent)
                 <button type="button" class="btn btn-primary form-control" data-toggle="modal"
                         data-target="#ModalTimer">
-                    Insert new item
+                        {{ __('Insert new item') }}
+                    
                 </button>
             @endif
         </div>
@@ -58,8 +59,8 @@
                 <div class="sidebarheader">
                     <p>Invoice information</p>
                 </div>
-                Invoice sent: {{$invoice->sent ? 'yes' : 'no'}} <br/>
-                Payment Received: {{$invoice->received ? 'yes' : 'no'}} <br/>
+                {{ __('Invoice sent') }}: {{$invoice->sent ? __('yes') : __('no') }} <br/>
+                {{ __('Payment Received') }}: {{$invoice->received ? __('yes') : __('no') }} <br/>
 
 
                 @if($invoice->received)
@@ -89,7 +90,7 @@
 
             @if(!$invoice->received)
                 <div class="sidebarheader">
-                    <p>Invoice paid date</p>
+                    <p>{{ __('Invoice paid date') }}</p>
                 </div>
                 {!! Form::open([
                 'method' => 'post',
@@ -121,7 +122,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Time Managment For This Invoice ({{$invoice->title}})</h4>
+                    <h4 class="modal-title" id="myModalLabel">{{ __('Time Managment For This Invoice') }} ({{$invoice->title}})</h4>
                 </div>
 
                 <div class="modal-body">
@@ -132,19 +133,19 @@
                     ]) !!}
 
                     <div class="form-group">
-                        {!! Form::label('title', 'Title:', ['class' => 'control-label']) !!}
+                        {!! Form::label('title', __('Title'), ['class' => 'control-label']) !!}
                         {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' => 'Fx Consultation Meeting']) !!}
                     </div>
                     <div class="form-group">
-                        {!! Form::label('comment', 'Description:', ['class' => 'control-label']) !!}
+                        {!! Form::label('comment', __('Description'), ['class' => 'control-label']) !!}
                         {!! Form::textarea('comment', null, ['class' => 'form-control', 'placeholder' => 'Short Comment about whats done(Will show on Invoice)']) !!}
                     </div>
                     <div class="form-group">
-                        {!! Form::label('value', 'Hourly price(DKK):', ['class' => 'control-label']) !!}
+                        {!! Form::label('value', __('Hourly price'), ['class' => 'control-label']) !!}
                         {!! Form::text('value', null, ['class' => 'form-control', 'placeholder' => '300']) !!}
                     </div>
                     <div class="form-group">
-                        {!! Form::label('time', 'Time spend (Hours):', ['class' => 'control-label']) !!}
+                        {!! Form::label('time', __('Time spend (Hours)'), ['class' => 'control-label']) !!}
                         {!! Form::text('time', null, ['class' => 'form-control', 'placeholder' => '3']) !!}
                     </div>
 
@@ -153,7 +154,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
                     <div class="col-lg-6">
-                        {!! Form::submit('Register time', ['class' => 'btn btn-success form-control closebtn']) !!}
+                        {!! Form::submit(__('Register time'), ['class' => 'btn btn-success form-control closebtn']) !!}
                     </div>
                     {!! Form::close() !!}
                 </div>
