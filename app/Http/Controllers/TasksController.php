@@ -155,7 +155,7 @@ class TasksController extends Controller
      */
     public function updateAssign($id, Request $request)
     {
-        $clientId = $this->tasks->getAssignedClient($id)->id;
+        $this->tasks->getAssignedClient($id)->id;
 
 
         $this->tasks->updateAssign($id, $request);

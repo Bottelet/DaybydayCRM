@@ -47,7 +47,7 @@ class DocumentsController extends Controller
             $request->all(),
             ['path' => "$filename", 'size' => "$totaltsize", 'file_display' => "$fileOrginal", 'client_id' => $id]
         );
-        $document = Document::create($input);
+        Document::create($input);
         Session::flash('flash_message', 'File successfully uploaded');
     }
     /**
