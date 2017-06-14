@@ -4,6 +4,7 @@
 @stop
 
 @section('content')
+@push('scripts')
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip(); //Tooltip on icons top
@@ -19,6 +20,7 @@
             });
         });
     </script>
+@endpush
 
     <?php
     $data = Session::get('data');
