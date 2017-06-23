@@ -10,25 +10,14 @@ use Log;
 class NotificationsController extends Controller
 {
     /**
-     * Get all notifications
-     * @return mixed
-     */
-    public function getAll()
-    {
-        $user = User::find(\Auth::id());
-       
-        return $user->unreadNotifications;
-    }
-
-    /**
      * Mark a notification read
      * @param Request $request
      * @return mixed
      */
     public function markRead(Request $request)
     {
-        $user = User::find(\Auth::id());
-        $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
+        $user = auth()->user();
+	$user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
 
         return redirect($user->notifications->where('id', $request->id)->first()->data['url']);
     }
