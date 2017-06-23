@@ -11,10 +11,10 @@
   }
 
 .menu {
-  right: -285px;
+  right: -400px;
   height: 100%;
   position: fixed;
-  width: 285px;
+  width: 400px;
   z-index: 11;
   background-color: $primary-color;
   transition: .2s
@@ -28,12 +28,18 @@
 }
 
 .menu li {
-  line-height: 45px;
+  line-height: 20px;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
-  font-size:13px;
+  font-size:11px;
   padding-left: 20px;
-  padding-top: 2px;
+  padding-top: 10px;
+  padding-bottom:10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color:#fff;
+   &:hover {
+   	background-color: $darker-primary-color;
+   }
 }
 
 .menu li a {

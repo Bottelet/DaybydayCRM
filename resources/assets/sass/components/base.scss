@@ -61,32 +61,24 @@ body {
 
 
 .navbar-toggle {
-	@media (max-width: 991px)
-		{
-		    display: block;
-		}
-
+	    display: block;
 }
-#wrapper {
-      @media(min-width:992px){
-
-    }
-
-
-}
-
 #page-content-wrapper {
     width: 100%;
     position: absolute;
     padding: 15px 15px 15px 270px;
   @media(min-width:768px)
 	{
-        padding: 20px 20px 20px 270px;
-        position: relative;
+        padding: 0px 0px 0px 0px;
+	position: relative;
+	}
+	@media(min-width:992px) {
+	padding:0px 0px 0px 270px;
+	position:relative;
 	}
     @media(max-width:768px)
     {
-       padding: 20px 20px 20px 270px;
+       padding: 0px 0px 0px 0px;
        position: relative;
     }
 }
