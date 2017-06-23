@@ -17,25 +17,36 @@
 </head>
 <body>
 
-
 <div id="wrapper">
     <div class="navbar navbar-default navbar-top">
         <!--NOTIFICATIONS START-->
-        <div class="dropdown">
-            <a id="dLabel" role="button" data-toggle="dropdown"  href="/page.html">
-                <i class="glyphicon glyphicon-bell"><span id="notifycount"></span></i>
+<div class="menu">
+  <!-- Menu --!>
+ <ul>
+<?php $notifications = auth()->user()->unreadNotifications; ?>
+    @foreach($notifications as $notification)
+	<a href="{{ route('notification.read', ['id' => $notification->id])  }}" onClick="postRead({{ $notification->id }})"><li>{{ $notification->data['message']}}</li></a>
+    @endforeach 
+  </ul>
+</div>
+
+       <div class="dropdown" id="nav-toggle">
+            <a id="dLabel" role="button" data-toggle="dropdown">
+                <i class="glyphicon glyphicon-bell"><span id="notifycount">{{ $notifications->count() }}</span></i>
             </a>
-            <ul class="dropdown-menu notify-drop  notifications" role="menu" aria-labelledby="dLabel">
-                <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4
-                            class="menu-title pull-right"><a href="{{url('notifications/markall')}}">Mark all as
-                            read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
                 </div>
-                <li class="divider"></li>
-                <div class="notifications-wrapper">
-                    <span id="notification-item"></span>
                     @push('scripts')
                     <script>
-                        id = {};
+$('#nav-toggle').click(function(e) {
+  e.stopPropagation();
+  $(".menu").toggleClass('bar')
+});
+$('body').click(function(e) {
+  if ($('.menu').hasClass('bar')) {
+    $(".menu").toggleClass('bar')
+  }
+})      
+                  id = {};
                         function postRead(id) {
                             $.ajax({
                                 type: 'post',
@@ -50,42 +61,8 @@
 
                         }
 
-                        $(function () {
-                            $.get("{{url('/notifications/getall')}}", function (notifications) {
-                                var notifyItem = document.getElementById('notification-item');
-                                var bell = document.getElementById('notifycount');
-                                var msg = "";
-                                var count = 0;
-                                $.each(notifications, function (index, notification) {
-                                    count++;
-                                    var id = notification['id'];
-                                    var url = notification['data']['url'];
-
-                                    msg += `<div>
-        <a class="content"  id="notify" href="{{url('notifications')}}/` + id + `">
-        `
-                                            + notification['data']['message'] +
-                                            ` </a></div>
-        <hr class="notify-line"/>`;
-                                    notifyItem.innerHTML = msg;
-
-                                    /**         notifyItem.onclick = (function(id){
-             return function(){
-                 postRead(id);
-             }})(id); **/
-
-                                });
-                                bell.innerHTML = count;
-                            })
-
-                        });
-
                     </script>
                 @endpush
-                </div>
-
-            </ul>
-        </div>
         <!--NOTIFICATIONS END-->
         <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu">
             <span class="icon-bar"></span>
