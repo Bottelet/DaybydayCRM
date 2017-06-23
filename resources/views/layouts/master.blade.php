@@ -100,15 +100,16 @@
 
     <nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation">
         <div class="list-group panel">
-            <p class=" list-group-item" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
+            <p class=" list-group-item siderbar-top" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
             <a href="{{route('dashboard', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-dashboard"></i> {{ __('Dashboard') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-dashboard"></i>{{ __('Dashboard') }} </a>
             <a href="{{route('users.show', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-user"></i> {{ __('Profile') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-user"></i>{{ __('Profile') }} </a>
 
 
             <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tag"></i> {{ __('Clients') }}</a>
+                        class="glyphicon sidebar-icon glyphicon-tag"></i>{{ __('Clients') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="clients">
 
                 <a href="{{ route('clients.index')}}" class="list-group-item childlist">{{ __('All Clients') }}</a>
@@ -118,8 +119,9 @@
                 @endif
             </div>
 
-            <a href="#tasks" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tasks"></i> {{ __('Tasks') }} </a>
+            <a href="#tasks" class="list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-tasks"></i>{{ __('Tasks') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="tasks">
                 <a href="{{ route('tasks.index')}}" class="list-group-item childlist">{{ __('All Tasks') }}</a>
                 @if(Entrust::can('task-create'))
@@ -128,7 +130,8 @@
             </div>
 
             <a href="#user" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-users"></i> {{ __('Users') }} </a>
+                        class="sidebar-icon fa fa-users"></i>{{ __('Users') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="user">
                 <a href="{{ route('users.index')}}" class="list-group-item childlist">{{ __('Users All') }}</a>
                 @if(Entrust::can('user-create'))
@@ -138,7 +141,8 @@
             </div>
 
             <a href="#leads" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-hourglass"></i> {{ __('Leads') }}</a>
+                        class="glyphicon sidebar-icon glyphicon-hourglass"></i>{{ __('Leads') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="leads">
                 <a href="{{ route('leads.index')}}" class="list-group-item childlist">{{ __('All Leads') }}</a>
                 @if(Entrust::can('lead-create'))
@@ -147,7 +151,8 @@
                 @endif
             </div>
             <a href="#departments" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-object-group"></i> {{ __('Departments') }}</a>
+                        class="sidebar-icon glyphicon glyphicon-list-alt"></i>{{ __('Departments') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="departments">
                 <a href="{{ route('departments.index')}}"
                    class="list-group-item childlist">{{ __('All Departments') }}</a>
@@ -159,7 +164,8 @@
 
             @if(Entrust::hasRole('administrator'))
                 <a href="#settings" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                            class="glyphicon glyphicon-cog"></i> {{ __('Settings') }}</a>
+                            class="glyphicon sidebar-icon glyphicon-cog"></i>{{ __('Settings') }}
+                <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
                 <div class="collapse" id="settings">
                     <a href="{{ route('settings.index')}}"
                        class="list-group-item childlist">{{ __('Overall Settings') }}</a>
@@ -173,7 +179,7 @@
 
             @endif
             <a href="{{ url('/logout') }}" class=" list-group-item impmenu" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-log-out"></i> {{ __('Sign Out') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-log-out"></i>{{ __('Sign Out') }} </a>
 
         </div>
     </nav>
@@ -215,4 +221,3 @@
 </body>
 
 </html>
-  

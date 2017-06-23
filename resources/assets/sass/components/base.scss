@@ -1,6 +1,8 @@
-$primary-color: #3A485C;
+$primary-color: #424242;
+$darker-primary-color: #3A3A3A;
 $secondary-color: #008ae6;
 $link-color:#337ab7;
+$top-bar-color:#2196F3;
 a{
     color: $link-color;
     text-decoration: none;
@@ -17,7 +19,7 @@ h1
 	font-size:28px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     min-height: 0rem;
-    font-weight: 200; 
+    font-weight: 200;
 }
 h3{
     &:first-child{
@@ -27,7 +29,7 @@ h3{
 }
 h4{
     margin: 0;
-    font-weight: normal; 
+    font-weight: normal;
 }
 
 body {
@@ -67,7 +69,7 @@ body {
 }
 #wrapper {
       @media(min-width:992px){
-    	 padding-left: 250px;
+
     }
 
 
@@ -76,30 +78,30 @@ body {
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    padding: 15px;
-	@media(min-width:768px)
+    padding: 15px 15px 15px 270px;
+  @media(min-width:768px)
 	{
-        padding: 20px;
+        padding: 20px 20px 20px 270px;
         position: relative;
 	}
     @media(max-width:768px)
     {
-	   padding: 20px;
+       padding: 20px 20px 20px 270px;
        position: relative;
     }
 }
 
-.boxspace 
-{ 
+.boxspace
+{
 	margin-right:10px;
-	padding:10px; 
+	padding:10px;
 }
 
 .taskcase
 {
     padding: 5px 5px 15px 20px;
     background-color: #cce5ff;
-    
+
 	hr
 	{
 		margin-top: 10px;
@@ -120,7 +122,7 @@ body {
 }
 
 .ui.selection.dropdown .menu>.item {
-    font-size: 15px; 
+    font-size: 15px;
 }
 
 .ui.selection.dropdown
@@ -147,7 +149,7 @@ body {
 .panel-header
 {
     color:#fff !important;
-    background-color:#3A485C !important; 
+    background-color:#3A485C !important;
 }
 
 .panel-heading
@@ -167,9 +169,10 @@ body {
 
 .navbar-default
 {
-  background-color: $primary-color;
+  background-color: $top-bar-color;
   border:none;
   border-radius:0px;
+  height:58px;
 }
 
 #permissions-table th:first-child {
