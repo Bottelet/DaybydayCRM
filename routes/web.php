@@ -98,8 +98,7 @@ Route::group(['middleware' => ['auth']], function () {
      * Notifications
      */
     Route::group(['prefix' => 'notifications'], function () {
-        Route::get('/getall', 'NotificationsController@getAll')->name('notifications.get');
-        Route::post('/markread', 'NotificationsController@markRead');
+        Route::post('/markread', 'NotificationsController@markRead')->name('notification.read');
         Route::get('/markall', 'NotificationsController@markAll');
         Route::get('/{id}', 'NotificationsController@markRead');
     });

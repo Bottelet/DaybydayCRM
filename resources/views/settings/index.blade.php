@@ -90,7 +90,7 @@
      *                     Task assign       
      *********************************************************************-->
             <div class="panel panel-default movedown">
-                <div class="panel-heading">@lang('setting.overall.task.assigned')</div>
+                <div class="panel-heading">{{ __('Task assigning') }}</div>
                 <div class="panel-body">
 
                    {{ __('If Allowed only user who are assigned the task &amp; the admin can assign another user.') }} <br/>
@@ -108,7 +108,7 @@
      *********************************************************************-->
 
             <div class="panel panel-default movedown">
-                <div class="panel-heading">@lang('setting.overall.lead.completion')</div>
+                <div class="panel-heading">{{ __('Lead completion') }}</div>
                 <div class="panel-body">
 
                     {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
@@ -124,7 +124,7 @@
      *                     Lead assign       
      *********************************************************************-->
             <div class="panel panel-default movedown">
-                <div class="panel-heading">@lang('setting.overall.lead.assigned')</div>
+                <div class="panel-heading">{{ __('Lead assigning') }}</div>
                 <div class="panel-body">
 
                     {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
