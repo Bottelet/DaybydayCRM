@@ -17,25 +17,36 @@
 </head>
 <body>
 
-
 <div id="wrapper">
     <div class="navbar navbar-default navbar-top">
         <!--NOTIFICATIONS START-->
-        <div class="dropdown">
-            <a id="dLabel" role="button" data-toggle="dropdown"  href="/page.html">
-                <i class="glyphicon glyphicon-bell"><span id="notifycount"></span></i>
+<div class="menu">
+  <!-- Menu --!>
+ <ul>
+<?php $notifications = auth()->user()->unreadNotifications; ?>
+    @foreach($notifications as $notification)
+	<a href="{{ route('notification.read', ['id' => $notification->id])  }}" onClick="postRead({{ $notification->id }})"><li>{{ $notification->data['message']}}</li></a>
+    @endforeach 
+  </ul>
+</div>
+
+       <div class="dropdown" id="nav-toggle">
+            <a id="dLabel" role="button" data-toggle="dropdown">
+                <i class="glyphicon glyphicon-bell"><span id="notifycount">{{ $notifications->count() }}</span></i>
             </a>
-            <ul class="dropdown-menu notify-drop  notifications" role="menu" aria-labelledby="dLabel">
-                <div class="notification-heading"><h4 class="menu-title">Notifications</h4><h4
-                            class="menu-title pull-right"><a href="{{url('notifications/markall')}}">Mark all as
-                            read</a><i class="glyphicon glyphicon-circle-arrow-right"></i></h4>
                 </div>
-                <li class="divider"></li>
-                <div class="notifications-wrapper">
-                    <span id="notification-item"></span>
                     @push('scripts')
                     <script>
-                        id = {};
+$('#nav-toggle').click(function(e) {
+  e.stopPropagation();
+  $(".menu").toggleClass('bar')
+});
+$('body').click(function(e) {
+  if ($('.menu').hasClass('bar')) {
+    $(".menu").toggleClass('bar')
+  }
+})      
+                  id = {};
                         function postRead(id) {
                             $.ajax({
                                 type: 'post',
@@ -50,42 +61,8 @@
 
                         }
 
-                        $(function () {
-                            $.get("{{url('/notifications/getall')}}", function (notifications) {
-                                var notifyItem = document.getElementById('notification-item');
-                                var bell = document.getElementById('notifycount');
-                                var msg = "";
-                                var count = 0;
-                                $.each(notifications, function (index, notification) {
-                                    count++;
-                                    var id = notification['id'];
-                                    var url = notification['data']['url'];
-
-                                    msg += `<div>
-        <a class="content"  id="notify" href="{{url('notifications')}}/` + id + `">
-        `
-                                            + notification['data']['message'] +
-                                            ` </a></div>
-        <hr class="notify-line"/>`;
-                                    notifyItem.innerHTML = msg;
-
-                                    /**         notifyItem.onclick = (function(id){
-             return function(){
-                 postRead(id);
-             }})(id); **/
-
-                                });
-                                bell.innerHTML = count;
-                            })
-
-                        });
-
                     </script>
                 @endpush
-                </div>
-
-            </ul>
-        </div>
         <!--NOTIFICATIONS END-->
         <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu">
             <span class="icon-bar"></span>
@@ -100,15 +77,16 @@
 
     <nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation">
         <div class="list-group panel">
-            <p class=" list-group-item" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
+            <p class=" list-group-item siderbar-top" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
             <a href="{{route('dashboard', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-dashboard"></i> {{ __('Dashboard') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-dashboard"></i>{{ __('Dashboard') }} </a>
             <a href="{{route('users.show', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-user"></i> {{ __('Profile') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-user"></i>{{ __('Profile') }} </a>
 
 
             <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tag"></i> {{ __('Clients') }}</a>
+                        class="glyphicon sidebar-icon glyphicon-tag"></i>{{ __('Clients') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="clients">
 
                 <a href="{{ route('clients.index')}}" class="list-group-item childlist">{{ __('All Clients') }}</a>
@@ -118,8 +96,9 @@
                 @endif
             </div>
 
-            <a href="#tasks" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-tasks"></i> {{ __('Tasks') }} </a>
+            <a href="#tasks" class="list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-tasks"></i>{{ __('Tasks') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="tasks">
                 <a href="{{ route('tasks.index')}}" class="list-group-item childlist">{{ __('All Tasks') }}</a>
                 @if(Entrust::can('task-create'))
@@ -128,7 +107,8 @@
             </div>
 
             <a href="#user" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-users"></i> {{ __('Users') }} </a>
+                        class="sidebar-icon fa fa-users"></i>{{ __('Users') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="user">
                 <a href="{{ route('users.index')}}" class="list-group-item childlist">{{ __('Users All') }}</a>
                 @if(Entrust::can('user-create'))
@@ -138,7 +118,8 @@
             </div>
 
             <a href="#leads" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-hourglass"></i> {{ __('Leads') }}</a>
+                        class="glyphicon sidebar-icon glyphicon-hourglass"></i>{{ __('Leads') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="leads">
                 <a href="{{ route('leads.index')}}" class="list-group-item childlist">{{ __('All Leads') }}</a>
                 @if(Entrust::can('lead-create'))
@@ -147,7 +128,8 @@
                 @endif
             </div>
             <a href="#departments" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                        class="fa fa-object-group"></i> {{ __('Departments') }}</a>
+                        class="sidebar-icon glyphicon glyphicon-list-alt"></i>{{ __('Departments') }}
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
             <div class="collapse" id="departments">
                 <a href="{{ route('departments.index')}}"
                    class="list-group-item childlist">{{ __('All Departments') }}</a>
@@ -159,7 +141,8 @@
 
             @if(Entrust::hasRole('administrator'))
                 <a href="#settings" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
-                            class="glyphicon glyphicon-cog"></i> {{ __('Settings') }}</a>
+                            class="glyphicon sidebar-icon glyphicon-cog"></i>{{ __('Settings') }}
+                <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
                 <div class="collapse" id="settings">
                     <a href="{{ route('settings.index')}}"
                        class="list-group-item childlist">{{ __('Overall Settings') }}</a>
@@ -173,7 +156,7 @@
 
             @endif
             <a href="{{ url('/logout') }}" class=" list-group-item impmenu" data-parent="#MainMenu"><i
-                        class="glyphicon glyphicon-log-out"></i> {{ __('Sign Out') }} </a>
+                        class="glyphicon sidebar-icon glyphicon-log-out"></i>{{ __('Sign Out') }} </a>
 
         </div>
     </nav>
@@ -215,4 +198,3 @@
 </body>
 
 </html>
-  
