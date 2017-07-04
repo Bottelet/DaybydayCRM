@@ -33,7 +33,7 @@ class StoreClientRequest extends FormRequest
             'city' => '',
             'primary_number' => 'max:10',
             'secondary_number' => 'max:10',
-            'industry' => '',
+            'industry_id' => 'required',
             'company_type' => '',
             'user_id' => 'required'
         ];
