@@ -56,7 +56,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
         Route::post('/updatetime/{id}', 'TasksController@updateTime');
         Route::post('/invoice/{id}', 'TasksController@invoice');
-        Route::post('/comments/{id}', 'CommentController@store');
     });
         Route::resource('tasks', 'TasksController');
 
@@ -66,12 +65,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'leads'], function () {
         Route::get('/data', 'LeadsController@anyData')->name('leads.data');
         Route::patch('/updateassign/{id}', 'LeadsController@updateAssign');
-        Route::post('/notes/{id}', 'NotesController@store');
         Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
         Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
     });
         Route::resource('leads', 'LeadsController');
-
+        Route::post('/comments/{type}/{id}', 'CommentController@store');
     /**
      * Settings
      */

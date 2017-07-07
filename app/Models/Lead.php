@@ -8,7 +8,7 @@ class Lead extends Model
 {
     protected $fillable = [
         'title',
-        'note',
+        'description',
         'status',
         'user_assigned_id',
         'user_created_id',
@@ -34,10 +34,10 @@ class Lead extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
-
-    public function notes()
+    
+    public function comments()
     {
-        return $this->hasMany(Note::class, 'lead_id', 'id');
+        return $this->morphMany(Comment::class, 'source');
     }
 
     public function activity()
@@ -48,5 +48,17 @@ class Lead extends Model
     public function getDaysUntilContactAttribute()
     {
         return Carbon\Carbon::now()->startOfDay()->diffInDays($this->contact_date, false);
+    }
+
+    /**
+     * Add a reply to the thread.
+     *
+     * @param  array $reply
+     * @return Model
+     */
+    public function addComment($reply)
+    {
+        $reply = $this->comments()->create($reply);
+        return $reply;
     }
 }

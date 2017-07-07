@@ -37,7 +37,7 @@ class Task extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'task_id', 'id');
+        return $this->morphMany(Comment::class, 'source');
     }
     
     public function getDaysUntilDeadlineAttribute()
@@ -65,5 +65,17 @@ class Task extends Model
     public function activity()
     {
         return $this->morphMany(Activity::class, 'source');
+    }
+
+    /**
+     * Add a reply to the thread.
+     *
+     * @param  array $reply
+     * @return Model
+     */
+    public function addComment($reply)
+    {
+        $reply = $this->comments()->create($reply);
+        return $reply;
     }
 }

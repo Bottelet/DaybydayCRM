@@ -3,7 +3,7 @@
 <div class="panel panel-primary shadow">
     <div class="panel-heading"><p>{{$subject->title}}</p></div>
     <div class="panel-body">
-        <p>{{$instance == 'task' ? $subject->description : $subject->note}}</p>
+        <p>{{$subject->description }}</p>
         <p class="smalltext">{{ __('Created at') }}:
             {{ date('d F, Y, H:i:s', strtotime($subject->created_at))}}
             @if($subject->updated_at != $subject->created_at)
@@ -14,11 +14,11 @@
 
 <?php $count = 0;?>
 <?php $i = 1 ?>
-@foreach(($instance == 'task' ? $subject->comments : $subject->notes) as $comment)
+@foreach($subject->comments as $comment)
     <div class="panel panel-primary shadow" style="margin-top:15px; padding-top:10px;">
         <div class="panel-body">
             <p class="smalltext">#{{$i++}}</p>
-            <p>  {{$instance == 'task' ? $comment->description : $comment->note}}</p>
+            <p>  {{$comment->description}}</p>
             <p class="smalltext">{{ __('Comment by') }}: <a
                         href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a>
             </p>
@@ -35,8 +35,9 @@
     </div>
 @endforeach
 <br/>
+
 @if($instance == 'task')
-    {!! Form::open(array('url' => array('/tasks/comments',$subject->id, ))) !!}
+    {!! Form::open(array('url' => array('/comments/task',$subject->id, ))) !!}
     <div class="form-group">
         {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 
@@ -44,11 +45,11 @@
     </div>
     {!! Form::close() !!}
 @else
-    {!! Form::open(array('url' => array('/leads/notes',$lead->id, ))) !!}
+    {!! Form::open(array('url' => array('/comments/lead',$lead->id, ))) !!}
     <div class="form-group">
-        {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
+        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
 
-        {!! Form::submit( __('Add Note') , ['class' => 'btn btn-primary']) !!}
+        {!! Form::submit( __('Add Comment') , ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @endif

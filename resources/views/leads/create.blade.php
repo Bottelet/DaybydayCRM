@@ -15,8 +15,8 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('note', __('Note'), ['class' => 'control-label']) !!}
-        {!! Form::textarea('note', null, ['class' => 'form-control']) !!}
+        {!! Form::label('description', __('Description'), ['class' => 'control-label']) !!}
+        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
     </div>
 
     <div class="form-inline">
