@@ -1,14 +1,7 @@
 <div class="col-lg-6">
-    <div class="profilepic"><img class="profilepicsize"
-                                 @if($contact->image_path != "")
-                                 src="../images/{{$companyname}}/{{$contact->image_path}}"
-                                 @else
-                                 src="../images/default_avatar.jpg"
-                @endif />
-    </div>
 
+    <div class="profilepic"><img class="profilepicsize" src="../{{ $contact->avatar }}" /></div>
     <h1>{{ $contact->nameAndDepartment }} </h1>
-
 
     <!--MAIL-->
     <p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>

@@ -6,6 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Cache;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Setting;
 
 class User extends Authenticatable
 {
@@ -91,5 +92,11 @@ class User extends Authenticatable
             $client->user_id = $user_id;
             $client->save();
         }
+    }
+
+    public function getAvatarattribute()
+    {
+        $setting = Setting::first();
+        return $this->image_path ? 'images/' . $setting->company . '/' . $this->image_path : 'images/default_avatar.jpg';
     }
 }

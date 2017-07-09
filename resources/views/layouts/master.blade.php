@@ -31,7 +31,7 @@
    
     <a href="{{ route('notification.read', ['id' => $notification->id])  }}" onClick="postRead({{ $notification->id }})">
     <li> 
- <img src="http://placekitten.com/g/300/300" class="notification-profile-image">
+ <img src="/{{ auth()->user()->avatar }}" class="notification-profile-image">
     <p>{{ $notification->data['message']}}</p></li>
     </a>
     @endforeach 
