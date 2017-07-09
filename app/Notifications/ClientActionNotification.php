@@ -77,7 +77,7 @@ class ClientActionNotification extends Notification
             default:
                 break;
         }
-       
+
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => auth()->user()->id,

@@ -92,7 +92,7 @@ class TaskActionNotification extends Notification
         }
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
-            'created_user' => $this->task->fk_user_id_created,
+            'created_user' => $this->task->creator->id,
             'message' => $text,
             'type' =>  Task::class,
             'type_id' =>  $this->task->id,

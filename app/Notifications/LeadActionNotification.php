@@ -91,7 +91,7 @@ class LeadActionNotification extends Notification
         }
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
-            'created_user' => $this->lead->fk_user_id_created,
+            'created_user' => $this->lead->creator->id,
             'message' => $text,
             'type' => Lead::class,
             'type_id' =>  $this->lead->id,
