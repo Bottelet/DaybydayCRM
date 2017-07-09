@@ -33,17 +33,20 @@
   font-weight: 300;
   font-size:11px;
   padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom:10px;
+  padding-top: 8px;
+  padding-bottom:9px;
+  padding-right: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  float: left;
+  width: 100%;
   color:#fff;
    &:hover {
    	background-color: $darker-primary-color;
    }
 }
 
-.menu li a {
-  color: white;
+.menu a li p {
+  margin-top:5px;
 }
 
 .bar {
@@ -57,4 +60,12 @@
     color: #fff;
     text-align: center;
     padding-top: 0.5em;
+}
+
+.notification-profile-image {
+    border-radius: 25px;
+    height:45px; 
+    width:45px;
+    margin-right:15px;
+    float: left;
 }

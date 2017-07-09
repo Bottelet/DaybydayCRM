@@ -21,13 +21,19 @@
     <div class="navbar navbar-default navbar-top">
         <!--NOTIFICATIONS START-->
 <div class="menu">
-    <?php $notifications = auth()->user()->unreadNotifications; ?>
+   
     <div class="notifications-header"><p>Notifications</p> </div>
-  <!-- Menu --!>
+  <!-- Menu -->
  <ul>
+ <?php $notifications = auth()->user()->unreadNotifications; ?>
 
     @foreach($notifications as $notification)
-    <a href="{{ route('notification.read', ['id' => $notification->id])  }}" onClick="postRead({{ $notification->id }})"><li>{{ $notification->data['message']}}</li></a>
+   
+    <a href="{{ route('notification.read', ['id' => $notification->id])  }}" onClick="postRead({{ $notification->id }})">
+    <li> 
+ <img src="http://placekitten.com/g/300/300" class="notification-profile-image">
+    <p>{{ $notification->data['message']}}</p></li>
+    </a>
     @endforeach 
   </ul>
 </div>
