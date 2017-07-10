@@ -150,8 +150,8 @@ a.list-group-item
 
 .big-menu .menu-txt-toggle {
   left: 280px;
-  -webkit-transition: left 0.35s;
-  transition: left 0.35s;
+  -webkit-transition: left 0.25s;
+  transition: left 0.25s;
 }
 
 .menu-txt-toggle {
@@ -161,8 +161,8 @@ a.list-group-item
   position: absolute;
   z-index: 999999;
   background: #424242;
-  -webkit-transition: left 0.45s;
-  transition: left 0.45s;
+  -webkit-transition: left 0.25s;
+  transition: left 0.25s;
 }
 
 .myNavmenu-icons .menu-txt-toggle {
@@ -171,10 +171,6 @@ a.list-group-item
 
 .menu-txt-toggle .icon-bar {
   background: #fff;
-}
-
-div#nav-toggle {
-  padding: 20px 43% 0px 0px;
 }
 
 .myNavmenu-icons {
@@ -241,6 +237,7 @@ div#nav-toggle {
   }
   .navmenu {
     width: 270px;
+    transition: width 0.25s;
   }
   #myNavmenu p.list-group-item.siderbar-top {
     text-align: left;
