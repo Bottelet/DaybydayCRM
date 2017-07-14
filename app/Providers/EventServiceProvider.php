@@ -25,6 +25,9 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\LeadActionNotify',
             'App\Listeners\LeadActionLog',
         ],
+        'App\Events\NewComment' => [
+            'App\Listeners\NotiftyMentionedUsers'
+        ]
     ];
 
     /**

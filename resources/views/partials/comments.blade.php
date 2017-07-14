@@ -18,18 +18,14 @@
     <div class="panel panel-primary shadow" style="margin-top:15px; padding-top:10px;">
         <div class="panel-body">
             <p class="smalltext">#{{$i++}}</p>
-            <p>  {{$comment->description}}</p>
+            <p>  {{ $comment->description }}</p>
             <p class="smalltext">{{ __('Comment by') }}: <a
                         href="{{route('users.show', $comment->user->id)}}"> {{$comment->user->name}} </a>
             </p>
             <p class="smalltext">{{ __('Created at') }}:
                 {{ date('d F, Y, H:i:s', strtotime($comment->created_at))}}
                 @if($comment->updated_at != $comment->created_at)
-                    @if($instance == 'task')
                         <br/>{{ __('Modified') }} : {{date('d F, Y, H:i:s', strtotime($comment->updated_at))}}
-                    @else
-                        <br/> {{ __('Modified') }}: {{date('d F, Y, H:i:s', strtotime($lead->updated_at))}}
-                    @endif
                 @endif</p>
         </div>
     </div>

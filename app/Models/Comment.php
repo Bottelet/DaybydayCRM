@@ -17,7 +17,7 @@ class Comment extends Model
      */
     public function commentable()
     {
-        return $this->morphTo();
+        return $this->morphTo('source');
     }
     
     public function task()
@@ -32,8 +32,18 @@ class Comment extends Model
 
     public function mentionedUsers()
     {
-         preg_match_all('/\@([^\s\.])/', $this->body, $matches);
+        preg_match_all('/@([\w\-]+)/', $this->description, $matches);
  
-         return $matches[1];
+        return $matches[1];
+    }
+
+    public function setDescriptionAttribute($description)
+    {
+        $this->attributes['description'] = preg_replace(
+          '/@([\w\-]+)/',
+          '<a href="/profiles/$1">$0</a>',
+          $description
+      );
+ 
     }
 }
