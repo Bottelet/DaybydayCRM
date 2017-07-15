@@ -16,7 +16,7 @@ I would like to refer to the wiki, for help on getting started
 * [Insertion of dummy data](https://github.com/Bottelet/Flarepoint-crm/wiki/Insertion-of-dummy-data)
 
 ## Demo site
-Flarepoint can be "browsed/tested" on 138.68.80.242.. Database is reseeded every 24 hr. 
+Flarepoint can be "browsed/tested" on the [flarepoint-demo](http://ec2-34-248-108-133.eu-west-1.compute.amazonaws.com).. Database is reseeded every 24 hr. 
 
 login:
 
