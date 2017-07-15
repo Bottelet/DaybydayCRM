@@ -21,7 +21,7 @@ class LeadsTableSeeder extends Seeder
             array (
                 'id' => 1,
                 'title' => 'Sell Item',
-                'note' => 'Try and sell this new Item',
+                'description' => 'Try and sell this new Item',
                 'status' => 1,
                 'userassign_id' => 1,
                 'client_id' => 9,
@@ -34,7 +34,7 @@ class LeadsTableSeeder extends Seeder
             array (
                 'id' => 2,
                 'title' => 'Contact Client about new offer',
-                'note' => 'Give them a call about the new items',
+                'description' => 'Give them a call about the new items',
                 'status' => 1,
                 'userassign_id' => 1,
                 'client_id' => 10,
@@ -47,7 +47,7 @@ class LeadsTableSeeder extends Seeder
             array (
                 'id' => 3,
                 'title' => 'Client wants to know more about item',
-                'note' => 'Give the client a call, about the item',
+                'description' => 'Give the client a call, about the item',
                 'status' => 2,
                 'userassign_id' => 1,
                 'client_id' => 10,

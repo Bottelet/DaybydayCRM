@@ -59,7 +59,7 @@ $factory->define(App\Models\Task::class, function (Faker\Generator $faker) {
 $factory->define(App\Models\Lead::class, function (Faker\Generator $faker) {
     return [
         'title' => $faker->sentence,
-        'note' => $faker->paragraph,
+        'description' => $faker->paragraph,
         'user_created_id' => $faker->numberBetween($min = 1, $max = 3),
         'user_assigned_id' => $faker->numberBetween($min = 1, $max = 3),
         'client_id' => $faker->numberBetween($min = 1, $max = 50),
