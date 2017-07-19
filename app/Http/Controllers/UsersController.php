@@ -52,6 +52,11 @@ class UsersController extends Controller
         return view('users.index')->withUsers($this->users);
     }
 
+    public function users()
+    {
+        return User::all();
+    }
+
     public function anyData()
     {
         $canUpdateUser = auth()->user()->can('update-user');

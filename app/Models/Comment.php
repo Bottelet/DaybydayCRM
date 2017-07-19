@@ -37,13 +37,14 @@ class Comment extends Model
         return $matches[1];
     }
 
-    public function setDescriptionAttribute($description)
+   /* //TODO figure out how to escape the comment, but not the link to the profile, as it just return the full HTML
+   public function setDescriptionAttribute($description)
     {
         $this->attributes['description'] = preg_replace(
           '/@([\w\-]+)/',
-          '<a href="/profiles/$1">$0</a>',
+          'e(<a href="/profiles/$1">$0</a>',
           $description
       );
  
-    }
+    }*/
 }

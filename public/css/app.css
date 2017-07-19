@@ -7837,7 +7837,7 @@ body {
 
 .dropdown {
   display: inline-block;
-  padding: 20px 320px 0px 0px;
+  padding: 20px 120px 0px 0px;
   float: right;
   z-index: 10;
 }
@@ -8090,7 +8090,7 @@ a.list-group-item:hover {
 /*===== custom css ========*/
 .big-menu .menu-txt-toggle {
   left: 280px;
-  transition: left 0.35s;
+  transition: left 0.25s;
 }
 
 .menu-txt-toggle {
@@ -8100,7 +8100,7 @@ a.list-group-item:hover {
   position: absolute;
   z-index: 999999;
   background: #424242;
-  transition: left 0.45s;
+  transition: left 0.25s;
 }
 
 .myNavmenu-icons .menu-txt-toggle {
@@ -8109,10 +8109,6 @@ a.list-group-item:hover {
 
 .menu-txt-toggle .icon-bar {
   background: #fff;
-}
-
-div#nav-toggle {
-  padding: 20px 43% 0px 0px;
 }
 
 .myNavmenu-icons .navmenu {
@@ -8178,6 +8174,7 @@ div#nav-toggle {
   }
   .navmenu {
     width: 270px;
+    transition: width 0.25s;
   }
   #myNavmenu p.list-group-item.siderbar-top {
     text-align: left;

@@ -35,7 +35,7 @@
 @if($instance == 'task')
     {!! Form::open(array('url' => array('/comments/task',$subject->id, ))) !!}
     <div class="form-group">
-        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
+        {!! Form::textarea('description', null, ['class' => 'form-control', 'id' => 'comment-field']) !!}
 
         {!! Form::submit( __('Add Comment') , ['class' => 'btn btn-primary']) !!}
     </div>
@@ -43,9 +43,26 @@
 @else
     {!! Form::open(array('url' => array('/comments/lead',$lead->id, ))) !!}
     <div class="form-group">
-        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
+        {!! Form::textarea('description', null, ['class' => 'form-control', 'id' => 'comment-field']) !!}
 
         {!! Form::submit( __('Add Comment') , ['class' => 'btn btn-primary']) !!}
     </div>
     {!! Form::close() !!}
 @endif
+
+@push('scripts')
+    <script>
+        $('#comment-field').atwho({
+            at: "@",
+            limit: 5, 
+            delay: 400,
+            callbacks: {
+                remoteFilter: function (t, e) {
+                    t.length <= 2 || $.getJSON("/users/users", {q: t}, function (t) {
+                        e(t)
+                    })
+                }
+            }
+        })
+    </script>
+@endpush
