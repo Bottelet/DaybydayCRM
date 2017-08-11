@@ -47,7 +47,6 @@ Flarepoint is still under development, so there are a lot on my to-do list.
 - Excel Import/export
 - Better cache
 - Even easier installation
-- User tagging
 
 And much more (in no particular order)
 
