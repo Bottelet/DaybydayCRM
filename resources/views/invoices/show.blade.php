@@ -67,19 +67,47 @@
                     {{ date('d-m-Y', strtotime($invoice->payment_received_at))}}
                 @endif
                 <br/><br/>
+@if(!$invoice->sent_at)
+            <button type="button" class="btn btn-success form-control closebtn" value="add_time_modal" data-toggle="modal" data-target="#SendInvoiceModalConfirm" >
+                {{ __('Set invoice as sent') }}
+            </button>
 
-                @if(!$invoice->sent_at)
-                    {!! Form::open([
+                </div>
+                 
+
+<div class="modal fade" id="SendInvoiceModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+                {{ __('Are you sure?') }}
+                    </h4>
+                    <p>{{ __('Once a invoice has been send, no new invoice lines can be added') }}</p>
+                 {!! Form::open([
                     'method' => 'post',
                     'route' => ['invoice.sent', $invoice->id],
                     ]) !!}
-
+                    @if($apiconnected)
+                    <p>{{ __('We have found this contact from your, billing integration, do you wish for us to send it to your billing system aswell?') }}</p>
+                        @foreach ($contacts as $key => $contact)
+                            {!! Form::radio('invoiceContact', $contact['guid']) !!}
+                            {{$contact['name']}}
+                            <br/>
+                        @endforeach
+                        {!! Form::label('mail', __('Send mail with invoice to Customer?(Cheked = Yes):'), ['class' => 'control-label']) !!}
+                        {!! Form::checkbox('sendMail', true) !!}
+                    @endif
                     {!! Form::submit('Set invoice as sent', ['class' => 'btn btn-success form-control closebtn']) !!}
-            </div>
+           
             {!! Form::close() !!}
-            @endif
-
-
+            </div>
+            
+        </div>
+    </div>
+</div>
+@endif
         @if($invoice->sent_at)
 
         @if(!$invoice->payment_received_at)

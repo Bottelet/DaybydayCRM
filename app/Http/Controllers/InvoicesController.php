@@ -6,6 +6,7 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Repositories\Invoice\InvoiceRepositoryContract;
 use App\Repositories\Client\ClientRepositoryContract;
+use App\Models\Integration;
 
 class InvoicesController extends Controller
 {
@@ -50,8 +51,26 @@ class InvoicesController extends Controller
      */
     public function show($id)
     {
+        $integrationCheck = Integration::first();
+        $invoice = $this->invoices->find($id);
+        if ($integrationCheck) {
+            $api = Integration::getApi('billing');
+            $apiConnected = true;
+            $invoiceContacts = $api->getContacts($invoice->client->email);
+            // If we can't find a client in the integration, show all
+            if (!$invoiceContacts) {
+                $invoiceContacts = $api->getContacts();
+            }
+            
+        } else {
+            $apiConnected = false;
+            $invoiceContacts = [];
+        }
+
         return view('invoices.show')
-            ->withInvoice($this->invoices->find($id));
+            ->withInvoice($invoice)
+            ->withApiconnected($apiConnected)
+            ->withContacts($invoiceContacts);
     }
 
     /**

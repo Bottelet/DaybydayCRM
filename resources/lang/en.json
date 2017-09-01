@@ -162,5 +162,7 @@
   "Create lead": "Creat lead",
   "Insert task title (will be shown on invoice": "Insert task title (will be shown on invoice",
   "A short description, as to what is being billed": "A short description, as to what is being billed",
-  "Can't insert new invoice line, to already sent invoice": "Can't insert new invoice line, to already sent invoice"
+  "Can't insert new invoice line, to already sent invoice": "Can't insert new invoice line, to already sent invoice",
+  "Once a invoice has been send, no new invoice lines can be added": "Once a invoice has been send, no new invoice lines can be added",
+  "We have found this contact from your, billing integration, do you wish for us to send it to your billing system aswell?": "We have found this contact from your, billing integration, do you wish for us to send it to your billing system aswell?"
 }

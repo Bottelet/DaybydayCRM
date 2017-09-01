@@ -8,6 +8,7 @@ use App\Models\Integration;
 use App\Models\Task;
 use Session;
 use App\Models\InvoiceLine;
+use App\Models\Activity;
 
 class InvoiceRepository implements InvoiceRepositoryContract
 {
@@ -29,7 +30,9 @@ class InvoiceRepository implements InvoiceRepositoryContract
     public function invoice($id, $requestData)
     {
         $contatGuid = $requestData->invoiceContact;
-        $invoice_lines = Invoice::find($id)->invoiceLines;
+      
+        $invoice = Invoice::find($id);
+        $invoice_lines = $invoice->invoiceLines;
         $sendMail = $requestData->sendMail;
         $productlines = [];
 
@@ -37,8 +40,8 @@ class InvoiceRepository implements InvoiceRepositoryContract
             $productlines[] = [
                 'Description' => $invoice_line->title,
                 'Comments' => $invoice_line->comment,
-                'BaseAmountValue' => $invoice_line->value,
-                'Quantity' => $invoice_line->time,
+                'BaseAmountValue' => $invoice_line->price,
+                'Quantity' => $invoice_line->quantity,
                 'AccountNumber' => 1000,
                 'Unit' => 'hours'];
         }
@@ -47,17 +50,10 @@ class InvoiceRepository implements InvoiceRepositoryContract
 
         $results = $api->createInvoice([
             'currency' => 'DKK',
-            'description' => $task->title,
+            'description' => $invoice->title,
             'contact_id' => $contatGuid,
             'product_lines' => $productlines]);
 
-         Activity::create([
-            'text' => "user has created, a invoice draft for this task",
-            'user_id' => Auth()->id(),
-            'source_type' => Invoice::class,
-            'source_id' =>  $invoice->id,
-            'action' => "sent_invoice"
-        ]);
         if ($sendMail == true) {
             $booked = $api->bookInvoice($results->Guid, $results->TimeStamp); 
             $bookGuid = $booked->Guid;
