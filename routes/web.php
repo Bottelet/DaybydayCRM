@@ -56,7 +56,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updatestatus/{id}', 'TasksController@updateStatus');
         Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
         Route::post('/updatetime/{id}', 'TasksController@updateTime');
-        Route::post('/invoice/{id}', 'TasksController@invoice');
     });
         Route::resource('tasks', 'TasksController');
 
@@ -109,7 +108,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updatepayment/{id}', 'InvoicesController@updatePayment')->name('invoice.payment.date');
         Route::post('/reopenpayment/{id}', 'InvoicesController@reopenPayment')->name('invoice.payment.reopen');
         Route::post('/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
-        Route::post('/reopensentinvoice/{id}', 'InvoicesController@updateSentReopen')->name('invoice.sent.reopen');
         Route::post('/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
     });
         Route::resource('invoices', 'InvoicesController');
