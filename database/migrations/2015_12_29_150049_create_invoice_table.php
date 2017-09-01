@@ -16,9 +16,9 @@ class CreateInvoiceTable extends Migration
             $table->increments('id');
             $table->string('status');
             $table->string('invoice_no')->nullable();
-            $table->date('sent_at');
-            $table->date('payment_received_at');
-            $table->date('due_at');
+            $table->date('sent_at')->nullable();
+            $table->date('payment_received_at')->nullable();
+            $table->date('due_at')->nullable();
             $table->integer('client_id')->unsigned();
             $table->foreign('client_id')->references('id')->on('clients');
             $table->timestamps();
