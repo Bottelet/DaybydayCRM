@@ -8,12 +8,14 @@
                 <th>{{ __('Totalt amount') }}</th>
                 <th>{{ __('Invoice sent') }}</th>
                 <th>{{ __('Payment received') }}</th>
+                <th>{{ __('Status') }}</th>
             </tr>
             </thead>
             <tbody>
             <?php $total = 0; ?>
+
             @foreach($invoices as $invoice)
-                <tr>
+               <tr>
                     <td>
                         <a href="{{route('invoices.show', $invoice->id)}}">
                             {{$invoice->id}}
@@ -21,35 +23,37 @@
                     </td>
                     <td>
                         <?php $total = 0; ?>
-                        @foreach($invoice->tasktime as $tasktime)
-                            <?php $total += $tasktime->time; ?>
-
+                        @foreach($invoice->invoiceLines as $invoiceLine)
+                            <?php $total += $invoiceLine->quantity; ?>
                         @endforeach
                         {{$total}}
                     </td>
                     <td>
                         <?php $totalAmount = 0; ?>
-                        @foreach($invoice->tasktime as $payment)
-                            <?php $totalAmount += $payment->value; ?>
+                        @foreach($invoice->invoiceLines as $payment)
+                            <?php $totalAmount += $payment->price; ?>
                         @endforeach
                         {{$totalAmount}},-
                     </td>
                     <td>
-                        @if($invoice->sent == 0)
+                        @if($invoice->sent_at == null)
                             <?php $color = "red"; ?>
                         @else
                             <?php $color = "green"; ?>
                         @endif
-                        <p style=" color:{{$color}}">{{$invoice->sent ? 'yes' : 'no'}}</p>
+                        <p style=" color:{{$color}}">{{$invoice->sent_at ? 'yes' : 'no'}}</p>
                     </td>
                     <td>
-                        @if($invoice->received == 0)
+                        @if($invoice->payment_received_at == null)
                             <?php $color = "red"; ?>
                         @else
                             <?php $color = "green"; ?>
                         @endif
-                        <p style=" color:{{$color}}">{{$invoice->received ? 'yes' : 'no'}}</p>
+                        <p style=" color:{{$color}}">{{$invoice->payment_received_at ? 'yes' : 'no'}}</p>
+                    </td>
 
+                    <td>
+                        <p>{{ $invoice->status }} </p>
                     </td>
                 </tr>
             @endforeach

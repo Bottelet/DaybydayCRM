@@ -58,7 +58,9 @@ body {
      height: 40px;
 
 }
-
+.form-control[disabled] {
+  background-color: #424242;
+}
 
 .navbar-toggle {
 	    display: block;

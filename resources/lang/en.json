@@ -159,5 +159,8 @@
   "Register time": "Register time",
   "Yes": "Yes",
   "No": "No",
-  "Create lead": "Creat lead"
+  "Create lead": "Creat lead",
+  "Insert task title (will be shown on invoice": "Insert task title (will be shown on invoice",
+  "A short description, as to what is being billed": "A short description, as to what is being billed",
+  "Can't insert new invoice line, to already sent invoice": "Can't insert new invoice line, to already sent invoice"
 }

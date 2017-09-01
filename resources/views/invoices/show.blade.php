@@ -23,12 +23,12 @@
                             </thead>
                             <tbody>
                             <?php $finalPrice = 0;?>
-                            @foreach($invoice->taskTime as $item)
-                                <?php $totalPrice = $item->time * $item->value ?>
+                            @foreach($invoice->invoiceLines as $item)
+                                <?php $totalPrice = $item->quantity * $item->price ?>
                                 <tr>
                                     <td>{{$item->title}}</td>
-                                    <td class="text-center">{{$item->value}},-</td>
-                                    <td class="text-center">{{$item->time}}</td>
+                                    <td class="text-center">{{$item->price}},-</td>
+                                    <td class="text-center">{{$item->quantity}}</td>
                                     <td class="text-right">{{$totalPrice}},-</td>
                                 </tr>
                                 <?php $finalPrice += $totalPrice;?>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            @if(!$invoice->sent)
+            @if(!$invoice->sent_at)
                 <button type="button" class="btn btn-primary form-control" data-toggle="modal"
                         data-target="#ModalTimer">
                         {{ __('Insert new item') }}
@@ -59,16 +59,16 @@
                 <div class="sidebarheader">
                     <p>Invoice information</p>
                 </div>
-                {{ __('Invoice sent') }}: {{$invoice->sent ? __('yes') : __('no') }} <br/>
-                {{ __('Payment Received') }}: {{$invoice->received ? __('yes') : __('no') }} <br/>
+                {{ __('Invoice sent') }}: {{$invoice->sent_at ? __('yes') : __('no') }} <br/>
+                {{ __('Payment Received') }}: {{$invoice->payment_received_at ? __('yes') : __('no') }} <br/>
 
 
-                @if($invoice->received)
-                    {{ date('d-m-Y', strtotime($invoice->payment_date))}}
+                @if($invoice->payment_received_at)
+                    {{ date('d-m-Y', strtotime($invoice->payment_received_at))}}
                 @endif
                 <br/><br/>
 
-                @if(!$invoice->sent)
+                @if(!$invoice->sent_at)
                     {!! Form::open([
                     'method' => 'post',
                     'route' => ['invoice.sent', $invoice->id],
@@ -77,18 +77,12 @@
                     {!! Form::submit('Set invoice as sent', ['class' => 'btn btn-success form-control closebtn']) !!}
             </div>
             {!! Form::close() !!}
-            @else
-                {!! Form::open([
-                 'method' => 'post',
-                 'route' => ['invoice.sent.reopen', $invoice->id],
-                 ]) !!}
-                {!! Form::submit('Set invoice as not sent', ['class' => 'btn btn-danger form-control closebtn']) !!}
-                {!! Form::close() !!}
             @endif
 
 
+        @if($invoice->sent_at)
 
-            @if(!$invoice->received)
+        @if(!$invoice->payment_received_at)
                 <div class="sidebarheader">
                     <p>{{ __('Invoice paid date') }}</p>
                 </div>
@@ -110,55 +104,10 @@
             {!! Form::submit('Set invoice as not paid', ['class' => 'btn btn-danger form-control closebtn']) !!}
             {!! Form::close() !!}
         @endif
+        @endif
     </div>
     </div>
     </div>
 
-
-
-    <div class="modal fade" id="ModalTimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">{{ __('Time Managment For This Invoice') }} ({{$invoice->title}})</h4>
-                </div>
-
-                <div class="modal-body">
-
-                    {!! Form::open([
-                    'method' => 'post',
-                    'route' => ['invoice.new.item', $invoice->id],
-                    ]) !!}
-
-                    <div class="form-group">
-                        {!! Form::label('title', __('Title'), ['class' => 'control-label']) !!}
-                        {!! Form::text('title', null, ['class' => 'form-control', 'placeholder' => 'Fx Consultation Meeting']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('comment', __('Description'), ['class' => 'control-label']) !!}
-                        {!! Form::textarea('comment', null, ['class' => 'form-control', 'placeholder' => 'Short Comment about whats done(Will show on Invoice)']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('value', __('Hourly price'), ['class' => 'control-label']) !!}
-                        {!! Form::text('value', null, ['class' => 'form-control', 'placeholder' => '300']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('time', __('Time spend (Hours)'), ['class' => 'control-label']) !!}
-                        {!! Form::text('time', null, ['class' => 'form-control', 'placeholder' => '3']) !!}
-                    </div>
-
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
-                    <div class="col-lg-6">
-                        {!! Form::submit(__('Register time'), ['class' => 'btn btn-success form-control closebtn']) !!}
-                    </div>
-                    {!! Form::close() !!}
-                </div>
-            </div>
-        </div>
-    </div>
+@include('invoices._invoiceLineModal', ['title' => $invoice->title, 'id' => $invoice->id, 'type' => 'invoice'])
 @endsection
