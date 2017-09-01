@@ -102,7 +102,7 @@ class TaskRepository implements TaskRepositoryContract
                 'status' => 'draft',
                 'client_id' => $task->client->id
             ]);
-            $task->invoice_id = $invoice;
+            $task->invoice_id = $invoice->id;
             $task->save();
         } 
 

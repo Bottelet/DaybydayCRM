@@ -89,11 +89,12 @@
                 </tbody>
             </table>
             <br/>
-            
             <button type="button" {{ $tasks->canUpdateInvoice() == 'true' ? '' : 'disabled'}} class="btn btn-primary form-control" value="add_time_modal" data-toggle="modal" data-target="#ModalTimer" >
                 {{ __('Add time') }}
             </button>
-                        
+            @if($tasks->invoice)
+                <a href="/invoices/{{$tasks->invoice->id}}">See the invoice</a>
+            @endif 
             <div class="activity-feed movedown">
                 @foreach($tasks->activity as $activity)
                     <div class="feed-item">
