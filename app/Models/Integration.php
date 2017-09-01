@@ -26,7 +26,7 @@ class Integration extends Model
             $className = $apiConfig->name;
 
             call_user_func_array(['App\\' . $className, 'initialize'], [$apiConfig]);
-            $apiInstance = call_user_func_array(['App\\Models\\' . $className, 'getInstance'], []);
+            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
 
             return $apiInstance;
         }

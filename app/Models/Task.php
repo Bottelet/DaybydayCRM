@@ -25,6 +25,11 @@ class Task extends Model
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
@@ -57,14 +62,14 @@ class Task extends Model
         return User::findOrFail($this->user_assigned_id);
     }
 
-    public function time()
-    {
-        return $this->hasMany(TaskTime::class, 'task_id', 'id');
-    }
-
     public function activity()
     {
         return $this->morphMany(Activity::class, 'source');
+    }
+
+    public function canUpdateInvoice()
+    {
+        return $this->invoice->canUpdateInvoice();
     }
 
     /**
