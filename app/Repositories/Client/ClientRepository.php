@@ -3,7 +3,7 @@ namespace App\Repositories\Client;
 
 use App\Models\Client;
 use App\Models\Industry;
-use App\Models\Invoices;
+use App\Models\Invoice;
 use App\Models\User;
 use DB;
 /**
@@ -38,7 +38,7 @@ class ClientRepository implements ClientRepositoryContract
      */
     public function getInvoices($id)
     {
-        $invoice = Client::findOrFail($id)->invoices()->with('tasktime')->get();
+        $invoice = Client::findOrFail($id)->invoices()->with('invoiceLines')->get();
 
         return $invoice;
     }

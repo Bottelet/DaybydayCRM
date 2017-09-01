@@ -23,8 +23,6 @@ interface InvoiceRepositoryContract
 
     public function newItem($id, $requestData);
 
-    public function updateSentReopen($id, $requestData);
-
     public function find($id);
 
     public function create($clientid, $timetaskid, $requestData);

@@ -3,10 +3,11 @@ namespace App\Repositories\Task;
 
 use App\Models\Task;
 use Carbon;
-use App\Models\TaskTime;
+use App\Models\Invoice;
+use App\Models\InvoiceLine;
 use Illuminate\Support\Facades\DB;
 use App\Models\Integration;
-
+use App\Models\Activity;
 /**
  * Class TaskRepository
  * @package App\Repositories\Task
@@ -33,31 +34,24 @@ class TaskRepository implements TaskRepositoryContract
      */
     public function getAssignedClient($id)
     {
-        $tasks = Task::findOrFail($id);
-        $tasks->client;
-        return $tasks;
+        $task = Task::findOrFail($id);
+        $task->client;
+        return $task;
     }
 
     /**
      * @param $id
      * @return mixed
      */
-    public function GetTimeForTask($id)
+    public function getInvoiceLines($id)
     {
-        $taskstime = Task::findOrFail($id);
-        $taskstime->time;
-        return $taskstime;
+        if (Task::findOrFail($id)->invoice) {
+            return Task::findOrFail($id)->invoice->invoiceLines;
+        } else {
+            return [];
+        }
+        
     }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    public function getTaskTime($id)
-    {
-        return TaskTime::where('task_id', $id)->get();
-    }
-
 
     /**
      * @param $requestData
@@ -66,13 +60,13 @@ class TaskRepository implements TaskRepositoryContract
     public function create($requestData)
     {
         $client_id = $requestData->get('client_id');
+
         $input = $requestData = array_merge(
             $requestData->all(),
             ['user_created_id' => auth()->id(),]
         );
 
         $task = Task::create($input);
-
 
         $insertedId = $task->id;
         Session()->flash('flash_message', 'Task successfully added!');
@@ -96,14 +90,30 @@ class TaskRepository implements TaskRepositoryContract
 
     /**
      * @param $id
-     * @param $requestData
+     * @param $request
      */
-    public function updateTime($id, $requestData)
+    public function updateTime($id, $request)
     {
         $task = Task::findOrFail($id);
-        $input = array_replace($requestData->all(), ['task_id' => "$task->id"]);
 
-        TaskTime::create($input);
+        $invoice = $task->invoice;
+        if(!$invoice) {
+            $invoice = Invoice::create([
+                'status' => 'draft',
+                'client_id' => $task->client->id
+            ]);
+            $task->invoice_id = $invoice;
+            $task->save();
+        } 
+
+        InvoiceLine::create([
+                'title' => $request->title,
+                'comment' => $request->comment,
+                'quantity' => $request->quantity,
+                'type' => $request->type,
+                'price' => $request->price,
+                'invoice_id' => $invoice->id
+        ]);
 
         event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
     }
@@ -123,45 +133,6 @@ class TaskRepository implements TaskRepositoryContract
         $task = $task->fresh();
 
         event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
-    }
-
-    /**
-     * @param $id
-     * @param $requestData
-     * @throws \Exception
-     */
-    public function invoice($id, $requestData)
-    {
-        $contatGuid = $requestData->invoiceContact;
-
-        $taskname = Task::find($id);
-        $timemanger = TaskTime::where('task_id', $id)->get();
-        $sendMail = $requestData->sendMail;
-        $productlines = [];
-
-        foreach ($timemanger as $time) {
-            $productlines[] = [
-                'Description' => $time->title,
-                'Comments' => $time->comment,
-                'BaseAmountValue' => $time->value,
-                'Quantity' => $time->time,
-                'AccountNumber' => 1000,
-                'Unit' => 'hours'];
-        }
-
-        $api = Integration::getApi('billing');
-
-        $results = $api->createInvoice([
-            'Currency' => 'DKK',
-            'Description' => $taskname->title,
-            'contactId' => $contatGuid,
-            'ProductLines' => $productlines]);
-
-        if ($sendMail == true) {
-            $bookGuid = $booked->Guid;
-            $bookTime = $booked->TimeStamp;
-            $api->sendInvoice($bookGuid, $bookTime);
-        }
     }
 
     /**
@@ -256,8 +227,8 @@ class TaskRepository implements TaskRepositoryContract
      */
     public function totalTimeSpent()
     {
-        return DB::table('tasks_time')
-            ->select(DB::raw('SUM(time)'))
+        return DB::table('invoice_lines')
+            ->select(DB::raw('SUM(quantity)'))
             ->get();
     }
 
