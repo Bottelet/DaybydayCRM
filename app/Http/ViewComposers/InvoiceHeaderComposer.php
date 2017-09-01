@@ -34,7 +34,7 @@ class InvoiceHeaderComposer
     {
         $invoices = $this->invoices->find($view->getData()['invoice']['id']);
 
-        $client = $invoices->clients->first();
+        $client = $invoices->client;
         
         $view->with('client', $client);
     }

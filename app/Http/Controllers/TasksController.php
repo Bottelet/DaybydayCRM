@@ -124,7 +124,7 @@ class TasksController extends Controller
             ->withTasks($this->tasks->find($id))
             ->withUsers($this->users->getAllUsersWithDepartments())
             ->withContacts($invoiceContacts)
-            ->withTasktimes($this->tasks->getTaskTime($id))
+            ->withInvoiceLines($this->tasks->getInvoiceLines($id))
             ->withCompanyname($this->settings->getCompanyName())
             ->withApiconnected($apiConnected);
     }
