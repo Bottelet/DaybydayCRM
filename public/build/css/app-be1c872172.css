@@ -7726,7 +7726,7 @@ body {
 }
 
 .form-control[disabled] {
-  background-color: #424242;
+  background-color: none;
 }
 
 .navbar-toggle {
