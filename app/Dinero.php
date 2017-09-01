@@ -68,7 +68,11 @@ class Dinero
             'headers' => [
                 'Authorization' => 'Bearer ' . self::$accessToken
             ],
-            'json' => $params
+            'json' => [
+                'Currency' => $params['currency'],
+                'Description' => $params['description'],
+                'ContactGuid' => $params['contact_id'],
+                'ProductLines' => $params['product_lines']]
         ]);
 
         return self::convertJson($res);
