@@ -66,7 +66,7 @@ class LeadsController extends Controller
                 return $leads->creator->name;
             })
             ->editColumn('contact_date', function ($leads) {
-                return $leads->contact_date ? with(new Carbon($leads->created_at))
+                return $leads->contact_date ? with(new Carbon($leads->contact_date))
                     ->format('d/m/Y') : '';
             })
             ->editColumn('user_assigned_id', function ($leads) {

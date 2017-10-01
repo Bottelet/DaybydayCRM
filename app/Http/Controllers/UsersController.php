@@ -93,7 +93,7 @@ class UsersController extends Controller
                     ->format('d/m/Y') : '';
             })
             ->editColumn('deadline', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
+                return $tasks->deadline ? with(new Carbon($tasks->deadline))
                     ->format('d/m/Y') : '';
             })
             ->editColumn('status', function ($tasks) {
@@ -125,7 +125,7 @@ class UsersController extends Controller
                     ->format('d/m/Y') : '';
             })
             ->editColumn('contact_date', function ($leads) {
-                return $leads->created_at ? with(new Carbon($leads->created_at))
+                return $leads->contact_date ? with(new Carbon($leads->contact_date))
                     ->format('d/m/Y') : '';
             })
             ->editColumn('status', function ($leads) {
@@ -144,7 +144,7 @@ class UsersController extends Controller
      */
     public function clientData($id)
     {
-        $clients = Client::select(['id', 'name', 'company_name', 'primary_number', 'email'])->where('user_id', $id);
+        $clients = Client::select(['id', 'name', 'company_name', 'primary_number', 'email', 'created_at'])->where('user_id', $id);
         return Datatables::of($clients)
             ->addColumn('clientlink', function ($clients) {
                 return '<a href="' . route('clients.show', $clients->id) . '">' . $clients->name . '</a>';
@@ -158,6 +158,9 @@ class UsersController extends Controller
                     ->format('d/m/Y') : '';
             })
             ->make(true);
+
+
+      
     }
 
 

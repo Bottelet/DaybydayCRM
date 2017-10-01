@@ -69,7 +69,7 @@ class TasksController extends Controller
                     ->format('d/m/Y') : '';
             })
             ->editColumn('deadline', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
+                return $tasks->created_at ? with(new Carbon($tasks->deadline))
                     ->format('d/m/Y') : '';
             })
             ->editColumn('user_assigned_id', function ($tasks) {

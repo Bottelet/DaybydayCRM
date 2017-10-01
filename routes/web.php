@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/taskdata/{id}', 'UsersController@taskData')->name('users.taskdata');
         Route::get('/leaddata/{id}', 'UsersController@leadData')->name('users.leaddata');
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
-        Route::get('/users', 'UsersController@users')->name('users.clientdata');
+        Route::get('/users', 'UsersController@users')->name('users.users');
     });
         Route::resource('users', 'UsersController');
 
