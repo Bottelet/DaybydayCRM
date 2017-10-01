@@ -125,24 +125,24 @@ class ClientRepository implements ClientRepositoryContract
             if (empty($vat)) {
                 // Print error message
                 return ('Please insert VAT');
-            } else {
-                // Start cURL
-                $ch = curl_init();
-
-                // Set cURL options
-                curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Flashpoint');
-
-                // Parse result
-                $result = curl_exec($ch);
-
-                // Close connection when done
-                curl_close($ch);
-
-                // Return our decoded result
-                return json_decode($result, 1);
             }
+            // Start cURL
+            $ch = curl_init();
+
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Flashpoint');
+
+            // Parse result
+            $result = curl_exec($ch);
+
+            // Close connection when done
+            curl_close($ch);
+
+            // Return our decoded result
+            return json_decode($result, 1);
+
         }
 
         $result = cvrApi($vat, 'dk');
