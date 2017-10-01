@@ -52,7 +52,7 @@
 
                         </div> <!--Shows users assigned to lead -->
                     </td>
-                    <td>{{date('d, M Y, H:i', strTotime($lead->cotact_date))}}  </td>
+                    <td>{{date('d, M Y, H:i', strTotime($lead->contact_date))}} </td>
                     <td>{{date('d, M Y', strTotime($lead->contact_date))}}
                         @if($lead->status == 1)({{ $lead->days_until_contact }})@endif </td>
                     <td></td>
