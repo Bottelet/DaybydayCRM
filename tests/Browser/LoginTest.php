@@ -15,8 +15,8 @@ class LoginTest extends DuskTestCase
     public function testExample()
     {
         $this->browse(function ($browser) {
-            $browser->visit('Flarepoint-crm/public/login')
-                    ->assertSee('Laravel');
+            $browser->visit('login')
+                    ->assertSee('E-Mail Address');
         });
     }
 }

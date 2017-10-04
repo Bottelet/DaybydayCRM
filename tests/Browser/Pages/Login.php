@@ -23,9 +23,7 @@ class Login extends UnauthenticatedPage
      */
     public function assert(Browser $browser)
     {
-        $browser->assertTitleContains('Laravel')
-            ->assertSee('Laravel')
-            ->assertSee('Login')
+        $browser->assertSee('Login')
             ->assertSee('E-Mail Address')
             ->assertInputValue('email', '')
             ->assertSee('Password')
