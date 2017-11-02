@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>Create new Client</h1>
+    <h1>Create Client</h1>
 @stop
 
 @section('content')
