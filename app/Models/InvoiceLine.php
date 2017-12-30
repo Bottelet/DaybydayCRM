@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;;
+use Illuminate\Database\Eloquent\Model;
 
 class InvoiceLine extends Model
 {
@@ -14,8 +14,6 @@ class InvoiceLine extends Model
         'price',
         'invoice_id'
     ];
-
-    protected $hidden = ['remember_token'];
 
     public function tasks()
     {
