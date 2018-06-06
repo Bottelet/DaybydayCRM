@@ -149,7 +149,6 @@ class UserRepository implements UserRepositoryContract
             $user->delete();
             Session()->flash('flash_message', 'User successfully deleted');
         } catch (\Illuminate\Database\QueryException $e) {
-            dd($e);
             Session()->flash('flash_message_warning', 'User can NOT have, leads, clients, or tasks assigned when deleted');
         }
     }
