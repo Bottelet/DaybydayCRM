@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>Create task</h1>
+    <h1>{{__('Create task')}}</h1>
 @stop
 
 @section('content')
@@ -39,7 +39,7 @@
         @if(Request::get('client') != "")
             {!! Form::hidden('client_id', Request::get('client')) !!}
         @else
-            {!! Form::label('client_id', __('Assign client'), ['class' => 'control-label']) !!}
+            {!! Form::label('client_id', __('Assign Client'), ['class' => 'control-label']) !!}
             {!! Form::select('client_id', $clients, null, ['class' => 'form-control']) !!}
         @endif
     </div>
