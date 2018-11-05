@@ -3,7 +3,7 @@
     @include('partials.userheader')
 <div class="col-sm-8">
   <el-tabs active-name="tasks" style="width:100%">
-    <el-tab-pane label="Tasks" name="tasks">
+    <el-tab-pane label="{{__('Tasks')}}" name="tasks">
         <table class="table table-hover" id="tasks-table">
         <h3>{{ __('Tasks assigned') }}</h3>
             <thead>
@@ -14,16 +14,16 @@
                     <th>
                         <select name="status" id="status-task">
                         <option value="" disabled selected>{{ __('Status') }}</option>
-                            <option value="open">Open</option>
-                            <option value="closed">Closed</option>
-                            <option value="all">All</option>
+                            <option value="open">{{__('Open')}}</option>
+                            <option value="closed">{{__('Closed')}}</option>
+                            <option value="all">{{__('All')}}</option>
                         </select>
                     </th>
                 </tr>
             </thead>
         </table>
     </el-tab-pane>
-    <el-tab-pane label="Leads" name="leads">
+    <el-tab-pane label="{{__('Leads')}}" name="leads">
       <table class="table table-hover">
         <table class="table table-hover" id="leads-table">
                 <h3>{{ __('Leads assigned') }}</h3>
@@ -45,7 +45,7 @@
                 </thead>
             </table>
     </el-tab-pane>
-    <el-tab-pane label="Clients" name="clients">
+    <el-tab-pane label="{{__('Clients')}}" name="clients">
          <table class="table table-hover" id="clients-table">
                 <h3>{{ __('Clients assigned') }}</h3>
                 <thead>
@@ -66,7 +66,7 @@
 <doughnut :statistics="{{$lead_statistics}}"></doughnut>
   </div>
 
-   @stop 
+   @stop
 @push('scripts')
         <script>
         $('#pagination a').on('click', function (e) {
@@ -101,7 +101,7 @@
                     } else {
                          table.columns(4).search( '' ).draw();
                     }
-              });  
+              });
 
           });
             $(function () {
@@ -143,9 +143,7 @@
                     } else {
                          table.columns(4).search( '' ).draw();
                     }
-              });  
+              });
           });
         </script>
 @endpush
-
-
