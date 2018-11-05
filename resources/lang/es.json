@@ -26,6 +26,7 @@
   "Size": "tamaño",
   "Max size": "Maximo tamaño",
   "Created at": "Creado el",
+  "Created by": "Creado por",
   "All Documents": "Todos los documentos",
   "ID": "ID",
   "Hours": "Houras",
@@ -34,7 +35,7 @@
   "Payment received": "Pago recibido",
   "Title": "Titulo",
   "Assigned user": "Usuario asignado",
-  "Deadline": "Fecha tope",
+  "Deadline": "Fecha Limite",
   "New Lead": "Nuevo Registro",
   "All Leads": "Todos Registros",
   "All Tasks": "Todas las Tareas",
@@ -72,7 +73,7 @@
   "Assign Client": "Asignar cliente",
   "Create new Lead": "Crear nuevo Registro",
   "Assigned": "Asignado",
-  "Lead Information": "Información de registro",
+  "Lead information": "Información de registro",
   "Assigned to": "Asignado a",
   "Follow up": "Seguir",
   "Tasks completed this month": "Tareas completadas este mes",
@@ -90,7 +91,7 @@
   "Users": "Usuarios",
   "Completed": "Completado",
   "Tasks each month": "Tareas cada mes",
-  "Leads each month": "Registros cada mes",
+  "Lead each month": "Registros cada mes",
   "Add new Role": "Añadir nuevo Rol",
   "All Roles": "Todos Roles",
   "Save Role": "Guardar Rol",
@@ -173,5 +174,7 @@
   "Once a invoice has been send, no new invoice lines can be added": "Una vez que se ha enviado una factura, no se pueden agregar nuevas líneas de factura",
   "We have found this contact from your, billing integration, do you wish for us to send it to your billing system aswell?": "Hemos encontrado este contacto de su integración de facturación. ¿Desea que lo enviemos también a su sistema de facturación?",
   "Users All": "Todos los Usuarios",
-  "New Task": "Nueva Tarea"
+  "New Task": "Nueva Tarea",
+  "Notifications": "Notificaciones",
+  "See the invoice": "Ver factura"
 }

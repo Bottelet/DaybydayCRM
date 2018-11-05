@@ -23,7 +23,7 @@
         <!--NOTIFICATIONS START-->
 <div class="menu">
 
-    <div class="notifications-header"><p>Notifications</p> </div>
+    <div class="notifications-header"><p>{{__('Notifications')}}</p> </div>
   <!-- Menu -->
  <ul>
  <?php $notifications = auth()->user()->unreadNotifications; ?>

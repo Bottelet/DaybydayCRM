@@ -74,7 +74,7 @@
                     <div class="icon">
                         <i class="ion ion-person"></i>
                     </div>
-                    <a href="{{route('clients.index')}}" class="small-box-footer">{{ __('All clients') }} <i
+                    <a href="{{route('clients.index')}}" class="small-box-footer">{{ __('All Clients') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
