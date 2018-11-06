@@ -91,7 +91,7 @@ class PagesController extends Controller
       *
       */
         $completedLeadsToday = $this->leads->completedLeadsToday();
-        $createdLeadsToday = $this->leads->completedLeadsToday();
+        $createdLeadsToday = $this->leads->createdLeadsToday();
 
      /**
       * Statistics for leads this month.

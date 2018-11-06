@@ -27,7 +27,7 @@
             </div>
             <div class="sidebarbox">
                 <p>{{ __('Assigned to') }}:
-                    <a href="{{route('leads.show', $lead->user->id)}}">
+                    <a href="{{route('users.show', $lead->user->id)}}">
                         {{$lead->user->name}}</a></p>
                 <p>{{ __('Created at') }}: {{ date('d F, Y, H:i', strtotime($lead->created_at))}} </p>
                 @if($lead->days_until_contact < 2)

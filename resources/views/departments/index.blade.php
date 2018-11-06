@@ -3,7 +3,7 @@
 @section('content')
     <div class="col-lg-12 currenttask">
         <table class="table table-hover">
-            <h3>All Departments</h3>
+            <h3>{{ __("All Departments") }}</h3>
             <thead>
             <thead>
             <tr>
