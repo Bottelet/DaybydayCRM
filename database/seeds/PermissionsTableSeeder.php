@@ -88,5 +88,28 @@ class PermissionsTableSeeder extends Seeder
         $updateLead->name = 'lead-update';
         $updateLead->description = 'Permission to update lead';
         $updateLead->save();
+
+        /**
+         * contacts Permissions
+         */
+
+        $createContact = new Permissions;
+        $createContact->display_name = 'Create contact';
+        $createContact->name = 'contact-create';
+        $createContact->description = 'Permission to create contact';
+        $createContact->save();
+
+        $updateContact = new Permissions;
+        $updateContact->display_name = 'Update contact';
+        $updateContact->name = 'contact-update';
+        $updateContact->description = 'Permission to update contact';
+        $updateContact->save();
+
+        $deleteContact = new Permissions;
+        $deleteContact->display_name = 'Delete contact';
+        $deleteContact->name = 'contact-delete';
+        $deleteContact->description = 'Permission to delete contact';
+        $deleteContact->save();
+        
     }
 }

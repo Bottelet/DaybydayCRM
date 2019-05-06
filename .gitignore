@@ -7,3 +7,4 @@ Homestead.json
 bower_components
 
 .docker/flarepoint-db/*
+.phpintel/

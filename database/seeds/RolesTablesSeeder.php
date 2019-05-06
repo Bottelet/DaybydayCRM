@@ -16,19 +16,26 @@ class RolesTablesSeeder extends Seeder
         $adminRole = new Role;
         $adminRole->display_name = 'Administrator';
         $adminRole->name = 'administrator';
-        $adminRole->description = 'System Administrator';
+        $adminRole->description = 'Administrators have superuser access';
         $adminRole->save();
 
         $editorRole = new Role;
         $editorRole->display_name = 'Manager';
         $editorRole->name = 'manager';
-        $editorRole->description = 'System Manager';
+        $editorRole->description = 'Managers have create, update and delete access';
         $editorRole->save();
+
+        $salesrepRole = new Role;
+        $salesrepRole->display_name = 'Sales Representative';
+        $salesrepRole->name = 'salesrep';
+        $salesrepRole->description = 'Sales Representatives have create and update access';
+        $salesrepRole->save();
 
         $employeeRole = new Role;
         $employeeRole->display_name = 'Employee';
         $employeeRole->name = 'employee';
-        $employeeRole->description = 'Employee';
+        $employeeRole->description = 'Employees had read-only access';
         $employeeRole->save();
+
     }
 }

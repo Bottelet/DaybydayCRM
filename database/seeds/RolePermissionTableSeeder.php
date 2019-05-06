@@ -75,5 +75,24 @@ class RolePermissionTableSeeder extends Seeder
         $updateLead->permission_id = '10';
         $updateLead->timestamps = false;
         $updateLead->save();
+
+        $createContact = new PermissionRole;
+        $createContact->role_id = '1';
+        $createContact->permission_id = '11';
+        $createContact->timestamps = false;
+        $createContact->save();
+
+        $updateContact = new PermissionRole;
+        $updateContact->role_id = '1';
+        $updateContact->permission_id = '12';
+        $updateContact->timestamps = false;
+        $updateContact->save();
+
+        $deleteContact = new PermissionRole;
+        $deleteContact->role_id = '1';
+        $deleteContact->permission_id = '13';
+        $deleteContact->timestamps = false;
+        $deleteContact->save();
+
     }
 }
