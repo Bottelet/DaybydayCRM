@@ -1,6 +1,6 @@
 <div class="col-md-6">
 
-    <h1 class="moveup">{{$client->name}} ({{$client->company_name}})</h1>
+    <h1 class="moveup">{{$client->company_name}}</h1>
 
     <!--Client info leftside-->
     <div class="contactleft">
@@ -34,10 +34,10 @@
     <!--Client info leftside END-->
     <!--Client info rightside-->
     <div class="contactright">
-        @if($client->company_name != "")
+        @if($client->primary_contact_name != "")
                 <!--Company-->
         <p><span class="glyphicon glyphicon-star" aria-hidden="true" data-toggle="tooltip"
-                 title="{{ __('Company') }}" data-placement="left"> </span> {{$client->company_name}}</p>
+                 title="{{ __('Primary Contact Name') }}" data-placement="left"> </span> {{$client->primary_contact_name}}</p>
         @endif
         @if($client->vat != "")
                 <!--Company-->

@@ -1,23 +1,5 @@
-<div class="form-group">
-    {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}
-    {!!
-        Form::text('name',
-        isset($data['owners']) ? $data['owners'][0]['name'] : null,
-        ['class' => 'form-control'])
-    !!}
-</div>
-
 <div class="form-inline">
     <div class="form-group col-sm-6 removeleft">
-        {!! Form::label('vat', __('Vat'), ['class' => 'control-label']) !!}
-        {!!
-            Form::text('vat',
-            isset($data['vat']) ?$data['vat'] : null,
-            ['class' => 'form-control'])
-        !!}
-    </div>
-
-    <div class="form-group col-sm-6 removeleft removeright">
         {!! Form::label('company_name', __('Company name'), ['class' => 'control-label']) !!}
         {!!
             Form::text('company_name',
@@ -25,6 +7,23 @@
             ['class' => 'form-control'])
         !!}
     </div>
+    <div class="form-group col-sm-6 removeleft removeright">
+        {!! Form::label('vat', __('Vat'), ['class' => 'control-label']) !!}
+        {!!
+            Form::text('vat',
+            isset($data['vat']) ?$data['vat'] : null,
+            ['class' => 'form-control'])
+        !!}
+    </div>
+</div>
+
+<div class="form-group">
+    {!! Form::label('primay_contact_name', __('Primary Contact'), ['class' => 'control-label']) !!}
+    {!!
+        Form::text('primary_contact_name',
+        isset($data['owners']) ? $data['owners'][0]['name'] : null,
+        ['class' => 'form-control'])
+    !!}
 </div>
 
 <div class="form-group">

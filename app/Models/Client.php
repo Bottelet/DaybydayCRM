@@ -7,7 +7,6 @@ class Client extends Model
 {
 
     protected $fillable = [
-        'name',
         'company_name',
         'vat',
         'email',
@@ -16,6 +15,7 @@ class Client extends Model
         'city',
         'primary_number',
         'secondary_number',
+        'primary_contact_name',
         'industry_id',
         'company_type',
         'user_id'];
@@ -36,6 +36,13 @@ class Client extends Model
     {
         return $this->hasMany(Lead::class, 'client_id', 'id')
             ->orderBy('status', 'asc')
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Lead::class, 'client_id', 'id')
+            ->orderBy('name', 'asc')
             ->orderBy('created_at', 'desc');
     }
 

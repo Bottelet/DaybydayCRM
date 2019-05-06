@@ -29,7 +29,7 @@ class ClientRepository implements ClientRepositoryContract
      */
     public function listAllClients()
     {
-        return Client::pluck('name', 'id');
+        return Client::pluck('company_name', 'id');
     }
 
     /**

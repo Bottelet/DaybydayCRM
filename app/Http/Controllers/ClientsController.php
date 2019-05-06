@@ -47,10 +47,10 @@ class ClientsController extends Controller
      */
     public function anyData()
     {
-        $clients = Client::select(['id', 'name', 'company_name', 'email', 'primary_number']);
+        $clients = Client::select(['id', 'primary_contact_name', 'company_name', 'email', 'primary_number']);
         return Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/' . $clients->id . '" ">' . $clients->name . '</a>';
+                return '<a href="clients/' . $clients->id . '" ">' . $clients->company_name . '</a>';
             })
             ->add_column('edit', '
                 <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
