@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Document extends Model
 {
-    protected $fillable = ['name', 'size', 'path', 'file_display', 'client_id'];
+    protected $fillable = [
+      'name',
+      'size',
+      'path',
+      'file_display',
+      'client_id',
+    ];
 
     public function clients()
     {

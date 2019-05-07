@@ -11,7 +11,14 @@
     "authors": [
         {
             "name": "Casper Bottelet",
-            "email": "cbottelet@gmail.com"
+            "email": "cbottelet@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Jason Huebel",
+            "email": "jason@huebel.dev",
+            "homepage": "https://huebel.dev",
+            "role": "Developer"
         }
     ],
     "license": "MIT",
@@ -26,7 +33,8 @@
         "zizaco/entrust": "1.7.*",
         "laravel/tinker": "^1.0",
         "laravel/dusk": "^1.0",
-        "doctrine/dbal": "^2.9"
+        "doctrine/dbal": "^2.9",
+        "dougsisk/laravel-country-state": "^2.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

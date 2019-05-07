@@ -18,7 +18,8 @@ class Client extends Model
         'primary_contact_name',
         'industry_id',
         'company_type',
-        'user_id', ];
+        'user_id',
+    ];
 
     public function user()
     {
@@ -41,7 +42,7 @@ class Client extends Model
 
     public function contacts()
     {
-        return $this->hasMany(Lead::class, 'client_id', 'id')
+        return $this->hasMany(Contact::class, 'client_id', 'id')
             ->orderBy('name', 'asc')
             ->orderBy('created_at', 'desc');
     }
