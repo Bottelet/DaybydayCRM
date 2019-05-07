@@ -7,7 +7,6 @@ use App\Repositories\Role\RoleRepositoryContract;
 
 class RolesController extends Controller
 {
-
     protected $roles;
 
     /**

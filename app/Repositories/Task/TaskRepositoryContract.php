@@ -3,7 +3,6 @@ namespace App\Repositories\Task;
 
 interface TaskRepositoryContract
 {
-
     public function find($id);
 
     public function getInvoiceLines($id);

@@ -107,7 +107,7 @@ class Dinero
     }
 
     public function getContacts($filter = "")
-    {        
+    {
         $res = self::getClient()->request("GET", "https://api.dinero.dk/v1/"
             . self::$organizationId . "/contacts?field=Name,ContactGuid&queryFilter=Email+contains+" . "'" . $filter . "'", [
             "verify" => false,

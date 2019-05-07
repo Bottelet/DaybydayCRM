@@ -22,8 +22,7 @@ class SettingsController extends Controller
     public function __construct(
         SettingRepositoryContract $settings,
         RoleRepositoryContract $roles
-    )
-    {
+    ) {
         $this->settings = $settings;
         $this->roles = $roles;
         $this->middleware('user.is.admin', ['only' => ['index']]);

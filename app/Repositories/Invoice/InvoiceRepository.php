@@ -22,11 +22,11 @@ class InvoiceRepository implements InvoiceRepositoryContract
         return Invoice::findOrFail($id);
     }
 
-     /**
-     * @param $id
-     * @param $requestData
-     * @throws \Exception
-     */
+    /**
+    * @param $id
+    * @param $requestData
+    * @throws \Exception
+    */
     public function invoice($id, $requestData)
     {
         $contatGuid = $requestData->invoiceContact;
@@ -55,7 +55,7 @@ class InvoiceRepository implements InvoiceRepositoryContract
             'product_lines' => $productlines]);
 
         if ($sendMail == true) {
-            $booked = $api->bookInvoice($results->Guid, $results->TimeStamp); 
+            $booked = $api->bookInvoice($results->Guid, $results->TimeStamp);
             $bookGuid = $booked->Guid;
             $bookTime = $booked->TimeStamp;
             $api->sendInvoice($bookGuid, $bookTime);

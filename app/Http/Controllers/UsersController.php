@@ -33,8 +33,7 @@ class UsersController extends Controller
         SettingRepositoryContract $settings,
         TaskRepositoryContract $tasks,
         LeadRepositoryContract $leads
-    )
-    {
+    ) {
         $this->users = $users;
         $this->roles = $roles;
         $this->departments = $departments;
@@ -68,7 +67,7 @@ class UsersController extends Controller
             ->addColumn('edit', function ($user) {
                 return '<a href="' . route("users.edit", $user->id) . '" class="btn btn-success"> Edit</a>';
             })
-            ->add_column('delete', function ($user) { 
+            ->add_column('delete', function ($user) {
                 return '<button type="button" class="btn btn-danger delete_client" data-client_id="' . $user->id . '" onClick="openModal(' . $user->id. ')" id="myBtn">Delete</button>';
             })->make(true);
     }
@@ -105,7 +104,7 @@ class UsersController extends Controller
             ->make(true);
     }
 
-        /**
+    /**
      * Json for Data tables
      * @param $id
      * @return mixed
@@ -154,9 +153,6 @@ class UsersController extends Controller
                     ->format('d/m/Y') : '';
             })
             ->make(true);
-
-
-      
     }
 
 

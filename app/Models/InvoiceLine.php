@@ -29,5 +29,4 @@ class InvoiceLine extends Model
     {
         return $this->invoice->task;
     }
-
 }

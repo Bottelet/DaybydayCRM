@@ -62,7 +62,7 @@ class UserRepository implements UserRepositoryContract
             $file->move($destinationPath, $filename);
         }
 
-        $user = New User();
+        $user = new User();
         $user->name = $requestData->name;
         $user->email = $requestData->email;
         $user->address = $requestData->address;
@@ -135,13 +135,13 @@ class UserRepository implements UserRepositoryContract
             return Session()->flash('flash_message_warning', 'Not allowed to delete super admin');
         }
 
-        if ($request->tasks == "move_all_tasks" && $request->task_user != "" ) {
+        if ($request->tasks == "move_all_tasks" && $request->task_user != "") {
             $user->moveTasks($request->task_user);
         }
-        if($request->leads == "move_all_leads" && $request->lead_user != "") {
+        if ($request->leads == "move_all_leads" && $request->lead_user != "") {
             $user->moveLeads($request->lead_user);
         }
-        if($request->clients == "move_all_clients" && $request->client_user != "") {
+        if ($request->clients == "move_all_clients" && $request->client_user != "") {
             $user->moveClients($request->client_user);
         }
 

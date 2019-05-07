@@ -12,7 +12,6 @@ use App\Repositories\Setting\SettingRepositoryContract;
 
 class PagesController extends Controller
 {
-
     protected $users;
     protected $clients;
     protected $settings;
@@ -49,60 +48,60 @@ class PagesController extends Controller
         $totalClients = $this->clients->getAllClientsCount();
         $totalTimeSpent = $this->tasks->totalTimeSpent();
 
-     /**
-      * Statistics for all-time tasks.
-      *
-      */
+        /**
+         * Statistics for all-time tasks.
+         *
+         */
         $alltasks = $this->tasks->tasks();
         $allCompletedTasks = $this->tasks->allCompletedTasks();
         $totalPercentageTasks = $this->tasks->percantageCompleted();
 
-     /**
-      * Statistics for today tasks.
-      *
-      */
+        /**
+         * Statistics for today tasks.
+         *
+         */
         $completedTasksToday =  $this->tasks->completedTasksToday();
         $createdTasksToday = $this->tasks->createdTasksToday();
 
-     /**
-      * Statistics for tasks this month.
-      *
-      */
-         $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
+        /**
+         * Statistics for tasks this month.
+         *
+         */
+        $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
     
 
-     /**
-      * Statistics for tasks each month(For Charts).
-      *
-      */
+        /**
+         * Statistics for tasks each month(For Charts).
+         *
+         */
         $createdTasksMonthly = $this->tasks->createdTasksMothly();
         $completedTasksMonthly = $this->tasks->completedTasksMothly();
 
-     /**
-      * Statistics for all-time Leads.
-      *
-      */
+        /**
+         * Statistics for all-time Leads.
+         *
+         */
      
         $allleads = $this->leads->leads();
         $allCompletedLeads = $this->leads->allCompletedLeads();
         $totalPercentageLeads = $this->leads->percantageCompleted();
-     /**
-      * Statistics for today leads.
-      *
-      */
+        /**
+         * Statistics for today leads.
+         *
+         */
         $completedLeadsToday = $this->leads->completedLeadsToday();
         $createdLeadsToday = $this->leads->createdLeadsToday();
 
-     /**
-      * Statistics for leads this month.
-      *
-      */
+        /**
+         * Statistics for leads this month.
+         *
+         */
         $leadCompletedThisMonth = $this->leads->completedLeadsThisMonth();
 
-     /**
-      * Statistics for leads each month(For Charts).
-      *
-      */
+        /**
+         * Statistics for leads each month(For Charts).
+         *
+         */
         $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
         $createdLeadsMonthly = $this->leads->completedLeadsMonthly();
        

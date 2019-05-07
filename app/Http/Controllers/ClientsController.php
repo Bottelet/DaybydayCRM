@@ -15,7 +15,6 @@ use App\Repositories\Setting\SettingRepositoryContract;
 
 class ClientsController extends Controller
 {
-
     protected $users;
     protected $clients;
     protected $settings;
@@ -24,8 +23,7 @@ class ClientsController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
-    )
-    {
+    ) {
         $this->users = $users;
         $this->clients = $clients;
         $this->settings = $settings;
@@ -159,5 +157,4 @@ class ClientsController extends Controller
         Session()->flash('flash_message', 'New user is assigned');
         return redirect()->back();
     }
-
 }

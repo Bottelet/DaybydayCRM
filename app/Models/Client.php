@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-
     protected $fillable = [
         'company_name',
         'vat',
@@ -25,7 +24,7 @@ class Client extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-   public function tasks()
+    public function tasks()
     {
         return $this->hasMany(Task::class, 'client_id', 'id')
             ->orderBy('status', 'asc')

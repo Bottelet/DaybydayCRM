@@ -28,7 +28,7 @@ class NotiftyMentionedUsers
      */
     public function handle(NewComment $event)
     {
-       collect($event->comment->mentionedUsers())
+        collect($event->comment->mentionedUsers())
         ->map(function ($name) {
             return User::where('name', $name)->first();
         })

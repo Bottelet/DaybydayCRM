@@ -93,6 +93,5 @@ class RolePermissionTableSeeder extends Seeder
         $deleteContact->permission_id = '13';
         $deleteContact->timestamps = false;
         $deleteContact->save();
-
     }
 }

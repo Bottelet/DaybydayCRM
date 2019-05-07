@@ -16,8 +16,8 @@ Route::group(['middleware' => ['auth']], function () {
     /**
      * Main
      */
-        Route::get('/', 'PagesController@dashboard');
-        Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
+    Route::get('/', 'PagesController@dashboard');
+    Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
         
     /**
      * Users
@@ -29,12 +29,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
         Route::get('/users', 'UsersController@users')->name('users.users');
     });
-        Route::resource('users', 'UsersController');
+    Route::resource('users', 'UsersController');
 
-	 /**
-     * Roles
-     */
-        Route::resource('roles', 'RolesController');
+    /**
+    * Roles
+    */
+    Route::resource('roles', 'RolesController');
     /**
      * Clients
      */
@@ -44,9 +44,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/upload/{id}', 'DocumentsController@upload');
         Route::patch('/updateassign/{id}', 'ClientsController@updateAssign');
     });
-        Route::resource('clients', 'ClientsController');
-	    Route::resource('documents', 'DocumentsController');
-	
+    Route::resource('clients', 'ClientsController');
+    Route::resource('documents', 'DocumentsController');
+    
       
     /**
      * Tasks
@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
         Route::post('/updatetime/{id}', 'TasksController@updateTime');
     });
-        Route::resource('tasks', 'TasksController');
+    Route::resource('tasks', 'TasksController');
 
     /**
      * Leads
@@ -68,8 +68,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
         Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
     });
-        Route::resource('leads', 'LeadsController');
-        Route::post('/comments/{type}/{id}', 'CommentController@store');
+    Route::resource('leads', 'LeadsController');
+    Route::post('/comments/{type}/{id}', 'CommentController@store');
     /**
      * Settings
      */
@@ -82,7 +82,7 @@ Route::group(['middleware' => ['auth']], function () {
     /**
      * Departments
      */
-        Route::resource('departments', 'DepartmentsController'); 
+    Route::resource('departments', 'DepartmentsController');
 
     /**
      * Integrations
@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'integrations'], function () {
         Route::get('Integration/slack', 'IntegrationsController@slack');
     });
-        Route::resource('integrations', 'IntegrationsController');
+    Route::resource('integrations', 'IntegrationsController');
 
     /**
      * Notifications
@@ -110,5 +110,5 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
         Route::post('/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
     });
-        Route::resource('invoices', 'InvoicesController');
+    Route::resource('invoices', 'InvoicesController');
 });

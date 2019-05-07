@@ -50,8 +50,8 @@ class YouWereMentionedNotification extends Notification
         
         $url_prefix = get_class($topic) == 'App\Models\Task' ? 'tasks/' : 'leads/';
             
-           return [
-            'assigned_user' => $notifiable->id, 
+        return [
+            'assigned_user' => $notifiable->id,
             'created_user' => $this->comment->user_id,
             'message' => $text,
             'type' =>  get_class($topic),

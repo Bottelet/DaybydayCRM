@@ -42,6 +42,5 @@ class ChangeContactFieldName extends Migration
         Schema::table('clients', function (Blueprint $table) {
             $table->renameColumn('primary_contact_name', 'name');
         });
-
     }
 }

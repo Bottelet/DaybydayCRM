@@ -6,6 +6,7 @@ use App\Models\Industry;
 use App\Models\Invoice;
 use App\Models\User;
 use DB;
+
 /**
  * Class ClientRepository
  * @package App\Repositories\Client

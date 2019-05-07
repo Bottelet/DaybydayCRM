@@ -31,5 +31,4 @@ class Invoice extends Model
         }
         return true;
     }
-    
 }

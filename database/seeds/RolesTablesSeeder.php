@@ -12,7 +12,6 @@ class RolesTablesSeeder extends Seeder
      */
     public function run()
     {
-        
         $adminRole = new Role;
         $adminRole->display_name = 'Administrator';
         $adminRole->name = 'administrator';
@@ -36,6 +35,5 @@ class RolesTablesSeeder extends Seeder
         $employeeRole->name = 'employee';
         $employeeRole->description = 'Employees had read-only access';
         $employeeRole->save();
-
     }
 }

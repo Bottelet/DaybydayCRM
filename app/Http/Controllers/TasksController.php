@@ -17,7 +17,6 @@ use App\Repositories\Invoice\InvoiceRepositoryContract;
 
 class TasksController extends Controller
 {
-
     protected $request;
     protected $tasks;
     protected $clients;
@@ -31,8 +30,7 @@ class TasksController extends Controller
         ClientRepositoryContract $clients,
         InvoiceRepositoryContract $invoices,
         SettingRepositoryContract $settings
-    )
-    {
+    ) {
         $this->tasks = $tasks;
         $this->users = $users;
         $this->clients = $clients;

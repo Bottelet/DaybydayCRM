@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use Excel;
 use Session;
 use Validator;
@@ -10,8 +11,6 @@ use App\Http\Requests;
 use App\Models\Setting;
 use App\Models\Document;
 use Illuminate\Http\Request;
-
-
 
 class DocumentsController extends Controller
 {
@@ -81,16 +80,16 @@ class DocumentsController extends Controller
             }
         }
     }
-   public function destroy($id)
-	{
-    	$document=Document::find($id);
-    	$settings = Setting::findOrFail(1);
-    	$companyname = $settings->company;
-    	$path = $document->path;
-    	$destroy_path = (public_path() . '/files/' . $companyname .'/' . $path);
-    	File::delete(public_path() . '/files/' . $companyname .'/' . $path);
-    	$document->delete();
-    	Session()->flash('flash_message', 'File has been deleted');
-    	return redirect()->back();
-	}
+    public function destroy($id)
+    {
+        $document=Document::find($id);
+        $settings = Setting::findOrFail(1);
+        $companyname = $settings->company;
+        $path = $document->path;
+        $destroy_path = (public_path() . '/files/' . $companyname .'/' . $path);
+        File::delete(public_path() . '/files/' . $companyname .'/' . $path);
+        $document->delete();
+        Session()->flash('flash_message', 'File has been deleted');
+        return redirect()->back();
     }
+}

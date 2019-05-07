@@ -10,15 +10,13 @@ use App\Models\Integration;
 
 class InvoicesController extends Controller
 {
-
     protected $clients;
     protected $invoices;
 
     public function __construct(
         InvoiceRepositoryContract $invoices,
         ClientRepositoryContract $clients
-    )
-    {
+    ) {
         $this->invoices = $invoices;
         $this->clients = $clients;
     }
@@ -61,7 +59,6 @@ class InvoicesController extends Controller
             if (!$invoiceContacts) {
                 $invoiceContacts = $api->getContacts();
             }
-            
         } else {
             $apiConnected = false;
             $invoiceContacts = [];

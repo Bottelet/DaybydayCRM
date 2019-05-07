@@ -8,6 +8,7 @@ use App\Models\InvoiceLine;
 use Illuminate\Support\Facades\DB;
 use App\Models\Integration;
 use App\Models\Activity;
+
 /**
  * Class TaskRepository
  * @package App\Repositories\Task
@@ -50,7 +51,6 @@ class TaskRepository implements TaskRepositoryContract
         } else {
             return [];
         }
-        
     }
 
     /**
@@ -97,14 +97,14 @@ class TaskRepository implements TaskRepositoryContract
         $task = Task::findOrFail($id);
 
         $invoice = $task->invoice;
-        if(!$invoice) {
+        if (!$invoice) {
             $invoice = Invoice::create([
                 'status' => 'draft',
                 'client_id' => $task->client->id
             ]);
             $task->invoice_id = $invoice->id;
             $task->save();
-        } 
+        }
 
         InvoiceLine::create([
                 'title' => $request->title,

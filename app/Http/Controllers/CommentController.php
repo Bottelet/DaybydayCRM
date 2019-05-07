@@ -18,16 +18,15 @@ class CommentController extends Controller
      * @return mixed
      */
     public function store(Request $request)
-    {   
+    {
         $this->validate($request, [
             'description' => 'required'
         ]);
 
-        $source = $request->type == "task" ? Task::find($request->id) : Lead::find($request->id); 
+        $source = $request->type == "task" ? Task::find($request->id) : Lead::find($request->id);
         $comment = $source->addComment(['description' => $request->description, 'user_id' => auth()->user()->id]);
         event(new \App\Events\NewComment($comment));
         Session::flash('flash_message', 'Comment successfully added!'); //Snippet in Master.blade.php
         return redirect()->back();
     }
-
 }

@@ -28,8 +28,7 @@ class LeadsController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
-    )
-    {
+    ) {
         $this->users = $users;
         $this->settings = $settings;
         $this->clients = $clients;

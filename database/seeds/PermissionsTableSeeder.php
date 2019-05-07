@@ -35,9 +35,9 @@ class PermissionsTableSeeder extends Seeder
         $deleteUser->save();
 
 
-         /**
-         * Client Permissions
-         */
+        /**
+        * Client Permissions
+        */
         
         $createClient = new Permissions;
         $createClient->display_name = 'Create client';
@@ -57,9 +57,9 @@ class PermissionsTableSeeder extends Seeder
         $deleteClient->description = 'Permission to delete client';
         $deleteClient->save();
 
-         /**
-         * Tasks Permissions
-         */
+        /**
+        * Tasks Permissions
+        */
         
         $createTask = new Permissions;
         $createTask->display_name = 'Create task';
@@ -73,9 +73,9 @@ class PermissionsTableSeeder extends Seeder
         $updateTask->description = 'Permission to update task';
         $updateTask->save();
 
-         /**
-         * Leads Permissions
-         */
+        /**
+        * Leads Permissions
+        */
         
         $createLead = new Permissions;
         $createLead->display_name = 'Create lead';
@@ -110,6 +110,5 @@ class PermissionsTableSeeder extends Seeder
         $deleteContact->name = 'contact-delete';
         $deleteContact->description = 'Permission to delete contact';
         $deleteContact->save();
-        
     }
 }

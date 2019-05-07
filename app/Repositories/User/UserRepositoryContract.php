@@ -3,7 +3,6 @@ namespace App\Repositories\User;
 
 interface UserRepositoryContract
 {
-    
     public function find($id);
     
     public function getAllUsers();

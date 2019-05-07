@@ -36,7 +36,8 @@ class Activity extends model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function source() {
+    public function source()
+    {
         return $this->morphTo();
     }
 }

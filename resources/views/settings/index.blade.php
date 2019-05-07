@@ -32,16 +32,18 @@
                         <th>{{$role->display_name}}</th>
                         @foreach($permission as $perm)
                             <?php $isEnabled = !current(
-                                    array_filter(
-                                            $role->permissions->toArray(),
-                                            function ($element) use ($perm) {
-                                                return $element['id'] === $perm->id;
-                                            }
+    array_filter(
+                                        $role->permissions->toArray(),
+                                        function ($element) use ($perm) {
+                                            return $element['id'] === $perm->id;
+                                        }
                                     )
                             );  ?>
 
                             <td><input type="checkbox"
-                                       <?php if (!$isEnabled) echo 'checked' ?> name="permissions[ {{ $perm->id }} ]"
+                                       <?php if (!$isEnabled) {
+                                echo 'checked';
+                            } ?> name="permissions[ {{ $perm->id }} ]"
                                        value="1" data-role="{{ $role->id }}">
                                 <span class="perm-name"></span><br/></td>
 

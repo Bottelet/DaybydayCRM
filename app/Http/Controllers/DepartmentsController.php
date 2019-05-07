@@ -8,7 +8,6 @@ use App\Repositories\Department\DepartmentRepositoryContract;
 
 class DepartmentsController extends Controller
 {
-
     protected $departments;
 
     /**
