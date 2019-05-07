@@ -13,12 +13,6 @@
             "name": "Casper Bottelet",
             "email": "cbottelet@gmail.com",
             "role": "Developer"
-        },
-        {
-            "name": "Jason Huebel",
-            "email": "jason@huebel.dev",
-            "homepage": "https://huebel.dev",
-            "role": "Developer"
         }
     ],
     "license": "MIT",
