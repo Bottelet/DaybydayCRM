@@ -7,4 +7,9 @@ Homestead.json
 bower_components
 
 .docker/flarepoint-db/*
+
+# PHP Intel cache
 .phpintel/
+
+# PHP CS Fixer cache
+.php_cs.cache
