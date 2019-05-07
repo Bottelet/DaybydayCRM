@@ -1,36 +1,27 @@
 <?php
+
 namespace App\Repositories\Lead;
 
 use App\Models\Lead;
-use Notifynder;
 use Carbon;
 use DB;
 
 /**
- * Class LeadRepository
- * @package App\Repositories\Lead
+ * Class LeadRepository.
  */
 class LeadRepository implements LeadRepositoryContract
 {
-    /**
-     *
-     */
     const CREATED = 'created';
-    /**
-     *
-     */
+
     const UPDATED_STATUS = 'updated_status';
-    /**
-     *
-     */
+
     const UPDATED_DEADLINE = 'updated_deadline';
-    /**
-     *
-     */
+
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function find($id)
@@ -40,18 +31,19 @@ class LeadRepository implements LeadRepositoryContract
 
     /**
      * @param $requestData
+     *
      * @return mixed
      */
     public function create($requestData)
     {
         $client_id = $requestData->get('client_id');
-        $input = $requestData = array_merge(
+        $input     = $requestData     = array_merge(
             $requestData->all(),
             ['user_created_id' => \Auth::id(),
-                'contact_date' => $requestData->contact_date . " " . $requestData->contact_time . ":00"]
+                'contact_date' => $requestData->contact_date.' '.$requestData->contact_time.':00', ]
         );
 
-        $lead = Lead::create($input);
+        $lead       = Lead::create($input);
         $insertedId = $lead->id;
         Session()->flash('flash_message', 'Lead successfully added!');
 
@@ -80,10 +72,10 @@ class LeadRepository implements LeadRepositoryContract
      */
     public function updateFollowup($id, $requestData)
     {
-        $lead = Lead::findOrFail($id);
+        $lead  = Lead::findOrFail($id);
         $input = $requestData->all();
         $input = $requestData =
-            ['contact_date' => $requestData->contact_date . " " . $requestData->contact_time . ":00"];
+            ['contact_date' => $requestData->contact_date.' '.$requestData->contact_time.':00'];
         $lead->fill($input)->save();
         event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
     }
@@ -192,6 +184,7 @@ class LeadRepository implements LeadRepositoryContract
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function totalOpenAndClosedLeads($id)

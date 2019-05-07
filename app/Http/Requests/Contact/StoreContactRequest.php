@@ -24,14 +24,14 @@ class StoreContactRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => '',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:6',
-            'city' => '',
-            'primary_number' => 'max:10',
+            'name'            => '',
+            'email'           => 'required',
+            'address'         => '',
+            'zipcode'         => 'max:6',
+            'city'            => '',
+            'primary_number'  => 'max:10',
             'cellular_number' => 'max:10',
-            'client_id' => 'required'
+            'client_id'       => 'required',
         ];
     }
 }

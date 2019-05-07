@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,6 @@ class Contact extends Model
         'city',
         'primary_number',
         'cellular_number',
-        'client_id'
+        'client_id',
     ];
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Task;
 
 use App\Models\Task;
@@ -6,22 +7,20 @@ use Carbon;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use Illuminate\Support\Facades\DB;
-use App\Models\Integration;
-use App\Models\Activity;
 
 /**
- * Class TaskRepository
- * @package App\Repositories\Task
+ * Class TaskRepository.
  */
 class TaskRepository implements TaskRepositoryContract
 {
-    const CREATED = 'created';
+    const CREATED        = 'created';
     const UPDATED_STATUS = 'updated_status';
-    const UPDATED_TIME = 'updated_time';
+    const UPDATED_TIME   = 'updated_time';
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function find($id)
@@ -31,17 +30,20 @@ class TaskRepository implements TaskRepositoryContract
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function getAssignedClient($id)
     {
         $task = Task::findOrFail($id);
         $task->client;
+
         return $task;
     }
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function getInvoiceLines($id)
@@ -55,6 +57,7 @@ class TaskRepository implements TaskRepositoryContract
 
     /**
      * @param $requestData
+     *
      * @return mixed
      */
     public function create($requestData)
@@ -63,7 +66,7 @@ class TaskRepository implements TaskRepositoryContract
 
         $input = $requestData = array_merge(
             $requestData->all(),
-            ['user_created_id' => auth()->id(),]
+            ['user_created_id' => auth()->id()]
         );
 
         $task = Task::create($input);
@@ -81,7 +84,7 @@ class TaskRepository implements TaskRepositoryContract
      */
     public function updateStatus($id, $requestData)
     {
-        $task = Task::findOrFail($id);
+        $task  = Task::findOrFail($id);
         $input = $requestData->get('status');
         $input = array_replace($requestData->all(), ['status' => 2]);
         $task->fill($input)->save();
@@ -99,20 +102,20 @@ class TaskRepository implements TaskRepositoryContract
         $invoice = $task->invoice;
         if (!$invoice) {
             $invoice = Invoice::create([
-                'status' => 'draft',
-                'client_id' => $task->client->id
+                'status'    => 'draft',
+                'client_id' => $task->client->id,
             ]);
             $task->invoice_id = $invoice->id;
             $task->save();
         }
 
         InvoiceLine::create([
-                'title' => $request->title,
-                'comment' => $request->comment,
-                'quantity' => $request->quantity,
-                'type' => $request->type,
-                'price' => $request->price,
-                'invoice_id' => $invoice->id
+                'title'      => $request->title,
+                'comment'    => $request->comment,
+                'quantity'   => $request->quantity,
+                'type'       => $request->type,
+                'price'      => $request->price,
+                'invoice_id' => $invoice->id,
         ]);
 
         event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
@@ -136,9 +139,8 @@ class TaskRepository implements TaskRepositoryContract
     }
 
     /**
-     * Statistics for Dashboard
+     * Statistics for Dashboard.
      */
-
     public function tasks()
     {
         return Task::all()->count();
@@ -234,6 +236,7 @@ class TaskRepository implements TaskRepositoryContract
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function totalOpenAndClosedTasks($id)

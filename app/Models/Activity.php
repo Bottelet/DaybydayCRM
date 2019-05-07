@@ -11,7 +11,7 @@ class Activity extends model
      *
      * @var string
      */
-    protected $table = 'activity_log';
+    protected $table    = 'activity_log';
     protected $fillable = [
         'user_id',
         'text',

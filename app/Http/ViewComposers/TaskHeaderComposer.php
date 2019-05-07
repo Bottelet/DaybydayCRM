@@ -27,20 +27,19 @@ class TaskHeaderComposer
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
-     * @return void
+     * @param View $view
      */
     public function compose(View $view)
     {
         $tasks = $this->tasks->find($view->getData()['tasks']['id']);
         /**
-         * [User assigned the task]
+         * [User assigned the task].
+         *
          * @var contact
          */
-       
         $contact = $tasks->user;
-        $client = $tasks->client;
-        
+        $client  = $tasks->client;
+
         $view->with('contact', $contact);
         $view->with('client', $client);
     }

@@ -25,17 +25,17 @@ class StoreClientRequest extends FormRequest
     {
         return [
             'primary_contact_name' => '',
-            'company_name' => 'required',
-            'vat' => 'max:12',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:6',
-            'city' => '',
-            'primary_number' => 'max:10',
-            'secondary_number' => 'max:10',
-            'industry_id' => 'required',
-            'company_type' => '',
-            'user_id' => 'required'
+            'company_name'         => 'required',
+            'vat'                  => 'max:12',
+            'email'                => 'required',
+            'address'              => '',
+            'zipcode'              => 'max:6',
+            'city'                 => '',
+            'primary_number'       => 'max:10',
+            'secondary_number'     => 'max:10',
+            'industry_id'          => 'required',
+            'company_type'         => '',
+            'user_id'              => 'required',
         ];
     }
 }

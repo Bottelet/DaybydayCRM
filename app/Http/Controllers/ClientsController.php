@@ -1,11 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Config;
-use Dinero;
 use Datatables;
 use App\Models\Client;
-use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
@@ -24,8 +22,8 @@ class ClientsController extends Controller
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
     ) {
-        $this->users = $users;
-        $this->clients = $clients;
+        $this->users    = $users;
+        $this->clients  = $clients;
         $this->settings = $settings;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
@@ -40,15 +38,17 @@ class ClientsController extends Controller
     }
 
     /**
-     * Make json respnse for datatables
+     * Make json respnse for datatables.
+     *
      * @return mixed
      */
     public function anyData()
     {
         $clients = Client::select(['id', 'primary_contact_name', 'company_name', 'email', 'primary_number']);
+
         return Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/' . $clients->id . '" ">' . $clients->company_name . '</a>';
+                return '<a href="clients/'.$clients->id.'" ">'.$clients->company_name.'</a>';
             })
             ->add_column('edit', '
                 <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
@@ -76,16 +76,19 @@ class ClientsController extends Controller
 
     /**
      * @param StoreClientRequest $request
+     *
      * @return mixed
      */
     public function store(StoreClientRequest $request)
     {
         $this->clients->create($request->all());
+
         return redirect()->route('clients.index');
     }
 
     /**
      * @param Request $vatRequest
+     *
      * @return mixed
      */
     public function cvrapiStart(Request $vatRequest)
@@ -97,7 +100,8 @@ class ClientsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return mixed
      */
     public function show($id)
@@ -112,7 +116,8 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return mixed
      */
     public function edit($id)
@@ -126,17 +131,20 @@ class ClientsController extends Controller
     /**
      * @param $id
      * @param UpdateClientRequest $request
+     *
      * @return mixed
      */
     public function update($id, UpdateClientRequest $request)
     {
         $this->clients->update($id, $request);
         Session()->flash('flash_message', 'Client successfully updated');
+
         return redirect()->route('clients.index');
     }
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function destroy($id)
@@ -149,12 +157,14 @@ class ClientsController extends Controller
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function updateAssign($id, Request $request)
     {
         $this->clients->updateAssign($id, $request);
         Session()->flash('flash_message', 'New user is assigned');
+
         return redirect()->back();
     }
 }

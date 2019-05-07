@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Repositories\Setting;
 
 use App\Models\Setting;
 
 /**
- * Class SettingRepository
- * @package App\Repositories\Setting
+ * Class SettingRepository.
  */
 class SettingRepository implements SettingRepositoryContract
 {

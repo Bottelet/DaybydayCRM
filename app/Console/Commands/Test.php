@@ -4,11 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class Test
- * @package App\Console\Commands
+ * Class Test.
  */
 class Test extends Command
 {
@@ -26,7 +24,7 @@ class Test extends Command
      */
     protected $description = 'Run all tests';
 
-    private function runPhpunit($files = array())
+    private function runPhpunit($files = [])
     {
         // If no files were specified we run all tests.
         if (empty($files)) {
@@ -34,7 +32,7 @@ class Test extends Command
         }
 
         $this->info('Running phpunit:');
-        $cmd =  base_path() . '/vendor/bin/phpunit -c ' . base_path() . '/phpunit.xml';
+        $cmd = base_path().'/vendor/bin/phpunit -c '.base_path().'/phpunit.xml';
         passthru($cmd);
     }
 
@@ -51,14 +49,14 @@ class Test extends Command
     protected function getOptions()
     {
         return [
-            ['phpunit', false, InputOption::VALUE_NONE, 'Run phpunit tests.', null]
+            ['phpunit', false, InputOption::VALUE_NONE, 'Run phpunit tests.', null],
         ];
     }
 
     protected function getArguments()
     {
-        return array(
-            array('file', InputOption::VALUE_OPTIONAL, 'Specify a test files.')
-        );
+        return [
+            ['file', InputOption::VALUE_OPTIONAL, 'Specify a test files.'],
+        ];
     }
 }

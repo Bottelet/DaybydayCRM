@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Models;
 
-use Fenos\Notifynder\Notifable;
 use Illuminate\Notifications\Notifiable;
 use Cache;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\Setting;
 
 class User extends Authenticatable
 {
-    use Notifiable, EntrustUserTrait;
+    use Notifiable;
+    use EntrustUserTrait;
 
     /**
      * The database table used by the model.
@@ -31,9 +31,8 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $dates = ['trial_ends_at', 'subscription_ends_at'];
+    protected $dates  = ['trial_ends_at', 'subscription_ends_at'];
     protected $hidden = ['password', 'password_confirmation', 'remember_token'];
-
 
     protected $primaryKey = 'id';
 
@@ -46,7 +45,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lead::class, 'user_id', 'id');
     }
-    
+
     public function department()
     {
         return $this->belongsToMany(Department::class, 'department_user')->withPivot('department_id');
@@ -59,14 +58,14 @@ class User extends Authenticatable
 
     public function isOnline()
     {
-        return Cache::has('user-is-online-' . $this->id);
+        return Cache::has('user-is-online-'.$this->id);
     }
 
     public function getNameAndDepartmentAttribute()
     {
-        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
+        return $this->name.' '.'('.$this->department()->first()->name.')';
     }
-    
+
     public function moveTasks($user_id)
     {
         $tasks = $this->tasks()->get();
@@ -97,6 +96,7 @@ class User extends Authenticatable
     public function getAvatarattribute()
     {
         $setting = Setting::first();
-        return $this->image_path ? 'images/' . $setting->company . '/' . $this->image_path : 'images/default_avatar.jpg';
+
+        return $this->image_path ? 'images/'.$setting->company.'/'.$this->image_path : 'images/default_avatar.jpg';
     }
 }

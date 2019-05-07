@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -26,9 +27,10 @@ class Invoice extends Model
 
     public function canUpdateInvoice()
     {
-        if ($this->sent_at != null) {
+        if (null != $this->sent_at) {
             return false;
         }
+
         return true;
     }
 }

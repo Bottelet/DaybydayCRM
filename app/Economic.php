@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 class Economic
@@ -10,23 +11,23 @@ class Economic
     protected static $clientSecret;
     protected static $apiKey;
 
-
     protected function getClient()
     {
         if (!$this->client) {
             $this->client = new \GuzzleHttp\Client();
 
             $res = $this->client->request('GET', 'https://restapi.e-conomic.com/customers', [
-                'verify' => false,
+                'verify'  => false,
                 'headers' => [
-                    'X-AppSecretToken:' => 'demo',
+                    'X-AppSecretToken:'     => 'demo',
                     'X-AgreementGrantToken' => 'demo',
-                    'Content-Type' => 'application/json'
-                ]
+                    'Content-Type'          => 'application/json',
+                ],
             ]);
-            $response = self::convertJson($res);
+            $response          = self::convertJson($res);
             self::$accessToken = $response->access_token;
         }
+
         return $this->client;
     }
 

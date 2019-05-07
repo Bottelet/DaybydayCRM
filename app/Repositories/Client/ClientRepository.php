@@ -1,23 +1,21 @@
 <?php
+
 namespace App\Repositories\Client;
 
 use App\Models\Client;
 use App\Models\Industry;
-use App\Models\Invoice;
-use App\Models\User;
-use DB;
 
 /**
- * Class ClientRepository
- * @package App\Repositories\Client
+ * Class ClientRepository.
  */
 class ClientRepository implements ClientRepositoryContract
 {
-    const CREATED = 'created';
+    const CREATED        = 'created';
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function find($id)
@@ -35,6 +33,7 @@ class ClientRepository implements ClientRepositoryContract
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function getInvoices($id)
@@ -100,7 +99,7 @@ class ClientRepository implements ClientRepositoryContract
      */
     public function updateAssign($id, $requestData)
     {
-        $client = Client::with('user')->findOrFail($id);
+        $client          = Client::with('user')->findOrFail($id);
         $client->user_id = $requestData->get('user_assigned_id');
         $client->save();
 
@@ -109,13 +108,14 @@ class ClientRepository implements ClientRepositoryContract
 
     /**
      * @param $requestData
+     *
      * @return string
      */
     public function vat($requestData)
     {
         $vat = $requestData->input('vat');
 
-        $country = $requestData->input('country');
+        $country      = $requestData->input('country');
         $company_name = $requestData->input('company_name');
 
         // Strip all other characters than numbers
@@ -125,13 +125,13 @@ class ClientRepository implements ClientRepositoryContract
         {
             if (empty($vat)) {
                 // Print error message
-                return ('Please insert VAT');
+                return 'Please insert VAT';
             } else {
                 // Start cURL
                 $ch = curl_init();
 
                 // Set cURL options
-                curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
+                curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search='.$vat.'&country=dk');
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_USERAGENT, 'Flashpoint');
 

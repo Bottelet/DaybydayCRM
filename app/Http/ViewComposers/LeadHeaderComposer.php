@@ -17,6 +17,7 @@ class LeadHeaderComposer
     /**
      * Create a new profile composer.
      * LeadHeaderComposer constructor.
+     *
      * @param LeadRepositoryContract $lead
      */
     public function __construct(LeadRepositoryContract $lead)
@@ -27,20 +28,19 @@ class LeadHeaderComposer
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
-     * @return void
+     * @param View $view
      */
     public function compose(View $view)
     {
         $lead = $this->lead->find($view->getData()['lead']['id']);
         /**
-         * [User assigned the task]
+         * [User assigned the task].
+         *
          * @var contact
          */
-       
         $contact = $lead->user;
-        $client = $lead->client;
-        
+        $client  = $lead->client;
+
         $view->with('contact', $contact);
         $view->with('client', $client);
     }

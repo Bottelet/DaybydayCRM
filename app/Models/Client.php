@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ class Client extends Model
         'primary_contact_name',
         'industry_id',
         'company_type',
-        'user_id'];
+        'user_id', ];
 
     public function user()
     {

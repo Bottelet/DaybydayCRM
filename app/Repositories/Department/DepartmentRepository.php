@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Repositories\Department;
 
 use App\Models\Department;
 
 /**
- * Class DepartmentRepository
- * @package App\Repositories\Department
+ * Class DepartmentRepository.
  */
 class DepartmentRepository implements DepartmentRepositoryContract
 {

@@ -1,13 +1,11 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
-use Auth;
 use Carbon;
 use Session;
 use Datatables;
 use App\Models\Lead;
-use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Repositories\Lead\LeadRepositoryContract;
@@ -29,10 +27,10 @@ class LeadsController extends Controller
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
     ) {
-        $this->users = $users;
+        $this->users    = $users;
         $this->settings = $settings;
-        $this->clients = $clients;
-        $this->leads = $leads;
+        $this->clients  = $clients;
+        $this->leads    = $leads;
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
@@ -49,7 +47,8 @@ class LeadsController extends Controller
     }
 
     /**
-     * Data for Data tables
+     * Data for Data tables.
+     *
      * @return mixed
      */
     public function anyData()
@@ -57,9 +56,10 @@ class LeadsController extends Controller
         $leads = Lead::select(
             ['id', 'title', 'user_created_id', 'client_id', 'user_assigned_id', 'contact_date']
         )->where('status', 1)->get();
+
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
-                return '<a href="leads/' . $leads->id . '" ">' . $leads->title . '</a>';
+                return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
             })
             ->editColumn('user_created_id', function ($leads) {
                 return $leads->creator->name;
@@ -89,12 +89,14 @@ class LeadsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreLeadRequest|Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(StoreLeadRequest $request)
     {
         $getInsertedId = $this->leads->create($request);
         Session()->flash('flash_message', 'Lead is created');
+
         return redirect()->route('leads.show', $getInsertedId);
     }
 
@@ -102,26 +104,31 @@ class LeadsController extends Controller
     {
         $this->leads->updateAssign($id, $request);
         Session()->flash('flash_message', 'New user is assigned');
+
         return redirect()->back();
     }
 
     /**
-     * Update the follow up date (Deadline)
+     * Update the follow up date (Deadline).
+     *
      * @param UpdateLeadFollowUpRequest $request
      * @param $id
+     *
      * @return mixed
      */
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
     {
         $this->leads->updateFollowup($id, $request);
         Session()->flash('flash_message', 'New follow up date is set');
+
         return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -133,15 +140,18 @@ class LeadsController extends Controller
     }
 
     /**
-     * Complete lead
+     * Complete lead.
+     *
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function updateStatus($id, Request $request)
     {
         $this->leads->updateStatus($id, $request);
         Session()->flash('flash_message', 'Lead is completed');
+
         return redirect()->back();
     }
 }

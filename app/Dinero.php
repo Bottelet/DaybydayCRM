@@ -1,4 +1,5 @@
 <?php
+
 namespace App;
 
 class Dinero
@@ -16,6 +17,7 @@ class Dinero
         if (!self::$instance) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 
@@ -24,22 +26,23 @@ class Dinero
         if (!self::$client) {
             self::$client = new \GuzzleHttp\Client();
 
-            $token = base64_encode(self::$clientId . ':' . self::$clientSecret);
-            $res = self::$client->request('POST', 'https://authz.dinero.dk/dineroapi/oauth/token', [
-                'verify' => false,
+            $token = base64_encode(self::$clientId.':'.self::$clientSecret);
+            $res   = self::$client->request('POST', 'https://authz.dinero.dk/dineroapi/oauth/token', [
+                'verify'  => false,
                 'headers' => [
-                    'Authorization' => 'Basic ' . $token
+                    'Authorization' => 'Basic '.$token,
                 ],
                 'form_params' => [
                     'grant_type' => 'password',
-                    'scope' => 'read write',
-                    'username' => self::$apiKey,
-                    'password' => self::$apiKey
-                ]
+                    'scope'      => 'read write',
+                    'username'   => self::$apiKey,
+                    'password'   => self::$apiKey,
+                ],
             ]);
-            $response = self::convertJson($res);
+            $response          = self::convertJson($res);
             self::$accessToken = $response->access_token;
         }
+
         return self::$client;
     }
 
@@ -50,29 +53,30 @@ class Dinero
         while (!$body->eof()) {
             $json .= $body->read(1024);
         }
+
         return json_decode($json);
     }
 
     public static function initialize($dbRow)
     {
         self::$organizationId = $dbRow['org_id'];
-        self::$clientId = config('services.dinero.client');
-        self::$clientSecret = config('services.dinero.secret');
-        self::$apiKey = $dbRow['api_key'];
+        self::$clientId       = config('services.dinero.client');
+        self::$clientSecret   = config('services.dinero.secret');
+        self::$apiKey         = $dbRow['api_key'];
     }
 
     public static function createInvoice($params)
     {
-        $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/' . self::$organizationId . '/invoices', [
-            'verify' => false,
+        $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/'.self::$organizationId.'/invoices', [
+            'verify'  => false,
             'headers' => [
-                'Authorization' => 'Bearer ' . self::$accessToken
+                'Authorization' => 'Bearer '.self::$accessToken,
             ],
             'json' => [
-                'Currency' => $params['currency'],
-                'Description' => $params['description'],
-                'ContactGuid' => $params['contact_id'],
-                'ProductLines' => $params['product_lines']]
+                'Currency'     => $params['currency'],
+                'Description'  => $params['description'],
+                'ContactGuid'  => $params['contact_id'],
+                'ProductLines' => $params['product_lines'], ],
         ]);
 
         return self::convertJson($res);
@@ -81,49 +85,51 @@ class Dinero
     public static function bookInvoice($invoiceGuid, $timestamp)
     {
         $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/'
-            . self::$organizationId . '/invoices/' . $invoiceGuid . '/book', [
-            'verify' => false,
+            .self::$organizationId.'/invoices/'.$invoiceGuid.'/book', [
+            'verify'  => false,
             'headers' => [
-                'Authorization' => 'Bearer ' . self::$accessToken
+                'Authorization' => 'Bearer '.self::$accessToken,
             ],
             'json' => [
-                'timestamp' => $timestamp]
+                'timestamp' => $timestamp, ],
         ]);
+
         return self::convertJson($res);
     }
 
     public static function sendInvoice($invoiceGuid, $timestamp)
     {
         $res = self::getClient()->request('POST', 'https://api.dinero.dk/v1/'
-            . self::$organizationId . '/invoices/' . $invoiceGuid . '/email', [
-            'verify' => false,
+            .self::$organizationId.'/invoices/'.$invoiceGuid.'/email', [
+            'verify'  => false,
             'headers' => [
-                'Authorization' => 'Bearer ' . self::$accessToken
+                'Authorization' => 'Bearer '.self::$accessToken,
             ],
             'json' => [
-                'timestamp' => $timestamp]
+                'timestamp' => $timestamp, ],
         ]);
+
         return $res;
     }
 
-    public function getContacts($filter = "")
+    public function getContacts($filter = '')
     {
-        $res = self::getClient()->request("GET", "https://api.dinero.dk/v1/"
-            . self::$organizationId . "/contacts?field=Name,ContactGuid&queryFilter=Email+contains+" . "'" . $filter . "'", [
-            "verify" => false,
-            "headers" => [
-                "Authorization" => "Bearer " . self::$accessToken
-            ]
+        $res = self::getClient()->request('GET', 'https://api.dinero.dk/v1/'
+            .self::$organizationId.'/contacts?field=Name,ContactGuid&queryFilter=Email+contains+'."'".$filter."'", [
+            'verify'  => false,
+            'headers' => [
+                'Authorization' => 'Bearer '.self::$accessToken,
+            ],
         ]);
 
         $request = json_decode($res->getBody(), true);
 
         $results = [];
-        $i = 0;
+        $i       = 0;
         foreach ($request['Collection'] as $contact) {
             $results[$i]['name'] = $contact['name'];
             $results[$i]['guid'] = $contact['contactGuid'];
-            $i++;
+            ++$i;
         }
 
         return $results;
