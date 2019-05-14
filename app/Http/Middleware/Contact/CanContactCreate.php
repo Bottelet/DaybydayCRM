@@ -19,7 +19,7 @@ class CanContactCreate
         if (!auth()->user()->can('contact-create')) {
             Session()->flash('flash_message_warning', 'Not allowed to create contact!');
 
-            return redirect()->route('clients.index');
+            return redirect()->route('contacts.index');
         }
 
         return $next($request);

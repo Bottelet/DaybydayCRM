@@ -12,14 +12,13 @@
 Route::auth();
 Route::get('/logout', 'Auth\LoginController@logout');
 Route::group(['middleware' => ['auth']], function () {
-    
-    /**
+    /*
      * Main
      */
     Route::get('/', 'PagesController@dashboard');
     Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
-        
-    /**
+
+    /*
      * Users
      */
     Route::group(['prefix' => 'users'], function () {
@@ -31,11 +30,12 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('users', 'UsersController');
 
-    /**
+    /*
     * Roles
     */
     Route::resource('roles', 'RolesController');
-    /**
+
+    /*
      * Clients
      */
     Route::group(['prefix' => 'clients'], function () {
@@ -46,9 +46,16 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('clients', 'ClientsController');
     Route::resource('documents', 'DocumentsController');
-    
-      
-    /**
+
+    /*
+     * Contacts
+     */
+    Route::group(['prefix' => 'contacts'], function () {
+        Route::get('/data', 'ContactsController@anyData')->name('contacts.data');
+    });
+    Route::resource('contacts', 'ContactsController');
+
+    /*
      * Tasks
      */
     Route::group(['prefix' => 'tasks'], function () {
@@ -59,7 +66,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('tasks', 'TasksController');
 
-    /**
+    /*
      * Leads
      */
     Route::group(['prefix' => 'leads'], function () {
@@ -70,7 +77,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{id}', 'CommentController@store');
-    /**
+    /*
      * Settings
      */
     Route::group(['prefix' => 'settings'], function () {
@@ -79,12 +86,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/overall', 'SettingsController@updateOverall');
     });
 
-    /**
+    /*
      * Departments
      */
     Route::resource('departments', 'DepartmentsController');
 
-    /**
+    /*
      * Integrations
      */
     Route::group(['prefix' => 'integrations'], function () {
@@ -92,7 +99,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('integrations', 'IntegrationsController');
 
-    /**
+    /*
      * Notifications
      */
     Route::group(['prefix' => 'notifications'], function () {
@@ -101,7 +108,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}', 'NotificationsController@markRead');
     });
 
-    /**
+    /*
      * Invoices
      */
     Route::group(['prefix' => 'invoices'], function () {

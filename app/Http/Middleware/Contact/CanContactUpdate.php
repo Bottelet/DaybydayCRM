@@ -19,7 +19,7 @@ class CanContactUpdate
         if (!auth()->user()->can('contact-update')) {
             Session()->flash('flash_message_warning', 'Not allowed to update contact');
 
-            return redirect()->route('clients.index');
+            return redirect()->route('contacts.index');
         }
 
         return $next($request);
