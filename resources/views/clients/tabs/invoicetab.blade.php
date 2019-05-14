@@ -1,4 +1,4 @@
-<div id="invoice" class="tab-pane fade">
+<div id="invoice" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
         <table class="table table-bordered">
             <thead>
@@ -37,17 +37,17 @@
                     </td>
                     <td>
                         @if($invoice->sent_at == null)
-                            <?php $color = "red"; ?>
+                            <?php $color = 'red'; ?>
                         @else
-                            <?php $color = "green"; ?>
+                            <?php $color = 'green'; ?>
                         @endif
                         <p style=" color:{{$color}}">{{$invoice->sent_at ? 'yes' : 'no'}}</p>
                     </td>
                     <td>
                         @if($invoice->payment_received_at == null)
-                            <?php $color = "red"; ?>
+                            <?php $color = 'red'; ?>
                         @else
-                            <?php $color = "green"; ?>
+                            <?php $color = 'green'; ?>
                         @endif
                         <p style=" color:{{$color}}">{{$invoice->payment_received_at ? 'yes' : 'no'}}</p>
                     </td>

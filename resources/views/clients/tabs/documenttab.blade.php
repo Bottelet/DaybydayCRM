@@ -1,17 +1,6 @@
-<div id="document" class="tab-pane fade">
-    <table class="table">
+<div id="document" class="tab-pane fade" role="tabpanel">
+    <table class="table table-hover">
         <h4>{{ __('All Documents') }}</h4>
-        <div class="col-xs-10">
-            <div class="form-group">
-                <form method="POST" action="{{ url('/clients/upload', $client->id)}}" class="dropzone" id="dropzone"
-                      files="true" data-dz-removea
-                      enctype="multipart/form-data"
-                >
-                    <meta name="csrf-token" content="{{ csrf_token() }}">
-                </form>
-                <p><b>{{ __('Max size') }}</b></p>
-            </div>
-        </div>
         <thead>
         <tr>
             <th>{{ __('File') }}</th>
@@ -38,5 +27,15 @@
         @endforeach
         </tbody>
     </table>
-
+    <div class="col-xs-10">
+        <div class="form-group">
+            <form method="POST" action="{{ url('/clients/upload', $client->id)}}" class="dropzone" id="dropzone"
+                  files="true" data-dz-removea
+                  enctype="multipart/form-data"
+            >
+                <meta name="csrf-token" content="{{ csrf_token() }}">
+            </form>
+            <p><b>{{ __('Max size') }}</b></p>
+        </div>
+    </div>
 </div>

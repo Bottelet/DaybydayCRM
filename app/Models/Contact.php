@@ -8,12 +8,13 @@ class Contact extends Model
 {
     protected $fillable = [
         'name',
+        'job_title',
         'email',
         'address',
         'zipcode',
         'city',
         'primary_number',
-        'cellular_number',
+        'secondary_number',
         'client_id',
     ];
 }

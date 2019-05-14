@@ -1,4 +1,4 @@
-<div id="lead" class="tab-pane fade">
+<div id="lead" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
         <table class="table table-hover">
             <h4>{{ __('All Leads') }}</h4>
@@ -17,7 +17,7 @@
             </tr>
             </thead>
             <tbody>
-            <?php  $tr = ""; ?>
+            <?php  $tr = ''; ?>
           
             @foreach($client->leads as $lead)
                 @if($lead->status == 1)
@@ -25,7 +25,7 @@
                 @elseif($lead->status == 2)
                     <?php $tr = '#ff6666'; ?>
                 @endif
-                <tr style="background-color:<?php echo $tr;?>">
+                <tr style="background-color:<?php echo $tr; ?>">
 
                     <td><a href="{{ route('leads.show', $lead->id) }}">{{$lead->title}} </a></td>
                     <td>

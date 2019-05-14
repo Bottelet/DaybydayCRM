@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Datatables;
-use App\Models\Contact;
-use Illuminate\Http\Request;
 use App\Http\Requests\Contact\StoreContactRequest;
 use App\Http\Requests\Contact\UpdateContactRequest;
-use App\Repositories\User\UserRepositoryContract;
+use App\Models\Contact;
+use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Contact\ContactRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use Datatables;
+use Illuminate\Http\Request;
 
 class ContactsController extends Controller
 {
@@ -20,10 +21,12 @@ class ContactsController extends Controller
     public function __construct(
         UserRepositoryContract $users,
         ContactRepositoryContract $contacts,
+        ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
     ) {
         $this->users    = $users;
         $this->contacts = $contacts;
+        $this->clients  = $clients;
         $this->settings = $settings;
         $this->middleware('contact.create', ['only' => ['create']]);
         $this->middleware('contact.update', ['only' => ['edit']]);
@@ -94,7 +97,9 @@ class ContactsController extends Controller
     public function show($id)
     {
         return view('contacts.show')
-            ->withContact($this->contacts->find($id));
+            ->withContact($this->contacts->find($id))
+            ->withUsers($this->users->getAllUsersWithDepartments())
+            ->withCompanyname($this->settings->getCompanyName());
     }
 
     /**
