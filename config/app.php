@@ -162,7 +162,6 @@ return [
         App\Providers\AccessServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
-        DougSisk\CountryState\CountryStateServiceProvider::class,
     ],
 
     /*
