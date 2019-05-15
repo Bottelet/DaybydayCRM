@@ -3,7 +3,7 @@
 @section('content')
     <div class="col-lg-12 currenttask">
 
-        <table class="table table-hover">
+        <table class="table table-striped">
             <h3>{{ __('All Roles') }}</h3>
             <thead>
             <thead>

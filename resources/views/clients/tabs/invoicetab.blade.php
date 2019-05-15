@@ -1,6 +1,6 @@
 <div id="invoice" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
-        <table class="table table-bordered">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>{{ __('ID') }}</th>

@@ -1,5 +1,5 @@
 <div id="document" class="tab-pane fade" role="tabpanel">
-    <table class="table table-hover">
+    <table class="table table-striped">
         <h4>{{ __('All Documents') }}</h4>
         <thead>
         <tr>

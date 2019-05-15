@@ -1,6 +1,6 @@
 <div id="task" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
-        <table class="table table-hover">
+        <table class="table table-striped">
             <h4>{{ __('All Tasks') }}</h4>
             <thead>
             <tr>
@@ -9,7 +9,7 @@
                 <th>{{ __('Created at') }}</th>
                 <th>{{ __('Deadline') }}</th>
                 <th><a href="{{ route('tasks.create', ['client' => $client->id])}}">
-                        <button class="btn btn-success">{{ __('New task') }}</button>
+                        <button class="btn btn-xs btn-success">{{ __('New task') }}</button>
                     </a></th>
             </tr>
             </thead>

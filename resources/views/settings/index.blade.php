@@ -14,7 +14,7 @@
         'url'    => 'settings/permissionsUpdate',
     ]) !!}
 
-        <table class="table table-responsive table-hover table_wrapper" id="permissions-table">
+        <table class="table table-responsive table-striped table_wrapper" id="permissions-table">
             <thead>
             <tr>
             <th></th>

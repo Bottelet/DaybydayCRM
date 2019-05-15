@@ -1,6 +1,6 @@
 <div id="contact" class="tab-pane fade in active" role="tabpanel">
     <div class="boxspace">
-        <table class="table table-hover">
+        <table class="table table-striped">
             <h4>{{ __('All Contacts') }}</h4>
             <thead>
             <tr>
@@ -10,7 +10,7 @@
                 <th>{{ __('Primary Number') }}</th>
                 <th>
                     <a href="{{ route('contacts.create', ['client' => $client->id])}}">
-                        <button class="btn btn-success">{{ __('New Contact') }}</button>
+                        <button class="btn btn-xs btn-success">{{ __('New Contact') }}</button>
                     </a>
                 </th>
             </tr>

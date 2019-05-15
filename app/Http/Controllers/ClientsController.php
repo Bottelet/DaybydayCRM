@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Datatables;
-use App\Models\Client;
-use Illuminate\Http\Request;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
-use App\Repositories\User\UserRepositoryContract;
+use App\Models\Client;
 use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use Datatables;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
@@ -46,23 +47,34 @@ class ClientsController extends Controller
     {
         $clients = Client::select(['id', 'primary_contact_name', 'company_name', 'email', 'primary_number']);
 
-        return Datatables::of($clients)
+        $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
                 return '<a href="clients/'.$clients->id.'" ">'.$clients->company_name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
                 return '<a href="mailto:'.$clients->email.'" ">'.$clients->email.'</a>';
-            })
-            ->add_column('edit', '
-                <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-sm btn-success" >Edit</a>')
-            ->add_column('delete', '
-                <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="Delete" class="btn btn-danger btn-sm" onClick="return confirm(\'Are you sure?\')"">
+            });
 
-            {{csrf_field()}}
-            </form>')
-            ->make(true);
+        // this looks wierd, but in order to keep the two buttons on the same line
+        // you have to put them both within the form tags if the Delete button is
+        // enabled
+        $actions = '';
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+            ';
+        }
+        if (Auth::user()->can('client-update')) {
+            $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
+        }
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" name="submit" value="Delete" class="btn btn-danger btn-xs" onClick="return confirm(\'Are you sure?\')"">
+                {{csrf_field()}}
+            </form>';
+        }
+
+        return $dt->addColumn('actions', $actions)->make(true);
     }
 
     /**

@@ -1,6 +1,6 @@
 <div id="lead" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
-        <table class="table table-hover">
+        <table class="table table-striped">
             <h4>{{ __('All Leads') }}</h4>
             <thead>
             <thead>
@@ -11,7 +11,7 @@
                 <th>{{ __('Deadline') }}</th>
 
                 <th><a href="{{ route('leads.create', ['client' => $client->id])}}">
-                        <button class="btn btn-success">{{ __('New Lead') }}</button>
+                        <button class="btn btn-xs btn-success">{{ __('New Lead') }}</button>
                     </a></th>
 
             </tr>

@@ -11,6 +11,7 @@ use App\Repositories\Setting\SettingRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
 use Datatables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContactsController extends Controller
 {
@@ -49,20 +50,34 @@ class ContactsController extends Controller
     {
         $contacts = Contact::select(['id', 'name', 'job_title', 'email', 'primary_number']);
 
-        return Datatables::of($contacts)
+        $dt = Datatables::of($contacts)
             ->addColumn('namelink', function ($contacts) {
                 return '<a href="contacts/'.$contacts->id.'" ">'.$contacts->name.'</a>';
             })
-            ->add_column('edit', '
-                <a href="{{ route(\'contacts.edit\', $id) }}" class="btn btn-success" >Edit</a>')
-            ->add_column('delete', '
-                <form action="{{ route(\'contacts.destroy\', $id) }}" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
+            ->addColumn('emaillink', function ($clients) {
+                return '<a href="mailto:'.$clients->email.'" ">'.$clients->email.'</a>';
+            });
 
-            {{csrf_field()}}
-            </form>')
-            ->make(true);
+        // this looks wierd, but in order to keep the two buttons on the same line
+        // you have to put them both within the form tags if the Delete button is
+        // enabled
+        $actions = '';
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+            ';
+        }
+        if (Auth::user()->can('client-update')) {
+            $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
+        }
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" name="submit" value="Delete" class="btn btn-xs btn-danger" onClick="return confirm(\'Are you sure?\')"">
+                {{csrf_field()}}
+            </form>';
+        }
+
+        return $dt->addColumn('actions', $actions)->make(true);
     }
 
     /**
