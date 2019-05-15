@@ -52,6 +52,7 @@
                 <tr>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Company') }}</th>
+                    <th>{{ __('Email') }}</th>
                     <th>{{ __('Primary number') }}</th>
                 </tr>
                 </thead>
@@ -111,11 +112,12 @@
                     ajax: '{!! route('users.clientdata', ['id' => $user->id]) !!}',
                     columns: [
 
-                        {data: 'clientlink', name: 'name'},
-                        {data: 'company_name', name: 'company_name'},
+                        {data: 'clientlink', name: 'company_name'},
+                        {data: 'primary_contact_name', name: 'primary_contact_name'},
+                        {data: 'emaillink', name: 'email'},
                         {data: 'primary_number', name: 'primary_number'},
 
-                    ]
+                    ],
                 });
             });
 

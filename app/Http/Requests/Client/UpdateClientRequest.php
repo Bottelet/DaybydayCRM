@@ -24,10 +24,10 @@ class UpdateClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'primary_contact_name' => '',
             'company_name'         => 'required',
             'vat'                  => 'max:12',
-            'email'                => 'required',
+            'primary_contact_name' => '',
+            'email'                => '',
             'address'              => '',
             'zipcode'              => 'max:6',
             'city'                 => '',

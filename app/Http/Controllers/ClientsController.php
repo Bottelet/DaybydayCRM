@@ -50,12 +50,15 @@ class ClientsController extends Controller
             ->addColumn('namelink', function ($clients) {
                 return '<a href="clients/'.$clients->id.'" ">'.$clients->company_name.'</a>';
             })
+            ->addColumn('emaillink', function ($clients) {
+                return '<a href="mailto:'.$clients->email.'" ">'.$clients->email.'</a>';
+            })
             ->add_column('edit', '
-                <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
+                <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-sm btn-success" >Edit</a>')
             ->add_column('delete', '
                 <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
+            <input type="submit" name="submit" value="Delete" class="btn btn-danger btn-sm" onClick="return confirm(\'Are you sure?\')"">
 
             {{csrf_field()}}
             </form>')

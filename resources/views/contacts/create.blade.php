@@ -8,7 +8,7 @@
     {!! Form::open(['route' => 'contacts.store']) !!}
 
     <div class="form-group">
-        {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}
+        {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}  <span class="text-danger">*</span>
         {!! Form::text('name', null, ['class' => 'form-control']) !!}
     </div>
     <div class="form-group">
@@ -43,7 +43,7 @@
         @if(Request::get('client') != "")
             {!! Form::hidden('client_id', Request::get('client')) !!}
         @else
-            {!! Form::label('client_id', __('Assign Client'), ['class' => 'control-label']) !!}
+            {!! Form::label('client_id', __('Assign Client'), ['class' => 'control-label']) !!}  <span class="text-danger">*</span>
             {!! Form::select('client_id', $clients, null, ['class' => 'form-control']) !!}
         @endif
     </div>
