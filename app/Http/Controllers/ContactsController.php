@@ -54,22 +54,22 @@ class ContactsController extends Controller
             ->addColumn('namelink', function ($contacts) {
                 return '<a href="contacts/'.$contacts->id.'" ">'.$contacts->name.'</a>';
             })
-            ->addColumn('emaillink', function ($clients) {
-                return '<a href="mailto:'.$clients->email.'" ">'.$clients->email.'</a>';
+            ->addColumn('emaillink', function ($contacts) {
+                return '<a href="mailto:'.$contacts->email.'" ">'.$contacts->email.'</a>';
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line
         // you have to put them both within the form tags if the Delete button is
         // enabled
         $actions = '';
-        if (Auth::user()->can('client-delete')) {
-            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+        if (Auth::user()->can('contact-delete')) {
+            $actions .= '<form action="{{ route(\'contacts.destroy\', $id) }}" method="POST">
             ';
         }
-        if (Auth::user()->can('client-update')) {
-            $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
+        if (Auth::user()->can('contact-update')) {
+            $actions .= '<a href="{{ route(\'contacts.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
         }
-        if (Auth::user()->can('client-delete')) {
+        if (Auth::user()->can('contact-delete')) {
             $actions .= '
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="submit" name="submit" value="Delete" class="btn btn-xs btn-danger" onClick="return confirm(\'Are you sure?\')"">
@@ -128,7 +128,8 @@ class ContactsController extends Controller
     public function edit($id)
     {
         return view('contacts.edit')
-            ->withContact($this->contacts->find($id));
+            ->withContact($this->contacts->find($id))
+            ->withClients($this->clients->listAllClients());
     }
 
     /**
@@ -142,7 +143,7 @@ class ContactsController extends Controller
         $this->contacts->update($id, $request);
         Session()->flash('flash_message', 'Contact successfully updated');
 
-        return redirect()->route('contacts.index');
+        return redirect()->route('contacts.show', ['id' => $id]);
     }
 
     /**

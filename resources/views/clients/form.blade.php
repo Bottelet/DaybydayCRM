@@ -44,7 +44,7 @@
 
     <div class="form-group col-sm-6 removeleft removeright">
         {!! Form::label('secondary_number', __('Secondary number'), ['class' => 'control-label']) !!}
-        {!! Form::text('secondary_number', null, ['class' => 'form-control']) !!}
+        {!! Form::text('secondary_number', $data['secondary_number'] ?? null, ['class' => 'form-control']) !!}
     </div>
 </div>
 
@@ -55,12 +55,12 @@
 
 <div class="form-group">
     {!! Form::label('industry', __('Industry'), ['class' => 'control-label']) !!}  <span class="text-danger">*</span>
-    {!! Form::select('industry_id', $industries, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+    {!! Form::select('industry_id', $industries, $data['industry_id'] ?? null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select', 'placeholder' => 'Select an industry...']) !!}
 </div>
 
 <div class="form-group">
     {!! Form::label('user_id', __('Assign user'), ['class' => 'control-label']) !!}
-    {!! Form::select('user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
+    {!! Form::select('user_id', $users, $data['user_id'] ?? null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select', 'placeholder' => 'Assign a user...']) !!}
 </div>
 
 {!! Form::submit($submitButtonText, ['class' => 'btn btn-primary']) !!}
