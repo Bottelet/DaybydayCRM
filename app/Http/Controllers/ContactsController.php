@@ -17,6 +17,7 @@ class ContactsController extends Controller
 {
     protected $users;
     protected $contacts;
+    protected $clients;
     protected $settings;
 
     public function __construct(
@@ -110,12 +111,12 @@ class ContactsController extends Controller
      *
      * @return mixed
      */
-    public function show($id)
+    public function show(Contact $contact)
     {
-        return view('contacts.show')
-            ->withContact($this->contacts->find($id))
-            ->withUsers($this->users->getAllUsersWithDepartments())
-            ->withCompanyname($this->settings->getCompanyName());
+        return view('contacts.show', [
+            'contact' => $contact,
+            'users'   => $this->users->getAllUsersWithDepartments(),
+        ]);
     }
 
     /**
