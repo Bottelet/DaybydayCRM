@@ -162,6 +162,7 @@ return [
         App\Providers\AccessServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
     ],
 
     /*
@@ -216,5 +217,6 @@ return [
         'Role'       => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'Permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'Ability'    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'Debugbar'   => Barryvdh\Debugbar\Facade::class,
     ],
 ];

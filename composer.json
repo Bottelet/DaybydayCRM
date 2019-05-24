@@ -27,7 +27,8 @@
         "zizaco/entrust": "1.7.*",
         "laravel/tinker": "^1.0",
         "laravel/dusk": "^1.0",
-        "doctrine/dbal": "^2.9"
+        "doctrine/dbal": "^2.9",
+        "barryvdh/laravel-debugbar": "~2.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
