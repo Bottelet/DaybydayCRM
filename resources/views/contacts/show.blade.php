@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('heading')
-	<h1>Contact Name</h1>
+	<h1>Contact: ({{ $contact->name }})</h1>
 @endsection
 
 @section('content')
@@ -14,11 +14,19 @@
 						{{ __('Contact Information') }}
 					</div>
 					<div class="panel-body">
-						<p>Address<br/>
-						City, State ZIP</p>
-						<p>Primary Phone<br/>
-						Secondary Phone</p>
-						<p>Email Address</p>
+						@if ($contact->html_formatted_address)
+							<p>{!! $contact->html_formatted_address !!}</p>
+						@endif
+						</p>
+						@if ($contact->primary_number)
+							<p><a href="tel:{{ $contact->primary_number }}">{{ $contact->primary_number }}</a></p>
+						@endif
+						@if ($contact->secondary_number)
+							<p><a href="tel:{{ $contact->secondary_number }}">{{ $contact->secondary_number }}</a></p>
+						@endif
+						@if ($contact->email)
+							<p><a href="mailto:{{ $contact->email }}">{{ $contact->email }}</a></p>
+						@endif
 					</div>
 				</div>
 			</div>
@@ -28,9 +36,8 @@
 						{{ __('Actions') }}
 					</div>
 					<div class="panel-body">
-						Edit Contact<br/>
-						Reassing Contact
-					</div>
+						<a href="{{ route('contacts.edit', ['contact' => $contact]) }}">Edit Contact</a
+>					</div>
 				</div>
 			</div>
 		</div>
@@ -39,7 +46,21 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">{{ __('Client Information') }}</div>
 					<div class="panel-body">
-						Client Information
+						{{ $contact->client->company_name }}
+						@if ($contact->client->html_formatted_address)
+							<p>{!! $contact->client->html_formatted_address !!}</p>
+						@endif
+						</p>
+						@if ($contact->client->primary_number)
+							<p><a href="tel:{{ $contact->client->primary_number }}">{{ $contact->client->primary_number }}</a></p>
+						@endif
+						@if ($contact->client->secondary_number)
+							<p><a href="tel:{{ $contact->client->secondary_number }}">{{ $contact->client->secondary_number }}</a></p>
+						@endif
+						@if ($contact->client->email)
+							<p><a href="mailto:{{ $contact->client->email }}">{{ $contact->client->email }}</a></p>
+						@endif
+						
 					</div>
 				</div>
 			</div>
