@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('heading')
-	<h1>Contact: ({{ $contact->name }})</h1>
+	<h1>Contact: {{ $contact->name }}</h1>
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
 			<div class="col-md-9">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						{{ __('Contact Information') }}
+						<strong>{{ __('Contact Information') }}</strong>
 					</div>
 					<div class="panel-body">
 						@if ($contact->html_formatted_address)
@@ -33,7 +33,7 @@
 			<div class="col-md-3">
 				<div class="panel panel-success">
 					<div class="panel-heading">
-						{{ __('Actions') }}
+						<strong>{{ __('Actions') }}</strong>
 					</div>
 					<div class="panel-body">
 						<a href="{{ route('contacts.edit', ['contact' => $contact]) }}">Edit Contact</a
@@ -44,7 +44,9 @@
 		<div class="row">
 			<div class="col-md-6">
 				<div class="panel panel-default">
-					<div class="panel-heading">{{ __('Client Information') }}</div>
+					<div class="panel-heading">
+						<strong>{{ __('Client Information') }}</strong>
+					</div>
 					<div class="panel-body">
 						{{ $contact->client->company_name }}
 						@if ($contact->client->html_formatted_address)
@@ -66,9 +68,20 @@
 			</div>
 			<div class="col-md-6">
 				<div class="panel panel-default">
-					<div class="panel-heading">{{ __('Salesperson Information') }}</div>
+					<div class="panel-heading">
+						<strong>{{ __('Salesperson Information') }}</strong>
+					</div>
 					<div class="panel-body">
-						Salesperson Information
+						<p>{{ $contact->client->user->name }}</p>
+						@if ($contact->client->user->email)
+							<p><a href="mailto:{{ $contact->client->user->email }}">{{ $contact->client->user->email }}</a></p>
+						@endif
+						@if ($contact->client->user->personal_number)
+							<p><a href="tel:{{ $contact->client->user->personal_number }}">{{ $contact->client->user->personal_name }}</a></p>
+						@endif
+						@if ($contact->client->user->work_number)
+							<p><a href="tel:{{ $contact->client->user->work_number }}">{{ $contact->client->user->work_number }}</a></p>
+						@endif
 					</div>
 				</div>
 			</div>
