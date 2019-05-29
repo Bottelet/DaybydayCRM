@@ -36,8 +36,17 @@
 						<strong>{{ __('Actions') }}</strong>
 					</div>
 					<div class="panel-body">
-						<a href="{{ route('contacts.edit', ['contact' => $contact]) }}">Edit Contact</a
->					</div>
+						@if (Auth::user()->can('contact-update'))
+						<a href="{{ route('contacts.edit', ['contact' => $contact]) }}" class="btn btn-success btn-xs">Edit Contact</a>
+						@endif
+						@if (Auth::user()->can('contact-delete'))
+						<form action="{{ route('clients.destroy', $contact->id) }}" method="POST">
+							<input type="hidden" name="_method" value="DELETE">
+                <input type="submit" name="submit" value="Delete Contact" class="btn btn-danger btn-xs" onClick="return confirm('Are you sure?')">
+                {{ csrf_field() }}
+            </form>
+						@endif
+					</div>
 				</div>
 			</div>
 		</div>
@@ -48,7 +57,7 @@
 						<strong>{{ __('Client Information') }}</strong>
 					</div>
 					<div class="panel-body">
-						{{ $contact->client->company_name }}
+						<p><a href="{{ route('clients.show', ['client' => $contact->client]) }}">{{ $contact->client->company_name }}</a></p>
 						@if ($contact->client->html_formatted_address)
 							<p>{!! $contact->client->html_formatted_address !!}</p>
 						@endif
@@ -72,7 +81,7 @@
 						<strong>{{ __('Salesperson Information') }}</strong>
 					</div>
 					<div class="panel-body">
-						<p>{{ $contact->client->user->name }}</p>
+						<p><a href="{{ route('users.show', ['user' => $contact->client->user]) }}">{{ $contact->client->user->name }}</a></p>
 						@if ($contact->client->user->email)
 							<p><a href="mailto:{{ $contact->client->user->email }}">{{ $contact->client->user->email }}</a></p>
 						@endif
