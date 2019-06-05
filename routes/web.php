@@ -48,10 +48,7 @@ Route::group(['middleware' => ['auth']], function () {
     * Roles
     */
     Route::resource('roles', 'RolesController');
-<<<<<<< HEAD
 
-=======
->>>>>>> develop
     /*
      * Clients
      */
@@ -65,7 +62,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('documents', 'DocumentsController');
 
     /*
-<<<<<<< HEAD
      * Contacts
      */
     Route::group(['prefix' => 'contacts'], function () {
@@ -74,8 +70,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('contacts', 'ContactsController');
 
     /*
-=======
->>>>>>> develop
      * Tasks
      */
     Route::group(['prefix' => 'tasks'], function () {
