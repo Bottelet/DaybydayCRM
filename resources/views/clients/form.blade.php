@@ -34,7 +34,7 @@
                     {!! Form::text('billing_city', $data['billing_city'] ?? null, ['class' => 'form-control']) !!}
                 </div>
                 <div class="form-group col-md-4 col-sm-6">
-                    {!! Form::label('billing_state', __('Billing State'), ['class' => 'control-label']) !!}
+                    {!! Form::label('billing_state', __('Billing State/Region'), ['class' => 'control-label']) !!}
                     {!! Form::text('billing_state', $data['billing_state'] ?? null, ['class' => 'form-control']) !!}
                 </div>
                 <div class="form-group col-md-4 col-sm-6">
@@ -70,7 +70,7 @@
                     {!! Form::text('shipping_city', $data['shipping_city'] ?? null, ['class' => 'form-control']) !!}
                 </div>
                 <div class="form-group col-md-4 col-sm-6">
-                    {!! Form::label('shipping_state', __('Shipping State'), ['class' => 'control-label']) !!}
+                    {!! Form::label('shipping_state', __('Shipping State/Region'), ['class' => 'control-label']) !!}
                     {!! Form::text('shipping_state', $data['shipping_state'] ?? null, ['class' => 'form-control']) !!}
                 </div>
                 <div class="form-group col-md-4 col-sm-6">

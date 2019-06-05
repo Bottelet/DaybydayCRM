@@ -126,7 +126,6 @@ class ClientsController extends Controller
     {
         return view('clients.show')
             ->withClient($this->clients->find($id))
-            ->withCompanyname($this->settings->getCompanyName())
             ->withInvoices($this->clients->getInvoices($id))
             ->withUsers($this->users->getAllUsersWithDepartments());
     }

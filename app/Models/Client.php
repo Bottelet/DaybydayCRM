@@ -129,6 +129,11 @@ class Client extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function industry()
+    {
+        return $this->belongsTo(Industry::class, 'industry_id');
+    }
+
     public function getAssignedUserAttribute()
     {
         return User::findOrFail($this->user_id);
