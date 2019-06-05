@@ -9,17 +9,30 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-Route::auth();
-Route::get('/logout', 'Auth\LoginController@logout');
+
+// Login/Logout Routes
+Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('login', 'Auth\LoginController@login');
+Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+
+// Registration Routes...
+// Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+// Route::post('register', 'Auth\RegisterController@register');
+
+// Password Reset Routes...
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
 Route::group(['middleware' => ['auth']], function () {
-    
-    /**
+    /*
      * Main
      */
-        Route::get('/', 'PagesController@dashboard');
-        Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
-        
-    /**
+    Route::get('/', 'PagesController@dashboard');
+    Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
+
+    /*
      * Users
      */
     Route::group(['prefix' => 'users'], function () {
@@ -29,13 +42,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
         Route::get('/users', 'UsersController@users')->name('users.users');
     });
-        Route::resource('users', 'UsersController');
+    Route::resource('users', 'UsersController');
 
-	 /**
-     * Roles
-     */
-        Route::resource('roles', 'RolesController');
-    /**
+    /*
+    * Roles
+    */
+    Route::resource('roles', 'RolesController');
+    /*
      * Clients
      */
     Route::group(['prefix' => 'clients'], function () {
@@ -44,11 +57,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/upload/{id}', 'DocumentsController@upload');
         Route::patch('/updateassign/{id}', 'ClientsController@updateAssign');
     });
-        Route::resource('clients', 'ClientsController');
-	    Route::resource('documents', 'DocumentsController');
-	
-      
-    /**
+    Route::resource('clients', 'ClientsController');
+    Route::resource('documents', 'DocumentsController');
+
+    /*
      * Tasks
      */
     Route::group(['prefix' => 'tasks'], function () {
@@ -57,9 +69,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
         Route::post('/updatetime/{id}', 'TasksController@updateTime');
     });
-        Route::resource('tasks', 'TasksController');
+    Route::resource('tasks', 'TasksController');
 
-    /**
+    /*
      * Leads
      */
     Route::group(['prefix' => 'leads'], function () {
@@ -68,9 +80,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
         Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
     });
-        Route::resource('leads', 'LeadsController');
-        Route::post('/comments/{type}/{id}', 'CommentController@store');
-    /**
+    Route::resource('leads', 'LeadsController');
+    Route::post('/comments/{type}/{id}', 'CommentController@store');
+    /*
      * Settings
      */
     Route::group(['prefix' => 'settings'], function () {
@@ -79,20 +91,20 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/overall', 'SettingsController@updateOverall');
     });
 
-    /**
+    /*
      * Departments
      */
-        Route::resource('departments', 'DepartmentsController'); 
+    Route::resource('departments', 'DepartmentsController');
 
-    /**
+    /*
      * Integrations
      */
     Route::group(['prefix' => 'integrations'], function () {
         Route::get('Integration/slack', 'IntegrationsController@slack');
     });
-        Route::resource('integrations', 'IntegrationsController');
+    Route::resource('integrations', 'IntegrationsController');
 
-    /**
+    /*
      * Notifications
      */
     Route::group(['prefix' => 'notifications'], function () {
@@ -101,7 +113,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{id}', 'NotificationsController@markRead');
     });
 
-    /**
+    /*
      * Invoices
      */
     Route::group(['prefix' => 'invoices'], function () {
@@ -110,5 +122,5 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/sentinvoice/{id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
         Route::post('/newitem/{id}', 'InvoicesController@newItem')->name('invoice.new.item');
     });
-        Route::resource('invoices', 'InvoicesController');
+    Route::resource('invoices', 'InvoicesController');
 });
