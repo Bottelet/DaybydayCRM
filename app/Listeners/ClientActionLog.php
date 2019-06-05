@@ -27,7 +27,7 @@ class ClientActionLog
         switch ($event->getAction()) {
             case 'created':
                 $text = __('Client :company was assigned to :assignee', [
-                    'company'  => $client->company_name,
+                    'company'  => $client->name,
                     'assignee' => $client->AssignedUser->name,
                 ]);
                 break;

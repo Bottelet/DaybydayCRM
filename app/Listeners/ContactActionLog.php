@@ -28,7 +28,7 @@ class ContactActionLog
             case 'created':
                 $text = __('Contact :company was assigned to :assignee', [
                     'name'     => $contact->name,
-                    'assignee' => $contact->AssignedClient->company_name,
+                    'assignee' => $contact->AssignedClient->name,
                 ]);
                 break;
             default:

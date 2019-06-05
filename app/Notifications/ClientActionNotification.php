@@ -67,12 +67,12 @@ class ClientActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __('Client :company was assigned to you', [
-                    'company' => $this->client->company_name,
+                    'company' => $this->client->name,
                 ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned :company to you', [
-                    'company'  => $this->client->company_name,
+                    'company'  => $this->client->name,
                     'username' => Auth()->user()->name,
                 ]);
                 break;

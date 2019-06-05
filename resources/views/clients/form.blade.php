@@ -99,8 +99,8 @@
 
     <div class="row">
         <div class="form-group col-sm-12">
-            {!! Form::label('email', __('Primary Email'), ['class' => 'control-label']) !!}
-            {!! Form::email('email', $data['email'] ?? null, ['class' => 'form-control']) !!}
+            {!! Form::label('primary_email', __('Primary Email'), ['class' => 'control-label']) !!}
+            {!! Form::email('primary_email', $data['primary_email'] ?? null, ['class' => 'form-control']) !!}
         </div>
     </div>
 

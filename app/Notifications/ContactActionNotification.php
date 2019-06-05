@@ -67,12 +67,12 @@ class ContactActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __('Contact :company was assigned to you', [
-                    'company' => $this->contact->company_name,
+                    'company' => $this->contact->name,
                 ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned :company to you', [
-                    'company'  => $this->contact->company_name,
+                    'company'  => $this->contact->name,
                     'username' => Auth()->user()->name,
                 ]);
                 break;

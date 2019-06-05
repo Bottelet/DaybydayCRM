@@ -24,18 +24,26 @@ class UpdateClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_name'         => 'required',
-            'vat'                  => 'max:12',
-            'primary_contact_name' => '',
-            'email'                => '',
-            'address'              => '',
-            'zipcode'              => 'max:6',
-            'city'                 => '',
-            'primary_number'       => 'max:10',
-            'secondary_number'     => 'max:10',
-            'industry'             => '',
-            'company_type'         => '',
-            'user_id'              => 'required',
+            'name'              => 'required',
+            'vat'               => 'max:12',
+            'primary_email'     => 'email',
+            'billing_address1'  => '',
+            'billing_address2'  => '',
+            'billing_city'      => '',
+            'billing_state'     => '',
+            'billing_zipcode'   => 'max:6',
+            'billing_country'   => '',
+            'shipping_address1' => '',
+            'shipping_address2' => '',
+            'shipping_city'     => '',
+            'shipping_state'    => '',
+            'shipping_zipcode'  => 'max:6',
+            'shipping_country'  => '',
+            'primary_number'    => 'max:10',
+            'secondary_number'  => 'max:10',
+            'industry_id'       => 'required',
+            'company_type'      => '',
+            'user_id'           => 'required',
         ];
     }
 }

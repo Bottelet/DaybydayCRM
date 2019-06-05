@@ -9,9 +9,9 @@
         <thead>
         <tr>
             <th>{{ __('Company') }}</th>
-            <th>{{ __('Primary Contact') }}</th>
-            <th>{{ __('Email') }}</th>
-            <th>{{ __('Number') }}</th>
+            <th>{{ __('Primary Number') }}</th>
+            <th>{{ __('Primary Email') }}</th>
+            <th>{{ __('Salesperson') }}</th>
             <th>{{ __('Actions') }}</th>
         </tr>
         </thead>
@@ -29,10 +29,10 @@
             ajax: '{!! route('clients.data') !!}',
             columns: [
 
-                {data: 'namelink', name: 'company_name'},
-                {data: 'primary_contact_name', name: 'primary_contact_name'},
-                {data: 'emaillink', name: 'email'},
+                {data: 'namelink', name: 'name'},
                 {data: 'primary_number', name: 'primary_number'},
+                {data: 'emaillink', name: 'primary_email'},
+                {data: 'salesperson', name: 'salesperson'},
                 {data: 'actions', name: 'actions', orderable: false, searchable: false},
 
             ]

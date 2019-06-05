@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('heading')
-    Edit Client ({{ $client->company_name }})
+    Edit Client ({{ $client->name }})
 @stop
 
 @section('content')

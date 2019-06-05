@@ -28,7 +28,7 @@ class ClientRepository implements ClientRepositoryContract
      */
     public function listAllClients()
     {
-        return Client::pluck('company_name', 'id');
+        return Client::pluck('name', 'id');
     }
 
     /**
@@ -116,7 +116,7 @@ class ClientRepository implements ClientRepositoryContract
         $vat = $requestData->input('vat');
 
         $country      = $requestData->input('country');
-        $company_name = $requestData->input('company_name');
+        $name         = $requestData->input('name');
 
         // Strip all other characters than numbers
         $vat = preg_replace('/[^0-9]/', '', $vat);

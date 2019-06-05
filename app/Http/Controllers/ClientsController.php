@@ -45,14 +45,17 @@ class ClientsController extends Controller
      */
     public function anyData()
     {
-        $clients = Client::select(['id', 'primary_contact_name', 'company_name', 'email', 'primary_number']);
+        $clients = Client::with('user')->select('clients.*');
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/'.$clients->id.'" ">'.$clients->company_name.'</a>';
+                return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
-                return '<a href="mailto:'.$clients->email.'" ">'.$clients->email.'</a>';
+                return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
+            })
+            ->addColumn('salesperson', function ($clients) {
+                return $clients->user->name;
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line

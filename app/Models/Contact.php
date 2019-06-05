@@ -10,29 +10,41 @@ class Contact extends Model
         'name',
         'job_title',
         'email',
-        'address',
-        'zipcode',
+        'address1',
+        'address2',
         'city',
+        'state',
+        'zipcode',
+        'country',
         'primary_number',
         'secondary_number',
         'client_id',
     ];
 
-    public function getHtmlFormattedAddressAttribute()
+    public function getFormattedAddressAttribute()
     {
         $address = '';
 
-        if ($this->address || $this->city || $this->zipcode) {
-            if ($this->address) {
-                $address .= htmlspecialchars($this->address).'<br/>';
+        if ($this->address1 || $this->city || $this->zipcode) {
+            if ($this->address1) {
+                $address .= htmlspecialchars($this->address1).'<br/>';
             }
-            if ($this->city || $this->zipcode) {
+            if ($this->address2) {
+                $address .= htmlspecialchars($this->address2).'<br/>';
+            }
+            if ($this->city || $this->state || $this->zipcode) {
                 if ($this->city) {
                     $address .= $this->city.'&nbsp;';
+                }
+                if ($this->state) {
+                    $address .= $this->state.'&nbsp;';
                 }
                 if ($this->zipcode) {
                     $address .= $this->zipcode;
                 }
+            }
+            if ($this->country) {
+                $address .= '<br/>'.$this->country;
             }
 
             return $address;

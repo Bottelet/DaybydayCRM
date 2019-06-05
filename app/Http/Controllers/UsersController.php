@@ -151,14 +151,14 @@ class UsersController extends Controller
      */
     public function clientData($id)
     {
-        $client = Client::select(['id', 'primary_contact_name', 'company_name', 'primary_number', 'email'])->where('user_id', $id);
+        $client = Client::select(['id', 'name', 'primary_number', 'primary_email'])->where('user_id', $id);
 
         return Datatables::of($client)
             ->addColumn('clientlink', function ($client) {
-                return '<a href="'.route('clients.show', $client->id).'">'.$client->company_name.'</a>';
+                return '<a href="'.route('clients.show', $client->id).'">'.$client->name.'</a>';
             })
             ->addColumn('emaillink', function ($client) {
-                return '<a href="mailto:'.$client->email.'">'.$client->email.'</a>';
+                return '<a href="mailto:'.$client->primary_email.'">'.$client->primary_email.'</a>';
             })
             ->editColumn('created_at', function ($client) {
                 return $client->created_at ? with(new Carbon($client->created_at))

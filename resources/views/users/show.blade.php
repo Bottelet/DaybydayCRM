@@ -50,10 +50,9 @@
                 <h3>{{ __('Clients assigned') }}</h3>
                 <thead>
                 <tr>
-                    <th>{{ __('Name') }}</th>
                     <th>{{ __('Company') }}</th>
-                    <th>{{ __('Email') }}</th>
                     <th>{{ __('Primary number') }}</th>
+                    <th>{{ __('Email') }}</th>
                 </tr>
                 </thead>
             </table>
@@ -112,10 +111,9 @@
                     ajax: '{!! route('users.clientdata', ['id' => $user->id]) !!}',
                     columns: [
 
-                        {data: 'clientlink', name: 'company_name'},
-                        {data: 'primary_contact_name', name: 'primary_contact_name'},
-                        {data: 'emaillink', name: 'email'},
+                        {data: 'clientlink', name: 'name'},
                         {data: 'primary_number', name: 'primary_number'},
+                        {data: 'emaillink', name: 'primary_email'},
 
                     ],
                 });

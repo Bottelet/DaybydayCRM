@@ -24,15 +24,18 @@ class StoreContactRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'             => 'required',
-            'job_title'        => '',
-            'email'            => '',
-            'address'          => '',
-            'zipcode'          => 'max:6',
-            'city'             => '',
-            'primary_number'   => 'max:10',
-            'secondary_number' => 'max:10',
-            'client_id'        => 'required',
+            'name'                => 'required',
+            'job_title'           => '',
+            'email'               => 'email',
+            'address1'            => '',
+            'address2'            => '',
+            'city'                => '',
+            'state'               => '',
+            'zipcode'             => 'max:6',
+            'country'             => '',
+            'primary_number'      => 'max:10',
+            'secondary_number'    => 'max:10',
+            'client_id'           => 'required',
         ];
     }
 }
