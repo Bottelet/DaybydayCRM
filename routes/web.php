@@ -9,8 +9,22 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-Route::auth();
-Route::get('/logout', 'Auth\LoginController@logout');
+
+// Login/Logout Routes
+Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('login', 'Auth\LoginController@login');
+Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+
+// Registration Routes...
+// Route::get('register', 'Auth\RegisterController@showRegistrationForm')->name('register');
+// Route::post('register', 'Auth\RegisterController@register');
+
+// Password Reset Routes...
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
 Route::group(['middleware' => ['auth']], function () {
     /*
      * Main
@@ -34,7 +48,10 @@ Route::group(['middleware' => ['auth']], function () {
     * Roles
     */
     Route::resource('roles', 'RolesController');
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
     /*
      * Clients
      */
@@ -48,6 +65,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('documents', 'DocumentsController');
 
     /*
+<<<<<<< HEAD
      * Contacts
      */
     Route::group(['prefix' => 'contacts'], function () {
@@ -56,6 +74,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('contacts', 'ContactsController');
 
     /*
+=======
+>>>>>>> develop
      * Tasks
      */
     Route::group(['prefix' => 'tasks'], function () {
