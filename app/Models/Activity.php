@@ -11,7 +11,7 @@ class Activity extends model
      *
      * @var string
      */
-    protected $table = 'activity_log';
+    protected $table    = 'activity_log';
     protected $fillable = [
         'user_id',
         'text',
@@ -36,7 +36,8 @@ class Activity extends model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function source() {
+    public function source()
+    {
         return $this->morphTo();
     }
 }

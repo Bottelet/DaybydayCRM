@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Repositories\Role;
 
 use App\Models\Role;
 use App\Models\Permissions;
 
 /**
- * Class RoleRepository
- * @package App\Repositories\Role
+ * Class RoleRepository.
  */
 class RoleRepository implements RoleRepositoryContract
 {
@@ -41,11 +41,11 @@ class RoleRepository implements RoleRepositoryContract
     {
         $allowed_permissions = [];
 
-        if ($requestData->input('permissions') != null) {
+        if (null != $requestData->input('permissions')) {
             foreach ($requestData->input('permissions')
                      as $permissionId => $permission) {
-                if ($permission === '1') {
-                    $allowed_permissions[] = (int)$permissionId;
+                if ('1' === $permission) {
+                    $allowed_permissions[] = (int) $permissionId;
                 }
             }
         } else {
@@ -63,12 +63,12 @@ class RoleRepository implements RoleRepositoryContract
      */
     public function create($requestData)
     {
-        $roleName = $requestData->name;
+        $roleName        = $requestData->name;
         $roleDescription = $requestData->description;
         Role::create([
-            'name' => strtolower($roleName),
+            'name'         => strtolower($roleName),
             'display_name' => ucfirst($roleName),
-            'description' => $roleDescription
+            'description'  => $roleDescription,
         ]);
     }
 
@@ -78,7 +78,7 @@ class RoleRepository implements RoleRepositoryContract
     public function destroy($id)
     {
         $role = Role::findorFail($id);
-        if ($role->id !== 1) {
+        if (1 !== $role->id) {
             $role->delete();
         } else {
             Session()->flash('flash_message_warning', 'Can not delete Administrator role');

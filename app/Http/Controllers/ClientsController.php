@@ -1,21 +1,19 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Config;
-use Dinero;
-use Datatables;
-use App\Models\Client;
-use App\Http\Requests;
-use Illuminate\Http\Request;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
-use App\Repositories\User\UserRepositoryContract;
+use App\Models\Client;
 use App\Repositories\Client\ClientRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use Datatables;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
-
     protected $users;
     protected $clients;
     protected $settings;
@@ -24,10 +22,9 @@ class ClientsController extends Controller
         UserRepositoryContract $users,
         ClientRepositoryContract $clients,
         SettingRepositoryContract $settings
-    )
-    {
-        $this->users = $users;
-        $this->clients = $clients;
+    ) {
+        $this->users    = $users;
+        $this->clients  = $clients;
         $this->settings = $settings;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
@@ -42,26 +39,45 @@ class ClientsController extends Controller
     }
 
     /**
-     * Make json respnse for datatables
+     * Make json respnse for datatables.
+     *
      * @return mixed
      */
     public function anyData()
     {
-        $clients = Client::select(['id', 'name', 'company_name', 'email', 'primary_number']);
-        return Datatables::of($clients)
-            ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/' . $clients->id . '" ">' . $clients->name . '</a>';
-            })
-            ->add_column('edit', '
-                <a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-success" >Edit</a>')
-            ->add_column('delete', '
-                <form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
-            <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="Delete" class="btn btn-danger" onClick="return confirm(\'Are you sure?\')"">
+        $clients = Client::with('user')->select('clients.*');
 
-            {{csrf_field()}}
-            </form>')
-            ->make(true);
+        $dt = Datatables::of($clients)
+            ->addColumn('namelink', function ($clients) {
+                return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
+            })
+            ->addColumn('emaillink', function ($clients) {
+                return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
+            })
+            ->addColumn('salesperson', function ($clients) {
+                return $clients->user->name;
+            });
+
+        // this looks wierd, but in order to keep the two buttons on the same line
+        // you have to put them both within the form tags if the Delete button is
+        // enabled
+        $actions = '';
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+            ';
+        }
+        if (Auth::user()->can('client-update')) {
+            $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
+        }
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" name="submit" value="Delete" class="btn btn-danger btn-xs" onClick="return confirm(\'Are you sure?\')"">
+                {{csrf_field()}}
+            </form>';
+        }
+
+        return $dt->addColumn('actions', $actions)->make(true);
     }
 
     /**
@@ -78,16 +94,19 @@ class ClientsController extends Controller
 
     /**
      * @param StoreClientRequest $request
+     *
      * @return mixed
      */
     public function store(StoreClientRequest $request)
     {
         $this->clients->create($request->all());
+
         return redirect()->route('clients.index');
     }
 
     /**
      * @param Request $vatRequest
+     *
      * @return mixed
      */
     public function cvrapiStart(Request $vatRequest)
@@ -99,14 +118,14 @@ class ClientsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return mixed
      */
     public function show($id)
     {
         return view('clients.show')
             ->withClient($this->clients->find($id))
-            ->withCompanyname($this->settings->getCompanyName())
             ->withInvoices($this->clients->getInvoices($id))
             ->withUsers($this->users->getAllUsersWithDepartments());
     }
@@ -114,7 +133,8 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return mixed
      */
     public function edit($id)
@@ -128,17 +148,20 @@ class ClientsController extends Controller
     /**
      * @param $id
      * @param UpdateClientRequest $request
+     *
      * @return mixed
      */
     public function update($id, UpdateClientRequest $request)
     {
         $this->clients->update($id, $request);
         Session()->flash('flash_message', 'Client successfully updated');
+
         return redirect()->route('clients.index');
     }
 
     /**
      * @param $id
+     *
      * @return mixed
      */
     public function destroy($id)
@@ -151,13 +174,14 @@ class ClientsController extends Controller
     /**
      * @param $id
      * @param Request $request
+     *
      * @return mixed
      */
     public function updateAssign($id, Request $request)
     {
         $this->clients->updateAssign($id, $request);
         Session()->flash('flash_message', 'New user is assigned');
+
         return redirect()->back();
     }
-
 }

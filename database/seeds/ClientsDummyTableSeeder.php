@@ -12,7 +12,7 @@ class ClientsDummyTableSeeder extends Seeder
      */
     public function run()
     {
-         factory(App\Models\Client::class, 50)->create()->each(function ($c) {
-         });
+        factory(App\Models\Client::class, 50)->create()->each(function ($c) {
+        });
     }
 }

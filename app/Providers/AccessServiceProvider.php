@@ -8,18 +8,13 @@ class AccessServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
-        //
     }
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -46,6 +41,10 @@ class AccessServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\Client\ClientRepositoryContract::class,
             \App\Repositories\Client\ClientRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Contact\ContactRepositoryContract::class,
+            \App\Repositories\Contact\ContactRepository::class
         );
         $this->app->bind(
             \App\Repositories\Lead\LeadRepositoryContract::class,

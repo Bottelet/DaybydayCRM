@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ class InvoiceLine extends Model
         'title',
         'comment',
         'price',
-        'invoice_id'
+        'invoice_id',
     ];
 
     public function tasks()
@@ -29,5 +30,4 @@ class InvoiceLine extends Model
     {
         return $this->invoice->task;
     }
-
 }

@@ -26,8 +26,8 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\LeadActionLog',
         ],
         'App\Events\NewComment' => [
-            'App\Listeners\NotiftyMentionedUsers'
-        ]
+            'App\Listeners\NotiftyMentionedUsers',
+        ],
     ];
 
     /**
@@ -38,7 +38,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

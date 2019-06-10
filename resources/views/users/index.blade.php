@@ -4,7 +4,7 @@
 @stop
 
 @section('content')
-    <table class="table table-hover" id="users-table">
+    <table class="table table-striped" id="users-table">
         <thead>
         <tr>
             <th>{{ __('Name') }}</th>

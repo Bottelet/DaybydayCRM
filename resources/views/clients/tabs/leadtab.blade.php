@@ -1,6 +1,6 @@
-<div id="lead" class="tab-pane fade">
+<div id="lead" class="tab-pane fade" role="tabpanel">
     <div class="boxspace">
-        <table class="table table-hover">
+        <table class="table table-striped">
             <h4>{{ __('All Leads') }}</h4>
             <thead>
             <thead>
@@ -11,13 +11,13 @@
                 <th>{{ __('Deadline') }}</th>
 
                 <th><a href="{{ route('leads.create', ['client' => $client->id])}}">
-                        <button class="btn btn-success">{{ __('New Lead') }}</button>
+                        <button class="btn btn-xs btn-success">{{ __('New Lead') }}</button>
                     </a></th>
 
             </tr>
             </thead>
             <tbody>
-            <?php  $tr = ""; ?>
+            <?php  $tr = ''; ?>
           
             @foreach($client->leads as $lead)
                 @if($lead->status == 1)
@@ -25,7 +25,7 @@
                 @elseif($lead->status == 2)
                     <?php $tr = '#ff6666'; ?>
                 @endif
-                <tr style="background-color:<?php echo $tr;?>">
+                <tr style="background-color:<?php echo $tr; ?>">
 
                     <td><a href="{{ route('leads.show', $lead->id) }}">{{$lead->title}} </a></td>
                     <td>

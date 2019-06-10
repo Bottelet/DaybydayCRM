@@ -13,5 +13,5 @@ bower_components
 
 # PHP CS Fixer cache
 .php_cs.cache
-
 storage/debugbar/
+public/build/

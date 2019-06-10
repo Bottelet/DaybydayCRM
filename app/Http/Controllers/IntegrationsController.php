@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use App\Models\Integration;
 use Illuminate\Http\Request;
 
@@ -20,13 +20,15 @@ class IntegrationsController extends Controller
     public function index()
     {
         $check = Integration::all();
+
         return view('integrations.index')->withCheck($check);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -35,7 +37,7 @@ class IntegrationsController extends Controller
 
         $existing = Integration::where([
             // 'user_id' => $request->post['user_id'] ? $userId : null,
-            'api_type' => $request->api_type
+            'api_type' => $request->api_type,
         ])->get();
         $existing = isset($existing[0]) ? $existing[0] : null;
 

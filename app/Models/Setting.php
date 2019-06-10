@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ class Setting extends Model
         'task_complete_allowed',
         'task_assign_allowed',
         'lead_complete_allowed',
-        'lead_assign_allowed'
+        'lead_assign_allowed',
     ];
 
     public function user()

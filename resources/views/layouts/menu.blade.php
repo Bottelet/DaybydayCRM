@@ -20,6 +20,18 @@
                 @endif
             </div>
 
+            <a href="#contacts" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
+                        class="glyphicon sidebar-icon glyphicon-tag"></i><span id="menu-txt">{{ __('Contacts') }}</span>
+            <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>
+            <div class="collapse" id="contacts">
+
+                <a href="{{ route('contacts.index')}}" class="list-group-item childlist">{{ __('All Contacts') }}</a>
+                @if(Entrust::can('contact-create'))
+                    <a href="{{ route('contacts.create')}}"
+                       class="list-group-item childlist">{{ __('New Contact') }}</a>
+                @endif
+            </div>
+
             <a href="#tasks" class="list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-tasks"></i><span id="menu-txt">{{ __('Tasks') }}</span>
             <i class="ion-chevron-up  arrow-up sidebar-arrow"></i></a>

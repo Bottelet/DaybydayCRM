@@ -2,8 +2,9 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\View\View;
+use App\Models\Client;
 use App\Repositories\Client\ClientRepositoryContract;
+use Illuminate\View\View;
 
 class ClientHeaderComposer
 {
@@ -27,17 +28,12 @@ class ClientHeaderComposer
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
-     * @return void
+     * @param View $view
      */
     public function compose(View $view)
     {
-        $clients = $this->clients->find($view->getData()['client']['id']);
-        /**
-         * [User assigned the client]
-         * @var contact
-         */
-        $contact = $clients->user;
+        $client  = Client::findOrFail($view->getData()['client']['id']);
+        $contact = $client->user;
 
         $view->with('contact', $contact);
     }

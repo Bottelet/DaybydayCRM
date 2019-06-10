@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth']], function () {
     * Roles
     */
     Route::resource('roles', 'RolesController');
+
     /*
      * Clients
      */
@@ -59,6 +60,14 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::resource('clients', 'ClientsController');
     Route::resource('documents', 'DocumentsController');
+
+    /*
+     * Contacts
+     */
+    Route::group(['prefix' => 'contacts'], function () {
+        Route::get('/data', 'ContactsController@anyData')->name('contacts.data');
+    });
+    Route::resource('contacts', 'ContactsController');
 
     /*
      * Tasks

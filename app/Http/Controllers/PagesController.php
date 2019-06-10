@@ -1,9 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use DB;
-use Carbon;
-use App\Http\Requests;
 use App\Repositories\Task\TaskRepositoryContract;
 use App\Repositories\Lead\LeadRepositoryContract;
 use App\Repositories\User\UserRepositoryContract;
@@ -12,7 +10,6 @@ use App\Repositories\Setting\SettingRepositoryContract;
 
 class PagesController extends Controller
 {
-
     protected $users;
     protected $clients;
     protected $settings;
@@ -26,86 +23,75 @@ class PagesController extends Controller
         TaskRepositoryContract $tasks,
         LeadRepositoryContract $leads
     ) {
-        $this->users = $users;
-        $this->clients = $clients;
+        $this->users    = $users;
+        $this->clients  = $clients;
         $this->settings = $settings;
-        $this->tasks = $tasks;
-        $this->leads = $leads;
+        $this->tasks    = $tasks;
+        $this->leads    = $leads;
     }
 
     /**
-     * Dashobard view
+     * Dashobard view.
+     *
      * @return mixed
      */
     public function dashboard()
     {
-
-      /**
-         * Other Statistics
-         *
+        /**
+         * Other Statistics.
          */
-        $companyname = $this->settings->getCompanyName();
-        $users = $this->users->getAllUsers();
-        $totalClients = $this->clients->getAllClientsCount();
+        $companyname    = $this->settings->getCompanyName();
+        $users          = $this->users->getAllUsers();
+        $totalClients   = $this->clients->getAllClientsCount();
         $totalTimeSpent = $this->tasks->totalTimeSpent();
 
-     /**
-      * Statistics for all-time tasks.
-      *
-      */
-        $alltasks = $this->tasks->tasks();
-        $allCompletedTasks = $this->tasks->allCompletedTasks();
+        /**
+         * Statistics for all-time tasks.
+         */
+        $alltasks             = $this->tasks->tasks();
+        $allCompletedTasks    = $this->tasks->allCompletedTasks();
         $totalPercentageTasks = $this->tasks->percantageCompleted();
 
-     /**
-      * Statistics for today tasks.
-      *
-      */
-        $completedTasksToday =  $this->tasks->completedTasksToday();
-        $createdTasksToday = $this->tasks->createdTasksToday();
+        /**
+         * Statistics for today tasks.
+         */
+        $completedTasksToday = $this->tasks->completedTasksToday();
+        $createdTasksToday   = $this->tasks->createdTasksToday();
 
-     /**
-      * Statistics for tasks this month.
-      *
-      */
-         $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
-    
+        /**
+         * Statistics for tasks this month.
+         */
+        $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
 
-     /**
-      * Statistics for tasks each month(For Charts).
-      *
-      */
-        $createdTasksMonthly = $this->tasks->createdTasksMothly();
+        /**
+         * Statistics for tasks each month(For Charts).
+         */
+        $createdTasksMonthly   = $this->tasks->createdTasksMothly();
         $completedTasksMonthly = $this->tasks->completedTasksMothly();
 
-     /**
-      * Statistics for all-time Leads.
-      *
-      */
-     
-        $allleads = $this->leads->leads();
-        $allCompletedLeads = $this->leads->allCompletedLeads();
+        /**
+         * Statistics for all-time Leads.
+         */
+        $allleads             = $this->leads->leads();
+        $allCompletedLeads    = $this->leads->allCompletedLeads();
         $totalPercentageLeads = $this->leads->percantageCompleted();
-     /**
-      * Statistics for today leads.
-      *
-      */
+        /**
+         * Statistics for today leads.
+         */
         $completedLeadsToday = $this->leads->completedLeadsToday();
-        $createdLeadsToday = $this->leads->createdLeadsToday();
+        $createdLeadsToday   = $this->leads->createdLeadsToday();
 
-     /**
-      * Statistics for leads this month.
-      *
-      */
+        /**
+         * Statistics for leads this month.
+         */
         $leadCompletedThisMonth = $this->leads->completedLeadsThisMonth();
 
-     /**
-      * Statistics for leads each month(For Charts).
-      *
-      */
+        /**
+         * Statistics for leads each month(For Charts).
+         */
         $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
-        $createdLeadsMonthly = $this->leads->completedLeadsMonthly();
-       
+        $createdLeadsMonthly   = $this->leads->completedLeadsMonthly();
+
         return view('pages.dashboard', compact(
             'completedTasksToday',
             'completedLeadsToday',

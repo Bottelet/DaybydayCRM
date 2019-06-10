@@ -88,6 +88,19 @@ $('body').click(function(e) {
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+        @if(Session::has('flash_message_warning'))
+             <message message="{{ Session::get('flash_message_warning') }}" type="warning"></message>
+        @endif
+        @if(Session::has('flash_message'))
+            <message message="{{ Session::get('flash_message') }}" type="success"></message>
+        @endif
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
@@ -96,20 +109,6 @@ $('body').click(function(e) {
                 </div>
             </div>
         </div>
-        @if($errors->any())
-            <div class="alert alert-danger">
-                @foreach($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
-            </div>
-
-        @endif
-        @if(Session::has('flash_message_warning'))
-             <message message="{{ Session::get('flash_message_warning') }}" type="warning"></message>
-        @endif
-        @if(Session::has('flash_message'))
-            <message message="{{ Session::get('flash_message') }}" type="success"></message>
-        @endif
     </div>
     <!-- /#page-content-wrapper -->
 </div>

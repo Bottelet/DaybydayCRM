@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Invoice;
 
 interface InvoiceRepositoryContract
@@ -12,7 +13,7 @@ interface InvoiceRepositoryContract
     public function GetAllSentInvoices();
 
     public function GetAllNotSentInvoices();
- 
+
     public function GetAllInvoicesPaymentNotReceived();
 
     public function updatePayment($id, $requestData);

@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Dinero;
 
 class Integration extends Model
 {
@@ -10,14 +10,16 @@ class Integration extends Model
 
     /**
      * @param $type
+     *
      * @return mixed
+     *
      * @throws \Exception
      */
     public static function getApi($type)
     {
         $integration = Integration::where([
             //'user_id' => $userId,
-            'api_type' => $type
+            'api_type' => $type,
         ])->get();
 
         if ($integration) {
@@ -25,8 +27,8 @@ class Integration extends Model
 
             $className = $apiConfig->name;
 
-            call_user_func_array(['App\\' . $className, 'initialize'], [$apiConfig]);
-            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
+            call_user_func_array(['App\\'.$className, 'initialize'], [$apiConfig]);
+            $apiInstance = call_user_func_array(['App\\'.$className, 'getInstance'], []);
 
             return $apiInstance;
         }

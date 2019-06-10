@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,6 @@ class Lead extends Model
         'user_created_id',
         'client_id',
         'contact_date',
-
     ];
     protected $dates = ['contact_date'];
 
@@ -34,7 +34,7 @@ class Lead extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
-    
+
     public function comments()
     {
         return $this->morphMany(Comment::class, 'source');
@@ -53,12 +53,14 @@ class Lead extends Model
     /**
      * Add a reply to the thread.
      *
-     * @param  array $reply
+     * @param array $reply
+     *
      * @return Model
      */
     public function addComment($reply)
     {
         $reply = $this->comments()->create($reply);
+
         return $reply;
     }
 }

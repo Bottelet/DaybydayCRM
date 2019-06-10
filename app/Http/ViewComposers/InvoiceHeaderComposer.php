@@ -27,15 +27,14 @@ class InvoiceHeaderComposer
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
-     * @return void
+     * @param View $view
      */
     public function compose(View $view)
     {
         $invoices = $this->invoices->find($view->getData()['invoice']['id']);
 
         $client = $invoices->client;
-        
+
         $view->with('client', $client);
     }
 }

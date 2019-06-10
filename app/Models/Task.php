@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -6,7 +7,6 @@ use Carbon;
 
 class Task extends Model
 {
-
     protected $fillable = [
         'title',
         'description',
@@ -14,7 +14,7 @@ class Task extends Model
         'user_assigned_id',
         'user_created_id',
         'client_id',
-        'deadline'
+        'deadline',
     ];
     protected $dates = ['deadline'];
 
@@ -44,7 +44,7 @@ class Task extends Model
     {
         return $this->morphMany(Comment::class, 'source');
     }
-    
+
     public function getDaysUntilDeadlineAttribute()
     {
         return Carbon\Carbon::now()
@@ -73,18 +73,21 @@ class Task extends Model
         if (!$this->invoice) {
             return true;
         }
+
         return $this->invoice->canUpdateInvoice();
     }
 
     /**
      * Add a reply to the thread.
      *
-     * @param  array $reply
+     * @param array $reply
+     *
      * @return Model
      */
     public function addComment($reply)
     {
         $reply = $this->comments()->create($reply);
+
         return $reply;
     }
 }

@@ -12,13 +12,11 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('users')->delete();
         
-        \DB::table('users')->insert(array (
+        \DB::table('users')->insert(array(
             0 =>
-            array (
+            array(
                 'id' => 1,
                 'name' => 'Admin',
                 'email' => 'admin@admin.com',
