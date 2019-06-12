@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>{{__('All Contacts')}}</h1>
+    <h1>{{__('My Contacts')}}</h1>
 @stop
 
 @section('content')
@@ -24,7 +24,7 @@
         $('#contacts-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{!! route('contacts.data') !!}',
+            ajax: '{!! route('contacts.mydata') !!}',
             columns: [
                 {data: 'namelink', name: 'name'},
                 {data: 'job_title', name: 'job_title'},
