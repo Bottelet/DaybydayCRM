@@ -1,7 +1,7 @@
 
     <nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation">
         <div class="list-group panel">
-            <p class=" list-group-item siderbar-top" title=""><img src="{{url('images/flarepoint_logo.png')}}" alt=""></p>
+            <p class="list-group-item siderbar-top" title="" style="background-color: #eee"><img src="{{url('images/flarepoint_logo.png')}}" alt="" style="display: block; margin-left: auto; margin-right: auto;"></p>
             <a href="{{route('dashboard', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
                         class="glyphicon sidebar-icon glyphicon-dashboard"></i><span id="menu-txt">{{ __('Dashboard') }}</span> </a>
             <a href="{{route('users.show', \Auth::id())}}" class=" list-group-item" data-parent="#MainMenu"><i
