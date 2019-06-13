@@ -2,7 +2,7 @@
 
 ### Flarepoint CRM [![Build Status](https://travis-ci.org/Bottelet/Flarepoint-crm.svg?branch=develop)](https://travis-ci.org/Bottelet/Flarepoint-crm)
 
-Flarepoint is a customer relationship management system (CRM) whose purpose is to help you keep track of your customers, contacts, leads, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel 5.4 PHP Framework and PHP 7.0+.
+Flarepoint is a customer relationship management system (CRM) whose purpose is to help you keep track of your customers, contacts, leads, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel 5.8 PHP Framework and >=PHP 7.1.3.
 
 ![page_design](https://cloud.githubusercontent.com/assets/15610490/16659700/903393ac-446b-11e6-969c-831fcd698a06.PNG)
 
