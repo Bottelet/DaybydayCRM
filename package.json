@@ -1,24 +1,23 @@
 {
   "private": true,
-  "devDependencies": {
-    "babel-core": "^6.21.0",
-    "babel-loader": "^6.2.10",
-    "css-loader": "^0.26.1",
-    "element-ui": "^1.0.7",
-    "gulp": "^3.8.8",
-    "style-loader": "^0.13.1",
-    "vue-loader": "^10.0.2"
+  "scripts": {
+    "dev": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "production": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "dependencies": {
     "bootstrap-sass": "^3.3.7",
     "chart.js": "^2.6.0",
     "element-ui": "^1.0.7",
+    "jquery": "^3.1.0"
+  },
+  "devDependencies": {
+    "axios": "^0.15.2",
+    "bootstrap-sass": "^3.3.7",
     "jquery": "^3.1.0",
-    "laravel-elixir": "^6.0.0-14",
-    "laravel-elixir-vue-2": "^0.2.0",
-    "laravel-elixir-webpack-official": "^1.0.2",
+    "laravel-mix": "^0.10.0",
     "lodash": "^4.16.2",
-    "vue": "^2.0.5",
-    "vue-resource": "^1.0.3"
+    "vue": "^2.0.1"
   }
 }

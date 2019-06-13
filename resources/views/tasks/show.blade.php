@@ -79,10 +79,10 @@
                     <th>{{ __('Time') }}</th>
                 </tr>
                 <tbody>
-               @foreach($invoice_lines as $invoice_line)
+               @foreach($invoiceLines as $line)
                     <tr>
-                        <td style="padding: 5px">{{$invoice_line->title}}</td>
-                        <td style="padding: 5px">{{$invoice_line->quantity}} </td>
+                        <td style="padding: 5px">{{$line->title}}</td>
+                        <td style="padding: 5px">{{$line->quantity}} </td>
                     </tr>
                 @endforeach
      
