@@ -89,7 +89,9 @@ class ContactsController extends Controller
             </form>';
         }
 
-        return $dt->addColumn('actions', $actions)->make(true);
+        return $dt->addColumn('actions', $actions)
+            ->rawColumns(['namelink', 'emaillink', 'actions'])
+            ->make(true);
     }
 
     /**
@@ -131,7 +133,9 @@ class ContactsController extends Controller
             </form>';
         }
 
-        return $dt->addColumn('actions', $actions)->make(true);
+        return $dt->addColumn('actions', $actions)
+            ->rawColumns(['namelink', 'emaillink', 'actions'])
+            ->make(true);
     }
 
     /**

@@ -25,7 +25,7 @@
             'method' => 'DELETE',
             'route' => ['departments.destroy', $dep->id]
         ]); !!}
-                            {!! Form::submit( __('Delete'), ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
+                            {!! Form::submit( __('Delete'), ['class' => 'btn btn-danger btn-xs', 'onclick' => 'return confirm("Are you sure?")']); !!}
 
                             {!! Form::close(); !!}</td></td>
                     @endif

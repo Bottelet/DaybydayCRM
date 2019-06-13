@@ -61,9 +61,9 @@
   </div>
   <div class="col-sm-4">
   <h4>{{ __('Tasks') }}</h4>
-<doughnut :statistics="{{$task_statistics}}"></doughnut>
+<doughnut :statistics="{{$taskStatistics}}"></doughnut>
 <h4>{{ __('Leads') }}</h4>
-<doughnut :statistics="{{$lead_statistics}}"></doughnut>
+<doughnut :statistics="{{$leadStatistics}}"></doughnut>
   </div>
 
    @stop

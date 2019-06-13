@@ -57,7 +57,7 @@ class ClientsController extends Controller
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
+                return '<a href="'.route('clients.show', $clients->id).'" ">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
                 return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
@@ -71,8 +71,7 @@ class ClientsController extends Controller
         // enabled
         $actions = '';
         if (Auth::user()->can('client-delete')) {
-            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
-            ';
+            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">';
         }
         if (Auth::user()->can('client-update')) {
             $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
@@ -85,7 +84,9 @@ class ClientsController extends Controller
             </form>';
         }
 
-        return $dt->addColumn('actions', $actions)->make(true);
+        return $dt->addColumn('actions', $actions)
+            ->rawColumns(['namelink', 'emaillink', 'actions'])
+            ->make(true);
     }
 
     /**
@@ -124,7 +125,9 @@ class ClientsController extends Controller
             </form>';
         }
 
-        return $dt->addColumn('actions', $actions)->make(true);
+        return $dt->addColumn('actions', $actions)
+            ->rawColumns(['namelink', 'emaillink', 'actions'])
+            ->make(true);
     }
 
     /**

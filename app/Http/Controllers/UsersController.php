@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Carbon;
-use Datatables;
-use App\Models\User;
-use App\Models\Task;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Client;
 use App\Models\Lead;
-use Illuminate\Http\Request;
-use App\Http\Requests\User\UpdateUserRequest;
-use App\Http\Requests\User\StoreUserRequest;
-use App\Repositories\User\UserRepositoryContract;
-use App\Repositories\Role\RoleRepositoryContract;
+use App\Models\Task;
+use App\Models\User;
 use App\Repositories\Department\DepartmentRepositoryContract;
+use App\Repositories\Lead\LeadRepositoryContract;
+use App\Repositories\Role\RoleRepositoryContract;
 use App\Repositories\Setting\SettingRepositoryContract;
 use App\Repositories\Task\TaskRepositoryContract;
-use App\Repositories\Lead\LeadRepositoryContract;
+use App\Repositories\User\UserRepositoryContract;
+use Carbon;
+use Datatables;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
@@ -47,6 +48,8 @@ class UsersController extends Controller
      */
     public function index()
     {
+        // dd($this->anyData());
+
         return view('users.index')->withUsers($this->users);
     }
 
@@ -57,19 +60,27 @@ class UsersController extends Controller
 
     public function anyData()
     {
-        $canUpdateUser = auth()->user()->can('update-user');
-        $users         = User::select(['id', 'name', 'email', 'work_number']);
+        $users         = User::select('users.*');
 
-        return Datatables::of($users)
+        $dt = Datatables::of($users)
             ->addColumn('namelink', function ($users) {
                 return '<a href="users/'.$users->id.'" ">'.$users->name.'</a>';
-            })
-            ->addColumn('edit', function ($user) {
-                return '<a href="'.route('users.edit', $user->id).'" class="btn btn-success"> Edit</a>';
-            })
-            ->add_column('delete', function ($user) {
-                return '<button type="button" class="btn btn-danger delete_client" data-client_id="'.$user->id.'" onClick="openModal('.$user->id.')" id="myBtn">Delete</button>';
-            })->make(true);
+            });
+
+        $actions = '';
+        if (Auth::user()->can('user-delete')) {
+            $actions .= '<form action="{{ route(\'users.destroy\', $id) }}" method="POST">';
+        }
+        if (Auth::user()->can('user-update')) {
+            $actions .= '<a href="{{ route(\'users.edit\', $id) }}" class="btn btn-success btn-xs"> Edit</a> ';
+        }
+        if (Auth::user()->can('user-delete')) {
+            $actions .= '<input type="hidden" name="_method" value="DELETE"><input type="submit" name="delete" value="Delete" class="btn btn-danger btn-xs" onClick="return confirm(\'Are you sure?\')"">{{csrf_field()}}</form>';
+        }
+
+        return $dt->addColumn('actions', $actions)
+            ->rawColumns(['namelink', 'actions'])
+            ->make(true);
     }
 
     /**
@@ -104,6 +115,7 @@ class UsersController extends Controller
             ->editColumn('client_id', function ($tasks) {
                 return $tasks->client->name;
             })
+            ->rawColumns(['titlelink', 'status'])
             ->make(true);
     }
 
@@ -139,6 +151,7 @@ class UsersController extends Controller
             ->editColumn('client_id', function ($tasks) {
                 return $tasks->client->name;
             })
+            ->rawColumns(['titlelink', 'status'])
             ->make(true);
     }
 
@@ -164,6 +177,7 @@ class UsersController extends Controller
                 return $client->created_at ? with(new Carbon($client->created_at))
                     ->format('d/m/Y') : '';
             })
+            ->rawColumns(['clientlink', 'emaillink'])
             ->make(true);
     }
 

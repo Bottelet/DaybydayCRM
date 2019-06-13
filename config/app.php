@@ -95,21 +95,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Logging Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure the log settings for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
-    |
-    | Available Settings: "single", "daily", "syslog", "errorlog"
-    |
-    */
-
-    'log' => env('APP_LOG', 'single'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
@@ -149,7 +134,6 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
 
-        Maatwebsite\Excel\ExcelServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
@@ -211,7 +195,6 @@ return [
         'Html'       => Collective\Html\HtmlFacade::class,
         'Datatables' => Yajra\Datatables\Datatables::class,
         'Carbon'     => Carbon\Carbon::class,
-        'Excel'      => Maatwebsite\Excel\Facades\Excel::class,
         'Notifty'    => Illuminate\Support\Facades\Notification::class,
         'Entrust'    => Zizaco\Entrust\EntrustFacade::class,
         'Role'       => \Zizaco\Entrust\Middleware\EntrustRole::class,

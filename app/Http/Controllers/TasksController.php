@@ -82,7 +82,9 @@ class TasksController extends Controller
             })
             ->editColumn('user_assigned_id', function ($tasks) {
                 return $tasks->user->name;
-            })->make(true);
+            })
+            ->rawColumns(['titlelink'])
+            ->make(true);
     }
 
     public function myData()
@@ -103,7 +105,9 @@ class TasksController extends Controller
             ->editColumn('deadline', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->deadline))
                     ->format('d/m/Y') : '';
-            })->make(true);
+            })
+            ->rawColumns(['titlelink'])
+            ->make(true);
     }
 
     /**

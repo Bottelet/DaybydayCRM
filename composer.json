@@ -13,29 +13,35 @@
             "name": "Casper Bottelet",
             "email": "cbottelet@gmail.com",
             "role": "Developer"
+        },
+        {
+            "name": "Jason Huebel",
+            "email": "jason@huebel.dev",
+            "role": "Contributor"
         }
     ],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "laravel/framework": "5.4.*",
-        "laravelcollective/html": "5.4.*@dev",
-        "yajra/laravel-datatables-oracle": "~6.0",
-        "guzzlehttp/guzzle": "^6.2",
-        "pusher/pusher-php-server": "^2.3",
-        "zizaco/entrust": "1.7.*",
+        "php": ">=7.1.3",
+        "laravel/framework": "5.6.*",
+        "laravelcollective/html": "5.6.*@dev",
+        "yajra/laravel-datatables-oracle": "~8.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "pusher/pusher-php-server": "^3.4",
+        "zizaco/entrust": "1.9.*",
         "laravel/tinker": "^1.0",
-        "laravel/dusk": "^1.0",
+        "laravel/dusk": "^3.0",
         "doctrine/dbal": "^2.9",
-        "barryvdh/laravel-debugbar": "~2.4"
+        "barryvdh/laravel-debugbar": "~3.2"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
+        "fzaninotto/faker": "~1.8",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.0",
+        "phpunit/phpunit": "~7.0",
         "symfony/css-selector": "2.8.*|3.0.*",
-        "symfony/dom-crawler": "2.8.*|3.0.*"
+        "symfony/dom-crawler": "2.8.*|3.0.*",
+        "filp/whoops": "~2.0"
     },
     "autoload": {
         "classmap": [
@@ -58,17 +64,20 @@
             "php artisan key:generate"
         ],
         "post-install-cmd": [
-            "php artisan clear-compiled",
-            "php artisan optimize"
+            "php artisan clear-compiled"
         ],
         "pre-update-cmd": [
             "php artisan clear-compiled"
         ],
         "post-update-cmd": [
-            "php artisan optimize"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
         ]
     },
     "config": {
+        "optimize-autoloader": true,
         "preferred-install": "dist"
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Excel;
 use Session;
 use Validator;
 use File;
@@ -46,38 +45,38 @@ class DocumentsController extends Controller
         Session::flash('flash_message', 'File successfully uploaded');
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return mixed
-     */
-    public function import(Request $request)
-    {
-        $rules = [
-            'file'        => 'required',
-            'num_records' => 'required',
-        ];
-        $validator = Validator::make($request->all(), $rules);
-        // process the form
-        if (!$validator->fails()) {
-            return Redirect(route('clients.create'))->withErrors($validator);
-        } else {
-            try {
-                Excel::load('public\imports\contacts.xlsx', function ($reader) {
-                    foreach ($reader->toArray() as $row) {
-                        if ($row['name'] && $row['company'] && $row['email'] && '' == $row['user']) {
-                            Session::flash('flash_message_warning', 'Required fields are empty');
-                        }
-                    }
-                });
-                Session::flash('flash_message', 'Users uploaded successfully.');
-                // return redirect(route('clients.index'));
-            } catch (\Exception $e) {
-                Session::flash('flash_message_warning', $e->getMessage());
-                //return redirect(route('clients.index'));
-            }
-        }
-    }
+    // /**
+    //  * @param Request $request
+    //  *
+    //  * @return mixed
+    //  */
+    // public function import(Request $request)
+    // {
+    //     $rules = [
+    //         'file'        => 'required',
+    //         'num_records' => 'required',
+    //     ];
+    //     $validator = Validator::make($request->all(), $rules);
+    //     // process the form
+    //     if (!$validator->fails()) {
+    //         return Redirect(route('clients.create'))->withErrors($validator);
+    //     } else {
+    //         try {
+    //             Excel::load('public\imports\contacts.xlsx', function ($reader) {
+    //                 foreach ($reader->toArray() as $row) {
+    //                     if ($row['name'] && $row['company'] && $row['email'] && '' == $row['user']) {
+    //                         Session::flash('flash_message_warning', 'Required fields are empty');
+    //                     }
+    //                 }
+    //             });
+    //             Session::flash('flash_message', 'Users uploaded successfully.');
+    //             // return redirect(route('clients.index'));
+    //         } catch (\Exception $e) {
+    //             Session::flash('flash_message_warning', $e->getMessage());
+    //             //return redirect(route('clients.index'));
+    //         }
+    //     }
+    // }
 
     public function destroy($id)
     {
