@@ -15,3 +15,5 @@ bower_components
 .php_cs.cache
 storage/debugbar/
 public/build/
+
+yarn-error.log
