@@ -64,7 +64,7 @@ class UsersController extends Controller
 
         $dt = Datatables::of($users)
             ->addColumn('namelink', function ($users) {
-                return '<a href="users/'.$users->id.'" ">'.$users->name.'</a>';
+                return '<a href="users/'.$users->id.'">'.$users->name.'</a>';
             });
 
         $actions = '';

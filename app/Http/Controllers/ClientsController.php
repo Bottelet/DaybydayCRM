@@ -57,10 +57,10 @@ class ClientsController extends Controller
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="'.route('clients.show', $clients->id).'" ">'.$clients->name.'</a>';
+                return '<a href="'.route('clients.show', $clients->id).'">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
-                return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
+                return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
             })
             ->addColumn('salesperson', function ($clients) {
                 return $clients->user->name;
@@ -103,7 +103,7 @@ class ClientsController extends Controller
                 return '<a href="'.route('clients.show', $clients->id).'">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
-                return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
+                return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line
