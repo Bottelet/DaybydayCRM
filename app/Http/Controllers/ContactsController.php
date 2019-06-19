@@ -61,13 +61,13 @@ class ContactsController extends Controller
 
         $dt = Datatables::of($contacts)
             ->addColumn('namelink', function ($contacts) {
-                return '<a href="'.route('contacts.show', $contacts->id).'" ">'.$contacts->name.'</a>';
+                return '<a href="'.route('contacts.show', $contacts->id).'">'.$contacts->name.'</a>';
             })
             ->addColumn('client_name', function ($contacts) {
                 return $contacts->client->name;
             })
             ->addColumn('emaillink', function ($contacts) {
-                return '<a href="mailto:'.$contacts->email.'" ">'.$contacts->email.'</a>';
+                return '<a href="mailto:'.$contacts->email.'">'.$contacts->email.'</a>';
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line
@@ -103,13 +103,13 @@ class ContactsController extends Controller
 
         $dt = Datatables::of($contacts)
             ->addColumn('namelink', function ($contacts) {
-                return '<a href="contacts/'.$contacts->id.'" ">'.$contacts->name.'</a>';
+                return '<a href="contacts/'.$contacts->id.'">'.$contacts->name.'</a>';
             })
             ->addColumn('client_name', function ($contacts) {
                 return $contacts->client->name;
             })
             ->addColumn('emaillink', function ($contacts) {
-                return '<a href="mailto:'.$contacts->email.'" ">'.$contacts->email.'</a>';
+                return '<a href="mailto:'.$contacts->email.'">'.$contacts->email.'</a>';
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line

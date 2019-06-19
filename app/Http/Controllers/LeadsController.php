@@ -67,7 +67,7 @@ class LeadsController extends Controller
 
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
-                return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
+                return '<a href="leads/'.$leads->id.'">'.$leads->title.'</a>';
             })
             ->editColumn('user_created_id', function ($leads) {
                 return $leads->creator->name;
@@ -92,7 +92,7 @@ class LeadsController extends Controller
 
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
-                return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
+                return '<a href="leads/'.$leads->id.'">'.$leads->title.'</a>';
             })
             ->editColumn('user_created_id', function ($leads) {
                 return $leads->creator->name;

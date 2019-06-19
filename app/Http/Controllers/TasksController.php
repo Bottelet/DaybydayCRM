@@ -67,7 +67,7 @@ class TasksController extends Controller
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
-                return '<a href="'.route('tasks.show', $tasks->id).'" ">'.$tasks->title.'</a>';
+                return '<a href="'.route('tasks.show', $tasks->id).'">'.$tasks->title.'</a>';
             })
             ->addColumn('client_name', function ($tasks) {
                 return $tasks->client->name;
@@ -91,7 +91,7 @@ class TasksController extends Controller
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
-                return '<a href="'.route('tasks.show', $tasks->id).'" ">'.$tasks->title.'</a>';
+                return '<a href="'.route('tasks.show', $tasks->id).'">'.$tasks->title.'</a>';
             })
             ->addColumn('client_name', function ($tasks) {
                 return $tasks->client->name;
