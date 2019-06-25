@@ -93,7 +93,7 @@
                 {{ __('Add time') }}
             </button>
             @if($tasks->invoice)
-                <a href="/invoices/{{$tasks->invoice->id}}">{{__('See the invoice')}}</a>
+                <a href="{{ route('invoices.show', $tasks->invoice->id) }}">{{__('See the invoice')}}</a>
             @endif
             <div class="activity-feed movedown">
                 @foreach($tasks->activity as $activity)
