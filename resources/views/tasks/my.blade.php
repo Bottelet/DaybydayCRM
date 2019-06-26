@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>{{__('All Tasks')}}</h1>
+    <h1>{{__('My Tasks')}}</h1>
 @stop
 
 @section('content')
@@ -12,7 +12,6 @@
             <th>{{ __('Client') }}</th>
             <th>{{ __('Created at') }}</th>
             <th>{{ __('Deadline') }}</th>
-            <th>{{ __('Assigned') }}</th>
 
         </tr>
         </thead>
@@ -25,15 +24,12 @@
         $('#tasks-table').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{!! route('tasks.data') !!}',
+            ajax: '{!! route('tasks.mydata') !!}',
             columns: [
-
                 {data: 'titlelink', name: 'title'},
                 {data: 'client_name', name: 'client_name'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'deadline', name: 'deadline'},
-                {data: 'user_assigned_id', name: 'user_assigned_id',},
-
             ]
         });
     });

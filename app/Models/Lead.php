@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Lead extends Model
 {
@@ -62,5 +63,10 @@ class Lead extends Model
         $reply = $this->comments()->create($reply);
 
         return $reply;
+    }
+
+    public function scopeMy($query)
+    {
+        return $query->where('user_assigned_id', '=', Auth::id());
     }
 }

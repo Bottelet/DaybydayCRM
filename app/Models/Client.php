@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Client extends Model
 {
@@ -137,5 +138,10 @@ class Client extends Model
     public function getAssignedUserAttribute()
     {
         return User::findOrFail($this->user_id);
+    }
+
+    public function scopeMy($query)
+    {
+        return $query->where('user_id', Auth::id());
     }
 }

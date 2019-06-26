@@ -39,6 +39,14 @@ class ClientsController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     */
+    public function my()
+    {
+        return view('clients.my');
+    }
+
+    /**
      * Make json respnse for datatables.
      *
      * @return mixed
@@ -49,13 +57,52 @@ class ClientsController extends Controller
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/'.$clients->id.'" ">'.$clients->name.'</a>';
+                return '<a href="clients/'.$clients->id.'">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
-                return '<a href="mailto:'.$clients->primary_email.'" ">'.$clients->primary_email.'</a>';
+                return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
             })
             ->addColumn('salesperson', function ($clients) {
                 return $clients->user->name;
+            });
+
+        // this looks wierd, but in order to keep the two buttons on the same line
+        // you have to put them both within the form tags if the Delete button is
+        // enabled
+        $actions = '';
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '<form action="{{ route(\'clients.destroy\', $id) }}" method="POST">
+            ';
+        }
+        if (Auth::user()->can('client-update')) {
+            $actions .= '<a href="{{ route(\'clients.edit\', $id) }}" class="btn btn-xs btn-success" >Edit</a>';
+        }
+        if (Auth::user()->can('client-delete')) {
+            $actions .= '
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="submit" name="submit" value="Delete" class="btn btn-danger btn-xs" onClick="return confirm(\'Are you sure?\')"">
+                {{csrf_field()}}
+            </form>';
+        }
+
+        return $dt->addColumn('actions', $actions)->make(true);
+    }
+
+    /**
+     * Make json respnse for datatables.
+     *
+     * @return mixed
+     */
+    public function myData()
+    {
+        $clients = Client::with('user')->select('clients.*')->my();
+
+        $dt = Datatables::of($clients)
+            ->addColumn('namelink', function ($clients) {
+                return '<a href="'.route('clients.show', $clients->id).'">'.$clients->name.'</a>';
+            })
+            ->addColumn('emaillink', function ($clients) {
+                return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line

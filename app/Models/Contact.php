@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Contact extends Model
 {
@@ -56,5 +57,12 @@ class Contact extends Model
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function scopeMy($query)
+    {
+        return $query->whereHas('client', function ($q) {
+            $q->where('user_id', '=', Auth::id());
+        });
     }
 }

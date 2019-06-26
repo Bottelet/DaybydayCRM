@@ -47,19 +47,27 @@ class LeadsController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function my()
+    {
+        return view('leads.my');
+    }
+
+    /**
      * Data for Data tables.
      *
      * @return mixed
      */
     public function anyData()
     {
-        $leads = Lead::select(
-            ['id', 'title', 'user_created_id', 'client_id', 'user_assigned_id', 'contact_date']
-        )->where('status', 1)->get();
+        $leads = Lead::select('leads.*')->where('status', 1)->get();
 
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
-                return '<a href="leads/'.$leads->id.'" ">'.$leads->title.'</a>';
+                return '<a href="leads/'.$leads->id.'">'.$leads->title.'</a>';
             })
             ->editColumn('user_created_id', function ($leads) {
                 return $leads->creator->name;
@@ -70,6 +78,28 @@ class LeadsController extends Controller
             })
             ->editColumn('user_assigned_id', function ($leads) {
                 return $leads->user->name;
+            })->make(true);
+    }
+
+    /**
+     * Data for Data tables.
+     *
+     * @return mixed
+     */
+    public function myData()
+    {
+        $leads = Lead::select('leads.*')->where('status', 1)->my()->get();
+
+        return Datatables::of($leads)
+            ->addColumn('titlelink', function ($leads) {
+                return '<a href="leads/'.$leads->id.'">'.$leads->title.'</a>';
+            })
+            ->editColumn('user_created_id', function ($leads) {
+                return $leads->creator->name;
+            })
+            ->editColumn('contact_date', function ($leads) {
+                return $leads->contact_date ? with(new Carbon($leads->contact_date))
+                    ->format('d/m/Y') : '';
             })->make(true);
     }
 

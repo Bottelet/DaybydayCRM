@@ -43,7 +43,7 @@ $factory->define(App\Models\Client::class, function (Faker\Generator $faker) {
         'primary_number'                => $faker->randomNumber(3).$faker->randomNumber(7),
         'secondary_number'              => $faker->randomNumber(3).$faker->randomNumber(7),
         'industry_id'                   => $faker->numberBetween($min = 1, $max = 25),
-        'user_id'                       => $faker->numberBetween($min = 1, $max = 1),
+        'user_id'                       => $faker->numberBetween($min = 1, $max = 6),
         'company_type'                  => 'ApS',
     ];
 });

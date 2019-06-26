@@ -54,6 +54,8 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'clients'], function () {
         Route::get('/data', 'ClientsController@anyData')->name('clients.data');
+        Route::get('/my', 'ClientsController@my')->name('clients.my');
+        Route::get('/mydata', 'ClientsController@myData')->name('clients.mydata');
         Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
         Route::post('/upload/{id}', 'DocumentsController@upload');
         Route::patch('/updateassign/{id}', 'ClientsController@updateAssign');
@@ -66,6 +68,8 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'contacts'], function () {
         Route::get('/data', 'ContactsController@anyData')->name('contacts.data');
+        Route::get('/my', 'ContactsController@my')->name('contacts.my');
+        Route::get('/mydata', 'ContactsController@myData')->name('contacts.mydata');
     });
     Route::resource('contacts', 'ContactsController');
 
@@ -74,6 +78,8 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'tasks'], function () {
         Route::get('/data', 'TasksController@anyData')->name('tasks.data');
+        Route::get('/my', 'TasksController@my')->name('tasks.my');
+        Route::get('/mydata', 'TasksController@myData')->name('tasks.mydata');
         Route::patch('/updatestatus/{id}', 'TasksController@updateStatus');
         Route::patch('/updateassign/{id}', 'TasksController@updateAssign');
         Route::post('/updatetime/{id}', 'TasksController@updateTime');
@@ -85,6 +91,8 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'leads'], function () {
         Route::get('/data', 'LeadsController@anyData')->name('leads.data');
+        Route::get('/my', 'LeadsController@my')->name('leads.my');
+        Route::get('/mydata', 'LeadsController@myData')->name('leads.mydata');
         Route::patch('/updateassign/{id}', 'LeadsController@updateAssign');
         Route::patch('/updatestatus/{id}', 'LeadsController@updateStatus');
         Route::patch('/updatefollowup/{id}', 'LeadsController@updateFollowup')->name('leads.followup');
