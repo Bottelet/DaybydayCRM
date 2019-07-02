@@ -19,6 +19,6 @@ class Role extends EntrustRole
 
     public function permissions()
     {
-        return $this->belongsToMany(permissions::class, 'permission_role', 'role_id', 'permission_id');
+        return $this->belongsToMany(Permissions::class, 'permission_role', 'role_id', 'permission_id');
     }
 }
