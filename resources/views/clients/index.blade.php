@@ -32,7 +32,7 @@
                 {data: 'namelink', name: 'name'},
                 {data: 'primary_number', name: 'primary_number'},
                 {data: 'emaillink', name: 'primary_email'},
-                {data: 'salesperson', name: 'salesperson'},
+                {data: 'salesperson', name: 'salesperson', searchable: true, sortable: true},
                 {data: 'actions', name: 'actions', orderable: false, searchable: false},
 
             ]

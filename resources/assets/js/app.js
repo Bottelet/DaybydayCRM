@@ -5,6 +5,9 @@
  */
 
 require('./bootstrap');
+
+windows.Vue = require('vue');
+
 import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
@@ -91,6 +94,7 @@ $('.search-select')
     direction: 'upward'
   })
 ;
+
 var app = new Vue({
     el: '#wrapper',
     components: {
