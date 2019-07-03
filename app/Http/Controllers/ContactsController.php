@@ -12,6 +12,7 @@ use App\Repositories\User\UserRepositoryContract;
 use Datatables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ContactsController extends Controller
 {
@@ -57,14 +58,12 @@ class ContactsController extends Controller
      */
     public function anyData()
     {
-        $contacts = Contact::with('client')->select('contacts.*');
+        $contacts = Contact::select(['contacts.*', DB::raw('clients.name AS client_name')])->join('clients', 'contacts.client_id', '=', 'clients.id');
+        // $contacts = Contact::with('client')->select('contacts.*');
 
         $dt = Datatables::of($contacts)
             ->addColumn('namelink', function ($contacts) {
                 return '<a href="'.route('contacts.show', $contacts->id).'">'.$contacts->name.'</a>';
-            })
-            ->addColumn('client_name', function ($contacts) {
-                return $contacts->client->name;
             })
             ->addColumn('emaillink', function ($contacts) {
                 return '<a href="mailto:'.$contacts->email.'">'.$contacts->email.'</a>';
@@ -99,14 +98,11 @@ class ContactsController extends Controller
      */
     public function myData()
     {
-        $contacts = Contact::with('client')->select('contacts.*')->my();
+        $contacts = Contact::select(['contacts.*', DB::raw('clients.name AS client_name')])->join('clients', 'contacts.client_id', '=', 'clients.id')->my();
 
         $dt = Datatables::of($contacts)
             ->addColumn('namelink', function ($contacts) {
                 return '<a href="contacts/'.$contacts->id.'">'.$contacts->name.'</a>';
-            })
-            ->addColumn('client_name', function ($contacts) {
-                return $contacts->client->name;
             })
             ->addColumn('emaillink', function ($contacts) {
                 return '<a href="mailto:'.$contacts->email.'">'.$contacts->email.'</a>';

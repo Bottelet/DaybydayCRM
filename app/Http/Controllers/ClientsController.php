@@ -11,6 +11,7 @@ use App\Repositories\User\UserRepositoryContract;
 use Datatables;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClientsController extends Controller
 {
@@ -53,7 +54,9 @@ class ClientsController extends Controller
      */
     public function anyData()
     {
-        $clients = Client::with('user')->select('clients.*');
+        $clients = Client::select(['clients.*', DB::raw('users.name AS salesperson')])->join('users', 'clients.user_id', '=', 'users.id');
+
+        // $clients = Client::with('user')->select('clients.*');
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
@@ -61,9 +64,6 @@ class ClientsController extends Controller
             })
             ->addColumn('emaillink', function ($clients) {
                 return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
-            })
-            ->addColumn('salesperson', function ($clients) {
-                return $clients->user->name;
             });
 
         // this looks wierd, but in order to keep the two buttons on the same line
