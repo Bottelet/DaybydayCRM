@@ -97,97 +97,91 @@
 
 @push('scripts')
 <script>
-    $(function () {
-        $('#users-table').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{!! route('users.data') !!}',
-            columns: [
 
-                {data: 'namelink', name: 'name'},
-                {data: 'email', name: 'email'},
-                {data: 'work_number', name: 'work_number'},
-                    @if(Entrust::can('user-update'))
-                {
-                    data: 'edit', name: 'edit', orderable: false, searchable: false
-                },
-                    @endif
-                    @if(Entrust::can('user-delete'))
-                {
-                    data: 'delete', name: 'delete', orderable: false, searchable: false
-                },
-                @endif
-            ]
-        });
+$(function () {
+    $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{!! route('users.data') !!}',
+        columns: [
+            {data: 'namelink', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'work_number', name: 'work_number'},
+            @if(Entrust::can('user-update'))
+                {data: 'edit', name: 'edit', orderable: false, searchable: false},
+            @endif
+            @if(Entrust::can('user-delete'))
+                {data: 'delete', name: 'delete', orderable: false, searchable: false},
+            @endif
+        ]
     });
+});
 
-     function openModal(client_id) {
-        $("#confirm_delete").attr('delete-id', client_id);
-        $("#myModal").modal();
-    }
-    
-    $("#handle_tasks").click(function () {
-    
+function openModal(client_id) {
+    $("#confirm_delete").attr('delete-id', client_id);
+    $("#myModal").modal();
+}
+
+$("#handle_tasks").click(function () {
     if($("#handle_tasks").val() == "move_all_tasks") {
         $("#assign_tasks").css('display', 'block');
-    } else 
-    {
+    } else {
         $("#assign_tasks").css('display', 'none');
     }
+});
 
-    });
 
-
-    $("#handle_clients").click(function () {
-
-   if($("#handle_clients").val() == "move_all_clients") {
-            $("#assign_clients").css('display', 'block');
+$("#handle_clients").click(function () {
+    if($("#handle_clients").val() == "move_all_clients") {
+        $("#assign_clients").css('display', 'block');
     } else {
         $("#assign_clients").css('display', 'none');
     }
-    });
-    
-    $("#handle_leads").click(function () {
+});
 
-   if($("#handle_leads").val() == "move_all_leads") {
-            $("#assign_leads").css('display', 'block');
+$("#handle_leads").click(function () {
+    if($("#handle_leads").val() == "move_all_leads") {
+        $("#assign_leads").css('display', 'block');
     } else {
         $("#assign_leads").css('display', 'none');
     }
-    });
+});
 
-    $("#confirm_delete").click(function () {
-        id = $(this).attr("delete-id"); 
-       handle_leads = $("#handle_leads").val();
-       handle_tasks =  $("#handle_tasks").val();
-       handle_clients =  $("#handle_clients").val()
-       leads_user = $("#user_leads").val();
-       tasks_user = $("#user_tasks").val();
-       clients_user = $("#user_clients").val();
-        $.ajax({
-            url: "/users/" + id,
-            type: 'DELETE',
-                headers: {
+$("#confirm_delete").click(function () {
+
+    id = $(this).attr("delete-id"); 
+    handle_leads = $("#handle_leads").val();
+    handle_tasks =  $("#handle_tasks").val();
+    handle_clients =  $("#handle_clients").val();
+    leads_user = $("#user_leads").val();
+    tasks_user = $("#user_tasks").val();
+    clients_user = $("#user_clients").val();
+
+    $.ajax({
+        url: "/users/" + id,
+        type: 'DELETE',
+        headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
+        },
         data: {
-        tasks: handle_tasks,
-        leads: handle_leads,
-        clients: handle_clients,
-        task_user: tasks_user,
-        lead_user: leads_user,
-        client_user: clients_user,
-       },   
+            tasks: handle_tasks,
+            task_user: tasks_user,
+            leads: handle_leads,
+            lead_user: leads_user,
+            clients: handle_clients,
+            client_user: clients_user,
+        },   
         complete: function (jqXHR, textStatus) {
-                // callback
-            },
-            success: function (data, textStatus, jqXHR) {
-                // success callback
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                // error callback
-            }
-        });
+            // callback
+        },
+        success: function (data, textStatus, jqXHR) {
+            // success callback
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            // error callback
+        }
     });
+});
+
 </script>
 @endpush
