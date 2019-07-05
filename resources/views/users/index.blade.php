@@ -86,7 +86,7 @@
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-danger" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-          <button type="submit" id="confirm_delete" class="btn btn-success"><span class="glyphicon glyphicon-off"></span> Login</button>
+          <button type="submit" id="confirm_delete" class="btn btn-success"><span class="glyphicon glyphicon-off"></span> Delete</button>
         </div>
       </div>
       
