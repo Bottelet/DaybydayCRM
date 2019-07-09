@@ -1,11 +1,11 @@
-version: "2"
+version: "3"
 
 services:
   php:
     container_name: flarepoint-php
     build:
-      context: .
-      dockerfile: .docker/flarepoint-php/Dockerfile
+      context: .docker
+      dockerfile: flarepoint-php/Dockerfile
     volumes:
       - .:/var/www/html
     environment:
@@ -23,10 +23,9 @@ services:
 
   db:
     container_name: flarepoint-db
-    image: mysql:latest
+    image: mysql:5.7
     volumes:
-      - .docker/flarepoint-db/mysql:/var/lib/mysql
-      - .docker/flarepoint-db/db/:/docker-entrypoint-initdb.d/
+      - mysql:/var/lib/mysql
     ports:
       - 3307:3306
     restart: always
@@ -38,7 +37,7 @@ services:
 
   nginx:
     container_name: flarepoint-nginx
-    image: nginx:latest
+    image: nginx:1.17
     links:
       - php
     ports:
@@ -47,11 +46,5 @@ services:
       - .docker/flarepoint-nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
       - .:/var/www/html
 
-networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.0.0/16
-          gateway: 172.16.0.1
+volumes:
+  mysql:
