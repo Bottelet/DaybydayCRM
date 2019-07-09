@@ -34,19 +34,19 @@
                     <!--HANDLE TASKS-->
                     <div class="form-group">
                         {{ Form::label('user_clients', __('Choose a new user to assign the clients')) }} <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toggle="tooltip" title="Deleting all clients also deletes ALL tasks and leads assigned to that client, regardless of the user they are assigned to."></span>
-                        {{ Form::select('user_clients', $users, null, ['class' => 'form-control', 'placeholder' => 'Delete All Clients']) }}
+                        {{ Form::select('user_clients', $users, null, ['class' => 'form-control', 'placeholder' => '(Delete All Clients)']) }}
                     </div>
 
                     <!--HANDLE LEADS-->
                     <div class="form-group">
                         {{ Form::label('user_leads', __('Choose a new user to assign the leads')) }}
-                        {{ Form::select('user_leads', $users, null, ['class' => 'form-control', 'placeholder' => 'Delete All Leads']) }}
+                        {{ Form::select('user_leads', $users, null, ['class' => 'form-control', 'placeholder' => '(Delete All Leads)']) }}
                     </div>
 
                     <!--HANDLE CLIENTS-->
                     <div class="form-group">
                         {{ Form::label('user_tasks', __('Choose a new user to assign the tasks')) }}
-                        {{ Form::select('user_tasks', $users, null, ['class' => 'form-control', 'placeholder' => 'Delete All Tasks']) }}
+                        {{ Form::select('user_tasks', $users, null, ['class' => 'form-control', 'placeholder' => '(Delete All Tasks)']) }}
                     </div>
 
                 </div>
