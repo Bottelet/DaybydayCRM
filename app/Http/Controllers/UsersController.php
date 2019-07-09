@@ -242,46 +242,92 @@ class UsersController extends Controller
         $id   = $request->id;
         $user = User::with('clients', 'tasks', 'leads')->findOrFail($id);
 
-        if ($request->user_clients === $id || $request->user_tasks === $id || $request->user_leads === $id) {
-            Session()->flash('flash_error', 'You may not reassign clients, leads or tasks to the user you are deleting!');
+        if ($request->user_clients == $id || $request->user_tasks == $id || $request->user_leads == $id) {
+            Session()->flash('flash_message_warning', 'You may not reassign clients, leads or tasks to the user you are deleting.');
         } else {
-            // are we keeping her clients?
-            if ('' === $request->user_clients) {
-                // just delete all the clients related to this user
-                foreach ($user->clients as $client) {
-                    $client->delete();
-                }
-            } else {
-                // move all clients to new user
-                foreach ($user->clients() as $client) {
-                    $client->user_id = $request->user_clients;
-                    $client->save();
+            // are we keeping her tasks?
+            if ($user->tasks()->count() > 0) {
+                if ('' == $request->user_tasks) {
+                    // just delete all the tasks related to this user
+                    $user->tasks()->delete();
+                } else {
+                    // move all clients to new user
+                    foreach ($user->tasks as $task) {
+                        $task->user_assigned_id = $request->user_tasks;
+                        $task->save();
+                    }
                 }
             }
 
-            // are we keeping her tasks?
-            if ('' === $request->user_tasks) {
-                // just delete all the tasks related to this user
-                $user->tasks()->delete();
+            // clean up tasks created but not assigned to the user
+            $tasks = Task::where('user_created_id', $id)->get();
+            if ('' == $request->user_tasks) {
+                foreach ($tasks as $task) {
+                    $task->user_created_id = $task->user_assigned_id;
+                    $task->save();
+                }
             } else {
-                // move all clients to new user
-                foreach ($user->tasks() as $task) {
-                    $task->user_id = $request->user_tasks;
+                foreach ($tasks as $task) {
+                    $task->user_created_id = $request->user_tasks;
                     $task->save();
                 }
             }
 
+            // refresh the user
+            $user->refresh();
+
             // are we keeping her leads?
-            if ('' === $request->user_leads) {
-                // just delete all the leads related to this user
-                $user->leads()->delete();
+            if ($user->leads()->count() > 0) {
+                if ('' == $request->user_leads) {
+                    // just delete all the leads related to this user
+                    $user->leads()->delete();
+                } else {
+                    // move all clients to new user
+                    foreach ($user->leads as $lead) {
+                        $lead->user_assigned_id = $request->user_leads;
+                        $lead->save();
+                    }
+                }
+            }
+
+            // clean up leads created but not assigned to the user
+            $leads = Lead::where('user_created_id', $id)->get();
+            if ('' == $request->user_leads) {
+                foreach ($leads as $lead) {
+                    $lead->user_created_id = $lead->user_assigned_id;
+                    $lead->save();
+                }
             } else {
-                // move all clients to new user
-                foreach ($user->leads() as $lead) {
-                    $lead->user_assigned_id = $request->user_leads;
+                foreach ($leads as $lead) {
+                    $lead->user_created_id = $request->user_leads;
                     $lead->save();
                 }
             }
+
+            // refresh the user
+            $user->refresh();
+
+            // are we keeping her clients?
+            if ($user->clients()->count() > 0) {
+                if ('' == $request->user_clients) {
+                    // just delete all the clients related to this user
+                    foreach ($user->clients as $client) {
+                        // clean out all remaining client tasks and leads
+                        $client->tasks()->delete();
+                        $client->leads()->delete();
+                        $client->delete();
+                    }
+                } else {
+                    // move all clients to new user
+                    foreach ($user->clients as $client) {
+                        $client->user_id = $request->user_clients;
+                        $client->save();
+                    }
+                }
+            }
+
+            // refresh the user one more time
+            $user->refresh();
 
             $user->delete();
             Session()->flash('flash_message', 'User successfully deleted');

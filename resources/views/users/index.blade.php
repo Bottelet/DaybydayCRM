@@ -33,7 +33,7 @@
 
                     <!--HANDLE TASKS-->
                     <div class="form-group">
-                        {{ Form::label('user_clients', __('Choose a new user to assign the clients')) }}
+                        {{ Form::label('user_clients', __('Choose a new user to assign the clients')) }} <span class="glyphicon glyphicon-exclamation-sign text-danger" data-toggle="tooltip" title="Deleting all clients also deletes ALL tasks and leads assigned to that client, regardless of the user they are assigned to."></span>
                         {{ Form::select('user_clients', $users, null, ['class' => 'form-control', 'placeholder' => 'Delete All Clients']) }}
                     </div>
 
@@ -88,6 +88,10 @@ $(function() {
          $("#client-id").val($(e.relatedTarget).data('client_id'));
     });
 });
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
 
 </script>
 @endpush

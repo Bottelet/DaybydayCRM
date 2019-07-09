@@ -117,8 +117,10 @@ $('body').click(function(e) {
     <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
-        <script type="text/javascript" src="{{ URL::asset('js/jquery.atwho.min.js') }}"></script>
+    <script type="text/javascript" src="{{ URL::asset('js/jquery.atwho.min.js') }}"></script>
+
 @stack('scripts')
+
 </body>
 
 </html>
