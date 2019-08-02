@@ -3,6 +3,19 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Application Name and Version
+    |--------------------------------------------------------------------------
+    |
+    | These values are used to display the application name and version.
+    | Set APP_NAME in your ".env" file is you wish to use a custom name.
+    |
+    */
+
+    'name'    => env('APP_NAME', 'Flarepoint CRM'),
+    'version' => ('1.3.7'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

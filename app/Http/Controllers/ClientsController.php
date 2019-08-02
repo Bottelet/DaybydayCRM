@@ -60,7 +60,7 @@ class ClientsController extends Controller
 
         $dt = Datatables::of($clients)
             ->addColumn('namelink', function ($clients) {
-                return '<a href="clients/'.$clients->id.'">'.$clients->name.'</a>';
+                return '<a href="'.route('clients.show', $clients->id).'">'.$clients->name.'</a>';
             })
             ->addColumn('emaillink', function ($clients) {
                 return '<a href="mailto:'.$clients->primary_email.'">'.$clients->primary_email.'</a>';
