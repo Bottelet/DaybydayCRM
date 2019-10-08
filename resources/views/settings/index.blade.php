@@ -78,7 +78,7 @@
                 <div class="panel-heading">{{ __('Task completion') }}</div>
                 <div class="panel-body">
 
-                    {{ __('If Allowed only user who are assigned the task & the admin can complete the task.') }} <br/>
+                    {{ __('If Allowed only user who is assigned the task & the admin can complete the task.') }} <br/>
                     {{ __('If Not allowed anyone, can complete all tasks.')}}
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 <div class="panel-heading">{{ __('Task assigning') }}</div>
                 <div class="panel-body">
 
-                   {{ __('If Allowed only user who are assigned the task &amp; the admin can assign another user.') }} <br/>
+                   {{ __('If Allowed only user who is assigned the task &amp; the admin can assign another user.') }} <br/>
                     {{ __('If Not allowed anyone, can assign another user.') }}
                 </div>
             </div>
@@ -113,7 +113,7 @@
                 <div class="panel-heading">{{ __('Lead completion') }}</div>
                 <div class="panel-body">
 
-                    {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
+                    {{ __('If Allowed only user who is assigned the lead & the admin can complete the lead.') }} <br/>
                     {{ __('If Not allowed anyone, can complete all leads.')}}
                 </div>
             </div>
@@ -129,7 +129,7 @@
                 <div class="panel-heading">{{ __('Lead assigning') }}</div>
                 <div class="panel-body">
 
-                    {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
+                    {{ __('If Allowed only user who is assigned the lead & the admin can complete the lead.') }} <br/>
                     {{ __('If Not allowed anyone, can complete all leads.')}}
                 </div>
             </div>

@@ -90,7 +90,7 @@
                     'route' => ['invoice.sent', $invoice->id],
                     ]) !!}
                     @if($apiconnected)
-                    <p>{{ __('We have found this contact from your, billing integration, do you wish for us to send it to your billing system aswell?') }}</p>
+                    <p>{{ __('We have found this contact from your, billing integration, do you wish for us to send it to your billing system as well?') }}</p>
                         @foreach ($contacts as $key => $contact)
                             {!! Form::radio('invoiceContact', $contact['guid']) !!}
                             {{$contact['name']}}

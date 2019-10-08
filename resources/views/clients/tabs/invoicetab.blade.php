@@ -5,7 +5,7 @@
             <tr>
                 <th>{{ __('ID') }}</th>
                 <th>{{ __('Hours') }}</th>
-                <th>{{ __('Totalt amount') }}</th>
+                <th>{{ __('Total amount') }}</th>
                 <th>{{ __('Invoice sent') }}</th>
                 <th>{{ __('Payment received') }}</th>
                 <th>{{ __('Status') }}</th>
