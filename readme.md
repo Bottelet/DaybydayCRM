@@ -6,6 +6,11 @@ Flarepoint is a customer relationship management system (CRM) whose purpose is t
 
 ![page_design](https://cloud.githubusercontent.com/assets/15610490/16659700/903393ac-446b-11e6-969c-831fcd698a06.PNG)
 
+## hosted solution
+![DaybydayLogo](https://user-images.githubusercontent.com/15610490/69175894-ed771300-0b04-11ea-9ecd-a5ad6e3d8877.png)
+
+If you are looking for a hosted CRM solution, i will recommend taking a look at [daybydaycrm.com](https://daybydaycrm.com) It's an upgraded version of Flarepoint, with a new nice design, and many new features.
+
 
 ## Get started
 
