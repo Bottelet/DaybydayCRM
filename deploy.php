@@ -26,8 +26,9 @@ host('crm.augetecnologia.com')
     ->user('augetecnologia')
     ->set('http_user','augetecnologia')
     ->port(2222)
-    // ->identityFile('~/.ssh/id_rsa')
-    // ->forwardAgent(true)
+    ->set('ssh_multiplexing', false)
+    ->identityFile('~/.ssh/id_rsa')
+    ->forwardAgent(true)
     ->set('deploy_path', '~/flarepoint-crm');    
     
 // Tasks
