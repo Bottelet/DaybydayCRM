@@ -23,7 +23,12 @@ add('writable_dirs', []);
 // Hosts
 
 host('crm.augetecnologia.com')
-    ->set('deploy_path', '~/{{application}}');    
+    ->user('augetecnologia')
+    ->set('http_user','augetecnologia')
+    ->port(2222)
+    ->identityFile('~/.ssh/id_rsa')
+    ->forwardAgent(true)
+    ->set('deploy_path', '~/flarepoint-crm');    
     
 // Tasks
 
