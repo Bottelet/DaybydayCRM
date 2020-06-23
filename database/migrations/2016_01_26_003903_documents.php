@@ -13,14 +13,18 @@ class Documents extends Migration
     public function up()
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('size');
-            $table->string('path');
-            $table->string('file_display');
-            $table->integer('client_id')->unsigned();
-            $table->foreign('client_id')->references('id')->on('clients');
-            $table->timestamps();
+                $table->increments('id');
+                $table->string('external_id');
+                $table->string('size');
+                $table->string('path');
+                $table->string('original_filename');
+                $table->string('mime');
+                $table->string('integration_id')->nullable();
+                $table->string('integration_type');
+                $table->morphs('source');
+                $table->softDeletes();
+                $table->timestamps();
+
         });
     }
 

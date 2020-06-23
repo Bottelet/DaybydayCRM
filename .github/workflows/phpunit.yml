@@ -1,0 +1,58 @@
+name: Run tests
+
+on: [push]
+
+jobs:
+  run-tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: daybyday_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: '7.3'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          coverage: none
+
+      - name: Create daybyday testing database
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
+        run: mysql -h 127.0.0.1 --port "$PORT" -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS daybyday_test;'
+
+      - name: Run yarn
+        run: yarn && yarn dev
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Run composer install
+        run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
+
+      - name: Prepare Laravel Application
+        run: |
+          cp .env.ci .env
+          php artisan key:generate
+
+      - name: Database setup
+        run:  php artisan migrate --seed
+
+      - name: Run tests
+        run: ./vendor/bin/phpunit
+        env:
+          ELASTICSEARCH_PORT: ${{ job.services.elasticsearch.ports[9200] }}

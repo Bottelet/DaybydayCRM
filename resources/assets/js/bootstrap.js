@@ -9,15 +9,19 @@ window._ = require('lodash');
 
 window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
-
+window.selectpicker = require('bootstrap-select');
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
  * and simple, leaving you to focus on building your next great project.
  */
 
+
 window.Vue = require('vue');
 require('vue-resource');
+
+window.axios = require('axios');
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
  * We'll register a HTTP interceptor to attach the "CSRF" header to each of

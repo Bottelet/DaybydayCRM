@@ -14,15 +14,13 @@ class Settings extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('task_complete_allowed');
-            $table->integer('task_assign_allowed');
-            $table->integer('lead_complete_allowed');
-            $table->integer('lead_assign_allowed');
-            $table->integer('time_change_allowed');
-            $table->integer('comment_allowed');
+            $table->integer('client_number');
+            $table->integer('invoice_number');
             $table->string('country')->nullable();
             $table->string('company')->nullable();
+            $table->integer('max_users');
             $table->timestamps();
+
         });
     }
 

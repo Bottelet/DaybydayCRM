@@ -13,7 +13,7 @@ return [
      * please specific it here, this option is not
      * considerate if using notifynder as polymorphic
      */
-    'model' => 'App\User',
+    'model' => 'App\Models\User',
 
     /**
      * Do you want have notifynder that work polymorphically?

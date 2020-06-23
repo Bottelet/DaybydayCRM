@@ -1,12 +1,17 @@
 <?php
-
 namespace App\Models;
 
+use App\Repositories\Money\Money;
+use App\Repositories\Money\MoneyConverter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceLine extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
+        'external_id',
         'type',
         'quantity',
         'task_id',
@@ -14,7 +19,18 @@ class InvoiceLine extends Model
         'comment',
         'price',
         'invoice_id',
+        'product_id',
     ];
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'external_id';
+    }
 
     public function tasks()
     {
@@ -30,4 +46,21 @@ class InvoiceLine extends Model
     {
         return $this->invoice->task;
     }
+
+    public function getTotalValueAttribute()
+    {
+        return $this->quantity * $this->price;
+    }
+
+    public function getTotalValueConvertedAttribute()
+    {
+        $money = new Money($this->quantity * $this->price);
+        return app(MoneyConverter::class, ['money' => $money])->format();
+    }
+    public function getPriceConvertedAttribute()
+    {
+        $money = new Money($this->price);
+        return app(MoneyConverter::class, ['money' => $money])->format();
+    }
+
 }

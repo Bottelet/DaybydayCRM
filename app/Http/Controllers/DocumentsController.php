@@ -1,95 +1,258 @@
 <?php
-
 namespace App\Http\Controllers;
-
+use App\Local;
+use App\Models\Task;
+use App\Services\Storage\GetStorageProvider;
 use Excel;
 use Session;
 use Validator;
+use DB;
+use Storage;
 use File;
+use App\Http\Requests;
 use App\Models\Setting;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use App\Models\Client;
+use App\Models\Project;
+use Ramsey\Uuid\Uuid;
+use App\Models\Integration;
 
 class DocumentsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('filesystem.is.enabled');
+    }
+
+    public function view($external_id)
+    {
+        $document = Document::whereExternalId($external_id)->first();
+        $fileSystem = GetStorageProvider::getStorage();
+        $file = $fileSystem->view($document);
+        if (!$file) {
+           session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
+            return redirect()->back();
+        }
+
+        return response($file, 200)
+              ->header('Content-Type', $document->mime)
+              ->header('Content-Disposition', 'inline')
+              ->header('filename', $document->original_filename);
+    }
+
+    public function download($external_id)
+    {
+        $document = Document::whereExternalId($external_id)->first();
+        $fileSystem = GetStorageProvider::getStorage();
+        $file = $fileSystem->download($document);
+        if (!$file) {
+            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
+            return redirect()->back();
+        }
+
+        return response($file, 200)
+            ->header('Content-Type', $document->mime)
+            ->header('Content-Disposition', 'attachment')
+            ->header('filename', $document->original_filename);
+    }
     /**
      * @param Request $request
      * @param $id
-     *
      * @return mixed
      */
-    public function upload(Request $request, $id)
+    public function upload(Request $request, $external_id)
     {
-        $settings    = Setting::findOrFail(1);
-        $companyname = $settings->company;
-        if (!is_dir(public_path().'/files/'.$companyname)) {
-            mkdir(public_path().'/files/'.$companyname, 0777, true);
+        if (!auth()->user()->can('document-upload')) {
+            session()->flash('flash_message_warning', __('You do not have permission to upload a document'));
+            return redirect()->route('tasks.show', $external_id);
         }
-        $file            = $request->file('file');
-        $destinationPath = public_path().'/files/'.$companyname;
-        $filename        = str_random(8).'_'.$file->getClientOriginalName();
-        $fileOrginal     = $file->getClientOriginalName();
-        $file->move($destinationPath, $filename);
-        $size       = $file->getClientSize();
-        $mbsize     = $size / 1048576;
-        $totaltsize = substr($mbsize, 0, 4);
-        if ($totaltsize > 15) {
-            Session::flash('flash_message', 'File Size can not be bigger then 15MB');
+        $client = Client::whereExternalId($external_id)->first();
 
+        $file = $request->file('file');
+        $filename = str_random(8) . '_' . $file->getClientOriginalName();
+        $fileOrginal = $file->getClientOriginalName();
+
+        $size = $file->getClientSize();
+        $mbsize = $size / 1048576;
+        $totaltsize = substr($mbsize, 0, 4);
+
+        if ($totaltsize > 15) {
+            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
             return redirect()->back();
         }
+
+        $client_folder = $client->external_id;
+        $fileSystem = GetStorageProvider::getStorage();
+        $fileData = $fileSystem->upload($client_folder, $filename, $file);
         $input = array_replace(
             $request->all(),
-            ['path' => "$filename", 'size' => "$totaltsize", 'file_display' => "$fileOrginal", 'client_id' => $id]
+            [
+                'external_id' => Uuid::uuid4()->toString(),
+                'path' => $fileData['file_path'],
+                'size' => $totaltsize,
+                'original_filename' => $fileOrginal,
+                'source_id' => $client->id,
+                'source_type' => Client::class,
+                'mime' => $file->getClientMimeType(),
+                'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
+                'integration_type' => get_class($fileSystem)
+            ]
         );
-        $document = Document::create($input);
-        Session::flash('flash_message', 'File successfully uploaded');
+        Document::create($input);
+        Session::flash('flash_message', __('File successfully uploaded'));
     }
 
     /**
      * @param Request $request
-     *
+     * @param $id
      * @return mixed
      */
-    public function import(Request $request)
+    public function uploadToTask(Request $request, $external_id)
     {
-        $rules = [
-            'file'        => 'required',
-            'num_records' => 'required',
-        ];
-        $validator = Validator::make($request->all(), $rules);
-        // process the form
-        if (!$validator->fails()) {
-            return Redirect(route('clients.create'))->withErrors($validator);
-        } else {
-            try {
-                Excel::load('public\imports\contacts.xlsx', function ($reader) {
-                    foreach ($reader->toArray() as $row) {
-                        if ($row['name'] && $row['company'] && $row['email'] && '' == $row['user']) {
-                            Session::flash('flash_message_warning', 'Required fields are empty');
-                        }
-                    }
-                });
-                Session::flash('flash_message', 'Users uploaded successfully.');
-                // return redirect(route('clients.index'));
-            } catch (\Exception $e) {
-                Session::flash('flash_message_warning', $e->getMessage());
-                //return redirect(route('clients.index'));
+        /**   if (!auth()->user()->can('image-upload')) {
+        session()->flash('flash_message_warning', __('You do not have permission to upload images'));
+        return redirect()->route('tasks.show', $task->external_id);
+        }**/
+
+        $task = Task::whereExternalId($external_id)->first();
+
+        if (!is_null($request->files)) {
+            foreach ($request->file('files') as $image) {
+                $file = $image;
+                $filename = str_random(8) . '_' . $file->getClientOriginalName();
+                $fileOrginal = $file->getClientOriginalName();
+
+                $size = $file->getClientSize();
+                $mbsize = $size / 1048576;
+                $totaltsize = substr($mbsize, 0, 4);
+
+                if ($totaltsize > 15) {
+                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    return redirect()->back();
+                }
+
+                $folder = $external_id;
+                $fileSystem = GetStorageProvider::getStorage();
+                $fileData = $fileSystem->upload($folder, $filename, $file);
+
+                Document::create([
+                    'external_id' => Uuid::uuid4()->toString(),
+                    'path' => $fileData['file_path'],
+                    'size' => $totaltsize,
+                    'original_filename' => $fileOrginal,
+                    'source_id' => $task->id,
+                    'source_type' => Task::class,
+                    'mime' => $file->getClientMimeType(),
+                    'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
+                    'integration_type' => get_class($fileSystem)
+                ]);
+
             }
         }
+        Session::flash('flash_message', __('File successfully uploaded'));
+        return $task->external_id;
     }
 
-    public function destroy($id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
+    public function uploadToProject(Request $request, $external_id)
     {
-        $document     = Document::find($id);
-        $settings     = Setting::findOrFail(1);
-        $companyname  = $settings->company;
-        $path         = $document->path;
-        $destroy_path = (public_path().'/files/'.$companyname.'/'.$path);
-        File::delete(public_path().'/files/'.$companyname.'/'.$path);
-        $document->delete();
-        Session()->flash('flash_message', 'File has been deleted');
+        /**   if (!auth()->user()->can('image-upload')) {
+        session()->flash('flash_message_warning', __('You do not have permission to upload images'));
+        return redirect()->route('tasks.show', $task->external_id);
+        }**/
 
-        return redirect()->back();
+        $project = Project::whereExternalId($external_id)->first();
+
+        if (!is_null($request->files)) {
+            foreach ($request->file('files') as $image) {
+                $file = $image;
+                $filename = str_random(8) . '_' . $file->getClientOriginalName();
+                $fileOrginal = $file->getClientOriginalName();
+
+                $size = $file->getClientSize();
+                $mbsize = $size / 1048576;
+                $totaltsize = substr($mbsize, 0, 4);
+
+                if ($totaltsize > 15) {
+                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    return redirect()->back();
+                }
+
+                $folder = $external_id;
+
+                $fileSystem = GetStorageProvider::getStorage();
+
+                $fileData = $fileSystem->upload($folder, $filename, $file);
+
+                Document::create([
+                    'external_id' => Uuid::uuid4()->toString(),
+                    'path' => $fileData['file_path'],
+                    'size' => $totaltsize,
+                    'original_filename' => $fileOrginal,
+                    'source_id' => $project->id,
+                    'source_type' => Project::class,
+                    'mime' => $file->getClientMimeType(),
+                    'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
+                    'integration_type' => get_class($fileSystem)
+                ]);
+
+            }
+        }
+        Session::flash('flash_message', __('File successfully uploaded'));
+        return $project->external_id;
     }
+
+
+    public function destroy($external_id)
+	{
+        if (!auth()->user()->can('document-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete a document'));
+            return redirect()->route('tasks.show', $external_id);
+        }
+        $fileSystem = GetStorageProvider::getStorage();
+
+    	$document = Document::whereExternalId($external_id)->first();
+        $deleted = $fileSystem->delete($document);
+    	if (!$deleted) {
+            Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
+        } else {
+            Session()->flash('flash_message', __('File has been deleted'));
+        }
+    	$document->delete();
+
+    	return redirect()->back();
+	}
+
+
+    /**
+     * Opens invoce line creation modal
+     * @param Request $request
+     * @param $external_id Customer's external_id
+     *
+     * @return View
+     */
+    public function uploadFilesModalView(Request $request, $external_id, $type)
+    {
+        $view = view('documents._uploadFileModal');
+
+        if ($type == 'task') {
+            $task = Task::whereExternalId($external_id)->first();
+        } elseif ($type == 'client') {
+            $task = Client::whereExternalId($external_id)->first()->task;
+        } elseif ($type == 'project') {
+            $task = Project::whereExternalId($external_id)->first();
+        }
+
+        return $view
+            ->withTitle($task->title)
+            ->with('external_id', $external_id)
+            ->withType($type)
+            ->withRoute(route('document.'. $type . '.upload', $external_id));
+    }
+
 }

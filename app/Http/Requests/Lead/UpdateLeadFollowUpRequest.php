@@ -24,7 +24,7 @@ class UpdateLeadFollowUpRequest extends FormRequest
     public function rules()
     {
         return [
-            'contact_date' => 'required',
+            'deadline' => 'required',
             'contact_time' => 'required',
         ];
     }

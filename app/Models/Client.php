@@ -1,97 +1,64 @@
 <?php
-
 namespace App\Models;
 
+use App\Http\Controllers\ClientsController;
+use App\Observers\ElasticSearchObserver;
+use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+
+/**
+ * @property mixed user_id
+ * @property mixed company_name
+ * @property mixed vat
+ * @property mixed id
+ */
 class Client extends Model
 {
+    use  SearchableTrait, SoftDeletes;
+
+    protected $searchableFields = ['company_name', 'vat', 'address'];
+
     protected $fillable = [
+        'external_id',
         'name',
+        'company_name',
         'vat',
-        'primary_email',
-        'billing_address1',
-        'billing_address2',
-        'billing_city',
-        'billing_state',
-        'billing_zipcode',
-        'billing_country',
-        'shipping_address1',
-        'shipping_address2',
-        'shipping_city',
-        'shipping_state',
-        'shipping_zipcode',
-        'shipping_country',
+        'email',
+        'address',
+        'zipcode',
+        'city',
         'primary_number',
         'secondary_number',
         'industry_id',
         'company_type',
         'user_id',
-    ];
+        'client_number'];
 
-    public function getFormattedBillingAddressAttribute()
+    public static function boot()
     {
-        $address = '';
-
-        if ($this->billing_address1 || $this->billing_city || $this->billing_zipcode) {
-            if ($this->billing_address1) {
-                $address .= htmlspecialchars($this->billing_address1).'<br/>';
-            }
-            if ($this->billing_address2) {
-                $address .= htmlspecialchars($this->billing_address2).'<br/>';
-            }
-            if ($this->billing_city || $this->billing_state || $this->billing_zipcode) {
-                if ($this->billing_city) {
-                    $address .= $this->billing_city.'&nbsp;';
-                }
-                if ($this->billing_state) {
-                    $address .= $this->billing_state.'&nbsp;';
-                }
-                if ($this->billing_zipcode) {
-                    $address .= $this->billing_zipcode;
-                }
-            }
-            if ($this->billing_country) {
-                $address .= '<br/>'.$this->billing_country;
-            }
-
-            return $address;
-        } else {
-            return null;
-        }
+        parent::boot();
+        // This makes it easy to toggle the search feature flag
+        // on and off. This is going to prove useful later on
+        // when deploy the new search engine to a live app.
+        //if (config('services.search.enabled')) {
+        static::observe(ElasticSearchObserver::class);
+        //}
     }
 
-    public function getFormattedShippingAddressAttribute()
+    public function updateAssignee(User $user)
     {
-        $address = '';
+        $this->user_id = $user->id;
+        $this->save();
 
-        if ($this->shipping_address1 || $this->shipping_city || $this->shipping_zipcode) {
-            if ($this->shipping_address1) {
-                $address .= htmlspecialchars($this->shipping_address1).'<br/>';
-            }
-            if ($this->shipping_address2) {
-                $address .= htmlspecialchars($this->shipping_address2).'<br/>';
-            }
-            if ($this->shipping_city || $this->shipping_state || $this->shipping_zipcode) {
-                if ($this->shipping_city) {
-                    $address .= $this->shipping_city.'&nbsp;';
-                }
-                if ($this->shipping_state) {
-                    $address .= $this->shipping_state.'&nbsp;';
-                }
-                if ($this->shipping_zipcode) {
-                    $address .= $this->shipping_zipcode;
-                }
-            }
-            if ($this->shipping_country) {
-                $address .= '<br/>'.$this->shipping_country;
-            }
+        event(new \App\Events\ClientAction($this, ClientsController::UPDATED_ASSIGN));
+    }
 
-            return $address;
-        } else {
-            return null;
-        }
+    public function displayValue()
+    {
+        return $this->company_name;
     }
 
     public function user()
@@ -102,27 +69,23 @@ class Client extends Model
     public function tasks()
     {
         return $this->hasMany(Task::class, 'client_id', 'id')
-            ->orderBy('status', 'asc')
             ->orderBy('created_at', 'desc');
     }
 
     public function leads()
     {
         return $this->hasMany(Lead::class, 'client_id', 'id')
-            ->orderBy('status', 'asc')
-            ->orderBy('created_at', 'desc');
-    }
-
-    public function contacts()
-    {
-        return $this->hasMany(Contact::class, 'client_id', 'id')
-            ->orderBy('name', 'asc')
             ->orderBy('created_at', 'desc');
     }
 
     public function documents()
     {
-        return $this->hasMany(Document::class, 'client_id', 'id');
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 
     public function invoices()
@@ -130,9 +93,24 @@ class Client extends Model
         return $this->hasMany(Invoice::class);
     }
 
-    public function industry()
+    public function contacts()
     {
-        return $this->belongsTo(Industry::class, 'industry_id');
+        return $this->hasMany(Contact::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function primaryContact()
+    {
+        return $this->hasOne(Contact::class)->whereIsPrimary(true);
+    }
+
+    public function getprimaryContactAttribute()
+    {
+        return $this->hasMany(Contact::class)->whereIsPrimary(true)->first();
     }
 
     public function getAssignedUserAttribute()
@@ -140,8 +118,16 @@ class Client extends Model
         return User::findOrFail($this->user_id);
     }
 
-    public function scopeMy($query)
+    public static function whereExternalId($external_id)
     {
-        return $query->where('user_id', Auth::id());
+        return self::where('external_id', $external_id)->first();
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchableFields(): array
+    {
+        return $this->searchableFields;
     }
 }

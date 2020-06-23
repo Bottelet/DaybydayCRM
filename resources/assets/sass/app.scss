@@ -1,13 +1,21 @@
 // Fonts
-@import url(https://fonts.googleapis.com/css?family=Raleway:300,400,600);
-@import url(https://fonts.googleapis.com/css?family=Lato:400,700,300);
+@import url('https://fonts.googleapis.com/css?family=Raleway:300,400,600');
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700,300');
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
-// Bootstrap
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500,700');
 
 //Custom components
 @import 'components/base';
 @import 'components/notifications';
 @import 'components/topcontactinfo';
 @import 'components/sidebar';
+@import 'components/task-sidebar';
 @import 'components/dashboard';
+@import 'components/datatables';
+@import 'components/tablet';
+@import 'components/project-board';
+@import 'components/button';
+@import 'components/datatables-overwrite';
+@import 'components/element-overrides';
+@import 'components/invoice';
+

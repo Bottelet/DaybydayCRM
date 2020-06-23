@@ -9,19 +9,17 @@ class RedirectIfNotAdmin
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if (!auth()->user()->hasRole('administrator')) {
-            Session()->flash('flash_message_warning', 'Only Allowed for admins');
-
-            return redirect()->back();
+        if (Auth()->user()->hasRole('administrator') || Auth()->user()->hasRole('owner')) {
+            return $next($request);
         }
-
-        return $next($request);
+          Session()->flash('flash_message_warning', __('Only Allowed for admins'));
+          return redirect()->back();
+        
     }
 }

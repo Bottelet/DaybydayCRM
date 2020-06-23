@@ -30,10 +30,11 @@ elixir(mix => {
         }
     });
 
+
     mix.sass('app.scss')
-    .version('public/css/app.css')
-    .webpack('app.js')
-    .version('public/js/app.js')
-    .copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/bootstrap')
+        .version('public/css/app.css')
+        .webpack('app.js')
+        .version('public/js/app.js')
+        .copy('node_modules/bootstrap-sass/assets/fonts/bootstrap/','public/fonts/bootstrap')
     //.browserSync({proxy : 'localhost:1337/Flarepoint-crm/public/tasks'});
 });

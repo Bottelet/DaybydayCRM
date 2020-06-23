@@ -1,149 +1,194 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>{{ __('Settings') }}</h1>
+    {{ __('Settings') }}
 @stop
 @section('content')
     <div class="row">
-    <div class="col-lg-12">
-        
-    </div>
-    @foreach($roles as $role) 
-    <div class="col-lg-12">
-    {!! Form::model($permission, [
-        'method' => 'PATCH',
-        'url'    => 'settings/permissionsUpdate',
-    ]) !!}
-
-        <table class="table table-responsive table-striped table_wrapper" id="permissions-table">
-            <thead>
-            <tr>
-            <th></th>
-                @foreach($permission as $perm)
-             <th>{{$perm->display_name}}</th>
-
-                @endforeach
-                <th></th>
-            </tr>
-
-            </thead>
-            <tbody>
-        <input type="hidden" name="role_id" value="{{ $role->id }}"/>
-                <tr>
-                        <th>{{$role->display_name}}</th>
-                        @foreach($permission as $perm)
-                            <?php $isEnabled = !current(
-    array_filter(
-                                        $role->permissions->toArray(),
-                                        function ($element) use ($perm) {
-                                            return $element['id'] === $perm->id;
-                                        }
-                                    )
-                            );  ?>
-
-                            <td><input type="checkbox"
-                                       <?php if (!$isEnabled) {
-                                echo 'checked';
-                            } ?> name="permissions[ {{ $perm->id }} ]"
-                                       value="1" data-role="{{ $role->id }}">
-                                <span class="perm-name"></span><br/></td>
-
-                
-                    @endforeach        
-    <td>{!! Form::submit( __('Save Role') , ['class' => 'btn btn-primary']) !!}</td>
-   
-            </tr>
-      </tbody>
-    </table>
-     {!! Form::close() !!}
-     </div>
-     @endforeach
-</div>
-
-
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="sidebarheader movedown"><p>{{ __('Overall Settings') }}</p></div>
-
-
-            {!! Form::model($settings, [
-               'method' => 'PATCH',
-               'url' => 'settings/overall'
-               ]) !!}
-
-                    <!-- *********************************************************************
-     *                     Task complete       
-     *********************************************************************-->
-            <div class="panel panel-default movedown">
-                <div class="panel-heading">{{ __('Task completion') }}</div>
-                <div class="panel-body">
-
-                    {{ __('If Allowed only user who are assigned the task & the admin can complete the task.') }} <br/>
-                    {{ __('If Not allowed anyone, can complete all tasks.')}}
+        <form action="{{route('settings.update')}}" method="POST">
+            {!! method_field('PATCH') !!}
+            {{csrf_field()}}
+            <div class="col-lg-12">
+                <div class="sidebarheader"><p>{{ __('Overall Settings') }}</p></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Company name')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Your company\'s name')</p>
+                            <br>
+                            <input name="company" type="text" class="form-control company_name" value="{{$settings->company}}" {{!$settings->company ? '' : 'disabled'}} style="">
+                        </div>
+                    </div>
                 </div>
             </div>
-            {!! Form::select('task_complete_allowed', 
-            [
-                1 => __('Allowed'), 
-                2 => __('Not allowed')
-            ], 
-            $settings->task_complete_allowed, ['class' => 'form-control']) !!}
-                    <!-- *********************************************************************
-     *                     Task assign       
-     *********************************************************************-->
-            <div class="panel panel-default movedown">
-                <div class="panel-heading">{{ __('Task assigning') }}</div>
-                <div class="panel-body">
-
-                   {{ __('If Allowed only user who are assigned the task &amp; the admin can assign another user.') }} <br/>
-                    {{ __('If Not allowed anyone, can assign another user.') }}
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Country')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Where is your company located?')</p>
+                            <br>
+                            <select class="form-control" name="country">
+                                @foreach(App\Enums\Country::values() as $country)
+                                    <option {{ $country->getCode() === $settings->country ? 'selected' : '' }} value="{{$country->getCode()}}">{{__($country->getDisplayValue())}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {!! Form::select('task_assign_allowed', 
-            [
-                1 => __('Allowed'), 
-                2 => __('Not allowed')
-            ],
-            $settings->task_assign_allowed, ['class' => 'form-control']) !!}
-                    <!-- *********************************************************************
-     *                     Lead complete       
-     *********************************************************************-->
-
-            <div class="panel panel-default movedown">
-                <div class="panel-heading">{{ __('Lead completion') }}</div>
-                <div class="panel-body">
-
-                    {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
-                    {{ __('If Not allowed anyone, can complete all leads.')}}
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Language')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('This is the default language for new users, the language can be changed for each user under their profile')</p>
+                            <br>
+                            <select class="form-control" name="language">
+                                <option value="EN">@lang("English")</option>
+                                <option value="DK" {{$settings->language == "DK" ? "selected" : ""}}>@lang("Danish")</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {!! Form::select('lead_complete_allowed', [
-                1 => __('Allowed'), 
-                2 => __('Not allowed')
-            ], 
-            $settings->lead_complete_allowed, ['class' => 'form-control']) !!}
-                    <!-- *********************************************************************
-     *                     Lead assign       
-     *********************************************************************-->
-            <div class="panel panel-default movedown">
-                <div class="panel-heading">{{ __('Lead assigning') }}</div>
-                <div class="panel-body">
-
-                    {{ __('If Allowed only user who are assigned the lead & the admin can complete the lead.') }} <br/>
-                    {{ __('If Not allowed anyone, can complete all leads.')}}
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Business hours')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Your business primary working working hours')</p>
+                            <br>
+                            <div class="form-group">
+                                <div class="col-md-5">
+                                    <input type="text" name="start_time" value="{{\Carbon\Carbon::parse('2020-01-01 '. $businessHours["open"])->format(carbonTime())}}" class="form-control" id="start_time" required>
+                                    <span class="help-block">
+                                    @lang('Start of business')
+                        </span>
+                                </div>
+                                <div class="col-md-1">_</div>
+                                <div class="col-md-5">
+                                    <input type="text" name="end_time" value="{{\Carbon\Carbon::parse('2020-01-01 ' . $businessHours["close"])->format(carbonTime())}}" class="form-control" id="end_time" required>
+                                    <span class="help-block">
+                                    @lang('End of business')
+                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {!! Form::select('lead_assign_allowed', 
-            [
-                1 => __('Allowed'), 
-                2 => __('Not allowed')
-            ], 
-            $settings->lead_assign_allowed, ['class' => 'form-control']) !!}
-            <br/>
-            {!! Form::submit( __('Save overall settings'), ['class' => 'btn btn-primary']) !!}
-            {!! Form::close() !!}
-        </div>
+            <div class="col-lg-12">
+                <div class="sidebarheader"><p>{{ __('Client') }}</p></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Next client number')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Change next number generated for a client. This will not affect previously created clients. Has to be higer then previously created client number')</p>
+                            <input name="client_number" type="number" class="form-control" min="1" max="9999999" value="{{$clientNumber}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="sidebarheader"><p>{{ __('Invoice') }}</p></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Next invoice number')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Change next number generated for a invoice. This will not affect previously created invoices. Has to be higer then previously created invoice number')</p>
+                            <input name="invoice_number" type="number" class="form-control" min="1" max="9999999" value="{{$invoiceNumber}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Currency')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('If the currency is changed, the invoice will not be recalculated to the new currency, only the visual is changed, like the prefix, separator, symbol etc')</p>
+                            <select class="form-control" name="currency">
+                                @foreach($currencies as $currency)
+                                    <option value="{{$currency["code"]}}" {{$currentCurrency == $currency["code"] ? 'selected' : ''}}>{{$currency["title"]}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <div class="tablet movedown">
+                        <div class="tablet__head slim">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">@lang('Vat percentage')</h3>
+                            </div>
+                        </div>
+                        <div class="tablet__body">
+                            <p class="small">@lang('Control the percentage of vat calculated on invoices. If any billing integration is active, will the integration control the VAT, we will only send the full amount')</p>
+                            <input name="vat" type="number" class="form-control" min="0" max="100" step=".01" value="{{$vatPercentage}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <input type="submit" class="btn btn-md btn-brand" value="@lang('Save settings')">
+            </div>
+        </form>
     </div>
 
 @stop
 
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('#start_time').pickatime({
+                format:'{{frontendTime()}}',
+                formatSubmit: 'HH:i',
+                hiddenName: true,
+                clear: false,
+            })
+            $('#end_time').pickatime({
+                format:'{{frontendTime()}}',
+                formatSubmit: 'HH:i',
+                hiddenName: true,
+                clear: false,
+            })
+        });
+    </script>
+@endpush

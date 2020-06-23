@@ -1,118 +1,61 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Repositories\Task\TaskRepositoryContract;
-use App\Repositories\Lead\LeadRepositoryContract;
-use App\Repositories\User\UserRepositoryContract;
-use App\Repositories\Client\ClientRepositoryContract;
-use App\Repositories\Setting\SettingRepositoryContract;
+use App\Models\Absence;
+use App\Models\Client;
+use App\Models\Lead;
+use App\Models\Project;
+use App\Models\Setting;
+use App\Models\Task;
+use App\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use DB;
 
 class PagesController extends Controller
 {
-    protected $users;
-    protected $clients;
-    protected $settings;
-    protected $tasks;
-    protected $leads;
-
-    public function __construct(
-        UserRepositoryContract $users,
-        ClientRepositoryContract $clients,
-        SettingRepositoryContract $settings,
-        TaskRepositoryContract $tasks,
-        LeadRepositoryContract $leads
-    ) {
-        $this->users    = $users;
-        $this->clients  = $clients;
-        $this->settings = $settings;
-        $this->tasks    = $tasks;
-        $this->leads    = $leads;
-    }
-
     /**
-     * Dashobard view.
-     *
+     * Dashobard view
      * @return mixed
      */
     public function dashboard()
     {
-        /**
-         * Other Statistics.
-         */
-        $companyname    = $this->settings->getCompanyName();
-        $users          = $this->users->getAllUsers();
-        $totalClients   = $this->clients->getAllClientsCount();
-        $totalTimeSpent = $this->tasks->totalTimeSpent();
+        $today = today();
+        $startDate = today()->subdays(14);
+        $period = CarbonPeriod::create($startDate, $today);
+        $datasheet = [];
 
-        /**
-         * Statistics for all-time tasks.
-         */
-        $alltasks             = $this->tasks->tasks();
-        $allCompletedTasks    = $this->tasks->allCompletedTasks();
-        $totalPercentageTasks = $this->tasks->percantageCompleted();
+        // Iterate over the period
+        foreach ($period as $date) {
+            $datasheet[$date->format(carbonDate())] = [];
+            $datasheet[$date->format(carbonDate())]["monthly"] = [];
+            $datasheet[$date->format(carbonDate())]["monthly"]["tasks"] = 0;
+            $datasheet[$date->format(carbonDate())]["monthly"]["leads"] = 0;
+        }
 
-        /**
-         * Statistics for today tasks.
-         */
-        $completedTasksToday = $this->tasks->completedTasksToday();
-        $createdTasksToday   = $this->tasks->createdTasksToday();
+        $tasks = Task::whereBetween('created_at', [$startDate, now()])->get();
+        $leads = Lead::whereBetween('created_at', [$startDate, now()])->get();
+        foreach ($tasks as $task) {
+            $datasheet[$task->created_at->format(carbonDate())]["monthly"]["tasks"]++;
+        }
 
-        /**
-         * Statistics for tasks this month.
-         */
-        $taskCompletedThisMonth = $this->tasks->completedTasksThisMonth();
+        foreach ($leads as $lead) {
+            $datasheet[$lead->created_at->format(carbonDate())]["monthly"]["leads"]++;
+        }
+        if(!auth()->user()->can('absence-view')) {
+            $absences = [];
+        } else {
+            $absences = Absence::with('user')->groupBy('user_id')->where('start_at', '>=', today())->orWhere('end_at', '>', today())->get();
+        }
 
-        /**
-         * Statistics for tasks each month(For Charts).
-         */
-        $createdTasksMonthly   = $this->tasks->createdTasksMothly();
-        $completedTasksMonthly = $this->tasks->completedTasksMothly();
-
-        /**
-         * Statistics for all-time Leads.
-         */
-        $allleads             = $this->leads->leads();
-        $allCompletedLeads    = $this->leads->allCompletedLeads();
-        $totalPercentageLeads = $this->leads->percantageCompleted();
-        /**
-         * Statistics for today leads.
-         */
-        $completedLeadsToday = $this->leads->completedLeadsToday();
-        $createdLeadsToday   = $this->leads->createdLeadsToday();
-
-        /**
-         * Statistics for leads this month.
-         */
-        $leadCompletedThisMonth = $this->leads->completedLeadsThisMonth();
-
-        /**
-         * Statistics for leads each month(For Charts).
-         */
-        $completedLeadsMonthly = $this->leads->createdLeadsMonthly();
-        $createdLeadsMonthly   = $this->leads->completedLeadsMonthly();
-
-        return view('pages.dashboard', compact(
-            'completedTasksToday',
-            'completedLeadsToday',
-            'createdTasksToday',
-            'createdLeadsToday',
-            'createdTasksMonthly',
-            'completedTasksMonthly',
-            'completedLeadsMonthly',
-            'createdLeadsMonthly',
-            'taskCompletedThisMonth',
-            'leadCompletedThisMonth',
-            'totalTimeSpent',
-            'totalClients',
-            'users',
-            'companyname',
-            'alltasks',
-            'allCompletedTasks',
-            'totalPercentageTasks',
-            'allleads',
-            'allCompletedLeads',
-            'totalPercentageLeads'
-        ));
+        return view('pages.dashboard')
+            ->withUsers(User::with(['department'])->get())
+            ->withDatasheet($datasheet)
+            ->withTotalTasks(Task::count())
+            ->withTotalLeads(Lead::count())
+            ->withTotalProjects(Project::count())
+            ->withTotalClients(Client::count())
+            ->withSettings(Setting::first())
+            ->withAbsencesToday($absences);
     }
 }

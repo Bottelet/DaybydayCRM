@@ -1,12 +1,12 @@
 <?php
-
 namespace App\Repositories\Role;
 
 use App\Models\Role;
-use App\Models\Permissions;
+use App\Models\Permission;
 
 /**
- * Class RoleRepository.
+ * Class RoleRepository
+ * @package App\Repositories\Role
  */
 class RoleRepository implements RoleRepositoryContract
 {
@@ -15,7 +15,7 @@ class RoleRepository implements RoleRepositoryContract
      */
     public function listAllRoles()
     {
-        return Role::pluck('name', 'id');
+        return $this->allRoles()->pluck('display_name', 'id');
     }
 
     /**
@@ -23,7 +23,7 @@ class RoleRepository implements RoleRepositoryContract
      */
     public function allPermissions()
     {
-        return Permissions::all();
+        return Permission::all();
     }
 
     /**
@@ -31,28 +31,31 @@ class RoleRepository implements RoleRepositoryContract
      */
     public function allRoles()
     {
-        return Role::all();
+        //Get rid of owner as the should only be one.
+        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function($value, $key) {
+            return $value->name != "owner";
+        });
     }
 
     /**
      * @param $requestData
      */
-    public function permissionsUpdate($requestData)
+    public function permissionsUpdate($requestData, $external_id)
     {
         $allowed_permissions = [];
 
-        if (null != $requestData->input('permissions')) {
+        if ($requestData->input('permissions') != null) {
             foreach ($requestData->input('permissions')
                      as $permissionId => $permission) {
-                if ('1' === $permission) {
-                    $allowed_permissions[] = (int) $permissionId;
+                if ($permission === '1') {
+                    $allowed_permissions[] = (int)$permissionId;
                 }
             }
         } else {
             $allowed_permissions = [];
         }
 
-        $role = Role::find($requestData->input('role_id'));
+        $role = Role::whereExternalId($external_id)->first();
 
         $role->permissions()->sync($allowed_permissions);
         $role->save();
@@ -63,12 +66,12 @@ class RoleRepository implements RoleRepositoryContract
      */
     public function create($requestData)
     {
-        $roleName        = $requestData->name;
+        $roleName = $requestData->name;
         $roleDescription = $requestData->description;
         Role::create([
-            'name'         => strtolower($roleName),
+            'name' => strtolower($roleName),
             'display_name' => ucfirst($roleName),
-            'description'  => $roleDescription,
+            'description' => $roleDescription
         ]);
     }
 
@@ -78,7 +81,7 @@ class RoleRepository implements RoleRepositoryContract
     public function destroy($id)
     {
         $role = Role::findorFail($id);
-        if (1 !== $role->id) {
+        if ($role->name !== 'administrator' || $role->name !== 'owner') {
             $role->delete();
         } else {
             Session()->flash('flash_message_warning', 'Can not delete Administrator role');

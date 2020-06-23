@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="bootstrap/autoload.php"
+         bootstrap="vendor/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
@@ -9,19 +9,27 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Application Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
     <filter>
-        <whitelist>
-            <directory suffix=".php">app/</directory>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./app</directory>
         </whitelist>
     </filter>
+    <extensions>
+        <extension class="Tests\Bootstrap"/>
+    </extensions>
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="QUEUE_DRIVER" value="sync"/>
+        <server name="APP_CONFIG_CACHE" value="bootstrap/cache/config.phpunit.php"/>
+        <server name="APP_SERVICES_CACHE" value="bootstrap/cache/services.phpunit.php"/>
+        <server name="APP_PACKAGES_CACHE" value="bootstrap/cache/packages.phpunit.php"/>
+        <server name="APP_ROUTES_CACHE" value="bootstrap/cache/routes.phpunit.php"/>
+        <server name="APP_EVENTS_CACHE" value="bootstrap/cache/events.phpunit.php"/>
     </php>
 </phpunit>

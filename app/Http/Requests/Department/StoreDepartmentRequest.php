@@ -13,7 +13,7 @@ class StoreDepartmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator');
+        return auth()->user()->hasRole('administrator') || auth()->user()->hasRole('owner');
     }
 
     /**
@@ -24,8 +24,8 @@ class StoreDepartmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'        => 'required',
-            'description' => '',
+            'name' => 'required',
+            'description' => ''
         ];
     }
 }

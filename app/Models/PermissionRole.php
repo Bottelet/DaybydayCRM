@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -10,8 +9,10 @@ class PermissionRole extends Model
 
     protected $fillable = [
         'permission_id',
-        'role_id',
+        'role_id'
     ];
+
+    public $timestamps = false;
 
     public function settings()
     {
@@ -25,6 +26,6 @@ class PermissionRole extends Model
 
     public function hasperm()
     {
-        return $this->hasMany(Permissions::class, 'Permission_role');
+        return $this->hasMany(Permission::class, 'Permission_role');
     }
 }

@@ -1,11 +1,12 @@
 <?php
-
 namespace App\Repositories\Lead;
 
 interface LeadRepositoryContract
 {
     public function find($id);
 
+    public function findByExternalId($external_id);
+    
     public function create($requestData);
 
     public function updateStatus($id, $requestData);

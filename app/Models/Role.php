@@ -1,15 +1,23 @@
 <?php
-
 namespace App\Models;
 
-use Zizaco\Entrust\EntrustRole;
+use Illuminate\Database\Eloquent\Model;
+use App\Zizaco\Entrust\EntrustRole;
+use App\Models\Permission;
+
 
 class Role extends EntrustRole
 {
+
+
+    const OWNER_ROLE = "owner";
+    const ADMIN_ROLE = "administrator";
+
     protected $fillable = [
         'name',
         'display_name',
         'description',
+        'external_id',
     ];
 
     public function userRole()
@@ -19,6 +27,11 @@ class Role extends EntrustRole
 
     public function permissions()
     {
-        return $this->belongsToMany(Permissions::class, 'permission_role', 'role_id', 'permission_id');
+        return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
+    }
+
+    public function canBeDeleted()
+    {
+        return $this->name !== Role::ADMIN_ROLE && $this->name !== Role::OWNER_ROLE;
     }
 }

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => env('MAIL_DRIVER', 'mailgun'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,8 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => 'hello@example.com', 'name' => 'Daybyday Crm'],
+    'no_reply_mail' => "noreply@exmaple.com",
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +81,7 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+    'username' => env('MAIL_USERNAME', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +94,7 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD'),
+    'password' => env('MAIL_PASSWORD', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,5 +118,5 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
-    ],
+    ]
 ];

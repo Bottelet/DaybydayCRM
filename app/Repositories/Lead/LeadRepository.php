@@ -1,27 +1,38 @@
 <?php
-
 namespace App\Repositories\Lead;
 
+use Ramsey\Uuid\Uuid;
 use App\Models\Lead;
+use App\Models\User;
+use Notifynder;
 use Carbon;
 use DB;
 
 /**
- * Class LeadRepository.
+ * Class LeadRepository
+ * @package App\Repositories\Lead
  */
 class LeadRepository implements LeadRepositoryContract
 {
+    /**
+     *
+     */
     const CREATED = 'created';
-
+    /**
+     *
+     */
     const UPDATED_STATUS = 'updated_status';
-
+    /**
+     *
+     */
     const UPDATED_DEADLINE = 'updated_deadline';
-
+    /**
+     *
+     */
     const UPDATED_ASSIGN = 'updated_assign';
 
     /**
      * @param $id
-     *
      * @return mixed
      */
     public function find($id)
@@ -30,64 +41,69 @@ class LeadRepository implements LeadRepositoryContract
     }
 
     /**
+     * @param $external_id
+     * @return mixed
+     */
+    public function findByExternalId($external_id)
+    {
+        return Lead::whereExternalId($external_id)->first();
+    }
+
+    /**
      * @param $requestData
-     *
      * @return mixed
      */
     public function create($requestData)
     {
         $client_id = $requestData->get('client_id');
-        $input     = $requestData     = array_merge(
+        $input = $requestData = array_merge(
             $requestData->all(),
             ['user_created_id' => \Auth::id(),
-                'contact_date' => $requestData->contact_date.' '.$requestData->contact_time.':00', ]
+                'deadline' => $requestData->deadline . " " . $requestData->contact_time . ":00",
+                'external_id' => Uuid::uuid4()->toString()]
         );
 
-        $lead       = Lead::create($input);
-        $insertedId = $lead->id;
-        Session()->flash('flash_message', 'Lead successfully added!');
+        $lead = Lead::create($input);
+        $insertedExternalId = $lead->external_id;
+        Session()->flash('flash_message', __('Lead successfully added'));
 
         event(new \App\Events\LeadAction($lead, self::CREATED));
 
-        return $insertedId;
+        return $insertedExternalId;
     }
 
     /**
-     * @param $id
+     * @param $external_id
      * @param $requestData
      */
-    public function updateStatus($id, $requestData)
+    public function updateStatus($external_id, $requestData)
     {
-        $lead = Lead::findOrFail($id);
-
-        $input = $requestData->get('status');
-        $input = array_replace($requestData->all(), ['status' => 2]);
-        $lead->fill($input)->save();
+        $lead = $this->findByExternalId($external_id);
+        $lead->fill($requestData->all())->save();
         event(new \App\Events\LeadAction($lead, self::UPDATED_STATUS));
     }
 
     /**
-     * @param $id
+     * @param $external_id
      * @param $requestData
      */
-    public function updateFollowup($id, $requestData)
+    public function updateFollowup($external_id, $requestData)
     {
-        $lead  = Lead::findOrFail($id);
+        $lead = $this->findByExternalId($external_id);
         $input = $requestData->all();
         $input = $requestData =
-            ['contact_date' => $requestData->contact_date.' '.$requestData->contact_time.':00'];
+            ['deadline' => $requestData->deadline . " " . $requestData->contact_time . ":00"];
         $lead->fill($input)->save();
         event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
     }
 
     /**
-     * @param $id
+     * @param $external_id
      * @param $requestData
      */
-    public function updateAssign($id, $requestData)
+    public function updateAssign($external_id, $requestData)
     {
-        $lead = Lead::findOrFail($id);
-
+        $lead = $this->findByExternalId($external_id);
         $input = $requestData->get('user_assigned_id');
         $input = array_replace($requestData->all());
         $lead->fill($input)->save();
@@ -109,7 +125,10 @@ class LeadRepository implements LeadRepositoryContract
      */
     public function allCompletedLeads()
     {
-        return Lead::where('status', 2)->count();
+        return Lead::whereHas('status', function ($query)
+            {
+                $query->whereTitle('Closed');
+            })->count();
     }
 
     /**
@@ -134,7 +153,10 @@ class LeadRepository implements LeadRepositoryContract
         return Lead::whereRaw(
             'date(updated_at) = ?',
             [Carbon::now()->format('Y-m-d')]
-        )->where('status', 2)->count();
+        )->whereHas('status', function ($query)
+            {
+                $query->whereTitle('Closed');
+            })->count();
     }
 
     /**
@@ -153,9 +175,11 @@ class LeadRepository implements LeadRepositoryContract
      */
     public function completedLeadsThisMonth()
     {
-        return DB::table('leads')
-            ->select(DB::raw('count(*) as total, updated_at'))
-            ->where('status', 2)
+        return Lead::select(DB::raw('count(*) as total, updated_at'))
+            ->whereHas('status', function ($query)
+            {
+                $query->whereTitle('Closed');
+            })
             ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
     }
 
@@ -164,9 +188,11 @@ class LeadRepository implements LeadRepositoryContract
      */
     public function createdLeadsMonthly()
     {
-        return DB::table('leads')
-            ->select(DB::raw('count(*) as month, updated_at'))
-            ->where('status', 2)
+        return Lead::select(DB::raw('count(*) as month, updated_at'))
+            ->whereHas('status', function ($query)
+            {
+                $query->whereTitle('Closed');
+            })
             ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
             ->get();
     }
@@ -183,19 +209,21 @@ class LeadRepository implements LeadRepositoryContract
     }
 
     /**
-     * @param $id
-     *
+     * @param $external_id
      * @return mixed
      */
-    public function totalOpenAndClosedLeads($id)
+    public function totalOpenAndClosedLeads($external_id)
     {
-        $open_leads = Lead::where('status', 1)
-        ->where('user_assigned_id', $id)
-        ->count();
+        $user = User::whereExternalId($external_id)->first();
 
-        $closed_leads = Lead::where('status', 2)
-        ->where('user_assigned_id', $id)->count();
+        $groups = $user->leads()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
+        $keys = collect();
+        $counts = collect();
+        foreach ($groups as $groupKey => $group) {
+            $keys->push($groupKey);
+            $counts->push(count($group));
+        }
 
-        return collect([$closed_leads, $open_leads]);
+        return collect(['keys' => $keys, 'counts' => $counts]);
     }
 }

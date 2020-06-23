@@ -1,36 +1,32 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
+use DB;
+use Auth;
 use Carbon;
 use Session;
 use Datatables;
 use App\Models\Lead;
+use App\Models\User;
+use App\Models\Client;
+use App\Http\Requests;
+use App\Models\Status;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Http\Requests\Lead\StoreLeadRequest;
-use App\Repositories\Lead\LeadRepositoryContract;
-use App\Repositories\User\UserRepositoryContract;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
-use App\Repositories\Client\ClientRepositoryContract;
-use App\Repositories\Setting\SettingRepositoryContract;
+use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
 {
-    protected $leads;
-    protected $clients;
-    protected $settings;
-    protected $users;
+    const CREATED = 'created';
+    const UPDATED_STATUS = 'updated_status';
+    const UPDATED_DEADLINE = 'updated_deadline';
+    const UPDATED_ASSIGN = 'updated_assign';
 
-    public function __construct(
-        LeadRepositoryContract $leads,
-        UserRepositoryContract $users,
-        ClientRepositoryContract $clients,
-        SettingRepositoryContract $settings
-    ) {
-        $this->users    = $users;
-        $this->settings = $settings;
-        $this->clients  = $clients;
-        $this->leads    = $leads;
+    public function __construct()
+    {
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
@@ -41,66 +37,26 @@ class LeadsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function unqualified()
     {
-        return view('leads.index');
+        return view('leads.unqualified')->withStatuses(Status::typeOfLead()->get());
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function my()
-    {
-        return view('leads.my');
-    }
-
-    /**
-     * Data for Data tables.
-     *
+     * Data for Data tables
      * @return mixed
      */
-    public function anyData()
+    public function unqualifiedLeads()
     {
-        $leads = Lead::select('leads.*')->where('status', 1)->get();
+        $status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $leads = Lead::isNotQualified()
+            ->where('status_id', '!=', $status_id)
+            ->with(['user', 'creator', 'client.primaryContact'])->get();
 
-        return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="'.route('leads.show', $leads->id).'">'.$leads->title.'</a>';
-            })
-            ->editColumn('user_created_id', function ($leads) {
-                return $leads->creator->name;
-            })
-            ->editColumn('contact_date', function ($leads) {
-                return $leads->contact_date ? with(new Carbon($leads->contact_date))
-                    ->format('d/m/Y') : '';
-            })
-            ->editColumn('user_assigned_id', function ($leads) {
-                return $leads->user->name;
-            })->make(true);
-    }
-
-    /**
-     * Data for Data tables.
-     *
-     * @return mixed
-     */
-    public function myData()
-    {
-        $leads = Lead::select('leads.*')->where('status', 1)->my()->get();
-
-        return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="'.route('leads.show', $leads->id).'">'.$leads->title.'</a>';
-            })
-            ->editColumn('user_created_id', function ($leads) {
-                return $leads->creator->name;
-            })
-            ->editColumn('contact_date', function ($leads) {
-                return $leads->contact_date ? with(new Carbon($leads->contact_date))
-                    ->format('d/m/Y') : '';
-            })->make(true);
+        $leads->map(function ($item) {
+            return [$item['visible_deadline_date'] = $item['deadline']->format(carbonDate()), $item["visible_deadline_time"] = $item['deadline']->format(carbonTime())];
+        });
+        return $leads->toJson();
     }
 
     /**
@@ -108,80 +64,148 @@ class LeadsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($client_external_id = null)
     {
+        $client =  Client::whereExternalId($client_external_id);
+
         return view('leads.create')
-            ->withUsers($this->users->getAllUsersWithDepartments())
-            ->withClients($this->clients->listAllClients());
+            ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
+            ->withClients(Client::pluck('company_name', 'external_id'))
+            ->withClient($client ?: null)
+            ->withStatuses(Status::typeOfLead()->pluck('title', 'id'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param StoreLeadRequest|Request $request
-     *
      * @return \Illuminate\Http\Response
      */
     public function store(StoreLeadRequest $request)
     {
-        $getInsertedId = $this->leads->create($request);
-        Session()->flash('flash_message', 'Lead is created');
+        if ($request->client_external_id) {
+            $client = Client::whereExternalId($request->client_external_id);
+        }
 
-        return redirect()->route('leads.show', $getInsertedId);
+        $lead = Lead::create(
+            [
+                'title' => $request->title,
+                'description' => clean($request->description),
+                'user_assigned_id' => $request->user_assigned_id,
+                'deadline' => Carbon::parse($request->deadline . " " . $request->contact_time . ":00"),
+                'status_id' => $request->status_id,
+                'user_created_id' => auth()->id(),
+                'external_id' => Uuid::uuid4()->toString(),
+                'client_id' => $client->id
+            ]
+        );
+        $insertedExternalId = $lead->external_id;
+        Session()->flash('flash_message', __('Lead successfully added'));
+
+        event(new \App\Events\LeadAction($lead, self::CREATED));
+        Session()->flash('flash_message', __('Lead successfully added'));
+        return redirect()->route('leads.show', $insertedExternalId);
     }
 
-    public function updateAssign($id, Request $request)
+    public function updateAssign($external_id, Request $request)
     {
-        $this->leads->updateAssign($id, $request);
-        Session()->flash('flash_message', 'New user is assigned');
+        $lead = $this->findByExternalId($external_id);
+        $input = $request->get('user_assigned_id');
+        $input = array_replace($request->all());
+        $lead->fill($input)->save();
+        $insertedName = $lead->user->name;
 
+        event(new \App\Events\LeadAction($lead, self::UPDATED_ASSIGN));
+        Session()->flash('flash_message', __('New user is assigned'));
         return redirect()->back();
     }
 
     /**
-     * Update the follow up date (Deadline).
-     *
+     * Update the follow up date (Deadline)
      * @param UpdateLeadFollowUpRequest $request
-     * @param $id
-     *
+     * @param $external_id
      * @return mixed
      */
-    public function updateFollowup(UpdateLeadFollowUpRequest $request, $id)
+    public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
-        $this->leads->updateFollowup($id, $request);
-        Session()->flash('flash_message', 'New follow up date is set');
-
+        if (!auth()->user()->can('lead-update-deadline')) {
+            session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
+            return redirect()->route('tasks.show', $external_id);
+        }
+        $lead = $this->findByExternalId($external_id);
+        $lead->fill(['deadline' => Carbon::parse($request->deadline . " " . $request->contact_time . ":00")])->save();
+        event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
+        Session()->flash('flash_message', __('New follow up date is set'));
         return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param int $id
-     *
+     * @param  int $external_id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($external_id)
     {
         return view('leads.show')
-            ->withLead($this->leads->find($id))
-            ->withUsers($this->users->getAllUsersWithDepartments())
-            ->withCompanyname($this->settings->getCompanyName());
+            ->withLead($this->findByExternalId($external_id))
+            ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
+            ->withCompanyname(Setting::first()->company)
+            ->withStatuses(Status::typeOfLead()->pluck('title', 'id'));
     }
 
     /**
-     * Complete lead.
-     *
-     * @param $id
+     * Complete lead
+     * @param $external_id
      * @param Request $request
-     *
      * @return mixed
      */
-    public function updateStatus($id, Request $request)
+    public function updateStatus($external_id, Request $request)
     {
-        $this->leads->updateStatus($id, $request);
-        Session()->flash('flash_message', 'Lead is completed');
-
+        if (!auth()->user()->can('lead-update-status')) {
+            session()->flash('flash_message_warning', __('You do not have permission to change lead status'));
+            return redirect()->route('tasks.show', $external_id);
+        }
+        $lead = $this->findByExternalId($external_id);
+        if (isset($request->closeLead) && $request->closeLead === true) {
+            $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+            $lead->save();
+        } else {
+            $lead->fill($request->all())->save();
+        }
+        event(new \App\Events\LeadAction($lead, self::UPDATED_STATUS));
+        Session()->flash('flash_message', __('Lead status updated'));
         return redirect()->back();
     }
+
+    public function convertToQualifiedLead(Lead $lead)
+    {
+        Session()->flash('flash_message', __('Lead status updated'));
+        return $lead->convertToQualified();
+    }
+
+
+    public function convertToOrder(Lead $lead)
+    {
+        $invoice = Invoice::create([
+            'status' => 'draft',
+            'client_id' => $lead->client->id,
+            'external_id' =>  Uuid::uuid4()->toString()
+        ]);
+
+        $lead->invoice_id = $invoice->id;
+        $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $lead->save();
+
+        return $invoice->external_id;
+    }
+        /**
+     * @param $external_id
+     * @return mixed
+     */
+    public function findByExternalId($external_id)
+    {
+        return Lead::whereExternalId($external_id)->first();
+    }
+
 }

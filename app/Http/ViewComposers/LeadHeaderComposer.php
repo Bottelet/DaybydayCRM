@@ -3,45 +3,31 @@
 namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
-use App\Repositories\Lead\LeadRepositoryContract;
+use App\Models\Lead;
+
 
 class LeadHeaderComposer
 {
     /**
-     * The task repository implementation.
-     *
-     * @var taskRepository
-     */
-    protected $lead;
-
-    /**
-     * Create a new profile composer.
-     * LeadHeaderComposer constructor.
-     *
-     * @param LeadRepositoryContract $lead
-     */
-    public function __construct(LeadRepositoryContract $lead)
-    {
-        $this->lead = $lead;
-    }
-
-    /**
      * Bind data to the view.
      *
-     * @param View $view
+     * @param  View  $view
+     * @return void
      */
     public function compose(View $view)
     {
-        $lead = $this->lead->find($view->getData()['lead']['id']);
+        $lead = Lead::findOrFail($view->getData()['lead']['id']);
         /**
-         * [User assigned the task].
-         *
+         * [User assigned the task]
          * @var contact
          */
+       
         $contact = $lead->user;
-        $client  = $lead->client;
+        $client = $lead->client;
+        $contact_info = $client->contacts()->first();
 
         $view->with('contact', $contact);
+        $view->with('contact_info', $contact_info);
         $view->with('client', $client);
     }
 }

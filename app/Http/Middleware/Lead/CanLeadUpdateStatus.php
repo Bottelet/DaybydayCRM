@@ -11,24 +11,14 @@ class CanLeadUpdateStatus
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $lead    = Lead::findOrFail($request->id);
-        $isAdmin = Auth()->user()->hasRole('administrator');
-
-        $settings = Setting::all();
-        if ($isAdmin) {
-            return $next($request);
-        }
-        $settingscomplete = $settings[0]['lead_complete_allowed'];
-        if (1 == $settingscomplete && Auth()->user()->id == $lead->fk_user_id_assign) {
-            Session()->flash('flash_message_warning', 'Only assigned user are allowed to close lead.');
-
+        if (!auth()->user()->can('lead-update-status')) {
+            Session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
             return redirect()->back();
         }
 

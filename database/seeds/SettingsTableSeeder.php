@@ -12,23 +12,41 @@ class SettingsTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('settings')->delete();
-        
-        \DB::table('settings')->insert(array(
+        \DB::table('settings')->insert(array (
             0 =>
-            array(
+            array (
                 'id' => 1,
-                'task_complete_allowed' => 2,
-                'task_assign_allowed' => 2,
-                'lead_complete_allowed' => 2,
-                'lead_assign_allowed' => 2,
-                'time_change_allowed' => 2,
-                'comment_allowed' => 2,
+                'client_number' => 10000,
+                'invoice_number' => 10000,
                 'country' => 'en',
-                'company' => 'Media',
+        		'company' => 'Media',
+                'max_users' => 10,
                 'created_at' => null,
                 'updated_at' => null,
             ),
         ));
+
+        for ($i=1; $i < 8; $i++) {
+            \App\Models\BusinessHour::create([
+                'day' => $this->integerToDay()[$i],
+                'open_time' => '09:00',
+                'close_time' => '18:00',
+                'settings_id' => 1,
+            ]);
+        }
+    }
+
+    private function integerToDay()
+    {
+        return [
+            1 => 'monday',
+            2 => 'tuesday',
+            3 => 'wednesday',
+            4 => 'thursday',
+            5 => 'friday',
+            6 => 'saturday',
+            7 => 'sunday'
+        ];
     }
 }
+

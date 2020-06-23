@@ -17,16 +17,61 @@
 .profilepic
 {
     float: left;
-    margin-right: 20px;
 }
 
 .profilepicsize
 {
-    width: 135px;
-    height: 160px;
+    width:100%;
+    border-radius: 125px;
+    box-shadow: 0 0 0 1px #cccccc;
+}
+@media (min-width: 2420px) {
+    .profilepicsize {
+        width:64%;
+    }
 }
 
 .popovertext{
     float:left; 
     margin-left:5px;
+}
+.name-text {
+    font-size: 16px;
+    color:$primary-color;
+    margin:0px;
+}
+
+.client-company-text {
+    font-size: 16px;
+    color:$primary-color;
+    border-bottom: 1px solid rgba(83, 107, 226, .3);
+}
+
+.client-name-text {
+    color: #434d6b;
+    font-size: 14px;
+    margin-bottom:4px;
+    color: $secondary-color;
+}
+
+.department-text {
+    font-size: 14px;
+    color: $secondary-color;
+}
+
+.contact-paragraph {
+    color: #434d6b;
+    font-size: 12px;
+    margin-bottom:4px;
+    a {
+        color: #434d6b;
+        font-size: 12px;
+        &:hover {
+            text-decoration: none;
+            color: $darker-primary-color;
+        }
+    }
+}
+.contact-header-box {
+    min-height:170px;
 }

@@ -1,37 +1,46 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Integration extends Model
 {
+
     protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type'];
 
     /**
      * @param $type
-     *
      * @return mixed
-     *
      * @throws \Exception
      */
     public static function getApi($type)
     {
         $integration = Integration::where([
-            //'user_id' => $userId,
-            'api_type' => $type,
-        ])->get();
-
+            'api_type' => $type
+        ])->first();
         if ($integration) {
-            $apiConfig = $integration[0];
+            $className = ucfirst($integration->name);
 
-            $className = $apiConfig->name;
-
-            call_user_func_array(['App\\'.$className, 'initialize'], [$apiConfig]);
-            $apiInstance = call_user_func_array(['App\\'.$className, 'getInstance'], []);
+            call_user_func_array(['App\\' . $className, 'initialize'], [$integration]);
+            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
 
             return $apiInstance;
         }
-        throw new \Exception('The user has no integrated APIs');
+        return false;
+    }
+
+    public static function initBillingIntegration()
+    {
+        $integration = Integration::whereApiType('billing')->first();
+        if (!$integration) {
+            return null;
+        }
+        return $integration->api_class;
+    }
+
+    public function getApiClassAttribute()
+    {
+        return new $this->name;
     }
 }

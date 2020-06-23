@@ -1,0 +1,25 @@
+{
+  "decimal":        "",
+  "emptyTable":     "Ingen data tilgængelige",
+  "info":           "Viser _START_ til _END_ ud af _TOTAL_ poster",
+  "infoEmpty":      "Viser 0 til 0 ud af 0 poster",
+  "infoFiltered":   "(filtreret fra _MAX_ totale poster)",
+  "infoPostFix":    "",
+  "thousands":      ",",
+  "lengthMenu":     "Vis _MENU_ poster",
+  "loadingRecords": "Loader...",
+  "processing":     "processere...",
+  "searchPlaceholder":         "Søg",
+  "search":         "",
+  "zeroRecords":    "Ingen matchende poster fundet",
+  "paginate": {
+    "first":      "Først",
+    "last":       "Sidste",
+    "next":       "Næste",
+    "previous":   "Forrige"
+  },
+  "aria": {
+    "sortAscending":  ": Aktivér for at sortere kolonne stigende",
+    "sortDescending": ": Aktivér for at sortere kolonne nedadgående"
+  }
+}

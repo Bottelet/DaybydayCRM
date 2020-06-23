@@ -1,18 +1,6 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Application Name and Version
-    |--------------------------------------------------------------------------
-    |
-    | These values are used to display the application name and version.
-    | Set APP_NAME in your ".env" file is you wish to use a custom name.
-    |
-    */
-
-    'name'    => env('APP_NAME', 'Flarepoint CRM'),
-    'version' => ('1.3.7'),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,7 +65,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'dk',
 
     /*
     |--------------------------------------------------------------------------
@@ -103,36 +91,13 @@ return [
     |
     */
 
-    'key'    => env('APP_KEY'),
+    'key' => env('APP_KEY'),
+
     'cipher' => 'AES-256-CBC',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Logging Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure the log settings for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
-    |
-    | Available Settings: "single", "daily", "syslog", "errorlog"
-    |
-    */
-
-    'log' => env('APP_LOG', 'single'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
-    |
-    */
 
     'providers' => [
+
         /*
          * Laravel Framework Service Providers...
          */
@@ -161,10 +126,8 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
-
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
-
+	    App\Zizaco\Entrust\EntrustServiceProvider::class,
+        Laravel\Cashier\CashierServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -175,7 +138,7 @@ return [
         App\Providers\AccessServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+        App\Providers\DropboxServiceProvider::class,
     ],
 
     /*
@@ -190,46 +153,46 @@ return [
     */
 
     'aliases' => [
-        'App'        => Illuminate\Support\Facades\App::class,
-        'Artisan'    => Illuminate\Support\Facades\Artisan::class,
-        'Auth'       => Illuminate\Support\Facades\Auth::class,
-        'Blade'      => Illuminate\Support\Facades\Blade::class,
-        'Cache'      => Illuminate\Support\Facades\Cache::class,
-        'Config'     => Illuminate\Support\Facades\Config::class,
-        'Cookie'     => Illuminate\Support\Facades\Cookie::class,
-        'Crypt'      => Illuminate\Support\Facades\Crypt::class,
-        'DB'         => Illuminate\Support\Facades\DB::class,
-        'Eloquent'   => Illuminate\Database\Eloquent\Model::class,
-        'Event'      => Illuminate\Support\Facades\Event::class,
-        'File'       => Illuminate\Support\Facades\File::class,
-        'Gate'       => Illuminate\Support\Facades\Gate::class,
-        'Hash'       => Illuminate\Support\Facades\Hash::class,
-        'Lang'       => Illuminate\Support\Facades\Lang::class,
-        'Log'        => Illuminate\Support\Facades\Log::class,
-        'Mail'       => Illuminate\Support\Facades\Mail::class,
-        'Password'   => Illuminate\Support\Facades\Password::class,
-        'Queue'      => Illuminate\Support\Facades\Queue::class,
-        'Redirect'   => Illuminate\Support\Facades\Redirect::class,
-        'Redis'      => Illuminate\Support\Facades\Redis::class,
-        'Request'    => Illuminate\Support\Facades\Request::class,
-        'Response'   => Illuminate\Support\Facades\Response::class,
-        'Route'      => Illuminate\Support\Facades\Route::class,
-        'Schema'     => Illuminate\Support\Facades\Schema::class,
-        'Session'    => Illuminate\Support\Facades\Session::class,
-        'Storage'    => Illuminate\Support\Facades\Storage::class,
-        'URL'        => Illuminate\Support\Facades\URL::class,
-        'Validator'  => Illuminate\Support\Facades\Validator::class,
-        'View'       => Illuminate\Support\Facades\View::class,
-        'Form'       => Collective\Html\FormFacade::class,
-        'Html'       => Collective\Html\HtmlFacade::class,
+
+        'App'       => Illuminate\Support\Facades\App::class,
+        'Artisan'   => Illuminate\Support\Facades\Artisan::class,
+        'Auth'      => Illuminate\Support\Facades\Auth::class,
+        'Blade'     => Illuminate\Support\Facades\Blade::class,
+        'Cache'     => Illuminate\Support\Facades\Cache::class,
+        'Config'    => Illuminate\Support\Facades\Config::class,
+        'Cookie'    => Illuminate\Support\Facades\Cookie::class,
+        'Crypt'     => Illuminate\Support\Facades\Crypt::class,
+        'DB'        => Illuminate\Support\Facades\DB::class,
+        'Eloquent'  => Illuminate\Database\Eloquent\Model::class,
+        'Event'     => Illuminate\Support\Facades\Event::class,
+        'File'      => Illuminate\Support\Facades\File::class,
+        'Gate'      => Illuminate\Support\Facades\Gate::class,
+        'Hash'      => Illuminate\Support\Facades\Hash::class,
+        'Lang'      => Illuminate\Support\Facades\Lang::class,
+        'Log'       => Illuminate\Support\Facades\Log::class,
+        'Mail'      => Illuminate\Support\Facades\Mail::class,
+        'Password'  => Illuminate\Support\Facades\Password::class,
+        'Queue'     => Illuminate\Support\Facades\Queue::class,
+        'Redirect'  => Illuminate\Support\Facades\Redirect::class,
+        'Redis'     => Illuminate\Support\Facades\Redis::class,
+        'Request'   => Illuminate\Support\Facades\Request::class,
+        'Response'  => Illuminate\Support\Facades\Response::class,
+        'Route'     => Illuminate\Support\Facades\Route::class,
+        'Schema'    => Illuminate\Support\Facades\Schema::class,
+        'Session'   => Illuminate\Support\Facades\Session::class,
+        'Storage'   => Illuminate\Support\Facades\Storage::class,
+        'URL'       => Illuminate\Support\Facades\URL::class,
+        'Validator' => Illuminate\Support\Facades\Validator::class,
+        'View'      => Illuminate\Support\Facades\View::class,
+        'Form'      => Collective\Html\FormFacade::class,
+        'Html'      => Collective\Html\HtmlFacade::class,
         'Datatables' => Yajra\Datatables\Datatables::class,
         'Carbon'     => Carbon\Carbon::class,
-        'Excel'      => Maatwebsite\Excel\Facades\Excel::class,
         'Notifty'    => Illuminate\Support\Facades\Notification::class,
-        'Entrust'    => Zizaco\Entrust\EntrustFacade::class,
-        'Role'       => \Zizaco\Entrust\Middleware\EntrustRole::class,
-        'Permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
-        'Ability'    => \Zizaco\Entrust\Middleware\EntrustAbility::class,
-        'Debugbar'   => Barryvdh\Debugbar\Facade::class,
-    ],
+        'Entrust'   => App\Zizaco\Entrust\EntrustFacade::class,
+        'role' => App\Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission' => App\Zizaco\Entrust\Middleware\EntrustPermission::class,
+	    'ability' => App\Zizaco\Entrust\Middleware\EntrustAbility::class,
+	],
+
 ];

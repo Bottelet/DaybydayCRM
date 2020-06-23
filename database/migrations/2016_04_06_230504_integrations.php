@@ -22,6 +22,7 @@ class Integrations extends Migration
             $table->string('api_type')->nullable();
             $table->string('org_id')->nullable();
             $table->timestamps();
+
         });
     }
 

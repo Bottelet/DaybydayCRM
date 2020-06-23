@@ -1,16 +1,30 @@
 <?php
-
 namespace App\Models;
 
+use Fenos\Notifynder\Notifable;
 use Illuminate\Notifications\Notifiable;
 use Cache;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use App\Models\Client;
+use App\Zizaco\Entrust\Traits\EntrustUserTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Setting;
+use App\Api\v1\Models\Token;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Cashier\Billable;
+
+
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
-    use Notifiable;
-    use EntrustUserTrait;
+    use Notifiable, EntrustUserTrait,  SoftDeletes, Billable;
+
+    public function restore()
+    {
+        $this->restoreA();
+        $this->restoreB();
+    }
 
     /**
      * The database table used by the model.
@@ -25,13 +39,15 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+        'external_id',
         'name',
         'email',
         'password',
         'address',
-        'personal_number',
-        'work_number',
+        'primary_number',
+        'secondary_number',
         'image_path',
+        'language',
     ];
 
     /**
@@ -39,15 +55,10 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $dates  = ['trial_ends_at', 'subscription_ends_at'];
-    protected $hidden = ['password', 'password_confirmation', 'remember_token'];
+    protected $hidden = ['id', 'password', 'password_confirmation', 'remember_token', 'image_path'];
+    protected $appends = ['avatar'];
 
     protected $primaryKey = 'id';
-
-    public function clients()
-    {
-        return $this->hasMany(Client::class, 'user_id', 'id');
-    }
 
     public function tasks()
     {
@@ -59,9 +70,14 @@ class User extends Authenticatable
         return $this->hasMany(Lead::class, 'user_assigned_id', 'id');
     }
 
+    public function clients()
+    {
+        return $this->hasMany(Client::class, 'user_id', 'id');
+    }
+
     public function department()
     {
-        return $this->belongsToMany(Department::class, 'department_user')->withPivot('department_id');
+        return $this->belongsToMany(Department::class);
     }
 
     public function userRole()
@@ -69,13 +85,72 @@ class User extends Authenticatable
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
     }
 
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function absences()
+    {
+        return $this->hasMany(Absence::class);
+    }
+
+    public function tokens()
+    {
+        return $this->hasMany(Token::class, 'user_id', 'id');
+    }
+
+
+
     public function isOnline()
     {
-        return Cache::has('user-is-online-'.$this->id);
+        return Cache::has('user-is-online-' . $this->id);
     }
 
     public function getNameAndDepartmentAttribute()
     {
-        return $this->name.' '.'('.$this->department()->first()->name.')';
+        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
     }
+
+
+    public function getNameAndDepartmentEagerLoadingAttribute()
+    {
+        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        return $this->name . ' ' . '(' . $this->relations['department'][0]->name . ')';
+    }
+
+    public function moveTasks($user_id)
+    {
+        $tasks = $this->tasks()->get();
+        foreach ($tasks as $task) {
+            $task->user_assigned_id = $user_id;
+            $task->save();
+        }
+    }
+
+    public function moveLeads($user_id)
+    {
+        $leads = $this->leads()->get();
+        foreach ($leads as $lead) {
+            $lead->user_assigned_id = $user_id;
+            $lead->save();
+        }
+    }
+
+    public function moveClients($user_id)
+    {
+        $clients = $this->clients()->get();
+        foreach ($clients as $client) {
+            $client->user_id = $user_id;
+            $client->save();
+        }
+    }
+
+    public function getAvatarattribute()
+    {
+        $image_path = $this->image_path ? Storage::url($this->image_path) : '/images/default_avatar.jpg';
+        return $image_path;
+    }
+
 }

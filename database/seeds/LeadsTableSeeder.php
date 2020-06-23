@@ -11,10 +11,10 @@ class LeadsTableSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
-        \DB::table('leads')->insert(array(
+    {       
+        \DB::table('leads')->insert(array (
             0 =>
-            array(
+            array (
                 'id' => 1,
                 'title' => 'Sell Item',
                 'description' => 'Try and sell this new Item',
@@ -22,12 +22,12 @@ class LeadsTableSeeder extends Seeder
                 'userassign_id' => 1,
                 'client_id' => 9,
                 'usercreated_id' => 1,
-                'contact_date' => '2016-06-18 12:00:00',
+                'contact_at' => '2016-06-18 12:00:00',
                 'created_at' => '2016-06-04 13:51:10',
                 'updated_at' => '2016-06-04 13:51:10',
             ),
             1 =>
-            array(
+            array (
                 'id' => 2,
                 'title' => 'Contact Client about new offer',
                 'description' => 'Give them a call about the new items',
@@ -35,12 +35,12 @@ class LeadsTableSeeder extends Seeder
                 'userassign_id' => 1,
                 'client_id' => 10,
                 'usercreated_id' => 1,
-                'contact_date' => '2016-06-18 13:00:00',
+                'contact_at' => '2016-06-18 13:00:00',
                 'created_at' => '2016-06-04 13:56:27',
                 'updated_at' => '2016-06-04 13:56:27',
             ),
             2 =>
-            array(
+            array (
                 'id' => 3,
                 'title' => 'Client wants to know more about item',
                 'description' => 'Give the client a call, about the item',
@@ -48,7 +48,7 @@ class LeadsTableSeeder extends Seeder
                 'userassign_id' => 1,
                 'client_id' => 10,
                 'usercreated_id' => 1,
-                'contact_date' => '2016-06-14 12:00:00',
+                'contact_at' => '2016-06-14 12:00:00',
                 'created_at' => '2016-06-04 13:57:07',
                 'updated_at' => '2016-06-04 13:57:07',
             ),

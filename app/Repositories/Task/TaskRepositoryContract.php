@@ -1,13 +1,13 @@
 <?php
-
 namespace App\Repositories\Task;
 
 interface TaskRepositoryContract
 {
+
     public function find($id);
 
     public function getInvoiceLines($id);
-
+    
     public function create($requestData);
 
     public function updateStatus($id, $requestData);
@@ -15,7 +15,7 @@ interface TaskRepositoryContract
     public function updateTime($id, $requestData);
 
     public function updateAssign($id, $requestData);
-
+    
     public function tasks();
 
     public function allCompletedTasks();

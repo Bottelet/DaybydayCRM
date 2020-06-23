@@ -1,76 +1,54 @@
-![Flarepoint Logo](https://cloud.githubusercontent.com/assets/15610490/16813901/ebfd6d94-4933-11e6-9fee-655f6193f38e.png)
 
-### Flarepoint CRM [![Build Status](https://travis-ci.org/Bottelet/Flarepoint-crm.svg?branch=develop)](https://travis-ci.org/Bottelet/Flarepoint-crm)
+<a href="https://daybydaycrm.com/">
+    <img src="https://user-images.githubusercontent.com/15610490/69175894-ed771300-0b04-11ea-9ecd-a5ad6e3d8877.png"  height="100" />
+</a>
 
-Flarepoint is a customer relationship management system (CRM) whose purpose is to help you keep track of your customers, contacts, leads, tasks etc. Flarepoint is a free, open-source and self-hosted platform based on Laravel 5.4 PHP Framework and PHP 7.0+.
+======================
 
-![page_design](https://cloud.githubusercontent.com/assets/15610490/16659700/903393ac-446b-11e6-969c-831fcd698a06.PNG)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bottelet/DaybydayCRM/Run%20tests?style=for-the-badge)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/bottelet/DaybydayCRM?label=Latest%20version&style=for-the-badge)
+![](https://img.shields.io/david/bottelet/DaybydayCRM?style=for-the-badge)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJzdmcyIiB3aWR0aD0iNjQ1IiBoZWlnaHQ9IjU4NSIgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPiA8ZyBpZD0ibGF5ZXIxIj4gIDxwYXRoIGlkPSJwYXRoMjQxNyIgZD0ibTI5Ny4zIDU1MC44N2MtMTMuNzc1LTE1LjQzNi00OC4xNzEtNDUuNTMtNzYuNDM1LTY2Ljg3NC04My43NDQtNjMuMjQyLTk1LjE0Mi03Mi4zOTQtMTI5LjE0LTEwMy43LTYyLjY4NS01Ny43Mi04OS4zMDYtMTE1LjcxLTg5LjIxNC0xOTQuMzQgMC4wNDQ1MTItMzguMzg0IDIuNjYwOC01My4xNzIgMTMuNDEtNzUuNzk3IDE4LjIzNy0zOC4zODYgNDUuMS02Ni45MDkgNzkuNDQ1LTg0LjM1NSAyNC4zMjUtMTIuMzU2IDM2LjMyMy0xNy44NDUgNzYuOTQ0LTE4LjA3IDQyLjQ5My0wLjIzNDgzIDUxLjQzOSA0LjcxOTcgNzYuNDM1IDE4LjQ1MiAzMC40MjUgMTYuNzE0IDYxLjc0IDUyLjQzNiA2OC4yMTMgNzcuODExbDMuOTk4MSAxNS42NzIgOS44NTk2LTIxLjU4NWM1NS43MTYtMTIxLjk3IDIzMy42LTEyMC4xNSAyOTUuNSAzLjAzMTYgMTkuNjM4IDM5LjA3NiAyMS43OTQgMTIyLjUxIDQuMzgwMSAxNjkuNTEtMjIuNzE1IDYxLjMwOS02NS4zOCAxMDguMDUtMTY0LjAxIDE3OS42OC02NC42ODEgNDYuOTc0LTEzNy44OCAxMTguMDUtMTQyLjk4IDEyOC4wMy01LjkxNTUgMTEuNTg4LTAuMjgyMTYgMS44MTU5LTI2LjQwOC0yNy40NjF6IiBmaWxsPSIjZGQ1MDRmIi8%2BIDwvZz48L3N2Zz4%3D)](http://makeapullrequest.com)
+![Twitter URL](https://img.shields.io/twitter/url?color=%2300acee&style=for-the-badge&url=https%3A%2F%2Fgithub.com%2Fbottelet%2Fdaybydaycrm)
 
-# Hosted CRM solution
-![DaybydayLogo](https://user-images.githubusercontent.com/15610490/69175894-ed771300-0b04-11ea-9ecd-a5ad6e3d8877.png)
+DaybydayCRM a customer relationship management system (CRM) which purpose is to help you keep track of your customers, tasks, appointments, etc. The CRM is offered as an open-source, self-hosted platform and as a [hosted CRM system](https://daybydaycrm.com) on daybydaycrm.com.
 
-If you are looking for a hosted CRM solution, i will recommend taking a look at [daybydaycrm.com](https://daybydaycrm.com) It's an upgraded version of Flarepoint, with a new nice design, and many new features.
+<img src="https://user-images.githubusercontent.com/15610490/84194453-54f2b100-aa9d-11ea-8fa8-12bde56b9deb.png" align="left"/>
 
+### Features
+- Tasks & leads management
+- Invoice management
+- Time registration
+- Register user absence and vacation 
+- Client & users appointments
+- Role -> permissions management
+- Global search
+- Client overview
+- Upload documents, and keep track of client documents
+- And many more, for more detailed features overview go to daybydaycrm.com/pricing
 
-## Get started
+### Get started
 
-I would like to refer to the wiki, for help on getting started
+For help on getting started take a look at the wiki
 
-* [Installation](https://github.com/Bottelet/Flarepoint-crm/wiki/Install)
-* [Upgrading](https://github.com/Bottelet/Flarepoint-crm/wiki/Upgrading)
-* [Installation with Docker](https://github.com/Bottelet/Flarepoint-crm/wiki/Install-using-Docker)
-* [Insertion of dummy data](https://github.com/Bottelet/Flarepoint-crm/wiki/Insertion-of-dummy-data)
+* [Installation](https://github.com/Bottelet/DaybydayCRM/wiki/Install)
+* [Installation with Docker](https://github.com/Bottelet/DaybydayCRM/wiki/Install-using-Docker)
+* [Insertion of dummy data](https://github.com/Bottelet/DaybydayCRM/wiki/Insertion-of-dummy-data)
 
-
-## Features overview
-
-- Tasks management
-- Leads management
-- Simple invoice management
-- Easy & simple time management for each task
-- Role management (Create and update your own roles)
-- Easy configurable settings
-- Client overview (Keep easy track of open tasks for each client etc)
-- Contacts management (associated with a Client)
-- Upload documents to each clients (easy track of contracts and more)
-- Fast overview over your own open tasks, leads etc
-- Global dashboard
-
-
-### To-do
-
-Flarepoint is still under development, so there are a lot on my to-do list.
-
-- Multiple integrations (Slack, e-conomic, Google Drive, dropbox etc.)
-- Different Color schemes
-- API
-- Excel Import/export
-- Better cache
-- Even easier installation
-
-And much more (in no particular order)
-
+### Feedback
+Feel free to send us feedback on [Twitter](https://twitter.com/Cbottelet) or [file an issue](https://github.com/bottelet/DaybydayCRM/issues/new). Feature requests are always welcome. If you wish to contribute, please take a quick look at the guidelines!
 
 ### Contribution Guide
+DaybydayCRM follows [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding standard.
 
-Flarepoint CRM follows [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) + Symfony coding standard.
+All test should pass on Github actions, or the failed test should be rewritten to fit new changes 
 
-All test should pass on Travis, or the failed test should be rewritten to fit new changes 
-
-Translation... You can help translating Flarepoint-crm into other languages, by copying the resources/lang/en folder into for example resources/lang/de and translate the files, found inside the folder.
-
-
-### Packages
-
-The packages used are the following...
-
-- [LaravelCollective](https://github.com/LaravelCollective/html)
-- [laravel-datatables](https://github.com/yajra/laravel-datatables)
-- [Entrust](https://github.com/Zizaco/entrust)
-- [Debugbar](https://github.com/barryvdh/laravel-debugbar)
-- [Doctrine Database Adstraction Layer](https://github.com/doctrine/dbal)
+### Localization
+You can help translating DaybydayCRM into other languages, by copying the resources/lang/en folder into for example resources/lang/de and translate the file, found inside the folder.
 
 
-### License
+### Licenses
+DaybydayCRM from version 2.0.0 and up is open-sourced software licensed under the [GNU GPLv3](https://opensource.org/licenses/GPL-3.0)...
+[FAQ GPL](https://www.gnu.org/licenses/gpl-faq.html#DoesFreeSoftwareMeanUsingTheGPL)
 
-Flarepoint is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+DaybydayCRM under and not included version 2.0.0 is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT)

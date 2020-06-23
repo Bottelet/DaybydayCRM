@@ -15,21 +15,19 @@ class CreateClientsTable extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('primary_number')->nullable();
-            $table->string('secondary_number')->nullable();
+            $table->string('external_id');
             $table->string('address')->nullable();
             $table->string('zipcode')->nullable();
             $table->string('city')->nullable();
             $table->string('company_name');
             $table->string('vat')->nullable();
-            $table->string('industry');
             $table->string('company_type')->nullable();
+            $table->bigInteger('client_number')->nullable();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('industry_id')->unsigned();
             $table->foreign('industry_id')->references('id')->on('industries');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

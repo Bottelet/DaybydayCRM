@@ -14,17 +14,21 @@ class CreateLeadsTable extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('external_id');
             $table->string('title');
             $table->text('description');
-            $table->integer('status');
+            $table->integer('status_id')->unsigned();
+            $table->foreign('status_id')->references('id')->on('statuses');
             $table->integer('user_assigned_id')->unsigned();
             $table->foreign('user_assigned_id')->references('id')->on('users');
             $table->integer('client_id')->unsigned();
-            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
             $table->integer('user_created_id')->unsigned();
             $table->foreign('user_created_id')->references('id')->on('users');
-            $table->datetime('contact_date');
+            $table->datetime('deadline');
+            $table->softDeletes();
             $table->timestamps();
+
         });
     }
 

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => 's3',
 
     /*
     |--------------------------------------------------------------------------
@@ -64,10 +64,15 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key'    => 'your-key',
-            'secret' => 'your-secret',
-            'region' => 'your-region',
-            'bucket' => 'your-bucket',
+            'key'    => null,
+            'secret' => null,
+            'region' => 'eu-west-1',
+            'bucket' => env('S3_STORAGE_PATH', null),
+            'cache' => [
+                'store' => 'redis',
+                'expire' => 600,
+                'prefix' => 'daybyday-storage',
+            ],
         ],
 
         'rackspace' => [
@@ -79,6 +84,13 @@ return [
             'region'    => 'IAD',
             'url_type'  => 'publicURL',
         ],
+        'dropbox' => [
+            'driver' => 'dropbox'
+        ],
+        'google' => [
+            'driver' => 'google',
+            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID', null),
+        ]
 
     ],
 

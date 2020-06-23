@@ -13,7 +13,7 @@ class StoreRoleRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator');
+        return auth()->user()->hasRole('administrator') || Auth()->user()->hasRole('owner');
     }
 
     /**
@@ -24,8 +24,8 @@ class StoreRoleRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'        => 'required',
-            'description' => 'required',
+            'name' => 'required',
+            'description' => 'required'
         ];
     }
 }

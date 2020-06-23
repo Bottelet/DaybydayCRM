@@ -2,24 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+
+
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Arr;
 
 class Activity extends model
 {
+
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table    = 'activity_log';
     protected $fillable = [
-        'user_id',
+        'causer_id',
+        'causer_type',
         'text',
         'source_type',
         'source_id',
-        'action',
+        'properties',
     ];
     protected $guarded = ['id'];
+    protected $casts = [
+        'properties' => 'collection',
+    ];
 
     /**
      * Get the user that the activity belongs to.
@@ -36,8 +45,32 @@ class Activity extends model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function source()
+    public function source() {
+        return $this->morphTo();
+    }
+
+    public function causer(): MorphTo
     {
         return $this->morphTo();
     }
+
+    public function getExtraProperty(string $propertyName)
+    {
+        return Arr::get($this->properties->toArray(), $propertyName);
+    }
+
+    public function scopeCausedBy(Builder $query, Model $causer): Builder
+    {
+        return $query
+            ->where('causer_type', $causer->getMorphClass())
+            ->where('causer_id', $causer->getKey());
+    }
+
+    public function scopeForSubject(Builder $query, Model $source): Builder
+    {
+        return $query
+            ->where('source_type', $source->getMorphClass())
+            ->where('source_id', $source->getKey());
+    }
+
 }

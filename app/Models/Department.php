@@ -1,14 +1,22 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class Department extends Model
 {
     protected $fillable =
-        [
-            'name',
-            'description',
-        ];
+    [
+        'name',
+        'external_id',
+        'description',
+    ];
+
+    protected $hidden = ['pivot'];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

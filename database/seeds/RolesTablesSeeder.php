@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+use Ramsey\Uuid\Uuid;
 
 class RolesTablesSeeder extends Seeder
 {
@@ -12,28 +13,33 @@ class RolesTablesSeeder extends Seeder
      */
     public function run()
     {
+
+        $super_adminRole = new Role;
+        $super_adminRole->display_name = 'Owner';
+        $super_adminRole->external_id = Uuid::uuid4();
+        $super_adminRole->name = 'owner';
+        $super_adminRole->description = 'Owner';
+        $super_adminRole->save();
+
         $adminRole = new Role;
         $adminRole->display_name = 'Administrator';
+        $adminRole->external_id = Uuid::uuid4();
         $adminRole->name = 'administrator';
-        $adminRole->description = 'Administrators have superuser access';
-        $adminRole->save();
+        $adminRole->description = 'System Administrator';
+    	$adminRole->save();
 
         $editorRole = new Role;
         $editorRole->display_name = 'Manager';
+        $editorRole->external_id = Uuid::uuid4();
         $editorRole->name = 'manager';
-        $editorRole->description = 'Managers have create, update and delete access';
+        $editorRole->description = 'System Manager';
         $editorRole->save();
-
-        $salesrepRole = new Role;
-        $salesrepRole->display_name = 'Sales Representative';
-        $salesrepRole->name = 'salesrep';
-        $salesrepRole->description = 'Sales Representatives have create and update access';
-        $salesrepRole->save();
 
         $employeeRole = new Role;
         $employeeRole->display_name = 'Employee';
+        $employeeRole->external_id = Uuid::uuid4();
         $employeeRole->name = 'employee';
-        $employeeRole->description = 'Employees had read-only access';
+        $employeeRole->description = 'Employee';
         $employeeRole->save();
     }
 }

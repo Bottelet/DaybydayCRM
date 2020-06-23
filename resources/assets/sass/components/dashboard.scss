@@ -13,24 +13,18 @@
     font-size: 15px;
 }
 
-.bg-aqua {
-    background-color: #00c0ef !important;
+.bg-secondary-color {
+    background: $secondary-color !important;
 }
-.bg-green {
-    background-color: #00a65a !important;
-}
-.bg-yellow{
-    background-color: #f39c12 !important;
-    }
-.bg-red{
-    background-color: #dd4b39 !important;
+.bg-white{
+    background-color: #fff !important;
 }
 .small-box {
     border-radius: 2px;
     position: relative;
     display: block;
     margin-bottom: 20px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.1);
 
         h3 {
         font-size: 38px;
@@ -38,11 +32,12 @@
         margin: 0 0 10px 0;
         white-space: nowrap;
         padding: 0;
-        color:#fff;
+        color:#3d4465;
         }
         p {
         z-index: 5;
-        color:#fff;
+        color:#4e515d;
+        font-size: 1.1em;
         }
         .icon {
         -webkit-transition: all .3s linear;
@@ -67,7 +62,7 @@
             color: rgba(255,255,255,0.8);
             display: block;
             z-index: 7;
-            background: rgba(0,0,0,0.1);
+            background: $secondary-color;
             text-decoration: none;
         }
 }
@@ -133,16 +128,16 @@
 .info-box {
     display: block;
     min-height: 90px;
-    background: #F1F1F1;
+    background: #ffffff;
     width: 100%;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.55);
+    box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.1);
     border-radius: 2px;
     margin-bottom: 15px;
 
     .progress {
     background: rgba(0,0,0,0.2);
     margin: 5px -10px 5px -10px;
-    height: 2px;
+    height: 5px;
     border-radius: 0;
     }
 
@@ -159,7 +154,7 @@
     text-align: center;
     font-size: 45px;
     line-height: 90px;
-    background: rgba(0,0,0,0.2);
+    background: $secondary-color;
     color: #fff;
 
 }
@@ -176,6 +171,11 @@
     display: block;
     font-weight: bold;
     font-size: 18px;
+}
+.info-box-number-today {
+    display: block;
+    font-weight: bold;
+    font-size: 2.4em;
 }
 .chart
 {

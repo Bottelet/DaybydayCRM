@@ -1,23 +1,21 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use Ramsey\Uuid\Uuid;
 use Session;
+use App\Http\Requests;
+use App\Models\Department;
 use App\Http\Requests\Department\StoreDepartmentRequest;
-use App\Repositories\Department\DepartmentRepositoryContract;
+use Datatables;
 
 class DepartmentsController extends Controller
 {
-    protected $departments;
-
     /**
      * DepartmentsController constructor.
-     *
      * @param DepartmentRepositoryContract $departments
      */
-    public function __construct(DepartmentRepositoryContract $departments)
+    public function __construct()
     {
-        $this->departments = $departments;
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
     }
 
@@ -27,7 +25,30 @@ class DepartmentsController extends Controller
     public function index()
     {
         return view('departments.index')
-            ->withDepartment($this->departments->getAllDepartments());
+            ->withDepartment(Department::all());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function indexData()
+    {
+        $departments = Department::select(['external_id', 'name', 'description']);
+        return Datatables::of($departments)
+            ->editColumn('name', function ($departments) {
+                return $departments->name;
+            })
+            ->editColumn('description', function ($departments) {
+                return $departments->description;
+            })
+            ->addColumn('delete', '
+                <form action="{{ route(\'departments.destroy\', $external_id) }}" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            {{csrf_field()}}
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
+            </form>')
+            ->rawColumns(['delete'])
+            ->make(true);
     }
 
     /**
@@ -40,26 +61,32 @@ class DepartmentsController extends Controller
 
     /**
      * @param StoreDepartmentRequest $request
-     *
      * @return mixed
      */
     public function store(StoreDepartmentRequest $request)
     {
-        $this->departments->create($request);
-        Session::flash('flash_message', 'Successfully created New Department');
-
+        Department::create([
+            'external_id' => Uuid::uuid4(),
+            'name' => $request->name,
+            'description' => $request->description
+        ]);
+        Session::flash('flash_message', __('Successfully created new department'));
         return redirect()->route('departments.index');
     }
 
     /**
-     * @param $id
-     *
+     * @param $external_id
      * @return mixed
      */
-    public function destroy($id)
+    public function destroy($external_id)
     {
-        $this->departments->destroy($id);
+        $department = Department::whereExternalId($external_id)->first();
 
+        if (!$department->users->isEmpty()) {
+            Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
+            return redirect()->route('departments.index');       
+        }
+        $department->delete();
         return redirect()->route('departments.index');
     }
 }

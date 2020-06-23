@@ -1,66 +1,60 @@
-<div id="lead" class="tab-pane fade" role="tabpanel">
-    <div class="boxspace">
-        <table class="table table-striped">
-            <h4>{{ __('All Leads') }}</h4>
-            <thead>
-            <thead>
-            <tr>
-                <th>{{ __('Title') }}</th>
-                <th>{{ __('Assigned user') }}</th>
-                <th>{{ __('Created at') }}</th>
-                <th>{{ __('Deadline') }}</th>
+<table class="table table-hover" id="leads-table">
+    <h3>{{ __('Leads assigned') }}</h3>
+    <thead>
+    <tr>
+        <th>{{ __('Title') }}</th>
+        <th>{{ __('Assigned') }}</th>
+        <th>{{ __('Created at') }}</th>
+        <th>{{ __('Deadline') }}</th>
+        <th>
+            <select name="status_id" id="status-lead" class="table-status-input">
+                <option value="" disabled selected>{{ __('Status') }}</option>
+                @foreach($lead_statuses as $lead_status)
+                    <option value="{{$lead_status->title}}">{{$lead_status->title}}</option>
+                @endforeach
+                <option value="all">All</option>
+            </select>
+        </th>
+        <th><a href="{{route('client.lead.create', $client->external_id)}}" class="btn btn-md btn-brand float-right">@lang('New lead')</a></th>
+    </tr>
+    </thead>
+</table>
 
-                <th><a href="{{ route('leads.create', ['client' => $client->id])}}">
-                        <button class="btn btn-xs btn-success">{{ __('New Lead') }}</button>
-                    </a></th>
+@push('scripts')
+    <script>
+        $(function () {
+            var table = $('#leads-table').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: false,
+                ajax: '{!! route('clients.leadDataTable',  $client->external_id) !!}',
+                language: {
+                    url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                },
+                drawCallback: function(){
+                    var length_select = $(".dataTables_length");
+                    var select = $(".dataTables_length").find("select");
+                    select.addClass("tablet__select");
+                },
+                columns: [
 
-            </tr>
-            </thead>
-            <tbody>
-            <?php  $tr = ''; ?>
-          
-            @foreach($client->leads as $lead)
-                @if($lead->status == 1)
-                    <?php  $tr = '#adebad'; ?>
-                @elseif($lead->status == 2)
-                    <?php $tr = '#ff6666'; ?>
-                @endif
-                <tr style="background-color:<?php echo $tr; ?>">
+                    {data: 'titlelink', name: 'title'},
+                    {data: 'assigned', name: 'assigned', orderable: false, searchable: false},
+                    {data: 'created_at', name: 'created_at'},
+                    {data: 'deadline', name: 'deadline'},
+                    {data: 'status_id', name: 'status.title', orderable: false},
+                    {defaultContent: ''}
+                ]
+            });
 
-                    <td><a href="{{ route('leads.show', $lead->id) }}">{{$lead->title}} </a></td>
-                    <td>
-                        <div class="popoverOption"
-                             rel="popover"
-                             data-placement="left"
-                             data-html="true"
-                             data-original-title="<span class='glyphicon glyphicon-user' aria-hidden='true'> </span> {{$lead->user->name}}">
-                            <div id="popover_content_wrapper" style="display:none; width:250px;">
-                                <img src='http://placehold.it/350x150' height='80px' width='80px'
-                                     style="float:left; margin-bottom:5px;"/>
-                                <p class="popovertext">
-                                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"> </span>
-                                    <a href="mailto:{{$lead->user->email}}">
-                                        {{$lead->user->email}}<br/>
-                                    </a>
-                                    <span class="glyphicon glyphicon-headphones" aria-hidden="true"> </span>
-                                    <a href="mailto:{{$lead->user->work_number}}">
-                                    {{$lead->user->work_number}}</p>
-                                </a>
-
-                            </div>
-                            <a href="{{route('users.show', $lead->user->id)}}"> {{$lead->user->name}}</a>
-
-                        </div> <!--Shows users assigned to lead -->
-                    </td>
-                    <td>{{date('d, M Y, H:i', strTotime($lead->contact_date))}} </td>
-                    <td>{{date('d, M Y', strTotime($lead->contact_date))}}
-                        @if($lead->status == 1)({{ $lead->days_until_contact }})@endif </td>
-                    <td></td>
-                </tr>
-
-            @endforeach
-
-            </tbody>
-        </table>
-    </div>
-</div>
+            $('#status-lead').change(function() {
+                selected = $("#status-lead option:selected").val();
+                if(selected == "all") {
+                    table.columns(4).search( '' ).draw();
+                } else {
+                    table.columns(4).search( selected ? '^'+selected+'$' : '', true, false ).draw();
+                }
+            });
+        });
+    </script>
+@endpush

@@ -1,0 +1,36 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      php: 7.3
+  pre_build:
+    commands:
+      - echo `aws --version`
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --region ${region} --no-include-email)
+      - REPOSITORY_URI=${repository_url}
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - echo Entered the pre_build phase...
+  build:
+    commands:
+      - echo Build started on `date`
+      - ./aws/init-env.sh
+      - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+      - php composer-setup.php
+      - php -r "unlink('composer-setup.php');"
+      - mv composer.phar /usr/local/bin/composer
+      - composer.phar install --no-ansi --no-dev --no-interaction --optimize-autoloader
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"web","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
