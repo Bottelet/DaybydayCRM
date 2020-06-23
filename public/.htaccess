@@ -12,4 +12,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R,L]
 </IfModule>
