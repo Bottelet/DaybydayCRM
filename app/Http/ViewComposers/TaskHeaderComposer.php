@@ -3,44 +3,31 @@
 namespace App\Http\ViewComposers;
 
 use Illuminate\View\View;
-use App\Repositories\Task\TaskRepositoryContract;
+use App\Models\Task;
 
 class TaskHeaderComposer
 {
     /**
-     * The task repository implementation.
-     *
-     * @var taskRepository
-     */
-    protected $tasks;
-
-    /**
-     * Create a new profile composer.
-     *
-     * @param taskRepository|TaskRepositoryContract $tasks
-     */
-    public function __construct(TaskRepositoryContract $tasks)
-    {
-        $this->tasks = $tasks;
-    }
-
-    /**
      * Bind data to the view.
      *
-     * @param View $view
+     * @param  View  $view
+     * @return void
      */
     public function compose(View $view)
     {
-        $tasks = $this->tasks->find($view->getData()['tasks']['id']);
+        $tasks = Task::findOrFail($view->getData()['tasks']['id']);
+        
         /**
-         * [User assigned the task].
-         *
+         * [User assigned the task]
          * @var contact
          */
+       
         $contact = $tasks->user;
-        $client  = $tasks->client;
+        $client = $tasks->client;
+        $contact_info = $client->contacts()->first();
 
         $view->with('contact', $contact);
+        $view->with('contact_info', $contact_info);
         $view->with('client', $client);
     }
 }

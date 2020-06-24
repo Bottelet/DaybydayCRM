@@ -2,49 +2,143 @@ version: "3"
 
 services:
   php:
-    container_name: flarepoint-php
+    container_name: phpMain
     build:
-      context: .docker
-      dockerfile: flarepoint-php/Dockerfile
+      context: .
+      dockerfile: .docker/php/Dockerfile
+    working_dir: /var/www/html
     volumes:
       - .:/var/www/html
+      - .docker/php/custom.ini:/usr/local/etc/php/php.ini
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
       - APP_KEY=i53weLzCSdunQzNc2SXR2AE9XJVDuNaq
       - DB_HOST=db
-      - DB_DATABASE=flarepoint
+      - DB_DATABASE=daybyday
       - DB_USERNAME=root
       - DB_PASSWORD=root
-    ports:
-      - 9000
     depends_on:
       - db
+    env_file:
+        - docker-compose.env
+    links:
+        - elasticsearch
+        - elasticsearch2
+        - redis
+    ports:
+      - 9000:9000
+    networks:
+      - service_net
+
+  chrome:
+    image: robcherry/docker-chromedriver
+    networks:
+      - service_net
+    environment:
+      CHROMEDRIVER_WHITELISTED_IPS: ""
+      CHROMEDRIVER_PORT: "9515"
+    ports:
+      - 9515:9515
+    cap_add:
+      - "SYS_ADMIN"
+    links:
+      - php
+      - nginx:daybydaycrm.test
 
   db:
-    container_name: flarepoint-db
+    container_name: dbMain
     image: mysql:5.7
     volumes:
-      - mysql:/var/lib/mysql
+      - dbdata:/var/lib/mysql
+      - .docker/db/db/:/docker-entrypoint-initdb.d
     ports:
-      - 3307:3306
+      - 3306:3306
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=flarepoint
+      - MYSQL_DATABASE=daybyday
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
+    networks:
+      - service_net
 
   nginx:
-    container_name: flarepoint-nginx
-    image: nginx:1.17
+    container_name: nginxMain
+    build:
+      context: .
+      dockerfile: ./.docker/nginx/Dockerfile
+    volumes:
+      - .docker/nginx/nginx-local.conf:/etc/nginx/nginx.conf
+      - .:/var/www/html
+    ports:
+      - 80:80
+    depends_on:
+      - php
     links:
       - php
-    ports:
-      - 8000:80
+    networks:
+      - service_net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
+    container_name: elasticsearchMain
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
-      - .docker/flarepoint-nginx/nginx-dev.conf:/etc/nginx/conf.d/default.conf
-      - .:/var/www/html
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - service_net
+
+  elasticsearch2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
+    container_name: elasticsearchSecond
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+      - "ELASTICSEARCH_MINIMUM_MASTER_NODES=2"
+      - "discovery.zen.minimum_master_nodes=2"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+        - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - service_net
+
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: redisMain
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redisdata:/bitnami/redis/data
+    ports:
+      - 6379:6379
+    networks:
+      - service_net
 
 volumes:
-  mysql:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+  redisdata:
+    driver: local
+  dbdata:
+    driver: local
+
+networks:
+    service_net:
+      driver: bridge

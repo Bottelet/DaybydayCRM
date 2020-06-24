@@ -1,8 +1,13 @@
+$nav-color: #242939;
+$nav-color-darker: #1f2231;
+$nav-text-color: #989eb3;
+$icon-hover-color: #536be2;
+$arrow-color: #687393;
 .navmenu
 {
-    background-color: $primary-color;
+    background-color: $nav-color;
     top: 0;
-    width: 270px;
+    width: 260px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -15,13 +20,12 @@
     padding-left: 10px;
     text-transform: uppercase;
     color: #fff;
-    margin-top: 15px;
 }
 
 .list-group-item 
 {
 
-    background-color: $primary-color;
+    background-color: $nav-color;
     border: none;
 
     &:first-child
@@ -43,10 +47,11 @@
 .sidebar-arrow {
   float: right;
   transition: 300ms linear all;
+  color: $arrow-color;
 }
 
-.arrow-up {
-  transform: rotate(0deg);
+.arrow-side {
+  transform: rotate(90deg);
   transition: transform 0.2s linear;
 }
 
@@ -55,30 +60,73 @@
   transition: transform 0.2s linear;
 }
 
-.childlist{
-    background-color: $primary-color;
-    padding-left:50px;
+.navbar-toggle {
+  &:hover {
+    span {
+      -webkit-transition: color 0.25s;
+      transition: color 0.25s;
+      &:first-child {
+        width: 26px;
+      }
+      &:last-child {
+        width: 26px;
+      }
+      width: 26px;
+    }
+  }
 }
 
 a.list-group-item
 {
-    color: #fff;
+    color: $nav-text-color;
 	font-size:13px;
-    font-family: 'Roboto', sans-serif;
     font-weight: 300;
+    padding: 10px 20px;
+    height: 44px;
 
   &:focus{
-    background-color: $darker-primary-color;
+    background-color: $nav-color-darker;
     color:#fff;
+
   }
   &:hover {
-    background-color: $darker-primary-color;
+    background-color: $nav-color-darker;
     color:#fff;
+
+    i.sidebar-icon {
+      color: $icon-hover-color;
+    }
+  }
+}
+.bullet-point {
+
+  padding-right: 15px;
+
+  span {
+    width: 4px;
+    height: 4px;
+    background-color: #fff;
+    vertical-align: middle;
+    display: inline-block;
+    border-radius: 100%;
+    background-color: $nav-text-color;
   }
 }
 
+.childlist{
+  background-color: $nav-color;
+  padding-left:45px !important;
+}
+
+.childlist a{
+  color:$nav-text-color;
+  background-color: $nav-color;
+  padding-left:50px !important;
+}
+
 .sidebar-icon {
-  padding-right: 40px;
+  padding-right: 15px;
+  color: #434d6b;
   font-size: 15px;
 }
 
@@ -129,7 +177,7 @@ a.list-group-item
       height: 10px;
       border-radius: 6px;
       background: #fff;
-      border: 1px solid #f37167;
+      border: 1px solid $secondary-color;
     }
     .feed-item .activity-date {
       position: relative;
@@ -160,7 +208,6 @@ a.list-group-item
   left: 25px;
   position: absolute;
   z-index: 999999;
-  background: #424242;
   -webkit-transition: left 0.25s;
   transition: left 0.25s;
 }
@@ -169,8 +216,46 @@ a.list-group-item
   left: 75px;
 }
 
+
 .menu-txt-toggle .icon-bar {
-  background: #fff;
+  display: block;
+  width: 26px;
+  height: 3px;
+  margin-bottom: 6px;
+  border-radius: 1px;
+  background-color: $nav-color;
+
+  &:first-child {
+    -webkit-transition: width 0.35s;
+    transition: width 0.35s;
+    width: 50%;
+  }
+  &:last-child {
+    -webkit-transition: width 0.25s;
+    transition: width 0.25s;
+    width: 77%;
+  }
+}
+
+
+.mobile-nav .icon-bar {
+  display: block;
+  width: 26px;
+  height: 3px;
+  margin-bottom: 6px;
+  border-radius: 1px;
+  background-color: $nav-color;
+
+  &:first-child {
+    -webkit-transition: width 0.35s;
+    transition: width 0.35s;
+    width: 50%;
+  }
+  &:last-child {
+    -webkit-transition: width 0.25s;
+    transition: width 0.25s;
+    width: 77%;
+  }
 }
 
 .myNavmenu-icons {
@@ -212,15 +297,10 @@ a.list-group-item
   text-align: center;
 }
 
-#page-content-wrapper {
-  padding: 20px 20px 20px 20px;
-  position: relative;
-}
-
 @media (min-width: 768px) {
   .big-menu #page-content-wrapper {
-    padding-left: 270px;
-    padding-left: 270px;
+    padding-left: 260px;
+    padding-left: 260px;
   }
   .myNavmenu-icons.big-menu #page-content-wrapper {
     padding-left: 60px;
@@ -236,20 +316,36 @@ a.list-group-item
     /*width: 125px;*/
   }
   .navmenu {
-    width: 270px;
+    width: 260px;
     transition: width 0.25s;
   }
   #myNavmenu p.list-group-item.siderbar-top {
     text-align: left;
   }
-  #page-content-wrapper {
-    padding: 20px 20px 20px 270px;
-    position: relative;
-  }
   .myNavmenu-icons #page-content-wrapper {
     padding-left: 60px;
   }
-  .navbar-default .navbar-toggle {
+  .mobile-nav {
     display: none;
   }
+}
+
+.mobile-nav {
+  position: absolute;
+  float: right;
+  z-index: 99999999;
+  padding: 9px 10px;
+  margin-right: 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  left: 25px;
+  transition: left 0.25s;
+}
+
+.big-menu .mobile-nav {
+  left: 285px;
 }

@@ -24,13 +24,13 @@ class StoreLeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'            => 'required',
-            'description'      => 'required',
-            'status'           => 'required',
+            'title' => 'required',
+            'description' => 'required',
+            'status_id' => 'required',
             'user_assigned_id' => 'required',
-            'user_created_id'  => '',
-            'client_id'        => 'required',
-            'contact_date'     => 'required',
+            'user_created_id' => '',
+            'client_external_id' => 'required',
+            'deadline' => 'required'
         ];
     }
 }

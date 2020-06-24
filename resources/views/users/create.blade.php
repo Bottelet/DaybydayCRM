@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('heading')
-    <h1>{{ __('Create user') }}</h1>
+    {{ __('Create user') }}
 @stop
 
 @section('content')

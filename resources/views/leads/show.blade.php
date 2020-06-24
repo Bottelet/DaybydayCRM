@@ -1,88 +1,56 @@
 @extends('layouts.master')
 
-@section('heading')
-
-@stop
 
 @section('content')
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-@endpush
+
     <div class="row">
         @include('partials.clientheader')
         @include('partials.userheader')
     </div>
-
     <div class="row">
         <div class="col-md-9">
             @include('partials.comments', ['subject' => $lead])
         </div>
         <div class="col-md-3">
-            <div class="sidebarheader">
-                <p> {{ __('Lead information') }}</p>
-            </div>
-            <div class="sidebarbox">
-                <p>{{ __('Assigned to') }}:
-                    <a href="{{route('users.show', $lead->user->id)}}">
-                        {{$lead->user->name}}</a></p>
-                <p>{{ __('Created at') }}: {{ date('d F, Y, H:i', strtotime($lead->created_at))}} </p>
-                @if($lead->days_until_contact < 2)
-                    <p>{{ __('Follow up') }}: <span style="color:red;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
+            <div class="tablet tablet--tabs tablet--height-fluid">
+                <div class="tablet__head tablet__head__color-brand padding-15-sides">
+                    <div class="tablet__head-toolbar">
+                        <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-brand nav-tabs-bold tablet-brand-color" role="tablist">
+                            <li class="nav-item active">
+                                <a class="nav-link text-white active" data-toggle="tab" href="#tab_information" role="tab">
+                                    @lang('Information')
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" data-toggle="tab" href="#tab_activity" role="tab">
+                                    @lang('Activity')
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tablet__body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade active in" id="tab_information" role="tabpanel">
+                            <div class="k-scroll ps ps--active-y" data-scroll="true" style="overflow: hidden;" data-mobile-height="350">
+                                @include('leads._sidebar')
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab_activity" role="tabpanel">
+                            <div class="k-scroll ps ps--active-y" data-scroll="true" style="overflow: hidden;" data-mobile-height="350">
+                                @include('leads._timeline')
+                            </div>
+                        </div>
+                    </div>
 
-                            @if($lead->status == 1) ({!! $lead->days_until_contact !!}) @endif</span> <i
-                                class="glyphicon glyphicon-calendar" data-toggle="modal"
-                                data-target="#ModalFollowUp"></i></p> <!--Remove days left if lead is completed-->
-
-                @else
-                    <p>{{ __('Follow up') }}: <span style="color:green;">{{date('d, F Y, H:i', strTotime($lead->contact_date))}}
-
-                            @if($lead->status == 1) ({!! $lead->days_until_contact !!})<i
-                                    class="glyphicon glyphicon-calendar" data-toggle="modal"
-                                    data-target="#ModalFollowUp"></i>@endif</span></p>
-                    <!--Remove days left if lead is completed-->
-                @endif
-                @if($lead->status == 1)
-                    {{ __('Status') }}: {{ __('Contact') }}
-                @elseif($lead->status == 2)
-                    {{ __('Status') }}: {{ __('Completed') }}
-                @elseif($lead->status == 3)
-                    {{ __('Status') }}: {{ __('Not interested') }}
-                @endif
-
-            </div>
-            @if($lead->status == 1)
-                {!! Form::model($lead, [
-               'method' => 'PATCH',
-                'url' => ['leads/updateassign', $lead->id],
-                ]) !!}
-                {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-                {!! Form::submit(__('Assign new user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
-                {!! Form::close() !!}
-                {!! Form::model($lead, [
-               'method' => 'PATCH',
-               'url' => ['leads/updatestatus', $lead->id],
-               ]) !!}
-
-                {!! Form::submit(__('Complete Lead'), ['class' => 'btn btn-success form-control closebtn movedown']) !!}
-                {!! Form::close() !!}
-            @endif
-
-            <div class="activity-feed movedown">
-                @foreach($lead->activity as $activity)
-
-                    <div class="feed-item">
-                        <div class="activity-date">{{date('d, F Y H:i', strTotime($activity->created_at))}}</div>
-                        <div class="activity-text">{{$activity->text}}</div>
+                </div>
+                <div class="tablet__footer">
+                    <div class="row">
 
                     </div>
-                @endforeach
+                </div>
             </div>
         </div>
-
     </div>
 
 
@@ -96,29 +64,43 @@
                 </div>
 
                 <div class="modal-body">
-
-                    {!! Form::model($lead, [
-                      'method' => 'PATCH',
-                      'route' => ['leads.followup', $lead->id],
-                      ]) !!}
-                    {!! Form::label('contact_date', __('Next follow up'), ['class' => 'control-label']) !!}
-                    {!! Form::date('contact_date', \Carbon\Carbon::now()->addDays(7), ['class' => 'form-control']) !!}
-                    {!! Form::time('contact_time', '11:00', ['class' => 'form-control']) !!}
-
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default col-lg-6"
-                                data-dismiss="modal">{{ __('Close') }}</button>
-                        <div class="col-lg-6">
-                            {!! Form::submit( __('Update follow up'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                    <form action="{{route('lead.followup', $lead->external_id)}}" method="POST">
+                        @method('PATCH')
+                        @csrf
+                        <div class="form-group">
+                            <label for="deadline" class="control-label thin-weight">@lang('Change deadline')</label>
+                            <input type="text" id="deadline" name="deadline" data-value="{{$lead->deadline}}" class="form-control">
+                            <input type="text" name="contact_time" value="{{$lead->deadline->format(carbonTime())}}" class="form-control" id="contact_time">
                         </div>
-                        {!! Form::close() !!}
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default col-lg-6"
+                                    data-dismiss="modal">{{ __('Close') }}</button>
+                            <div class="col-lg-6">
+                                <input type="submit" value="{{__('Update deadline')}}" class="btn btn-brand form-control closebtn">
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 @stop
-       
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('#deadline').pickadate({
+                hiddenName:true,
+                format: '{{frontendDate()}}',
+                formatSubmit: 'yyyy/mm/dd',
+                closeOnClear: false,
+            });
+            $('#contact_time').pickatime({
+                format:'{{frontendTime()}}',
+                formatSubmit: 'HH:i',
+                hiddenName: true
+            })
+        });
 
-   
+    </script>
+@endpush

@@ -1,0 +1,66 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 18/09/2019 12:45
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff2") format("woff2"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-user:before { content: "\f100"; }
+.flaticon-owner:before { content: "\f101"; }
+.flaticon-plan:before { content: "\f102"; }
+.flaticon-avatar:before { content: "\f103"; }
+.flaticon-lead:before { content: "\f104"; }
+.flaticon-team:before { content: "\f105"; }
+.flaticon-gear:before { content: "\f106"; }
+.flaticon-logout:before { content: "\f107"; }
+.flaticon-content:before { content: "\f108"; }
+.flaticon-grid:before { content: "\f109"; }
+.flaticon-bell:before { content: "\f10a"; }
+.flaticon-close:before { content: "\f10b"; }
+.flaticon-project:before { content: "\f10c"; }
+    
+    $font-Flaticon-user: "\f100";
+    $font-Flaticon-owner: "\f101";
+    $font-Flaticon-plan: "\f102";
+    $font-Flaticon-avatar: "\f103";
+    $font-Flaticon-lead: "\f104";
+    $font-Flaticon-team: "\f105";
+    $font-Flaticon-gear: "\f106";
+    $font-Flaticon-logout: "\f107";
+    $font-Flaticon-content: "\f108";
+    $font-Flaticon-grid: "\f109";
+    $font-Flaticon-bell: "\f10a";
+    $font-Flaticon-close: "\f10b";
+    $font-Flaticon-project: "\f10c";

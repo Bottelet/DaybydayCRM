@@ -11,23 +11,14 @@ class CanTaskUpdateStatus
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $task             = Task::findOrFail($request->id);
-        $isAdmin          = auth()->user()->hasRole('administrator');
-        $settings         = Setting::all();
-        $settingscomplete = $settings[0]['task_complete_allowed'];
-        if ($isAdmin) {
-            return $next($request);
-        }
-        if (1 == $settingscomplete && auth()->user()->id != $task->fk_user_id_assign) {
-            Session()->flash('flash_message_warning', 'Only assigned user are allowed to close Task.');
-
+        if (!auth()->user()->can('task-update-status')) {
+            Session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
             return redirect()->back();
         }
 

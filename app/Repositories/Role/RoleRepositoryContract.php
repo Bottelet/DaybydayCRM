@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Role;
 
 interface RoleRepositoryContract
@@ -10,7 +9,7 @@ interface RoleRepositoryContract
 
     public function allRoles();
 
-    public function permissionsUpdate($requestData);
+    public function permissionsUpdate($requestData, $id);
 
     public function create($requestData);
 

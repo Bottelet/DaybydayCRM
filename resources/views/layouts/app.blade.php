@@ -5,11 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>{{ config('app.name') }}</title>
+    <title>Daybyday - Login</title>
 
     <!-- Fonts -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel='stylesheet'
-          type='text/css'>
+    <script src="https://use.fontawesome.com/8301ab0e4f.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'>
 
     <!-- Styles -->
@@ -19,46 +18,54 @@
     <style>
         body {
             font-family: 'Lato';
+            background-color: #242939;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='199' viewBox='0 0 100 199'%3E%3Cg fill='%230989b8' fill-opacity='0.13'%3E%3Cpath d='M0 199V0h1v1.99L100 199h-1.12L1 4.22V199H0zM100 2h-.12l-1-2H100v2z'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
         }
 
         .fa-btn {
             margin-right: 6px;
         }
+        /* enable absolute positioning */
+        .inner-addon { 
+            position: relative; 
+        }
+
+        /* style icon */
+        .inner-addon .fa {
+          position: absolute;
+          padding-top: 13px;
+          padding-right: 30px;
+          font-size: 20px;
+          pointer-events: none;
+        }
+
+        /* align icon */
+        .left-addon .fa  { left:  0px;}
+        .right-addon .fa { right: 0px;}
+
+        /* add padding  */
+        .left-addon input  { padding-left:  30px; }
+        .right-addon input { padding-right: 30px; }
+        .btn-primary:hover {
+            border-color: #145a96;
+        } 
+        .tablet {
+            box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
+            background-color: #ffffff;
+            border-radius: 5px;
+            padding: 2em;
+        }
+
     </style>
 </head>
 <body id="app-layout">
-<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-
-
-        </div>
-
-        <div class="collapse navbar-collapse" id="app-navbar-collapse">
-            <!-- Left Side Of Navbar -->
-
-
-            <!-- Right Side Of Navbar -->
-            <ul class="nav navbar-nav navbar-right">
-                <!-- Authentication Links -->
-                @if (!Auth::guest())
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            {{ Auth::user()->name }} <span class="caret"></span>
-                        </a>
-
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="{{ url('/logout') }}"><i class="fa fa-btn fa-sign-out"></i>Logout</a></li>
-                        </ul>
-                    </li>
-                @endif
-            </ul>
-        </div>
-    </div>
 </nav>
-<div style="text-align: center; margin-bottom:20px;"><img src="{{ asset('images/FP_logo_big.png') }}" width="400px"
-                                                          alt=""></div>
-@yield('content')
+
+<div style="text-align: center; margin-bottom:20px;"><a href="/login">
+    <img src="{{ asset('images/daybyday-logo-white-with-bg.png') }}" width="458px"
+                                                          alt="" style="margin-top:5em; margin-bottom:2em; margin-left: 6%" class="logo-placment"></a></div>
+
+    @yield('content')
 
         <!-- JavaScripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>

@@ -1,0 +1,36 @@
+.invoice-title {
+   @extend .tablet__head-title;
+   font-size:1.6rem;
+   margin-bottom: 0 !important;
+}
+
+.invoice-info {
+   color: #797979;
+   margin-bottom: 0 !important;
+   font-size: 1.1rem;
+}
+
+.invoice-info-title {
+   font-size:1.3rem;
+   color: #6b6b6b;
+   margin-bottom: 0 !important;
+}
+
+.invoice-info-subtext {
+   font-size:1.3rem;
+   color: #3a3a3a;
+   font-weight: 400;
+}
+
+.final-price {
+   font-size: 1.2em;
+   font-weight: 400;
+}
+.trashcan-icon {
+   padding-left: 1em !important;
+   color:#95969a;
+}
+
+.trashcan-icon:hover {
+   color:$danger-color;
+}

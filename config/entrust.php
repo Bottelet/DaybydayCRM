@@ -40,7 +40,7 @@ return [
     | Update the permission if it is in a different namespace.
     |
     */
-    'permission' => 'App\Models\Permissions',
+    'permission' => 'App\Models\Permission',
 
     /*
     |--------------------------------------------------------------------------

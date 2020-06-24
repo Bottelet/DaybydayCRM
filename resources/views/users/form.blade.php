@@ -1,58 +1,120 @@
-<div class="form-group">
-    {{ Form::label('image_path', __('Image'), ['class' => 'control-label']) }}
-    {!! Form::file('image_path',  null, ['class' => 'form-control']) !!}
+
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Name')</label>
+</div>
+<div class="col-sm-9">
+        <div class="form-group col-sm-8">
+            <input type="text" name="name" class="form-control" value="{{isset($user) ? optional($user)->name : ''}}">
+        </div>
+</div>
+<div class="col-sm-12">
+    <hr>
+</div>
+<div class="col-sm-3">
+    <label for="image_path" class="base-input-label">@lang('Image')</label>
+</div>
+<div class="col-sm-9">
+    <div class="form-group form-inline col-sm-8">
+        <div class="input-group ">
+            <img src="{{isset($user) ? optional($user)->avatar : '/images/default_avatar.jpg'}}" style="max-height: 40px; border-radius: 25px;">
+        </div>
+        <div class="input-group" style="margin-left: 0.7em;">
+            <input type="file" name="image_path">
+        </div>
+    </div>
+</div>
+<div class="col-sm-12">
+    <hr>
+</div>
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Address')</label>
+</div>
+<div class="col-sm-9">
+    <div class="form-group col-sm-8">
+        <input type="text" name="address" class="form-control" value="{{isset($user) ? optional($user)->address : ''}}">
+    </div>
+</div>
+<div class="col-sm-12">
+    <hr>
+</div>
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Contact information')</label>
+</div>
+<div class="col-sm-9">
+    <div class="form-group col-sm-8">
+        <label for="email" class="control-label thin-weight">@lang('Email')</label>
+        <input type="email" name="email" class="form-control" value="{{isset($user) ? optional($user)->email : ''}}">
+    </div>
+    <div class="form-group col-sm-8">
+        <label for="primary_number" class="control-label thin-weight">@lang('Primary number')</label>
+        <input type="number" name="primary_number" class="form-control" value="{{isset($user) ? optional($user)->primary_number : ''}}">
+    </div>
+    <div class="form-group col-sm-8">
+        <label for="secondary_number" class="control-label thin-weight">@lang('Secondary number')</label>
+        <input type="number" name="secondary_number" class="form-control" value="{{isset($user) ? optional($user)->secondary_number : ''}}">
+    </div>
+</div>
+<div class="col-sm-12">
+    <hr>
 </div>
 
-
-<div class="form-group">
-    {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}
-    {!! Form::text('name', null, ['class' => 'form-control']) !!}
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Security')</label>
 </div>
-
-<div class="form-group">
-    {!! Form::label('email', __('Mail'), ['class' => 'control-label']) !!}
-    {!! Form::email('email', null, ['class' => 'form-control']) !!}
+<div class="col-sm-9">
+    <div class="form-group col-sm-8">
+        <label for="password" class="control-label thin-weight">@lang('Password')</label>
+        <input type="password" name="password" class="form-control" value="">
+    </div>
+    <div class="form-group col-sm-8">
+        <label for="password_confirmation" class="control-label thin-weight">@lang('Confirm password')</label>
+        <input type="password" name="password_confirmation" class="form-control" value="">
+    </div>
 </div>
-
-<div class="form-group">
-    {!! Form::label('address', __('Address'), ['class' => 'control-label']) !!}
-    {!! Form::text('address', null, ['class' => 'form-control']) !!}
+<div class="col-sm-12">
+    <hr>
 </div>
-
-<div class="form-group">
-    {!! Form::label('work_number', __('Work number'), ['class' => 'control-label']) !!}
-    {!! Form::text('work_number',  null, ['class' => 'form-control']) !!}
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Access')</label>
 </div>
-
-<div class="form-group">
-    {!! Form::label('personal_number', __('Personal number'), ['class' => 'control-label']) !!}
-    {!! Form::text('personal_number',  null, ['class' => 'form-control']) !!}
+<div class="col-sm-9">
+    <div class="form-group col-sm-8">
+        <label for="roles" class="control-label thin-weight">@lang('Assign role')</label>
+        <select name="roles" id="" class="form-control">
+        @foreach($roles as $key => $role)
+                <option {{ isset($user) && $user->userRole->role_id === $key ? "selected" : "" }} value="{{$key}}">{{$role}}</option>
+        @endforeach
+        </select>
+    </div>
+    <div class="form-group col-sm-8">
+        <label for="departments" class="control-label thin-weight">@lang('Assign department')</label>
+        <select name="departments" id="" class="form-control">
+            @foreach($departments as $key => $department)
+                <option {{ isset($user) && $user->department->first()->id === $key ? "selected" : "" }} value="{{$key}}">{{$department}}</option>
+            @endforeach
+        </select>
+    </div>
 </div>
-
-<div class="form-group">
-    {!! Form::label('password', __('Password'), ['class' => 'control-label']) !!}
-    {!! Form::password('password', ['class' => 'form-control']) !!}
+<div class="col-sm-12">
+    <hr>
 </div>
-<div class="form-group">
-    {!! Form::label('password_confirmation', __('Confirm password'), ['class' => 'control-label']) !!}
-    {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}
+<div class="col-sm-3">
+    <label for="name" class="base-input-label">@lang('Settings')</label>
 </div>
-<div class="form-group form-inline">
-    {!! Form::label('roles', __('Assign role'), ['class' => 'control-label']) !!}
-    {!!
-        Form::select('roles',
-        $roles,
-        isset($user->role->role_id) ? $user->role->role_id : null,
-        ['class' => 'form-control']) !!}
-
-    {!! Form::label('departments', __('Assign department'), ['class' => 'control-label']) !!}
-
-    {!!
-        Form::select('departments',
-        $departments,
-        isset($user)
-        ? $user->department->first()->id : null,
-        ['class' => 'form-control']) !!}
+<div class="col-sm-9">
+    <div class="form-group col-sm-8">
+        <label for="language" class="control-label thin-weight">@lang('Language')</label> <br>
+        <label class="radio-inline">
+            <input value="dk" type="radio" name="language" {{isset($user) && strtolower($user->language) == "dk" ? 'checked': ''}}>@lang('Danish')
+        </label>
+        <label class="radio-inline">
+            <input value="en" type="radio" name="language" {{isset($user) && strtolower($user->language) == "en" ? 'checked': ''}}>@lang('English')
+        </label>
+    </div>
 </div>
-
-{!! Form::submit($submitButtonText, ['class' => 'btn btn-primary']) !!}
+<div class="col-sm-12">
+    <hr>
+</div>
+<div class="col-lg-12">
+    <input type="submit" value="{{$submitButtonText}}" class="btn btn-md btn-brand">
+</div>

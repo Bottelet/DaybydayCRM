@@ -15,8 +15,9 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain' => env('MAILGUN_DOMAIN', null),
+        'secret' => env('MAILGUN_SECRET', null),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.eu.mailgun.net'),
     ],
 
     'mandrill' => [
@@ -28,11 +29,24 @@ return [
         'secret' => env('SES_SECRET'),
         'region' => 'us-east-1',
     ],
-
     'dinero' => [
-        'secret' => env('DINERO_SECRET', 'SECRET'),
-        'client' => env('DINERO_CLIENTID', 'CLIENTID'),
-    ]
-
-
+        'secret' => env('DINERO_SECRET', null),
+        'client' => env('DINERO_CLIENT_ID', null),
+    ],
+    'stripe' => [
+        'model'  => App\Models\Tenant::class,
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+    'dropbox' => [
+        'client_id' => env('DROPBOX_CLIENT_ID', null),
+        'client_secret' => env('DROPBOX_CLIENT_SECRET', null),
+    ],
+    'google-drive' => [
+        'client_id' => env('GOOGLE_DRIVE_CLIENT_ID', null),
+        'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET', null),
+    ],
+    'elasticsearch' => [
+        'enabled' => env('ELASTICSEARCH_ENABLED', false),
+    ],
 ];
