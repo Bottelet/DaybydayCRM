@@ -1,5 +1,5 @@
 {
-    "name": "bottelet/DaybydayCRM",
+    "name": "bottelet/daybydaycrm",
     "description": "DaybydayCRM is a free, open-source and self-hosted CRM platform based of Laravel 5",
     "keywords": [
         "laravel",
@@ -8,12 +8,10 @@
         "Lead management",
         "customer relationship management"
     ],
-    "authors": [
-        {
-            "name": "Casper Bottelet",
-            "email": "cbottelet@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "Casper Bottelet",
+        "email": "cbottelet@gmail.com"
+    }],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -58,8 +56,7 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-        ]
+        "classmap": []
     },
     "scripts": {
         "post-root-package-install": [
