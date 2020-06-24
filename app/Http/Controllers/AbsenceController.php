@@ -68,7 +68,7 @@ class AbsenceController extends Controller
     {
         $medical_certificate = null;
         $user = auth()->user();
-        if ($request->user_external_id) {
+        if ($request->user_external_id && auth()->user()->can('absence-manage')) {
             $user = User::whereExternalId($request->user_external_id)->first();
             if (!$user) {
                 Session::flash('flash_message_warning', __('Could not find user'));
@@ -97,11 +97,11 @@ class AbsenceController extends Controller
 
     public function destroy(Absence $absence)
     {
+        dd($absence);
         if (!auth()->user()->can('absence-manage')) {
             Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
             return redirect()->back();
         }
-
         $absence->delete();
 
         return response("OK");

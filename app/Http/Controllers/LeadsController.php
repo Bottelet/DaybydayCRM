@@ -187,16 +187,7 @@ class LeadsController extends Controller
 
     public function convertToOrder(Lead $lead)
     {
-        $invoice = Invoice::create([
-            'status' => 'draft',
-            'client_id' => $lead->client->id,
-            'external_id' =>  Uuid::uuid4()->toString()
-        ]);
-
-        $lead->invoice_id = $invoice->id;
-        $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
-        $lead->save();
-
+        $invoice = $lead->canConvertToOrder();
         return $invoice->external_id;
     }
     /**

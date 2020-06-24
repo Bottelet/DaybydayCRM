@@ -11,6 +11,7 @@ use Carbon;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property bool qualified
@@ -21,10 +22,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Client client
  * @property integer invoice_id
  * @property integer status_id
+ * @property Invoice invoice
  */
 class Lead extends Model implements Commentable
 {
-    use  SearchableTrait, SoftDeletes, DeadlineTrait;
+    use SearchableTrait, SoftDeletes, DeadlineTrait;
 
     protected $searchableFields = ['title'];
 
@@ -106,6 +108,11 @@ class Lead extends Model implements Commentable
         $this->save();
     }
 
+    public function getIsQualifiedAttribute()
+    {
+        return $this->qualified;
+    }
+
     public function activity()
     {
         return $this->morphMany(Activity::class, 'source');
@@ -131,11 +138,41 @@ class Lead extends Model implements Commentable
         return $query->where('qualified', false);
     }
 
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
     /**
      * @return array
      */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
+    }
+
+    public function convertToOrder()
+    {
+        if(!$this->canConvertToOrder()) {
+            return false;
+        }
+        $invoice = Invoice::create([
+            'status' => 'draft',
+            'client_id' => $this->client->id,
+            'external_id' =>  Uuid::uuid4()->toString()
+        ]);
+
+        $this->invoice_id = $invoice->id;
+        $this->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $this->save();
+
+        return $invoice;
+    }
+
+    public function canConvertToOrder()
+    {
+        if($this->invoice) {
+            return false;
+        }
+        return true;
     }
 }

@@ -20,16 +20,15 @@ class IntegrationsController extends Controller
      */
     public function index()
     {
-        $google_auth_url = app(GoogleDriveAuthenticator::class)->authUrl();
-        $dropbox_auth_url =  app(DropboxAuthenticator::class)->authUrl();
+
         $billing_integration = Integration::whereApiType('billing')->first();
         $filesystem_integration = Integration::whereApiType('file')->first();
 
         return view('integrations.index')
         ->with('billing_integration', $billing_integration)
         ->with('filesystem_integration', $filesystem_integration)
-        ->with('google_drive_auth_url', $google_auth_url)
-        ->with('dropbox_auth_url', $dropbox_auth_url);
+        ->with('google_drive_auth_url', null)
+        ->with('dropbox_auth_url', null);
     }
 
     /**

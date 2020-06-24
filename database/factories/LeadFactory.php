@@ -14,11 +14,11 @@ $factory->define(Lead::class, function (Faker $faker) {
         'description' => $faker->paragraph,
         'user_created_id' => $user->id,
         'user_assigned_id' => $user->id,
+        'qualified' => false,
         'client_id' => factory(\App\Models\Client::class)->create()->id,
         'status_id' => $faker->numberBetween($min = 5, $max = 8),
         'deadline' => $faker->dateTimeThisYear($max = 'now'),
         'created_at' => $faker->dateTimeThisYear($max = 'now'),
         'updated_at' => $faker->dateTimeThisYear($max = 'now'),
-
     ];
 });

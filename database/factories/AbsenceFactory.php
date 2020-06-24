@@ -8,6 +8,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Absence::class, function (Faker $faker) {
     return [
+        'external_id' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
         'reason' => $faker->word,
         'start_at' => now(),
         'end_at' => now()->addDays(3),
