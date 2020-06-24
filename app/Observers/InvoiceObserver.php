@@ -35,7 +35,6 @@ class InvoiceObserver
      */
     public function updated(Invoice $task)
     {
-
     }
 
     /**

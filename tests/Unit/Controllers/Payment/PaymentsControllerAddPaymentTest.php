@@ -32,7 +32,6 @@ class PaymentsControllerAddPaymentTest extends TestCase
             'quantity' => 1,
             'type' => 'hours',
         ]);
-
     }
 
     /** @test **/

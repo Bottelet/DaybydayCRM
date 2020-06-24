@@ -11,7 +11,6 @@ use Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 /**
  * @property mixed external_id
  */

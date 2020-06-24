@@ -56,10 +56,10 @@ class SettingsController extends Controller
             $end_tmp = clone $end_time;
             $end_time = $start_time;
             $start_time = $end_tmp;
-        } elseif($start_time->eq($end_time)) {
+        } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
         }
-        foreach(BusinessHour::all() as $businessHour) {
+        foreach (BusinessHour::all() as $businessHour) {
             $businessHour->update([
                 'open_time' => $start_time->format('H:i:s'),
                 'close_time' => $end_time->format('H:i:s'),
@@ -112,16 +112,14 @@ class SettingsController extends Controller
 
         if ($request->currency == $setting->currency && !empty($request->vat)) {
             $setting->vat = $request->vat * 100;
-        }
-        elseif(empty($request->vat)) {
+        } elseif (empty($request->vat)) {
             $request->vat = $setting->vat;
         } else {
-            if(app(Currency::class, ["code" => $request->currency])->hasCurrency($request->currency)) {
+            if (app(Currency::class, ["code" => $request->currency])->hasCurrency($request->currency)) {
                 $setting->currency = $request->currency;
                 if ($request->vat == $setting->vat / 100) {
                     $setting->vat = app(Currency::class, ["code" => $request->currency])->getCurrency($request->currency)["vatPercentage"];
-                }
-                else {
+                } else {
                     $setting->vat = $request->vat * 100;
                 }
             };
@@ -132,10 +130,10 @@ class SettingsController extends Controller
             $end_tmp = clone $end_time;
             $end_time = $start_time;
             $start_time = $end_tmp;
-        } elseif($start_time->eq($end_time)) {
+        } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
         }
-        foreach(BusinessHour::all() as $businessHour) {
+        foreach (BusinessHour::all() as $businessHour) {
             $businessHour->update([
                 'open_time' => $start_time->format('H:i:s'),
                 'close_time' => $end_time->format('H:i:s'),

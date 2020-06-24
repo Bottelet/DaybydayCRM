@@ -83,7 +83,7 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($client, $task, $lead, $task_2, $lead_2) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/' . $client->external_id);
-                #->clickddLink($task->title, 'a');
+            #->clickddLink($task->title, 'a');
                 #->assertDontSee($task_2->title);
                 #->press('Leads')->element(".tablet")
                 #->assertSee($lead->title)
@@ -190,7 +190,6 @@ class ClientTest extends DuskTestCase
                 ->type('company_type', 'A/S')
                 ->select('industry_id')
                 ->press('Update client');
-
         });
 
         //Had to split this in to two functions as i had to use element to locate the submit button.
@@ -203,7 +202,6 @@ class ClientTest extends DuskTestCase
                 ->assertSee($address)
                 ->assertSee($zip_code)
                 ->assertSee($city);
-
         });
     }
 }

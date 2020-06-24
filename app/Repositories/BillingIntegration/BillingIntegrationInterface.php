@@ -29,4 +29,3 @@ interface BillingIntegrationInterface
 
     public function deletePayment(Payment $payment);
 }
-

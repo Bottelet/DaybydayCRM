@@ -58,7 +58,7 @@ class ProjectObserver
      */
     public function restored(Project $project)
     {
-       foreach ($this->relations as $relation) {
+        foreach ($this->relations as $relation) {
             $project->$relation()->withTrashed()->restore();
         }
     }

@@ -20,7 +20,6 @@ class Settings extends Migration
             $table->string('company')->nullable();
             $table->integer('max_users');
             $table->timestamps();
-
         });
     }
 

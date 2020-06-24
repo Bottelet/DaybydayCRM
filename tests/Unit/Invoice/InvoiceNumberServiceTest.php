@@ -31,7 +31,6 @@ class InvoiceNumberServiceTest extends TestCase
         ]);
 
         $this->invoiceNumberService = app(InvoiceNumberService::class);
-
     }
 
     /** @test */

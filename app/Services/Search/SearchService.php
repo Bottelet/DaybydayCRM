@@ -3,7 +3,6 @@ namespace App\Services\Search;
 
 use Elasticsearch\ClientBuilder;
 
-
 class SearchService
 {
     private $elasticsearch;

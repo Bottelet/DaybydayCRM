@@ -36,5 +36,4 @@ class CanUpdateInvoiceTest extends TestCase
 
         $this->assertFalse($this->invoice->canUpdateInvoice());
     }
-
 }

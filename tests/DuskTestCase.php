@@ -56,12 +56,12 @@ abstract class DuskTestCase extends BaseTestCase
             $client = factory(Client::class)->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
         }
 
-        if(!$client) {
+        if (!$client) {
             $client = factory(Client::class)->create($attributes);
         }
 
         if (!array_has($attributes, 'contact_id')) {
-           $contact = factory(Contact::class)->create(['client_id' => $client->id]);
+            $contact = factory(Contact::class)->create(['client_id' => $client->id]);
         }
 
 
@@ -114,8 +114,11 @@ abstract class DuskTestCase extends BaseTestCase
         ]);
 
         return RemoteWebDriver::create(
-            'http://chrome:9515', DesiredCapabilities::chrome()->setCapability(
-            ChromeOptions::CAPABILITY, $options
-        ));
+            'http://chrome:9515',
+            DesiredCapabilities::chrome()->setCapability(
+                ChromeOptions::CAPABILITY,
+                $options
+            )
+        );
     }
 }

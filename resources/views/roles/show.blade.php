@@ -19,13 +19,13 @@
 	@foreach($permissions as $permission)
    <div class="col-xs-6 col-md-6">
 	    <?php $isEnabled = !current(
-	            array_filter(
-	                    $role->permissions->toArray(),
-	                    function ($element) use ($permission) {
-	                        return $element['id'] === $permission->id;
-	                    }
-	            )
-	    );  ?>
+    array_filter(
+                    $role->permissions->toArray(),
+                    function ($element) use ($permission) {
+                            return $element['id'] === $permission->id;
+                        }
+                )
+);  ?>
 	<div class="white-box">
 	    <input type="checkbox"
 	    			{{ !$isEnabled ? 'checked' : ''}} name="permissions[ {{ $permission->id }} ]"

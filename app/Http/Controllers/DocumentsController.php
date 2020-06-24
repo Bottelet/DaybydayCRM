@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+
 use App\Local;
 use App\Models\Task;
 use App\Services\Storage\GetStorageProvider;
@@ -31,7 +32,7 @@ class DocumentsController extends Controller
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
         if (!$file) {
-           session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
+            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
             return redirect()->back();
         }
 
@@ -147,7 +148,6 @@ class DocumentsController extends Controller
                     'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
                     'integration_type' => get_class($fileSystem)
                 ]);
-
             }
         }
         Session::flash('flash_message', __('File successfully uploaded'));
@@ -200,7 +200,6 @@ class DocumentsController extends Controller
                     'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
                     'integration_type' => get_class($fileSystem)
                 ]);
-
             }
         }
         Session::flash('flash_message', __('File successfully uploaded'));
@@ -209,24 +208,24 @@ class DocumentsController extends Controller
 
 
     public function destroy($external_id)
-	{
+    {
         if (!auth()->user()->can('document-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete a document'));
             return redirect()->route('tasks.show', $external_id);
         }
         $fileSystem = GetStorageProvider::getStorage();
 
-    	$document = Document::whereExternalId($external_id)->first();
+        $document = Document::whereExternalId($external_id)->first();
         $deleted = $fileSystem->delete($document);
-    	if (!$deleted) {
+        if (!$deleted) {
             Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
         } else {
             Session()->flash('flash_message', __('File has been deleted'));
         }
-    	$document->delete();
+        $document->delete();
 
-    	return redirect()->back();
-	}
+        return redirect()->back();
+    }
 
 
     /**
@@ -254,5 +253,4 @@ class DocumentsController extends Controller
             ->withType($type)
             ->withRoute(route('document.'. $type . '.upload', $external_id));
     }
-
 }

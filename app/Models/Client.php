@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 /**
  * @property mixed user_id
  * @property mixed company_name

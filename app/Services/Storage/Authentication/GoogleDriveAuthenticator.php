@@ -1,7 +1,6 @@
 <?php
 namespace App\Services\Storage\Authentication;
 
-
 use App\Models\Integration;
 use App\Services\Storage\GoogleDrive;
 use Google_Client;
@@ -46,5 +45,4 @@ class GoogleDriveAuthenticator implements StorageAuthenticatorContract
         $this->client->fetchAccessTokenWithRefreshToken($token);
         return $this->client->revokeToken($token);
     }
-
 }

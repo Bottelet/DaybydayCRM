@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Comment\Commentable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-Use Carbon\Carbon;
+use Carbon\Carbon;
 
 class Project extends model implements Commentable
 {
@@ -111,5 +111,4 @@ class Project extends model implements Commentable
     {
         return $this->searchableFields;
     }
-
 }

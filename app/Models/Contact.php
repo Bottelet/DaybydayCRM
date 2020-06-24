@@ -10,7 +10,7 @@ class Contact extends Model
 {
     use  SoftDeletes;
 
-	    protected $fillable = [
+    protected $fillable = [
         'external_id',
         'name',
         'email',
@@ -22,6 +22,6 @@ class Contact extends Model
 
     public function client()
     {
-    	return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class);
     }
 }

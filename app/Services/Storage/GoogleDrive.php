@@ -29,7 +29,6 @@ class GoogleDrive implements FilesystemIntegration
         $this->client->fetchAccessTokenWithRefreshToken(Integration::where(['name' => get_class($this)])->first()->api_key);
 
         $this->driveService = new \Google_Service_Drive($this->client);
-
     }
 
     public function upload($folder, $filename, $file): array
@@ -69,13 +68,11 @@ class GoogleDrive implements FilesystemIntegration
                 'mimeType' => 'image/jpeg',
                 'uploadType' => 'multipart',
                 'fields' => 'id'));
-
-
-
         } else {
             $clientFolder = null;
             $files = $this->driveService->files->listFiles(
-                ["q" => "'" . $rootFolder['id'] . "'" . " in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false"]);
+                ["q" => "'" . $rootFolder['id'] . "'" . " in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false"]
+            );
 
             foreach ($files['files'] as $item) {
                 if ($item['name'] == $folder) {
@@ -132,8 +129,8 @@ class GoogleDrive implements FilesystemIntegration
         $file = $this->driveService->files->get($file->integration_id, $options);
 
         if (!$file) {
-           session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $file->path]));
-           return redirect()->back();
+            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $file->path]));
+            return redirect()->back();
         }
 
         return $file;

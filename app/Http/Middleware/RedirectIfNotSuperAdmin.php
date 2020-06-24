@@ -18,8 +18,7 @@ class RedirectIfNotSuperAdmin
         if (Auth()->user()->hasRole('owner')) {
             return $next($request);
         }
-          Session()->flash('flash_message_warning', __('Only Allowed for the user who registered the CRM'));
-          return redirect()->back();
-        
+        Session()->flash('flash_message_warning', __('Only Allowed for the user who registered the CRM'));
+        return redirect()->back();
     }
 }

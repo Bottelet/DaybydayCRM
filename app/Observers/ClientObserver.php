@@ -6,7 +6,6 @@ use App\Models\Client;
 
 class ClientObserver
 {
-
     private $relations;
 
     public function __construct()

@@ -50,5 +50,4 @@ class CreateAppointmentCalendarRequest extends FormRequest
             'color.required' => __('The color is required.'),
         ];
     }
-
 }

@@ -19,13 +19,13 @@ class UsersDummyTableSeeder extends Seeder
 
         $createDep = new Department;
         $createDep->id = '2';
-	    $createDep->name = 'Nerds';
+        $createDep->name = 'Nerds';
         $createDep->external_id = Uuid::uuid4();
         $createDep->external_id = Uuid::uuid4();
         $createDep->save();
         $createDep = new Department;
         $createDep->id = '3';
-	    $createDep->name = 'Genius';
+        $createDep->name = 'Genius';
         $createDep->external_id = Uuid::uuid4();
         $createDep->external_id = Uuid::uuid4();
         $createDep->save();

@@ -52,10 +52,10 @@ class AppointmentsControllerTest extends TestCase
         $correctAppointment = null;
         $r = $this->json('GET', '/appointments/data');
 
-        foreach($r->decodeResponseJson() as $appointment) {
+        foreach ($r->decodeResponseJson() as $appointment) {
             $this->assertNotTrue($appointment["external_id"] == $this->appointmentsWithToLate->external_id);
             $this->assertNotTrue($appointment["external_id"] == $this->appointmentsWithToEarly->external_id);
-            if($appointment["external_id"] == $this->appointmentsWithInTime->external_id) {
+            if ($appointment["external_id"] == $this->appointmentsWithInTime->external_id) {
                 $correctAppointment = $appointment;
             }
         }
@@ -64,7 +64,5 @@ class AppointmentsControllerTest extends TestCase
         $this->assertEquals($this->appointmentsWithInTime->end_at, $correctAppointment["end_at"]);
 
         $this->assertCount(3, User::whereExternalId($this->user->external_id)->first()->appointments);
-
     }
-
 }

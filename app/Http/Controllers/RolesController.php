@@ -29,7 +29,7 @@ class RolesController extends Controller
         $roles = Role::select(['id', 'name', 'external_id', 'display_name']);
         return Datatables::of($roles)
             ->addColumn('namelink', function ($roles) {
-                if($roles->name == Role::OWNER_ROLE) {
+                if ($roles->name == Role::OWNER_ROLE) {
                     return '<a href="'.route('roles.show', $roles->external_id).'">'.$roles->display_name.'</a>' . '<br>' . __('Extra: Owner is able to do the same as an administrator but also controls billing');
                 }
                 if ($roles->name == Role::ADMIN_ROLE) {
@@ -38,7 +38,7 @@ class RolesController extends Controller
                 return '<a href="'.route('roles.show', $roles->external_id).'">'.$roles->display_name.'</a>';
             })
             ->editColumn('permissions', function ($roles) {
-                return $roles->permissions->map(function($permission) {
+                return $roles->permissions->map(function ($permission) {
                     return $permission->display_name;
                 })->implode("<br>");
             })
@@ -83,7 +83,7 @@ class RolesController extends Controller
         $permissions_grouping = Permission::all()->groupBy('grouping');
 
         if (!Integration::whereApiType('file')->first()) {
-            unset($permissions_grouping['document']);   
+            unset($permissions_grouping['document']);
         }
         
         return view('roles.show')
@@ -125,7 +125,7 @@ class RolesController extends Controller
             Session()->flash('flash_message_warning', __('Can not delete role'));
             return redirect()->route('roles.index');
         }
-            Session()->flash('flash_message', __('Role deleted'));
+        Session()->flash('flash_message', __('Role deleted'));
         return redirect()->route('roles.index');
     }
 

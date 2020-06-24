@@ -29,8 +29,7 @@ class UsersController extends Controller
     public function __construct(
         TaskRepositoryContract $tasks,
         LeadRepositoryContract $leads
-    )
-    {
+    ) {
         $this->tasks = $tasks;
         $this->leads = $leads;
         $this->middleware('user.create', ['only' => ['create']]);
@@ -46,8 +45,8 @@ class UsersController extends Controller
 
     public function calendarUsers()
     {
-        return User::with(['department', 'absences' =>  function($q) {
-            return $q->whereBetween('start_at',  [today()->subWeeks(2)->startOfDay(), today()->addWeeks(4)->endOfDay()])
+        return User::with(['department', 'absences' =>  function ($q) {
+            return $q->whereBetween('start_at', [today()->subWeeks(2)->startOfDay(), today()->addWeeks(4)->endOfDay()])
                       ->orWhereBetween('end_at', [today()->subWeeks(2)->startOfDay(), today()->addWeeks(4)->endOfDay()]);
         }
         ])->get();
@@ -112,7 +111,7 @@ class UsersController extends Controller
             ->make(true);
     }
 
-        /**
+    /**
      * Json for Data tables
      * @param $id
      * @return mixed
@@ -156,7 +155,7 @@ class UsersController extends Controller
         $clients = Client::select(['external_id', 'company_name', 'vat', 'address'])->where('user_id', $id);
         return Datatables::of($clients)
             ->addColumn('clientlink', function ($clients) {
-                return '<a href="' . route('clients.show', $clients->external_id    ) . '">' . $clients->company_name . '</a>';
+                return '<a href="' . route('clients.show', $clients->external_id) . '">' . $clients->company_name . '</a>';
             })
             ->editColumn('created_at', function ($clients) {
                 return $clients->created_at ? with(new Carbon($clients->created_at))
@@ -197,7 +196,7 @@ class UsersController extends Controller
         }
 
 
-        $user = New User();
+        $user = new User();
         $user->name = $request->name;
         $user->external_id = Uuid::uuid4()->toString();
         $user->email = $request->email;
@@ -274,16 +273,14 @@ class UsersController extends Controller
             }
         }
 
-        $owners = User::whereHas('roles', function($q){
+        $owners = User::whereHas('roles', function ($q) {
             $q->where('name', Role::OWNER_ROLE);
         })->get();
 
         $user->fill($input)->save();
         $role = $user->roles->first();
         if ($request->roles == (int)$role->id) {
-
-        }
-        elseif($role->first()->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
+        } elseif ($role->first()->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
             Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
             $user->roles()->sync([$role]);
@@ -300,19 +297,19 @@ class UsersController extends Controller
      */
     public function destroy(Request $request, $external_id)
     {
-       $user = $this->findByExternalId($external_id);
+        $user = $this->findByExternalId($external_id);
 
         if ($user->hasRole('owner')) {
             return Session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
         }
 
-        if ($request->tasks == "move_all_tasks" && $request->task_user != "" ) {
+        if ($request->tasks == "move_all_tasks" && $request->task_user != "") {
             $user->moveTasks($request->task_user);
         }
-        if($request->leads == "move_all_leads" && $request->lead_user != "") {
+        if ($request->leads == "move_all_leads" && $request->lead_user != "") {
             $user->moveLeads($request->lead_user);
         }
-        if($request->clients == "move_all_clients" && $request->client_user != "") {
+        if ($request->clients == "move_all_clients" && $request->client_user != "") {
             $user->moveClients($request->client_user);
         }
 
@@ -326,10 +323,10 @@ class UsersController extends Controller
         return redirect()->route('users.index');
     }
 
-     /**
-     * @param $external_id
-     * @return mixed
-     */
+    /**
+    * @param $external_id
+    * @return mixed
+    */
     public function findByExternalId($external_id)
     {
         return User::whereExternalId($external_id)->first();
@@ -343,9 +340,8 @@ class UsersController extends Controller
             return Role::all('display_name', 'id', 'name', 'external_id')->sortBy('display_name');
         }
 
-        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function($value, $key) {
+        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function ($value, $key) {
             return $value->name != "owner";
         })->sortBy('display_name');
     }
-
 }

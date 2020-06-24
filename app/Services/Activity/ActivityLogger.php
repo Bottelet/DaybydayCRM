@@ -37,7 +37,7 @@ class ActivityLogger
         return $this;
     }
 
-    public function withProperties(Array $properties)
+    public function withProperties(array $properties)
     {
         $this->getActivity()->properties = collect($properties);
         return $this;
@@ -71,7 +71,6 @@ class ActivityLogger
 
     protected static function determineActivityModel(): string
     {
-
         $activityModel = Activity::class;
         if (! is_a($activityModel, Activity::class, true)
             || ! is_a($activityModel, Model::class, true)) {

@@ -6,7 +6,6 @@ use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 use Aws\Credentials\CredentialProvider;
 
-
 class ElasticSearchObserver
 {
     private $elasticsearch;
@@ -18,7 +17,6 @@ class ElasticSearchObserver
         if (is_null($this->elasticsearch)) {
             $builder = ClientBuilder::create()->setHosts($host);
             $this->elasticsearch = $builder->build();
-
         }
     }
 
@@ -31,7 +29,6 @@ class ElasticSearchObserver
             'id' => $model->id,
             'body' => $model->toSearchArray(),
         ]);
-
     }
 
     public function deleted($model)

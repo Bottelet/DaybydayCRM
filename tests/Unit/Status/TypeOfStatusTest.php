@@ -34,8 +34,6 @@ class TypeOfStatusTest extends TestCase
             "source_type" => Project::class,
             "title" => "Hello"
         ]);
-
-
     }
 
     /** @test */

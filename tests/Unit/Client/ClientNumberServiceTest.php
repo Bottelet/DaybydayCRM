@@ -32,7 +32,6 @@ class ClientNumberServiceTest extends TestCase
         ]);
 
         $this->clientNumberService = app(ClientNumberService::class);
-
     }
 
     /** @test */

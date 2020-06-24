@@ -28,8 +28,8 @@ class IntegrationsController extends Controller
         return view('integrations.index')
         ->with('billing_integration', $billing_integration)
         ->with('filesystem_integration', $filesystem_integration)
-        ->with('google_drive_auth_url' , $google_auth_url)
-        ->with('dropbox_auth_url' , $dropbox_auth_url);
+        ->with('google_drive_auth_url', $google_auth_url)
+        ->with('dropbox_auth_url', $dropbox_auth_url);
     }
 
     /**

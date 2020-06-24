@@ -43,21 +43,21 @@ class AppointmentsController extends Controller
 
         if ($request->client_external_id) {
             $client_id = Client::where('external_id', $request->client_external_id)->first()->id;
-            if(!$client_id) {
+            if (!$client_id) {
                 return response(__("Client not found"), 422);
             }
         }
 
         $request_type = null;
         $request_id = null;
-        if($request->source_type && $request->source_external_id) {
+        if ($request->source_type && $request->source_external_id) {
             $request_type = $request->source_type;
 
             $entry = $request_type::whereExternalId($request->source_external_id);
             $request_id = $entry->id;
         }
 
-        if(!$user) {
+        if (!$user) {
             return response(__("User not found"), 422);
         }
 
@@ -80,14 +80,14 @@ class AppointmentsController extends Controller
 
     public function destroy(Appointment $appointment)
     {
-        if(!auth()->user()->can("appointment-create")) {
+        if (!auth()->user()->can("appointment-create")) {
             return response("Access denied", 403);
         }
 
         $deleted = $appointment->delete();
-        if($deleted) {
+        if ($deleted) {
             return response("Success");
         }
-            return response("Error", 503);
+        return response("Error", 503);
     }
 }

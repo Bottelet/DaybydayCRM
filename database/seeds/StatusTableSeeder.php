@@ -16,8 +16,8 @@ class StatusTableSeeder extends Seeder
      */
     public function run()
     {
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Open';
         $status->source_type = Task::class;
         $status->color = '#2FA599';
@@ -30,15 +30,15 @@ class StatusTableSeeder extends Seeder
         $status->color = '#2FA55E';
         $status->save();
 
-  		  $status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Pending';
         $status->source_type = Task::class;
         $status->color = '#EFAC57';
         $status->save();
 
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Waiting client';
         $status->source_type = Task::class;
         $status->color = '#60C0DC';
@@ -51,36 +51,36 @@ class StatusTableSeeder extends Seeder
         $status->color = '#E6733E';
         $status->save();
 
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Closed';
         $status->source_type = Task::class;
         $status->color = '#D75453';
         $status->save();
 
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Open';
         $status->source_type = Lead::class;
         $status->color = '#2FA599';
         $status->save();
 
-  		  $status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Pending';
         $status->source_type = Lead::class;
         $status->color = '#EFAC57';
         $status->save();
 
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Waiting client';
         $status->source_type = Lead::class;
         $status->color = '#60C0DC';
         $status->save();
 
-      	$status = new Status;
-      	$status->external_id = Uuid::uuid4();
+        $status = new Status;
+        $status->external_id = Uuid::uuid4();
         $status->title = 'Closed';
         $status->source_type = Lead::class;
         $status->color = '#D75453';

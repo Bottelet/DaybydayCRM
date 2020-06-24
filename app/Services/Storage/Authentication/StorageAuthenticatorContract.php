@@ -9,4 +9,3 @@ interface StorageAuthenticatorContract
 
     public function revokeAccess();
 }
-

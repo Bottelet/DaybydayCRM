@@ -45,8 +45,8 @@ class UsersControllerCalendarTest extends TestCase
     {
         $correctUser = null;
         $r = $this->json('GET', '/users/calendar-users/');
-        foreach($r->decodeResponseJson() as $user) {
-            if($user["external_id"] == $this->user->external_id){
+        foreach ($r->decodeResponseJson() as $user) {
+            if ($user["external_id"] == $this->user->external_id) {
                 $correctUser = $user;
             }
         }
@@ -57,5 +57,4 @@ class UsersControllerCalendarTest extends TestCase
 
         $this->assertCount(3, User::whereExternalId($correctUser["external_id"])->first()->absences);
     }
-
 }

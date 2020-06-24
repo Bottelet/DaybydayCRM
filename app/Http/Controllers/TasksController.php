@@ -24,7 +24,6 @@ use App\Models\Project;
 
 class TasksController extends Controller
 {
-
     const CREATED = 'created';
     const UPDATED_STATUS = 'updated_status';
     const UPDATED_TIME = 'updated_time';
@@ -97,9 +96,8 @@ class TasksController extends Controller
         $projects = null;
         $client =  Client::whereExternalId($client_external_id);
         $project = Project::whereExternalId($project_external_id)->first();
-        if($client){
-            $projects = $client->projects()->whereHas('status', function ($q)
-            {
+        if ($client) {
+            $projects = $client->projects()->whereHas('status', function ($q) {
                 return $q->where('title', '!=', 'Closed');
             })->pluck('title', 'external_id');
         }
@@ -134,7 +132,7 @@ class TasksController extends Controller
         );
 
         $task = Task::create(
-        [
+            [
             'title' => $request->title,
             'description' => clean($request->description),
             'user_assigned_id' => $request->user_assigned_id,
@@ -152,7 +150,7 @@ class TasksController extends Controller
         Session()->flash('flash_message', __('Task successfully added'));
         event(new \App\Events\TaskAction($task, self::CREATED));
 
-        if(!is_null($request->images)) {
+        if (!is_null($request->images)) {
             foreach ($request->file('images') as $image) {
                 $this->upload($image, $task);
             }
@@ -196,7 +194,6 @@ class TasksController extends Controller
             'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
             'integration_type' => get_class($fileSystem)
         ]);
-
     }
 
     /**
@@ -306,7 +303,7 @@ class TasksController extends Controller
         $task = $this->findByExternalId($external_id);
 
         $invoice = $task->invoice;
-        if(!$invoice) {
+        if (!$invoice) {
             $invoice = Invoice::create([
                 'status' => 'draft',
                 'client_id' => $task->client->id,
@@ -380,7 +377,6 @@ class TasksController extends Controller
         } else {
             return [];
         }
-
     }
 
 

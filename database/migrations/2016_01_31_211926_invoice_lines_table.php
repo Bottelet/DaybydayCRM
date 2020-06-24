@@ -25,7 +25,6 @@ class InvoiceLinesTable extends Migration
             $table->string('product_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
         });
     }
 

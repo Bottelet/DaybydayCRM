@@ -37,7 +37,7 @@ class GenerateInvoiceStatus
         if ($this->isUnPaid()) {
             return InvoiceStatus::unpaid()->getStatus();
         }
-        if ($this->isPaid()){
+        if ($this->isPaid()) {
             return InvoiceStatus::paid()->getStatus();
         }
         if ($this->isPartialPaid()) {

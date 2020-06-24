@@ -16,8 +16,8 @@ Route::group(['middleware' => ['auth']], function () {
     /**
      * Main
      */
-        Route::get('/', 'PagesController@dashboard');
-        Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
+    Route::get('/', 'PagesController@dashboard');
+    Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
 
     /**
      * Users
@@ -30,17 +30,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-        Route::resource('users', 'UsersController');
+    Route::resource('users', 'UsersController');
 
-	 /**
-     * Roles
-     */
+    /**
+    * Roles
+    */
 
-        Route::group(['prefix' => 'roles'], function () {
-            Route::get('/data', 'RolesController@indexData')->name('roles.data');
-             Route::patch('/update/{external_id}', 'RolesController@update');
-        });
-        Route::resource('roles', 'RolesController',['except' => [
+    Route::group(['prefix' => 'roles'], function () {
+        Route::get('/data', 'RolesController@indexData')->name('roles.data');
+        Route::patch('/update/{external_id}', 'RolesController@update');
+    });
+    Route::resource('roles', 'RolesController', ['except' => [
             'update'
         ]]);
     /**
@@ -57,10 +57,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-        Route::resource('clients', 'ClientsController');
-        Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
-        Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
-	    Route::resource('documents', 'DocumentsController');
+    Route::resource('clients', 'ClientsController');
+    Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
+    Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
+    Route::resource('documents', 'DocumentsController');
 
 
     /**
@@ -75,11 +75,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updatetime/{external_id}', 'TasksController@updateTime')->name('task.update.time');
         Route::post('/invoice/{external_id}', 'TasksController@invoice')->name('task.invoice');
         Route::patch('/update-deadline/{external_id}', 'TasksController@updateDeadline')->name('task.update.deadline');
-        Route::get('/create/{client_external_id}',  'TasksController@create')->name('client.task.create');
-        Route::get('/create/{client_external_id}/{project_external_id}',  'TasksController@create')->name('client.project.task.create');
+        Route::get('/create/{client_external_id}', 'TasksController@create')->name('client.task.create');
+        Route::get('/create/{client_external_id}/{project_external_id}', 'TasksController@create')->name('client.project.task.create');
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
     });
-        Route::resource('tasks', 'TasksController');
+    Route::resource('tasks', 'TasksController');
 
     /**
      * Leads
@@ -93,13 +93,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
         Route::post('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
-        Route::get('/create/{client_external_id}',  'LeadsController@create')->name('client.lead.create');
+        Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
 
         Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
         Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
     });
-        Route::resource('leads', 'LeadsController');
-        Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
+    Route::resource('leads', 'LeadsController');
+    Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /**
      * Projects
@@ -111,7 +111,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updatestatus/{external_id}', 'ProjectsController@updateStatus');
         Route::post('/updateassign/{external_id}', 'ProjectsController@updateAssign');
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
-        Route::get('/create/{client_external_id}',  'ProjectsController@create')->name('project.client.create');
+        Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
     Route::resource('projects', 'ProjectsController');
     /**
@@ -131,7 +131,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'departments'], function () {
         Route::get('/indexData', 'DepartmentsController@indexData')->name('departments.indexDataTable');
     });
-        Route::resource('departments', 'DepartmentsController');
+    Route::resource('departments', 'DepartmentsController');
 
     /**
      * Integrations
@@ -140,7 +140,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/revokeAccess', 'IntegrationsController@revokeAccess')->name('integration.revoke-access');
         Route::post('/sync/dinero', 'IntegrationsController@dineroSync')->name('sync.dinero');
     });
-        Route::resource('integrations', 'IntegrationsController');
+    Route::resource('integrations', 'IntegrationsController');
 
     /**
      * Notifications
@@ -207,8 +207,8 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::group(['middleware' => ['auth']], function () {
-        Route::get('/dropbox-token', 'CallbackController@dropbox')->name('dropbox.callback');
-        Route::get('/googledrive-token', 'CallbackController@googleDrive')->name('googleDrive.callback');
+    Route::get('/dropbox-token', 'CallbackController@dropbox')->name('dropbox.callback');
+    Route::get('/googledrive-token', 'CallbackController@googleDrive')->name('googleDrive.callback');
 });
 
 

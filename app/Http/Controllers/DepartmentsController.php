@@ -84,7 +84,7 @@ class DepartmentsController extends Controller
 
         if (!$department->users->isEmpty()) {
             Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
-            return redirect()->route('departments.index');       
+            return redirect()->route('departments.index');
         }
         $department->delete();
         return redirect()->route('departments.index');

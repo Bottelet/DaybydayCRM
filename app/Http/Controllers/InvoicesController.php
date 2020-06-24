@@ -27,7 +27,6 @@ use Datatables;
 
 class InvoicesController extends Controller
 {
-
     protected $clients;
     protected $invoices;
 
@@ -49,7 +48,6 @@ class InvoicesController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
@@ -100,7 +98,6 @@ class InvoicesController extends Controller
             ->withAmountDue($amountDue)
             ->withReference($invoice->reference)
             ->withCompanyName(Setting::first()->company);
-
     }
 
 
@@ -190,12 +187,10 @@ class InvoicesController extends Controller
 
         $api = Integration::initBillingIntegration();
 
-        if ($api instanceof Billy)
-        {
+        if ($api instanceof Billy) {
             $products = collect();
 
-            foreach ($api->products()->products as $product)
-            {
+            foreach ($api->products()->products as $product) {
                 $products->push($product);
             }
             $view->withProducts($products->pluck('name', 'id'));

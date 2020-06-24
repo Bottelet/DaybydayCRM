@@ -21,7 +21,7 @@ class DropboxAuthenticator implements StorageAuthenticatorContract
     }
 
 
-    public  function authUrl()
+    public function authUrl()
     {
         return "https://www.dropbox.com/oauth2/authorize?client_id=" . $this->client_id . "&response_type=code&redirect_uri=" . $this->redirect_uri . "";
     }
@@ -39,7 +39,6 @@ class DropboxAuthenticator implements StorageAuthenticatorContract
         ]);
 
         return json_decode($res->getBody()->read(1024));
-
     }
 
     public function revokeAccess()

@@ -59,7 +59,6 @@ class PaymentSource
             }
         }
         throw new Exception('Unknown control status display value: ' . $displayValue);
-
     }
 
     /**

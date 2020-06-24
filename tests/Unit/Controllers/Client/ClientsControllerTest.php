@@ -20,18 +20,18 @@ class ClientsControllerTest extends TestCase
     public function can_create_client()
     {
         $response = $this->json('POST', route('clients.store'), [
-	            'name' => 'James Test',
-	            'email' => 'james@test.com',
-	            'primary_number' => '2342342342',
-	            'secondary_number' => '423423432',
+                'name' => 'James Test',
+                'email' => 'james@test.com',
+                'primary_number' => '2342342342',
+                'secondary_number' => '423423432',
                 'vat' => '12312334',
-	            'company_name' => 'James & Co',
-	            'address' => 'james street',
-	            'zipcode' => '2222',
-	            'city' => 'Bond city',
-	            'company_type' => 'Aps',
-	            'industry_id' => Industry::first()->id,
-	            'user_id' => User::first()->id,
+                'company_name' => 'James & Co',
+                'address' => 'james street',
+                'zipcode' => '2222',
+                'city' => 'Bond city',
+                'company_type' => 'Aps',
+                'industry_id' => Industry::first()->id,
+                'user_id' => User::first()->id,
         ]);
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -59,11 +59,12 @@ class ClientsControllerTest extends TestCase
     public function can_update_client()
     {
         $client = factory(Client::class)->create(
-        	[
-        		'vat' => "5898989898",
-        		'company_type' => 'A/S',
-        		'company_name' => 'Hello',
-        	]);
+            [
+                'vat' => "5898989898",
+                'company_type' => 'A/S',
+                'company_name' => 'Hello',
+            ]
+        );
 
         $contact = factory(Contact::class)->create(
             [
@@ -71,21 +72,22 @@ class ClientsControllerTest extends TestCase
                 'secondary_number' => '11111111',
                 'primary_number' => '2342342342',
                 'client_id' => $client->id
-            ]);
+            ]
+        );
 
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
-	            'name' => 'Mads',
-	            'email' => 'james@test.com',
-	            'primary_number' => '2342342342',
-	            'secondary_number' => '423423432',
+                'name' => 'Mads',
+                'email' => 'james@test.com',
+                'primary_number' => '2342342342',
+                'secondary_number' => '423423432',
                 'vat' => '12312335',
-	            'company_name' => 'Hello',
-	            'address' => 'mads street',
-	            'zipcode' => '2222',
-	            'city' => 'Bond city',
-	            'company_type' => 'Aps',
-	            'industry_id' => Industry::first()->id,
-	            'user_id' => User::first()->id,
+                'company_name' => 'Hello',
+                'address' => 'mads street',
+                'zipcode' => '2222',
+                'city' => 'Bond city',
+                'company_type' => 'Aps',
+                'industry_id' => Industry::first()->id,
+                'user_id' => User::first()->id,
         ]);
 
         $client = Client::where('vat', '12312335')->first();

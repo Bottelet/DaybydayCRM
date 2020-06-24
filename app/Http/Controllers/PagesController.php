@@ -42,7 +42,7 @@ class PagesController extends Controller
         foreach ($leads as $lead) {
             $datasheet[$lead->created_at->format(carbonDate())]["monthly"]["leads"]++;
         }
-        if(!auth()->user()->can('absence-view')) {
+        if (!auth()->user()->can('absence-view')) {
             $absences = [];
         } else {
             $absences = Absence::with('user')->groupBy('user_id')->where('start_at', '>=', today())->orWhere('end_at', '>', today())->get();

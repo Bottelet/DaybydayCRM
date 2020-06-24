@@ -47,5 +47,4 @@ class InvoiceCalculatorTest extends TestCase
     {
         $this->assertEquals(4000, $this->invoiceCalculator->getAmountDue()->getAmount());
     }
-
 }

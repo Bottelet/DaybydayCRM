@@ -56,5 +56,4 @@ class InvoiceCalculator
     {
         return new Money($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
     }
-
 }

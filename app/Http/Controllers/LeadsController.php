@@ -199,7 +199,7 @@ class LeadsController extends Controller
 
         return $invoice->external_id;
     }
-        /**
+    /**
      * @param $external_id
      * @return mixed
      */
@@ -207,5 +207,4 @@ class LeadsController extends Controller
     {
         return Lead::whereExternalId($external_id)->first();
     }
-
 }

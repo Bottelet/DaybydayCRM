@@ -34,9 +34,9 @@ class LeadsControllerTest extends TestCase
     public function can_create_lead()
     {
         $response = $this->json('POST', route('leads.store'), [
-	            'title' => 'Lead test',
-	            'description' => 'This is a description',
-	            'status_id' => factory(Status::class)->create(['source_type' => Lead::class])->id,
+                'title' => 'Lead test',
+                'description' => 'This is a description',
+                'status_id' => factory(Status::class)->create(['source_type' => Lead::class])->id,
                 'user_assigned_id' => $this->user->id,
                 'user_created_id' => $this->user->id,
                 'client_external_id' => $this->client->external_id,

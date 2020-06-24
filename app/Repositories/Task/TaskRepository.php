@@ -33,7 +33,7 @@ class TaskRepository implements TaskRepositoryContract
         return Task::findOrFail($id);
     }
 
-        /**
+    /**
      * @param $id
      * @return mixed
      */
@@ -44,7 +44,6 @@ class TaskRepository implements TaskRepositoryContract
 
     public function getInvoiceLines($id)
     {
-        
     }
 
     /**
@@ -100,7 +99,7 @@ class TaskRepository implements TaskRepositoryContract
         $task = $this->findByExternalId($external_id);
          
         $invoice = $task->invoice;
-        if(!$invoice) {
+        if (!$invoice) {
             $invoice = Invoice::create([
                 'status' => 'draft',
                 'client_id' => $task->client->id,
@@ -108,7 +107,7 @@ class TaskRepository implements TaskRepositoryContract
             ]);
             $task->invoice_id = $invoice->id;
             $task->save();
-        } 
+        }
 
         InvoiceLine::create([
                 'title' => $request->title,
@@ -168,8 +167,7 @@ class TaskRepository implements TaskRepositoryContract
      */
     public function allCompletedTasks()
     {
-        return Task::whereHas('status', function ($query)
-        {
+        return Task::whereHas('status', function ($query) {
             $query->whereTitle('Closed');
         })->count();
     }
@@ -205,8 +203,7 @@ class TaskRepository implements TaskRepositoryContract
     public function completedTasksMothly()
     {
         return Task::select(DB::raw('count(*) as month, updated_at'))
-            ->whereHas('status', function ($query)
-            {
+            ->whereHas('status', function ($query) {
                 $query->whereTitle('Closed');
             })
             ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))
@@ -231,9 +228,9 @@ class TaskRepository implements TaskRepositoryContract
     {
         return Task::whereRaw(
             'date(updated_at) = ?',
-            [Carbon::now()->format('Y-m-d')])
-            ->whereHas('status', function ($query)
-            {
+            [Carbon::now()->format('Y-m-d')]
+        )
+            ->whereHas('status', function ($query) {
                 $query->whereTitle('Closed');
             })->count();
     }
@@ -244,8 +241,7 @@ class TaskRepository implements TaskRepositoryContract
     public function completedTasksThisMonth()
     {
         return Task::select(DB::raw('count(*) as total, updated_at'))
-            ->whereHas('status', function ($query)
-            {
+            ->whereHas('status', function ($query) {
                 $query->whereTitle('Closed');
             })
             ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])

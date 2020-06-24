@@ -62,7 +62,6 @@ class AbsenceReason
             }
         }
         throw new Exception('Unknown absence reason display value: ' . $displayValue);
-
     }
 
     /**

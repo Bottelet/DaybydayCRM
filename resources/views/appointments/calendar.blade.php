@@ -16,14 +16,14 @@
   window.trans = <?php
   // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
   try {
-    $filename = File::get(resource_path() . '/lang/' . App::getLocale() . '.json');
+      $filename = File::get(resource_path() . '/lang/' . App::getLocale() . '.json');
   } catch (\Illuminate\Contracts\Filesystem\FileNotFoundException $e) {
-    return;
+      return;
   }
   $trans = [];
   $entries = json_decode($filename, true);
   foreach ($entries as $k => $v) {
-    $trans[$k] = trans($v);
+      $trans[$k] = trans($v);
   }
   $trans[$filename] = trans($filename);
   echo json_encode($trans);

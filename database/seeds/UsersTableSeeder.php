@@ -13,13 +13,11 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-
-
         \DB::table('users')->delete();
 
-        \DB::table('users')->insert(array (
+        \DB::table('users')->insert(array(
             0 =>
-            array (
+            array(
                 'id' => 1,
                 'external_id' => Uuid::uuid4(),
                 'name' => 'Admin',
@@ -31,7 +29,7 @@ class UsersTableSeeder extends Seeder
                 'image_path' => '',
                 'remember_token' => null,
                 'created_at' => '2016-06-04 13:42:19',
-		        'updated_at' => '2016-06-04 13:42:19',
+                'updated_at' => '2016-06-04 13:42:19',
             ),
         ));
     }

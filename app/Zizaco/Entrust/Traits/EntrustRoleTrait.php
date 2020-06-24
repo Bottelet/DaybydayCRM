@@ -23,7 +23,9 @@ trait EntrustRoleTrait
             return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
                 return $this->perms()->get();
             });
-        } else return $this->perms()->get();
+        } else {
+            return $this->perms()->get();
+        }
     }
 
     public function save(array $options = [])
@@ -220,7 +222,9 @@ trait EntrustRoleTrait
      */
     public function detachPermissions($permissions = null)
     {
-        if (!$permissions) $permissions = $this->perms()->get();
+        if (!$permissions) {
+            $permissions = $this->perms()->get();
+        }
 
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);

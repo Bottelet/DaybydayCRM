@@ -60,7 +60,6 @@ class InvoiceStatus
             }
         }
         throw new Exception('Unknown invoice status display value: ' . $displayValue);
-
     }
 
     /**

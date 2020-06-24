@@ -5,7 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-
     protected $fillable = [
         'client_number',
         'invoice_number',

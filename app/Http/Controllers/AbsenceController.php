@@ -15,11 +15,9 @@ use Yajra\DataTables\DataTables;
 
 class AbsenceController extends Controller
 {
-
-
     public function indexData()
     {
-        if(!auth()->user()->can('absence-view')) {
+        if (!auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
             return redirect()->back();
         }
@@ -48,7 +46,7 @@ class AbsenceController extends Controller
     }
     public function index()
     {
-        if(!auth()->user()->can('absence-view')) {
+        if (!auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
             return redirect()->back();
         }
@@ -58,7 +56,7 @@ class AbsenceController extends Controller
     public function create()
     {
         $users = null;
-        if(request()->management === "true" && auth()->user()->can('absence-manage')) {
+        if (request()->management === "true" && auth()->user()->can('absence-manage')) {
             $users = User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'external_id');
         }
         return view('absence.create')
@@ -70,14 +68,14 @@ class AbsenceController extends Controller
     {
         $medical_certificate = null;
         $user = auth()->user();
-        if($request->user_external_id) {
+        if ($request->user_external_id) {
             $user = User::whereExternalId($request->user_external_id)->first();
             if (!$user) {
                 Session::flash('flash_message_warning', __('Could not find user'));
                 return redirect()->back();
             }
         }
-        if($request->medical_certificate == true) {
+        if ($request->medical_certificate == true) {
             $medical_certificate = true;
         } elseif ($request->medical_certificate == false) {
             $medical_certificate = false;
@@ -99,7 +97,7 @@ class AbsenceController extends Controller
 
     public function destroy(Absence $absence)
     {
-        if(!auth()->user()->can('absence-manage')) {
+        if (!auth()->user()->can('absence-manage')) {
             Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
             return redirect()->back();
         }

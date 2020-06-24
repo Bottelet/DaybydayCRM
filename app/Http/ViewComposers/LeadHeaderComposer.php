@@ -5,7 +5,6 @@ namespace App\Http\ViewComposers;
 use Illuminate\View\View;
 use App\Models\Lead;
 
-
 class LeadHeaderComposer
 {
     /**

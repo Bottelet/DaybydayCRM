@@ -12,10 +12,10 @@ class ClientsDummyTableSeeder extends Seeder
      */
     public function run()
     {
-         factory(App\Models\Client::class, 50)->create()->each(function ($c) {
-                factory(\App\Models\Contact::class)->create([
+        factory(App\Models\Client::class, 50)->create()->each(function ($c) {
+            factory(\App\Models\Contact::class)->create([
                     'client_id' => $c->id
                 ]);
-         });
+        });
     }
 }

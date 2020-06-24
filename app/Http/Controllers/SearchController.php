@@ -10,7 +10,7 @@ class SearchController extends Controller
 {
     public function search($query, $type)
     {
-        if(config('services.elasticsearch.enabled')) {
+        if (config('services.elasticsearch.enabled')) {
             return response()->json(app(SearchService::class)->search($query, $type));
         }
 
@@ -18,12 +18,12 @@ class SearchController extends Controller
         $class = '\\App\\Models\\' . $type;
         $searchClass = new $class();
         $result["hits"] = [];
-        foreach($searchClass->getSearchableFields() as $searchableField) {
+        foreach ($searchClass->getSearchableFields() as $searchableField) {
             $classes = $searchClass->where($searchableField, 'LIKE', '%' . $query . '%')->get();
             foreach ($classes as $class) {
                 $source = new \stdClass();
                 $source->_source = new \stdClass();
-                if(!$class->displayValue() || !$class->searchLink()) {
+                if (!$class->displayValue() || !$class->searchLink()) {
                     continue;
                 }
                 $source->_source->display_value = $class->displayValue();

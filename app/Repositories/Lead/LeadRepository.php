@@ -125,10 +125,9 @@ class LeadRepository implements LeadRepositoryContract
      */
     public function allCompletedLeads()
     {
-        return Lead::whereHas('status', function ($query)
-            {
-                $query->whereTitle('Closed');
-            })->count();
+        return Lead::whereHas('status', function ($query) {
+            $query->whereTitle('Closed');
+        })->count();
     }
 
     /**
@@ -153,10 +152,9 @@ class LeadRepository implements LeadRepositoryContract
         return Lead::whereRaw(
             'date(updated_at) = ?',
             [Carbon::now()->format('Y-m-d')]
-        )->whereHas('status', function ($query)
-            {
-                $query->whereTitle('Closed');
-            })->count();
+        )->whereHas('status', function ($query) {
+            $query->whereTitle('Closed');
+        })->count();
     }
 
     /**
@@ -176,8 +174,7 @@ class LeadRepository implements LeadRepositoryContract
     public function completedLeadsThisMonth()
     {
         return Lead::select(DB::raw('count(*) as total, updated_at'))
-            ->whereHas('status', function ($query)
-            {
+            ->whereHas('status', function ($query) {
                 $query->whereTitle('Closed');
             })
             ->whereBetween('updated_at', [Carbon::now()->startOfMonth(), Carbon::now()])->get();
@@ -189,8 +186,7 @@ class LeadRepository implements LeadRepositoryContract
     public function createdLeadsMonthly()
     {
         return Lead::select(DB::raw('count(*) as month, updated_at'))
-            ->whereHas('status', function ($query)
-            {
+            ->whereHas('status', function ($query) {
                 $query->whereTitle('Closed');
             })
             ->groupBy(DB::raw('YEAR(updated_at), MONTH(updated_at)'))

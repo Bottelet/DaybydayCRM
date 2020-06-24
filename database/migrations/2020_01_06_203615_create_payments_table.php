@@ -14,7 +14,7 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function($table) {
+        Schema::table('invoices', function ($table) {
             $table->dropColumn('payment_received_at');
         });
 
@@ -62,7 +62,7 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('invoices', function($table) {
+        Schema::table('invoices', function ($table) {
             $table->dateTime('payment_received_at')->nullable();
         });
         $cpp = Permission::where('name', 'payment-create')->first();
@@ -74,6 +74,5 @@ class CreatePaymentsTable extends Migration
         $cpp->forceDelete();
         $dpp->forceDelete();
         Schema::dropIfExists('payments');
-
     }
 }

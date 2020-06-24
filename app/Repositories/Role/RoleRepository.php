@@ -32,7 +32,7 @@ class RoleRepository implements RoleRepositoryContract
     public function allRoles()
     {
         //Get rid of owner as the should only be one.
-        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function($value, $key) {
+        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function ($value, $key) {
             return $value->name != "owner";
         });
     }

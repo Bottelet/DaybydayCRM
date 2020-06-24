@@ -39,8 +39,6 @@ class DropboxServiceProvider extends ServiceProvider
 
             return new Filesystem(new DropboxAdapter($client));
         });
-
-
     }
 
     /**
@@ -52,6 +50,4 @@ class DropboxServiceProvider extends ServiceProvider
     {
         //
     }
-
-
 }

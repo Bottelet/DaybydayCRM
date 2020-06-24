@@ -12,14 +12,14 @@ class SettingsTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('settings')->insert(array (
+        \DB::table('settings')->insert(array(
             0 =>
-            array (
+            array(
                 'id' => 1,
                 'client_number' => 10000,
                 'invoice_number' => 10000,
                 'country' => 'en',
-        		'company' => 'Media',
+                'company' => 'Media',
                 'max_users' => 10,
                 'created_at' => null,
                 'updated_at' => null,
@@ -49,4 +49,3 @@ class SettingsTableSeeder extends Seeder
         ];
     }
 }
-

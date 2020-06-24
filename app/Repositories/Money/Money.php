@@ -19,7 +19,7 @@ class Money
     {
         $currency = Setting::select('currency')->first()->currency;
         $this->amount = $amount;
-        $this->currency = New Currency($currency);
+        $this->currency = new Currency($currency);
     }
     /**
      * @return mixed

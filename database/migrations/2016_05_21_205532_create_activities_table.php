@@ -22,7 +22,6 @@ class CreateActivitiesTable extends Migration
             $table->string('ip_address', 64);
             $table->json('properties')->nullable();
             $table->timestamps();
-
         });
     }
 

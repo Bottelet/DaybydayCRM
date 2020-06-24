@@ -28,7 +28,6 @@ class CreateLeadsTable extends Migration
             $table->datetime('deadline');
             $table->softDeletes();
             $table->timestamps();
-
         });
     }
 

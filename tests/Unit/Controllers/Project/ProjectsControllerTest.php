@@ -33,9 +33,9 @@ class ProjectsControllerTest extends TestCase
     public function can_create_project()
     {
         $response = $this->json('POST', route('projects.store'), [
-	            'title' => 'Project test',
-	            'description' => 'This is a description',
-	            'status_id' => factory(Status::class)->create(['source_type' => Project::class])->id,
+                'title' => 'Project test',
+                'description' => 'This is a description',
+                'status_id' => factory(Status::class)->create(['source_type' => Project::class])->id,
                 'user_assigned_id' => $this->user->id,
                 'user_created_id' => $this->user->id,
                 'client_external_id' => $this->client->external_id,

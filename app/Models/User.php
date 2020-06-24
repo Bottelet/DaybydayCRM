@@ -152,5 +152,4 @@ class User extends Authenticatable
         $image_path = $this->image_path ? Storage::url($this->image_path) : '/images/default_avatar.jpg';
         return $image_path;
     }
-
 }

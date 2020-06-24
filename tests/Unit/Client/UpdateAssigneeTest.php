@@ -25,7 +25,6 @@ class UpdateAssigneeTest extends TestCase
 
             'company_name' => 'Just something'
         ]);
-
     }
 
     /** @test */

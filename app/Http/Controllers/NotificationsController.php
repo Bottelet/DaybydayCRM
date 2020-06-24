@@ -17,7 +17,7 @@ class NotificationsController extends Controller
     public function markRead(Request $request)
     {
         $user = auth()->user();
-	    $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
+        $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
 
         return redirect($user->notifications->where('id', $request->id)->first()->data['url']);
     }

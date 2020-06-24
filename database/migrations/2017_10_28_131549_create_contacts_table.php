@@ -25,7 +25,6 @@ class CreateContactsTable extends Migration
             $table->boolean('is_primary')->defualt(false);
             $table->softDeletes();
             $table->timestamps();
-
         });
     }
 

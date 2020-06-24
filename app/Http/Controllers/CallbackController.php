@@ -11,14 +11,14 @@ use App\Models\Integration;
 
 class CallbackController extends Controller
 {
-	public function dropbox(Request $request)
+    public function dropbox(Request $request)
     {
         $integration = Integration::whereApiType('file')->first();
         if ($integration) {
             session()->flash('flash_message_warning', __('File integration alredy exists'));
             return redirect()->route('integrations.index');
         }
-        if($request->error) {
+        if ($request->error) {
             session()->flash('flash_message_warning', __('Access not given, try again'));
             return redirect()->route('integrations.index');
         }
@@ -35,14 +35,13 @@ class CallbackController extends Controller
             session()->flash('flash_message_warning', __('File integration alredy exists'));
             return redirect()->route('integrations.index');
         }
-        if($request->error) {
+        if ($request->error) {
             session()->flash('flash_message_warning', __('Access not given, try again'));
             return redirect()->route('integrations.index');
         }
         $res =  app(GoogleDriveAuthenticator::class)->token($request->code);
 
-        if(!isset($res['refresh_token']))
-        {
+        if (!isset($res['refresh_token'])) {
             session()->flash('flash_message_warning', __('It seems you already have a connection to Daybyday. Please remove it in your Google console.'));
             return redirect()->route('integrations.index');
         }

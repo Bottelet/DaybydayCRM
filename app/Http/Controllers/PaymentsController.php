@@ -33,7 +33,7 @@ class PaymentsController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        if(!auth()->user()->can('payment-delete'))  {
+        if (!auth()->user()->can('payment-delete')) {
             session()->flash('flash_message', __("You don't have permission to delete a payment"));
             return redirect()->back();
         }

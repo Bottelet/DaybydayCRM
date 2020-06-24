@@ -34,13 +34,13 @@ interface EntrustRoleInterface
      */
     public function savePermissions($inputPermissions);
 
-     /**
-     * Attach permission to current role.
-     *
-     * @param object|array $permission
-     *
-     * @return void
-     */
+    /**
+    * Attach permission to current role.
+    *
+    * @param object|array $permission
+    *
+    * @return void
+    */
     public function attachPermission($permission);
 
     /**

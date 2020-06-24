@@ -5,11 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 use App\Zizaco\Entrust\EntrustRole;
 use App\Models\Permission;
 
-
 class Role extends EntrustRole
 {
-
-
     const OWNER_ROLE = "owner";
     const ADMIN_ROLE = "administrator";
 

@@ -34,9 +34,9 @@ class TasksControllerTest extends TestCase
     public function can_create_task()
     {
         $response = $this->json('POST', route('tasks.store'), [
-	            'title' => 'Task test',
-	            'description' => 'This is a description',
-	            'status_id' => factory(Status::class)->create(['source_type' => Task::class])->id,
+                'title' => 'Task test',
+                'description' => 'This is a description',
+                'status_id' => factory(Status::class)->create(['source_type' => Task::class])->id,
                 'user_assigned_id' => $this->user->id,
                 'user_created_id' => $this->user->id,
                 'client_external_id' => $this->client->external_id,

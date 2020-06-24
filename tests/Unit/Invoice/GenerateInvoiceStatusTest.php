@@ -212,5 +212,4 @@ class GenerateInvoiceStatusTest extends TestCase
         app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->createStatus();
         $this->assertEquals("partial_paid", $this->invoice->refresh()->status);
     }
-
 }

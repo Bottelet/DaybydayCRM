@@ -85,8 +85,8 @@ class DeadlineTest extends TestCase
         $this->lead->deadline = Carbon::now()->addDays(3);
         $this->project->deadline = Carbon::now()->addDays(3);
 
-        $this->assertEquals($this->lead->days_until_deadline,3);
-        $this->assertEquals($this->task->days_until_deadline,3);
-        $this->assertEquals($this->project->days_until_deadline,3);
+        $this->assertEquals($this->lead->days_until_deadline, 3);
+        $this->assertEquals($this->task->days_until_deadline, 3);
+        $this->assertEquals($this->project->days_until_deadline, 3);
     }
 }

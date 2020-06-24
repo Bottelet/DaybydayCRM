@@ -48,7 +48,4 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNotNull(\Session::all()["flash_message_warning"]);
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
     }
-
-
-
 }

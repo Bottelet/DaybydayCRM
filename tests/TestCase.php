@@ -1,5 +1,6 @@
 <?php
 namespace Tests;
+
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 use App\Models\User;
@@ -12,11 +13,11 @@ abstract class TestCase extends BaseTestCase
 
     public function setUp(): void
     {
-    	parent::setUp();
+        parent::setUp();
 
-	    $this->user = User::where('name', 'Admin')->first();
+        $this->user = User::where('name', 'Admin')->first();
 
-	    $this->actingAs($this->user);
+        $this->actingAs($this->user);
     }
 
     /**
@@ -35,6 +36,4 @@ abstract class TestCase extends BaseTestCase
         $this->user = $user;
         $this->actingAs($user);
     }
-
-
 }

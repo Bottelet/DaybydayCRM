@@ -42,8 +42,7 @@ class ProjectsController extends Controller
                 return $projects->created_at ? with(new Carbon($projects->deadline))
                     ->format(carbonDate()) : '';
             })
-            ->editColumn
-            ('user_assigned_id', function ($projects) {
+            ->editColumn('user_assigned_id', function ($projects) {
                 return $projects->assignee->name;
             })
             ->editColumn('status_id', function ($projects) {
@@ -63,10 +62,9 @@ class ProjectsController extends Controller
         ->withStatuses(Status::typeOfProject()->get());
     }
 
-	public function update()
-	{
-
-	}
+    public function update()
+    {
+    }
 
     /**
      * @param StoreTaskRequest $request
@@ -95,7 +93,7 @@ class ProjectsController extends Controller
         Session()->flash('flash_message', __('Project successfully added'));
         event(new \App\Events\ProjectAction($project, self::CREATED));
 
-        if(!is_null($request->images)) {
+        if (!is_null($request->images)) {
             foreach ($request->file('images') as $image) {
                 $this->upload($image, $project);
             }
@@ -139,7 +137,6 @@ class ProjectsController extends Controller
             'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
             'integration_type' => get_class($fileSystem)
         ]);
-
     }
 
     /**
@@ -161,12 +158,11 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-    	$tasks = $project->tasks->count();
+        $tasks = $project->tasks->count();
         if ($tasks === 0) {
             $completionPercentage = 0;
         } else {
-            $completedTasks = $project->tasks()->whereHas('status', function ($q)
-            {
+            $completedTasks = $project->tasks()->whereHas('status', function ($q) {
                 $q->where('title', 'closed');
             })->count();
             $completionPercentage = round($completedTasks / $tasks * 100);
@@ -174,23 +170,24 @@ class ProjectsController extends Controller
 
 
 
-    	$collaborators = collect();
+        $collaborators = collect();
 
-    	$collaborators->push($project->assignee);
-    	foreach($project->tasks as $task) {
-    		$collaborators->push($task->user);
-    	}
+        $collaborators->push($project->assignee);
+        foreach ($project->tasks as $task) {
+            $collaborators->push($task->user);
+        }
 
 
         return view('projects.show')
-        	->withProject($project)
-        	->withStatuses(Status::typeOfTask()->get())
-        	->withTasks($project->tasks)
-        	->withCompletionPercentage($completionPercentage)
-        	->withCollaborators($collaborators->unique())
+            ->withProject($project)
+            ->withStatuses(Status::typeOfTask()->get())
+            ->withTasks($project->tasks)
+            ->withCompletionPercentage($completionPercentage)
+            ->withCollaborators($collaborators->unique())
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->withFiles($project->documents)
-            ->with('filesystem_integration', Integration::whereApiType('file')->first());;
+            ->with('filesystem_integration', Integration::whereApiType('file')->first());
+        ;
     }
 
     public function updateStatus($external_id, Request $request)
@@ -239,7 +236,7 @@ class ProjectsController extends Controller
             session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
             return redirect()->route('tasks.show', $external_id);
         }
-          $project = $this->findByExternalId($external_id);
+        $project = $this->findByExternalId($external_id);
         $input = $request->all();
         $input = $request =
             ['deadline' => $request->deadline_date . " " . $request->deadline_time . ":00"];
@@ -249,7 +246,7 @@ class ProjectsController extends Controller
         return redirect()->back();
     }
 
-        /**
+    /**
      * @param $id
      * @return mixed
      */

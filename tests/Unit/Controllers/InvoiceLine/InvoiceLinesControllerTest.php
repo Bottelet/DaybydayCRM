@@ -41,7 +41,7 @@ class InvoiceLinesControllerTest extends TestCase
     {
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
-        $r = $this->json('delete', route('invoiceLine.destroy',  $this->invoiceLine->external_id));
+        $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
         $r->assertStatus(302);
         $this->assertNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());

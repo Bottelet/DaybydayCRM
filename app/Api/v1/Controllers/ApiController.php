@@ -5,7 +5,6 @@ use Dingo\Api\Routing\Helpers;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
-
 class ApiController extends Controller
 {
     /**
@@ -102,4 +101,3 @@ class ApiController extends Controller
         return $this->respondError($message, 404);
     }
 }
-

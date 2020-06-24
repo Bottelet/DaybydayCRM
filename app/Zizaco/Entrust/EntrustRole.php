@@ -34,5 +34,4 @@ class EntrustRole extends Model implements EntrustRoleInterface
         parent::__construct($attributes);
         $this->table = Config::get('entrust.roles_table');
     }
-
 }

@@ -29,11 +29,11 @@ class InvoiceRepository implements InvoiceRepositoryContract
     }
 
 
-     /**
-     * @param $external_id
-     * @param $requestData
-     * @throws \Exception
-     */
+    /**
+    * @param $external_id
+    * @param $requestData
+    * @throws \Exception
+    */
     public function invoice($external_id, $requestData)
     {
         $contacts = explode(',', $requestData->invoiceContact);
@@ -64,7 +64,7 @@ class InvoiceRepository implements InvoiceRepositoryContract
             'product_lines' => $productlines]);
         
         if ($sendMail == true) {
-            $booked = $api->bookInvoice($results->Guid, $results->TimeStamp); 
+            $booked = $api->bookInvoice($results->Guid, $results->TimeStamp);
             $bookGuid = $booked->Guid;
             $bookTime = $booked->TimeStamp;
             
@@ -81,7 +81,7 @@ class InvoiceRepository implements InvoiceRepositoryContract
     {
         $api = Integration::whereApiType('billing')->first();
         if ($api && $requestData->invoiceContact) {
-                $this->invoice($external_id, $requestData);
+            $this->invoice($external_id, $requestData);
         }
 
         $invoice = $this->findByExternalId($external_id);

@@ -12,7 +12,7 @@ trait SearchableTrait
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
         //if (config('services.search.enabled')) {
-            static::observe(ElasticSearchObserver::class);
+        static::observe(ElasticSearchObserver::class);
         //}
     }
 

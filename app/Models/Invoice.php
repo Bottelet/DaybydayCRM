@@ -110,7 +110,8 @@ class Invoice extends Model
                     'description' => $this->reference->title,
                     'contact_id' => $contactId,
                     'invoice_lines' => $this->invoiceLines,
-                ]);
+                ]
+            );
             $this->integration_invoice_id = $results->invoiceId;
             $this->integration_type = get_class($api);
             $this->save();

@@ -17,4 +17,3 @@ interface FilesystemIntegration
 
     public function isEnabled();
 }
-

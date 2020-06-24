@@ -31,9 +31,8 @@ class GetCommentEndpointTest extends TestCase
     /** @test */
     public function happyPath()
     {
-        $this->assertEquals(url('comments/lead') . DIRECTORY_SEPARATOR . $this->lead->external_id ,$this->lead->getCreateCommentEndpoint());
-        $this->assertEquals(url('comments/task') . DIRECTORY_SEPARATOR . $this->task->external_id ,$this->task->getCreateCommentEndpoint());
-        $this->assertEquals(url('comments/project') . DIRECTORY_SEPARATOR . $this->project->external_id ,$this->project->getCreateCommentEndpoint());
+        $this->assertEquals(url('comments/lead') . DIRECTORY_SEPARATOR . $this->lead->external_id, $this->lead->getCreateCommentEndpoint());
+        $this->assertEquals(url('comments/task') . DIRECTORY_SEPARATOR . $this->task->external_id, $this->task->getCreateCommentEndpoint());
+        $this->assertEquals(url('comments/project') . DIRECTORY_SEPARATOR . $this->project->external_id, $this->project->getCreateCommentEndpoint());
     }
-
 }

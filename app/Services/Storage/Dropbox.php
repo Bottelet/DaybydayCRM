@@ -8,7 +8,6 @@ use GuzzleHttp\Client;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Models\Integration;
 
-
 class Dropbox implements FilesystemIntegration
 {
     private $disk;
@@ -21,7 +20,7 @@ class Dropbox implements FilesystemIntegration
     public function upload($folder, $filename, $file): array
     {
         $file_path = FilesystemIntegration::ROOT_FOLDER . '/' .$folder . '/' . $filename;
-    	$this->disk->put($file_path, File::get($file));
+        $this->disk->put($file_path, File::get($file));
 
         return [
             'file_path' => $file_path
@@ -30,12 +29,12 @@ class Dropbox implements FilesystemIntegration
 
     public function delete($file): bool
     {
-    	return $this->disk->delete($file->path);
+        return $this->disk->delete($file->path);
     }
 
     public function get($file)
     {
-        if(!$this->disk->exists($file->path)) {
+        if (!$this->disk->exists($file->path)) {
             return null;
         };
         return $this->disk->get($file->path);

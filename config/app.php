@@ -126,7 +126,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
-	    App\Zizaco\Entrust\EntrustServiceProvider::class,
+        App\Zizaco\Entrust\EntrustServiceProvider::class,
         Laravel\Cashier\CashierServiceProvider::class,
         /*
          * Application Service Providers...
@@ -192,7 +192,7 @@ return [
         'Entrust'   => App\Zizaco\Entrust\EntrustFacade::class,
         'role' => App\Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission' => App\Zizaco\Entrust\Middleware\EntrustPermission::class,
-	    'ability' => App\Zizaco\Entrust\Middleware\EntrustAbility::class,
-	],
+        'ability' => App\Zizaco\Entrust\Middleware\EntrustAbility::class,
+    ],
 
 ];

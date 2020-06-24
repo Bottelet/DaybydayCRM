@@ -29,7 +29,6 @@ use App\Models\Contact;
 
 class ClientsController extends Controller
 {
-
     const CREATED = 'created';
     const UPDATED_ASSIGN = 'updated_assign';
 
@@ -86,7 +85,7 @@ class ClientsController extends Controller
     {
         $client = Client::where('external_id', $external_id)->firstOrFail();
         $tasks = $client->tasks()->with(['status'])->select(
-        ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
+            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )->get();
 
 
@@ -187,7 +186,7 @@ class ClientsController extends Controller
                 return app(MoneyConverter::class, ['money' => $totalPrice])->format();
             })
             ->editColumn('invoice_sent', function ($invoices) {
-                return $invoices->sent_at ? __('yes' ): __('no');
+                return $invoices->sent_at ? __('yes'): __('no');
             })
             ->editColumn('status', function ($invoices) {
                 return __(InvoiceStatus::fromStatus($invoices->status)->getDisplayValue());
@@ -214,7 +213,7 @@ class ClientsController extends Controller
      */
     public function store(StoreClientRequest $request)
     {
-         $client = Client::create([
+        $client = Client::create([
             'external_id' => Uuid::uuid4()->toString(),
             'vat' => $request->vat,
             'company_name' => $request->company_name,
@@ -264,30 +263,30 @@ class ClientsController extends Controller
     }
 
     public function cvrApi($vat)
-        {
-            if (empty($vat)) {
-                // Print error message
+    {
+        if (empty($vat)) {
+            // Print error message
 
-                return ('Please insert VAT');
-            } else {
-                // Start cURL
-                $ch = curl_init();
+            return ('Please insert VAT');
+        } else {
+            // Start cURL
+            $ch = curl_init();
 
-                // Set cURL options
-                curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_USERAGENT, 'Daybyday');
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Daybyday');
 
-                // Parse result
-                $result = curl_exec($ch);
+            // Parse result
+            $result = curl_exec($ch);
 
-                // Close connection when done
-                curl_close($ch);
+            // Close connection when done
+            curl_close($ch);
 
-                // Return our decoded result
-                return json_decode($result, 1);
-            }
+            // Return our decoded result
+            return json_decode($result, 1);
         }
+    }
 
     /**
      * Display the specified resource.
@@ -367,7 +366,7 @@ class ClientsController extends Controller
      */
     public function destroy($external_id)
     {
-         try {
+        try {
             $client = $this->findByExternalId($external_id);
             $client->delete();
             Session()->flash('flash_message', __('Client successfully deleted'));
@@ -423,7 +422,7 @@ class ClientsController extends Controller
         return Client::pluck('company_name', 'id');
     }
 
-        /**
+    /**
      * @return int
      */
     public function getAllClientsCount()
@@ -438,5 +437,4 @@ class ClientsController extends Controller
     {
         return Industry::pluck('name', 'id');
     }
-
 }
