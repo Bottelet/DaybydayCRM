@@ -1,63 +1,40 @@
-<div id="invoice" class="tab-pane fade" role="tabpanel">
-    <div class="boxspace">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ __('ID') }}</th>
-                <th>{{ __('Hours') }}</th>
-                <th>{{ __('Totalt amount') }}</th>
-                <th>{{ __('Invoice sent') }}</th>
-                <th>{{ __('Payment received') }}</th>
-                <th>{{ __('Status') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php $total = 0; ?>
+<table class="table table-hover" id="invoices-table">
+    <h3>{{ __('Invoices assigned') }}</h3>
+    <thead>
+    <tr>
+        <th>{{ __('Invoice number') }}</th>
+        <th>{{ __('Total amount') }}</th>
+        <th>{{ __('Invoice sent') }}</th>
+        <th>{{ __('Status') }}</th>
+    </tr>
+    </thead>
+</table>
 
-            @foreach($invoices as $invoice)
-               <tr>
-                    <td>
-                        <a href="{{route('invoices.show', $invoice->id)}}">
-                            {{$invoice->id}}
-                        </a>
-                    </td>
-                    <td>
-                        <?php $total = 0; ?>
-                        @foreach($invoice->invoiceLines as $invoiceLine)
-                            <?php $total += $invoiceLine->quantity; ?>
-                        @endforeach
-                        {{$total}}
-                    </td>
-                    <td>
-                        <?php $totalAmount = 0; ?>
-                        @foreach($invoice->invoiceLines as $payment)
-                            <?php $totalAmount += $payment->price; ?>
-                        @endforeach
-                        {{$totalAmount}},-
-                    </td>
-                    <td>
-                        @if($invoice->sent_at == null)
-                            <?php $color = 'red'; ?>
-                        @else
-                            <?php $color = 'green'; ?>
-                        @endif
-                        <p style=" color:{{$color}}">{{$invoice->sent_at ? 'yes' : 'no'}}</p>
-                    </td>
-                    <td>
-                        @if($invoice->payment_received_at == null)
-                            <?php $color = 'red'; ?>
-                        @else
-                            <?php $color = 'green'; ?>
-                        @endif
-                        <p style=" color:{{$color}}">{{$invoice->payment_received_at ? 'yes' : 'no'}}</p>
-                    </td>
+@push('scripts')
+    <script>
+        $(function () {
+            var table = $('#invoices-table').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: false,
+                ajax: '{!! route('clients.invoiceDataTable', $client->external_id) !!}',
+                language: {
+                    url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                },
+                drawCallback: function(){
+                    var length_select = $(".dataTables_length");
+                    var select = $(".dataTables_length").find("select");
+                    select.addClass("tablet__select");
+                },
+                columns: [
 
-                    <td>
-                        <p>{{ $invoice->status }} </p>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
+                    {data: 'invoice_number', name: 'invoice_number'},
+                    {data: 'total_amount', name: 'total_amount', searchable: false},
+                    {data: 'invoice_sent', name: 'invoice_sent', searchable: false},
+                    {data: 'status', name: 'status'},
+                ]
+            });
+
+        });
+    </script>
+@endpush

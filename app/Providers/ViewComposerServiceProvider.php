@@ -8,6 +8,8 @@ class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
+     *
+     * @return void
      */
     public function boot()
     {
@@ -24,6 +26,10 @@ class ViewComposerServiceProvider extends ServiceProvider
             'App\Http\ViewComposers\TaskHeaderComposer'
         );
         view()->composer(
+            ['projects.show'],
+            'App\Http\ViewComposers\ProjectHeaderComposer'
+        );
+        view()->composer(
             ['leads.show'],
             'App\Http\ViewComposers\LeadHeaderComposer'
         );
@@ -35,8 +41,11 @@ class ViewComposerServiceProvider extends ServiceProvider
 
     /**
      * Register the application services.
+     *
+     * @return void
      */
     public function register()
     {
+        //
     }
 }

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_DRIVER', 'array'),
+    'default' => env('CACHE_DRIVER', 'memcached'),
 
     /*
     |--------------------------------------------------------------------------
@@ -75,5 +75,5 @@ return [
     */
 
     'prefix' => 'laravel',
-
+    'ttl' => 60,
 ];

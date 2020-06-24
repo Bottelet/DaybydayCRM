@@ -1,6 +1,6 @@
 {
-    "name": "bottelet/flarepoint",
-    "description": "Flarepoint is a free, open-source and self-hosted CRM platform based of Laravel 5",
+    "name": "bottelet/DaybydayCRM",
+    "description": "DaybydayCRM is a free, open-source and self-hosted CRM platform based of Laravel 5",
     "keywords": [
         "laravel",
         "CRM",
@@ -11,33 +11,44 @@
     "authors": [
         {
             "name": "Casper Bottelet",
-            "email": "cbottelet@gmail.com",
-            "role": "Developer"
+            "email": "cbottelet@gmail.com"
         }
     ],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.6.4",
-        "laravel/framework": "5.4.*",
-        "laravelcollective/html": "5.4.*@dev",
-        "yajra/laravel-datatables-oracle": "~6.0",
-        "guzzlehttp/guzzle": "^6.2",
-        "pusher/pusher-php-server": "^2.3",
-        "zizaco/entrust": "1.7.*",
+        "php": ">=7.3.9",
+        "aws/aws-sdk-php": "^3.112",
+        "elasticsearch/elasticsearch": "^6.1",
+        "google/apiclient": "^2.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "laravel/cashier": "^10.2",
+        "laravel/framework": "6.0.*",
+        "laravel/helpers": "^1.1",
         "laravel/tinker": "^1.0",
-        "laravel/dusk": "^1.0",
-        "doctrine/dbal": "^2.9",
-        "barryvdh/laravel-debugbar": "~2.4"
+        "laravelcollective/html": "6.0.*@dev",
+        "league/flysystem-aws-s3-v3": "~1.0",
+        "league/flysystem-cached-adapter": "~1.0",
+        "mews/purifier": "^3.1",
+        "predis/predis": "^1.1",
+        "ramsey/uuid": "^3.6",
+        "spatie/flysystem-dropbox": "^1.0",
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
+        "barryvdh/laravel-debugbar": "~3.2",
+        "facade/ignition": "^1.4",
+        "fzaninotto/faker": "~1.8",
+        "laravel/dusk": "^5.8",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~5.0",
+        "phpunit/phpunit": "~7.0",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*"
     },
     "autoload": {
+        "files": [
+            "app/helpers.php"
+        ],
         "classmap": [
             "database"
         ],
@@ -52,23 +63,24 @@
     },
     "scripts": {
         "post-root-package-install": [
-            "php -r \"copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "php artisan key:generate"
+            "@php artisan key:generate"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover"
         ],
         "post-install-cmd": [
-            "php artisan clear-compiled",
-            "php artisan optimize"
-        ],
-        "pre-update-cmd": [
-            "php artisan clear-compiled"
-        ],
-        "post-update-cmd": [
-            "php artisan optimize"
+            "php artisan route:cache"
         ]
     },
     "config": {
-        "preferred-install": "dist"
-    }
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "optimize-autoloader": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

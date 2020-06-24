@@ -1,21 +1,44 @@
 @extends('layouts.master')
-
-@section('heading')
-
-@stop
-
 @section('content')
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-@endpush
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+            $(document).ready(function () {
+                var $btnSets = $('#responsive'),
+                    $btnLinks = $btnSets.find('a');
+
+                $btnLinks.click(function (e) {
+                    e.preventDefault();
+                    $(this).siblings('a.active').removeClass("active");
+                    $(this).addClass("active");
+                    var index = $(this).index();
+                    $("div.user-menu>div.user-menu-content").removeClass("active");
+                    $("div.user-menu>div.user-menu-content").eq(index).addClass("active");
+                });
+            });
+
+
+
+            $(document).ready(function () {
+                $("[rel='tooltip']").tooltip();
+
+                $('.view').hover(
+                    function () {
+                        $(this).find('.caption').slideDown(250); //.fadeIn(250)
+                    },
+                    function () {
+                        $(this).find('.caption').slideUp(250); //.fadeOut(205)
+                    }
+                );
+            });
+        </script>
+    @endpush
 
     <div class="row">
         @include('partials.clientheader')
-        @include('partials.userheader')
+        @include('partials.userheader', ['changeUser' => false])
     </div>
 
     <div class="row">
@@ -23,89 +46,254 @@
             @include('partials.comments', ['subject' => $tasks])
         </div>
         <div class="col-md-3">
-            <div class="sidebarheader">
-                <p>{{ __('Task information') }}</p>
+            <div class="tablet tablet--tabs tablet--height-fluid">
+                <div class="tablet__head tablet__head__color-brand padding-15-sides">
+                    <div class="tablet__head-toolbar">
+                        <ul class="nav nav-tabs nav-tabs-line nav-tabs-line-brand nav-tabs-bold tablet-brand-color" role="tablist">
+                            <li class="nav-item active">
+                                <a class="nav-link text-white active" data-toggle="tab" href="#tab_information" role="tab">
+                                    @lang('Information')
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" data-toggle="tab" href="#tab_activity" role="tab">
+                                    @lang('Activity')
+                                </a>
+                            </li>
+                            @if(Entrust::can('invoice-see') && $tasks->invoice)
+                            <li class="nav-item">
+                                <a class="nav-link text-white" data-toggle="tab" href="#tab_invoice_lines" role="tab">
+                                    @lang('Hours')
+                                </a>
+                            </li>
+                            @endif
+                        </ul>
+                    </div>
+                </div>
+                <div class="tablet__body">
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade active in" id="tab_information" role="tabpanel">
+                            <div class="k-scroll ps ps--active-y" data-scroll="true" style="overflow: hidden;" data-mobile-height="350">
+                                @include('tasks._sidebar')
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="tab_activity" role="tabpanel">
+                            <div class="k-scroll ps ps--active-y" data-scroll="true" style="overflow: hidden;" data-mobile-height="350">
+                                @include('tasks._timeline')
+                            </div>
+                        </div>
+                        @if(Entrust::can('invoice-see') && $tasks->invoice)
+                            <div class="tab-pane fade" id="tab_invoice_lines" role="tabpanel">
+                                <div class="k-scroll ps ps--active-y" data-scroll="true" style="overflow: hidden;" data-mobile-height="350">
+                                    @include('tasks._time_management')
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                </div>
+            <div class="tablet__footer">
+                <div class="row">
+                    <div class="col-lg-6 col-sm-12">
+                        @if(Entrust::can('modify-invoice-lines'))
+                                <button type="button" id="time-manager" class="btn btn-md btn-brand btn-upper btn-full-width time-manager"
+                                <?php $titleText =  !$tasks->canUpdateInvoice() ? __("Can't update an already send invoice") : "" ?>
+                                title="{{$titleText}}"
+                                {{ !$tasks->canUpdateInvoice() ? 'disabled ' : "" }}>
+                                    {{ __('Add time') }}
+                                </button>
+                        @endif
+                    </div>
+                    <div class="col-lg-6 col-sm-12">
+                        @if(Entrust::can('invoice-see'))
+                                <a href="/invoices/{{optional($tasks->invoice)->external_id}}">
+                                    <button type="button"
+                                    <?php $titleText =  !$tasks->invoice ? __("No Invoice to show. Add time to create an invoice") : "" ?>
+                                    title="{{$titleText}}"
+                                    {{ !$tasks->invoice ? 'disabled ' : "" }}
+                                    class="btn btn-md btn-teal btn-upper btn-full-width">
+                                        {{ __('Show invoice') }}
+                                    </button>
+                                </a>
+                        @endif
+                    </div>
+
+                </div>
             </div>
-            <div class="sidebarbox">
-                <p>{{ __('Assigned') }}:
-                    <a href="{{route('users.show', $tasks->user->id)}}">
-                        {{$tasks->user->name}}</a></p>
-                <p>{{ __('Created at') }}: {{ date('d F, Y, H:i', strtotime($tasks->created_at))}} </p>
-
-                @if($tasks->days_until_deadline)
-                    <p>{{ __('Deadline') }}: <span style="color:red;">{{date('d, F Y', strTotime($tasks->deadline))}}
-
-                            @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p>
-                    <!--Remove days left if tasks is completed-->
-
-                @else
-                    <p>{{ __('Deadline') }}: <span style="color:green;">{{date('d, F Y', strTotime($tasks->deadline))}}
-
-                            @if($tasks->status == 1)({!! $tasks->days_until_deadline !!})@endif</span></p>
-                    <!--Remove days left if tasks is completed-->
-                @endif
-
-                @if($tasks->status == 1)
-                    {{ __('Status') }}: {{ __('Open') }}
-                @else
-                    {{ __('Status') }}: {{ __('Closed') }}
-                @endif
             </div>
-            @if($tasks->status == 1)
+            @if(Entrust::can('task-upload-files') && $filesystem_integration)
+                <div id="document" class="tab-pane">
+                    <div class="tablet">
+                        <div class="tablet__head">
+                            <div class="tablet__head-label">
+                                <h3 class="tablet__head-title">{{ __('All Files') }}</h3>
+                                <button id="add-files" style="
+                                margin-left: 18rem !important;
+                                border: 0;
+                                padding: 0;
+                                background: transparent;
+                                font-size:2em;">
+                                    <i class="icon ion-md-add-circle"></i>
+                                </button>
+                            </div>
 
-                {!! Form::model($tasks, [
-               'method' => 'PATCH',
-                'url' => ['tasks/updateassign', $tasks->id],
-                ]) !!}
-                {!! Form::select('user_assigned_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-                {!! Form::submit(__('Assign user'), ['class' => 'btn btn-primary form-control closebtn']) !!}
-                {!! Form::close() !!}
+                        </div>
+                        <div class="tablet__body">
+                            @if($files->count() == 0)
+                                <div class="tablet__item">
+                                    <div class="tablet__item__pic">
+                                        <p class="title">@lang('No files')</p>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="tablet__items">
+                                @foreach($files as $file)
+                                    <div class="tablet__item">
+                                        <div class="tablet__item__pic">
+                                            <img src="{{url('images/doc-icon.svg')}}" alt="">
+                                        </div>
+                                        <div class="tablet__item__info">
 
-                {!! Form::model($tasks, [
-          'method' => 'PATCH',
-          'url' => ['tasks/updatestatus', $tasks->id],
-          ]) !!}
+                                            <a href="{{ route('document.view', $file->external_id) }}" class="tablet__item__title" target="_blank">{{$file->original_filename}}</a>
+                                            <div class="tablet__item__description">
+                                                {{$file->size}} MB
+                                            </div>
+                                        </div>
+                                        <div class="tablet__item__toolbar">
+                                            <div class="dropdown dropdown-inline">
+                                                <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-md"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="icon ion-md-more" style="font-size: 2.5em;"></i>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-right">
+                                                    <ul class="tablet__nav">
+                                                        <li class="nav-item">
+                                                            <a href=" {{ route('document.view', $file->external_id) }}" target="_blank" class="nav-link">
+                                                                <i class="icon ion-md-eye"></i>
+                                                                <span class="nav-link-text">@lang('View')</span>
+                                                            </a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a href=" {{ route('document.download', $file->external_id) }}" target="_blank" class="nav-link">
+                                                                <i class="icon ion-md-cloud-download"></i>
+                                                                <span class="nav-link-text">@lang('Download')</span>
+                                                            </a>
+                                                        </li>
+                                                        @if(Entrust::can('document-delete'))
 
-                {!! Form::submit(__('Close task'), ['class' => 'btn btn-success form-control closebtn']) !!}
-                {!! Form::close() !!}
-
-            @endif
-            <div class="sidebarheader">
-                <p>{{ __('Time management') }}</p>
-            </div>
-            <table class="table table_wrapper ">
-                <tr>
-                    <th>{{ __('Title') }}</th>
-                    <th>{{ __('Time') }}</th>
-                </tr>
-                <tbody>
-               @foreach($invoice_lines as $invoice_line)
-                    <tr>
-                        <td style="padding: 5px">{{$invoice_line->title}}</td>
-                        <td style="padding: 5px">{{$invoice_line->quantity}} </td>
-                    </tr>
-                @endforeach
-     
-                </tbody>
-            </table>
-            <br/>
-            <button type="button" {{ $tasks->canUpdateInvoice() == 'true' ? '' : 'disabled'}} class="btn btn-primary form-control" value="add_time_modal" data-toggle="modal" data-target="#ModalTimer" >
-                {{ __('Add time') }}
-            </button>
-            @if($tasks->invoice)
-                <a href="{{ route('invoices.show', $tasks->invoice->id) }}">{{__('See the invoice')}}</a>
-            @endif
-            <div class="activity-feed movedown">
-                @foreach($tasks->activity as $activity)
-                    <div class="feed-item">
-                        <div class="activity-date">{{date('d, F Y H:i', strTotime($activity->created_at))}}</div>
-                        <div class="activity-text">{{$activity->text}}</div>
+                                                            <li class="nav-item">
+                                            <span class="nav-link">
+                                                <i class="icon ion-md-trash"></i>
+                                                <form method="POST" action="{{action('DocumentsController@destroy', $file->external_id)}}">
+                                                    <input type="hidden" name="_method" value="delete"/>
+                                                    <input type="hidden" name="_token" value="{{csrf_token()}}"/>
+                                                    <button type="submit" class="btn btn-clean nav-link-text">{{__('Delete')}}</button>
+                                                </form>
+                                            </span>
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
 
                     </div>
-                @endforeach
-            </div>
+                </div>
+                @endif
 
-            @include('invoices._invoiceLineModal', ['title' => $tasks->title, 'id' => $tasks->id, 'type' => 'task'])
+
+        </div>
+
+    </div>
+    @if(Entrust::can('task-update-deadline'))
+        <div class="modal fade" id="ModalUpdateDeadline" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">{{ __('Change deadline') }}</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <form action="{{route('task.update.deadline', $tasks->external_id)}}" method="POST">
+                            @method('PATCH')
+                            @csrf
+                            <div class="form-group">
+                                <label for="deadline_date" class="control-label thin-weight">@lang('Change deadline')</label>
+                                <input type="text" id="deadline_date" name="deadline_date" data-value="{{now()->addDays(3)}}" class="form-control">
+                            </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default col-lg-6"
+                                    data-dismiss="modal">{{ __('Close') }}</button>
+                            <div class="col-lg-6">
+                                <input type="submit" value="{{__('Update deadline')}}" class="btn btn-brand form-control closebtn">
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+    <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true"
+         style="display:none;">
+        <div class="modal-dialog">
+            <div class="modal-content"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="add-files-modal" tabindex="-1" role="dialog" aria-hidden="true"
+         style="display:none;">
+        <div class="modal-dialog">
+            <div class="modal-content"></div>
         </div>
     </div>
 @stop
+@push('scripts')
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#deadline_date').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                closeOnClear: false,
+            });
+
+            $('#time-manager').on('click', function () {
+                $('#add-invoice-line-modal .modal-content').load('/add-invoice-lines/{{$tasks->external_id}}' + '/task');
+                $('#add-invoice-line-modal').modal('show');
+            });
+            @if(Entrust::can('task-upload-files') && $filesystem_integration)
+            $('#add-files').on('click', function () {
+                $('#add-files-modal .modal-content').load('/add-documents/{{$tasks->external_id}}' + '/task');
+                $('#add-files-modal').modal('show');
+            });
+            @endif
+        });
+
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            function validateHhMm(inputField) {
+                var isValid = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(inputField.value);
+
+                return isValid;
+            }
+
+            function isNumberKey(evt) {
+                var charCode = (evt.which) ? evt.which : event.keyCode;
+                if (charCode)
+                    return false;
+
+                return true;
+            }
+        });
+
+    </script>
+@endpush

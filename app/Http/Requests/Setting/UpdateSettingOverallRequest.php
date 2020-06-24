@@ -13,7 +13,7 @@ class UpdateSettingOverallRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator');
+        return auth()->user()->hasRole('administrator') || Auth()->user()->hasRole('owner');
     }
 
     /**
@@ -24,10 +24,8 @@ class UpdateSettingOverallRequest extends FormRequest
     public function rules()
     {
         return [
-            'task_complete_allowed' => 'required',
-            'task_assign_allowed'   => 'required',
-            'lead_complete_allowed' => 'required',
-            'lead_assign_allowed'   => 'required',
+            'client_number' => 'required|integer',
+            'invoice_number' => 'required|integer'
         ];
     }
 }

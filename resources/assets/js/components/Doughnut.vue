@@ -6,18 +6,19 @@
 import Chart from 'chart.js';
 
     export default {
-        props: ['statistics'],
+        props: ['statistics', 'closed', 'open'],
         methods: {
             render(data)
             {
+                console.log(this.statistics.keys);
                 this.Chart = new Chart(this.$refs.canvaschart.getContext('2d'), {
                     type: 'doughnut',
                     data: {
-                    labels: ["Closed", "Open"],
+                    labels: this.statistics.keys,
                     datasets: [
                         {
-                            backgroundColor: ["#FF6384", "#61BA95"],
-                            data: this.statistics
+                            backgroundColor: ["rgba(93, 115, 226, 1)", "rgba(93, 115, 226, 0.8)", "rgba(93, 115, 226, 0.6)", "rgba(93, 115, 226, 0.4)"],
+                            data: this.statistics.counts
                         }
                    
                     ]

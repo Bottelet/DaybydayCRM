@@ -23,7 +23,7 @@ class Login extends UnauthenticatedPage
      */
     public function assert(Browser $browser)
     {
-        $browser->assertSee('Login')
+        $Browser->assertSee('Login')
             ->assertSee('E-Mail Address')
             ->assertInputValue('email', '')
             ->assertSee('Password')

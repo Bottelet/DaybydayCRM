@@ -21,7 +21,16 @@
         $('#users-table').DataTable({
             processing: true,
             serverSide: true,
+            autoWidth: false,
             ajax: '{!! route('datatables.data') !!}',
+            language: {
+                url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+            },
+            drawCallback: function(){
+                var length_select = $(".dataTables_length");
+                var select = $(".dataTables_length").find("select");
+                select.addClass("tablet__select");
+            },
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},

@@ -24,16 +24,15 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                  => 'required',
-            'email'                 => 'required|email',
-            'address'               => '',
-            'work_number'           => 'numeric',
-            'personal_number'       => 'numeric',
-            'password'              => 'sometimes',
+            'name' => 'required',
+            'email' => 'required|email',
+            'address' => '',
+            'primary_number' => 'numeric',
+            'secondary_number' => 'numeric',
+            'password' => 'sometimes',
             'password_confirmation' => 'sometimes',
-            'image_path'            => '',
-            'roles'                 => 'required',
-            'departments'           => '',
+            'image_path' => '',
+            'departments' => 'required'
         ];
     }
 }

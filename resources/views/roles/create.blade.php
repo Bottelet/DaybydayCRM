@@ -14,7 +14,7 @@
         {!! Form::label('description', __('Description'), ['class' => 'control-label']) !!}
         {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
     </div>
-    {!! Form::submit( __('Add new Role'), ['class' => 'btn btn-primary']) !!}
+    {!! Form::submit( __('Add new Role'), ['class' => 'btn btn-md btn-brand']) !!}
 
     {!! Form::close() !!}
 

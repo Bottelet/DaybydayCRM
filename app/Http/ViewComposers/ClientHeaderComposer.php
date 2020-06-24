@@ -2,39 +2,28 @@
 
 namespace App\Http\ViewComposers;
 
-use App\Models\Client;
-use App\Repositories\Client\ClientRepositoryContract;
 use Illuminate\View\View;
+use App\Models\Client;
 
 class ClientHeaderComposer
 {
     /**
-     * The client repository implementation.
-     *
-     * @var ClientRepository
-     */
-    protected $clients;
-
-    /**
-     * Create a new profile composer.
-     *
-     * @param ClientRepository|ClientRepositoryContract $clients
-     */
-    public function __construct(ClientRepositoryContract $clients)
-    {
-        $this->clients = $clients;
-    }
-
-    /**
      * Bind data to the view.
      *
-     * @param View $view
+     * @param  View  $view
+     * @return void
      */
     public function compose(View $view)
     {
-        $client  = Client::findOrFail($view->getData()['client']['id']);
-        $contact = $client->user;
+        $clients = Client::findOrFail($view->getData()['client']['id']);
 
-        $view->with('contact', $contact);
+        $contact_info = $clients->contacts()->first();
+        /**
+         * [User assigned the client]
+         * @var contact
+         */
+        $contact = $clients->user;
+
+        $view->with('contact', $contact)->with('contact_info', $contact_info);
     }
 }

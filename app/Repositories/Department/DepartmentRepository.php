@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Repositories\Department;
 
 use App\Models\Department;
 
 /**
- * Class DepartmentRepository.
+ * Class DepartmentRepository
+ * @package App\Repositories\Department
  */
 class DepartmentRepository implements DepartmentRepositoryContract
 {
@@ -34,10 +34,10 @@ class DepartmentRepository implements DepartmentRepositoryContract
     }
 
     /**
-     * @param $id
+     * @param $external_id
      */
-    public function destroy($id)
+    public function destroy($external_id)
     {
-        Department::findorFail($id)->delete();
+        Department::whereExternalId($external_id)->delete();
     }
 }

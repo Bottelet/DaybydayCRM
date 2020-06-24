@@ -1,0 +1,99 @@
+$primary-color-button: #536BE2;
+$primary-color-button-hover: #4A64E2;
+
+
+
+
+
+.btn.btn-brand {
+  background: $primary-color-button;
+  color: #ffffff;
+  &:hover {
+    background-color: $primary-color-button-hover;
+    border-color: $primary-color-button-hover;
+  }
+}
+
+.btn.btn-teal {
+  background-color: #1dc9b7;
+  color: #fff;
+  &:hover {
+    background-color: #1cad9b;
+    border-color: #1e8a77;
+  }
+}
+.btn.btn-outline-metal {
+  border-color: #d3dae6;
+  color: #645ca1;
+  background: transparent;
+  border-radius: 0.25rem;
+}
+
+.btn-hover-brand:hover {
+  color: #ffffff;
+  background: $primary-color-button-hover;
+  border-color: $primary-color-button-hover;
+}
+.btn.btn-upper {
+  text-transform: uppercase;
+}
+.btn.btn-bold {
+  font-weight: 600;
+}
+.btn-sm {
+  padding: 0.60rem 2rem;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  border-radius: 0.2rem
+}
+
+.btn-md {
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding: 1.1rem 1.2rem;
+  border-radius: 0.25rem;
+  transition: all 0.3s;
+}
+
+.btn-lg {
+  padding: 0.8em 1.1em;
+  font-size: 1.2em;
+  border-radius: 0.4rem
+}
+
+.btn-xlg {
+  padding: 0.8em 1.5em;
+  font-size: 2rem;
+  border-radius: 0.4rem
+}
+
+.btn-light {
+  background: #fff;
+  color: #646c9a;
+  border-color: #ebedf2;
+  box-shadow: none;
+}
+
+.btn-light:hover {
+  color: #555d8a;
+}
+
+.btn.btn-full-width {
+  width: 100%;
+}
+
+.btn.btn-clean {
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.btn.btn-clean:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  outline: none;
+}
+
+.btn.btn-icon:focus {
+  color: $secondary-color;
+}

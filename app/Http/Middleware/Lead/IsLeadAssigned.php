@@ -11,23 +11,14 @@ class IsLeadAssigned
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure                 $next
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $lead             = Lead::findOrFail($request->id);
-        $settings         = Setting::all();
-        $isAdmin          = Auth()->user()->hasRole('administrator');
-        $settingscomplete = $settings[0]['lead_assign_allowed'];
-        if ($isAdmin) {
-            return $next($request);
-        }
-        if (1 == $settingscomplete && Auth()->user()->id == $lead->fk_user_id_assign) {
-            Session()->flash('flash_message_warning', 'Not allowed to create lead');
-
+        if (!auth()->user()->can('can-assign-new-user-to-lead')) {
+            Session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
             return redirect()->back();
         }
 

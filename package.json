@@ -1,24 +1,35 @@
 {
   "private": true,
+  "scripts": {
+    "dev": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch-poll": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --watch-poll --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "hot": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
   "devDependencies": {
-    "babel-core": "^6.21.0",
-    "babel-loader": "^6.2.10",
-    "css-loader": "^0.26.1",
-    "element-ui": "^1.0.7",
-    "gulp": "^3.8.8",
+    "cross-env": "^5.1",
+    "laravel-mix": "^4.0.7",
+    "resolve-url-loader": "^3.1.0",
+    "sass": "^1.23.0",
+    "sass-loader": "^7.3.1",
     "style-loader": "^0.13.1",
-    "vue-loader": "^10.0.2"
+    "vue-loader": "^15.7.1",
+    "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "bootstrap-sass": "^3.3.7",
-    "chart.js": "^2.6.0",
+    "axios": "^0.16.2",
+    "bootstrap-sass": "^3.4.1",
+    "bootstrap-select": "^1.13.12",
+    "chart.js": "^2.9.3",
     "element-ui": "^1.0.7",
-    "jquery": "^3.5.0",
-    "laravel-elixir": "^6.0.0-14",
-    "laravel-elixir-vue-2": "^0.2.0",
-    "laravel-elixir-webpack-official": "^1.0.2",
-    "lodash": "^4.17.13",
-    "vue": "^2.0.5",
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.15",
+    "natives": "^1.1.6",
+    "timepicker.js": "^2.5.0",
+    "vis-timeline": "^7.3.4",
+    "vue": "^2.6.10",
     "vue-resource": "^1.0.3"
   }
 }
