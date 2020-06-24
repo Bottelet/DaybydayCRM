@@ -97,7 +97,6 @@ class AbsenceController extends Controller
 
     public function destroy(Absence $absence)
     {
-        dd($absence);
         if (!auth()->user()->can('absence-manage')) {
             Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
             return redirect()->back();
