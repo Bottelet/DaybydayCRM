@@ -88,6 +88,8 @@ class SettingsController extends Controller
         $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
         $user->save();
 
+        cache()->delete(GetDateFormat::CACHE_KEY);
+
         return redirect()->back();
     }
 
@@ -146,6 +148,8 @@ class SettingsController extends Controller
         $setting->country = $request->country;
         $setting->language = $request->language;
         $setting->save();
+
+        cache()->delete(GetDateFormat::CACHE_KEY);
 
         Session::flash('flash_message', __('Overall settings successfully updated'));
         return redirect()->back();

@@ -9,9 +9,16 @@ class GetDateFormat
 {
     private $format;
 
+    const CACHE_KEY = "country_date_format";
+
     public function __construct()
     {
-        $this->format = Country::fromCode(Setting::first()->country)->getFormat();
+        if (!cache(self::CACHE_KEY)){
+            $this->format = Country::fromCode(Setting::first()->country)->getFormat();
+            cache()->set("country_date_format", $this->format);
+        }
+
+        $this->format = cache(self::CACHE_KEY);
     }
 
     public function getAllDateFormats()
