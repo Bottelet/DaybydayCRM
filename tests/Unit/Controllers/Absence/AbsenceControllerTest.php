@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\Controllers\Client;
+namespace Tests\Unit\Controllers\Absence;
 
 use App\Models\Absence;
 use App\Models\Contact;
