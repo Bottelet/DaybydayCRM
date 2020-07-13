@@ -59,7 +59,6 @@
     </style>
 </head>
 <body id="app-layout">
-</nav>
 
 <div style="text-align: center; margin-bottom:20px;"><a href="/login">
     <img src="{{ asset('images/daybyday-logo-white-with-bg.png') }}" width="458px"
