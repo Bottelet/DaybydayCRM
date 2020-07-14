@@ -29,9 +29,9 @@
 	<div class="white-box">
 	    <input type="checkbox"
 	    			{{ !$isEnabled ? 'checked' : ''}} name="permissions[ {{ $permission->id }} ]"
-	               value="1" data-role="{{ $role->id }}">
+	               value="1" data-role="{{ $role->id }}" id="permissions-{{ $permission->id }}">
 
-	        <span class="perm-name lead"><small>{{ $permission->display_name }}</small></span><br/>
+	        <span class="perm-name lead"><label for="permissions-{{ $permission->id }}" class="text-secondary">{{ $permission->display_name }}</label></span><br/>
 	        {{ $permission->description }}
     </div>
     </div>
