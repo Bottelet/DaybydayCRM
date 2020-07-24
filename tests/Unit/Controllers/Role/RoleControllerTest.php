@@ -13,7 +13,7 @@ class RoleControllerTest extends TestCase
 //    use DatabaseTransactions, WithoutMiddleware;
 
     /** @test */
-    public function unprivileged_user_cannot_change_permissions()
+    public function unprivileged_user_cannot_change_roles()
     {
         /** @var User $user */
         $user = factory(User::class)->create();
