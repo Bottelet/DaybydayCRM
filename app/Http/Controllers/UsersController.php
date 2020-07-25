@@ -280,7 +280,7 @@ class UsersController extends Controller
         $user->fill($input)->save();
         $role = $user->roles->first();
         if ($request->roles == (int)$role->id) {
-        } elseif ($role->first()->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
+        } elseif ($role->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
             Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
             $user->roles()->sync([$role]);
