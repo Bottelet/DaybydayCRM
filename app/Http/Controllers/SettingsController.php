@@ -84,11 +84,11 @@ class SettingsController extends Controller
         $settings->company = $request->company_name;
         $settings->vat = $currency->getVatPercentage();
         $settings->currency = $currency->getCode();
-        $settings->language = strtolower($country->getLanguage());
+        $settings->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
         $settings->save();
 
         $user = auth()->user();
-        $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";;
+        $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
         $user->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
