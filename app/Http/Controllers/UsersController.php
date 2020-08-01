@@ -205,7 +205,7 @@ class UsersController extends Controller
         $user->secondary_number = $request->secondary_number;
         $user->password = bcrypt($request->password);
         $user->image_path = $path;
-        $user->language = $request->language == "dk" ?: "en";
+        $user->language = $request->language ?? config('locale');
         $user->save();
         $user->roles()->attach($request->roles);
         $user->department()->attach($request->departments);
@@ -276,7 +276,6 @@ class UsersController extends Controller
         $owners = User::whereHas('roles', function ($q) {
             $q->where('name', Role::OWNER_ROLE);
         })->get();
-
         $user->fill($input)->save();
         $role = $user->roles->first();
         if ($request->roles == (int)$role->id) {

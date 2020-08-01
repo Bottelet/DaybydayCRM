@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Enums\Country;
@@ -38,13 +39,13 @@ class SettingsController extends Controller
     public function index()
     {
         return view('settings.index')
-            ->withVatPercentage(app(Tax::class)->percentage())
-            ->withClientNumber(app(ClientNumberService::class)->nextClientNumber())
-            ->withInvoiceNumber(app(InvoiceNumberService::class)->nextInvoiceNumber())
-            ->withCurrencies(Currency::getAllCurrencies())
-            ->withCurrentCurrency(Setting::select("currency")->first()->currency)
-            ->withSettings(Setting::first())
-            ->withBusinessHours($this->businessHours());
+          ->withVatPercentage(app(Tax::class)->percentage())
+          ->withClientNumber(app(ClientNumberService::class)->nextClientNumber())
+          ->withInvoiceNumber(app(InvoiceNumberService::class)->nextInvoiceNumber())
+          ->withCurrencies(Currency::getAllCurrencies())
+          ->withCurrentCurrency(Setting::select("currency")->first()->currency)
+          ->withSettings(Setting::first())
+          ->withBusinessHours($this->businessHours());
     }
 
     public function updateFirstStep(Request $request)
@@ -60,10 +61,12 @@ class SettingsController extends Controller
             $end_time->addHour();
         }
         foreach (BusinessHour::all() as $businessHour) {
-            $businessHour->update([
+            $businessHour->update(
+              [
                 'open_time' => $start_time->format('H:i:s'),
                 'close_time' => $end_time->format('H:i:s'),
-            ]);
+              ]
+            );
         }
 
         if (!$request->company_name) {
@@ -81,11 +84,11 @@ class SettingsController extends Controller
         $settings->company = $request->company_name;
         $settings->vat = $currency->getVatPercentage();
         $settings->currency = $currency->getCode();
-        $settings->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
+        $settings->language = strtolower($country->getLanguage());
         $settings->save();
 
         $user = auth()->user();
-        $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
+        $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";;
         $user->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
@@ -120,7 +123,9 @@ class SettingsController extends Controller
             if (app(Currency::class, ["code" => $request->currency])->hasCurrency($request->currency)) {
                 $setting->currency = $request->currency;
                 if ($request->vat == $setting->vat / 100) {
-                    $setting->vat = app(Currency::class, ["code" => $request->currency])->getCurrency($request->currency)["vatPercentage"];
+                    $setting->vat = app(Currency::class, ["code" => $request->currency])->getCurrency(
+                      $request->currency
+                    )["vatPercentage"];
                 } else {
                     $setting->vat = $request->vat * 100;
                 }
@@ -136,17 +141,19 @@ class SettingsController extends Controller
             $end_time->addHour();
         }
         foreach (BusinessHour::all() as $businessHour) {
-            $businessHour->update([
+            $businessHour->update(
+              [
                 'open_time' => $start_time->format('H:i:s'),
                 'close_time' => $end_time->format('H:i:s'),
-            ]);
+              ]
+            );
         }
 
         $setting->client_number = $request->client_number;
         $setting->invoice_number = $request->invoice_number;
-        isset($request->company) ? $setting->company = $request->company: null;
+        isset($request->company) ? $setting->company = $request->company : null;
         $setting->country = $request->country;
-        $setting->language = $request->language;
+        $setting->language = strtolower($request->language);
         $setting->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
@@ -158,8 +165,8 @@ class SettingsController extends Controller
     public function businessHours()
     {
         return [
-            'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
-            'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time
+          'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
+          'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time
         ];
     }
 

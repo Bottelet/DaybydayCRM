@@ -58,8 +58,9 @@
                             <p class="small">@lang('This is the default language for new users, the language can be changed for each user under their profile')</p>
                             <br>
                             <select class="form-control" name="language">
-                                <option value="EN">@lang("English")</option>
-                                <option value="DK" {{$settings->language == "DK" ? "selected" : ""}}>@lang("Danish")</option>
+                                <option value="EN" @if($settings->language==='en') selected @endif">@lang("English")</option>
+                                <option value="ES" @if($settings->language==='es') selected @endif>@lang("Español")</option>
+                                <option value="DK" @if($settings->language==='dk') selected @endif>@lang("Danish")</option>
                             </select>
                         </div>
                     </div>
