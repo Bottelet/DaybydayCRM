@@ -211,10 +211,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/googledrive-token', 'CallbackController@googleDrive')->name('googleDrive.callback');
 });
 
-
-Route::get('/user/verify/{token}', 'VerifyController@show');
-Route::post('/user/verify/{token}', 'VerifyController@verify');
-
 Route::post(
     '/stripe/webhook',
     'StripeWebhooksController@handleWebhook'
