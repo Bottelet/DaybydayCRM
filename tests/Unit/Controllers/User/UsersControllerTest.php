@@ -41,6 +41,22 @@ class UsersControllerTest extends TestCase
             [$targetRole->id],
             $user->roles()->get()->pluck('id')->toArray()
         );
+    }
 
+    /**
+     * @test
+     */
+    public function only_admin_can_update_user()
+    {
+        /** @var User $manager */
+        $manager = factory(User::class)->create();
+        $manager->roles()->save(Role::whereName('manager')->first());
+        $this->actingAs($manager);
+
+        $this->json(
+            'PATCH',
+            route('users.update', 1)
+        )
+            ->assertForbidden();
     }
 }
