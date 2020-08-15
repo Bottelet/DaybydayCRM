@@ -283,7 +283,7 @@ class UsersController extends Controller
         } elseif ($role->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
             Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
-            $user->roles()->sync([$role]);
+            $user->roles()->sync([$request->roles]);
         }
         $user->department()->sync([$department]);
 
