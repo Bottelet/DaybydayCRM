@@ -216,6 +216,23 @@ class Country
 
                     ]
                 ]),
+                "ES" => new Country("ES", [
+                    "displayValue" => "Spain",
+                    "currencyCode" => "EUR",
+                    "language" => "Spanish",
+                    "phoneCode" => "+34",
+                    "format" => [
+                        "frontendDate" => "dd/mm/yyyy",
+                        "frontendTime" => "HH:i",
+                        "momentjsDayAndDateWithText" => "ddd D MMMM",
+                        "momentJsTime" => "HH:mm",
+                        "carbonDate" => "d/m/Y",
+                        "carbonTime" => "H:i",
+                        "carbonFullDateWithText" => "d, F Y H:i",
+                        "carbonDateWithText" => "d, F Y"
+
+                    ]
+                ]),
                 "IN" => new Country("IN", [
                     "displayValue" => "India",
                     "currencyCode" => "INR",
