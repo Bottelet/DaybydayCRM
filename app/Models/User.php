@@ -152,4 +152,34 @@ class User extends Authenticatable
         $image_path = $this->image_path ? Storage::url($this->image_path) : '/images/default_avatar.jpg';
         return $image_path;
     }
+
+    public function totalOpenAndClosedLeads()
+    {
+        $groups = $this->leads()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
+        $keys = collect();
+        $counts = collect();
+        foreach ($groups as $groupKey => $group) {
+            $keys->push($groupKey);
+            $counts->push(count($group));
+        }
+
+        return collect(['keys' => $keys, 'counts' => $counts]);
+    }
+
+    /**
+     * @param $external_id
+     * @return mixed
+     */
+    public function totalOpenAndClosedTasks()
+    {
+        $groups = $this->tasks()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
+        $keys = collect();
+        $counts = collect();
+        foreach ($groups as $groupKey => $group) {
+            $keys->push($groupKey);
+            $counts->push(count($group));
+        }
+
+        return collect(['keys' => $keys, 'counts' => $counts]);
+    }
 }
