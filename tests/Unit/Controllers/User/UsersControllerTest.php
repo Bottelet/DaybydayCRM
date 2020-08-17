@@ -10,43 +10,37 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class UsersControllerTest extends TestCase
 {
-//    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions, WithoutMiddleware;
 
     /**
      * @test
-     * @link https://github.com/Bottelet/DaybydayCRM/pull/175
      */
-    public function can_update_user_role()
+    public function owner_can_update_user_role()
     {
-        /** @var User $user */
-        $user = factory(User::class)->create();
-        $user->roles()->save(Role::skip(1)->first());
-
         /** @var Role $targetRole */
         $targetRole = Role::first();
+
         $this->json(
             'PATCH',
-            route('users.update', $user->external_id),
+            route('users.update', $this->user->external_id),
             [
-                'name'        => $user->name,
-                'email'       => $user->email,
-                'departments' => $user->department()->first()->id,
+                'name'        => $this->user->name,
+                'email'       => $this->user->email,
+                'departments' => $this->user->department()->first()->id,
                 'roles'       => $targetRole->id,
-            ]
-        )
-            ->assertRedirect();
+            ])->assertRedirect();
 
 
-        self::assertEquals(
+        $this->assertEquals(
             [$targetRole->id],
-            $user->roles()->get()->pluck('id')->toArray()
+            $this->user->roles()->get()->pluck('id')->toArray()
         );
     }
 
     /**
      * @test
      */
-    public function only_admin_can_update_user()
+    public function only_owner_role_can_update_user()
     {
         /** @var User $manager */
         $manager = factory(User::class)->create();
@@ -56,7 +50,6 @@ class UsersControllerTest extends TestCase
         $this->json(
             'PATCH',
             route('users.update', 1)
-        )
-            ->assertForbidden();
+        )->assertForbidden();
     }
 }
