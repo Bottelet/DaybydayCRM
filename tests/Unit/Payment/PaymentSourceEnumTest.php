@@ -53,19 +53,17 @@ class PaymentSourceEnumTest extends TestCase
         $this->assertEquals(PaymentSource::fromDisplayValue("Intercompany"), PaymentSource::interCompany()->getSource());
     }
 
-    /** @test
-    @expectedException \Exception
-     */
+    /** @test */
     public function throwsExceptionIfSourceIsNotKnown()
     {
+        $this->expectException(\Exception::class);
         PaymentSource::fromSource("None existing source");
     }
 
-    /** @test
-    @expectedException \Exception
-     */
+    /** @test */
     public function throwsExceptionIfDisplayValueIsNotKnown()
     {
+        $this->expectException(\Exception::class);
         PaymentSource::fromDisplayValue("None existing display value");
     }
 

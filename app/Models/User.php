@@ -12,8 +12,6 @@ use App\Api\v1\Models\Token;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
-
-
 use Carbon\Carbon;
 
 class User extends Authenticatable

@@ -1,6 +1,6 @@
 {
     "name": "bottelet/daybyday-crm",
-    "description": "DaybydayCRM is a free, open-source and self-hosted CRM platform based of Laravel 5",
+    "description": "DaybydayCRM is a free, open-source and self-hosted CRM platform based of Laravel",
     "keywords": [
         "laravel",
         "CRM",
@@ -23,9 +23,10 @@
         "google/apiclient": "^2.2",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/cashier": "^10.2",
-        "laravel/framework": "6.0.*",
+        "laravel/framework": "^7.0",
         "laravel/helpers": "^1.1",
-        "laravel/tinker": "^1.0",
+        "laravel/tinker": "^2.0",
+        "laravel/ui": "^2.0",
         "laravelcollective/html": "6.0.*@dev",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/flysystem-cached-adapter": "~1.0",
@@ -37,11 +38,12 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
-        "facade/ignition": "^1.4",
+        "facade/ignition": "^2.0",
         "fzaninotto/faker": "~1.8",
         "laravel/dusk": "^5.8",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~7.0",
+        "phpunit/phpunit": "^8.5",
+        "nunomaduro/collision":"^4.1",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*"
     },

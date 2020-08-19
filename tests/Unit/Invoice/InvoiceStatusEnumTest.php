@@ -52,18 +52,18 @@ class InvoiceStatusEnumTest extends TestCase
     }
 
     /** @test
-        @expectedException \Exception
      */
     public function throwsExceptionIfStatusIsNotKnown()
     {
+        $this->expectException(\Exception::class);
         InvoiceStatus::fromStatus("None existing status");
     }
 
     /** @test
-    @expectedException \Exception
      */
     public function throwsExceptionIfDisplayValueIsNotKnown()
     {
+        $this->expectException(\Exception::class);
         InvoiceStatus::fromDisplayValue("None existing display value");
     }
 }
