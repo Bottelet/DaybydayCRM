@@ -17,7 +17,6 @@ use App\Models\Integration;
 use Illuminate\Http\Request;
 use App\Http\Requests\Task\StoreTaskRequest;
 use Ramsey\Uuid\Uuid;
-use App\Repositories\Invoice\InvoiceRepositoryContract;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Project;
@@ -32,10 +31,8 @@ class TasksController extends Controller
 
     protected $invoices;
 
-    public function __construct(InvoiceRepositoryContract $invoices)
+    public function __construct()
     {
-        $this->invoices = $invoices;
-
         $this->middleware('filesystem.is.enabled', ['only' => ['upload']]);
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
@@ -345,26 +342,6 @@ class TasksController extends Controller
 
         event(new \App\Events\TaskAction($task, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', 'New deadline is set');
-        return redirect()->back();
-    }
-
-    /**
-     * @param $external_id
-     * @param Request $request
-     * @return mixed
-     */
-    public function invoice($external_id, Request $request)
-    {
-        $task = $this->findByExternalId($external_id);
-        $clientId = $task->client()->first()->id;
-        $timeTaskId = $task->time()->get();
-        $integrationCheck = Integration::first();
-
-        if ($integrationCheck) {
-            $this->invoices->invoice($external_id, $request);
-        }
-        $this->invoices->create($clientId, $timeTaskId, $request->all());
-        Session()->flash('flash_message', 'Invoice created');
         return redirect()->back();
     }
 

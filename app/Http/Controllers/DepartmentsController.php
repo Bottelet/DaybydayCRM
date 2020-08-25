@@ -10,10 +10,7 @@ use Datatables;
 
 class DepartmentsController extends Controller
 {
-    /**
-     * DepartmentsController constructor.
-     * @param DepartmentRepositoryContract $departments
-     */
+
     public function __construct()
     {
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);

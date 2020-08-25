@@ -82,7 +82,7 @@
         <label for="roles" class="control-label thin-weight">@lang('Assign role')</label>
         <select name="roles" id="" class="form-control">
         @foreach($roles as $key => $role)
-                <option {{ isset($user) && $user->userRole->role_id === $key ? "selected" : "" }} value="{{$key}}">{{$role}}</option>
+                <option {{ isset($user) && optional($user->userRole)->role_id === $key ? "selected" : "" }} value="{{$key}}">{{$role}}</option>
         @endforeach
         </select>
     </div>
@@ -109,6 +109,9 @@
         </label>
         <label class="radio-inline">
             <input value="en" type="radio" name="language" {{isset($user) && strtolower($user->language) == "en" ? 'checked': ''}}>@lang('English')
+        </label>
+        <label class="radio-inline">
+            <input value="es" type="radio" name="language" {{isset($user) && strtolower($user->language) == "es" ? 'checked': ''}}>@lang('Spanish')
         </label>
     </div>
 </div>

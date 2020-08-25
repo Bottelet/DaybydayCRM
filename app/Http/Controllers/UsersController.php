@@ -18,20 +18,14 @@ use Illuminate\Http\Request;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use Ramsey\Uuid\Uuid;
-use App\Repositories\Task\TaskRepositoryContract;
-use App\Repositories\Lead\LeadRepositoryContract;
 
 class UsersController extends Controller
 {
     protected $users;
     protected $roles;
 
-    public function __construct(
-        TaskRepositoryContract $tasks,
-        LeadRepositoryContract $leads
-    ) {
-        $this->tasks = $tasks;
-        $this->leads = $leads;
+    public function __construct()
+    {
         $this->middleware('user.create', ['only' => ['create']]);
     }
 
@@ -221,14 +215,17 @@ class UsersController extends Controller
      */
     public function show($external_id)
     {
+        /** @var User $user */
+        $user = $this->findByExternalId($external_id);
         return view('users.show')
-            ->withUser($this->findByExternalId($external_id))
+            ->withUser($user)
             ->withCompanyname(Setting::first()->company)
-            ->with('task_statistics', $this->tasks->totalOpenAndClosedTasks($external_id))
-            ->with('lead_statistics', $this->leads->totalOpenAndClosedLeads($external_id))
+            ->with('task_statistics', $user->totalOpenAndClosedTasks($external_id))
+            ->with('lead_statistics', $user->totalOpenAndClosedLeads($external_id))
             ->with('lead_statuses', Status::typeOfLead()->get())
             ->with('task_statuses', Status::typeOfTask()->get());
     }
+
 
     /**
      * @param $external_id
@@ -279,11 +276,10 @@ class UsersController extends Controller
 
         $user->fill($input)->save();
         $role = $user->roles->first();
-        if ($request->roles == (int)$role->id) {
-        } elseif ($role->first()->name == Role::OWNER_ROLE && $owners->count() <= 1 && $role) {
+        if ($role && $role->name == Role::OWNER_ROLE && $owners->count() <= 1) {
             Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
-            $user->roles()->sync([$role]);
+            $user->roles()->sync([$request->roles]);
         }
         $user->department()->sync([$department]);
 

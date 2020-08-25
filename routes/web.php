@@ -92,7 +92,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
-        Route::post('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
 
         Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
@@ -210,12 +209,3 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dropbox-token', 'CallbackController@dropbox')->name('dropbox.callback');
     Route::get('/googledrive-token', 'CallbackController@googleDrive')->name('googleDrive.callback');
 });
-
-
-Route::get('/user/verify/{token}', 'VerifyController@show');
-Route::post('/user/verify/{token}', 'VerifyController@verify');
-
-Route::post(
-    '/stripe/webhook',
-    'StripeWebhooksController@handleWebhook'
-);
