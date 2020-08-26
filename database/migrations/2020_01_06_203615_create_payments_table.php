@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Permission;
+use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -36,6 +37,7 @@ class CreatePaymentsTable extends Migration
 
         /** Create new permissions */
         $cpp = Permission::create([
+            'external_id' => Uuid::uuid4(),
             'display_name' => 'Add payment',
             'name' => 'payment-create',
             'description' => 'Be able to add a new payment on a invoice',
@@ -43,6 +45,7 @@ class CreatePaymentsTable extends Migration
         ]);
 
         $dpp = Permission::create([
+            'external_id' => Uuid::uuid4(),
             'display_name' => 'Delete payment',
             'name' => 'payment-delete',
             'description' => 'Be able to delete a payment',
