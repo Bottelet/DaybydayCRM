@@ -51,6 +51,7 @@ class SettingsController extends Controller
     {
         $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
         $end_time = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
+        $settings = Setting::first();
 
         if ($start_time->gt($end_time)) {
             $end_tmp = clone $end_time;
@@ -59,11 +60,23 @@ class SettingsController extends Controller
         } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
         }
-        foreach (BusinessHour::all() as $businessHour) {
-            $businessHour->update([
-                'open_time' => $start_time->format('H:i:s'),
-                'close_time' => $end_time->format('H:i:s'),
-            ]);
+        $businessHours = BusinessHour::all();
+        if($businessHours->isNotEmpty()) {
+            foreach (BusinessHour::all() as $businessHour) {
+                $businessHour->update([
+                    'open_time' => $start_time->format('H:i:s'),
+                    'close_time' => $end_time->format('H:i:s'),
+                ]);
+            }
+        } else {
+            for ($i=1; $i < 8; $i++) {
+                \App\Models\BusinessHour::create([
+                    'day' => $this->integerToDay()[$i],
+                    'open_time' => '09:00',
+                    'close_time' => '18:00',
+                    'settings_id' => $settings->id,
+                ]);
+            }
         }
 
         if (!$request->company_name) {
@@ -76,7 +89,6 @@ class SettingsController extends Controller
         $country = Country::fromCode($request->country);
         $currency = app(Currency::class, ["code" => $country->getCurrencyCode()]);
 
-        $settings = Setting::first();
         $settings->country = $request->country;
         $settings->company = $request->company_name;
         $settings->vat = $currency->getVatPercentage();
@@ -111,7 +123,6 @@ class SettingsController extends Controller
             Session::flash('flash_message_warning', __('Invoice number invalid'));
             return redirect()->back();
         }
-
         if ($request->currency == $setting->currency && !empty($request->vat)) {
             $setting->vat = $request->vat * 100;
         } elseif (empty($request->vat)) {
@@ -135,6 +146,7 @@ class SettingsController extends Controller
         } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
         }
+
         foreach (BusinessHour::all() as $businessHour) {
             $businessHour->update([
                 'open_time' => $start_time->format('H:i:s'),
@@ -160,6 +172,19 @@ class SettingsController extends Controller
         return [
             'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
             'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time
+        ];
+    }
+
+    private function integerToDay()
+    {
+        return [
+            1 => 'monday',
+            2 => 'tuesday',
+            3 => 'wednesday',
+            4 => 'thursday',
+            5 => 'friday',
+            6 => 'saturday',
+            7 => 'sunday'
         ];
     }
 
