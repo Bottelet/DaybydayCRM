@@ -74,7 +74,7 @@ class DocumentsController extends Controller
         $filename = str_random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
-        $size = $file->getClientSize();
+        $size = $file->getSize();
         $mbsize = $size / 1048576;
         $totaltsize = substr($mbsize, 0, 4);
 
@@ -124,7 +124,7 @@ class DocumentsController extends Controller
                 $filename = str_random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size = $file->getClientSize();
+                $size = $file->getSize();
                 $mbsize = $size / 1048576;
                 $totaltsize = substr($mbsize, 0, 4);
 
@@ -174,7 +174,7 @@ class DocumentsController extends Controller
                 $filename = str_random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size = $file->getClientSize();
+                $size = $file->getSize();
                 $mbsize = $size / 1048576;
                 $totaltsize = substr($mbsize, 0, 4);
 
