@@ -13,12 +13,13 @@ class GetDateFormat
 
     public function __construct()
     {
-        if (!cache(self::CACHE_KEY)){
+        //if (!cache(self::CACHE_KEY)){
             $this->format = Country::fromCode(Setting::first()->country)->getFormat();
             cache()->set("country_date_format", $this->format);
-        }
+        //}
 
-        $this->format = cache(self::CACHE_KEY);
+        //$this->format = cache(self::CACHE_KEY);
+        
     }
 
     public function getAllDateFormats()

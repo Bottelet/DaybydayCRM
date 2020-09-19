@@ -189,9 +189,9 @@ class Country
                     "phoneCode" => "+1",
                     "format" => [
                         "frontendDate" => "mm/dd/yyyy",
-                        "frontendTime" => "h:i A",
+                        "frontendTime" => "h:i a",
                         "momentjsDayAndDateWithText" => "MMMM D ddd",
-                        "momentJsTime" => "HH a",
+                        "momentJsTime" => "h:mm a",
                         "carbonDate" => "m/d/Y",
                         "carbonTime" => "g:i A",
                         "carbonFullDateWithText" => "F d, Y g:i A",
