@@ -38,6 +38,7 @@ class AppointmentsController extends Controller
 
     public function store(CreateAppointmentCalendarRequest $request)
     {
+ 
         $client_id = null;
         $user = User::where('external_id', $request->user)->first();
 
@@ -61,14 +62,19 @@ class AppointmentsController extends Controller
             return response(__("User not found"), 422);
         }
 
+        $startTime = str_replace(["am", "pm", ' '], "", $request->start_time) . ':00';
+        $endTime = str_replace(["am", "pm", ' '], "", $request->end_time) . ':00';
+
+     
+
         $appointment = Appointment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'source_type' => $request_type,
             'source_id' => $request_id,
             'client_id' => $client_id,
             'title' => $request->title,
-            'start_at' => Carbon::parse($request->start_date . $request->start_time),
-            'end_at' => Carbon::parse($request->end_date . $request->end_time),
+            'start_at' => Carbon::parse($request->start_date . " " . $startTime),
+            'end_at' => Carbon::parse($request->end_date . " " . $endTime),
             'user_id' => $user->id,
             'color' => $request->color
         ]);

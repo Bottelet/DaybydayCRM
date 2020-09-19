@@ -15,7 +15,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="form-group col-xs-12">
-                            <label for="title" class="col-sm-1 thin-weight control-label">Title</label>
+                            <label for="title" class="col-sm-1 thin-weight control-label">{{trans('Title')}}</label>
 
                             <div class="form-group col-sm-6">
                                 <input type="text" id="title" name="title"  class="form-control" v-model="newAppointment.title">
@@ -42,7 +42,7 @@
                             <div class="form-group col-sm-4">
                                 <input type="text" id="start_date" name="start_date"  class="form-control" v-model="newAppointment.start_date">
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <input type="text" id="start_time" name="start_time" class="form-control" v-model="newAppointment.start_time">
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                             <div class="form-group col-sm-4">
                                 <input type="text" id="end_date" name="end_date"  class="form-control" v-model="newAppointment.end_date">
                             </div>
-                            <div class="form-group col-sm-2">
+                            <div class="form-group col-sm-3">
                                 <input type="text" id="end_time" name="end_time" class="form-control" v-model="newAppointment.end_time">
                             </div>
                         </div>
@@ -192,14 +192,18 @@
                 this.validateTimeAndDate()
             },
             updateNewAppointmentTime(field, newValue) {
-                let time = moment(newValue._data).format('mm:ss');
+                var format = 'mm:ss';
+                if(this.dateFormats.momentjs_time.endsWith('a')) {
+                    format = 'mm:ss a';
+                }
+
+                let time = moment(newValue._data).format(format);
                 this.newAppointment[field] = time;
                 this.validateTimeAndDate()
             },
             validateTimeAndDate() {
                 let start = moment(this.newAppointment.start_date + ' ' + this.newAppointment.start_time + ':00', this.dateFormats.carbon_date_with_text.toUpperCase() +  " " + this.dateFormats.momentjs_time);
                 let end = moment(this.newAppointment.end_date + ' ' + this.newAppointment.end_time + ':00', this.dateFormats.carbon_date_with_text.toUpperCase() +  " " + this.dateFormats.momentjs_time);
-
                 if (start.isSameOrAfter(end)) {
                     this.timeAndDateWarnings = {"warnings": ["Not possible to set end before start"]};
                     this.newAppointment.end_time = start.add(1, 'hour').format(this.dateFormats.momentjs_time);
