@@ -1,7 +1,6 @@
 @extends('layouts.master')
 @section('heading')
     {{__('All Departments')}}
-    @dd(auth()->user()->id)
     @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
         <a href="{{ route('departments.create')}}">
             <button class="btn btn-brand cta-btn pull-right">@lang('New Department')</button>
