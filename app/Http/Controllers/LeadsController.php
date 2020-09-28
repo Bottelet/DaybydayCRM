@@ -187,7 +187,7 @@ class LeadsController extends Controller
 
     public function convertToOrder(Lead $lead)
     {
-        $invoice = $lead->canConvertToOrder();
+        $invoice = $lead->convertToOrder();
         return $invoice->external_id;
     }
     /**

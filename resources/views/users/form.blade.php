@@ -20,6 +20,7 @@
         </div>
         <div class="input-group" style="margin-left: 0.7em;">
             <input type="file" name="image_path">
+            <span style="font-size:10px">Recommended size 300x300</span>
         </div>
     </div>
 </div>

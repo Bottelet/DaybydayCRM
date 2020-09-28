@@ -82,7 +82,7 @@ class LeadsControllerTest extends TestCase
     {
         $lead = factory(Lead::class)->create();
 
-        $response = $this->json('PATCH', route('lead.followup', $lead->external_id), [
+        $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline' => '2020-08-06',
             'contact_time' => '15:00',
         ]);
