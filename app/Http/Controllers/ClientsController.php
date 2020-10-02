@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Enums\Country;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Status;
@@ -204,7 +205,8 @@ class ClientsController extends Controller
     {
         return view('clients.create')
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withIndustries($this->listAllIndustries());
+            ->withIndustries($this->listAllIndustries())
+            ->withCountry(Country::fromCode(Setting::first()->country));
     }
 
     /**

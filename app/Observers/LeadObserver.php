@@ -12,6 +12,8 @@ class LeadObserver
     {
         $this->relations = [
             'comments',
+            'activity',
+            'appointments'
         ];
     }
 
@@ -72,6 +74,8 @@ class LeadObserver
      */
     public function forceDeleted(Lead $lead)
     {
-        //
+        foreach ($this->relations as $relation) {
+            $lead->$relation()->withTrashed()->forceDelete();
+        }
     }
 }

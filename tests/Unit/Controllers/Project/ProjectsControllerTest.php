@@ -1,17 +1,12 @@
 <?php
 namespace Tests\Unit\Controllers\Project;
 
-use App\Models\Contact;
 use App\Models\Project;
 use App\Models\Status;
 use Carbon\Carbon;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Client;
 use App\Models\User;
-use App\Models\Industry;
-
-use Ramsey\Uuid\Uuid;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 

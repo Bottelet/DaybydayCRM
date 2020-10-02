@@ -50,7 +50,8 @@ class ProjectsController extends Controller
                     $projects->status->title . '</span>';
             })
             ->addColumn('view', function ($projects) {
-                return '<a href="' . route("projects.show", $projects->external_id) . '" class="btn btn-link">' . __('View') .'</a>';
+                return '<a href="' . route("projects.show", $projects->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
+                . '<a data-toggle="modal" data-id="'. route('projects.destroy',$projects->external_id) . '" data-title="'. $projects->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>';
             })
             ->rawColumns(['titlelink','view', 'status_id'])
             ->make(true);
@@ -62,19 +63,37 @@ class ProjectsController extends Controller
         ->withStatuses(Status::typeOfProject()->get());
     }
 
-    public function update()
+    public function destroy(Project $project, Request $request)
     {
+        $deleteTasks = $request->delete_tasks ? true : false;
+        if($project->tasks && $deleteTasks) {
+            $project->tasks()->delete();
+        } else {
+            $project->tasks()->update(['project_id' => null]);
+        }
+        
+        $project->delete();
+        
+        Session()->flash('flash_message', __('Project deleted'));
+        return redirect()->back();
     }
+
 
     /**
      * @param StoreTaskRequest $request
      * @return mixed
      */
-    public function store(StoreProjectRequest $request) // uses __contrust request
+    public function store(StoreProjectRequest $request) 
     {
         if ($request->client_external_id) {
             $client = Client::whereExternalId($request->client_external_id);
         }
+
+        if(!$client) {
+            Session()->flash('flash_message', __('Could not find client'));
+            return redirect()->back();
+        }
+
         $project = Project::create(
             [
                 'title' => $request->title,
@@ -84,7 +103,7 @@ class ProjectsController extends Controller
                 'status_id' => $request->status_id,
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => Client::whereExternalId($client->external_id)->first()->id,
+                'client_id' => $client ? $client->id : null,
             ]
         );
 

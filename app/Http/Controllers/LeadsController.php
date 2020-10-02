@@ -32,6 +32,43 @@ class LeadsController extends Controller
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
     }
 
+
+    public function index()
+    {
+        return view('leads.index')
+        ->withStatuses(Status::typeOfLead()->get());;
+    }
+    
+    public function allLeads()
+    {
+        $leads = Lead::with(['user', 'status'])->select('leads.*')->get();
+
+        return Datatables::of($leads)
+            ->addColumn('titlelink', function ($leads) {
+                return '<a href="'.route('leads.show', $leads->external_id).'">'.$leads->title.'</a>';
+            })
+            ->editColumn('qualified', function ($leads) {
+                return $leads->qualified ? __('True') : __('False');
+            })
+            ->editColumn('contact_date', function ($leads) {
+                return $leads->deadline ? with(new Carbon($leads->deadline))
+                    ->format(carbonDate()) : '';
+            })
+            ->editColumn('user_assigned_id', function ($leads) {
+                return $leads->user->name;
+            })
+            ->editColumn('status_id', function ($leads) {
+                return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> ' .
+                    $leads->status->title . '</span>';
+            })
+            ->addColumn('view', function ($leads) {
+                return '<a href="' . route("leads.show", $leads->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
+                . '<a data-toggle="modal" data-id="'. route('leads.destroy',$leads->external_id) . '" data-title="'. $leads->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>';
+            })
+            ->rawColumns(['titlelink','view', 'status_id'])
+            ->make(true);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -105,6 +142,20 @@ class LeadsController extends Controller
         event(new \App\Events\LeadAction($lead, self::CREATED));
         Session()->flash('flash_message', __('Lead successfully added'));
         return redirect()->route('leads.show', $insertedExternalId);
+    }
+
+    public function destroy(Lead $lead, Request $request)
+    {
+        $deleteInvoice = $request->delete_invoice ? true : false;
+        if($lead->invoice && $deleteInvoice) {
+            $lead->invoice()->delete();
+        } elseif($lead->invoice) {
+            $lead->invoice->removeReference();
+        }
+        $lead->delete();
+        
+        Session()->flash('flash_message', __('Lead deleted'));
+        return redirect()->back();
     }
 
     public function updateAssign($external_id, Request $request)

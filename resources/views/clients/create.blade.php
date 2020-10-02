@@ -68,27 +68,29 @@
             'url' => '/clients/create/cvrapi'
 
             ]) !!}
+            @if($country->getCode() == "DK")
             <div class="col-sm-3">
                 <p style="font-size:1.2em; font-weight:300;">VAT</p>
             </div>
             <div class="col-sm-9">
-    <div class="form-group">
-        <div class="input-group">
+             <div class="form-group">
+                <div class="input-group">
 
-            {!! Form::text('vat', null, ['class' => 'form-control', 'placeholder' => 'Insert company VAT']) !!}
-            <div class="popoverOption input-group-addon"
-                 rel="popover"
-                 data-placement="left"
-                 data-html="true"
-                 data-original-title="<span>Only for DK, atm.</span>">?
+                    {!! Form::text('vat', null, ['class' => 'form-control', 'placeholder' => 'Insert company VAT']) !!}
+                    <div class="popoverOption input-group-addon"
+                        rel="popover"
+                        data-placement="left"
+                        data-html="true"
+                        data-original-title="<span>Only for danish VAT, atm.</span>">?
+                    </div>
+
+                </div>
+                {!! Form::submit(__('Find Company'), ['class' => 'btn btn-sm btn-brand  clientvat']) !!}
+
             </div>
-
-        </div>
-        {!! Form::submit(__('Find Company'), ['class' => 'btn btn-sm btn-brand  clientvat']) !!}
-
-    </div>
-    </div>
+        </div>  
     <hr>
+    @endif
 
     {!!Form::close()!!}
 

@@ -85,6 +85,7 @@ Route::group(['middleware' => ['auth']], function () {
      * Leads
      */
     Route::group(['prefix' => 'leads'], function () {
+        Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
         Route::get('/data', 'LeadsController@unqualifiedLeads')->name('leads.data');
         Route::get('/unqualified', 'LeadsController@unqualified')->name('leads.unqualified');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee');

@@ -76,7 +76,9 @@ class TasksController extends Controller
                     $tasks->status->title . '</span>';
             })
             ->addColumn('view', function ($tasks) {
-                return '<a href="' . route("tasks.show", $tasks->external_id) . '" class="btn btn-link">' . __('View') .'</a>';
+                return '<a href="' . route("tasks.show", $tasks->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
+                . '<a data-toggle="modal" data-id="'. route('tasks.destroy',$tasks->external_id) . '" data-title="'. $tasks->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>'
+                ;
             })
             ->rawColumns(['titlelink','view', 'status_id'])
             ->make(true);
@@ -155,6 +157,21 @@ class TasksController extends Controller
         //Hack to make dropzone js work, as it only called with AJAX and not form submit
         return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $project ? $project->external_id : null]);
         return redirect()->route("tasks.show", $insertedExternalId);
+    }
+
+    public function destroy(Task $task, Request $request)
+    {
+        $deleteInvoice = $request->delete_invoice ? true : false;
+
+        if($task->invoice && $deleteInvoice) {
+            $task->invoice()->delete();
+        } elseif ($task->invoice) {
+            $task->invoice->removeReference();
+        }
+        $task->delete();
+        
+        Session()->flash('flash_message', __('Task deleted'));
+        return redirect()->back();
     }
 
     private function upload($image, $task)

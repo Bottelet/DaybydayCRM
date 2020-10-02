@@ -93,6 +93,14 @@ class Invoice extends Model
         return $this->sent_at != null;
     }
 
+    public function removeReference(): bool
+    {
+        return $this->update([
+            'integration_invoice_id' => null,
+            'integration_type' => null,
+        ]);
+    }
+
     /**
      * @param $contactId
      * @param bool $sendMail

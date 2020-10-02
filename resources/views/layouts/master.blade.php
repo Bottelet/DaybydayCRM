@@ -96,6 +96,8 @@
                         class="fa fa-hourglass-2 sidebar-icon"></i><span id="menu-txt">{{ __('Leads') }}</span>
                 <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
             <div class="collapse" id="leads">
+            <a href="{{ route('leads.index')}}" class="list-group-item childlist"> <i
+                            class="bullet-point"><span></span></i> {{ __('All Leads') }}</a>
                 <a href="{{ route('leads.unqualified')}}" class="list-group-item childlist"> <i
                             class="bullet-point"><span></span></i> {{ __('Unqualified Leads') }}</a>
                 @if(Entrust::can('lead-create'))
@@ -124,7 +126,7 @@
                                 class="bullet-point"><span></span></i> {{ __('Absence overview') }}</a>
                 @endif
                 @if(Entrust::can('absence-manage'))
-                    <a href="{{ route('absence.create', ['management' => "true"])}}"
+                    <a href="{{ route('absence.create', ['management' => 'true'])}}"
                        class="list-group-item childlist"> <i
                                 class="bullet-point"><span></span></i> {{ __('Register absence') }}</a>
                 @endif

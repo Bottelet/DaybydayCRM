@@ -89,6 +89,11 @@ class Project extends model implements Commentable
         return $this->hasMany(Task::class);
     }
 
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'source');
+    }
+
     public function isClosed()
     {
         return $this->status->title == self::PROJECT_STATUS_CLOSED;

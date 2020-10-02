@@ -13,29 +13,9 @@ class TaskObserver
         $this->relations = [
             'comments',
             'documents',
-            'invoice'
+            'appointments',
+            'activity',
         ];
-    }
-
-    /**
-     * Handle the task "created" event.
-     *
-     * @param  \App\Models\Task  $task
-     * @return void
-     */
-    public function created(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Handle the task "updated" event.
-     *
-     * @param  \App\Models\Task  $task
-     * @return void
-     */
-    public function updated(Task $task)
-    {
     }
 
     /**
@@ -72,6 +52,8 @@ class TaskObserver
      */
     public function forceDeleted(Task $task)
     {
-        //
+        foreach ($this->relations as $relation) {
+            $task->$relation()->forceDelete();
+        }
     }
 }

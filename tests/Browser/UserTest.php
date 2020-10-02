@@ -47,7 +47,7 @@ class UserTest extends DuskTestCase
      */
     public function testICanCreateANewUser()
     {
-        Setting::whereTenantId(1)->update(['max_users' => 10000000]);
+        Setting::whereId(1)->update(['max_users' => 10000000]);
         $faker = Faker::create();
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())

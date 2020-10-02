@@ -117,6 +117,11 @@ class Lead extends Model implements Commentable
     {
         return $this->morphMany(Activity::class, 'source');
     }
+    
+    public function appointments()
+    {
+        return $this->morphMany(Appointment::class, 'source');
+    }
 
     public function status()
     {

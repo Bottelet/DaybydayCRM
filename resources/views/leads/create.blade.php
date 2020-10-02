@@ -39,9 +39,13 @@
                             
                                 <label for="client_external_id" class="control-label thin-weight">@lang('Assign client')</label>
                                 <select name="client_external_id" id="client_external_id" class="form-control">
+                                    @if($clients->isEmpty())
+                                        <option value="" default></option>
+                                        <option value="new_client">+ @lang('Create New Client')</option>
+                                    @endif
                                     @foreach($clients as $client => $clientK)
                                         <option value="{{$client}}">{{$clientK}}</option>
-                                @endforeach
+                                    @endforeach
                                 </select>
                             @endif
 
@@ -90,6 +94,12 @@
 @endpush
 @push('scripts')
     <script>
+        $("#client_external_id").click(function() {
+            var value = $("#client_external_id").val();
+            if(value == "new_client") {
+                window.location.href = "/clients/create"
+            }
+        });
         $('#description').summernote({
             toolbar: [
                 [ 'fontsize', [ 'fontsize' ] ],

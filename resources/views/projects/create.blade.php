@@ -49,7 +49,11 @@
                             @else
                                 <label for="client_external_id" class="control-label thin-weight">@lang('Assign client')</label>
                                 <select name="client_external_id" id="client_external_id" class="form-control">
-                                    @foreach($clients as $client => $clientK)
+                                @if($clients->isEmpty())
+                                        <option value="" default></option>
+                                        <option value="new_client">+ @lang('Create New Client')</option>
+                                @endif
+                                @foreach($clients as $client => $clientK)
                                         <option value="{{$client}}">{{$clientK}}</option>
                                 @endforeach
                                 </select>
@@ -91,6 +95,12 @@
     <script>
         Dropzone.autoDiscover = false;
         $(document).ready(function () {
+            $("#client_external_id").click(function() {
+                var value = $("#client_external_id").val();
+                if(value == "new_client") {
+                    window.location.href = "/clients/create"
+                }
+            });
 
           $('#description').summernote({
             toolbar: [
@@ -152,8 +162,7 @@
                         url: '{{route('projects.store')}}',
                         data: $("#createProjectForm").serialize(),
                         success: function(response){
-
-                             window.location.href = ("/projects/"+response.project_external_id)
+                            window.location.href = ("/projects/"+response.project_external_id)
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.log(jqXHR.responseJSON, textStatus);

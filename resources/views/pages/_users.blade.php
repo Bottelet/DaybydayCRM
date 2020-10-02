@@ -16,7 +16,7 @@
                         <a href="{{url('/users', $user->external_id)}}"
                            class="tablet__item__title">{{$user->name}}</a>
                         <div class="tablet__item__description">
-                            {{$user->department->first()->name}}
+                            {{optional($user->department->first())->name}}
                         </div>
                     </div>
                     <div class="tablet__item__toolbar">

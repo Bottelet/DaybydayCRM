@@ -105,9 +105,8 @@ class ClientTest extends DuskTestCase
             $browser->assertDontSee($user->email);
             $browser->assertDontSee($user->name);
             $browser->click("#assignee-user");
-            $browser->clickLink($user->name);
-            $browser->waitForText($user->email);
-            $browser->assertSee($user->email);
+            $browser->clickLink($user->name, 'span');
+            $browser->seeLink($user->email);
             $browser->assertSee($user->name);
         });
     }

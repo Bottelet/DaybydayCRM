@@ -11,7 +11,9 @@ class ProjectObserver
     public function __construct()
     {
         $this->relations = [
-            'invoice'
+            'comments',
+            'activity',
+            'documents',
         ];
     }
 
@@ -71,6 +73,8 @@ class ProjectObserver
      */
     public function forceDeleted(Project $project)
     {
-        //
+        foreach ($this->relations as $relation) {
+            $project->$relation()->forceDelete();
+        }
     }
 }

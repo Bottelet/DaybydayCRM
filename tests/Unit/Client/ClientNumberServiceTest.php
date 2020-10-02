@@ -32,20 +32,21 @@ class ClientNumberServiceTest extends TestCase
         ]);
 
         $this->clientNumberService = app(ClientNumberService::class);
+        $this->clientNumberService->setClientNumber("980200");
     }
 
     /** @test */
     public function setNextClientNumberTakesBiggestClientNumberAndAddOne()
     {
-        $this->assertEquals(10000, $this->clientNumberService->setNextClientNumber());
-        $this->assertEquals(10001, $this->clientNumberService->setNextClientNumber());
+        $this->assertEquals(980200, $this->clientNumberService->setNextClientNumber());
+        $this->assertEquals(980201, $this->clientNumberService->setNextClientNumber());
     }
 
     /** @test */
-    public function nextClientNumberTakesBiggestClientNumberAndDoesNotAddOne()
+    public function nextClientNumberTakesBiggestClientNumberAndDoesNotSetIt()
     {
-        $this->assertEquals(10000, $this->clientNumberService->nextClientNumber());
-        $this->assertEquals(10000, $this->clientNumberService->nextClientNumber());
+        $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
+        $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
     }
 
     /** @test */

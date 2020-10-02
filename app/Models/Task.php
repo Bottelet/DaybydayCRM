@@ -48,6 +48,11 @@ class Task extends Model implements Commentable
         //}
     }
 
+    public function getRouteKeyName()
+    {
+        return 'external_id';
+    }
+
     public function displayValue()
     {
         return $this->title;

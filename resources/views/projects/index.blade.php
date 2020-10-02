@@ -18,12 +18,50 @@
                     @foreach($statuses as $status)
                         <option class="table-status-input-option" {{ $status->title == 'Open' ? 'selected' : ''}} value="{{$status->title}}">{{$status->title}}</option>
                     @endforeach
-                    <option value="all">All</option>
+                    <option value="all">@lang('All')</option>
                 </select>
             </th>
         </tr>
         </thead>
     </table>
+
+      <!-- DELETE MODAL SECTION -->
+      <div id="deletion" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+        <form method="POST" id="deletion-form">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">@lang('Deletion of ') <span id="deletion-title"></span></h4>
+            </div>
+            <div class="modal-body">
+   
+            @method('delete')
+            @csrf
+            <label style="font-weight: 300; color:#333; font-size:14px;">
+                <input type="checkbox" name="delete_tasks"> @lang('Delete tasks') 
+            </label>
+            <p>
+            @lang('If the tasks are not deleted, they will be attached to the client, without a reference to the project').
+            </p>
+            <p>
+            @lang('Keep in mind, every document, activity, appointment, and comment related will be deleted as well').
+            </p>
+            <p>
+            @lang('Once deleted, it is not possible to restore it. Are you sure?')
+            </p>
+            
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">@lang('Cancel')</button>
+            <input type="submit" class="btn btn-brand" value="{{__('Delete')}}">
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- END OF THE EDIT MODAL SECTION -->
 @stop
 
 @push('scripts')
@@ -72,6 +110,14 @@
                 }
             });
         });
+        $( '#deletion' ).on( 'show.bs.modal', function (e) {
+            var target = e.relatedTarget;
+            var id = $(target).data('id');
+            var title = $(target).data('title');
+            console.log(title);
+            $("#deletion-title").text(title);
+            $('#deletion-form').attr('action', id)
 
+        });
     </script>
 @endpush

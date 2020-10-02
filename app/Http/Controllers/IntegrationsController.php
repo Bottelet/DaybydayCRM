@@ -20,7 +20,7 @@ class IntegrationsController extends Controller
      */
     public function index()
     {
-
+        $dropbox_auth_url =  app(DropboxAuthenticator::class)->authUrl();
         $billing_integration = Integration::whereApiType('billing')->first();
         $filesystem_integration = Integration::whereApiType('file')->first();
 
@@ -28,8 +28,9 @@ class IntegrationsController extends Controller
         ->with('billing_integration', $billing_integration)
         ->with('filesystem_integration', $filesystem_integration)
         ->with('google_drive_auth_url', null)
-        ->with('dropbox_auth_url', null);
+        ->with('dropbox_auth_url', $dropbox_auth_url);
     }
+
 
     /**
      * Store a newly created resource in storage.
