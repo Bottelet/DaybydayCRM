@@ -139,4 +139,22 @@ class LeadTest extends DuskTestCase
                 ->assertSee("This is a test lead title");
         });
     }
+
+    /**
+     * Test i can create a new task
+     */
+    public function testICanGoToCreateNewClientInDropdownIfNoClientsExistsFromLead()
+    {
+        Client::query()->forceDelete();
+
+        $user = factory(User::class)->create();
+
+        $this->browse(function (Browser $browser) use ($user) {
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->visit('/projects/create')
+                ->select('user_assigned_id', $user->id)
+                ->select('client_external_id', "new_client")
+                ->assertPathIs('/clients/create');
+        });
+    }
 }

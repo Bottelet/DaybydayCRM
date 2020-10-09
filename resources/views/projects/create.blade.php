@@ -48,7 +48,14 @@
                                 <input type="hidden" name="client_external_id" value="{!! Request::get('client') ?: $client->external_id !!}">
                             @else
                                 <label for="client_external_id" class="control-label thin-weight">@lang('Assign client')</label>
-                                <select name="client_external_id" id="client_external_id" class="form-control">
+                                <select 
+                                name="client_external_id" 
+                                id="client_external_id" 
+                                data-container="body" 
+                                data-live-search="true" 
+                                data-style-base="form-control"
+                                data-style=""
+                                data-width="100%">
                                 @if($clients->isEmpty())
                                         <option value="" default></option>
                                         <option value="new_client">+ @lang('Create New Client')</option>
@@ -95,13 +102,15 @@
     <script>
         Dropzone.autoDiscover = false;
         $(document).ready(function () {
-            $("#client_external_id").click(function() {
-                var value = $("#client_external_id").val();
-                if(value == "new_client") {
-                    window.location.href = "/clients/create"
-                }
-            });
+          $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+            var value = $("#client_external_id").val();
+            console.log(value);
+            if(value == "new_client") {
+              window.location.href = "/clients/create"
+            }
+          });
 
+          $('#client_external_id').selectpicker()
           $('#description').summernote({
             toolbar: [
                 [ 'fontsize', [ 'fontsize' ] ],
