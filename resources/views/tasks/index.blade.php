@@ -9,8 +9,9 @@
         <tr>
 
             <th>{{ __('Title') }}</th>
-            <th>{{ __('Created at') }}</th>
+            <th>{{ __('Client') }}</th>
             <th>{{ __('Deadline') }}</th>
+            <th>{{ __('Created at') }}</th>
             <th>{{ __('Assigned') }}</th>
             <th>
                 <select name="status_id" id="status-task" class="table-status-input">
@@ -75,6 +76,12 @@
     #tasks-table tbody tr:hover .table-actions{
       opacity: 1;
     }
+    .title-table-tab {
+        width:260px;
+    }
+    .client-table-tab {
+        width:220px;
+    }
 </style>
     <script>
         $(function () {
@@ -92,21 +99,22 @@
                     select.addClass("tablet__select");
                 },
                 columns: [
-                    {data: 'titlelink', name: 'title'},
-                    {data: 'created_at', name: 'created_at'},
+                    {data: 'titlelink', name: 'title', class: 'title-table-tab'},
+                    {data: 'client', name: 'client', class: 'client-table-tab'},
                     {data: 'deadline', name: 'deadline'},
+                    {data: 'created_at', name: 'created_at'},
                     {data: 'user_assigned_id', name: 'user_assigned_id'},
                     {data: 'status_id', name: 'status.title', orderable: false},
                     {data: 'view', name: 'view', orderable: false, searchable: false, class: 'table-actions'},
                 ]
             });
-            table.columns(4).search('^' + 'Open' + '$', true, false).draw();
+            table.columns(5).search('^' + 'Open' + '$', true, false).draw();
             $('#status-task').change(function () {
                 selected = $("#status-task option:selected").val();
                 if (selected == "all") {
-                    table.columns(4).search('').draw();
+                    table.columns(5).search('').draw();
                 } else {
-                    table.columns(4).search(selected ? '^' + selected + '$' : '', true, false).draw();
+                    table.columns(5).search(selected ? '^' + selected + '$' : '', true, false).draw();
                 }
             });
         });

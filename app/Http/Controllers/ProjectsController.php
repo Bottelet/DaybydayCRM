@@ -26,20 +26,23 @@ class ProjectsController extends Controller
 
     public function indexData()
     {
-        $projects = Project::with(['assignee', 'status'])->select(
-            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id']
+        $projects = Project::with(['assignee', 'status', 'client'])->select(
+            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
         )->get();
 
         return Datatables::of($projects)
             ->addColumn('titlelink', function ($projects) {
                 return '<a href="projects/' . $projects->external_id . '" ">' . $projects->title . '</a>';
             })
-            ->editColumn('created_at', function ($projects) {
-                return $projects->created_at ? with(new Carbon($projects->created_at))
-                    ->format(carbonDate()) : '';
+            ->editColumn('client', function ($projects) {
+                return $projects->client->company_name;
             })
             ->editColumn('deadline', function ($projects) {
                 return $projects->created_at ? with(new Carbon($projects->deadline))
+                    ->format(carbonDate()) : '';
+            })
+            ->editColumn('created_at', function ($projects) {
+                return $projects->created_at ? with(new Carbon($projects->created_at))
                     ->format(carbonDate()) : '';
             })
             ->editColumn('user_assigned_id', function ($projects) {

@@ -41,11 +41,14 @@ class LeadsController extends Controller
     
     public function allLeads()
     {
-        $leads = Lead::with(['user', 'status'])->select('leads.*')->get();
+        $leads = Lead::with(['user', 'status', 'client'])->select('leads.*')->get();
 
         return Datatables::of($leads)
             ->addColumn('titlelink', function ($leads) {
                 return '<a href="'.route('leads.show', $leads->external_id).'">'.$leads->title.'</a>';
+            })
+            ->editColumn('client', function ($projects) {
+                return $projects->client->company_name;
             })
             ->editColumn('qualified', function ($leads) {
                 return $leads->qualified ? __('True') : __('False');

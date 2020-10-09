@@ -52,13 +52,16 @@ class TasksController extends Controller
 
     public function anyData()
     {
-        $tasks = Task::with(['user', 'status'])->select(
-            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id']
+        $tasks = Task::with(['user', 'status', 'client'])->select(
+            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
         )->get();
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
                 return '<a href="tasks/' . $tasks->external_id . '" ">' . $tasks->title . '</a>';
+            })
+            ->editColumn('client', function ($projects) {
+                return $projects->client->company_name;
             })
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))

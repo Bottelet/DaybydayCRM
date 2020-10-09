@@ -9,6 +9,7 @@
         <tr>
 
             <th>{{ __('Title') }}</th>
+            <th>{{ __('Client') }}</th>
             <th>{{ __('Qualified') }}</th>
             <th>{{ __('Deadline') }}</th>
             <th>{{ __('Assigned') }}</th>
@@ -77,6 +78,12 @@
     #leads-table tbody tr:hover .table-actions{
       opacity: 1;
     }
+    .title-table-tab {
+        width:260px;
+    }
+    .client-table-tab {
+        width:220px;
+    }
 </style>
 <script>
     $(function () {
@@ -93,7 +100,8 @@
                 select.addClass("tablet__select");
             },
             columns: [
-                {data: 'titlelink', name: 'title'},
+                {data: 'titlelink', name: 'title', class: 'title-table-tab'},
+                {data: 'client', name: 'client', class: 'client-table-tab'},
                 {data: 'qualified', name: 'qualified'},
                 {data: 'contact_date', name: 'contact_date',},
                 {data: 'user_assigned_id', name: 'user_assigned_id'},
@@ -101,14 +109,14 @@
                 {data: 'view', name: 'view', orderable: false, searchable: false, class: 'table-actions'},
             ]
         });
-        table.columns(4).search('^' + 'Open' + '$', true, false).draw();
+        table.columns(5).search('^' + 'Open' + '$', true, false).draw();
             $('#status-lead').change(function () {
                 selected = $("#status-lead option:selected").val();
                 if (selected == "all") {
-                    table.columns(4).search('').draw();
+                    table.columns(5).search('').draw();
                 } else {
                     console.log(selected)
-                    table.columns(4).search(selected ? '^' + selected + '$' : '', true, false).draw();
+                    table.columns(5).search(selected ? '^' + selected + '$' : '', true, false).draw();
                 }
             });
     });
