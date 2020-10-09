@@ -34,7 +34,7 @@ class LeadObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteTasksSoftDeletes()
+    public function deleteLeadsSoftDeletes()
     {
         $this->lead->delete();
         
@@ -42,7 +42,7 @@ class LeadObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteTaskSoftDeletesRelations()
+    public function deleteLeadsoftDeletesRelations()
     {
         $this->assertNotEmpty($this->lead->comments);
         $this->assertNotEmpty($this->lead->activity);
@@ -62,15 +62,15 @@ class LeadObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function forceDeleteRemovesTaskFromDatabase()
+    public function forceDeleteRemovesLeadFromDatabase()
     {
-        $taskId = $this->lead->id;
+        $leadId = $this->lead->id;
         
         $this->lead->forceDelete();
         $this->lead->refresh();
 
-        $this->assertDatabaseMissing('tasks', [
-            'id' => $taskId
+        $this->assertDatabaseMissing('leads', [
+            'id' => $leadId
         ]);
     }
 
@@ -102,7 +102,7 @@ class LeadObserverDeleteTest extends TestCase
             'status' => 'Test',
             'client_id' => factory(Client::class)->create()->id,
             'integration_invoice_id' => $this->lead->id,
-            'integration_type' => Task::class,
+            'integration_type' => Lead::class,
         ]);
 
         $this->lead->invoice_id = $invoice->id;
