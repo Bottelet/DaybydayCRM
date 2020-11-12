@@ -1,4 +1,7 @@
 @extends('layouts.master')
+@section('heading')
+    {{ __('Create New Client') }}
+@stop
 @section('content')
 @push('scripts')
     <script>
@@ -62,20 +65,19 @@
     <?php
     $data = Session::get('data');
     ?>
-<h1>Create Client</h1>
 <hr>
     {!! Form::open([
             'url' => '/clients/create/cvrapi'
 
             ]) !!}
             <div class="col-sm-3">
-                <p style="font-size:1.2em; font-weight:300;">VAT</p>
+                <p style="font-size:1.2em; font-weight:300;">{!! __('Vat') !!}</p>
             </div>
             <div class="col-sm-9">
     <div class="form-group">
         <div class="input-group">
 
-            {!! Form::text('vat', null, ['class' => 'form-control', 'placeholder' => 'Insert company VAT']) !!}
+            {!! Form::text('vat', null, ['class' => 'form-control', 'placeholder' => __('Insert Company Vat')]) !!}
             <div class="popoverOption input-group-addon"
                  rel="popover"
                  data-placement="left"
