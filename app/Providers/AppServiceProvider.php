@@ -13,6 +13,7 @@ use App\Observers\TaskObserver;
 use App\Observers\LeadObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\InvoiceObserver;
+use App\Repositories\Format\GetDateFormat;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 use Laravel\Cashier\Cashier;
@@ -44,5 +45,6 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('local', 'testing')) {
             $this->app->register(DuskServiceProvider::class);
         }
+        $this->app->singleton(GetDateFormat::class);
     }
 }

@@ -52,9 +52,20 @@ class TasksController extends Controller
 
     public function anyData()
     {
+<<<<<<< HEAD
         $tasks = Task::with(['user', 'status', 'client'])->select(
             ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
         )->get();
+=======
+        $tasks = Task::with(['user', 'status'])->select(
+            collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id'])
+                ->map(function ($field) {
+                    $tablePrefix = (new Task())->getTable();
+                    return "$tablePrefix.$field";
+                })
+                ->all()
+        );
+>>>>>>> develop
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', function ($tasks) {
