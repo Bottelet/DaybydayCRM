@@ -16,10 +16,13 @@
 <div class="col-sm-9">
     <div class="form-group form-inline col-sm-8">
         <div class="input-group ">
-            <img src="{{isset($user) ? optional($user)->avatar : '/images/default_avatar.jpg'}}" style="max-height: 40px; border-radius: 25px;">
+            <img id="preview_avatar" src="{{isset($user) ? optional($user)->avatar : '/images/default_avatar.jpg'}}" style="max-height: 40px; border-radius: 25px;">
+        </div>
+        <div id="input_avatar" class="input-group" style="margin-left: 0.7em;">
+            <input type="file" name="image_path" id="avatar_image" onchange="loadPreview(this);">
         </div>
         <div class="input-group" style="margin-left: 0.7em;">
-            <input type="file" name="image_path">
+            <button id="delete_avatar" type="button">remove</button>
         </div>
     </div>
 </div>
