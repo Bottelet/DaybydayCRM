@@ -107,8 +107,12 @@
 <div class="col-sm-9">
     <div class="form-group col-sm-8">
         <label for="language" class="control-label thin-weight">@lang('Language')</label> <br>
+
         <label class="radio-inline">
             <input value="dk" type="radio" name="language" {{isset($user) && strtolower($user->language) == "dk" ? 'checked': ''}}>@lang('Danish')
+        </label>
+        <label class="radio-inline">
+            <input value="de" type="radio" name="language" {{isset($user) && strtolower($user->language) == "de" ? 'checked': ''}}>@lang('German')
         </label>
         <label class="radio-inline">
             <input value="en" type="radio" name="language" {{isset($user) && strtolower($user->language) == "en" ? 'checked': ''}}>@lang('English')
