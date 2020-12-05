@@ -50,3 +50,24 @@ if (! function_exists('carbonDate')) {
         return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonDate();
     }
 }
+
+if (!function_exists('translations')) {
+    function translations()
+    {
+        try {
+            $filename = \Illuminate\Support\Facades\File::get(resource_path() . '/lang/' . app()->getLocale() . '.json');
+        } catch (\Illuminate\Contracts\Filesystem\FileNotFoundException $e) {
+            return [];
+        }
+        $trans = [];
+
+        $entries = json_decode($filename, true);
+
+        foreach ($entries as $k => $v) {
+            $trans[$k] = trans($v);
+        }
+        $trans[$filename] = trans($filename);
+
+        return $trans;
+    }
+}
