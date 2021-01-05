@@ -52,11 +52,10 @@ class TasksController extends Controller
 
     public function anyData()
     {
-        $tasks = Task::with(['user', 'status'])->select(
-            collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id'])
+        $tasks = Task::with(['user', 'status', 'client'])->select(
+            collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
                 ->map(function ($field) {
-                    $tablePrefix = (new Task())->getTable();
-                    return "$tablePrefix.$field";
+                    return (new Task())->qualifyColumn($field);
                 })
                 ->all()
         );

@@ -122,4 +122,15 @@ class TasksControllerTest extends TestCase
 
         $this->assertEquals(Carbon::parse('2020-08-06')->toDate(), $task->refresh()->deadline->toDate());
     }
+
+    /** @test */
+    public function can_list_tasks()
+    {
+        factory(Task::class)->create();
+
+        $error = $this->json('GET', route('tasks.data'))
+            ->assertSuccessful()
+            ->json('error');
+        $this->assertNull($error);
+    }
 }
