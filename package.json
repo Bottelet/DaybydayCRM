@@ -19,7 +19,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "bootstrap-sass": "^3.4.1",
     "bootstrap-select": "^1.13.12",
     "chart.js": "^2.9.3",
