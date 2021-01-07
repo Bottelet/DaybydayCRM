@@ -95,6 +95,23 @@ class Country
     {
         if (is_null(self::$values)) {
             self::$values = [
+                "PL" => new Country("PL", [
+                    "displayValue" => "Poland",
+                    "currencyCode" => "EUR",
+                    "language" => "Polish",
+                    "phoneCode" => "+48",
+                    "format" => [
+                        "frontendDate" => "dd/mm/yyyy",
+                        "frontendTime" => "HH:i",
+                        "momentjsDayAndDateWithText" => "ddd D MMMM",
+                        "momentJsTime" => "HH:mm",
+                        "carbonDate" => "d/m/Y",
+                        "carbonTime" => "H:i",
+                        "carbonFullDateWithText" => "d, F Y H:i",
+                        "carbonDateWithText" => "d, F Y"
+
+                    ]
+                ]),
                 "DK" => new Country("DK", [
                     "displayValue" => "Denmark",
                     "currencyCode" => "DKK",
