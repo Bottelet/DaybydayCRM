@@ -14,7 +14,6 @@ class InvoiceLine extends Model
         'external_id',
         'type',
         'quantity',
-        'task_id',
         'title',
         'comment',
         'price',

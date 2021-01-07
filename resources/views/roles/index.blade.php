@@ -18,10 +18,6 @@
             <button class="btn btn-md btn-brand">{{ __('Add new Role') }}</button>
         </a>
     </div>
-
-
-
-
 @stop
 
 
@@ -45,8 +41,8 @@
                     {data: 'namelink', name: 'name', width: "40%"},
                     {data: 'permissions', name: 'permissions', orderable: false, searchable: false,},
                     { data: 'view', name: 'view', orderable: false, searchable: false, class:'fit-action-delete-th'},
-                    @if(auth()->user()->roles->first()->name == "owner" || $role->name == "administrator")
-                    { data: 'delete', name: 'delete', orderable: false, searchable: false, class:'fit-action-delete-th'},
+                    @if(auth()->user()->roles->first()->name == "owner" || auth()->user()->roles->first()->name == "administrator")
+                    { data: 'delete', name: 'delete', orderable: false, searchable: false, class:'fit-action-delete-th'}
                     @endif
                 ]
             });

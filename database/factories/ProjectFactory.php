@@ -14,7 +14,7 @@ $factory->define(Project::class, function (Faker $faker) {
         'description' => $faker->paragraph,
         'user_created_id' => $user->id,
         'user_assigned_id' => $user->id,
-        'client_id' => factory(App\Models\Client::class)->create()->id,
+        'client_id' => factory(App\Models\Client::class),
         'status_id' => $faker->numberBetween($min = 1, $max = 4),
         'deadline' => $faker->dateTimeThisYear($max = 'now'),
         'created_at' => $faker->dateTimeThisYear($max = 'now'),

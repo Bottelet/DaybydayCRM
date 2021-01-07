@@ -9,7 +9,6 @@ $factory->define(Invoice::class, function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'status' => 'draft',
-        'client_id' => factory(\App\Models\Client::class)->create()->id,
-
+        'client_id' => factory(\App\Models\Client::class),
     ];
 });

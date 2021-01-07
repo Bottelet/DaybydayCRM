@@ -14,9 +14,8 @@ $factory->define(Appointment::class, function (Faker $faker) {
         'description' => $faker->text,
         'start_at' => now(),
         'end_at' => now()->addHour(),
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => factory(User::class),
         'source_type' => Task::class,
-        'source_id' => factory(Task::class)->create()->id,
-
+        'source_id' => factory(Task::class),
     ];
 });
