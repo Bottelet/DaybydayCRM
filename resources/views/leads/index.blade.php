@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     <h1>{{__('All Leads')}}</h1>
+    @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
+        <a href="{{ route('leads.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New Lead')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')

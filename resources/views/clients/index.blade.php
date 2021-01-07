@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All clients') }}
+    @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
+        <a href="{{ route('clients.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New Client')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')

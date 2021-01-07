@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All projects')}}
+    @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
+        <a href="{{ route('projects.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New Project')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')

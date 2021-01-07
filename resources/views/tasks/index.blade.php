@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All tasks')}}
+    @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
+        <a href="{{ route('tasks.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New Task')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')

@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All users') }}
+    @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
+        <a href="{{ route('users.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New User')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')
