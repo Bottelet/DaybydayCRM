@@ -1945,7 +1945,7 @@ table.dataTable td {
 }
 
 .tablet__shadow {
-  box-shadow: 0px 2px 18px -4px #4f4f4f;
+  box-shadow: 0px 1px 10px -5px #4f4f4f;
 }
 
 .tablet__head {

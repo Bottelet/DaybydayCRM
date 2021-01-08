@@ -6,6 +6,7 @@ use Closure;
 
 class RedirectIfDemo
 {
+    const MEESAGE = 'This action is not allowed in the demo.';
     /**
      * Handle an incoming request.
      *
@@ -19,7 +20,7 @@ class RedirectIfDemo
             return $next($request);
         }
         
-        Session()->flash('flash_message_warning', __('This action is not allowed in the demo.'));
+        Session()->flash('flash_message_warning', __(self::MEESAGE));
         return redirect()->back();
     }
 }
