@@ -20,7 +20,8 @@ class TaskTest extends DuskTestCase
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
+            'title' => 'Lets',
         ]);
         $this->browse(function (Browser $browser) use ($task) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())

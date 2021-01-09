@@ -18,7 +18,7 @@ class Appointment extends Model
         'external_id',
         'title',
         'description',
-         'color',
+        'color',
         'client_id',
     ];
 
