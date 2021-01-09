@@ -15,6 +15,12 @@ DaybydayCRM a customer relationship management system (CRM) which purpose is to 
 
 <img src="https://user-images.githubusercontent.com/15610490/84194453-54f2b100-aa9d-11ea-8fa8-12bde56b9deb.png" align="left"/>
 
+# Demo
+
+Try a demo version of DaybydayCRM at:
+
+[demo.daybydaycrm.com](https://demo.daybydaycrm.com/)
+
 ### Features
 - Tasks & leads management
 - Invoice management
