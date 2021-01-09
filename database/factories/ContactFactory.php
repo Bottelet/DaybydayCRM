@@ -14,6 +14,5 @@ $factory->define(Contact::class, function (Faker $faker) {
         'secondary_number' => $faker->randomNumber(8),
         'client_id' => 1,
         'is_primary' => 1,
-
     ];
 });

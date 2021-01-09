@@ -102,6 +102,17 @@ class CanNotAccessTest extends TestCase
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
     }
 
+
+    /** @test */
+    public function updateUser()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->json('PATCH', route('users.update', []));
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+    }
+
     /** @test */
     public function deleteDepartment()
     {

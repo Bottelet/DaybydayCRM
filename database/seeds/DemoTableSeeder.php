@@ -20,26 +20,13 @@ class DemoTableSeeder extends Seeder
      */
     public function run()
     {
-        $createDep = new Department;
-        $createDep->id = '2';
-        $createDep->name = 'Nerds';
-        $createDep->external_id = Uuid::uuid4();
-        $createDep->external_id = Uuid::uuid4();
-        $createDep->save();
-        $createDep = new Department;
-        $createDep->id = '3';
-        $createDep->name = 'Genius';
-        $createDep->external_id = Uuid::uuid4();
-        $createDep->external_id = Uuid::uuid4();
-        $createDep->save();
-
         factory(User::class)->create([
-                'id' => 2,
-                'external_id' => Uuid::uuid4(),
-                'name' => 'DaybydayCRM',
-                'email' => 'demo@daybydaycrm.com',
-                'password' => bcrypt('Daybydaycrm123'),
-            ])->each(function ($user) {
+            'id' => 2,
+            'external_id' => Uuid::uuid4(),
+            'name' => 'DaybydayCRM',
+            'email' => 'demo@daybydaycrm.com',
+            'password' => bcrypt('Daybydaycrm123'),
+        ])->each(function ($user) {
             $this->createData($user);
         });
 
@@ -69,7 +56,6 @@ class DemoTableSeeder extends Seeder
             'start_at' => now()->subDays(2),
             'end_at' => now()->addDays(1),
         ]);
-      
     }
 
     private function createData(User $user) {
@@ -92,7 +78,7 @@ class DemoTableSeeder extends Seeder
                 'user_created_id' => $user->id,
                 'user_assigned_id' => $user->id,
                 'project_id' => optional($project)->id
-                ])->each(function ($task) use ($user) {
+            ])->each(function ($task) use ($user) {
                 if(rand(1,5) == 1) {
                     factory(Appointment::class)->create([
                         'client_id' => $task->client_id,

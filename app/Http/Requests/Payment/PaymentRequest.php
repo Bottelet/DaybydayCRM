@@ -26,7 +26,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'integer|required|not_in:0',
+            'amount' => 'regex:/^-?[0-9]+[.,]?[0-9]*+$/|required|not_in:0',
             'payment_date' => 'date|required',
             'source' => ['required', PaymentSource::validationRules()],
         ];

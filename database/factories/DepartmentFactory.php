@@ -10,6 +10,5 @@ $factory->define(Department::class, function (Faker $faker) {
         'name' => 'factory',
         'external_id' => $faker->uuid,
         'description' => 'Mock Department',
-
     ];
 });
