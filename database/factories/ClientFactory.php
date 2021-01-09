@@ -14,9 +14,8 @@ $factory->define(Client::class, function (Faker $faker) {
         'city' => $faker->city(),
         'zipcode' => $faker->postcode(),
         'industry_id' => $faker->numberBetween($min = 1, $max = 25),
-        'user_id' => factory(App\Models\User::class)->create()->id,
+        'user_id' => factory(App\Models\User::class),
         'company_type' => 'ApS',
-
     ];
 });
 $factory->afterCreating(Client::class, function ($client, $faker) {

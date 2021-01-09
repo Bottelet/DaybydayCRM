@@ -50,6 +50,37 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     /** @test **/
+    public function can_add_payment_with_decimals_dot_separator()
+    {
+        $this->assertTrue($this->invoice->payments->isEmpty());
+        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+            'amount' => 5000.234,
+            'payment_date' => "2020-01-01",
+            'source' => "bank",
+            'description' => "A random description",
+        ]);
+
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
+        $response->assertStatus(302);
+    }
+    
+    /** @test **/
+    public function can_add_payment_with_decimals_comma_separator()
+    {
+        $this->assertTrue($this->invoice->payments->isEmpty());
+        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+            'amount' => 5000,234,
+            'payment_date' => "2020-01-01",
+            'source' => "bank",
+            'description' => "A random description",
+        ]);
+
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
+        $response->assertStatus(302);
+    }
+    
+
+    /** @test **/
     public function adding_payment_updates_invoice_status()
     {
         $this->assertEquals("unpaid", $this->invoice->status);
@@ -120,6 +151,28 @@ class PaymentsControllerAddPaymentTest extends TestCase
         ]);
 
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
+    }
+
+    /** @test **/
+    public function can_add_negative_payment_with_separator()
+    {
+        $this->assertTrue($this->invoice->payments->isEmpty());
+        $this->json('POST', route('payment.add', $this->invoice->external_id), [
+            'amount' => -5000,234,
+            'payment_date' => "2020-01-01",
+            'source' => "bank",
+            'description' => "A random description",
+        ]);
+
+        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+            'amount' => -5000.234,
+            'payment_date' => "2020-01-01",
+            'source' => "bank",
+            'description' => "A random description",
+        ]);
+
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
+        $response->assertStatus(302);
     }
 
     /** @test **/

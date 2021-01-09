@@ -12,6 +12,6 @@ $factory->define(Absence::class, function (Faker $faker) {
         'reason' => $faker->word,
         'start_at' => now(),
         'end_at' => now()->addDays(3),
-        'user_id' => factory(User::class)->create()->id,
+        'user_id' => factory(User::class),
     ];
 });

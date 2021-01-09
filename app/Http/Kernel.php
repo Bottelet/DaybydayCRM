@@ -46,6 +46,7 @@ class Kernel extends HttpKernel
         'user.is.admin' => [ \App\Http\Middleware\RedirectIfNotAdmin::class ],
         'user.is.superadmin' => [ \App\Http\Middleware\RedirectIfNotSuperAdmin::class ],
         'filesystem.is.enabled' => [ \App\Http\Middleware\RedirectIfFileSystemIsNotEnabled::class],
+        'is.demo' => [ \App\Http\Middleware\RedirectIfDemo::class],
         'api' => [
             'auth:api',
             'throttle:60,1',

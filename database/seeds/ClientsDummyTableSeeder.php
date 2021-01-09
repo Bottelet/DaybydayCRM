@@ -14,8 +14,8 @@ class ClientsDummyTableSeeder extends Seeder
     {
         factory(App\Models\Client::class, 50)->create()->each(function ($c) {
             factory(\App\Models\Contact::class)->create([
-                    'client_id' => $c->id
-                ]);
+                'client_id' => $c->id
+            ]);
         });
     }
 }

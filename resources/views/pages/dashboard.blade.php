@@ -77,6 +77,12 @@
     </script>
 @endpush
         <!-- Small boxes (Stat box) -->
+        @if(isDemo())
+            <div class="alert alert-info">
+                <strong>Info!</strong> Data on the demo environment is reset every 24hr.
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->

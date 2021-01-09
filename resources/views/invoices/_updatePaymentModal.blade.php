@@ -16,7 +16,7 @@
         <div class="col-lg-6">
             <div class="form-group col-lg-6 removeleft">
                 <label for="amount" class="thin-weight">@lang('Amount in') {{$amountDue->getCurrency()->getCode()}}</label>
-                <input type="number" name="amount" id="amount"  value="{{$amountDue->getBigDecimalAmount()}}" class="form-control input-sm">
+                <input type="number" step=".01" name="amount" id="amount"  value="{{$amountDue->getBigDecimalAmount()}}" class="form-control input-sm">
             </div>
             <div class="form-group col-lg-12 removeleft" >
                 <label for="payment_date" class="thin-weight">@lang('Payment date')</label>

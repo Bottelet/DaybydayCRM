@@ -14,6 +14,7 @@ class DepartmentsController extends Controller
     public function __construct()
     {
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
+        $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 
     /**

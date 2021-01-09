@@ -7,11 +7,10 @@ use Faker\Generator as Faker;
 
 $factory->define(InvoiceLine::class, function (Faker $faker) {
     return [
-        'title' => $faker->name,
+        'title' => $faker->word,
         'external_id' => $faker->uuid,
         'type' => $faker->word,
         'quantity' => $faker->randomNumber(1),
         'price' => $faker->randomNumber(4),
-
     ];
 });

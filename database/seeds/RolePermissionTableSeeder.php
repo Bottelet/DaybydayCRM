@@ -19,5 +19,13 @@ class RolePermissionTableSeeder extends Seeder
                'permission_id' => $permission->id
             ]);
         }
+        
+        $role = \App\Models\Role::where('name', \App\Models\Role::ADMIN_ROLE)->first();
+        foreach (\App\Models\Permission::all() as $permission) {
+            PermissionRole::create([
+               'role_id' => $role->id,
+               'permission_id' => $permission->id
+            ]);
+        }
     }
 }

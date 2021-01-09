@@ -50,3 +50,10 @@ if (! function_exists('carbonDate')) {
         return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonDate();
     }
 }
+
+if (! function_exists('isDemo')) {
+    function isDemo(): String
+    {
+        return app()->environment() == "demo" ? 1 : 0;
+    }
+}

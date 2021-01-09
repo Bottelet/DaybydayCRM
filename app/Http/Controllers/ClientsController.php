@@ -45,6 +45,7 @@ class ClientsController extends Controller
     {
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
+        $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 
     /**

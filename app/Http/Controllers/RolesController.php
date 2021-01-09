@@ -7,6 +7,7 @@ use App\Models\Integration;
 use App\Http\Requests;
 use App\Http\Requests\Role\StoreRoleRequest;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Uuid;
 use Session;
 use Yajra\Datatables\Datatables;
 
@@ -18,6 +19,7 @@ class RolesController extends Controller
     public function __construct()
     {
         $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'update']]);
+        $this->middleware('is.demo', ['except' => ['index', 'create', 'show', 'indexData']]);
     }
 
     /**
@@ -100,12 +102,13 @@ class RolesController extends Controller
         $roleName = $request->name;
         $roleDescription = $request->description;
         Role::create([
+            'external_id' => Uuid::uuid4()->toString(),
             'name' => strtolower($roleName),
             'display_name' => ucfirst($roleName),
             'description' => $roleDescription
         ]);
         Session()->flash('flash_message', __('Role created'));
-        return redirect()->back();
+        return view('roles.index');
     }
 
     /**

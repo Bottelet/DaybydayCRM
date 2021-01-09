@@ -16,7 +16,8 @@ class ClientObserver
             'documents',
             'projects',
             'invoices',
-            'contacts'
+            'contacts',
+            'appointments'
         ];
     }
     /**

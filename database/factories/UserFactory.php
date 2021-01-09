@@ -16,7 +16,6 @@ $factory->define(User::class, function (Faker $faker) {
         'secondary_number' => $faker->randomNumber(8),
         'remember_token' => null,
         'language' => 'en',
-
     ];
 });
 
