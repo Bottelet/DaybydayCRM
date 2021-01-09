@@ -108,7 +108,7 @@ class CanNotAccessTest extends TestCase
     {
         $user = factory(User::class)->create();
 
-        $response = $this->json('PATCH', route('users.update', []));
+        $response = $this->json('PATCH', route('users.update', $user->external_id));
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
     }
