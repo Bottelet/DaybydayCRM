@@ -101,6 +101,25 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
+
+    /**
+     * Sales
+     */
+    Route::group(['prefix' => 'sales'], function () {
+        Route::get('/', 'SalesController@index')->name('sales.index');
+    });
+
+    /**
+     * Sales
+     */
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('/', 'ProductsController@index')->name('products.index');
+        Route::delete('/{product}', 'ProductsController@destroy')->name('products.destroy');
+        Route::get('/creator/{external_id?}', 'ProductsController@productCreator')->name('products.creator');
+        Route::post('/{external_id?}', 'ProductsController@update')->name('products.update');
+        Route::get('/data', 'ProductsController@allProducts')->name('products.data');
+    });
+
     /**
      * Projects
      */
@@ -154,13 +173,16 @@ Route::group(['middleware' => ['auth']], function () {
     /**
      * Invoices
      */
-    Route::get('/add-invoice-lines/{external_id}/{type}', 'InvoicesController@addInvoiceLineModalView');
     Route::group(['prefix' => 'invoices'], function () {
         Route::post('/sentinvoice/{external_id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
         Route::post('/newitem/{external_id}', 'InvoicesController@newItem')->name('invoice.new.item');
         Route::get('/{invoice}', 'InvoicesController@show')->name('invoices.show');
         Route::get('/payments-data/{invoice}', 'InvoicesController@paymentsDataTable')->name('invoice.paymentsDataTable');
     });
+
+    Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
+    Route::post('/invoice/create/offer/{lead}', 'InvoicesController@createOffer')->name('create.offer');
+    Route::post('/invoice/create/invoice/{sale}', 'InvoicesController@createInvoice')->name('create.invoice');
 
     /**
      * Invoice Lines
@@ -174,6 +196,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/{payment}', 'PaymentsController@destroy')->name('payment.destroy');
         Route::post('/add-payment/{invoice}', 'PaymentsController@addPayment')->name('payment.add');
     });
+
+    Route::post('/offer/won', 'InvoicesController@Offerwon')->name('offer.won');
+    Route::post('/offer/lost', 'InvoicesController@OfferLost')->name('offer.lost');
 
     /**
      * Documents

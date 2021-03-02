@@ -56,6 +56,7 @@ class InvoiceLine extends Model
         $money = new Money($this->quantity * $this->price);
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
+    
     public function getPriceConvertedAttribute()
     {
         $money = new Money($this->price);

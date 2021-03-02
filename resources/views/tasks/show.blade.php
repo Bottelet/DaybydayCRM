@@ -242,12 +242,7 @@
             </div>
         </div>
     @endif
-    <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true"
-         style="display:none;">
-        <div class="modal-dialog">
-            <div class="modal-content"></div>
-        </div>
-    </div>
+
     <div class="modal fade" id="add-files-modal" tabindex="-1" role="dialog" aria-hidden="true"
          style="display:none;">
         <div class="modal-dialog">
@@ -264,9 +259,9 @@
                 formatSubmit: 'yyyy/mm/dd',
                 closeOnClear: false,
             });
-
+            $('#add-invoice-line-modal').modal('show');
+            
             $('#time-manager').on('click', function () {
-                $('#add-invoice-line-modal .modal-content').load('/add-invoice-lines/{{$tasks->external_id}}' + '/task');
                 $('#add-invoice-line-modal').modal('show');
             });
             @if(Entrust::can('task-upload-files') && $filesystem_integration)

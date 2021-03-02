@@ -117,6 +117,17 @@
                     </a>
                 @endif
             </div>
+            <a href="#sales" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
+                class="fa fa-dollar sidebar-icon"></i><span id="menu-txt">{{ __('Sales') }}</span>
+                <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
+            <div class="collapse" id="sales">
+            <a href="{{ route('sales.index')}}" class="list-group-item childlist"> 
+                <i class="bullet-point"><span></span></i> {{ __('All sales') }}
+            </a>
+            <a href="{{ route('products.index')}}" class="list-group-item childlist"> 
+                <i class="bullet-point"><span></span></i> {{ __('Products') }}
+            </a>
+            </div>
             @if(Entrust::can('calendar-view'))
                 <a href="#appointments" class="list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                             class="fa fa-calendar sidebar-icon"></i><span id="menu-txt">{{ __('Appointments') }}</span>

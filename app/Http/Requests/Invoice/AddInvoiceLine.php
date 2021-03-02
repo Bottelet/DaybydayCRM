@@ -28,7 +28,7 @@ class AddInvoiceLine extends FormRequest
             'comment' => '',
             'quantity' => 'required|int',
             'type' => 'required',
-            'price' => 'required|int',
+            'price' => 'required',
         ];
     }
 }

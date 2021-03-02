@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Invoice;
 use DB;
 use Auth;
 use Carbon;
@@ -9,14 +8,16 @@ use Session;
 use Datatables;
 use App\Models\Lead;
 use App\Models\User;
-use App\Models\Client;
+use Ramsey\Uuid\Uuid;
 use App\Http\Requests;
+use App\Models\Client;
 use App\Models\Status;
+use App\Models\Invoice;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Services\Invoice\InvoiceCalculator;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
-use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
 {
@@ -139,12 +140,10 @@ class LeadsController extends Controller
                 'client_id' => $client->id
             ]
         );
-        $insertedExternalId = $lead->external_id;
-        Session()->flash('flash_message', __('Lead successfully added'));
-
+        
         event(new \App\Events\LeadAction($lead, self::CREATED));
         Session()->flash('flash_message', __('Lead successfully added'));
-        return redirect()->route('leads.show', $insertedExternalId);
+        return redirect()->route('leads.show', $lead->external_id);
     }
 
     public function destroy(Lead $lead, Request $request)
@@ -201,8 +200,15 @@ class LeadsController extends Controller
      */
     public function show($external_id)
     {
+        $lead = $this->findByExternalId($external_id);
+        
+        $offers = $lead->offers->map(function($offer) {
+            return new InvoiceCalculator($offer);
+        });
+        
         return view('leads.show')
-            ->withLead($this->findByExternalId($external_id))
+            ->withLead($lead)
+            ->withOffers($offers)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->withCompanyname(Setting::first()->company)
             ->withStatuses(Status::typeOfLead()->pluck('title', 'id'));
@@ -237,7 +243,6 @@ class LeadsController extends Controller
         Session()->flash('flash_message', __('Lead status updated'));
         return $lead->convertToQualified();
     }
-
 
     public function convertToOrder(Lead $lead)
     {

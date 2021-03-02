@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
+use App\Enums\OfferStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Repositories\Money\Money;
 use App\Services\InvoiceNumber\InvoiceNumberService;
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use  SoftDeletes;
+    use SoftDeletes;
 
     const STATUS_SENT = "sent";
 
@@ -29,6 +31,9 @@ class Invoice extends Model
         'client_id',
         'integration_invoice_id',
         'integration_type',
+        'source_id',
+        'source_type',
+        'offer_status',
         'external_id'
     ];
 
