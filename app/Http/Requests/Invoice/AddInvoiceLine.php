@@ -25,7 +25,6 @@ class AddInvoiceLine extends FormRequest
     {
         return [
             'title' => 'required',
-            'comment' => '',
             'quantity' => 'required|int',
             'type' => 'required',
             'price' => 'required',

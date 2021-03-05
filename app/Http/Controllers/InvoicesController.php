@@ -26,8 +26,8 @@ use App\Repositories\Currency\Currency;
 use App\Repositories\Money\MoneyConverter;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Http\Requests\Invoice\AddInvoiceLine;
+use App\Models\Offer;
 use App\Models\Product;
-use App\Models\Sale;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Support\Facades\Validator;
 
@@ -92,7 +92,7 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDueFormatted(app(MoneyConverter::class, ['money' => $amountDue])->format())
             ->withAmountDue($amountDue)
-            ->withReference($invoice->reference)
+            ->withSource($invoice->source)
             ->withCompanyName(Setting::first()->company);
     }
 
@@ -151,6 +151,13 @@ class InvoicesController extends Controller
             return redirect()->back();
         }
 
+        $product = null;
+        if($request->product_id) {
+            $product = $request->product_id;
+        } elseif($request->product) {
+            $product = Product::whereExternalId($request->product)->first()->id;
+        }
+
         InvoiceLine::create([
                 'external_id' => Uuid::uuid4()->toString(),
                 'title' => $request->title,
@@ -159,12 +166,20 @@ class InvoicesController extends Controller
                 'type' => $request->type,
                 'price' => $request->price * 100,
                 'invoice_id' => $invoice->id,
-                'product_id' => $request->product_id ?: null
+                'product_id' => $product
             ]);
 
         return redirect()->back();
     }
-
+    
+    public function newItems($external_id, Request $request)
+    {
+        foreach($request->all() as $invoiceLine) {
+            $invoiceLine = new AddInvoiceLine($invoiceLine);
+            $this->newItem($external_id, $invoiceLine);
+        }
+    }
+    
     public function findByExternalId($external_id)
     {
         return Invoice::whereExternalId($external_id)->first();
@@ -202,13 +217,13 @@ class InvoicesController extends Controller
 
     public function createOffer(Request $request, Lead $lead)
     {
-        $invoice = Invoice::create([
+        $offer = Offer::create([
             'status' => 'draft',
             'client_id' => $lead->client_id,
             'external_id' =>  Uuid::uuid4()->toString(),
             'source_id' => $lead->id,
             'source_type' => Lead::class,
-            'offer_status' => OfferStatus::inProgress()->getStatus()
+            'status' => OfferStatus::inProgress()->getStatus()
         ]);
         
         foreach ($request->all() as $line) {
@@ -224,7 +239,7 @@ class InvoicesController extends Controller
                 'price' => $line["price"] * 100,
                 'product_id' => $line["product"] ? Product::whereExternalId($line["product"])->first()->id : null
             ]);
-            $invoice->invoiceLines()->save($invoiceLine);
+            $offer->invoiceLines()->save($invoiceLine);
         }
 
         return response("OK");
@@ -233,21 +248,34 @@ class InvoicesController extends Controller
 
     public function offerWon(Request $request)
     {
-        $invoice = Invoice::whereExternalId($request->get('invoice_external_id'))->firstOrFail();
+        $offer = Offer::whereExternalId($request->get('offer_external_id'))->with('invoiceLines')->firstOrFail();
         
-        $invoice->offer_status = OfferStatus::won()->getStatus();
+        $offer->status = OfferStatus::won()->getStatus();
+        $offer->save();
+        
+        $invoice = Invoice::create($offer->toArray());
+        $invoice->offer_id = $offer->id;
+        $invoice->status = InvoiceStatus::draft()->getStatus();
         $invoice->save();
 
-        Sale::create();
+        $lines = $offer->invoiceLines;
+        $newLines = collect();
+        foreach($lines as $invoiceLine) {
+            $invoiceLine->offer_id = null;
+            $newLines->push(InvoiceLine::make($invoiceLine->toArray()));
+        }
+  
+        $invoice->invoiceLines()->saveMany($newLines);
+        
         return redirect()->back();
     }
 
     public function offerLost(Request $request)
     {
-        $invoice = Invoice::whereExternalId($request->get('invoice_external_id'))->firstOrFail();
+        $offer = Offer::whereExternalId($request->get('offer_external_id'))->firstOrFail();
         
-        $invoice->offer_status = OfferStatus::lost()->getStatus();
-        $invoice->save();
+        $offer->status = OfferStatus::lost()->getStatus();
+        $offer->save();
 
         return redirect()->back();
     }

@@ -102,15 +102,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
 
-    /**
-     * Sales
-     */
-    Route::group(['prefix' => 'sales'], function () {
-        Route::get('/', 'SalesController@index')->name('sales.index');
-    });
 
     /**
-     * Sales
+     * Products
      */
     Route::group(['prefix' => 'products'], function () {
         Route::get('/', 'ProductsController@index')->name('products.index');
@@ -183,6 +177,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
     Route::post('/invoice/create/offer/{lead}', 'InvoicesController@createOffer')->name('create.offer');
     Route::post('/invoice/create/invoice/{sale}', 'InvoicesController@createInvoice')->name('create.invoice');
+    Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
     /**
      * Invoice Lines
@@ -199,6 +194,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('/offer/won', 'InvoicesController@Offerwon')->name('offer.won');
     Route::post('/offer/lost', 'InvoicesController@OfferLost')->name('offer.lost');
+
+    Route::get('/offer/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
 
     /**
      * Documents

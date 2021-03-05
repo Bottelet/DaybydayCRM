@@ -155,7 +155,7 @@ class Lead extends Model implements Commentable
 
     public function offers()
     {
-        return $this->morphMany(Invoice::class, 'source')->whereNotNull('offer_status');
+        return $this->morphMany(Offer::class, 'source');
     }
 
     public function convertToOrder()

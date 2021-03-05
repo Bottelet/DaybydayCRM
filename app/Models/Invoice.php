@@ -24,7 +24,6 @@ class Invoice extends Model
     const STATUS_SENT = "sent";
 
     protected $fillable = [
-        'sent_at',
         'status',
         'sent_at',
         'due_at',
@@ -33,8 +32,8 @@ class Invoice extends Model
         'integration_type',
         'source_id',
         'source_type',
-        'offer_status',
-        'external_id'
+        'external_id',
+        'offer_id',
     ];
 
     /**
@@ -57,27 +56,15 @@ class Invoice extends Model
         return $this->hasMany(InvoiceLine::class);
     }
 
-    public function task()
+    public function offer()
     {
-        return $this->hasOne(Task::class);
+        return $this->belongsTo(Offer::class);
     }
 
-    public function lead()
-    {
-        return $this->hasOne(Lead::class);
-    }
 
-    public function reference()
+    public function source()
     {
-        if (!is_null($this->lead) && !is_null($this->task)) {
-            throw new \Exception("Invoice can't have both a reference to tasks and leads");
-        }
-
-        if (!is_null($this->lead())) {
-            return $this->lead();
-        } else {
-            return $this->task();
-        }
+        return $this->morphTo('source');
     }
 
     public function payments()
@@ -120,7 +107,7 @@ class Invoice extends Model
                 [
                     'currency' => Setting::first()->currency,
                     'show_lines_incl_vat' => true,
-                    'description' => $this->reference->title,
+                    'description' => $this->source->title,
                     'contact_id' => $contactId,
                     'invoice_lines' => $this->invoiceLines,
                 ]

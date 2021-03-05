@@ -34,12 +34,19 @@
                             <tr>
                                 <td>{{$index +1}}</td>
                                 <td>{{formatMoney($offer->getTotalPrice())}}</td>
-                                <td>{{$offer->getInvoice()->offer_status}}</td>
+                                <td>{{$offer->getInvoice()->status}}</td>
                                 <td>{{$offer->getInvoice()->created_at->format(carbonDateWithText()) }}</td>
                                 <td>
-                                @if(!in_array($offer->getInvoice()->offer_status, ['won', 'lost']))
+                                @if(!in_array($offer->getInvoice()->status, ['won', 'lost']))
                                     <button class="btn btn-brand" data-toggle="modal" data-target="#ModalWonOffer" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-check"></span></button>
                                     <button class="btn btn-warning" data-toggle="modal" data-target="#ModalLostOffer" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-times"></span></button>
+                                @endif
+                      
+                                @if($offer->getInvoice()->invoice)
+                                <button class="btn view-offer-btn" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-eye"></span></button>
+                                <a href="{{route('invoices.show', $offer->getInvoice()->invoice->external_id)}}">
+                                    <button class="btn btn-brand"><span class="fa fa-file-text-o"></span></button>
+                                </a>
                                 @endif
                                 </td>
                             </tr>
@@ -54,6 +61,12 @@
          style="display:none;">
         <div class="modal-dialog modal-lg" style="background:white;">
             <invoice-line-modal type="offer" :resource="{{$lead}}"/>
+        </div>
+    </div>
+    <div class="modal fade" id="view-offer" tabindex="-1" role="dialog" aria-hidden="true"
+         style="display:none;">
+        <div class="modal-dialog modal-lg view-offer-inner" style="background:white;">
+            
         </div>
     </div>
     <div class="row">
@@ -149,7 +162,7 @@
                 </p>
                     <form action="{{route('offer.won')}}" method="POST">
                         @csrf
-                        <input type="hidden" name="invoice_external_id" >
+                        <input type="hidden" name="offer_external_id" >
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
                                     data-dismiss="modal">{{ __('Close') }}</button>
@@ -177,7 +190,7 @@
                 </p>
                     <form action="{{route('offer.lost')}}" method="POST">
                         @csrf
-                        <input type="hidden" name="invoice_external_id" >
+                        <input type="hidden" name="offer_external_id" >
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
                                     data-dismiss="modal">{{ __('Close') }}</button>
@@ -195,16 +208,17 @@
     <script>
         $(document).ready(function () {      
             $('#ModalWonOffer').on('show.bs.modal', function(e) {
-                var invoiceExternalId = $(e.relatedTarget).data('offer-external_id');
-                $(e.currentTarget).find('input[name="invoice_external_id"]').val(invoiceExternalId);
+                var offerExternalId = $(e.relatedTarget).data('offer-external_id');
+                $(e.currentTarget).find('input[name="offer_external_id"]').val(offerExternalId);
             }); 
             $('#ModalLostOffer').on('show.bs.modal', function(e) {
-                var invoiceExternalId = $(e.relatedTarget).data('offer-external_id');
-                $(e.currentTarget).find('input[name="invoice_external_id"]').val(invoiceExternalId);
+                var offerExternalId = $(e.relatedTarget).data('offer-external_id');
+                $(e.currentTarget).find('input[name="offer_external_id"]').val(offerExternalId);
             }); 
             $('#create-offer-btn').on('click', function () {
                 $('#create-offer').modal('show');
             });
+
             $('[data-toggle="tooltip"]').tooltip();
             $('#deadline').pickadate({
                 hiddenName:true,

@@ -97,7 +97,23 @@ $(document).ready(function () {
             }
         }
     });
+
+    $('.view-offer-btn, #view-original-offer').on('click', function (e) {
+        var offerExternalId = $(this).data('offer-external_id')
+        var vuecomp = Vue.extend(invoiceLineModal);
+        var component = new vuecomp({
+            propsData: {
+                external_id: offerExternalId,
+                type: "offer"
+            }
+        }).$mount()
+        $('.view-offer-inner').empty().append(component.$el)
+        $('#view-offer').modal('show');
+    });
 });
+
+
+
 $(window).on('resize', function () {
     var win = $(this); //this = window
     if (win.width() >= 991) {

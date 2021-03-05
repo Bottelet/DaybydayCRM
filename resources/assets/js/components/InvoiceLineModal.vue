@@ -5,13 +5,13 @@
         <h4 class="invoice-modal-title modal-title" id="myModalLabel">
             {{this.type}} management
         </h4>
-        <button type="button" class="btn btn-brand pull-right" @click="addNewLine()" style="margin:5px 15px;">Add new line</button>
+        <button type="button" class="btn btn-brand pull-right"  v-if="!readOnly" @click="addNewLine()" style="margin:5px 15px;">Add new line</button>
     </div>
         <div class="modal-body">
             <div class="line-wrapper" v-for="(line, lineIndex) in lines" :key="lineIndex" style="margin: 15px 0px;">
-                <i class="fa fa-lg pull-right fa-trash" @click="removeLine(lineIndex)" style="cursor:pointer; padding:10px;"></i>
-                <i class="fa fa-lg pull-right" v-bind:class="[line.show ? 'fa-arrow-up' : 'fa-arrow-down ']" @click="toggleLine(line)" style="cursor:pointer; padding:10px;"></i>
-                <span class="pull-right" v-if="line.errors.length" style="color:red; font-size:2.2em; font-style:bold;">!</span>
+                <i class="fa fa-lg pull-right fa-trash"  v-if="!readOnly" @click="removeLine(lineIndex)" style="cursor:pointer; padding:10px;"></i>
+                <i class="fa fa-lg pull-right"  v-if="!readOnly" v-bind:class="[line.show ? 'fa-arrow-up' : 'fa-arrow-down ']" @click="toggleLine(line)" style="cursor:pointer; padding:10px;"></i>
+                <span class="pull-right" v-if="line.errors && line.errors.length" style="color:red; font-size:2.2em; font-style:bold;">!</span>
                 <div class="line-summary row" @click="toggleLine(line)" v-show="!line.show" style="background: #f7f7f7; padding: 10px;">
                     <div class="col-lg-3">{{line.title}}</div>
                     <div class="col-lg-3">{{line.price | currency({ 
@@ -33,7 +33,7 @@
                 <div class="line-information" v-show="line.show">
                     <div class="form-group">
                         <label for="product" class="control-label thin-weight">{{trans('Product')}}</label>
-                        <select  name="product" class="product" :id="lineIndex + '_product'" 
+                        <select v-if="products.length" name="product" class="product" :id="lineIndex + '_product'" 
                         data-container="body" 
                         data-live-search="true" 
                         data-style-base="form-control"
@@ -47,18 +47,18 @@
                     <div class="form-inline row">
                     <div class="form-group col-sm-6">
                         <label for="title" class="control-label thin-weight">{{trans('Title')}}</label>
-                        <input v-model="line.title" type="text" name="title" class="form-control" placeholder="Insert task title (will be shown on invoice">
+                        <input v-model="line.title" type="text" name="title" :disabled="readOnly" class="form-control" placeholder="Insert task title (will be shown on invoice">
                     </div>
 
                     <div class="form-group col-sm-6">
                         <label for="comment" class="control-label thin-weight">{{trans('Description')}}</label>
-                        <input v-model="line.comment" type="text" name="comment" class="form-control" placeholder="A short description, as to what is being billed"> 
+                        <input v-model="line.comment" type="text" name="comment" :disabled="readOnly" class="form-control" placeholder="A short description, as to what is being billed"> 
                     </div>
                     </div>
 
                     <div class="form-group">
                         <label for="type" class="control-label thin-weight">{{trans('Type')}}</label>
-                        <select v-model="line.type" name="type" :id="lineIndex  + '_type'" class="type form-control">
+                        <select v-model="line.type" name="type" :disabled="readOnly" :id="lineIndex  + '_type'" class="type form-control">
                             <option value="pieces">{{trans('pieces')}}</option>
                             <option value="hours">{{trans('hours')}}</option>
                             <option value="days">{{trans('days')}}</option>
@@ -75,12 +75,12 @@
                     <div class="form-inline row">
                         <div class="form-group col-sm-3">
                             <label for="price" class="control-label thin-weight">{{trans('Price')}}</label>
-                            <input v-model="line.price" type="number" name="price" step=".01" class="form-control" placeholder="300">
+                            <input v-model="line.price" type="number" name="price" step=".01" :disabled="readOnly" class="form-control" placeholder="300">
                         </div>
 
                         <div class="form-group col-sm-3">
                             <label for="quantity" class="control-label thin-weight">{{trans('Quantity')}}</label>
-                            <input v-model="line.quantity" type="number" name="quantity" class="form-control" value="1">
+                            <input v-model="line.quantity" type="number" name="quantity" :disabled="readOnly" class="form-control" value="1">
                         </div>
                         <div class="form-group col-sm-6" style="padding-top: 15px;">
                             <div class="col-sm-4">
@@ -168,7 +168,7 @@
        
         <div class="modal-footer">
             <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
-            <div class="col-lg-6">
+            <div class="col-lg-6" v-if="!readOnly">
                 <button type="button" class="btn btn-brand form-control closebtn" @click="submitForm()">Create</button>
             </div>
         </div>
@@ -184,8 +184,21 @@ export default {
     },
     resource: { 
       type: Object,
-      required: true
+      required: false
     },
+    external_id: {
+      type: String,
+      required: false
+    },
+  },
+  computed: {
+      readOnly() {
+          if (this.external_id) {
+              return true;
+          }
+
+          return false;
+      },
   },
   methods: {
       fillWithProduct(event, line, lineIndex) {
@@ -194,12 +207,18 @@ export default {
             line.title = product.name
             line.comment = product.description
             line.type = product.default_type
-            line.price = product.price
+            line.price = product.divided_price
             line.product = product.external_id
 
             //Hack to change selectpicker value
             this.$nextTick(function(){ $("#" + lineIndex + "_type").selectpicker('refresh'); });
             
+      },
+      queryParameter() {
+          const urlParams = new URLSearchParams(window.location.search);
+          this.external_id_query = urlParams.get('offer-external-id')
+
+          return urlParams.get('offer-external-id');
       },
       addNewLine() {
             var self = this;
@@ -230,6 +249,7 @@ export default {
         
       },
       toggleLine(line) {
+          console.log(line)
           line.show = !line.show
       },
       removeLine(lineIndex) {
@@ -286,7 +306,7 @@ export default {
                   line.errors.push("Type is required");
               }
           });
-          console.log(error)
+         
           if(!error) {
             axios
                 .post('/invoice/create/' + this.type + '/' + this.resource.external_id, this.lines)
@@ -314,13 +334,27 @@ export default {
                 errors: []
             }
         ],
-        moneyFormat: {}
+        moneyFormat: {},
+        external_id_query: "",
     }
     },
     created() {
-        axios.get('/products/data').then((res) => {
-            this.products = res.data;
-        });
+        if(this.readOnly) {
+            this.queryParameter();
+            const useable_id = this.external_id ? this.external_id : this.external_id_query;
+            axios.get('/offer/' + useable_id + "/invoice-lines/json").then((res) => {
+                this.lines = res.data;
+                  this.lines.forEach(line => {
+                    line.show = true;
+                    line.product = "";
+                    line.errors = [];
+                })
+            })
+        } else {
+            axios.get('/products/data').then((res) => {
+                this.products = res.data;
+            });
+        }
         axios.get('/money-format').then((res) => {
             this.moneyFormat = res.data;
         });
@@ -332,5 +366,8 @@ export default {
 <style scoped>
 .invoice-modal-title {
     text-transform: capitalize;
+}
+.form-control[disabled] {
+    background-color: #f1f1f1;
 }
 </style>
