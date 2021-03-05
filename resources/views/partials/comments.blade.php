@@ -56,11 +56,12 @@
                     [ 'color', [ 'color' ] ],
                     [ 'para', [ 'ol', 'ul', 'paragraph'] ],
                     [ 'table', [ 'table' ] ],
-                    [ 'insert', [ 'link'] ],
+                    [ 'insert', [ 'link', 'picture'] ],
                     [ 'view', [ 'fullscreen' ] ]
                 ],
                 height:300,
-                disableDragAndDrop: true
+                disableDragAndDrop: false,
+                maximumImageFileSize: 120*1024,
 
             });
 
