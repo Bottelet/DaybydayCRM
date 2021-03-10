@@ -232,7 +232,6 @@ class TasksController extends Controller
         return view('tasks.show')
             ->withTasks($task)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('invoice_lines', $this->getInvoiceLines($external_id))
             ->with('company_name', Setting::first()->company)
             ->withStatuses(Status::typeOfTask()->pluck('title', 'id'))
             ->withProjects($task->client->projects()->pluck('title', 'external_id'))
@@ -311,45 +310,6 @@ class TasksController extends Controller
     }
 
     /**
-     * @param $external_id
-     * @param Request $request
-     * @return mixed
-     */
-    public function updateTime($external_id, Requests\Invoice\AddInvoiceLine $request)
-    {
-        if (!auth()->user()->can('modify-invoice-lines')) {
-            session()->flash('flash_message_warning', __('You do not have permission to modify invoice lines'));
-            return redirect()->route('tasks.show', $external_id);
-        }
-        $task = $this->findByExternalId($external_id);
-
-        $invoice = $task->invoice;
-        if (!$invoice) {
-            $invoice = Invoice::create([
-                'status' => 'draft',
-                'client_id' => $task->client->id,
-                'external_id' =>  Uuid::uuid4()->toString()
-            ]);
-            $task->invoice_id = $invoice->id;
-            $task->save();
-        }
-        InvoiceLine::create([
-                'external_id' => Uuid::uuid4()->toString(),
-                'title' => $request->title,
-                'comment' => $request->comment,
-                'quantity' => $request->quantity,
-                'type' => $request->type,
-                'price' => $request->price * 100,
-                'invoice_id' => $invoice->id,
-                'product_id' => $request->product_id ?: null
-        ]);
-
-        event(new \App\Events\TaskAction($task, self::UPDATED_TIME));
-        Session()->flash('flash_message', 'Time has been updated');
-        return redirect()->back();
-    }
-
-    /**
      * Update the follow up date (Deadline)
      * @param Request $request
      * @param $external_id
@@ -368,18 +328,6 @@ class TasksController extends Controller
         Session()->flash('flash_message', 'New deadline is set');
         return redirect()->back();
     }
-
-    public function getInvoiceLines($external_id)
-    {
-        $task = $this->findByExternalId($external_id);
-        $invoice = $task->invoice;
-        if ($task && $invoice) {
-            return $invoice->invoiceLines;
-        } else {
-            return [];
-        }
-    }
-
 
     /**
      * @param $id

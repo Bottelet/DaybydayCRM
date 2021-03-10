@@ -72,7 +72,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{external_id}', 'TasksController@updateAssign')->name('task.update.assignee');
         Route::post('/updatestatus/{external_id}', 'TasksController@updateStatus');
         Route::post('/updateassign/{external_id}', 'TasksController@updateAssign');
-        Route::post('/updatetime/{external_id}', 'TasksController@updateTime')->name('task.update.time');
         Route::post('/invoice/{external_id}', 'TasksController@invoice')->name('task.invoice');
         Route::patch('/update-deadline/{external_id}', 'TasksController@updateDeadline')->name('task.update.deadline');
         Route::get('/create/{client_external_id}', 'TasksController@create')->name('client.task.create');
@@ -96,7 +95,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
 
         Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
-        Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
     });
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
@@ -175,7 +173,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
-    Route::post('/invoice/create/offer/{lead}', 'InvoicesController@createOffer')->name('create.offer');
+    Route::post('/invoice/create/offer/{lead}', 'OffersController@create')->name('create.offer');
     Route::post('/invoice/create/invoice/{sale}', 'InvoicesController@createInvoice')->name('create.invoice');
     Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
@@ -192,10 +190,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/add-payment/{invoice}', 'PaymentsController@addPayment')->name('payment.add');
     });
 
-    Route::post('/offer/won', 'InvoicesController@Offerwon')->name('offer.won');
-    Route::post('/offer/lost', 'InvoicesController@OfferLost')->name('offer.lost');
-
-    Route::get('/offer/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
+    /** 
+     * Offers
+     */
+    Route::group(['prefix' => 'offer'], function () {
+        Route::post('/won', 'OffersController@won')->name('offer.won');
+        Route::post('/lost', 'OffersController@lost')->name('offer.lost');
+        Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
+        Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
+    });
 
     /**
      * Documents

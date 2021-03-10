@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\OfferStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
+    use SoftDeletes;
     protected $fillable = [
         'sent_at',
         'status',
@@ -30,5 +33,17 @@ class Offer extends Model
     public function invoice()
     {
         return $this->hasOne(Invoice::class);
+    }
+
+    public function setAsWon()
+    {
+        $this->status = OfferStatus::won()->getStatus();
+        $this->save();
+    }
+
+    public function setAsLost()
+    {
+        $this->status = OfferStatus::lost()->getStatus();
+        $this->save();
     }
 }

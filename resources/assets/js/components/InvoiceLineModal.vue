@@ -33,7 +33,7 @@
                 <div class="line-information" v-show="line.show">
                     <div class="form-group">
                         <label for="product" class="control-label thin-weight">{{trans('Product')}}</label>
-                        <select v-if="products.length" name="product" class="product" :id="lineIndex + '_product'" 
+                        <select v-if="products.length && !readOnly" name="product" class="product" :id="lineIndex + '_product'" 
                         data-container="body" 
                         data-live-search="true" 
                         data-style-base="form-control"
@@ -169,7 +169,7 @@
         <div class="modal-footer">
             <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
             <div class="col-lg-6" v-if="!readOnly">
-                <button type="button" class="btn btn-brand form-control closebtn" @click="submitForm()">Create</button>
+                <button type="button" class="btn btn-brand form-control closebtn" @click="submitForm()">{{isEditable ? 'Update' : 'Create'}}</button>
             </div>
         </div>
 </div>
@@ -190,15 +190,22 @@ export default {
       type: String,
       required: false
     },
+    editMode: {
+      type: Boolean,
+      default: true
+    }
   },
   computed: {
       readOnly() {
-          if (this.external_id) {
+          if (this.external_id && !this.editMode) {
               return true;
           }
 
           return false;
       },
+      isEditable() {
+          return this.external_id && this.editMode;
+      }
   },
   methods: {
       fillWithProduct(event, line, lineIndex) {
@@ -308,14 +315,25 @@ export default {
           });
          
           if(!error) {
-            axios
-                .post('/invoice/create/' + this.type + '/' + this.resource.external_id, this.lines)
+              if (this.isEditable) {
+                axios
+                .post('/offer/' + this.external_id + '/update', this.lines)
                 .then(res => {
                     console.log(res)
                     
                 }).catch(err => {
                 this.newAppointmentErrors = err.response.data.errors
             })
+              } else {
+                axios
+                    .post('/invoice/create/' + this.type + '/' + this.resource.external_id, this.lines)
+                    .then(res => {
+                        console.log(res)
+                        
+                    }).catch(err => {
+                    this.newAppointmentErrors = err.response.data.errors
+                })
+            }
           }
       }
   },
@@ -339,22 +357,23 @@ export default {
     }
     },
     created() {
-        if(this.readOnly) {
+        if(this.readOnly || this.isEditable) {
             this.queryParameter();
             const useable_id = this.external_id ? this.external_id : this.external_id_query;
             axios.get('/offer/' + useable_id + "/invoice-lines/json").then((res) => {
                 this.lines = res.data;
+
                   this.lines.forEach(line => {
                     line.show = true;
                     line.product = "";
                     line.errors = [];
+                    line.price = line.price / 100
                 })
             })
-        } else {
-            axios.get('/products/data').then((res) => {
+        }
+        axios.get('/products/data').then((res) => {
                 this.products = res.data;
             });
-        }
         axios.get('/money-format').then((res) => {
             this.moneyFormat = res.data;
         });

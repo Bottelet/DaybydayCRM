@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\Lead;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LeadObserverDeleteTest extends TestCase
@@ -96,20 +97,14 @@ class LeadObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function invoiceIsNotDeletedByObserver()
+    public function offerIsNotDeletedByObserver()
     {
-        $invoice = factory(Invoice::class)->create([
-            'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
-            'integration_invoice_id' => $this->lead->id,
-            'integration_type' => Lead::class,
+        $offer = factory(Offer::class)->create([
+            'source_id' => $this->lead->id,
         ]);
 
-        $this->lead->invoice_id = $invoice->id;
-        $this->lead->save();
-        
         $this->lead->forceDelete();
 
-        $this->assertNotNull($invoice->refresh());
+        $this->assertNotNull($offer->refresh());
     }
 }

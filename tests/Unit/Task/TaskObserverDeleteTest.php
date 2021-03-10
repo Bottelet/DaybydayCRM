@@ -109,21 +109,4 @@ class TaskObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function invoiceIsNotDeletedByObserver()
-    {
-        $invoice = factory(Invoice::class)->create([
-            'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
-            'integration_invoice_id' => $this->task->id,
-            'integration_type' => Task::class,
-        ]);
-
-        $this->task->invoice_id = $invoice->id;
-        $this->task->save();
-        
-        $this->task->forceDelete();
-
-        $this->assertNotNull($invoice->refresh());
-    }
 }

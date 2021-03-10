@@ -33,19 +33,6 @@ class UnqualifiedLeadActionsControllerTest extends TestCase
     }
 
     /** @test **/
-    public function can_convert_to_order()
-    {
-        $this->withoutMiddleware(VerifyCsrfToken::class);
-        $lead = factory(Lead::class)->create();
-
-        $this->assertNull($lead->refresh()->invoice);
-
-        $this->json('POST', route('lead.convert.order', $lead->external_id));
-        
-        $this->assertNotNull($lead->refresh()->invoice);
-    }
-
-    /** @test **/
     public function can_convert_to_qualified()
     {
         $this->withoutMiddleware(VerifyCsrfToken::class);

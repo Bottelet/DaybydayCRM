@@ -142,21 +142,27 @@ class LeadsController extends Controller
         );
         
         event(new \App\Events\LeadAction($lead, self::CREATED));
-        Session()->flash('flash_message', __('Lead successfully added'));
+        session()->flash('flash_message', __('Lead successfully added'));
         return redirect()->route('leads.show', $lead->external_id);
     }
 
     public function destroy(Lead $lead, Request $request)
     {
-        $deleteInvoice = $request->delete_invoice ? true : false;
-        if($lead->invoice && $deleteInvoice) {
-            $lead->invoice()->delete();
-        } elseif($lead->invoice) {
-            $lead->invoice->removeReference();
+        $deleteOffers = $request->delete_offers ? true : false;
+        if($lead->offers && $deleteOffers) {
+            $lead->offers()->delete();
+        } elseif($lead->offers) {
+            foreach($lead->offers as $offer) {
+                $offer->update([
+                    'source_id' => null,
+                    'source_type' => null,
+                ]);
+            }
         }
+        
         $lead->delete();
         
-        Session()->flash('flash_message', __('Lead deleted'));
+        session()->flash('flash_message', __('Lead deleted'));
         return redirect()->back();
     }
 
@@ -166,7 +172,6 @@ class LeadsController extends Controller
         $input = $request->get('user_assigned_id');
         $input = array_replace($request->all());
         $lead->fill($input)->save();
-        $insertedName = $lead->user->name;
 
         event(new \App\Events\LeadAction($lead, self::UPDATED_ASSIGN));
         Session()->flash('flash_message', __('New user is assigned'));

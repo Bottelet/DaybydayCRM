@@ -3,6 +3,7 @@ namespace Tests\Unit\Controllers\Lead;
 
 use Tests\TestCase;
 use App\Models\Lead;
+use App\Models\Offer;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Http\Middleware\VerifyCsrfToken;
@@ -13,22 +14,19 @@ class DeleteLeadControllerTest extends TestCase
     use DatabaseTransactions;
 
     private $lead;
-    private $invoice;
+    private $offer;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->lead = factory(Lead::class)->create();
-        $this->invoice = factory(Invoice::class)->create([
-            'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
-            'integration_invoice_id' => $this->lead->id,
-            'integration_type' => Lead::class,
-        ]);
 
-        $this->lead->invoice_id = $this->invoice->id;
-        $this->lead->save();
+        $this->offer = Offer::create([
+            'source_id' => $this->lead->id,
+            'source_type' => Lead::class,
+            'client_id' => $this->lead->client_id,
+        ]);
         
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -39,38 +37,41 @@ class DeleteLeadControllerTest extends TestCase
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
         
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
+        
     }
 
     /** @test */
-    public function deleteInvoiceIfFlagGiven()
+    public function deleteOffersIfFlagGiven()
     {   
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
-            'delete_invoice' => "on"
+            'delete_offers' => "on"
         ]);
         
+        
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
-        $this->assertSoftDeleted('invoices', ['id' => $this->invoice->id]);
+        $this->assertSoftDeleted('offers', ['id' => $this->offer->id]);
     }
 
     /** @test */
-    public function doNotDeleteInvoiceIfFlagIsNotGivenButRemoveReference()
+    public function doNotDeleteOffersIfFlagIsNotGivenButRemoveReference()
     {   
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
-        $this->assertNull($this->lead->invoice->refresh()->deleted_at);
-        $this->assertNull($this->lead->invoice->refresh()->integration_invoice_id);
-        $this->assertNull($this->lead->invoice->refresh()->integration_type);
+        $this->offer->refresh();
+
+        $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
+        $this->assertNotNull(Offer::find($this->offer->id));
+        $this->assertNull(Offer::find($this->offer->source_id));
     }
 
 
     /** @test */
-    public function canDeleteLeadIfFlagIsGivenAndInvoiceDoesNotExists()
+    public function canDeleteLeadIfFlagIsGivenAndOffersDoesNotExists()
     {   
-        $this->lead->invoice_id = null;
-        $this->lead->save();
+        $this->lead->offers()->forceDelete();
         
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
-            'delete_invoice' => "on"
+            'delete_offers' => "on"
         ]);
         
         $this->assertNotNull($this->lead->refresh()->deleted_at);

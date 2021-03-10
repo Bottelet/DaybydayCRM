@@ -40,6 +40,7 @@
                                 @if(!in_array($offer->getInvoice()->status, ['won', 'lost']))
                                     <button class="btn btn-brand" data-toggle="modal" data-target="#ModalWonOffer" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-check"></span></button>
                                     <button class="btn btn-warning" data-toggle="modal" data-target="#ModalLostOffer" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-times"></span></button>
+                                    <button class="btn btn-info edit-offer-btn" data-toggle="modal" data-target="#ModalEditOffer" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-pencil"></span></button>
                                 @endif
                       
                                 @if($offer->getInvoice()->invoice)
