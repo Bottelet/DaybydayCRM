@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $appends = ['divided_price'];
+    protected $hidden=['id'];
     
     public function getRouteKeyName()
     {

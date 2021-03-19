@@ -32,17 +32,13 @@
                 </div>
                 <div class="line-information" v-show="line.show">
                     <div class="form-group">
-                        <label for="product" class="control-label thin-weight">{{trans('Product')}}</label>
-                        <select v-if="products.length && !readOnly" name="product" class="product" :id="lineIndex + '_product'" 
-                        data-container="body" 
-                        data-live-search="true" 
-                        data-style-base="form-control"
-                        data-style=""
-                        data-width="100%"
-                        @change="fillWithProduct($event, line, lineIndex)">
-                                <option  value="none" default></option>
-                                <option  v-for="(product, index) in products" :value="index" :key="product.external_id"> {{product.name}}</option>
-                        </select>
+                        <label v-if="products.length && !readOnly" for="product" class="control-label thin-weight">{{trans('Product')}}</label>
+                        <v-select 
+                        :options="products" 
+                        v-model="line.product_name"
+                        v-if="products.length && !readOnly"
+                        label="name" 
+                        v-on:input="product => fillWithProduct(product, line, lineIndex)"></v-select>
                     </div>
                     <div class="form-inline row">
                     <div class="form-group col-sm-6">
@@ -59,16 +55,16 @@
                     <div class="form-group">
                         <label for="type" class="control-label thin-weight">{{trans('Type')}}</label>
                         <select v-model="line.type" name="type" :disabled="readOnly" :id="lineIndex  + '_type'" class="type form-control">
-                            <option value="pieces">{{trans('pieces')}}</option>
-                            <option value="hours">{{trans('hours')}}</option>
-                            <option value="days">{{trans('days')}}</option>
-                            <option value="session">{{trans('session')}}</option>
-                            <option value="sqm">{{trans('sqm')}}</option>
-                            <option value="meters">{{trans('meters')}}</option>
-                            <option value="kilometer">{{trans('kilometer')}}</option>
-                            <option value="kg">{{trans('kg')}}</option>
-                            <option value="package">{{trans('package')}}</option>
-                            <option value="boxes">{{trans('boxes')}}</option>
+                            <option :selected= "line.type == 'pieces'" value="pieces">{{trans('pieces')}}</option>
+                            <option :selected= "line.type == 'hours'" value="hours">{{trans('hours')}}</option>
+                            <option :selected= "line.type == 'days'" value="days">{{trans('days')}}</option>
+                            <option :selected= "line.type == 'session'" value="session">{{trans('session')}}</option>
+                            <option :selected= "line.type == 'sqm'" value="sqm">{{trans('sqm')}}</option>
+                            <option :selected= "line.type == 'meters'" value="meters">{{trans('meters')}}</option>
+                            <option :selected= "line.type == 'kilometer'" value="kilometer">{{trans('kilometer')}}</option>
+                            <option :selected= "line.type == 'kg'" value="kg">{{trans('kg')}}</option>
+                            <option :selected= "line.type == 'package'" value="package">{{trans('package')}}</option>
+                            <option :selected= "line.type == 'boxes'" value="boxes">{{trans('boxes')}}</option>
                         </select>
                     </div>
 
@@ -115,7 +111,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                    <hr v-if="readOnly">
                         <p v-for="(error, index) in line.errors" :key="index" class="text-danger">
                             {{error}}
                         </p>
@@ -176,6 +172,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
 export default {
   props: {
     type: { 
@@ -205,21 +204,25 @@ export default {
       },
       isEditable() {
           return this.external_id && this.editMode;
+      },
+      pickedType() {
+          return this.type
       }
   },
+  components: {
+      vSelect: vSelect
+  },
   methods: {
-      fillWithProduct(event, line, lineIndex) {
-            const product = this.products[event.target.value]
-            
+      fillWithProduct(product, line, lineIndex) {       
             line.title = product.name
             line.comment = product.description
             line.type = product.default_type
             line.price = product.divided_price
             line.product = product.external_id
+            line.product_name = line.product_name 
 
             //Hack to change selectpicker value
             this.$nextTick(function(){ $("#" + lineIndex + "_type").selectpicker('refresh'); });
-            
       },
       queryParameter() {
           const urlParams = new URLSearchParams(window.location.search);
@@ -230,7 +233,7 @@ export default {
       addNewLine() {
             var self = this;
   
-            this.lines.map(function(line, index) {
+            this.lines.map(function(line) {
                 line.show = false;
             })
 
@@ -245,19 +248,13 @@ export default {
                 errors: []
             })
 
-          this.lines.map(function(line, index) {
-                var pIndex = self.products.findIndex( p => p.external_id == line.product )
-                $("#" + index + "_product").val(pIndex).selectpicker('refresh');
-            })
-
-       this.$nextTick(function(){ $("#" + this.lines.length -1 + "_product").val("").selectpicker('refresh'); });
-       this.$nextTick(function(){ $("#0_product").val("").selectpicker('refresh'); });
-            
-        
+          this.lines.map(function(line) {
+                self.products.findIndex( p => p.external_id == line.product )
+            })           
       },
       toggleLine(line) {
-          console.log(line)
-          line.show = !line.show
+          console.log(line.show)
+          line.show = !line.showt
       },
       removeLine(lineIndex) {
           this.lines.splice(lineIndex, 1)
@@ -319,7 +316,6 @@ export default {
                 axios
                 .post('/offer/' + this.external_id + '/update', this.lines)
                 .then(res => {
-                    console.log(res)
                     
                 }).catch(err => {
                 this.newAppointmentErrors = err.response.data.errors
@@ -328,7 +324,6 @@ export default {
                 axios
                     .post('/invoice/create/' + this.type + '/' + this.resource.external_id, this.lines)
                     .then(res => {
-                        console.log(res)
                         
                     }).catch(err => {
                     this.newAppointmentErrors = err.response.data.errors
@@ -365,9 +360,11 @@ export default {
 
                   this.lines.forEach(line => {
                     line.show = true;
-                    line.product = "";
+                    line.product = line.product;
+                    line.product_name = line.product;
                     line.errors = [];
                     line.price = line.price / 100
+
                 })
             })
         }

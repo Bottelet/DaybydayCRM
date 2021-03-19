@@ -15,7 +15,9 @@ class OffersController extends Controller
 {
     public function getOfferInvoiceLinesJson(Offer $offer)
     {
-        return $offer->invoiceLines()->get(['title', 'comment', 'price', 'quantity', 'type']);
+        return $offer->invoiceLines()->with(['product' => function ($q ){
+            $q->select('id', 'external_id', 'name');
+        }])->get(['title', 'comment', 'price', 'quantity', 'type', 'product_id']);
     }
 
     public function update(Request $request, Offer $offer)
