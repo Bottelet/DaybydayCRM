@@ -9,7 +9,7 @@ use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
-class InvoiceCalculatorTest extends TestCase
+class DueAtTest extends TestCase
 {
     use DatabaseTransactions;
 
