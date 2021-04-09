@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\Invoice;
+namespace Tests\Unit\Payment;
 
 use App\Enums\PaymentSource;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

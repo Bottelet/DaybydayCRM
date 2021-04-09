@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\Controllers\DemoEnvironment;
+namespace Tests\Unit\DemoEnvironment;
 
 use Tests\TestCase;
 use App\Models\Lead;

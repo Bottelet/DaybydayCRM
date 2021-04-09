@@ -1,5 +1,5 @@
 <?php
-namespace Tests\Unit\Deadline;
+namespace Tests\Unit\Format;
 
 use App\Models\Lead;
 use App\Models\Project;
