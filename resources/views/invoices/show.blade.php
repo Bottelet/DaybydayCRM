@@ -152,7 +152,7 @@
                             <div class="col-md-6">
                                 <p class="invoice-info-title">@lang('Based on')</p>
                                 <p class="invoice-info-subtext">
-                                    <button data-offer-external_id={{$invoice->offer->external_id}} class="btn btn-link" style="padding: 0px;" id="view-original-offer">Original Offer</button> 
+                                    <button data-offer-external_id={{$invoice->offer->external_id}} class="btn btn-link" style="padding: 0px;" id="view-original-offer">@lang('Offer')</button> 
                                 </p>
                             </div>
                         @endif

@@ -168,6 +168,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'invoices'], function () {
         Route::post('/sentinvoice/{external_id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
         Route::post('/newitem/{external_id}', 'InvoicesController@newItem')->name('invoice.new.item');
+        Route::get('/overdue', 'InvoicesController@overdue')->name('invoices.overdue');
         Route::get('/{invoice}', 'InvoicesController@show')->name('invoices.show');
         Route::get('/payments-data/{invoice}', 'InvoicesController@paymentsDataTable')->name('invoice.paymentsDataTable');
     });
@@ -183,7 +184,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/invoice-lines/{invoiceLine}', 'InvoiceLinesController@destroy')->name('invoiceLine.destroy');
 
     /**
-     * Invoices
+     * Payment
      */
     Route::group(['prefix' => 'payment'], function () {
         Route::delete('/{payment}', 'PaymentsController@destroy')->name('payment.destroy');

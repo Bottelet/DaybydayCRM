@@ -3,9 +3,9 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="invoice-modal-title modal-title" id="myModalLabel">
-            {{this.type}} management
+            {{trans(this.type)}} {{trans('management')}}
         </h4>
-        <button type="button" class="btn btn-brand pull-right"  v-if="!readOnly" @click="addNewLine()" style="margin:5px 15px;">Add new line</button>
+        <button type="button" class="btn btn-brand pull-right"  v-if="!readOnly" @click="addNewLine()" style="margin:5px 15px;">{{trans('Add new line')}}</button>
     </div>
         <div class="modal-body">
             <div class="line-wrapper" v-for="(line, lineIndex) in lines" :key="lineIndex" style="margin: 15px 0px;">
@@ -80,7 +80,7 @@
                         </div>
                         <div class="form-group col-sm-6" style="padding-top: 15px;">
                             <div class="col-sm-4">
-                                <p>Total</p>
+                                <p>{{trans('Total')}}</p>
                                 {{getTotalLinePrice(line)| currency({ 
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
@@ -90,7 +90,7 @@
                                     }) }}
                             </div>
                             <div class="col-sm-4">
-                                <p>Sub Total</p>
+                                <p>{{trans('Sub Total')}}</p>
                                 {{getSubTotalLinePrice(line) | currency({ 
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
@@ -100,7 +100,7 @@
                                     }) }}
                             </div>
                             <div class="col-sm-4">
-                                <p>Vat</p>
+                                <p>{{trans('Tax')}}</p>
                                 {{getLineVat(line)| currency({ 
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
@@ -122,11 +122,11 @@
         <hr >
         <div class="row form-inline">
             <div class="col-lg-6 form-group">
-                <p>Total</p>
+                <p>{{trans('Total')}}</p>
             </div>
             <div class="form-group col-sm-6">
                 <div class="col-sm-4"> 
-                    <p style="font-weight:bold;">Total</p>
+                    <p style="font-weight:bold;">{{trans('Total')}}</p>
                     {{getTotalOfAllLines()| currency({ 
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
@@ -136,7 +136,7 @@
                         }) }}
                 </div>
                 <div class="col-sm-4">
-                <p style="font-weight:bold;">Sub Total</p>
+                <p style="font-weight:bold;">{{trans('Sub Total')}}</p>
                     {{getSubTotalOfAllLines()| currency({ 
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
@@ -147,7 +147,7 @@
               
                 </div>
                 <div class="col-sm-4">
-                    <p style="font-weight:bold;">Vat</p>
+                    <p style="font-weight:bold;">{{trans('Tax')}}</p>
                     {{getVatOfAllLines()| currency({ 
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
@@ -163,9 +163,9 @@
         </div>
        
         <div class="modal-footer">
-            <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">{{trans('Close')}}</button>
             <div class="col-lg-6" v-if="!readOnly">
-                <button type="button" class="btn btn-brand form-control closebtn" @click="submitForm()">{{isEditable ? 'Update' : 'Create'}}</button>
+                <button type="button" class="btn btn-brand form-control closebtn" @click="submitForm()">{{isEditable ? trans('Update') : trans('Create')}}</button>
             </div>
         </div>
 </div>
@@ -253,8 +253,7 @@ export default {
             })           
       },
       toggleLine(line) {
-          console.log(line.show)
-          line.show = !line.showt
+          line.show = !line.show
       },
       removeLine(lineIndex) {
           this.lines.splice(lineIndex, 1)
@@ -356,15 +355,21 @@ export default {
             this.queryParameter();
             const useable_id = this.external_id ? this.external_id : this.external_id_query;
             axios.get('/offer/' + useable_id + "/invoice-lines/json").then((res) => {
-                this.lines = res.data;
-
-                  this.lines.forEach(line => {
-                    line.show = true;
-                    line.product = line.product;
-                    line.product_name = line.product;
-                    line.errors = [];
-                    line.price = line.price / 100
-
+                  this.lines = [];
+                  res.data.forEach(line => {
+                    var invoiceLine = {}
+      
+                    invoiceLine.show = true;
+                    invoiceLine.title = line.title
+                    invoiceLine.product = line.product.external_id;
+                    invoiceLine.product_name = line.product;
+                    invoiceLine.errors = [];
+                    invoiceLine.price = line.price / 100
+                    invoiceLine.type = line.type
+                    invoiceLine.comment = line.comment
+                    invoiceLine.quantity = line.quantity
+                    console.log(invoiceLine)
+                    this.lines.push(invoiceLine)
                 })
             })
         }

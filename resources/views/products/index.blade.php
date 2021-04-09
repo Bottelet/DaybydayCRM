@@ -35,6 +35,9 @@
                         @endforeach
                         </tbody>
                     </table>
+                    @if($products->isEmpty())
+                        <h3 style="text-align: center;">@lang('No products')</h3>
+                    @endif
                 </div>
             </div>
         </div>

@@ -225,4 +225,11 @@ class InvoicesController extends Controller
         
         return $formats;
     }
+
+    public function overdue()
+    {
+        $invoices = Invoice::pastDueAt()->notFullyPaid()->get();
+
+        return view('invoices.overdue')->withInvoices($invoices);
+    }
 }

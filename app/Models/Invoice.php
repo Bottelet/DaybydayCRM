@@ -1,15 +1,16 @@
 <?php
 namespace App\Models;
 
-use App\Enums\InvoiceStatus;
-use App\Enums\OfferStatus;
-use App\Repositories\BillingIntegration\BillingIntegrationInterface;
-use App\Repositories\Money\Money;
-use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
+use App\Enums\OfferStatus;
+use App\Enums\InvoiceStatus;
+use App\Repositories\Money\Money;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
+use App\Services\InvoiceNumber\InvoiceNumberService;
+use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 
 /**
  * @property mixed sent_at
@@ -34,6 +35,10 @@ class Invoice extends Model
         'source_type',
         'external_id',
         'offer_id',
+    ];
+
+    protected $dates = [
+        'due_at',
     ];
 
     /**
@@ -142,5 +147,21 @@ class Invoice extends Model
             ->log("user has send the invoice to the customer");
 
         return true;
+    }
+
+    public function scopePastDueAt()
+    {
+        return $this->where('due_at', '>', now());
+    }
+
+    public function scopeNotFullyPaid()
+    {
+        return $this->where('status', '!=', InvoiceStatus::paid()->getStatus());
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $invoiceCalculator = new InvoiceCalculator($this);
+        return $invoiceCalculator->getTotalPrice();
     }
 }

@@ -15,7 +15,7 @@
                         Offers
                     </div>
                     <div class="tablet__head"  style="padding: 6px 2px;">
-                        <button class="btn btn-brand" id="create-offer-btn">New Offer</button>
+                        <button class="btn btn-brand" id="create-offer-btn">@lang('New Offer')</button>
                     </div>
                 </div>
                 <div class="tablet__body">
