@@ -57,3 +57,10 @@ if (! function_exists('isDemo')) {
         return app()->environment() == "demo" ? 1 : 0;
     }
 }
+
+if (! function_exists('formatMoney')) {
+    function formatMoney($amount, $useCode = false): String
+    {
+        return app(\App\Repositories\Money\MoneyConverter::class, ['money' => $amount])->format($useCode);
+    }
+}

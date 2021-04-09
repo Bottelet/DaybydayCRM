@@ -1,9 +1,10 @@
 <?php
 namespace App\Services\Invoice;
 
+use App\Models\Offer;
 use App\Models\Invoice;
-use App\Repositories\Money\Money;
 use App\Repositories\Tax\Tax;
+use App\Repositories\Money\Money;
 
 class InvoiceCalculator
 {
@@ -16,8 +17,11 @@ class InvoiceCalculator
      */
     private $tax;
 
-    public function __construct(Invoice $invoice)
+    public function __construct($invoice)
     {
+        if(!$invoice instanceof Invoice && !$invoice instanceof Offer ) {
+            throw new \Exception("Not correct type for Invoice Calculator");
+        }
         $this->tax = new Tax();
         $this->invoice = $invoice;
     }
@@ -55,5 +59,15 @@ class InvoiceCalculator
     public function getAmountDue()
     {
         return new Money($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
+    }
+
+    public function getInvoice()
+    {
+        return $this->invoice;
+    }
+
+    public function getTax()
+    {
+        return $this->tax;
     }
 }

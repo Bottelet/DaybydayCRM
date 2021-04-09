@@ -19,6 +19,7 @@ class InvoiceLine extends Model
         'price',
         'invoice_id',
         'product_id',
+        'offer_id',
     ];
 
     /**
@@ -51,11 +52,17 @@ class InvoiceLine extends Model
         return $this->quantity * $this->price;
     }
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    
     public function getTotalValueConvertedAttribute()
     {
         $money = new Money($this->quantity * $this->price);
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
+    
     public function getPriceConvertedAttribute()
     {
         $money = new Money($this->price);

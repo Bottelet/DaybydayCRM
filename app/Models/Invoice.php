@@ -1,13 +1,16 @@
 <?php
 namespace App\Models;
 
-use App\Repositories\BillingIntegration\BillingIntegrationInterface;
-use App\Repositories\Money\Money;
-use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
+use App\Enums\OfferStatus;
+use App\Enums\InvoiceStatus;
+use App\Repositories\Money\Money;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
+use App\Services\InvoiceNumber\InvoiceNumberService;
+use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 
 /**
  * @property mixed sent_at
@@ -17,19 +20,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use  SoftDeletes;
+    use SoftDeletes;
 
     const STATUS_SENT = "sent";
 
     protected $fillable = [
-        'sent_at',
         'status',
         'sent_at',
         'due_at',
         'client_id',
         'integration_invoice_id',
         'integration_type',
-        'external_id'
+        'source_id',
+        'source_type',
+        'external_id',
+        'offer_id',
+    ];
+
+    protected $dates = [
+        'due_at',
     ];
 
     /**
@@ -52,27 +61,15 @@ class Invoice extends Model
         return $this->hasMany(InvoiceLine::class);
     }
 
-    public function task()
+    public function offer()
     {
-        return $this->hasOne(Task::class);
+        return $this->belongsTo(Offer::class);
     }
 
-    public function lead()
-    {
-        return $this->hasOne(Lead::class);
-    }
 
-    public function reference()
+    public function source()
     {
-        if (!is_null($this->lead) && !is_null($this->task)) {
-            throw new \Exception("Invoice can't have both a reference to tasks and leads");
-        }
-
-        if (!is_null($this->lead())) {
-            return $this->lead();
-        } else {
-            return $this->task();
-        }
+        return $this->morphTo('source');
     }
 
     public function payments()
@@ -115,7 +112,7 @@ class Invoice extends Model
                 [
                     'currency' => Setting::first()->currency,
                     'show_lines_incl_vat' => true,
-                    'description' => $this->reference->title,
+                    'description' => $this->source->title,
                     'contact_id' => $contactId,
                     'invoice_lines' => $this->invoiceLines,
                 ]
@@ -150,5 +147,21 @@ class Invoice extends Model
             ->log("user has send the invoice to the customer");
 
         return true;
+    }
+
+    public function scopePastDueAt()
+    {
+        return $this->where('due_at', '>', now());
+    }
+
+    public function scopeNotFullyPaid()
+    {
+        return $this->where('status', '!=', InvoiceStatus::paid()->getStatus());
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $invoiceCalculator = new InvoiceCalculator($this);
+        return $invoiceCalculator->getTotalPrice();
     }
 }

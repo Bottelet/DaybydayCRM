@@ -7,8 +7,6 @@ use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Carbon;
-
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Ramsey\Uuid\Uuid;
@@ -145,7 +143,7 @@ class Lead extends Model implements Commentable
 
     public function invoice()
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->morphMany(Invoice::class, 'source');
     }
     /**
      * @return array
@@ -153,6 +151,11 @@ class Lead extends Model implements Commentable
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
+    }
+
+    public function offers()
+    {
+        return $this->morphMany(Offer::class, 'source');
     }
 
     public function convertToOrder()

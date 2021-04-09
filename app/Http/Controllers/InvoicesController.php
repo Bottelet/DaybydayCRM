@@ -2,34 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use View;
 use App\Billy;
-use App\Enums\InvoiceStatus;
-use App\Enums\PaymentSource;
+use Datatables;
+use Carbon\Carbon;
+use App\Models\Lead;
+use App\Models\Task;
+use Ramsey\Uuid\Uuid;
 use App\Http\Requests;
-use App\Http\Requests\Invoice\AddInvoiceLine;
 use App\Models\Client;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Setting;
-use App\Models\Task;
-use App\Repositories\Currency\Currency;
+use App\Models\Integration;
+use App\Models\InvoiceLine;
+use App\Enums\InvoiceStatus;
+use App\Enums\OfferStatus;
+use App\Enums\PaymentSource;
+use Illuminate\Http\Request;
+use App\Repositories\Tax\Tax;
 use App\Repositories\Money\Money;
+use App\Repositories\Currency\Currency;
 use App\Repositories\Money\MoneyConverter;
 use App\Services\Invoice\InvoiceCalculator;
+use App\Http\Requests\Invoice\AddInvoiceLine;
+use App\Models\Offer;
+use App\Models\Product;
 use App\Services\InvoiceNumber\InvoiceNumberService;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use App\Models\Integration;
-use App\Models\Invoice;
-use App\Models\InvoiceLine;
-use Ramsey\Uuid\Uuid;
-use View;
-use Datatables;
+use Illuminate\Support\Facades\Validator;
 
 class InvoicesController extends Controller
 {
     protected $clients;
     protected $invoices;
-
 
     /**
      * Display a listing of the resource.
@@ -39,15 +44,6 @@ class InvoicesController extends Controller
     public function index()
     {
         return view('invoices.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
     }
 
     /**
@@ -96,7 +92,7 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDueFormatted(app(MoneyConverter::class, ['money' => $amountDue])->format())
             ->withAmountDue($amountDue)
-            ->withReference($invoice->reference)
+            ->withSource($invoice->source)
             ->withCompanyName(Setting::first()->company);
     }
 
@@ -155,6 +151,13 @@ class InvoicesController extends Controller
             return redirect()->back();
         }
 
+        $product = null;
+        if($request->product_id) {
+            $product = $request->product_id;
+        } elseif($request->product) {
+            $product = Product::whereExternalId($request->product)->first()->id;
+        }
+
         InvoiceLine::create([
                 'external_id' => Uuid::uuid4()->toString(),
                 'title' => $request->title,
@@ -163,49 +166,23 @@ class InvoicesController extends Controller
                 'type' => $request->type,
                 'price' => $request->price * 100,
                 'invoice_id' => $invoice->id,
-                'product_id' => $request->product_id ?: null
+                'product_id' => $product
             ]);
 
         return redirect()->back();
     }
-
+    
+    public function newItems($external_id, Request $request)
+    {
+        foreach($request->all() as $invoiceLine) {
+            $invoiceLine = new AddInvoiceLine($invoiceLine);
+            $this->newItem($external_id, $invoiceLine);
+        }
+    }
+    
     public function findByExternalId($external_id)
     {
         return Invoice::whereExternalId($external_id)->first();
-    }
-
-    /**
-     * Opens invoce line creation modal
-     * @param Request $request
-     * @param $external_id Customer's external_id
-     *
-     * @return View
-     */
-    public function addInvoiceLineModalView(Request $request, $external_id, $type)
-    {
-        $view = View::make('invoices._invoiceLineModal');
-
-        $api = Integration::initBillingIntegration();
-
-        if ($api instanceof Billy) {
-            $products = collect();
-
-            foreach ($api->products()->products as $product) {
-                $products->push($product);
-            }
-            $view->withProducts($products->pluck('name', 'id'));
-        }
-
-        if ($type == 'task') {
-            $title = Task::whereExternalId($external_id)->first()->title;
-        } elseif ($type == 'invoice') {
-            $title = Invoice::whereExternalId($external_id)->first()->invoice_number;
-        }
-
-        return $view
-            ->withTitle($title)
-            ->with('external_id', $external_id)
-            ->withType($type);
     }
 
     public function paymentsDataTable(Invoice $invoice)
@@ -236,5 +213,23 @@ class InvoicesController extends Controller
             </form>')
             ->rawColumns(['delete'])
             ->make(true);
+    }
+
+    public function moneyFormat()
+    {
+        $formats = [];
+        $currency = app(Currency::class, ["code" => Setting::select("currency")->first()->currency]);
+        $formats = array_merge($formats, $currency->toArray());
+        $formats['vatPercentage'] = app(Tax::class)->multipleVatRate();
+        $formats['vatRate'] = app(Tax::class)->vatRate();
+        
+        return $formats;
+    }
+
+    public function overdue()
+    {
+        $invoices = Invoice::pastDueAt()->notFullyPaid()->get();
+
+        return view('invoices.overdue')->withInvoices($invoices);
     }
 }

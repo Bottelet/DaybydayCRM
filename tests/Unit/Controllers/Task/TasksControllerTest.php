@@ -92,25 +92,6 @@ class TasksControllerTest extends TestCase
     }
 
     /** @test */
-    public function can_update_time_for_task()
-    {
-        $task = factory(Task::class)->create();
-
-        $this->assertNull($task->invoice);
-
-        $response = $this->json('POST', route('task.update.time', $task->external_id), [
-            'title' => 'Invoice line test',
-            'comment' => 'random comment',
-            'quantity' => 10,
-            'type' => 'hours',
-            'price' => '1000'
-        ]);
-
-        $this->assertNotNull($task->refresh()->invoice);
-        $this->assertEquals('Invoice line test', $task->refresh()->invoice->invoiceLines->first()->title);
-    }
-
-    /** @test */
     public function can_update_deadline_for_task()
     {
         $task = factory(Task::class)->create();

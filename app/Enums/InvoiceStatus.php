@@ -7,6 +7,7 @@ use Exception;
 class InvoiceStatus
 {
     private const DRAFT = 'draft';
+    private const CLOSED = 'closed';
     private const SENT = 'sent';
     private const UNPAID = 'unpaid';
     private const PARTIAL_PAID = 'partial_paid';
@@ -70,6 +71,7 @@ class InvoiceStatus
         if (is_null(self::$values)) {
             self::$values = [
                 self::DRAFT => new InvoiceStatus(self::DRAFT, 'Draft'),
+                self::CLOSED => new InvoiceStatus(self::CLOSED, 'Closed'),
                 self::SENT => new InvoiceStatus(self::SENT, 'Sent'),
                 self::UNPAID => new InvoiceStatus(self::UNPAID, 'Unpaid'),
                 self::PARTIAL_PAID => new InvoiceStatus(self::PARTIAL_PAID, 'Partially paid'),
@@ -86,6 +88,14 @@ class InvoiceStatus
     public static function draft(): InvoiceStatus
     {
         return self::values()[self::DRAFT];
+    }
+
+    /**
+     * @return InvoiceStatus
+     */
+    public static function closed(): InvoiceStatus
+    {
+        return self::values()[self::CLOSED];
     }
 
     /**

@@ -72,7 +72,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::patch('/updateassign/{external_id}', 'TasksController@updateAssign')->name('task.update.assignee');
         Route::post('/updatestatus/{external_id}', 'TasksController@updateStatus');
         Route::post('/updateassign/{external_id}', 'TasksController@updateAssign');
-        Route::post('/updatetime/{external_id}', 'TasksController@updateTime')->name('task.update.time');
         Route::post('/invoice/{external_id}', 'TasksController@invoice')->name('task.invoice');
         Route::patch('/update-deadline/{external_id}', 'TasksController@updateDeadline')->name('task.update.deadline');
         Route::get('/create/{client_external_id}', 'TasksController@create')->name('client.task.create');
@@ -96,10 +95,22 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
 
         Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
-        Route::post('/covert-to-order/{lead}', 'LeadsController@convertToOrder')->name('lead.convert.order');
     });
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
+
+
+
+    /**
+     * Products
+     */
+    Route::group(['prefix' => 'products'], function () {
+        Route::get('/', 'ProductsController@index')->name('products.index');
+        Route::delete('/{product}', 'ProductsController@destroy')->name('products.destroy');
+        Route::get('/creator/{external_id?}', 'ProductsController@productCreator')->name('products.creator');
+        Route::post('/{external_id?}', 'ProductsController@update')->name('products.update');
+        Route::get('/data', 'ProductsController@allProducts')->name('products.data');
+    });
 
     /**
      * Projects
@@ -154,13 +165,18 @@ Route::group(['middleware' => ['auth']], function () {
     /**
      * Invoices
      */
-    Route::get('/add-invoice-lines/{external_id}/{type}', 'InvoicesController@addInvoiceLineModalView');
     Route::group(['prefix' => 'invoices'], function () {
         Route::post('/sentinvoice/{external_id}', 'InvoicesController@updateSentStatus')->name('invoice.sent');
         Route::post('/newitem/{external_id}', 'InvoicesController@newItem')->name('invoice.new.item');
+        Route::get('/overdue', 'InvoicesController@overdue')->name('invoices.overdue');
         Route::get('/{invoice}', 'InvoicesController@show')->name('invoices.show');
         Route::get('/payments-data/{invoice}', 'InvoicesController@paymentsDataTable')->name('invoice.paymentsDataTable');
     });
+
+    Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
+    Route::post('/invoice/create/offer/{lead}', 'OffersController@create')->name('create.offer');
+    Route::post('/invoice/create/invoice/{sale}', 'InvoicesController@createInvoice')->name('create.invoice');
+    Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
     /**
      * Invoice Lines
@@ -168,11 +184,21 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('/invoice-lines/{invoiceLine}', 'InvoiceLinesController@destroy')->name('invoiceLine.destroy');
 
     /**
-     * Invoices
+     * Payment
      */
     Route::group(['prefix' => 'payment'], function () {
         Route::delete('/{payment}', 'PaymentsController@destroy')->name('payment.destroy');
         Route::post('/add-payment/{invoice}', 'PaymentsController@addPayment')->name('payment.add');
+    });
+
+    /** 
+     * Offers
+     */
+    Route::group(['prefix' => 'offer'], function () {
+        Route::post('/won', 'OffersController@won')->name('offer.won');
+        Route::post('/lost', 'OffersController@lost')->name('offer.lost');
+        Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
+        Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
 
     /**

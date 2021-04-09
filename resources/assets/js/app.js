@@ -13,10 +13,12 @@ import createAppointment from './components/AppointmentCreate.vue';
 import message from './components/Message.vue';
 import search from './components/Search.vue';
 import dynamictable from './components/DynamicTable.vue';
+import invoiceLineModal from './components/InvoiceLineModal.vue';
 import passportclients from './components/passport/Clients.vue';
 import passportauthorizedclients from './components/passport/AuthorizedClients.vue';
 import passportpersonalaccesstokens from './components/passport/PersonalAccessTokens.vue';
 import 'element-ui/lib/theme-default/index.css';
+import VueCurrencyFilter from 'vue-currency-filter'
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -24,7 +26,7 @@ import 'element-ui/lib/theme-default/index.css';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 Vue.use(ElementUI);
-
+Vue.use(VueCurrencyFilter)
 //Vue.component('graphline', require('./components/Graphline.vue'));
 $('.dropdown.keep-open').on({
     "shown.bs.dropdown": function () {
@@ -61,6 +63,7 @@ $(document).ready(function () {
     });
 });
 
+
 $(document).ready(function () {
     $('body').on('click', '.menu-txt-toggle', function () {
         $("body #wrapper").toggleClass("myNavmenu-icons");
@@ -94,7 +97,39 @@ $(document).ready(function () {
             }
         }
     });
+
+    $('.view-offer-btn, #view-original-offer').on('click', function (e) {
+        var offerExternalId = $(this).data('offer-external_id')
+        var vuecomp = Vue.extend(invoiceLineModal);
+        var component = new vuecomp({
+            propsData: {
+                external_id: offerExternalId,
+                type: "offer",
+                editMode: false
+            }
+        }).$mount()
+        $('.view-offer-inner').empty().append(component.$el)
+        $('#view-offer').modal('show');
+    });
+
+    $('.edit-offer-btn').on('click', function (e) {
+        var offerExternalId = $(this).data('offer-external_id')
+        var vuecomp = Vue.extend(invoiceLineModal);
+        var component = new vuecomp({
+            propsData: {
+                external_id: offerExternalId,
+                type: "offer"
+            }
+        }).$mount()
+        $('.view-offer-inner').empty().append(component.$el)
+        $('#view-offer').modal('show');
+    });
+
+    
 });
+
+
+
 $(window).on('resize', function () {
     var win = $(this); //this = window
     if (win.width() >= 991) {
@@ -125,7 +160,8 @@ var app = new Vue({
         search,
         dynamictable,
         calendar,
-        createAppointment
+        createAppointment,
+        invoiceLineModal
     },
     //Used for global accessibilty to reload page on events
     methods: {

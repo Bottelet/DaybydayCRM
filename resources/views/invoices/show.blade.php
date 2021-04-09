@@ -33,7 +33,6 @@
                                                     {{$invoice_line->total_value_converted}}
                                             @if($invoice->canUpdateInvoice())
                                                 <button type="submit" class="fa fa-btn fa-trash-o btn btn-clean trashcan-icon"></button>
-
                                                 </p>
                                             </form>
                                             @endif
@@ -141,11 +140,19 @@
                             <p class="invoice-info-title">@lang('Status')</p>
                             <p class="invoice-info-subtext">{{\App\Enums\InvoiceStatus::fromStatus($invoice->status)->getDisplayValue()}}</p>
                         </div>
-                        @if($reference)
+                        @if($source)
                             <div class="col-md-6">
                                 <p class="invoice-info-title">@lang('Reference')</p>
                                 <p class="invoice-info-subtext">
-                                    <a href="{{$reference->getShowRoute()}}">{{__(class_basename(get_class($reference)))}}</a>
+                                    <a href="{{$source->getShowRoute()}}">{{__(class_basename(get_class($source)))}}</a>
+                                </p>
+                            </div>
+                        @endif
+                        @if($invoice->offer)
+                            <div class="col-md-6">
+                                <p class="invoice-info-title">@lang('Based on')</p>
+                                <p class="invoice-info-subtext">
+                                    <button data-offer-external_id={{$invoice->offer->external_id}} class="btn btn-link" style="padding: 0px;" id="view-original-offer">@lang('Offer')</button> 
                                 </p>
                             </div>
                         @endif
@@ -176,6 +183,12 @@
             @if($invoice->payments->isNotEmpty())
                 @include('invoices._paymentList')
             @endif
+        </div>
+    </div>
+    <div class="modal fade" id="view-offer" tabindex="-1" role="dialog" aria-hidden="true"
+         style="display:none;">
+        <div class="modal-dialog modal-lg view-offer-inner" style="background:white;">
+            
         </div>
     </div>
 @if(!$invoice->sent_at)
@@ -236,8 +249,8 @@
 </div>
 @endif
     <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
-        <div class="modal-dialog">
-            <div class="modal-content"></div>
+        <div class="modal-dialog modal-lg" style="background:white;">
+            <invoice-line-modal type="invoiceLine" :resource="{{$invoice}}"/>
         </div>
     </div>
     <div class="modal fade" id="update-payment-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
@@ -256,7 +269,6 @@
                 $('#sendMailBox').hide();
             }
             $('#time-manager').on('click', function () {
-                $('#add-invoice-line-modal .modal-content').load('/add-invoice-lines/{{$invoice->external_id}}' + '/invoice' );
                 $('#add-invoice-line-modal').modal('show');
             });
 

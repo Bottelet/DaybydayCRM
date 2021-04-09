@@ -30,6 +30,8 @@
     "timepicker.js": "^2.5.0",
     "vis-timeline": "^7.3.4",
     "vue": "^2.6.10",
-    "vue-resource": "^1.0.3"
+    "vue-currency-filter": "^5.2.0",
+    "vue-resource": "^1.0.3",
+    "vue-select": "^3.11.2"
   }
 }

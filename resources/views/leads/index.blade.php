@@ -43,7 +43,7 @@
             @method('delete')
             @csrf
             <label style="font-weight: 300; color:#333; font-size:14px;">
-                <input type="checkbox" name="delete_invoice"> @lang('Delete invoice') 
+                <input type="checkbox" name="delete_offers"> @lang('Delete invoice') 
             </label>
             <p>
             @lang('If the invoice is not deleted it will be attached to the client, without a reference to the lead').

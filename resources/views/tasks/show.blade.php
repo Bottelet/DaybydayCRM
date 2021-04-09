@@ -94,32 +94,7 @@
 
                 </div>
             <div class="tablet__footer">
-                <div class="row">
-                    <div class="col-lg-6 col-sm-12">
-                        @if(Entrust::can('modify-invoice-lines'))
-                                <button type="button" id="time-manager" class="btn btn-md btn-brand btn-upper btn-full-width time-manager"
-                                <?php $titleText =  !$tasks->canUpdateInvoice() ? __("Can't update an already send invoice") : "" ?>
-                                title="{{$titleText}}"
-                                {{ !$tasks->canUpdateInvoice() ? 'disabled ' : "" }}>
-                                    {{ __('Add time') }}
-                                </button>
-                        @endif
-                    </div>
-                    <div class="col-lg-6 col-sm-12">
-                        @if(Entrust::can('invoice-see'))
-                                <a href="/invoices/{{optional($tasks->invoice)->external_id}}">
-                                    <button type="button"
-                                    <?php $titleText =  !$tasks->invoice ? __("No Invoice to show. Add time to create an invoice") : "" ?>
-                                    title="{{$titleText}}"
-                                    {{ !$tasks->invoice ? 'disabled ' : "" }}
-                                    class="btn btn-md btn-teal btn-upper btn-full-width">
-                                        {{ __('Show invoice') }}
-                                    </button>
-                                </a>
-                        @endif
-                    </div>
 
-                </div>
             </div>
             </div>
             @if(Entrust::can('task-upload-files') && $filesystem_integration)
@@ -242,12 +217,7 @@
             </div>
         </div>
     @endif
-    <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true"
-         style="display:none;">
-        <div class="modal-dialog">
-            <div class="modal-content"></div>
-        </div>
-    </div>
+
     <div class="modal fade" id="add-files-modal" tabindex="-1" role="dialog" aria-hidden="true"
          style="display:none;">
         <div class="modal-dialog">
@@ -265,10 +235,6 @@
                 closeOnClear: false,
             });
 
-            $('#time-manager').on('click', function () {
-                $('#add-invoice-line-modal .modal-content').load('/add-invoice-lines/{{$tasks->external_id}}' + '/task');
-                $('#add-invoice-line-modal').modal('show');
-            });
             @if(Entrust::can('task-upload-files') && $filesystem_integration)
             $('#add-files').on('click', function () {
                 $('#add-files-modal .modal-content').load('/add-documents/{{$tasks->external_id}}' + '/task');
