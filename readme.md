@@ -23,10 +23,10 @@ Try a demo version of DaybydayCRM at:
 
 # Support the project
 If you benefit from and/or like using DaybydayCRM, please consider help drive the future development of the project by:
-* Star the project.
-* Create a pull request.
-* [Donating/Sponsoring today](https://github.com/sponsors/Bottelet).
-* Consider using the hosted version of [DaybydayCRM](https://daybydaycrm.com).
+* Star the project. ⭐
+* Create a pull request. 🚧
+* [Donating/Sponsoring today](https://github.com/sponsors/Bottelet). 💛
+* Consider using the hosted version of [DaybydayCRM](https://daybydaycrm.com). ✔️
 
 And i will keep creating new features, releases, keep support running, and fix issues.
 
