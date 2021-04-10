@@ -148,6 +148,12 @@
                                 </p>
                             </div>
                         @endif
+                            <div class="col-md-6">
+                                <p class="invoice-info-title">@lang('Invoice number')</p>
+                                <p class="invoice-info-subtext">
+                                    {{$invoice->invoice_number}}
+                                </p>
+                            </div>
                         @if($invoice->offer)
                             <div class="col-md-6">
                                 <p class="invoice-info-title">@lang('Based on')</p>

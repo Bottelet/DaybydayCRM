@@ -315,7 +315,7 @@ export default {
                 axios
                 .post('/offer/' + this.external_id + '/update', this.lines)
                 .then(res => {
-                    
+                    location.reload();
                 }).catch(err => {
                 this.newAppointmentErrors = err.response.data.errors
             })
@@ -323,7 +323,7 @@ export default {
                 axios
                     .post('/invoice/create/' + this.type + '/' + this.resource.external_id, this.lines)
                     .then(res => {
-                        
+                        location.reload();
                     }).catch(err => {
                     this.newAppointmentErrors = err.response.data.errors
                 })
@@ -368,7 +368,6 @@ export default {
                     invoiceLine.type = line.type
                     invoiceLine.comment = line.comment
                     invoiceLine.quantity = line.quantity
-                    console.log(invoiceLine)
                     this.lines.push(invoiceLine)
                 })
             })

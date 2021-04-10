@@ -175,7 +175,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
     Route::post('/invoice/create/offer/{lead}', 'OffersController@create')->name('create.offer');
-    Route::post('/invoice/create/invoice/{sale}', 'InvoicesController@createInvoice')->name('create.invoice');
     Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
     /**

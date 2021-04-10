@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Enums\OfferStatus;
 use App\Models\InvoiceLine;
 use App\Enums\InvoiceStatus;
+use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Http\Request;
 
 class OffersController extends Controller
@@ -78,6 +79,7 @@ class OffersController extends Controller
         
         $invoice = Invoice::create($offer->toArray());
         $invoice->offer_id = $offer->id;
+        $invoice->invoice_number = app(InvoiceNumberService::class)->setNextInvoiceNumber();
         $invoice->status = InvoiceStatus::draft()->getStatus();
         $invoice->save();
         
