@@ -2,10 +2,6 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use App\Models\InvoiceLine;
-use App\Models\Payment;
-use App\Services\Invoice\GenerateInvoiceStatus;
-use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -32,17 +28,17 @@ class DueAtTest extends TestCase
     /** @test */
     public function ensureWeGetInvoicePastDueAt()
     {
-        $invoices =  Invoice::pastDueAt()->get();
+        $invoices = Invoice::pastDueAt()->get();
         
         $this->assertCount(1, $invoices);
-        $this->assertEquals($this->invoice->id, $invoices->first()->id);
+        $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
 
     /** @test */
-    public function ensureWeDontInvoiceIfDueAtIsNull()
+    public function ensureWeDontGetInvoiceIfDueAtIsNull()
     {
-        $this->invoice->due_at = null;
-        $this->invoice->save();
+        $this->secondInvoice->due_at = null;
+        $this->secondInvoice->save();
         $invoices =  Invoice::pastDueAt()->get();
         
         $this->assertCount(0, $invoices);

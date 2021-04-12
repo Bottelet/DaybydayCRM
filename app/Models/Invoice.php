@@ -151,7 +151,7 @@ class Invoice extends Model
 
     public function scopePastDueAt()
     {
-        return $this->where('due_at', '>', now());
+        return $this->where('due_at', '<', now());
     }
 
     public function scopeNotFullyPaid()
