@@ -43,4 +43,17 @@ class DueAtTest extends TestCase
         
         $this->assertCount(0, $invoices);
     }
+
+    /** @test */
+    public function ensureWeDontGetInvoiceIfStatusIsPaid()
+    {
+        $invoices =  Invoice::pastDueAt()->get();
+        $this->assertCount(1, $invoices);
+
+        $this->secondInvoice->status = "paid";
+        $this->secondInvoice->save();
+        $invoices =  Invoice::pastDueAt()->get();
+        
+        $this->assertCount(0, $invoices);
+    }
 }

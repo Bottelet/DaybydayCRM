@@ -149,14 +149,14 @@ class Invoice extends Model
         return true;
     }
 
-    public function scopePastDueAt()
+    public function scopePastDueAt($query)
     {
-        return $this->where('due_at', '<', now());
+        return $query->where('due_at', '<', now())->NotFullyPaid();
     }
 
-    public function scopeNotFullyPaid()
+    public function scopeNotFullyPaid($query)
     {
-        return $this->where('status', '!=', InvoiceStatus::paid()->getStatus());
+        return $query->where('status', '!=', InvoiceStatus::paid()->getStatus());
     }
 
     public function getTotalPriceAttribute()
