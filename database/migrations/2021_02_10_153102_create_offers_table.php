@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Permission;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateOffersTable extends Migration
 {
@@ -25,6 +26,32 @@ class CreateOffersTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        $p1 = Permission::create([
+            'display_name' => 'Add offer',
+            'name' => 'offer-create',
+            'description' => 'Be able to create an offer',
+            'grouping' => 'offer',
+        ]);
+
+        $p2 = Permission::create([
+            'display_name' => 'Edit offer',
+            'name' => 'offer-edit',
+            'description' => 'Be able to edit an offer',
+            'grouping' => 'offer',
+        ]);
+
+        $p3 = Permission::create([
+            'display_name' => 'Delete offer',
+            'name' => 'offer-delete',
+            'description' => 'Be able to delete an offer',
+            'grouping' => 'offer',
+        ]);
+
+        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        foreach ($roles as $role) {
+            $role->permissions()->attach([$p1->id, $p2->id, $p3->id]);
+        }
     }
 
     /**

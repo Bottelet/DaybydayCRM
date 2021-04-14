@@ -122,7 +122,7 @@
             var target = e.relatedTarget;
             var id = $(target).data('id');
             var title = $(target).data('title');
-            console.log(title);
+      
             $("#deletion-title").text(title);
             $('#deletion-form').attr('action', id)
 

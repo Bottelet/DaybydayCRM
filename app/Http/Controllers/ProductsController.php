@@ -22,6 +22,11 @@ class ProductsController extends Controller
 
   public function update(Request $request, $external_id = null)
   {
+    if (!auth()->user()->can('product-edit')) {
+      session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+      return redirect()->back();
+    }
+
     if($external_id) {
       $product = Product::whereExternalId($external_id)->firstOrFail();
     } else {
@@ -42,6 +47,10 @@ class ProductsController extends Controller
 
   public function productCreator(Request $request, $external_id = null)
   {
+      if (!auth()->user()->can('product-create')) {
+        session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+        return redirect()->back();
+      }
       $view = View::make('products._creatorModal');
       if($external_id) {
         $product = Product::whereExternalId($external_id)->firstOrFail();
@@ -54,6 +63,11 @@ class ProductsController extends Controller
 
   public function destroy(Product $product)
   {
+    if (!auth()->user()->can('product-delete')) {
+      session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+      return redirect()->back();
+    }
+
     $product->forceDelete();
 
     return redirect()->back();

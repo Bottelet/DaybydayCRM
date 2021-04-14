@@ -10,7 +10,6 @@ import Chart from 'chart.js';
         methods: {
             render(data)
             {
-                console.log(this.statistics.keys);
                 this.Chart = new Chart(this.$refs.canvaschart.getContext('2d'), {
                     type: 'doughnut',
                     data: {

@@ -29,7 +29,7 @@
                                 <td><a href="{{route('invoices.show', $invoice->external_id)}}">@lang('View')</a></td>
                             </tr>
                         @endforeach
-        
+                        
                         </tbody>
     
                     </table>

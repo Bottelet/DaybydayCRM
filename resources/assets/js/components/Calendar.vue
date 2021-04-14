@@ -146,7 +146,6 @@
                                 this.items.splice(index, 1)
                                 this.timeline.setItems(this.items);
                             }).catch(err => {
-                                console.log(err)
                                 //Hack to show sort of nice 403 error
                                 if(err.response.status === 403) {
                                     document.getElementById("accessDeniedError").style.transition = "all 2s";

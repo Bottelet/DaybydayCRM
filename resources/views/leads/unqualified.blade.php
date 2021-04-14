@@ -45,10 +45,6 @@
                 ]
             });
 
-            $('#leads-table').on('click', function(){
-                console.log( table.cell(this))
-            });
-
             table.columns(4).search('^' + 'Open' + '$', true, false).draw();
             $('#status-lead').change(function () {
                 selected = $("#status-lead option:selected").val();

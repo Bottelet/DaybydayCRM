@@ -115,7 +115,7 @@
                 if (selected == "all") {
                     table.columns(5).search('').draw();
                 } else {
-                    console.log(selected)
+            
                     table.columns(5).search(selected ? '^' + selected + '$' : '', true, false).draw();
                 }
             });
@@ -124,7 +124,7 @@
             var target = e.relatedTarget;
             var id = $(target).data('id');
             var title = $(target).data('title');
-            console.log(title);
+            
             $("#deletion-title").text(title);
             $('#deletion-form').attr('action', id)
 

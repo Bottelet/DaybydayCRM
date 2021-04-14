@@ -9,9 +9,11 @@
                     <div class="tablet__head-toolbar">
                         @lang('Products')
                     </div>
-                    <div class="tablet__head"  style="padding: 6px 2px;">
-                        <button class="btn btn-brand" id="create-product-btn">@lang('New product')</button>
-                    </div>
+                    @if(Entrust::can('product-create'))
+                        <div class="tablet__head"  style="padding: 6px 2px;">
+                            <button class="btn btn-brand" id="create-product-btn">@lang('New product')</button>
+                        </div>
+                    @endif
                 </div>
                 <div class="tablet__body">
                     <table class="table table-hover" id="leads-table">
@@ -28,8 +30,12 @@
                                 <td>{{$product->name}}</td>
                                 <td>{{formatMoney($product->moneyPrice)}}</td>
                                 <td>
-                                    <button class="btn edit-product-btn" id="edit-product-btn" data-product_offer_external_id="{{$product->external_id}}"><span class="fa fa-pencil"></span></button>
-                                    <button class="btn btn-warning"  data-toggle="modal" data-title="{{$product->name}}" data-target="#deletion" data-id="{{route('products.destroy',$product->external_id)}}"><span class="fa fa-trash"></span></button>
+                                    @if(Entrust::can('product-edit'))
+                                        <button class="btn edit-product-btn" id="edit-product-btn" data-product_offer_external_id="{{$product->external_id}}"><span class="fa fa-pencil"></span></button>
+                                    @endif
+                                    @if(Entrust::can('product-delete'))
+                                        <button class="btn btn-warning"  data-toggle="modal" data-title="{{$product->name}}" data-target="#deletion" data-id="{{route('products.destroy',$product->external_id)}}"><span class="fa fa-trash"></span></button>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -42,15 +48,16 @@
             </div>
         </div>
     </div>
-
-<div class="modal fade" id="product-creator-modal" tabindex="-1" role="dialog" aria-hidden="true"
-    style="display:none;">
-    <div class="modal-dialog">
-        <div class="modal-content"></div>
+@if(Entrust::can('product-create') || Entrust::can('product-edit'))
+    <div class="modal fade" id="product-creator-modal" tabindex="-1" role="dialog" aria-hidden="true"
+        style="display:none;">
+        <div class="modal-dialog">
+            <div class="modal-content"></div>
+        </div>
     </div>
-</div>
+@endif
 
-
+@if(Entrust::can('product-delete'))
 <!-- DELETE MODAL SECTION -->
 <div id="deletion" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -76,6 +83,7 @@
         </div>
     </div>
 </div>
+@endif
 <!-- END OF THE DELETE MODAL SECTION -->
 @endsection
 

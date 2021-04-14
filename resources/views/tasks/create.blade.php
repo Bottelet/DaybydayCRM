@@ -200,7 +200,7 @@
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR.responseJSON.errors);
+                            
                             if (jqXHR.responseJSON.errors.title != undefined) {
                                 $('.title-alert').show();
                             } else {

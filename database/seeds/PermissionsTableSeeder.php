@@ -265,5 +265,48 @@ class PermissionsTableSeeder extends Seeder
             'description' => 'Be able to delete an appointment',
             'grouping' => 'appointment',
         ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Add Product',
+            'name' => 'product-create',
+            'description' => 'Be able to create an product',
+            'grouping' => 'product',
+        ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Edit product',
+            'name' => 'product-edit',
+            'description' => 'Be able to edit an product',
+            'grouping' => 'product',
+        ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Delete product',
+            'name' => 'product-delete',
+            'description' => 'Be able to delete an product',
+            'grouping' => 'product',
+        ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Add offer',
+            'name' => 'offer-create',
+            'description' => 'Be able to create an offer',
+            'grouping' => 'offer',
+        ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Edit offer',
+            'name' => 'offer-edit',
+            'description' => 'Be able to edit an offer',
+            'grouping' => 'offer',
+        ]);
+
+        Permission::firstOrCreate([
+            'display_name' => 'Delete offer',
+            'name' => 'offer-delete',
+            'description' => 'Be able to delete an offer',
+            'grouping' => 'offer',
+        ]);
+
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Permission;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateProductsTable extends Migration
 {
@@ -26,6 +27,32 @@ class CreateProductsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        $p1 = Permission::create([
+            'display_name' => 'Add product',
+            'name' => 'product-create',
+            'description' => 'Be able to create an product',
+            'grouping' => 'product',
+        ]);
+
+        $p2 = Permission::create([
+            'display_name' => 'Edit product',
+            'name' => 'product-edit',
+            'description' => 'Be able to edit an product',
+            'grouping' => 'product',
+        ]);
+
+        $p3 = Permission::create([
+            'display_name' => 'Delete product',
+            'name' => 'product-delete',
+            'description' => 'Be able to delete an product',
+            'grouping' => 'product',
+        ]);
+
+        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        foreach ($roles as $role) {
+            $role->permissions()->attach([$p1->id, $p2->id, $p3->id]);
+        }
     }
 
     /**

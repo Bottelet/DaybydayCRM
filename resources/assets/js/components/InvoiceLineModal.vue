@@ -361,7 +361,7 @@ export default {
       
                     invoiceLine.show = true;
                     invoiceLine.title = line.title
-                    invoiceLine.product = line.product.external_id;
+                    invoiceLine.product = line.product ? line.product.external_id : null;
                     invoiceLine.product_name = line.product;
                     invoiceLine.errors = [];
                     invoiceLine.price = line.price / 100
