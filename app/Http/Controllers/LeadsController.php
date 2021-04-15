@@ -90,9 +90,7 @@ class LeadsController extends Controller
     public function unqualifiedLeads()
     {
         $status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
-        $leads = Lead::isNotQualified()
-            ->where('status_id', '!=', $status_id)
-            ->with(['user', 'creator', 'client.primaryContact'])->get();
+        $leads = Lead::with(['user', 'creator', 'client.primaryContact'])->get();
 
         $leads->map(function ($item) {
             return [$item['visible_deadline_date'] = $item['deadline']->format(carbonDate()), $item["visible_deadline_time"] = $item['deadline']->format(carbonTime())];
@@ -164,6 +162,25 @@ class LeadsController extends Controller
         
         session()->flash('flash_message', __('Lead deleted'));
         return redirect()->back();
+    }
+
+    public function destroyJson(Lead $lead, Request $request)
+    {
+        $deleteOffers = $request->delete_offers ? true : false;
+        if($lead->offers && $deleteOffers) {
+            $lead->offers()->delete();
+        } elseif($lead->offers) {
+            foreach($lead->offers as $offer) {
+                $offer->update([
+                    'source_id' => null,
+                    'source_type' => null,
+                ]);
+            }
+        }
+        
+        $lead->delete();
+
+        return response('OK');
     }
 
     public function updateAssign($external_id, Request $request)

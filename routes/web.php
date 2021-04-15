@@ -93,6 +93,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
+        Route::delete('/{lead}/json', 'LeadsController@destroyJson');
 
         Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
     });

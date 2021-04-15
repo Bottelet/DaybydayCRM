@@ -135,12 +135,7 @@ class Lead extends Model implements Commentable
     {
         return $this->status == self::LEAD_STATUS_CLOSED;
     }
-
-    public function scopeIsNotQualified(Builder $query)
-    {
-        return $query->where('qualified', false);
-    }
-
+    
     public function invoice()
     {
         return $this->morphMany(Invoice::class, 'source');
