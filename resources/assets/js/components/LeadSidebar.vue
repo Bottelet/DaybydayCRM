@@ -65,6 +65,12 @@
                                     <p>{{lead.visible_deadline_date}} {{lead.visible_deadline_time}}</p>
                                 </div>
                                 <div class="col-xs-3">
+                                    {{trans('Status')}}
+                                </div>
+                                <div class="col-xs-9">
+                                    <p>{{lead.status.title}}</p>
+                                </div>
+                                <div class="col-xs-3">
                                     {{trans('Created by')}}
                                 </div>
                                 <div class="col-xs-9">
