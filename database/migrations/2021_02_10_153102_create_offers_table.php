@@ -18,7 +18,6 @@ class CreateOffersTable extends Migration
             $table->increments('id');
             $table->string('external_id');
             $table->dateTime('sent_at')->nullable();
-            $table->dateTime('due_at')->nullable();
             $table->nullableMorphs('source');
             $table->integer('client_id')->unsigned();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');

@@ -326,7 +326,7 @@ class UsersController extends Controller
     */
     public function findByExternalId($external_id)
     {
-        return User::whereExternalId($external_id)->first();
+        return User::whereExternalId($external_id)->firstOrFail();
     }
     /**
      * @return \Illuminate\Database\Eloquent\Collection|static[]

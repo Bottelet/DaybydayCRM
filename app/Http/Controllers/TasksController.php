@@ -335,7 +335,7 @@ class TasksController extends Controller
      */
     public function findByExternalId($external_id)
     {
-        return Task::whereExternalId($external_id)->first();
+        return Task::whereExternalId($external_id)->firstOrFail();
     }
 
     /**

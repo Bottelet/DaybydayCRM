@@ -58,6 +58,7 @@ class InvoicesController extends Controller
             session()->flash('flash_message_warning', __('You do not have permission to view this invoice'));
             return redirect()->route('clients.index');
         }
+        
         $apiConnected = false;
         $invoiceContacts = [];
         $primaryContact = null;
@@ -80,7 +81,7 @@ class InvoicesController extends Controller
         $subPrice = $invoiceCalculator->getSubTotal();
         $vatPrice = $invoiceCalculator->getVatTotal();
         $amountDue = $invoiceCalculator->getAmountDue();
-
+        
         return view('invoices.show')
             ->withInvoice($invoice)
             ->withApiconnected($apiConnected)
@@ -88,9 +89,9 @@ class InvoicesController extends Controller
             ->withfinalPrice(app(MoneyConverter::class, ['money' => $totalPrice])->format())
             ->withsubPrice(app(MoneyConverter::class, ['money' => $subPrice])->format())
             ->withVatPrice(app(MoneyConverter::class, ['money' => $vatPrice])->format())
+            ->withAmountDueFormatted(app(MoneyConverter::class, ['money' => $amountDue])->format())
             ->withPrimaryContact(optional($primaryContact)[0])
             ->withPaymentSources(PaymentSource::values())
-            ->withAmountDueFormatted(app(MoneyConverter::class, ['money' => $amountDue])->format())
             ->withAmountDue($amountDue)
             ->withSource($invoice->source)
             ->withCompanyName(Setting::first()->company);

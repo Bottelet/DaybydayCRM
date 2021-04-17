@@ -9,6 +9,7 @@
     </div>
         <div class="modal-body">
             <div class="line-wrapper" v-for="(line, lineIndex) in lines" :key="lineIndex" style="margin: 15px 0px;">
+                <hr v-if="lineIndex != 0 && line.show != false" style="background-color: #b3c0ff"/>
                 <i class="fa fa-lg pull-right fa-trash"  v-if="!readOnly" @click="removeLine(lineIndex)" style="cursor:pointer; padding:10px;"></i>
                 <i class="fa fa-lg pull-right"  v-if="!readOnly" v-bind:class="[line.show ? 'fa-arrow-up' : 'fa-arrow-down ']" @click="toggleLine(line)" style="cursor:pointer; padding:10px;"></i>
                 <span class="pull-right" v-if="line.errors && line.errors.length" style="color:red; font-size:2.2em; font-style:bold;">!</span>

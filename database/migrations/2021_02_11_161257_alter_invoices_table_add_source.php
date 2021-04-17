@@ -17,8 +17,8 @@ class AlterInvoicesTableAddSource extends Migration
     public function up()
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->string("source_type")->after('integration_type');
-            $table->unsignedBigInteger("source_id")->after('source_type');
+            $table->string("source_type")->nullable()->after('integration_type');
+            $table->unsignedBigInteger("source_id")->nullable()->after('source_type');
             $table->index(["source_type", "source_id"]);
             $table->integer('offer_id')->unsigned()->nullable()->after('client_id');
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('set null');

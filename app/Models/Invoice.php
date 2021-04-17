@@ -66,7 +66,6 @@ class Invoice extends Model
         return $this->belongsTo(Offer::class);
     }
 
-
     public function source()
     {
         return $this->morphTo('source');
@@ -95,6 +94,8 @@ class Invoice extends Model
         return $this->update([
             'integration_invoice_id' => null,
             'integration_type' => null,
+            'source_id' => null,
+            'source_type' => null,
         ]);
     }
 

@@ -274,6 +274,6 @@ class ProjectsController extends Controller
      */
     public function findByExternalId($external_id)
     {
-        return Project::whereExternalId($external_id)->first();
+        return Project::whereExternalId($external_id)->firstOrFail();
     }
 }

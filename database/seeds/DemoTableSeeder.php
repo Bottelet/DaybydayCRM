@@ -7,8 +7,11 @@ use Ramsey\Uuid\Uuid;
 use App\Models\Absence;
 use App\Models\Project;
 use App\Models\RoleUser;
+use App\Enums\OfferStatus;
 use App\Models\Department;
 use App\Models\Appointment;
+use App\Models\InvoiceLine;
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class DemoTableSeeder extends Seeder
@@ -86,7 +89,9 @@ class DemoTableSeeder extends Seeder
                         'source_id' => $task->id,
                     ]);
                     $invoice = factory(\App\Models\Invoice::class)->create([
-                        'client_id' => $task->client_id
+                        'client_id' => $task->client_id,
+                        'source_id' => $task->id,
+                        'source_type' => Task::class
                     ]);
                     factory(\App\Models\InvoiceLine::class, 4)->create([
                         'invoice_id' => $invoice->id,
@@ -118,6 +123,16 @@ class DemoTableSeeder extends Seeder
                         'user_id' => $user->id,
                     ]);
                 }
+                $offer = factory(App\Models\Offer::class)->create([
+                    'status' => OfferStatus::inProgress()->getStatus(),
+                    'source_id' => $lead->id,
+                    'client_id' => $lead->client_id,
+                    'source_type' => Lead::class,
+                ]);
+                factory(InvoiceLine::class, rand(1,5))->create([
+                    'offer_id' => $offer->id,
+                    'product_id' => rand(1,4) == 2 ? factory(Product::class)->create()->id : null,
+                ]);
                 factory(App\Models\Comment::class, 2)->create([
                     'source_type' => Lead::class,
                     'source_id' => $lead->id,

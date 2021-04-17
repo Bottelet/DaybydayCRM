@@ -230,6 +230,6 @@ class LeadsController extends Controller
      */
     public function findByExternalId($external_id)
     {
-        return Lead::whereExternalId($external_id)->first();
+        return Lead::whereExternalId($external_id)->firstOrFail();
     }
 }
