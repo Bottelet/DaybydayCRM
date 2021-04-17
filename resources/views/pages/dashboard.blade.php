@@ -115,6 +115,8 @@
                     <div class="icon">
                         <i class="ion ion-stats-bars"></i>
                     </div>
+                    <a href="{{route('leads.index')}}" class="small-box-footer">{{ __('All Leads') }} <i
+                                class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
