@@ -30,7 +30,8 @@
             <lead-sidebar 
             :lead="selectedRow"
             :hidden="selectedRow"
-            v-on:closed-lead="removeRow($event.external_id)"
+            v-on:closed-lead="leadStatusChange"
+            v-on:opened-lead="leadStatusChange"
             v-on:deleted-lead="removeRow($event.external_id)"
             v-on:closed-sidebar="selectedRow = null"
             />
@@ -74,6 +75,12 @@
             removeRow(external_id) {
                 let index = this.leads.findIndex(x => x.external_id === external_id);
                 this.$delete(this.leads, index);
+            },
+            leadStatusChange(lead) {
+                console.log(lead)
+                let index = this.leads.findIndex(x => x.external_id === lead.external_id);
+                
+                this.leads[index].status.title = lead.newStatus;
             }
         },
         mounted () {

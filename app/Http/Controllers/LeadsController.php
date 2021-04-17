@@ -39,58 +39,14 @@ class LeadsController extends Controller
         return view('leads.index')
         ->withStatuses(Status::typeOfLead()->get());;
     }
-    
-    public function allLeads()
-    {
-        $leads = Lead::with(['user', 'status', 'client'])->select('leads.*')->get();
-
-        return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="'.route('leads.show', $leads->external_id).'">'.$leads->title.'</a>';
-            })
-            ->editColumn('client', function ($projects) {
-                return $projects->client->company_name;
-            })
-            ->editColumn('qualified', function ($leads) {
-                return $leads->qualified ? __('True') : __('False');
-            })
-            ->editColumn('contact_date', function ($leads) {
-                return $leads->deadline ? with(new Carbon($leads->deadline))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('user_assigned_id', function ($leads) {
-                return $leads->user->name;
-            })
-            ->editColumn('status_id', function ($leads) {
-                return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> ' .
-                    $leads->status->title . '</span>';
-            })
-            ->addColumn('view', function ($leads) {
-                return '<a href="' . route("leads.show", $leads->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
-                . '<a data-toggle="modal" data-id="'. route('leads.destroy',$leads->external_id) . '" data-title="'. $leads->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>';
-            })
-            ->rawColumns(['titlelink','view', 'status_id'])
-            ->make(true);
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function unqualified()
-    {
-        return view('leads.unqualified')->withStatuses(Status::typeOfLead()->get());
-    }
 
     /**
      * Data for Data tables
      * @return mixed
      */
-    public function unqualifiedLeads()
+    public function leadsJson()
     {
-        $status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
-        $leads = Lead::with(['user', 'creator', 'client.primaryContact'])->get();
+        $leads = Lead::with(['user', 'creator', 'client.primaryContact', 'status'])->get();
 
         $leads->map(function ($item) {
             return [$item['visible_deadline_date'] = $item['deadline']->format(carbonDate()), $item["visible_deadline_time"] = $item['deadline']->format(carbonTime())];
@@ -252,18 +208,15 @@ class LeadsController extends Controller
         if (isset($request->closeLead) && $request->closeLead === true) {
             $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
             $lead->save();
+        } elseif (isset($request->openLead) && $request->openLead === true) {
+            $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
+            $lead->save();
         } else {
             $lead->fill($request->all())->save();
         }
         event(new \App\Events\LeadAction($lead, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Lead status updated'));
         return redirect()->back();
-    }
-
-    public function convertToQualifiedLead(Lead $lead)
-    {
-        Session()->flash('flash_message', __('Lead status updated'));
-        return $lead->convertToQualified();
     }
 
     public function convertToOrder(Lead $lead)

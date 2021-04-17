@@ -85,8 +85,7 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'leads'], function () {
         Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
-        Route::get('/data', 'LeadsController@unqualifiedLeads')->name('leads.data');
-        Route::get('/unqualified', 'LeadsController@unqualified')->name('leads.unqualified');
+        Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee');
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
         Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
@@ -94,8 +93,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson');
-
-        Route::post('/covert-to-qualified/{lead}', 'LeadsController@convertToQualifiedLead')->name('lead.convert.qualified');
     });
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');

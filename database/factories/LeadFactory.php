@@ -14,7 +14,6 @@ $factory->define(Lead::class, function (Faker $faker) {
         'user_created_id' => factory(User::class),
         'user_assigned_id' => factory(User::class),
         'client_id' => factory(\App\Models\Client::class),
-        'qualified' => false,
         'status_id' => $faker->numberBetween($min = 5, $max = 8),
         'deadline' => $faker->dateTimeThisYear($max = 'now'),
         'created_at' => $faker->dateTimeThisYear($max = 'now'),

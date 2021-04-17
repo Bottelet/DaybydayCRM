@@ -109,8 +109,6 @@
             <div class="collapse" id="leads">
             <a href="{{ route('leads.index')}}" class="list-group-item childlist"> <i
                             class="bullet-point"><span></span></i> {{ __('All Leads') }}</a>
-                <a href="{{ route('leads.unqualified')}}" class="list-group-item childlist"> <i
-                            class="bullet-point"><span></span></i> {{ __('Unqualified Leads') }}</a>
                 @if(Entrust::can('lead-create'))
                     <a href="{{ route('leads.create')}}"
                        class="list-group-item childlist"> <i class="bullet-point"><span></span></i> {{ __('New Lead') }}

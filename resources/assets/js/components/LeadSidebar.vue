@@ -1,8 +1,11 @@
 <template>
 <div v-if="lead !== null" v-show="hidden">
-        <div v-show="createOfferModal" class="modal-dialog modal-lg" style="background:white;">
+    <div class="modal fade" id="create-offer" tabindex="-1" role="dialog" aria-hidden="true"
+         style="display:none;">
+        <div class="modal-dialog modal-lg" style="background:white;">
             <invoice-line-modal type="offer" :resource="lead"/>
         </div>
+    </div>
   
     <transition name="appear">
         <confirm-modal v-if='confirmModal' :title="modalTitle" @cancel="closeConfirmModal()" @confirm='action()'></confirm-modal>
@@ -24,26 +27,32 @@
                                     <a :href="'/leads/' + lead.external_id">
                                         <button class="btn btn-brand btn-full-width cta-btn">
                                             <i class="ion ion-ios-redo cta-btn-icon"></i> <br>
-                                            {{trans('View lead')}}
+                                            {{trans('View')}}
                                         </button>
                                     </a>
                                 </div>
                                 <div class="col-xs-3 no-padding">
-                                    <button class="btn btn-brand btn-full-width cta-btn"  @click="createOfferModal = !createOfferModal">
+                                    <button class="btn btn-brand btn-full-width cta-btn"  @click="showOfferModal()">
                                         <i class="fa fa-dollar cta-btn-icon"></i> <br>
                                         {{trans('Create offer')}}
                                     </button>
                                 </div>
-                                <div class="col-xs-3 no-padding" style="z-index: 999">
+                                <div v-if="lead.status.title != 'Closed'" class="col-xs-3 no-padding" style="z-index: 999">
                                     <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(closeLead, 'Are you sure you want to close the lead?')">
                                         <i class="fa fa-close cta-btn-icon"></i> <br>
-                                        {{trans('Close lead')}}
+                                        {{trans('Close')}}
+                                    </button>
+                                </div>
+                                <div v-if="lead.status.title == 'Closed'" class="col-xs-3 no-padding" style="z-index: 999">
+                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(reopenLead, 'Are you sure you want to open the lead?')">
+                                        <i class="fa fa-check cta-btn-icon"></i> <br>
+                                        {{trans('Reopen')}}
                                     </button>
                                 </div>
                                 <div class="col-xs-3 no-padding" >
                                     <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(deleteLead, 'Are you sure you want to delete the lead?')">
                                         <i class="fa fa-trash cta-btn-icon"></i> <br>
-                                        {{trans('Delete lead')}}
+                                        {{trans('Delete')}}
                                     </button>
                                 </div>
                                 <div class="col-xs-12 movedown">
@@ -136,8 +145,7 @@ export default {
         return {
             confirmModal: false,
             action: null,
-            modalTitle: null,
-            createOfferModal: false
+            modalTitle: null
         }
     },
   methods: {
@@ -147,8 +155,16 @@ export default {
     closeLead() {
         axios
             .post('/leads/updatestatus/' + this.lead.external_id, {"closeLead": true})
+        this.lead.newStatus = "Closed"
         this.$emit('closed-lead', this.lead)
-        this.closeSidebar()
+        this.closeConfirmModal()
+
+    },
+    reopenLead() {
+        axios
+            .post('/leads/updatestatus/' + this.lead.external_id, {"openLead": true})
+        this.lead.newStatus = "Open"
+        this.$emit('opened-lead', this.lead)
         this.closeConfirmModal()
 
     },
@@ -173,6 +189,9 @@ export default {
     closeConfirmModal() {
         this.confirmModal = false
     },
+    showOfferModal() {
+        $('#create-offer').modal('show');
+    }
   },
   components: {
         ConfirmModal,

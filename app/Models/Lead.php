@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Ramsey\Uuid\Uuid;
 
 /**
- * @property bool qualified
  * @property string title
  * @property string external_id
  * @property integer user_assigned_id
@@ -38,7 +37,6 @@ class Lead extends Model implements Commentable
         'user_assigned_id',
         'user_created_id',
         'client_id',
-        'qualified',
         'result',
         'deadline',
         'invoice_id',
@@ -98,17 +96,6 @@ class Lead extends Model implements Commentable
     public function getShowRoute()
     {
         return route('leads.show', [$this->external_id]);
-    }
-
-    public function convertToQualified()
-    {
-        $this->qualified = true;
-        $this->save();
-    }
-
-    public function getIsQualifiedAttribute()
-    {
-        return $this->qualified;
     }
 
     public function activity()
