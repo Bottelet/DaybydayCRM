@@ -16,7 +16,7 @@ services:
       - APP_KEY=i53weLzCSdunQzNc2SXR2AE9XJVDuNaq
       - DB_HOST=db
       - DB_DATABASE=daybyday
-      - DB_USERNAME=root
+      - DB_ROOT_USERNAME=root
       - DB_PASSWORD=root
     depends_on:
       - db
