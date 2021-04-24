@@ -222,8 +222,8 @@
                     let group = {};
                     group.id = user.external_id;
                     group.content = "<div style='float:left; margin-right: 10px;'><img src='" + user.avatar + "' style='border-radius:50%;' width='60em'></div>" +
-                        "<div style='float:right;'><p style='margin: 0'>" + user.name + "</p>" +
-                        "<span style='font-size:11px; font-weight: 300; font-color:#eee;'>" + user.department[0].name +  "<span></div>";
+                        "<div style='float:right;'><p style='margin: 0'>" + this.sanitizeHTML(user.name) + "</p>" +
+                        "<span style='font-size:11px; font-weight: 300; font-color:#eee;'>" + this.sanitizeHTML(user.department[0].name) +  "<span></div>";
                     group.style = "width: 240px";
                     this.groups.push(group);
                 })
@@ -233,7 +233,7 @@
                     let item = {};
                     item.id = appointment.external_id;
                     item.group = appointment.user.external_id;
-                    item.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>"+ appointment.start_at +"</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + appointment.title+ "</p>";
+                    item.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>"+ appointment.start_at +"</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + this.sanitizeHTML(appointment.title) + "</p>";
                     item.start = appointment.start_at;
                     item.end = appointment.end_at;
                     item.style = "background-color:" + appointment.color;
@@ -307,13 +307,18 @@
                 var appointment = {};
                 appointment.id = event.data.external_id;
                 appointment.group = event.data.user_external_id;
-                appointment.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>" + event.data.start_at + "</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + event.data.title + "</p>";
+                appointment.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>" + event.data.start_at + "</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + this.sanitizeHTML(event.data.title) + "</p>";
                 appointment.start = event.data.start_at;
                 appointment.end = event.data.end_at;
                 appointment.style = "background-color:" + event.data.color;
                 this.items.push(appointment);
                 this.timeline.setItems(this.items);
             },
+            sanitizeHTML(text) {
+                var element = document.createElement('div');
+                element.innerText = text;
+                return element.innerHTML;
+            }
         },
         components: {
             message: Message,

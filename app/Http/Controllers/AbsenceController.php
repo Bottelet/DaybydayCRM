@@ -41,7 +41,7 @@ class AbsenceController extends Controller
             <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
             {{csrf_field()}}
             </form>')
-            ->rawColumns(['username', 'delete'])
+            ->rawColumns(['delete'])
             ->make(true);
     }
     public function index()

@@ -54,12 +54,9 @@ class UsersController extends Controller
 
     public function anyData()
     {
-        $canUpdateUser = auth()->user()->can('update-user');
         $users = User::select(['id', 'external_id', 'name', 'email', 'primary_number']);
         return Datatables::of($users)
-            ->addColumn('namelink', function ($users) {
-                return '<a href="/users/' . $users->external_id . '" ">' . $users->name . '</a>';
-            })
+            ->addColumn('namelink', '<a href="{{ route("users.show",[$external_id]) }}">{{$name}}</a>')
             ->addColumn('view', function ($user) {
                 return '<a href="' . route("users.show", $user->external_id) . '" class="btn btn-link">' . __('View') .'</a>';
             })
@@ -85,9 +82,7 @@ class UsersController extends Controller
         )
             ->where('user_assigned_id', $id)->get();
         return Datatables::of($tasks)
-            ->addColumn('titlelink', function ($tasks) {
-                return '<a href="' . route('tasks.show', $tasks->external_id) . '">' . $tasks->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format(carbonDate()) : '';
@@ -118,9 +113,7 @@ class UsersController extends Controller
         )
             ->where('user_assigned_id', $id)->get();
         return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="' . route('leads.show', $leads->external_id) . '">' . $leads->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($leads) {
                 return $leads->created_at ? with(new Carbon($leads->created_at))
                     ->format(carbonDate()) : '';

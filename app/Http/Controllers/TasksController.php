@@ -61,9 +61,7 @@ class TasksController extends Controller
         );
 
         return Datatables::of($tasks)
-            ->addColumn('titlelink', function ($tasks) {
-                return '<a href="tasks/' . $tasks->external_id . '" ">' . $tasks->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;
             })

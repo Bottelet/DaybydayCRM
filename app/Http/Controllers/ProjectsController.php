@@ -31,9 +31,7 @@ class ProjectsController extends Controller
         )->get();
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', function ($projects) {
-                return '<a href="projects/' . $projects->external_id . '" ">' . $projects->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;
             })

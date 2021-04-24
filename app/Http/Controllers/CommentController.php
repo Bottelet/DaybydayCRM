@@ -1,13 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use Auth;
 use Session;
-use Mews\Purifier;
-use App\Models\Task;
-use App\Models\Lead;
-use App\Http\Requests;
-use App\Models\Comment;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller

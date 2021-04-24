@@ -63,10 +63,8 @@ class ClientsController extends Controller
     public function anyData()
     {
         $clients = Client::select(['external_id', 'company_name', 'vat', 'address']);
-        return Datatables::of($clients)
-            ->addColumn('namelink', function ($clients) {
-                return '<a href="/clients/' . $clients->external_id . '" ">' . $clients->company_name . '</a>';
-            })
+        return Datatables::of($clients)       
+            ->addColumn('namelink', '<a href="{{ route("clients.show",[$external_id]) }}">{{$company_name}}</a>')
             ->addColumn('view', '
                 <a href="{{ route(\'clients.show\', $external_id) }}" class="btn btn-link" >'  . __('View') . '</a>')
             ->addColumn('edit', '
@@ -77,7 +75,7 @@ class ClientsController extends Controller
             <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well\')"">
             {{csrf_field()}}
             </form>')
-            ->rawColumns(['namelink','view','edit', 'delete'])
+            ->rawColumns(['namelink', 'view','edit', 'delete'])
             ->make(true);
     }
 
@@ -92,9 +90,7 @@ class ClientsController extends Controller
 
 
         return Datatables::of($tasks)
-            ->addColumn('titlelink', function ($tasks) {
-                return '<a href="' . route('tasks.show', $tasks->external_id) . '">' . $tasks->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format(carbonDate()) : '';
@@ -121,9 +117,7 @@ class ClientsController extends Controller
         )->get();
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', function ($projects) {
-                return '<a href="' . route('projects.show', $projects->external_id) . '">' . $projects->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($projects) {
                 return $projects->created_at ? with(new Carbon($projects->created_at))
                     ->format(carbonDate()) : '';
@@ -149,9 +143,7 @@ class ClientsController extends Controller
             ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )->get();
         return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="' . route('leads.show', $leads->external_id) . '">' . $leads->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($leads) {
                 return $leads->created_at ? with(new Carbon($leads->created_at))
                     ->format(carbonDate()) : '';
@@ -227,7 +219,7 @@ class ClientsController extends Controller
             'industry_id' => $request->industry_id,
             'user_id' => $request->user_id,
             'client_number' => app(ClientNumberService::class)->setNextClientNumber(),
-            ]);
+        ]);
 
         $contact = Contact::create([
             'external_id' => Uuid::uuid4()->toString(),
