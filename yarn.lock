@@ -6915,10 +6915,10 @@ vendors@^1.0.0:
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.4.tgz#e2b800a53e7a29b93506c3cf41100d16c4c4ad8e"
   integrity sha512-/juG65kTL4Cy2su4P8HjtkTxk6VmJDiOPBufWniqQ6wknac6jNiXS9vU+hO3wgusiyqWlzTbVHi0dyJqRONg3w==
 
-vis-timeline@^7.3.4:
-  version "7.4.6"
-  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.6.tgz#7cb7c7e8b138e9b0d481f6073eed764fc3854072"
-  integrity sha512-U4InXbpSaSH8Ag91RRnrjsC4Mf6SXNfdeCqVI3E2G1UrEM890otLS14/VpRYBYJkwSrFCVS2lPntEJHnU2XwTQ==
+vis-timeline@^7.4.4:
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/vis-timeline/-/vis-timeline-7.4.4.tgz#9d52885fa6e098f0860dd9a4f712691b7a222d98"
+  integrity sha512-L7SAIjMuccBl476ByskJbm4KLUIzxwflQ/zIL2WcaLgtdedyza+VLB+MVOv/RwavpdHCUY7ygLJ77cKe4dPzIg==
 
 vm-browserify@^1.0.1:
   version "1.1.2"
