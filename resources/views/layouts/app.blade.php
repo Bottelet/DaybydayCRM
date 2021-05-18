@@ -58,7 +58,7 @@
 
     </style>
 </head>
-<body id="app-layout">
+<body id="app-layout" class="{{config('app.direction')}}">
 </nav>
 
 <div style="text-align: center; margin-bottom:20px;"><a href="/login">
