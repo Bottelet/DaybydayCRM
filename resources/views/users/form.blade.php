@@ -19,10 +19,10 @@
         </div>
         <div id="input_avatar" class="input-group" style="margin-left: 0.7em;">
             <input type="file" name="image_path" id="avatar_image" onchange="loadPreview(this);">
-            <span style="font-size:10px">Recommended size 300x300</span>
+            <span style="font-size:10px">@lang('Recommended size 300x300')</span>
         </div>
         <div class="input-group" style="margin-left: 0.7em;">
-            <button id="delete_avatar" type="button">remove</button>
+            <button id="delete_avatar" type="button">@lang('remove')</button>
         </div>
     </div>
 </div>

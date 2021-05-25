@@ -25,7 +25,7 @@
                             @foreach($task_statuses as $task_status)
                                 <option value="{{$task_status->title}}">{{$task_status->title}}</option>
                             @endforeach
-                            <option value="all">All</option>
+                            <option value="all">{{ __('All') }}</option>
                         </select>
                     </th>
                 </tr>
