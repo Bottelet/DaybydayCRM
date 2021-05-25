@@ -48,6 +48,7 @@
   font-weight: 900;
 }
 
-body.rtl {
+body.rtl,
+body.rtl .global-heading {
   font-family: Sahel, "Poppins", sans-serif;
 }
