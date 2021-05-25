@@ -19,7 +19,7 @@
                 autoWidth: false,
                 ajax: '{!! route('clients.invoiceDataTable', $client->external_id) !!}',
                 language: {
-                    url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                    url: '{{ $dataTableLanguageFile }}'
                 },
                 drawCallback: function(){
                     var length_select = $(".dataTables_length");

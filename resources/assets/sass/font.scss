@@ -1,0 +1,53 @@
+@font-face {
+  font-family: Sahel;
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-FD-WOL.eot');
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-FD-WOL.eot?#iefix') format('embedded-opentype'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-FD-WOL.woff2') format('woff2'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-FD-WOL.woff') format('woff'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-FD-WOL.ttf') format('truetype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Sahel;
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Bold-FD-WOL.eot');
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Bold-FD-WOL.eot?#iefix') format('embedded-opentype'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Bold-FD-WOL.woff2') format('woff2'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Bold-FD-WOL.woff') format('woff'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Bold-FD-WOL.ttf') format('truetype');
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Sahel;
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Light-FD-WOL.eot');
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Light-FD-WOL.eot?#iefix') format('embedded-opentype'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Light-FD-WOL.woff2') format('woff2'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Light-FD-WOL.woff') format('woff'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Light-FD-WOL.ttf') format('truetype');
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: Sahel;
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-SemiBold-FD-WOL.eot');
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-SemiBold-FD-WOL.eot?#iefix') format('embedded-opentype'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-SemiBold-FD-WOL.woff2') format('woff2'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-SemiBold-FD-WOL.woff') format('woff'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-SemiBold-FD-WOL.ttf') format('truetype');
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: Sahel;
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Black-FD-WOL.eot');
+  src: url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Black-FD-WOL.eot?#iefix') format('embedded-opentype'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Black-FD-WOL.woff2') format('woff2'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Black-FD-WOL.woff') format('woff'),
+  url('../font/sahel/Farsi-Digits-Without-Latin/Sahel-Black-FD-WOL.ttf') format('truetype');
+  font-weight: 900;
+}
+
+body.rtl {
+  font-family: Sahel, "Poppins", sans-serif;
+}

@@ -38,7 +38,7 @@
                     autoWidth: false,
                     ajax: '{!! route('departments.indexDataTable') !!}',
                     language: {
-                        url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                        url: '{{ $dataTableLanguageFile }}'
                     },
                     drawCallback: function(){
                         var length_select = $(".dataTables_length");

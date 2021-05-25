@@ -38,19 +38,19 @@
                                     </button>
                                 </div>
                                 <div v-if="lead.status.title != 'Closed'" class="col-xs-3 no-padding" style="z-index: 999">
-                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(closeLead, 'Are you sure you want to close the lead?')">
+                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(closeLead, trans('Are you sure you want to close the lead?'))">
                                         <i class="fa fa-close cta-btn-icon"></i> <br>
                                         {{trans('Close')}}
                                     </button>
                                 </div>
                                 <div v-if="lead.status.title == 'Closed'" class="col-xs-3 no-padding" style="z-index: 999">
-                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(reopenLead, 'Are you sure you want to open the lead?')">
+                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(reopenLead, trans('Are you sure you want to open the lead?'))">
                                         <i class="fa fa-check cta-btn-icon"></i> <br>
                                         {{trans('Reopen')}}
                                     </button>
                                 </div>
                                 <div class="col-xs-3 no-padding" >
-                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(deleteLead, 'Are you sure you want to delete the lead?')">
+                                    <button class="btn btn-brand btn-full-width cta-btn" @click="openConfirmModal(deleteLead, trans('Are you sure you want to delete the lead?'))">
                                         <i class="fa fa-trash cta-btn-icon"></i> <br>
                                         {{trans('Delete')}}
                                     </button>
@@ -237,6 +237,10 @@ export default {
         background: transparent;
         font-size:1.6em;
         margin-right: 10px;
+    }
+    .rtl #close-sidebar {
+        margin-right: auto;
+        margin-left: 10px;
     }
     .cta-btn {
         font-size: 0.77em !important;

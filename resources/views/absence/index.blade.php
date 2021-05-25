@@ -32,7 +32,7 @@
                 serverSide: true,
                 ajax: '{!! route('absence.data') !!}',
                 language: {
-                    url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                    url: '{{ $dataTableLanguageFile }}'
                 },
                 name:'search',
                 drawCallback: function() {

@@ -1,0 +1,25 @@
+{
+  "decimal":        "",
+  "emptyTable":     "داده ای وجود ندارد",
+  "info":           "نمایش _START_ تا _END_ از _TOTAL_",
+  "infoEmpty":      "",
+  "infoFiltered":   "(فیلتر شده از کل _MAX_ مورد)",
+  "infoPostFix":    "",
+  "thousands":      ",",
+  "lengthMenu":     "نمایش _MENU_ مورد",
+  "loadingRecords": "در حال بارگذاری ...",
+  "processing":     "در حال پردازش ...",
+  "searchPlaceholder":         "جستجو",
+  "search":         "",
+  "zeroRecords":    "موردی یافت نشد",
+  "paginate": {
+    "first":      "اولین",
+    "last":       "آخرین",
+    "next":       "بعدی",
+    "previous":   "قبلی"
+  },
+  "aria": {
+    "sortAscending":  "برای مرتب سازی صعودی ستون فعال کنید: ",
+    "sortDescending": "برای مرتب سازی نزولی ستون فعال کنید: "
+  }
+}

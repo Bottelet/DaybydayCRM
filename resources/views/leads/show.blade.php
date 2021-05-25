@@ -12,7 +12,7 @@
             <div class="tablet tablet--tabs tablet--height-fluid">
                 <div class="tablet__head ">
                     <div class="tablet__head-toolbar">
-                        Offers
+                        {{ __('Offers') }}
                     </div>
                     @if(Entrust::can('offer-create'))
                     <div class="tablet__head"  style="padding: 6px 2px;">

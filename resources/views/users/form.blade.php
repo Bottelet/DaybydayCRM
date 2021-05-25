@@ -1,4 +1,3 @@
-
 <div class="col-sm-3">
     <label for="name" class="base-input-label">@lang('Name')</label>
 </div>
@@ -116,6 +115,9 @@
         </label>
         <label class="radio-inline">
             <input value="es" type="radio" name="language" {{isset($user) && strtolower($user->language) == "es" ? 'checked': ''}}>@lang('Spanish')
+        </label>
+        <label class="radio-inline">
+            <input value="fa" type="radio" name="language" {{isset($user) && strtolower($user->language) == "fa" ? 'checked': ''}}>@lang('Persian')
         </label>
     </div>
 </div>

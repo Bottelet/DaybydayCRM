@@ -119,7 +119,7 @@
                         select.addClass("tablet__select");
                   },
                   language: {
-                      url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                      url: '{{ $dataTableLanguageFile }}'
                   },
                     columns: [
                         {data: 'titlelink', name: 'title'},
@@ -147,7 +147,7 @@
                     autoWidth: false,
                     ajax: '{!! route('users.clientdata', ['id' => $user->id]) !!}',
                     language: {
-                        url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                        url: '{{ $dataTableLanguageFile }}'
                     },
                     drawCallback: function(){
                         var length_select = $(".dataTables_length");
@@ -171,7 +171,7 @@
                     autoWidth: false,
                     ajax: '{!! route('users.leaddata', ['id' => $user->id]) !!}',
                   language: {
-                      url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                      url: '{{ $dataTableLanguageFile }}'
                   },
                   drawCallback: function(){
                       var length_select = $(".dataTables_length");
