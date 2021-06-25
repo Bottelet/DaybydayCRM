@@ -82,7 +82,7 @@ class TasksController extends Controller
             })
             ->addColumn('view', function ($tasks) {
                 return '<a href="' . route("tasks.show", $tasks->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
-                . '<a data-toggle="modal" data-id="'. route('tasks.destroy',$tasks->external_id) . '" data-title="'. $tasks->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>'
+                . '<a data-toggle="modal" data-id="'. route('tasks.destroy',$tasks->external_id) . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>'
                 ;
             })
             ->rawColumns(['titlelink','view', 'status_id'])
