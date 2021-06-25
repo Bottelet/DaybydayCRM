@@ -40,6 +40,10 @@ class UsersController extends Controller
 
     public function calendarUsers()
     {
+        if (!auth()->user()->can('absence-view')) {
+            session()->flash('flash_message_warning', __('You do not have permission to view this page'));
+            return redirect()->back();
+        }
         return User::with(['department', 'absences' =>  function ($q) {
             return $q->whereBetween('start_at', [today()->subWeeks(2)->startOfDay(), today()->addWeeks(4)->endOfDay()])
                       ->orWhereBetween('end_at', [today()->subWeeks(2)->startOfDay(), today()->addWeeks(4)->endOfDay()]);
@@ -244,6 +248,12 @@ class UsersController extends Controller
         $password = bcrypt($request->password);
         $role = $request->roles;
         $department = $request->departments;
+
+        if( !auth()->user()->canChangePasswordOn($user) ) {
+            unset($request['password']);
+        }
+
+
         if ($request->hasFile('image_path')) {
             $companyname = Setting::first()->external_id;
             $file =  $request->file('image_path');
@@ -273,7 +283,9 @@ class UsersController extends Controller
         if ($role && $role->name == Role::OWNER_ROLE && $owners->count() <= 1) {
             Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
-            $user->roles()->sync([$request->roles]);
+            if(auth()->user()->canChangeRole() ) {
+                $user->roles()->sync([$request->roles]);
+            }
         }
         $user->department()->sync([$department]);
 

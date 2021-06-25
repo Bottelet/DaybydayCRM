@@ -98,6 +98,19 @@ class User extends Authenticatable
         return $this->hasMany(Token::class, 'user_id', 'id');
     }
 
+    public function canChangePasswordOn(User $user)
+    {
+        if($this->id === $user->id || ( $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function canChangeRole()
+    {
+        return $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE;
+    }
 
 
     public function isOnline()
