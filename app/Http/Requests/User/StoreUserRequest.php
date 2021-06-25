@@ -29,8 +29,8 @@ class StoreUserRequest extends FormRequest
             'address' => '',
             'primary_number' => 'numeric',
             'secondary_number' => 'numeric',
-            'password' => 'required|min:5|confirmed',
-            'password_confirmation' => 'required|min:5',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6',
             'image_path' => '',
             'roles' => 'required',
             'departments' => 'required'

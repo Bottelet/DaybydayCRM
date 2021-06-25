@@ -29,8 +29,8 @@ class UpdateUserRequest extends FormRequest
             'address' => '',
             'primary_number' => 'numeric',
             'secondary_number' => 'numeric',
-            'password' => 'sometimes',
-            'password_confirmation' => 'sometimes',
+            'password' => 'sometimes|min:6|confirmed',
+            'password_confirmation' => 'sometimes|min:6',
             'image_path' => '',
             'departments' => 'required'
         ];

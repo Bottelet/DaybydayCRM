@@ -15,6 +15,10 @@ class AppointmentsController extends Controller
 {
     public function calendar()
     {
+        if (!auth()->user()->can("calendar-view")) {
+            session()->flash('flash_message_warning', __('You do not have permission to view this page'));
+            return redirect()->back();
+        }
         return view('appointments.calendar');
     }
 
@@ -38,7 +42,6 @@ class AppointmentsController extends Controller
 
     public function store(CreateAppointmentCalendarRequest $request)
     {
- 
         $client_id = null;
         $user = User::where('external_id', $request->user)->first();
 
@@ -86,7 +89,7 @@ class AppointmentsController extends Controller
 
     public function destroy(Appointment $appointment)
     {
-        if (!auth()->user()->can("appointment-create")) {
+        if (!auth()->user()->can("appointment-delete")) {
             return response("Access denied", 403);
         }
 
