@@ -63,6 +63,7 @@ class ClientsController extends Controller
     public function anyData()
     {
         $clients = Client::select(['external_id', 'company_name', 'vat', 'address']);
+        $confirmMessage = 'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well';
         return Datatables::of($clients)       
             ->addColumn('namelink', '<a href="{{ route("clients.show",[$external_id]) }}">{{$company_name}}</a>')
             ->addColumn('view', '
@@ -72,7 +73,7 @@ class ClientsController extends Controller
             ->addColumn('delete', '
                 <form action="{{ route(\'clients.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well\')"">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\''.__($confirmMessage).'\')"">
             {{csrf_field()}}
             </form>')
             ->rawColumns(['namelink', 'view','edit', 'delete'])

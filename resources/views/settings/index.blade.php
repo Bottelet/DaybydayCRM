@@ -61,6 +61,7 @@
                                 <option value="EN">@lang("English")</option>
                                 <option value="DK" {{$settings->language == "DK" ? "selected" : ""}}>@lang("Danish")</option>
                                 <option value="ES" {{$settings->language == "ES" ? "selected" : ""}}>@lang("Spanish")</option>
+                                <option value="FA" {{$settings->language == "FA" ? "selected" : ""}}>@lang("Persian")</option>
                             </select>
                         </div>
                     </div>

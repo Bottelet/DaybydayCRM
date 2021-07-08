@@ -1,4 +1,3 @@
-
 <div class="col-sm-3">
     <label for="name" class="base-input-label">@lang('Name')</label>
 </div>
@@ -20,10 +19,10 @@
         </div>
         <div id="input_avatar" class="input-group" style="margin-left: 0.7em;">
             <input type="file" name="image_path" id="avatar_image" onchange="loadPreview(this);">
-            <span style="font-size:10px">Recommended size 300x300</span>
+            <span style="font-size:10px">@lang('Recommended size 300x300')</span>
         </div>
         <div class="input-group" style="margin-left: 0.7em;">
-            <button id="delete_avatar" type="button">remove</button>
+            <button id="delete_avatar" type="button">@lang('remove')</button>
         </div>
     </div>
 </div>
@@ -138,6 +137,9 @@
         </label>
         <label class="radio-inline">
             <input value="es" type="radio" name="language" {{isset($user) && strtolower($user->language) == "es" ? 'checked': ''}}>@lang('Spanish')
+        </label>
+        <label class="radio-inline">
+            <input value="fa" type="radio" name="language" {{isset($user) && strtolower($user->language) == "fa" ? 'checked': ''}}>@lang('Persian')
         </label>
     </div>
 </div>

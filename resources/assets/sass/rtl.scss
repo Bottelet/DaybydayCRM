@@ -1,0 +1,215 @@
+.rtl {
+  direction: rtl;
+
+  .navmenu-fixed-left,
+  .navbar-offcanvas.navmenu-fixed-left {
+    right: 0;
+    left: auto;
+    border-width: 0 0 0 1px;
+  }
+
+  .menu-txt-toggle {
+    left: auto;
+    right: 280px;
+  }
+
+  .myNavmenu-icons .menu-txt-toggle {
+    left: auto;
+    right: 75px;
+  }
+
+  .navbar-toggle {
+    margin-right: 0;
+    margin-left: 15px;
+  }
+
+  .mobile-nav {
+    left: auto;
+    right: 25px;
+    margin-right: 0;
+    margin-left: 15px;
+  }
+
+  .myNavmenu-icons.big-menu .mobile-nav {
+    left: auto;
+    right: 75px;
+  }
+
+  .navbar-icons__wrapper {
+    float: left;
+    padding-right: 0;
+    padding-left: 20px;
+  }
+
+  .big-menu .mobile-nav {
+    left: auto;
+    right: 285px;
+  }
+
+  .action-panel {
+    right: auto;
+    left: -400px;
+  }
+
+  .bar {
+    right: auto;
+    left: 0;
+  }
+
+  .action-panel-header__btn-close {
+    margin-left: 0;
+    margin-right: 12rem;
+  }
+
+  .nav {
+    padding-right: 0;
+  }
+
+  .topbar-user__card-image-wrapper {
+    padding-right: 0;
+    padding-left: 1rem;
+  }
+
+  .radio-inline, .checkbox-inline {
+    padding-left: 0;
+    padding-right: 20px;
+  }
+
+  .radio input[type=radio], .radio-inline input[type=radio], .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox] {
+    margin-left: 0;
+    margin-right: -20px;
+  }
+
+  .arrow-side {
+    transform: rotate(270deg);
+  }
+
+  .sidebar-arrow {
+    float: left;
+  }
+
+  .sidebar-icon {
+    padding-right: 0;
+    padding-left: 15px;
+  }
+
+  .dropdown-menu {
+    text-align: right;
+  }
+
+  .topbar-user__list-wrapper .btn-logout {
+    margin-right: 20px;
+    margin-left: 0 !important;
+  }
+
+  #close-sidebar {
+    margin-right: auto;
+    margin-left: 10px;
+  }
+
+  .dataTables_filter input {
+    padding: 11px 13px 6px 0;
+  }
+
+  .close {
+    float: left;
+  }
+
+  .sidebarheader {
+    padding-left: 0;
+    padding-right: 10px;
+  }
+
+  .action-content {
+    margin-left: 0;
+    margin-right: 44px;
+  }
+
+  .pull-right {
+    float: left !important;
+  }
+
+  .el-tabs__nav {
+    float: right;
+    direction: ltr;
+  }
+
+  .removeleft {
+    padding-right: 0;
+  }
+
+  .removeright {
+    padding-left: 0;
+  }
+
+  @media (min-width: 1200px) {
+    .col-lg-1,
+    .col-lg-2,
+    .col-lg-3,
+    .col-lg-4,
+    .col-lg-5,
+    .col-lg-6,
+    .col-lg-7,
+    .col-lg-8,
+    .col-lg-9,
+    .col-lg-10,
+    .col-lg-11,
+    .col-lg-12 {
+      float: right;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .col-md-1,
+    .col-md-2,
+    .col-md-3,
+    .col-md-4,
+    .col-md-5,
+    .col-md-6,
+    .col-md-7,
+    .col-md-8,
+    .col-md-9,
+    .col-md-10,
+    .col-md-11,
+    .col-md-12 {
+      float: right;
+    }
+    #page-content-wrapper {
+      padding: 0 270px 0 0;
+    }
+    .myNavmenu-icons #page-content-wrapper {
+      padding-left: 0;
+      padding-right: 60px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .big-menu #page-content-wrapper {
+      padding-left: 0;
+      padding-right: 260px;
+    }
+    .myNavmenu-icons.big-menu #page-content-wrapper {
+      padding-left: 0;
+      padding-right: 60px;
+    }
+
+    .navbar-right .dropdown-menu {
+      right: auto;
+      left: 0;
+    }
+    .col-sm-1,
+    .col-sm-2,
+    .col-sm-3,
+    .col-sm-4,
+    .col-sm-5,
+    .col-sm-6,
+    .col-sm-7,
+    .col-sm-8,
+    .col-sm-9,
+    .col-sm-10,
+    .col-sm-11,
+    .col-sm-12 {
+      float: right;
+    }
+  }
+}

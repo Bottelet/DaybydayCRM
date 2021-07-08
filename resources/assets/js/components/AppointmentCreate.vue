@@ -77,8 +77,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-brand" @click="createNewAppointment()">Create</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{trans('Close')}}</button>
+                    <button type="button" class="btn btn-brand" @click="createNewAppointment()">{{trans('Create')}}</button>
                 </div>
             </div>
         </div>

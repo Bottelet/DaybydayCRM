@@ -44,12 +44,12 @@
                     <div class="form-inline row">
                     <div class="form-group col-sm-6">
                         <label for="title" class="control-label thin-weight">{{trans('Title')}}</label>
-                        <input v-model="line.title" type="text" name="title" :disabled="readOnly" class="form-control" placeholder="Insert task title (will be shown on invoice">
+                        <input v-model="line.title" type="text" name="title" :disabled="readOnly" class="form-control" :placeholder="trans('Insert task title (will be shown on invoice)')">
                     </div>
 
                     <div class="form-group col-sm-6">
                         <label for="comment" class="control-label thin-weight">{{trans('Description')}}</label>
-                        <input v-model="line.comment" type="text" name="comment" :disabled="readOnly" class="form-control" placeholder="A short description, as to what is being billed"> 
+                        <input v-model="line.comment" type="text" name="comment" :disabled="readOnly" class="form-control" :placeholder="trans('A short description, as to what is being billed')">
                     </div>
                     </div>
 

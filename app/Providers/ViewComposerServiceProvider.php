@@ -37,6 +37,26 @@ class ViewComposerServiceProvider extends ServiceProvider
             ['invoices.show'],
             'App\Http\ViewComposers\InvoiceHeaderComposer'
         );
+
+        view()->composer(
+            [
+                'departments.index',
+                'absence.index',
+                'clients.index',
+                'clients.tabs.invoicetab',
+                'clients.tabs.leadtab',
+                'clients.tabs.projectstab',
+                'clients.tabs.tasktab',
+                'datatables.index',
+                'invoices._paymentList',
+                'projects.index',
+                'roles.index',
+                'tasks.index',
+                'users.index',
+                'users.show'
+            ],
+            'App\Http\ViewComposers\DataTableLanguageComposer'
+        );
     }
 
     /**

@@ -38,7 +38,7 @@
     <script src="https://js.stripe.com/v3/"></script>
     @stack('style')
 </head>
-<body>
+<body class="{{config('app.direction')}}">
 
 <div id="wrapper">
 

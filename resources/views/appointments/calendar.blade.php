@@ -8,7 +8,7 @@
   <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{{ asset(elixir('css/bootstrap-select.min.css')) }}">
 </head>
-<body>
+<body class="{{config('app.direction')}}">
 <div id="wrapper">
   <calendar></calendar>
 </div>

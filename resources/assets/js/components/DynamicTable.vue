@@ -135,6 +135,10 @@
         font-size:1.6em;
         margin-right: 10px;
     }
+    .rtl #close-sidebar {
+        margin-right: auto;
+        margin-left: 10px;
+    }
     .cta-btn {
         font-size: 0.77em !important;
         min-height: 6em;

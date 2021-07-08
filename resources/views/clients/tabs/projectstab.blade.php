@@ -33,7 +33,7 @@
                     select.addClass("tablet__select");
                 },
                 language: {
-                    url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                    url: '{{ $dataTableLanguageFile }}'
                 },
                 columns: [
                     {data: 'titlelink', name: 'title'},

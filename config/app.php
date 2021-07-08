@@ -194,4 +194,11 @@ return [
         'ability' => App\Zizaco\Entrust\Middleware\EntrustAbility::class,
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Application Direction
+    |--------------------------------------------------------------------------
+    */
+
+    'direction' => env('APP_DIRECTION', 'ltr'),
 ];
