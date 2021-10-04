@@ -37,7 +37,7 @@
             serverSide: true,
             ajax: '{!! route('clients.data') !!}',
             language: {
-                url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en', 'bn']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
             },
             name:'search',
             drawCallback: function(){
