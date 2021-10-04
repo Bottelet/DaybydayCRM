@@ -112,6 +112,7 @@ class SettingsController extends Controller
      */
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
+
         $setting = Setting::first();
 
         if (!app(ClientNumberValidator::class)->validateClientNumber((int)$request->client_number)) {

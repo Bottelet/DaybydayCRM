@@ -139,6 +139,9 @@
         <label class="radio-inline">
             <input value="es" type="radio" name="language" {{isset($user) && strtolower($user->language) == "es" ? 'checked': ''}}>@lang('Spanish')
         </label>
+        <label class="radio-inline">
+            <input value="bn" type="radio" name="language" {{isset($user) && strtolower($user->language) == "bn" ? 'checked': ''}}>@lang('Bengali')
+        </label>
     </div>
 </div>
 <div class="col-sm-12">

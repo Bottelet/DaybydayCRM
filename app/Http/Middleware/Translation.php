@@ -17,7 +17,7 @@ class Translation
     {
         if (auth()->user()) {
             $language = auth()->user()->language;
-            if (!in_array($language, ["en", "dk", "es"])) {
+            if (!in_array($language, ["en", "dk", "es",'bn'])) {
                 $language = "en";
             }
             app()->setLocale($language);
