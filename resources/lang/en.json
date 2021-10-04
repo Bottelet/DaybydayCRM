@@ -530,5 +530,7 @@
   "week": "week",
   "yellow": "yellow",
   "yes": "yes",
-  "HR": "HR"
+  "HR": "HR",
+  "Notifications" : "Notifications",
+  "Actions" : "Actions"
 }
