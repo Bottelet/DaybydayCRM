@@ -1,7 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All users') }}
+    @if(Entrust::can('user-create'))
     <a href="{{ route('users.create')}}" class="btn btn-brand float-right">{{ __('New User') }}</a>
+    @endif
 @stop
 
 @section('content')
