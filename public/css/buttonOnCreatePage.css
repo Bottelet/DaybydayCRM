@@ -1,0 +1,12 @@
+.row_flex{
+    display: flex;
+}
+.column_flex{
+    display: flex;
+}
+
+.item_center_right{
+    align-items: center;
+    align-content: flex-start;
+    flex-direction: row-reverse;
+}

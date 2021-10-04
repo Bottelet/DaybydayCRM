@@ -12,6 +12,7 @@
     <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7.3.4/styles/vis-timeline-graph2d.min.css">
     <link rel="stylesheet" href="{{ asset(elixir('css/vendor.css')) }}">
+    <link rel="stylesheet" href="{{ asset(('css/buttonOnCreatePage.css')) }}">
     <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>

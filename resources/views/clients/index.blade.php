@@ -1,6 +1,7 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All clients') }}
+    <a href="{{ route('clients.create')}}" class="btn btn-brand float-right">{{ __('New Client') }}</a>
 @stop
 
 @section('content')

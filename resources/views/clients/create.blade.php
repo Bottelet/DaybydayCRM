@@ -62,7 +62,16 @@
     <?php
     $data = Session::get('data');
     ?>
-<h1>Create Client</h1>
+<div class="row row_flex">
+    <div class="col-md-6">
+        <h1>Create Client</h1>
+    </div>
+    <div class="col-md-6 column_flex item_center_right">
+        <a href="{{ route('clients.index')}}" class="btn btn-primary ">{{ __('All Clients') }}</a>
+    </div>
+
+</div>
+
 <hr>
     {!! Form::open([
             'url' => '/clients/create/cvrapi'
