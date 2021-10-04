@@ -1,7 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All projects')}}
+    @if(Entrust::can('project-create'))
     <a href="{{ route('projects.create')}}" class="btn btn-brand float-right">{{ __('New Project') }}</a>
+    @endif
 @stop
 
 @section('content')
