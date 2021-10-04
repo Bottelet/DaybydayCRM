@@ -1,4 +1,9 @@
 @extends('layouts.master')
+@section('heading')
+@if(Entrust::can('absence-manage'))
+<a href="{{ route('absence.create', ['management' => 'true'])}}" class="btn btn-brand float-right">{{ __('Register absence') }}</a>
+@endif
+    @stop
 @section('content')
     <table class="table table-hover" id="absence-table">
         <thead>
