@@ -1,6 +1,7 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All users') }}
+    <a href="{{ route('users.create')}}" class="btn btn-brand float-right">{{ __('New User') }}</a>
 @stop
 
 @section('content')
