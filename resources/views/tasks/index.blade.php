@@ -1,6 +1,7 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All tasks')}}
+    <a href="{{ route('tasks.create')}}" class="btn btn-brand float-right">{{ __('New Task') }}</a>
 @stop
 
 @section('content')
