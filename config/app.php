@@ -137,7 +137,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\ViewComposerServiceProvider::class,
-        App\Providers\DropboxServiceProvider::class,
     ],
 
     /*

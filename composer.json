@@ -33,7 +33,7 @@
         "mews/purifier": "^3.1",
         "predis/predis": "^1.1",
         "ramsey/uuid": "^3.6",
-        "spatie/flysystem-dropbox": "^1.0",
+        "spatie/dropbox-api": "^1.19",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
