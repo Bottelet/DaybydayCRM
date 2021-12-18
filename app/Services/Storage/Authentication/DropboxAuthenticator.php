@@ -41,6 +41,21 @@ class DropboxAuthenticator implements StorageAuthenticatorContract
         return json_decode($res->getBody()->read(1024));
     }
 
+    public function getRefreshToken($oldToken)
+    {
+        $res = $this->client->request('POST', 'https://api.dropboxapi.com/oauth2/token', [
+            'form_params' => [
+                'grant_type' => 'refresh_token',
+                'code' => $oldToken,
+                'client_id' => $this->client_id,
+                'client_secret' => $this->client_secret,
+                'redirect_uri' => $this->redirect_uri
+            ]
+        ]);
+
+        return json_decode($res->getBody()->read(1024));
+    }
+
     public function revokeAccess()
     {
         $token = optional(Integration::whereApiType('file')->whereName(Dropbox::class)->first())->api_key;

@@ -139,7 +139,7 @@
                                             <div class="dropdown dropdown-inline">
                                                 <button type="button" class="btn btn-clean btn-sm btn-icon btn-icon-md"
                                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="icon ion-md-more" style="font-size: 2.5em;"></i>
+                                                    <i class="fa fa-ellipsis-h text-3xl" style="font-size: 2.5em;"></i>
                                                 </button>
                                                 <div class="dropdown-menu dropdown-menu-right">
                                                     <ul class="tablet__nav">

@@ -13,6 +13,7 @@ class CallbackController extends Controller
 {
     public function dropbox(Request $request)
     {
+        
         $integration = Integration::whereApiType('file')->first();
         if ($integration) {
             session()->flash('flash_message_warning', __('File integration alredy exists'));

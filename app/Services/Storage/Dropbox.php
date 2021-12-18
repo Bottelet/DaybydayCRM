@@ -1,26 +1,32 @@
 <?php
 namespace App\Services\Storage;
 
-use App\Services\Storage\Authentication\DropboxAuthenticator;
-use Storage;
-use File;
-use GuzzleHttp\Client;
-use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Models\Integration;
+use Illuminate\Support\Facades\File;
+use Spatie\Dropbox\Client as DropboxClient;
+use App\Services\Storage\Authentication\DropboxAuthenticator;
+use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 
 class Dropbox implements FilesystemIntegration
 {
-    private $disk;
+    private $client;
 
     public function __construct()
     {
-        $this->disk = Storage::disk('dropbox');
+        $dropbox_integration = Integration::where('name', Dropbox::class)->first();
+
+        if (!$dropbox_integration) {
+            throw new \Exception('Dropbox integration is not configured');
+        }
+       
+        /** @var DropboxClient $client */
+        $this->client = new DropboxClient($dropbox_integration->api_key);
     }
 
     public function upload($folder, $filename, $file): array
     {
         $file_path = FilesystemIntegration::ROOT_FOLDER . '/' .$folder . '/' . $filename;
-        $this->disk->put($file_path, File::get($file));
+        $this->client->upload($file_path, File::get($file));
 
         return [
             'file_path' => $file_path
@@ -29,15 +35,18 @@ class Dropbox implements FilesystemIntegration
 
     public function delete($file): bool
     {
-        return $this->disk->delete($file->path);
+        $this->client->delete($file->path);
+
+        return true;
     }
 
     public function get($file)
     {
-        if (!$this->disk->exists($file->path)) {
-            return null;
-        };
-        return $this->disk->get($file->path);
+        // if (!$this->client->exists($file->path)) {
+        //     return null;
+        // };
+   
+        return $this->client->download($file->path);
     }
 
     public function revokeAccess()
@@ -47,12 +56,12 @@ class Dropbox implements FilesystemIntegration
 
     public function view($file)
     {
-        return $this->get($file);
+        return stream_get_contents($this->get($file));
     }
 
     public function download($file)
     {
-        return $this->get($file);
+        return stream_get_contents($this->client->download($file->path));
     }
 
     public function isEnabled()

@@ -47,6 +47,7 @@ class DocumentsController extends Controller
         $document = Document::whereExternalId($external_id)->first();
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
+     
         if (!$file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
             return redirect()->back();
