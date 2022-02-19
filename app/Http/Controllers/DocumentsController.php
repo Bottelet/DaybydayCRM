@@ -69,7 +69,7 @@ class DocumentsController extends Controller
             session()->flash('flash_message_warning', __('You do not have permission to upload a document'));
             return redirect()->route('tasks.show', $external_id);
         }
-        $client = Client::whereExternalId($external_id)->first();
+        $client = Client::whereExternalId($external_id);
 
         $file = $request->file('file');
         $filename = str_random(8) . '_' . $file->getClientOriginalName();
