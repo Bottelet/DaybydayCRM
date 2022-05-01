@@ -115,13 +115,12 @@ class SettingsController extends Controller
         $setting = Setting::first();
 
         if (!app(ClientNumberValidator::class)->validateClientNumber((int)$request->client_number)) {
-            Session::flash('flash_message_warning', __('Client number invalid'));
+            session()->flash('flash_message_warning', __('Client number invalid'));
             return redirect()->back();
         }
 
-
         if (!app(InvoiceNumberValidator::class)->validateInvoiceNumber((int)$request->invoice_number)) {
-            Session::flash('flash_message_warning', __('Invoice number invalid'));
+            session()->flash('flash_message_warning', __('Invoice number invalid'));
             return redirect()->back();
         }
         if ($request->currency == $setting->currency && !empty($request->vat)) {
@@ -157,14 +156,14 @@ class SettingsController extends Controller
 
         $setting->client_number = $request->client_number;
         $setting->invoice_number = $request->invoice_number;
-        isset($request->company) ? $setting->company = $request->company: null;
+        isset($request->company) ? $setting->company = $request->company : null;
         $setting->country = $request->country;
         $setting->language = $request->language;
         $setting->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
 
-        Session::flash('flash_message', __('Overall settings successfully updated'));
+        session()->flash('flash_message', __('Overall settings successfully updated'));
         return redirect()->back();
     }
 

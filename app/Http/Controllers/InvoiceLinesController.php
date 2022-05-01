@@ -15,7 +15,7 @@ class InvoiceLinesController extends Controller
 
         $invoiceLine->delete();
 
-        Session()->flash('flash_message', __('Invoice line successfully deleted'));
+        session()->flash('flash_message', __('Invoice line successfully deleted'));
         return redirect()->route('invoices.show', $invoiceLine->invoice->external_id);
     }
 }

@@ -16,7 +16,7 @@ class CanClientCreate
     public function handle($request, Closure $next)
     {
         if (!auth()->user()->can('client-create')) {
-            Session()->flash('flash_message_warning', __("You don't have permission to create a client"));
+            session()->flash('flash_message_warning', __("You don't have permission to create a client"));
             return redirect()->route('clients.index');
         }
 

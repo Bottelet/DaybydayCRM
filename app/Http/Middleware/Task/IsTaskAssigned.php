@@ -18,7 +18,7 @@ class IsTaskAssigned
     public function handle($request, Closure $next)
     {
         if (!auth()->user()->can('can-assign-new-user-to-task')) {
-            Session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
+            session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
             return redirect()->back();
         }
 
