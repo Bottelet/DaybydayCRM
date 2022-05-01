@@ -7,6 +7,17 @@
 
     <div class="row">
         <form action="{{route('tasks.store')}}" method="POST" id="createTaskForm">
+            <div class="col-sm-12">
+                <div class="alert alert-danger title-alert" style="display: none;">
+                    {{__("Title is required")}}
+                </div>
+                <div class="alert alert-danger description-alert" style="display: none;">
+                    {{__("Description is required")}}
+                </div>
+                <div class="alert alert-danger client-alert" style="display: none;">
+                    {{__("Client is required")}}
+                </div>
+            </div>
             <div class="col-sm-8">
                 <div class="tablet">
                     <div class="tablet__body">
@@ -88,7 +99,7 @@
                             <label for="status_id" class="control-label thin-weight">@lang('Status')</label>
                             <select name="status_id" id="status" class="form-control">
                                 @foreach($statuses as $status => $statusK)
-                                    <option value="{{$status}}">{{$statusK}}</option>
+                                    <option value="{{$status}}">{{__($statusK)}} ({{ $statusK }})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -100,15 +111,6 @@
                 </div>
             </div>
         </form>
-    </div>
-    <div class="alert alert-danger title-alert" style="display: none;">
-        {{__("Title is required")}}
-    </div>
-    <div class="alert alert-danger description-alert" style="display: none;">
-        {{__("Description is required")}}
-    </div>
-    <div class="alert alert-danger client-alert" style="display: none;">
-        {{__("Client is required")}}
     </div>
 @stop
 

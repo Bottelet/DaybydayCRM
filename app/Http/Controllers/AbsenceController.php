@@ -71,7 +71,7 @@ class AbsenceController extends Controller
         if ($request->user_external_id && auth()->user()->can('absence-manage')) {
             $user = User::whereExternalId($request->user_external_id)->first();
             if (!$user) {
-                Session::flash('flash_message_warning', __('Could not find user'));
+                session()->flash('flash_message_warning', __('Could not find user'));
                 return redirect()->back();
             }
         }
@@ -91,14 +91,14 @@ class AbsenceController extends Controller
             'comment' => clean($request->comment),
         ]);
 
-        Session::flash('flash_message', __('Absence registered'));
+        session()->flash('flash_message', __('Absence registered'));
         return redirect()->back();
     }
 
     public function destroy(Absence $absence)
     {
         if (!auth()->user()->can('absence-manage')) {
-            Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+            session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
             return redirect()->back();
         }
         $absence->delete();

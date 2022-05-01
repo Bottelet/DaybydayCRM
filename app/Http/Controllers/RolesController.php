@@ -106,7 +106,7 @@ class RolesController extends Controller
             'display_name' => ucfirst($roleName),
             'description' => $roleDescription
         ]);
-        Session()->flash('flash_message', __('Role created'));
+        session()->flash('flash_message', __('Role created'));
         return view('roles.index');
     }
 
@@ -118,16 +118,16 @@ class RolesController extends Controller
     {
         $role = Role::where('external_id', $external_id)->first();
         if (!$role->users->isEmpty()) {
-            Session::flash('flash_message_warning', __("Can't delete role with users, please remove users"));
+            session()->flash('flash_message_warning', __("Can't delete role with users, please remove users"));
             return redirect()->route('roles.index');
         }
         if ($role->name !== Role::ADMIN_ROLE && $role->name !== Role::OWNER_ROLE) {
             $role->delete();
         } else {
-            Session()->flash('flash_message_warning', __('Can not delete role'));
+            session()->flash('flash_message_warning', __('Can not delete role'));
             return redirect()->route('roles.index');
         }
-        Session()->flash('flash_message', __('Role deleted'));
+        session()->flash('flash_message', __('Role deleted'));
         return redirect()->route('roles.index');
     }
 
@@ -154,7 +154,7 @@ class RolesController extends Controller
 
         $role->permissions()->sync($allowed_permissions);
         $role->save();
-        Session::flash('flash_message', __('Role is updated'));
+        session()->flash('flash_message', __('Role is updated'));
         return redirect()->back();
     }
 }

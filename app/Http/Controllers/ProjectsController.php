@@ -75,7 +75,7 @@ class ProjectsController extends Controller
         
         $project->delete();
         
-        Session()->flash('flash_message', __('Project deleted'));
+        session()->flash('flash_message', __('Project deleted'));
         return redirect()->back();
     }
 
@@ -91,7 +91,7 @@ class ProjectsController extends Controller
         }
 
         if(!$client) {
-            Session()->flash('flash_message', __('Could not find client'));
+            session()->flash('flash_message', __('Could not find client'));
             return redirect()->back();
         }
 
@@ -110,7 +110,7 @@ class ProjectsController extends Controller
 
         $insertedExternalId = $project->external_id;
 
-        Session()->flash('flash_message', __('Project successfully added'));
+        session()->flash('flash_message', __('Project successfully added'));
         event(new \App\Events\ProjectAction($project, self::CREATED));
 
         if (!is_null($request->images)) {
@@ -138,7 +138,7 @@ class ProjectsController extends Controller
         $totaltsize = substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+            session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
             return redirect()->back();
         }
 
@@ -224,7 +224,7 @@ class ProjectsController extends Controller
         $project->fill($input)->save();
 
         event(new \App\Events\ProjectAction($project, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task status is updated'));
+        session()->flash('flash_message', __('Task status is updated'));
 
         return redirect()->back();
     }
@@ -240,7 +240,7 @@ class ProjectsController extends Controller
 
         event(new \App\Events\ProjectAction($project, self::UPDATED_ASSIGN));
 
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
         return redirect()->back();
     }
 
@@ -262,7 +262,7 @@ class ProjectsController extends Controller
             ['deadline' => $request->deadline_date . " " . $request->deadline_time . ":00"];
         $project->fill($input)->save();
         event(new \App\Events\ProjectAction($project, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', __('New deadline is set'));
+        session()->flash('flash_message', __('New deadline is set'));
         return redirect()->back();
     }
 
