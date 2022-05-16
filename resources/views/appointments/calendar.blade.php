@@ -7,6 +7,7 @@
   <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
   <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{{ asset(elixir('css/bootstrap-select.min.css')) }}">
+  <link rel="shortcut icon" href="{{{ asset('images/favicon.png') }}}">
 </head>
 <body>
 <div id="wrapper">
