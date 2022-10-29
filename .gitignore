@@ -15,3 +15,6 @@ bower_components
 .php_cs.cache
 storage/debugbar/
 public/build/
+
+# Virtual environment
+.virtualenv_laravel_php_7_1
