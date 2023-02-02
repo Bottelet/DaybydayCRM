@@ -31,7 +31,7 @@
     "vis-timeline": "^7.4.4",
     "vue": "^2.6.10",
     "vue-currency-filter": "^5.2.0",
-    "vue-resource": "^1.0.3",
+    "vue-resource": "^1.5.3",
     "vue-select": "^3.11.2"
   }
 }
