@@ -21,7 +21,6 @@
         "aws/aws-sdk-php": "^3.112",
         "elasticsearch/elasticsearch": "^6.1",
         "google/apiclient": "^2.2",
-        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^11.0",
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",
