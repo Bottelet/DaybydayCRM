@@ -26,7 +26,6 @@
         "laravel/tinker": "^2.9",
         "laravel/ui": "^v4.5.2",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "league/flysystem-cached-adapter": "~1.0",
         "mews/purifier": "^3.1",
         "predis/predis": "^1.1",
         "ramsey/uuid": "4.7.6",
