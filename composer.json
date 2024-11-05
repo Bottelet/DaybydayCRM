@@ -17,13 +17,12 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3.9",
+        "php": "^8.2",
         "aws/aws-sdk-php": "^3.112",
         "elasticsearch/elasticsearch": "^6.1",
         "google/apiclient": "^2.2",
         "guzzlehttp/guzzle": "^6.3",
-        "laravel/cashier": "^10.2",
-        "laravel/framework": "^7.0",
+        "laravel/framework": "^11.0",
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
@@ -39,7 +38,6 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
         "facade/ignition": "^2.0",
-        "fzaninotto/faker": "~1.8",
         "laravel/dusk": "^5.8",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "^8.5",
