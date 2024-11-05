@@ -25,7 +25,6 @@
         "laravel/helpers": "^1.1",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^v4.5.2",
-        "laravelcollective/html": "6.0.*@dev",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/flysystem-cached-adapter": "~1.0",
         "mews/purifier": "^3.1",
