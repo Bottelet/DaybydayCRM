@@ -28,8 +28,8 @@
         "laravel/ui": "^v4.5.2",
         "league/flysystem-aws-s3-v3": "^3.0",
         "mews/purifier": "^3.1",
-        "predis/predis": "^1.1",
-        "ramsey/uuid": "4.7.6",
+        "predis/predis": "^v2.2.2",
+        "ramsey/uuid": "^4.7.6",
         "spatie/dropbox-api": "^1.19",
         "yajra/laravel-datatables-oracle": "^v11.1.5"
     },
@@ -40,8 +40,8 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^11.0.1",
-        "symfony/css-selector": "2.8.*|3.0.*",
-        "symfony/dom-crawler": "2.8.*|3.0.*"
+        "symfony/css-selector": "^7.1.6",
+        "symfony/dom-crawler": "^7.1.6"
     },
     "autoload": {
         "files": [
