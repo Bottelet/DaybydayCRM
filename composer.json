@@ -31,15 +31,14 @@
         "predis/predis": "^1.1",
         "ramsey/uuid": "4.7.6",
         "spatie/dropbox-api": "^1.19",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "^v11.1.5"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
-        "facade/ignition": "^2.0",
-        "laravel/dusk": "^5.8",
+        "laravel/dusk": "^8.2.10",
         "mockery/mockery": "0.9.*",
+        "nunomaduro/collision": "^4.1",
         "phpunit/phpunit": "^8.5",
-        "nunomaduro/collision":"^4.1",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*"
     },
