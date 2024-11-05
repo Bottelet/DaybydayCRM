@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.2",
         "aws/aws-sdk-php": "^3.112",
-        "elasticsearch/elasticsearch": "^6.1",
+        "elasticsearch/elasticsearch": "^8.15.0",
         "google/apiclient": "^2.2",
         "laravel/cashier": "*",
         "laravel/framework": "^11.0",
@@ -83,7 +83,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
