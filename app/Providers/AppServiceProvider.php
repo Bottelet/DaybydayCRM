@@ -27,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Cashier::ignoreMigrations();
         Client::observe(ClientObserver::class);
         Task::observe(TaskObserver::class);
         Lead::observe(LeadObserver::class);
