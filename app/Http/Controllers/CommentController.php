@@ -25,7 +25,7 @@ class CommentController extends Controller
         ];
         
         if (!array_key_exists($request->type, $modelsMapping)) {
-            Session::flash('flash_message_warning', __('Could not create comment, type not found! Please contact Daybyday support'));
+            session()->flash('flash_message_warning', __('Could not create comment, type not found! Please contact Daybyday support'));
             throw new \Exception("Could not create comment with type " . $request->type);
             return redirect()->back();
         }
@@ -40,7 +40,7 @@ class CommentController extends Controller
         );
 
         
-        Session::flash('flash_message', __('Comment successfully added')); //Snippet in Master.blade.php
+        session()->flash('flash_message', __('Comment successfully added')); //Snippet in Master.blade.php
         return redirect()->back();
     }
 }

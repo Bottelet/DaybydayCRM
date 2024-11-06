@@ -151,7 +151,7 @@ class TasksController extends Controller
 
         $insertedExternalId = $task->external_id;
 
-        Session()->flash('flash_message', __('Task successfully added'));
+        session()->flash('flash_message', __('Task successfully added'));
         event(new \App\Events\TaskAction($task, self::CREATED));
 
         if (!is_null($request->images)) {
@@ -175,7 +175,7 @@ class TasksController extends Controller
         }
         $task->delete();
         
-        Session()->flash('flash_message', __('Task deleted'));
+        session()->flash('flash_message', __('Task deleted'));
         return redirect()->back();
     }
 
@@ -194,7 +194,7 @@ class TasksController extends Controller
         $totaltsize = substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+            session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
             return redirect()->back();
         }
 
@@ -262,7 +262,7 @@ class TasksController extends Controller
         $task = $this->findByExternalId($external_id);
         $task->fill($input)->save();
         event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task status is updated'));
+        session()->flash('flash_message', __('Task status is updated'));
 
         return redirect()->back();
     }
@@ -282,7 +282,7 @@ class TasksController extends Controller
 
 
         //event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task project is updated'));
+        session()->flash('flash_message', __('Task project is updated'));
 
         return redirect()->back();
     }
@@ -303,7 +303,7 @@ class TasksController extends Controller
         $task->refresh();
 
         event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
         return redirect()->back();
     }
 
@@ -323,7 +323,7 @@ class TasksController extends Controller
         $task->fill(['deadline' => Carbon::parse($request->deadline_date)])->save();
 
         event(new \App\Events\TaskAction($task, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', 'New deadline is set');
+        session()->flash('flash_message', 'New deadline is set');
         return redirect()->back();
     }
 

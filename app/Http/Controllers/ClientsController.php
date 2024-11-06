@@ -231,7 +231,7 @@ class ClientsController extends Controller
             'is_primary' => true
         ]);
 
-        Session()->flash('flash_message', __('Client successfully added'));
+        session()->flash('flash_message', __('Client successfully added'));
         event(new \App\Events\ClientAction($client, self::CREATED));
         return redirect()->route('clients.index');
     }
@@ -351,7 +351,7 @@ class ClientsController extends Controller
             'is_primary' => true
         ])->save();
 
-        Session()->flash('flash_message', __('Client successfully updated'));
+        session()->flash('flash_message', __('Client successfully updated'));
         return redirect()->route('clients.index');
     }
 
@@ -364,9 +364,9 @@ class ClientsController extends Controller
         try {
             $client = $this->findByExternalId($external_id);
             $client->delete();
-            Session()->flash('flash_message', __('Client successfully deleted'));
+            session()->flash('flash_message', __('Client successfully deleted'));
         } catch (\Exception $e) {
-            Session()->flash('flash_message_warning', __('Client could not be deleted, contact Daybyday support'));
+            session()->flash('flash_message_warning', __('Client could not be deleted, contact Daybyday support'));
         }
 
         return redirect()->route('clients.index');
@@ -380,7 +380,7 @@ class ClientsController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         if (!auth()->user()->can('client-update')) {
-            Session()->flash('flash_message_warning', __("Not authorized"));
+            session()->flash('flash_message_warning', __("Not authorized"));
             return back();
         }
 
@@ -388,7 +388,7 @@ class ClientsController extends Controller
         $client = Client::with('user')->where('external_id', $external_id)->first();
         $client->updateAssignee($user);
 
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
         return redirect()->back();
     }
 
