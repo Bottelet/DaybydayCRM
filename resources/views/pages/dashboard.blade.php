@@ -21,6 +21,7 @@
                 });
             });
         });
+        
         $(document).ready(function () {
             if(!getCookie("step_dashboard") && "{{$settings->company}}") {
                 $("#clients").addClass("in");
