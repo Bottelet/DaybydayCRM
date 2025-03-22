@@ -15,6 +15,7 @@ class DataController extends Controller
      */
     public function resetAndImportData()
     {
+        //test merge
         // Désactiver les vérifications de contraintes de clé étrangère
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
