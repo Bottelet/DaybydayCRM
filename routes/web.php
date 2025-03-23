@@ -143,6 +143,16 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('departments', 'DepartmentsController');
 
     /**
+     * Database
+     */
+    
+     Route::group(['prefix' => 'database'], function () {
+        Route::get('/', 'DatabaseController@index')->name('database.index');
+        Route::get('/import', 'DatabaseController@import')->name('database.import');
+        Route::get('/reset', 'DatabaseController@truncateAllExcept')->name('database.reset');
+     });
+
+    /**
      * Integrations
      */
     Route::group(['prefix' => 'integrations'], function () {

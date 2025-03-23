@@ -28,6 +28,7 @@ use App\Services\Invoice\InvoiceCalculator;
 use App\Http\Requests\Invoice\AddInvoiceLine;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\InvoiceReduction;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Support\Facades\Validator;
 
@@ -81,9 +82,12 @@ class InvoicesController extends Controller
         $subPrice = $invoiceCalculator->getSubTotal();
         $vatPrice = $invoiceCalculator->getVatTotal();
         $amountDue = $invoiceCalculator->getAmountDue();
+
+        $reduction = InvoiceReduction::whereId(1)->first();
         
         return view('invoices.show')
             ->withInvoice($invoice)
+            ->withreduction($reduction->reduction)
             ->withApiconnected($apiConnected)
             ->withContacts($invoiceContacts)
             ->withfinalPrice(app(MoneyConverter::class, ['money' => $totalPrice])->format())
@@ -127,6 +131,14 @@ class InvoicesController extends Controller
         $invoice->status  =  InvoiceStatus::unpaid()->getStatus();
         $invoice->due_at  =  $result["due_at"];
         $invoice->invoice_number = app(InvoiceNumberService::class)->setInvoiceNumber($result["invoice_number"]);
+        $hasRemise = $request->has('remise');
+        if($hasRemise) {
+            $remise = $request->remise;
+            foreach($invoice->invoiceLines as $line) {
+                $line->price = $line->price - ($line->price * $remise / 100);
+                $line->save();
+            }
+        }
         $invoice->save();
 
         return redirect()->back();

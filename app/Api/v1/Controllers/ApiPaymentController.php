@@ -1,0 +1,75 @@
+<?php
+namespace App\Api\v1\Controllers;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use App\Models\Payment;
+use Illuminate\Routing\Controller;
+
+class ApiPaymentController extends Controller
+{
+    public function deletePayment($id): JsonResponse
+    {
+        try {
+            $payment = Payment::findOrFail($id);
+            
+            DB::transaction(function() use ($payment) {
+                $payment->deleted_at = now();
+                $payment->save();
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Paiement marqué comme supprimé',
+                'deleted_at' => $payment->deleted_at
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paiement non trouvé'
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la suppression',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updatePayment($id, $amount): JsonResponse
+    {
+        try {
+            $payment = Payment::findOrFail($id);
+
+            
+            DB::transaction(function() use ($payment, $amount) {
+                $payment->updated_at = now();
+                $payment->amount = $amount;
+                $payment->save();
+                info('Amount: ' . $payment->amount);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Paiement mis a jour',
+                'updated_at' => $payment->updated_at
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Paiement non trouvé'
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la MIS A JOUR',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
