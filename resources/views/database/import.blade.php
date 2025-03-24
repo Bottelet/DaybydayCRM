@@ -12,7 +12,7 @@
             <div class="tablet__items">
                 <h4>{{ __('Import CSV to database') }}</h4>
                 <p></p>
-                <form action="{{route('tasks.store')}}" method="POST" enctype="multipart/form-data">
+                <form action="{{route('database.import.csv')}}" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="csv" class="control-label thin-weight">@lang('CSV')</label>
                         <input type="file" name="csv" id="csv">
@@ -20,7 +20,9 @@
                     <div class="form-group">
                         <label for="table" class="control-label thin-weight">@lang('Table')</label>
                         <select name="table" id="table" class="form-control">
-                            
+                            @foreach ($tables as $table)
+                                <option value="{{ $table->$tableKey }}">{{ $table->$tableKey }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <button type="submit" class="btn btn-md btn-brand">Import CSV</button>
