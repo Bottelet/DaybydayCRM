@@ -24,7 +24,7 @@ class ApiLoginController extends Controller
                 return response()->json(['message' => 'Echec de l\'authentification'], 500);
             }
 
-            return response()->json(['message' => 'Authentification réussie'], 200);
+            return response()->json(['message' => 'Authentification réussie', 'user' => $user], 200);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Utilisateur non trouvé'], 404);

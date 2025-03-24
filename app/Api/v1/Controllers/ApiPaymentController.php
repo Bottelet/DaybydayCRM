@@ -42,15 +42,42 @@ class ApiPaymentController extends Controller
     public function updatePayment($id, $amount): JsonResponse
     {
         try {
+            \DB::beginTransaction();
             $payment = Payment::findOrFail($id);
 
+            try {
+                $payment->updated_at = now();
+                $payment->amount = $amount*100;
+                $payment->save();
+
+                $sommeFacture = 0;
+                foreach ($payment->invoice->invoiceLines as $line) {
+                    $sommeFacture += $line->price;
+                }
+
+                if($sommeFacture < $payment->invoice->payments->sum('amount')) {
+                    \DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Le montant du paiement est supérieur au montant de la facture',
+                        'sommeFacture' => $sommeFacture,
+                        'sommePaiements' => $payment->invoice->payments->sum('amount')
+                    ], 500);
+                }
+
+                info('Amount: ' . $payment->amount);
+                \DB::commit();
+            } catch (\Exception $e) {
+                \DB::rollBack();
+                throw $e;
+            }
             
-            DB::transaction(function() use ($payment, $amount) {
+            /*DB::transaction(function() use ($payment, $amount) {
                 $payment->updated_at = now();
                 $payment->amount = $amount;
                 $payment->save();
                 info('Amount: ' . $payment->amount);
-            });
+            });*/
 
             return response()->json([
                 'success' => true,
