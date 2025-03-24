@@ -150,6 +150,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/', 'DatabaseController@index')->name('database.index');
         Route::get('/import', 'DatabaseController@import')->name('database.import');
         Route::get('/reset', 'DatabaseController@truncateAllExcept')->name('database.reset');
+        Route::post('/importCsv', 'DatabaseController@importCsv')->name('database.import.csv');
      });
 
     /**
