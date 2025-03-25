@@ -15,16 +15,16 @@
                 <form action="{{route('database.import.csv')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="csv" class="control-label thin-weight">@lang('CSV')</label>
-                        <input type="file" name="csv" id="csv">
+                        <label for="csv1" class="control-label thin-weight">@lang('CSV 1')</label>
+                        <input type="file" name="csv1" id="csv1">
                     </div>
                     <div class="form-group">
-                        <label for="table" class="control-label thin-weight">@lang('Table')</label>
-                        <select name="table" id="table" class="form-control">
-                            @foreach ($tables as $table)
-                                <option value="{{ $table->$tableKey }}">{{ $table->$tableKey }}</option>
-                            @endforeach
-                        </select>
+                        <label for="csv2" class="control-label thin-weight">@lang('CSV 2')</label>
+                        <input type="file" name="csv2" id="csv2">
+                    </div>
+                    <div class="form-group">
+                        <label for="csv3" class="control-label thin-weight">@lang('CSV 3')</label>
+                        <input type="file" name="csv3" id="csv3">
                     </div>
                     <button type="submit" class="btn btn-md btn-brand">Import CSV</button>
                 </form>
@@ -36,7 +36,7 @@
     </div>
 </div>
 @if(isset($errorImport) && count($errorImport) > 0)
-    <div class="alert alert-danger" style="margin-top: 400px;">
+    <div class="alert alert-danger" style="margin-top: 450px;">
         @foreach($errorImport as $error)
             <p>{{ $error }}</p>
         @endforeach

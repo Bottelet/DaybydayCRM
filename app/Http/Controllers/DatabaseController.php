@@ -22,12 +22,8 @@ class DatabaseController extends Controller
     }
 
     public function import(){
-        $tables = DB::select('SHOW TABLES');
-        $tableKey = 'Tables_in_' . env('DB_DATABASE');
-
         return view('database.import', [
-            'tables' => $tables,
-            'tableKey' => $tableKey
+            'errorImport' => session('errorImport')
         ]);
     }
 
@@ -46,8 +42,9 @@ class DatabaseController extends Controller
     public function importCsv(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'csv' => 'required|file|mimes:csv,txt',
-            'table' => 'required|string'
+            'csv1' => 'required|file|mimes:csv,txt',
+            'csv2' => 'required|file|mimes:csv,txt',
+            'csv3' => 'required|file|mimes:csv,txt',
         ]);
 
         if ($validator->fails()) {
@@ -55,29 +52,13 @@ class DatabaseController extends Controller
         }
 
         try {
-            $file = $request->file('csv');
-            $table = $request->input('table');
+            $csv1 = $request->file('csv1');
+            $csv2 = $request->file('csv2');
+            $csv3 = $request->file('csv3');
 
-            $map = $this->databaseService->tableNameMapping($table, 'title', 'id');
-            info('Map:', ['map' => $map]);
-            
-            /*$data = $this->databaseService->readCsv($file->getPathname());
-    
-            info('CSV Import - Table cible: ' . $table);
-            info('CSV Import - En-têtes: ', ['headers' => $data['headers']]);
-            
-            foreach ($data['records'] as $index => $record) {
-                info("CSV Import - : ", ['Ligne' => $record['name']]);
-            }*/
+            $errors = $this->databaseService->importIntoDatabase($csv1, $csv2, $csv3);
 
-            $tables = DB::select('SHOW TABLES');
-            $tableKey = 'Tables_in_' . env('DB_DATABASE');
-            $errors = ["aaasgv", "bjsdfvjl", "shkfsdjsl"];
-
-            return view("database.import")
-                ->withTables($tables)
-                ->withTableKey($tableKey)
-                ->withErrorImport($errors);
+            return redirect()->back()->with('errorImport', $errors);
         }
         catch (\Exception $e) {
             Session()->flash('flash_message_warning', __('Erreur lors de l\'importation'));

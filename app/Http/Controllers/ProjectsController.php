@@ -200,7 +200,7 @@ class ProjectsController extends Controller
 
         return view('projects.show')
             ->withProject($project)
-            ->withStatuses(Status::typeOfProject()->get())
+            ->withStatuses(Status::typeOfTask()->get())
             ->withTasks($project->tasks)
             ->withCompletionPercentage($completionPercentage)
             ->withCollaborators($collaborators->unique())

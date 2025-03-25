@@ -30,7 +30,7 @@ class ApiDashboardController extends Controller
             'totals' => [
                 'clients' => Client::count(),
                 'offers' => Offer::count(),
-                'payments' => Payment::sum('amount')
+                'payments' => (Payment::sum('amount')/100)
             ],
             'graphs' => $graphs
         ]);
