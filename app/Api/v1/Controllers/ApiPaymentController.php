@@ -59,10 +59,10 @@ class ApiPaymentController extends Controller
                     \DB::rollBack();
                     return response()->json([
                         'success' => false,
-                        'message' => 'Le montant du paiement est supérieur au montant de la facture',
+                        'message' => 'Le montant du paiement est superieur au montant de la facture',
                         'sommeFacture' => $sommeFacture,
                         'sommePaiements' => $payment->invoice->payments->sum('amount')
-                    ], 500);
+                    ], 200);
                 }
 
                 info('Amount: ' . $payment->amount);

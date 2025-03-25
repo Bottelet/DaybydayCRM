@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\Database\DatabaseService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DatabaseController extends Controller
 {
@@ -55,16 +57,27 @@ class DatabaseController extends Controller
         try {
             $file = $request->file('csv');
             $table = $request->input('table');
-            
-            $data = $this->databaseService->readCsv($file->getRealPath());
-            
-            foreach ($data as $record) {
-                logger()->info('Record: ', $record);
-            }
 
-            // $this->databaseService->importData($table, $data);
-            Session()->flash('flash_message', __('Importation réussie'));
-            return redirect()->route('database.index');
+            $map = $this->databaseService->tableNameMapping($table, 'title', 'id');
+            info('Map:', ['map' => $map]);
+            
+            /*$data = $this->databaseService->readCsv($file->getPathname());
+    
+            info('CSV Import - Table cible: ' . $table);
+            info('CSV Import - En-têtes: ', ['headers' => $data['headers']]);
+            
+            foreach ($data['records'] as $index => $record) {
+                info("CSV Import - : ", ['Ligne' => $record['name']]);
+            }*/
+
+            $tables = DB::select('SHOW TABLES');
+            $tableKey = 'Tables_in_' . env('DB_DATABASE');
+            $errors = ["aaasgv", "bjsdfvjl", "shkfsdjsl"];
+
+            return view("database.import")
+                ->withTables($tables)
+                ->withTableKey($tableKey)
+                ->withErrorImport($errors);
         }
         catch (\Exception $e) {
             Session()->flash('flash_message_warning', __('Erreur lors de l\'importation'));

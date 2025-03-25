@@ -31,11 +31,13 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single', 'console'],
+            'ignore_exceptions' => false,
         ],
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
+            // 'path' => storage_path('logs/laravel.log'),
+            'path' => 'php://stdout',
             'level' => 'debug',
         ],
         'daily' => [

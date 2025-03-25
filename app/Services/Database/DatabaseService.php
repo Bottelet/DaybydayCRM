@@ -27,16 +27,53 @@ class DatabaseService
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
-    public function readCsv(string $filePath): array
+    public function readCsv(string $filename): array
     {
-        $csv = Reader::createFromPath($filePath, 'r');
-        $csv->setHeaderOffset(0);
+        $defaultResponse = [
+            'headers' => [],
+            'records' => []
+        ];
+
+        if (($handle = fopen($filename, 'r')) === false) {
+            return $defaultResponse;
+        }
+
+        $header = fgetcsv($handle, 0, ';');
+        
+        if ($header === false || empty($header)) {
+            fclose($handle);
+            return $defaultResponse;
+        }
+
+        $records = [];
+        $lineNumber = 1;
+        
+        while (($data = fgetcsv($handle, 0, ';')) !== false) {
+            $lineNumber++;
+            
+            if (count($header) !== count($data)) {
+                throw new \Exception("Nombre de colonnes incorrect à la ligne $lineNumber");
+            }
+            
+            $records[] = array_combine($header, $data);
+        }
+
+        fclose($handle);
         
         return [
-            'headers' => $csv->getHeader(),
-            'records' => iterator_to_array($csv->getRecords())
+            'headers' => $header,
+            'records' => $records
         ];
-    } 
+    }
+
+    public function tableNameMapping(string $tableName, $key, $value): array
+    {
+        $records = DB::table($tableName)->select($value, $key)->get();
+        
+        $mapping = $records->pluck($value, $key)->toArray();
+        
+        return $mapping;
+    }
     
     public function importToTable(string $table, array $csvData): array
     {

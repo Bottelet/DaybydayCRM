@@ -13,6 +13,7 @@
                 <h4>{{ __('Import CSV to database') }}</h4>
                 <p></p>
                 <form action="{{route('database.import.csv')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="form-group">
                         <label for="csv" class="control-label thin-weight">@lang('CSV')</label>
                         <input type="file" name="csv" id="csv">
@@ -34,4 +35,11 @@
         </div>
     </div>
 </div>
+@if(isset($errorImport) && count($errorImport) > 0)
+    <div class="alert alert-danger" style="margin-top: 400px;">
+        @foreach($errorImport as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
 @Stop
