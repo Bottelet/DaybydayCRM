@@ -26,7 +26,7 @@ class SettingsTableSeeder extends Seeder
             ),
         ));
 
-        for ($i=1; $i < 8; $i++) {
+        for ($i=2; $i < 8; $i++) {
             \App\Models\BusinessHour::create([
                 'day' => $this->integerToDay()[$i],
                 'open_time' => '09:00',

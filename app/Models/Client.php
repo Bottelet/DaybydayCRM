@@ -41,7 +41,7 @@ class Client extends Model
         parent::boot();
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
+        // when deploy new search engine to a live app.
         //if (config('services.search.enabled')) {
         static::observe(ElasticSearchObserver::class);
         //}

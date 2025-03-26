@@ -6,7 +6,9 @@ use App\Http\Requests\Payment\PaymentRequest;
 use App\Models\Integration;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Repositories\Money\Money;
 use App\Services\Invoice\GenerateInvoiceStatus;
+use App\Services\Invoice\InvoiceCalculator;
 use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
@@ -52,6 +54,12 @@ class PaymentsController extends Controller
         if (!$invoice->isSent()) {
             session()->flash('flash_message_warning', __("Can't add payment on Invoice"));
             return redirect()->route('invoices.show', $invoice->external_id);
+        }
+        $invoiceCalculator = new InvoiceCalculator($invoice);
+        // $money = new Money();
+        if($invoiceCalculator->getAmountDue()->getBigDecimalAmount()<$request->amount){
+            session()->flash('flash_message_warning','Montant paye superieur au montant total');
+            return redirect()->back();
         }
 
         $payment = Payment::create([

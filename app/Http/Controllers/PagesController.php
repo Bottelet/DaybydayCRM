@@ -45,7 +45,9 @@ class PagesController extends Controller
         if (!auth()->user()->can('absence-view')) {
             $absences = [];
         } else {
+            // DB::statement("SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''))");
             $absences = Absence::with('user')->groupBy('user_id')->where('start_at', '>=', today())->orWhere('end_at', '>', today())->get();
+            // DB::statement("SET SESSION sql_mode = CONCAT(@@sql_mode, ',ONLY_FULL_GROUP_BY')");
         }
 
         return view('pages.dashboard')

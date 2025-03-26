@@ -35,6 +35,7 @@ class Invoice extends Model
         'source_type',
         'external_id',
         'offer_id',
+        'remise_id'
     ];
 
     protected $dates = [
@@ -164,5 +165,10 @@ class Invoice extends Model
     {
         $invoiceCalculator = new InvoiceCalculator($this);
         return $invoiceCalculator->getTotalPrice();
+    }
+
+    public function getAlreadyPaid(){
+        $invoiceCalculator = new InvoiceCalculator($this);
+        return $invoiceCalculator->getAlreadyPaid();
     }
 }

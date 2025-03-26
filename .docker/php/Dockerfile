@@ -40,7 +40,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 #Nodejs
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt install nodejs -y
+RUN apt install nodejs -y \
+&& apt-get install -y npm
 
 RUN groupadd -g 1000 daybyday
 RUN useradd -u 1000 -ms /bin/bash daybyday -g daybyday

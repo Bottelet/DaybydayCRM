@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dashboard\Remise;
 use View;
 use App\Billy;
 use Datatables;
@@ -81,6 +82,8 @@ class InvoicesController extends Controller
         $subPrice = $invoiceCalculator->getSubTotal();
         $vatPrice = $invoiceCalculator->getVatTotal();
         $amountDue = $invoiceCalculator->getAmountDue();
+        $remise = new Remise();
+        $remises = $remise->getRemiseValide($invoice->id);
         
         return view('invoices.show')
             ->withInvoice($invoice)
@@ -94,7 +97,8 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDue($amountDue)
             ->withSource($invoice->source)
-            ->withCompanyName(Setting::first()->company);
+            ->withCompanyName(Setting::first()->company)
+            ->withRemises($remises);
     }
 
 

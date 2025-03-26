@@ -70,4 +70,9 @@ class InvoiceCalculator
     {
         return $this->tax;
     }
+
+
+    public function getAlreadyPaid(){
+        return new Money($this->invoice->payments()->sum('amount'));
+    }
 }

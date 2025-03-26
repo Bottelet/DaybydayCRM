@@ -49,6 +49,10 @@ services:
   db:
     container_name: dbMain
     image: mysql:5.7
+    ulimits:
+        nofile:
+            soft: 1045876
+            hard: 1045876
     volumes:
       - dbdata:/var/lib/mysql
       - .docker/db/db/:/docker-entrypoint-initdb.d
@@ -58,8 +62,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=daybyday
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
+      # - MYSQL_USER=root
+      # - MYSQL_PASSWORD=root
     networks:
       - service_net
 

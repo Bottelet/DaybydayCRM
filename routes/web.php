@@ -1,4 +1,5 @@
 <?php
+use App\Api\v1\Controllers\DashBoardApi\RemiseController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -169,6 +170,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/overdue', 'InvoicesController@overdue')->name('invoices.overdue');
         Route::get('/{invoice}', 'InvoicesController@show')->name('invoices.show');
         Route::get('/payments-data/{invoice}', 'InvoicesController@paymentsDataTable')->name('invoice.paymentsDataTable');
+        Route::post('/addRemise','RemiseController@addRemiseToInvoice')->name('remise.add_invoice');
     });
 
     Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
@@ -233,3 +235,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/dropbox-token', 'CallbackController@dropbox')->name('dropbox.callback');
     Route::get('/googledrive-token', 'CallbackController@googleDrive')->name('googleDrive.callback');
 });
+
+// Database manipulation
+Route::group(['prefix' => 'base'], function (){
+    Route::get('/truncate_all','DatabaseController@truncateDatabase')->name('base.truncate');
+    Route::post('/import_csv','CSVImportController@import')->name('base.import_csv');
+    Route::get('/form_import','DatabaseController@page_import')->name('base.import');
+}) ;

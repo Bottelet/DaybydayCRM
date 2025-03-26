@@ -172,6 +172,18 @@
                                 class="bullet-point"><span></span></i> {{ __('Integrations') }}</a>
                 </div>
             @endif
+            <a href="#database" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
+                class="fa fa-database sidebar-icon"></i><span id="menu-txt">{{ __('Database') }}</span>
+            <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
+            <div class="collapse" id="database">
+                <a href="{{ route('base.truncate') }}" class=" list-group-item childlist">
+                    <i class="bullet-point"><span></span></i> {{ 'Truncate Database' }}
+                </a>
+                <a href="{{ route('base.import') }}" class=" list-group-item childlist">
+                    <i class="bullet-point"><span></span></i> {{ 'Import data' }}
+
+                </a>
+            </div>
         </div>
     </nav>
 

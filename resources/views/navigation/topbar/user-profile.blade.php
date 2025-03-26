@@ -24,9 +24,9 @@
                 </div>
                 <ul class="topbar-user__list-wrapper">
                     <li class="topbar-user__list">
-                        <a href="{{url('/users', auth()->user()->external_id)}}" class="topbar-user__list-link">
+                        <a href="{{ url('/users', auth()->user()->external_id) }}" class="topbar-user__list-link">
                             <span class="user__list-icon">
-                                 <i class="fa fa-user"></i>
+                                <i class="fa fa-user"></i>
                             </span>
                             <span class="user__list-text">
                                 @lang('Profile')
@@ -34,9 +34,9 @@
                         </a>
                     </li>
                     <li class="topbar-user__list">
-                        <a href="{{route('absence.create')}}" class="topbar-user__list-link">
+                        <a href="{{ route('absence.create') }}" class="topbar-user__list-link">
                             <span class="user__list-icon">
-                                 <i class="fa fa-clock-o"></i>
+                                <i class="fa fa-clock-o"></i>
                             </span>
                             <span class="user__list-text">
                                 @lang('Register absence')
@@ -44,9 +44,10 @@
                         </a>
                     </li>
                     <li class="topbar-user__list">
-                        <a href="{{url('/users/' .auth()->user()->external_id . '/edit')}}" class="topbar-user__list-link">
+                        <a href="{{ url('/users/' . auth()->user()->external_id . '/edit') }}"
+                            class="topbar-user__list-link">
                             <span class="user__list-icon">
-                                 <i class="fa fa-cog"></i>
+                                <i class="fa fa-cog"></i>
                             </span>
                             <span class="user__list-text">
                                 @lang('Settings')
@@ -54,7 +55,9 @@
                         </a>
                     </li>
                     <li class="topbar-user__list">
-                        <a href="{{url('/logout')}}" class="btn btn-outline-metal btn-hover-brand btn-upper btn-font-dark btn-sm btn-bold" style="margin-top: 15px;
+                        <a href="{{ url('/logout') }}"
+                            class="btn btn-outline-metal btn-hover-brand btn-upper btn-font-dark btn-sm btn-bold"
+                            style="margin-top: 15px;
     margin-left: 20px;">{{ __('Sign Out') }}</a>
                     </li>
                 </ul>
