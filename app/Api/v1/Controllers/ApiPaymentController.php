@@ -4,6 +4,7 @@ namespace App\Api\v1\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use App\Models\Payment;
+use App\Models\InvoiceReduction;
 use Illuminate\Routing\Controller;
 
 class ApiPaymentController extends Controller
@@ -52,10 +53,14 @@ class ApiPaymentController extends Controller
 
                 $sommeFacture = 0;
                 foreach ($payment->invoice->invoiceLines as $line) {
-                    $sommeFacture += $line->price;
+                    $sommeFacture += $line->price*100;
                 }
 
-                if($sommeFacture < $payment->invoice->payments->sum('amount')) {
+                /*$reduction = InvoiceReduction::whereId(1)->first();
+
+                $sommeFacture = $sommeFacture - ($sommeFacture*($reduction->reduction/100));*/
+
+                if($sommeFacture < ($payment->invoice->payments->sum('amount'))) {
                     \DB::rollBack();
                     return response()->json([
                         'success' => false,

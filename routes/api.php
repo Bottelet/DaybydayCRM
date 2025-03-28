@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'App\Api\v1\Controllers'], function () {
     Route::post('/api-login', 'ApiLoginController@login');
+    Route::post('/api-import', 'ApiLoginController@importCsvDuplicate');
 
     Route::get('/dashboard-data', 'ApiDashboardController@dashboardData');
 
@@ -23,6 +24,7 @@ Route::group(['namespace' => 'App\Api\v1\Controllers'], function () {
         Route::get('/clients', 'ApiDetailsController@clientsDetails');
         Route::get('/offers', 'ApiDetailsController@offersDetails');
         Route::get('/payments', 'ApiDetailsController@paymentsDetails');
+        Route::get('/invoice-lines', 'ApiDetailsController@invoiceLinesDetails');
     });
 
     Route::group(['prefix' => 'payments'], function () {

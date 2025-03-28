@@ -1,6 +1,7 @@
 <?php
 namespace App\Api\v1\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\JsonResponse;
@@ -30,7 +31,9 @@ class ApiDashboardController extends Controller
             'totals' => [
                 'clients' => Client::count(),
                 'offers' => Offer::count(),
-                'payments' => (Payment::sum('amount')/100)
+                'invoices' => Invoice::count(),
+                'payments' => doubleval(Payment::sum('amount')/100),
+                'factures' => $this->totalInvoice()
             ],
             'graphs' => $graphs
         ]);
@@ -45,5 +48,12 @@ class ApiDashboardController extends Controller
             ->pluck('count', 'date');
 
         return array_replace($template, $counts->toArray());
+    }
+
+    private function totalInvoice(){
+        $total = DB::select("select sum(price*quantity) as total from invoice_lines where offer_id is null")[0]->total;
+
+        $total = $total/100;
+        return $total;
     }
 }

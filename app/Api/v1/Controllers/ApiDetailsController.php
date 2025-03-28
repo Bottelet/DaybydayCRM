@@ -1,6 +1,7 @@
 <?php
 namespace App\Api\v1\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use App\Models\Client;
 use App\Models\Offer;
@@ -71,5 +72,25 @@ class ApiDetailsController extends Controller
                 'message' => 'Erreur lors de la récupération des paiements'
             ], 500);
         }
+    }
+
+    public function invoiceLinesDetails()
+    {
+        try{
+
+            $invoiceLines = DB::select("select title, price, quantity from invoice_lines where offer_id is null and deleted_at is null");
+
+            return response()->json([
+                'success' => true,
+                'invoiceLines' => $invoiceLines
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors de la récupération des paiements'
+            ], 500);
+        }
+
     }
 }

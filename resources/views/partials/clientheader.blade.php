@@ -11,6 +11,10 @@
             <p class="client-company-text" title="{{ __('Company name') }}">{{$client->company_name}} <span aria-hidden="true" data-toggle="tooltip" title="{{ __('Client number') }}" data-placement="top" style="font-size:10px;"> | {{$client->client_number}}</span> 
 
             </p>
+            <form action="{{route('clients.export')}}" method="get">
+                <input type="hidden" value="{{$client->external_id}}" name="id">
+                <input type="submit" class="btn" style="margin-left:0px" value="Exporter">
+            </form>
             <!--Client info leftside-->
             <div class="contactleft">
                 <p class="client-name-text"  aria-hidden="true" data-toggle="tooltip"
