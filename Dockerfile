@@ -1,4 +1,4 @@
-FROM php:7.3-fpm
+FROM php:8.3-fpm
 
 MAINTAINER Casper Bottelet <cbottelet@gmail.com>
 
@@ -49,11 +49,17 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY .docker/nginx/nginx.conf /etc/nginx/nginx.conf
 
 #Frotend NPM/YARN
-RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
-RUN apt-get install -y nodejs
-RUN curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install yarn
+# Install Node.js 20 LTS + Yarn (modern method)
+RUN apt-get update \
+    && apt-get install -y ca-certificates curl gnupg \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+        | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+        > /etc/apt/sources.list.d/nodesource.list \
+    && apt-get update \
+    && apt-get install -y nodejs yarn \
+    && corepack enable
 
 RUN useradd -u 1000 -ms /bin/bash daybyday
 

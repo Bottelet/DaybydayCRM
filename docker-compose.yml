@@ -27,7 +27,7 @@ services:
         - elasticsearch2
         - redis
     ports:
-      - 9000:9000
+      - "9000:9000"
     networks:
       - service_net
 
@@ -39,7 +39,7 @@ services:
       CHROMEDRIVER_WHITELISTED_IPS: ""
       CHROMEDRIVER_PORT: "9515"
     ports:
-      - 9515:9515
+      - "9515:9515"
     cap_add:
       - "SYS_ADMIN"
     links:
@@ -53,7 +53,7 @@ services:
       - dbdata:/var/lib/mysql
       - .docker/db/db/:/docker-entrypoint-initdb.d
     ports:
-      - 3306:3306
+      - "3306:3306"
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -70,7 +70,7 @@ services:
       - .docker/nginx/nginx-local.conf:/etc/nginx/nginx.conf
       - .:/var/www/html
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
       - php
     links:
@@ -92,7 +92,7 @@ services:
     volumes:
       - esdata1:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - "9200:9200"
     networks:
       - service_net
 
@@ -123,7 +123,7 @@ services:
     volumes:
       - redisdata:/bitnami/redis/data
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
       - service_net
 
