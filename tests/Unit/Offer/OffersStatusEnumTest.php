@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Unit\Invoice;
+namespace Tests\Unit\Offer;
 
 use App\Enums\OfferStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
-class OfferStatusEnumTest extends TestCase
+class OffersStatusEnumTest extends TestCase
 {
     use DatabaseTransactions;
 

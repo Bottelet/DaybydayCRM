@@ -13,10 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
     protected $fillable = [
-<<<<<<< Updated upstream
         'external_id',
-=======
->>>>>>> Stashed changes
         'display_name',
         'name',
         'description',

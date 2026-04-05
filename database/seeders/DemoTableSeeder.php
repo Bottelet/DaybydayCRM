@@ -1,14 +1,5 @@
 <?php
 
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-namespace Database\Seeders;
-
-use App\Enums\OfferStatus;
-use App\Models\Absence;
-use App\Models\Appointment;
-use App\Models\InvoiceLine;
-use App\Models\Lead;
-=======
 use App\Enums\OfferStatus;
 use App\Models\Absence;
 use App\Models\Appointment;
@@ -16,16 +7,9 @@ use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
-use App\Models\Lead;
 use App\Models\Offer;
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
 use App\Models\Product;
-use App\Models\Project;
-use App\Models\RoleUser;
-use App\Models\Task;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Ramsey\Uuid\Uuid;
 
 class DemoTableSeeder extends Seeder
 {
@@ -76,11 +60,7 @@ class DemoTableSeeder extends Seeder
 
     private function createData(User $user)
     {
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-        factory(App\Models\Client::class, rand(1, 5))->create(['user_id' => $user->id])->each(function ($client) use ($user) {
-=======
         factory(Client::class, rand(1, 5))->create(['user_id' => $user->id])->each(function ($client) use ($user) {
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
             $project = null;
             if (rand(1, 3) == 2) {
                 $project = factory(Project::class)->create([
@@ -88,11 +68,7 @@ class DemoTableSeeder extends Seeder
                     'user_created_id' => $user->id,
                     'user_assigned_id' => $user->id,
                 ]);
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-                factory(App\Models\Comment::class, rand(2, 6))->create([
-=======
                 factory(Comment::class, rand(2, 6))->create([
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
                     'source_type' => Project::class,
                     'source_id' => $project->id,
                     'user_id' => $user->id,
@@ -119,22 +95,14 @@ class DemoTableSeeder extends Seeder
                         'invoice_id' => $invoice->id,
                     ]);
 
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-                    factory(App\Models\Comment::class, 3)->create([
-=======
                     factory(Comment::class, 3)->create([
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
                         'source_type' => Task::class,
                         'source_id' => $task->id,
                         'user_id' => $user->id,
                     ]);
                 }
 
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-                factory(App\Models\Comment::class, 3)->create([
-=======
                 factory(Comment::class, 3)->create([
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
                     'source_type' => Task::class,
                     'source_id' => $task->id,
                     'user_id' => $user->id,
@@ -147,11 +115,7 @@ class DemoTableSeeder extends Seeder
                 'user_assigned_id' => $user->id,
             ])->each(function ($lead) use ($user) {
                 if (rand(0, 5) == 1) {
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-                    factory(App\Models\Comment::class, 3)->create([
-=======
                     factory(Comment::class, 3)->create([
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
                         'source_type' => Lead::class,
                         'source_id' => $lead->id,
                         'user_id' => $user->id,
@@ -165,11 +129,7 @@ class DemoTableSeeder extends Seeder
                 ]);
                 factory(InvoiceLine::class, rand(1, 5))->create([
                     'offer_id' => $offer->id,
-<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
-                    'product_id' => random_int(1, 4) == 2 ? factory(Product::class)->create()->id : null,
-=======
                     'product_id' => rand(1, 4) == 2 ? factory(Product::class)->create()->id : null,
->>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
                 ]);
                 factory(Comment::class, 2)->create([
                     'source_type' => Lead::class,
@@ -180,5 +140,3 @@ class DemoTableSeeder extends Seeder
         });
     }
 }
-
-// NOTE: The 'factory()' helper is undefined in Laravel 8+. Use 'Model::factory()' instead, e.g. Product::factory()->create().

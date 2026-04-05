@@ -36,11 +36,13 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
+        "driftingly/rector-laravel": "^2.2",
         "laravel/dusk": "^8.2.10",
         "laravel/pint": "^1.13",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^11.0.1",
+        "rector/rector": "^2.4",
         "symfony/css-selector": "^7.1.6",
         "symfony/dom-crawler": "^7.1.6"
     },

@@ -10,10 +10,7 @@ namespace App\Zizaco\Entrust\Traits;
  */
 
 use Illuminate\Cache\TaggableStore;
-<<<<<<< Updated upstream
-=======
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
->>>>>>> Stashed changes
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
@@ -34,32 +31,19 @@ trait EntrustRoleTrait
     }
 
     public function save(array $options = [])
-<<<<<<< Updated upstream
-    {   //both inserts and updates
-=======
     {   // both inserts and updates
->>>>>>> Stashed changes
         if (! parent::save($options)) {
             return false;
         }
-
-        /*if (Cache::getStore() instanceof TaggableStore) {
+        if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-<<<<<<< Updated upstream
-        }*/
-=======
         }
 
->>>>>>> Stashed changes
         return true;
     }
 
     public function delete(array $options = [])
-<<<<<<< Updated upstream
-    {   //soft or hard
-=======
     {   // soft or hard
->>>>>>> Stashed changes
         if (! parent::delete($options)) {
             return false;
         }
@@ -71,11 +55,7 @@ trait EntrustRoleTrait
     }
 
     public function restore()
-<<<<<<< Updated upstream
-    {   //soft delete undo's
-=======
     {   // soft delete undo's
->>>>>>> Stashed changes
         if (! parent::restore()) {
             return false;
         }

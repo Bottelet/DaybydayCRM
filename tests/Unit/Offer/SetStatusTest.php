@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Invoice;
+namespace Tests\Unit\Offer;
 
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

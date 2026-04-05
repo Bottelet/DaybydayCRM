@@ -1,17 +1,11 @@
 <?php
 
 use App\Models\Permission;
-<<<<<<< Updated upstream
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
-=======
 use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
->>>>>>> Stashed changes
+use Illuminate\Support\Str;
 
 class CreatePaymentsTable extends Migration
 {
@@ -22,9 +16,13 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function ($table) {
-            $table->dropColumn('payment_received_at');
-        });
+
+        // Only drop the column if it exists
+        if (Schema::hasColumn('invoices', 'payment_received_at')) {
+            Schema::table('invoices', function (Blueprint $table) {
+                $table->dropColumn('payment_received_at');
+            });
+        }
 
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
