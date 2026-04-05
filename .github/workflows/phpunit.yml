@@ -1,5 +1,6 @@
 name: Run tests
-on: [push, pull_request]
+on: workflow_dispatch
+# on: [push, pull_request]
 
 jobs:
   run-tests:
@@ -24,7 +25,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
 
       - name: Create daybyday testing database
