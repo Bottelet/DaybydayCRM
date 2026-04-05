@@ -2,7 +2,15 @@
 
 namespace Database\Seeders;
 
+use DepartmentsTableSeeder;
 use Illuminate\Database\Seeder;
+use IndustriesTableSeeder;
+use RolePermissionTableSeeder;
+use RolesTablesSeeder;
+use SettingsTableSeeder;
+use StatusTableSeeder;
+use UserRoleTableSeeder;
+use UsersTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,14 +21,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call('StatusTableSeeder');
-        $this->call('UsersTableSeeder');
-        $this->call('IndustriesTableSeeder');
-        $this->call('DepartmentsTableSeeder');
-        $this->call('SettingsTableSeeder');
-        $this->call('PermissionsTableSeeder');
-        $this->call('RolesTablesSeeder');
-        $this->call('RolePermissionTableSeeder');
-        $this->call('UserRoleTableSeeder');
+        $this->call(StatusTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(IndustriesTableSeeder::class);
+        $this->call(DepartmentsTableSeeder::class);
+        $this->call(SettingsTableSeeder::class);
+        $this->call(PermissionsTableSeeder::class);
+        $this->call(RolesTablesSeeder::class);
+        $this->call(RolePermissionTableSeeder::class);
+        $this->call(UserRoleTableSeeder::class);
     }
 }

@@ -263,13 +263,16 @@ class PermissionsTableSeeder extends Seeder
             ],
         ];
 
+        // Always ensure external_id is set for every permission, even if the array is changed in the future
         foreach ($permissions as $perm) {
             $existing = Permission::where('name', $perm['name'])->first();
             if (! $existing) {
-                Permission::create(array_merge($perm, [
-                    'external_id' => Str::uuid()->toString(),
-                ]));
+                if (! isset($perm['external_id'])) {
+                    $perm['external_id'] = Str::uuid()->toString();
+                }
+                Permission::create($perm);
             }
         }
+        // NOTE: If you add new permissions, you must provide an external_id or this code will generate one.
     }
 }
