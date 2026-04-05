@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Lead;
 use App\Models\Project;
-use Illuminate\Database\Seeder;
 use App\Models\Status;
 use App\Models\Task;
-use App\Models\Lead;
+use Illuminate\Database\Seeder;
 use Ramsey\Uuid\Uuid;
 
 class StatusTableSeeder extends Seeder

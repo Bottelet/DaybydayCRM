@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\Client;
+use App\Models\Contact;
 use Illuminate\Database\Seeder;
 
 class ClientsDummyTableSeeder extends Seeder
 {
-
     /**
      * Auto generated seed file
      *
@@ -12,9 +13,9 @@ class ClientsDummyTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Client::class, 50)->create()->each(function ($c) {
-            factory(\App\Models\Contact::class)->create([
-                'client_id' => $c->id
+        factory(Client::class, 50)->create()->each(function ($c) {
+            factory(Contact::class)->create([
+                'client_id' => $c->id,
             ]);
         });
     }

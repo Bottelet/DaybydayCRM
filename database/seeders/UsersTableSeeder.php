@@ -5,7 +5,6 @@ use Ramsey\Uuid\Uuid;
 
 class UsersTableSeeder extends Seeder
 {
-
     /**
      * Auto generated seed file
      *
@@ -13,11 +12,10 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('users')->delete();
+        DB::table('users')->delete();
 
-        \DB::table('users')->insert(array(
-            0 =>
-            array(
+        DB::table('users')->insert([
+            0 => [
                 'id' => 1,
                 'external_id' => Uuid::uuid4(),
                 'name' => 'Admin',
@@ -30,7 +28,7 @@ class UsersTableSeeder extends Seeder
                 'remember_token' => null,
                 'created_at' => '2016-06-04 13:42:19',
                 'updated_at' => '2016-06-04 13:42:19',
-            ),
-        ));
+            ],
+        ]);
     }
 }

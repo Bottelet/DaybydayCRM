@@ -1,10 +1,17 @@
 <?php
 
 use App\Models\Permission;
+<<<<<<< Updated upstream
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+=======
+use App\Models\Role;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+>>>>>>> Stashed changes
 
 class CreateAppointmentsTable extends Migration
 {
@@ -66,7 +73,7 @@ class CreateAppointmentsTable extends Migration
             'grouping' => 'appointment',
         ]);
 
-        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$cpp->id, $dpp->id, $epp->id, $scpp->id]);
         }

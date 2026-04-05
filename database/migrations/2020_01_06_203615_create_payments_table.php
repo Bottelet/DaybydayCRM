@@ -1,10 +1,17 @@
 <?php
 
 use App\Models\Permission;
+<<<<<<< Updated upstream
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+=======
+use App\Models\Role;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+>>>>>>> Stashed changes
 
 class CreatePaymentsTable extends Migration
 {
@@ -52,7 +59,7 @@ class CreatePaymentsTable extends Migration
             'grouping' => 'payment',
         ]);
 
-        $roles = \App\Models\Role::where('name', 'owner')->get();
+        $roles = Role::where('name', 'owner')->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$cpp->id, $dpp->id]);
         }
@@ -70,7 +77,7 @@ class CreatePaymentsTable extends Migration
         });
         $cpp = Permission::where('name', 'payment-create')->first();
         $dpp = Permission::where('name', 'payment-delete')->first();
-        $roles = \App\Models\Role::where('name', 'owner')->get();
+        $roles = Role::where('name', 'owner')->get();
         foreach ($roles as $role) {
             $role->permissions()->detach([$cpp->id, $dpp->id]);
         }

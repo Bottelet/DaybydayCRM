@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\BusinessHour;
 use Illuminate\Database\Seeder;
 
 class SettingsTableSeeder extends Seeder
 {
-
     /**
      * Auto generated seed file
      *
@@ -12,9 +12,8 @@ class SettingsTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('settings')->insert(array(
-            0 =>
-            array(
+        DB::table('settings')->insert([
+            0 => [
                 'id' => 1,
                 'client_number' => 10000,
                 'invoice_number' => 10000,
@@ -23,11 +22,11 @@ class SettingsTableSeeder extends Seeder
                 'max_users' => 10,
                 'created_at' => null,
                 'updated_at' => null,
-            ),
-        ));
+            ],
+        ]);
 
-        for ($i=1; $i < 8; $i++) {
-            \App\Models\BusinessHour::create([
+        for ($i = 1; $i < 8; $i++) {
+            BusinessHour::create([
                 'day' => $this->integerToDay()[$i],
                 'open_time' => '09:00',
                 'close_time' => '18:00',
@@ -45,7 +44,7 @@ class SettingsTableSeeder extends Seeder
             4 => 'thursday',
             5 => 'friday',
             6 => 'saturday',
-            7 => 'sunday'
+            7 => 'sunday',
         ];
     }
 }

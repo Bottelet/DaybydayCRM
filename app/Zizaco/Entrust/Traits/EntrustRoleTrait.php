@@ -10,12 +10,16 @@ namespace App\Zizaco\Entrust\Traits;
  */
 
 use Illuminate\Cache\TaggableStore;
+<<<<<<< Updated upstream
+=======
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+>>>>>>> Stashed changes
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustRoleTrait
 {
-    //Big block of caching functionality.
+    // Big block of caching functionality.
     public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
@@ -30,19 +34,32 @@ trait EntrustRoleTrait
     }
 
     public function save(array $options = [])
+<<<<<<< Updated upstream
     {   //both inserts and updates
+=======
+    {   // both inserts and updates
+>>>>>>> Stashed changes
         if (! parent::save($options)) {
             return false;
         }
 
         /*if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+<<<<<<< Updated upstream
         }*/
+=======
+        }
+
+>>>>>>> Stashed changes
         return true;
     }
 
     public function delete(array $options = [])
+<<<<<<< Updated upstream
     {   //soft or hard
+=======
+    {   // soft or hard
+>>>>>>> Stashed changes
         if (! parent::delete($options)) {
             return false;
         }
@@ -54,7 +71,11 @@ trait EntrustRoleTrait
     }
 
     public function restore()
+<<<<<<< Updated upstream
     {   //soft delete undo's
+=======
+    {   // soft delete undo's
+>>>>>>> Stashed changes
         if (! parent::restore()) {
             return false;
         }
@@ -68,7 +89,7 @@ trait EntrustRoleTrait
     /**
      * Many-to-Many relations with the user model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function users()
     {
@@ -79,7 +100,7 @@ trait EntrustRoleTrait
      * Many-to-Many relations with the permission model.
      * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function perms()
     {
