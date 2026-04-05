@@ -33,9 +33,21 @@ RUN docker-php-ext-install -j$(nproc) \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
+<<<<<<< Updated upstream
 # Optional: caching and memcached
 RUN pecl install apcu memcached \
     && docker-php-ext-enable apcu memcached
+=======
+# Install the PHP mcrypt extention (from PECL, mcrypt has been removed from PHP 7.2)
+RUN pecl install mcrypt-1.0.2
+RUN docker-php-ext-enable mcrypt
+
+# Install the PHP redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
+# Install the php memcached extension
+RUN pecl install memcached && docker-php-ext-enable memcached
+>>>>>>> Stashed changes
 
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -39,6 +39,9 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN pecl install mcrypt-1.0.2
 RUN docker-php-ext-enable mcrypt
 
+# Install the PHP redis extension
+RUN pecl install redis && docker-php-ext-enable redis
+
 # Install the php memcached extension
 RUN pecl install memcached && docker-php-ext-enable memcached
 

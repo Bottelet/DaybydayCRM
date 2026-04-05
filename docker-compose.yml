@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   php:
     container_name: phpMain
@@ -57,7 +55,14 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
+<<<<<<< Updated upstream
       - MYSQL_DATABASE=daybyday_db
+=======
+      - MYSQL_DATABASE=daybyday
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_SQL_MODE=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+>>>>>>> Stashed changes
     networks:
       - service_net
 
