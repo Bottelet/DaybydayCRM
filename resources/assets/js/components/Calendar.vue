@@ -299,17 +299,6 @@
                 }
                 this.timeline.setOptions(this.options);
             },
-            createNewAppointment(event) {
-                var appointment = {};
-                appointment.id = event.data.external_id;
-                appointment.group = event.data.user_external_id;
-                appointment.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>" + event.data.start_at + "</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + this.sanitizeHTML(event.data.title) + "</p>";
-                appointment.start = event.data.start_at;
-                appointment.end = event.data.end_at;
-                appointment.style = "background-color:" + event.data.color;
-                this.items.push(appointment);
-                this.timeline.setItems(this.items);
-            },
             sanitizeHTML(text) {
                 var element = document.createElement('div');
                 element.innerText = text;
@@ -317,8 +306,7 @@
             }
         },
         components: {
-            message: Message,
-            createAppointment: CreateAppointment
+            message: Message
         }
     }
 </script>

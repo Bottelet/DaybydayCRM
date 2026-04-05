@@ -10,8 +10,7 @@ class RedirectIfFileSystemIsNotEnabled
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -22,6 +21,7 @@ class RedirectIfFileSystemIsNotEnabled
         }
 
         session()->flash('flash_message_warning', __('File integration required for this action'));
+
         return redirect()->back();
     }
 }

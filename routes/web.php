@@ -209,7 +209,6 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/calendar', 'AppointmentsController@calendar')->name('appointments.calendar');
         Route::get('/data', 'AppointmentsController@appointmentsJson')->name('appointments.data.json');
         Route::post('/update/{appointment}', 'AppointmentsController@update')->name('appointments.update');
-        Route::post('/', 'AppointmentsController@store')->name('appointments.store');
         Route::delete('/{appointment}', 'AppointmentsController@destroy')->name('appointments.destroy');
     });
 

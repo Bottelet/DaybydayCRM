@@ -1,39 +1,41 @@
 <?php
+
 namespace Tests\Unit\Deadline;
 
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
 use Tests\TestCase;
 
 class DeadlineTest extends TestCase
 {
-    /** @var $task Task */
+    /** @var Task */
     private $task;
-    /** @var $lead Lead  */
+
+    /** @var Lead */
     private $lead;
-    /** @var $project Project  */
+
+    /** @var Project */
     private $project;
 
-    public function setUp():void
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->task = factory(Task::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
         $this->lead = factory(Lead::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
         $this->project = factory(Project::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
     }

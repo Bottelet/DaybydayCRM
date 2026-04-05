@@ -8,6 +8,7 @@
 
 /* provided dependency */ var __webpack_provided_window_dot_jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 window.$ = __webpack_provided_window_dot_jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+console.log('jQuery-init: window.jQuery is set to ', __webpack_provided_window_dot_jQuery);
 
 /***/ }
 

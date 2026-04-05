@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,12 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Comment extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'description',
         'task_id',
-        'user_id'
+        'user_id',
     ];
+
     protected $hidden = ['remember_token'];
 
     /**
@@ -22,7 +24,7 @@ class Comment extends Model
     {
         return $this->morphTo('source');
     }
-    
+
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id', 'id');
@@ -36,7 +38,7 @@ class Comment extends Model
     public function mentionedUsers()
     {
         preg_match_all('/@([\w\-]+)/', $this->description, $matches);
- 
+
         return $matches[1];
     }
 }

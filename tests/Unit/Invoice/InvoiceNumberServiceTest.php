@@ -1,13 +1,11 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use App\Services\InvoiceNumber\InvoiceNumberService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
-
+use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Testing\Fakes\EventFake;
 use Tests\TestCase;
 
 class InvoiceNumberServiceTest extends TestCase
@@ -15,6 +13,7 @@ class InvoiceNumberServiceTest extends TestCase
     use DatabaseTransactions;
 
     protected $client;
+
     /**
      * @var \Illuminate\Contracts\Foundation\Application
      */

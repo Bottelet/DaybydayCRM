@@ -55,7 +55,7 @@ return [
     */
 
     'from' => ['address' => 'hello@example.com', 'name' => 'Daybyday Crm'],
-    'no_reply_mail' => "noreply@exmaple.com",
+    'no_reply_mail' => 'noreply@exmaple.com',
 
     /*
     |--------------------------------------------------------------------------
@@ -118,5 +118,5 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
-    ]
+    ],
 ];

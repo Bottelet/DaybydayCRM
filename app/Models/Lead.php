@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use App\Observers\ElasticSearchObserver;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,20 +14,20 @@ use Ramsey\Uuid\Uuid;
 /**
  * @property string title
  * @property string external_id
- * @property integer user_assigned_id
+ * @property int user_assigned_id
  * @property Status status
  * @property Client client
- * @property integer invoice_id
- * @property integer status_id
+ * @property int invoice_id
+ * @property int status_id
  * @property Invoice invoice
  */
 class Lead extends Model implements Commentable
 {
-    use SearchableTrait, SoftDeletes, DeadlineTrait;
+    use DeadlineTrait, SearchableTrait, SoftDeletes;
 
     protected $searchableFields = ['title'];
 
-    const LEAD_STATUS_CLOSED = "closed";
+    const LEAD_STATUS_CLOSED = 'closed';
 
     protected $fillable = [
         'external_id',
@@ -41,10 +41,10 @@ class Lead extends Model implements Commentable
         'deadline',
         'invoice_id',
     ];
+
     protected $dates = ['deadline'];
 
     protected $hidden = ['remember_token'];
-
 
     public static function boot()
     {
@@ -88,7 +88,7 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'lead', 'external_id' => $this->external_id]);
     }
@@ -102,7 +102,7 @@ class Lead extends Model implements Commentable
     {
         return $this->morphMany(Activity::class, 'source');
     }
-    
+
     public function appointments()
     {
         return $this->morphMany(Appointment::class, 'source');
@@ -122,14 +122,12 @@ class Lead extends Model implements Commentable
     {
         return $this->status == self::LEAD_STATUS_CLOSED;
     }
-    
+
     public function invoice()
     {
         return $this->morphMany(Invoice::class, 'source');
     }
-    /**
-     * @return array
-     */
+
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
@@ -142,13 +140,13 @@ class Lead extends Model implements Commentable
 
     public function convertToOrder()
     {
-        if(!$this->canConvertToOrder()) {
+        if (! $this->canConvertToOrder()) {
             return false;
         }
         $invoice = Invoice::create([
             'status' => 'draft',
             'client_id' => $this->client->id,
-            'external_id' =>  Uuid::uuid4()->toString()
+            'external_id' => Uuid::uuid4()->toString(),
         ]);
 
         $this->invoice_id = $invoice->id;
@@ -160,9 +158,10 @@ class Lead extends Model implements Commentable
 
     public function canConvertToOrder()
     {
-        if($this->invoice) {
+        if ($this->invoice) {
             return false;
         }
+
         return true;
     }
 }

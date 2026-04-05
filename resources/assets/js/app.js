@@ -55,6 +55,23 @@ $("#menu-toggle").click(function (e) {
 
 $(document).ready(function () {
     $('.dropdown-toggle').dropdown();
+    $('.dropdown-toggle').click(function (e) {
+        var href = $(this).attr('href');
+        if (href && href !== '#' && !href.startsWith('#')) {
+            var $parent = $(this).closest('.dropdown');
+            if ($parent.length === 0) {
+                $parent = $(this).parent();
+            }
+
+            if (!$parent.hasClass('open')) {
+                // If the dropdown is not open, let Bootstrap handle opening it.
+                return true;
+            } else {
+                // If it's already open, then navigate.
+                window.location.href = href;
+            }
+        }
+    });
     $(".list-group-item[data-toggle='collapse']").click(function (e) {
         var target = $(this).attr('data-target') || $(this).attr('href');
         if (target && target.startsWith('#')) {

@@ -1,12 +1,11 @@
 <?php
+
 namespace Tests\Unit\Controllers\Task;
 
-use Tests\TestCase;
-use App\Models\Task;
-use App\Models\Client;
-use App\Models\Invoice;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class DeleteTaskControllerTest extends TestCase
 {
@@ -19,7 +18,7 @@ class DeleteTaskControllerTest extends TestCase
         parent::setUp();
 
         $this->task = factory(Task::class)->create();
-        
+
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
@@ -27,7 +26,7 @@ class DeleteTaskControllerTest extends TestCase
     public function deleteTask()
     {
         $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
-        
+
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 }

@@ -1,10 +1,8 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use App\Models\InvoiceLine;
-use App\Models\Payment;
-use App\Services\Invoice\GenerateInvoiceStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -18,7 +16,7 @@ class CanUpdateInvoiceTest extends TestCase
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
-            'sent_at' => null
+            'sent_at' => null,
         ]);
     }
 

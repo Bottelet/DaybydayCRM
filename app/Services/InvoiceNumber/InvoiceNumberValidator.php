@@ -6,7 +6,7 @@ use App\Models\Invoice;
 
 class InvoiceNumberValidator
 {
-    public function validateInvoiceNumberSize(Int $invoiceNumber)
+    public function validateInvoiceNumberSize(int $invoiceNumber)
     {
         if ($invoiceNumber <= 9999999 && $invoiceNumber >= 1) {
             return true;
@@ -15,7 +15,7 @@ class InvoiceNumberValidator
         return false;
     }
 
-    public function validateInvoiceNumberIsNotLowerThenCurrentMax(Int $invoiceNumber)
+    public function validateInvoiceNumberIsNotLowerThenCurrentMax(int $invoiceNumber)
     {
         $currentInvoiceNumber = optional(Invoice::query()->orderByDesc('invoice_number')->limit(1)->first())->invoice_number;
         if ($invoiceNumber > $currentInvoiceNumber) {
@@ -25,7 +25,7 @@ class InvoiceNumberValidator
         return false;
     }
 
-    public function validateInvoiceNumber(Int $invoiceNumber)
+    public function validateInvoiceNumber(int $invoiceNumber)
     {
         if ($this->validateInvoiceNumberIsNotLowerThenCurrentMax($invoiceNumber) && $this->validateInvoiceNumberSize($invoiceNumber)) {
             return true;

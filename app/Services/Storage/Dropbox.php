@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Services\Storage;
 
 use App\Models\Integration;
+use App\Repositories\FilesystemIntegration\FilesystemIntegration;
+use App\Services\Storage\Authentication\DropboxAuthenticator;
 use Illuminate\Support\Facades\File;
 use Spatie\Dropbox\Client as DropboxClient;
-use App\Services\Storage\Authentication\DropboxAuthenticator;
-use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 
 class Dropbox implements FilesystemIntegration
 {
@@ -15,21 +16,21 @@ class Dropbox implements FilesystemIntegration
     {
         $dropbox_integration = Integration::where('name', Dropbox::class)->first();
 
-        if (!$dropbox_integration) {
+        if (! $dropbox_integration) {
             throw new \Exception('Dropbox integration is not configured');
         }
-       
+
         /** @var DropboxClient $client */
         $this->client = new DropboxClient($dropbox_integration->api_key);
     }
 
     public function upload($folder, $filename, $file): array
     {
-        $file_path = FilesystemIntegration::ROOT_FOLDER . '/' .$folder . '/' . $filename;
+        $file_path = FilesystemIntegration::ROOT_FOLDER.'/'.$folder.'/'.$filename;
         $this->client->upload($file_path, File::get($file));
 
         return [
-            'file_path' => $file_path
+            'file_path' => $file_path,
         ];
     }
 
@@ -45,7 +46,7 @@ class Dropbox implements FilesystemIntegration
         // if (!$this->client->exists($file->path)) {
         //     return null;
         // };
-   
+
         return $this->client->download($file->path);
     }
 

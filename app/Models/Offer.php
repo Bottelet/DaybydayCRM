@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Offer extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'sent_at',
         'status',
@@ -17,7 +18,7 @@ class Offer extends Model
         'source_id',
         'source_type',
         'status',
-        'external_id'
+        'external_id',
     ];
 
     public function getRouteKeyName()

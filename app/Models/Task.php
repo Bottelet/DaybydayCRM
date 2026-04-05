@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Observers\ElasticSearchObserver;
@@ -6,8 +7,6 @@ use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-use Carbon;
-
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -16,9 +15,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Task extends Model implements Commentable
 {
-    use  SearchableTrait, SoftDeletes, DeadlineTrait;
+    use DeadlineTrait, SearchableTrait, SoftDeletes;
 
-    const TASK_STATUS_CLOSED = "closed";
+    const TASK_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
 
@@ -33,6 +32,7 @@ class Task extends Model implements Commentable
         'deadline',
         'project_id',
     ];
+
     protected $dates = ['deadline'];
 
     protected $hidden = ['remember_token'];
@@ -83,7 +83,7 @@ class Task extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'task', 'external_id' => $this->external_id]);
     }
@@ -131,9 +131,10 @@ class Task extends Model implements Commentable
     public function canUpdateInvoice()
     {
         //If there is no invoice, it should be possible, because it also creates
-        if (!$this->invoice) {
+        if (! $this->invoice) {
             return true;
         }
+
         return $this->invoice->canUpdateInvoice();
     }
 
@@ -142,9 +143,6 @@ class Task extends Model implements Commentable
         return $this->status == self::TASK_STATUS_CLOSED;
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

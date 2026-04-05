@@ -12,14 +12,13 @@ class InvoiceObserver
     {
         $this->relations = [
             'invoiceLines',
-            'payments'
+            'payments',
         ];
     }
 
     /**
      * Handle the task "created" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function created(Invoice $task)
@@ -30,17 +29,13 @@ class InvoiceObserver
     /**
      * Handle the task "updated" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
-    public function updated(Invoice $task)
-    {
-    }
+    public function updated(Invoice $task) {}
 
     /**
      * Handle the task "deleted" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function deleted(Invoice $task)
@@ -53,7 +48,6 @@ class InvoiceObserver
     /**
      * Handle the task "restored" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function restored(Invoice $task)
@@ -66,7 +60,6 @@ class InvoiceObserver
     /**
      * Handle the task "force deleted" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function forceDeleted(Invoice $task)

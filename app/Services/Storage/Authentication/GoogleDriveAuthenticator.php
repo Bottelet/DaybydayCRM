@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Storage\Authentication;
 
 use App\Models\Integration;
@@ -14,18 +15,17 @@ class GoogleDriveAuthenticator implements StorageAuthenticatorContract
     {
         $auth = [
             'client_id' => config('services.google-drive.client_id'),
-            'client_secret' => config('services.google-drive.client_secret')
+            'client_secret' => config('services.google-drive.client_secret'),
         ];
-        $this->client = new Google_Client();
+        $this->client = new Google_Client;
         $this->client->setAuthConfig($auth);
-        $this->client->setAccessType("offline");        // offline access
+        $this->client->setAccessType('offline');        // offline access
         $this->client->setIncludeGrantedScopes(true);   // incremental auth
         $this->client->addScope(
             Google_Service_Drive::DRIVE_FILE
         );
         $this->client->setRedirectUri(route('googleDrive.callback'));
     }
-
 
     public function authUrl()
     {
@@ -43,6 +43,7 @@ class GoogleDriveAuthenticator implements StorageAuthenticatorContract
     {
         $token = Integration::where(['api_type' => 'file', 'name' => GoogleDrive::class])->first()->api_key;
         $this->client->fetchAccessTokenWithRefreshToken($token);
+
         return $this->client->revokeToken($token);
     }
 }

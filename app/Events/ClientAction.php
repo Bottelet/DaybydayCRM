@@ -2,17 +2,16 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Client;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Queue\SerializesModels;
 
 class ClientAction
 {
     private $client;
+
     private $action;
 
     use InteractsWithSockets, SerializesModels;
@@ -21,6 +20,7 @@ class ClientAction
     {
         return $this->client;
     }
+
     public function getAction()
     {
         return $this->action;
@@ -29,8 +29,6 @@ class ClientAction
     /**
      * Create a new event instance.
      * ClientAction constructor.
-     * @param Client $client
-     * @param $action
      */
     public function __construct(Client $client, $action)
     {

@@ -126,7 +126,7 @@
                 <i class="bullet-point"><span></span></i> {{ __('Products') }}
             </a>
             </div>
-            @if(Entrust::can('calendar-view'))
+            {{--@if(Entrust::can('calendar-view'))
                 <a href="{{ route('appointments.calendar')}}" class="list-group-item" data-toggle="collapse" data-target="#appointments" data-parent="#MainMenu"><i
                             class="fa fa-calendar sidebar-icon"></i><span id="menu-txt">{{ __('Appointments') }}</span>
                     <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
@@ -135,7 +135,7 @@
                        class="list-group-item childlist"> <i
                                 class="bullet-point"><span></span></i> {{ __('Calendar') }}</a>
                 </div>
-            @endif
+            @endif--}}
             <a href="{{ route('absence.index')}}" class=" list-group-item" data-toggle="collapse" data-target="#hr" data-parent="#MainMenu"><i
                         class="fa fa-handshake-o sidebar-icon"></i><span id="menu-txt">{{ __('HR') }}</span>
                 <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
@@ -209,6 +209,15 @@
 <script src="{{ mix('js/vendor.js') }}"></script>
 <script src="{{ mix('js/jquery-init.js') }}"></script>
 <script type="text/javascript" src="{{ mix('js/app.js') }}"></script>
+<script>
+    // Ensure jQuery and $ are globally available for scripts loaded via URL::asset()
+    if (typeof window.jQuery === 'undefined' && typeof __webpack_require__ !== 'undefined') {
+        try {
+            window.jQuery = window.$ = __webpack_require__(require.resolveWeak('jquery'));
+        } catch (e) {}
+    }
+    window.jQuery = window.$ = window.jQuery || window.$;
+</script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
