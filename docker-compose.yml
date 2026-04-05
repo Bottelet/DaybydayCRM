@@ -48,7 +48,7 @@ services:
 
   db:
     container_name: dbMain
-    image: mysql:5.7
+    image: mysql:8.0
     volumes:
       - dbdata:/var/lib/mysql
       - .docker/db/db/:/docker-entrypoint-initdb.d
@@ -57,7 +57,7 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=daybyday
+      - MYSQL_DATABASE=daybyday_db
     networks:
       - service_net
 
