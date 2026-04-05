@@ -24,6 +24,7 @@
         "laravel/cashier": "*",
         "laravel/framework": "^11.0",
         "laravel/helpers": "^1.1",
+        "laravel/legacy-factories": "^1.4",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^v4.5.2",
         "league/flysystem-aws-s3-v3": "^3.0",
@@ -52,6 +53,8 @@
         ],
         "psr-4": {
             "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/",
             "Tests\\": "tests/"
         }
     },

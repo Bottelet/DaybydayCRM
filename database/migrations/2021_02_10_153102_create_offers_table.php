@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreateOffersTable extends Migration
 {
@@ -27,6 +28,7 @@ class CreateOffersTable extends Migration
         });
 
         $p1 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Add offer',
             'name' => 'offer-create',
             'description' => 'Be able to create an offer',
@@ -34,6 +36,7 @@ class CreateOffersTable extends Migration
         ]);
 
         $p2 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Edit offer',
             'name' => 'offer-edit',
             'description' => 'Be able to edit an offer',
@@ -41,6 +44,7 @@ class CreateOffersTable extends Migration
         ]);
 
         $p3 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Delete offer',
             'name' => 'offer-delete',
             'description' => 'Be able to delete an offer',

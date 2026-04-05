@@ -1,16 +1,17 @@
-<?php namespace App\Zizaco\Entrust\Traits;
+<?php
+
+namespace App\Zizaco\Entrust\Traits;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
 use Illuminate\Cache\TaggableStore;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 trait EntrustRoleTrait
 {
@@ -18,7 +19,7 @@ trait EntrustRoleTrait
     public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_permissions_for_role_' . $this->$rolePrimaryKey;
+        $cacheKey = 'entrust_permissions_for_role_'.$this->$rolePrimaryKey;
         if (Cache::getStore() instanceof TaggableStore) {
             return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
                 return $this->perms()->get();
@@ -30,34 +31,37 @@ trait EntrustRoleTrait
 
     public function save(array $options = [])
     {   //both inserts and updates
-        if (!parent::save($options)) {
+        if (! parent::save($options)) {
             return false;
         }
-        if (Cache::getStore() instanceof TaggableStore) {
+
+        /*if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
-        }
+        }*/
         return true;
     }
 
     public function delete(array $options = [])
     {   //soft or hard
-        if (!parent::delete($options)) {
+        if (! parent::delete($options)) {
             return false;
         }
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
+
         return true;
     }
 
     public function restore()
     {   //soft delete undo's
-        if (!parent::restore()) {
+        if (! parent::restore()) {
             return false;
         }
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
+
         return true;
     }
 
@@ -94,7 +98,7 @@ trait EntrustRoleTrait
         parent::boot();
 
         static::deleting(function ($role) {
-            if (!method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
+            if (! method_exists(Config::get('entrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
             }
@@ -106,9 +110,8 @@ trait EntrustRoleTrait
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string|array $name Permission name or array of permission names.
-     * @param bool $requireAll All permissions in the array are required.
-     *
+     * @param  string|array  $name  Permission name or array of permission names.
+     * @param  bool  $requireAll  All permissions in the array are required.
      * @return bool
      */
     public function hasPermission($name, $requireAll = false)
@@ -117,9 +120,9 @@ trait EntrustRoleTrait
             foreach ($name as $permissionName) {
                 $hasPermission = $this->hasPermission($permissionName);
 
-                if ($hasPermission && !$requireAll) {
+                if ($hasPermission && ! $requireAll) {
                     return true;
-                } elseif (!$hasPermission && $requireAll) {
+                } elseif (! $hasPermission && $requireAll) {
                     return false;
                 }
             }
@@ -142,13 +145,12 @@ trait EntrustRoleTrait
     /**
      * Save the inputted permissions.
      *
-     * @param mixed $inputPermissions
-     *
+     * @param  mixed  $inputPermissions
      * @return void
      */
     public function savePermissions($inputPermissions)
     {
-        if (!empty($inputPermissions)) {
+        if (! empty($inputPermissions)) {
             $this->perms()->sync($inputPermissions);
         } else {
             $this->perms()->detach();
@@ -162,8 +164,7 @@ trait EntrustRoleTrait
     /**
      * Attach permission to current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function attachPermission($permission)
@@ -182,8 +183,7 @@ trait EntrustRoleTrait
     /**
      * Detach permission from current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function detachPermission($permission)
@@ -202,8 +202,7 @@ trait EntrustRoleTrait
     /**
      * Attach multiple permissions to current role.
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function attachPermissions($permissions)
@@ -216,13 +215,12 @@ trait EntrustRoleTrait
     /**
      * Detach multiple permissions from current role
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function detachPermissions($permissions = null)
     {
-        if (!$permissions) {
+        if (! $permissions) {
             $permissions = $this->perms()->get();
         }
 

@@ -1,0 +1,2 @@
+Class Tests\Unit\Invoice\SetStatusTest located in ./tests/Unit/Offer/SetStatusTest.php does not comply with psr-4 autoloading standard (rule: Tests\ => ./tests). Skipping.
+Class Tests\Unit\Invoice\OfferStatusEnumTest located in ./tests/Unit/Offer/OffersStatusEnumTest.php does not comply with psr-4 autoloading standard (rule: Tests\ => ./tests). Skipping.

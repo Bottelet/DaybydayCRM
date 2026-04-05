@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreateProductsTable extends Migration
 {
@@ -29,6 +30,7 @@ class CreateProductsTable extends Migration
         });
 
         $p1 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Add product',
             'name' => 'product-create',
             'description' => 'Be able to create an product',
@@ -36,6 +38,7 @@ class CreateProductsTable extends Migration
         ]);
 
         $p2 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Edit product',
             'name' => 'product-edit',
             'description' => 'Be able to edit an product',
@@ -43,6 +46,7 @@ class CreateProductsTable extends Migration
         ]);
 
         $p3 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Delete product',
             'name' => 'product-delete',
             'description' => 'Be able to delete an product',
