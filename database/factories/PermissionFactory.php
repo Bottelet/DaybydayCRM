@@ -5,7 +5,7 @@
 use App\Models\Permission;
 use Faker\Factory as FakerFactory;
 
-$factory->define(Permission::class, function () {
+$factory->define(Permission::class, static function () {
     $faker = FakerFactory::create();
 
     return [

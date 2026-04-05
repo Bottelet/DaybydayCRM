@@ -5,7 +5,7 @@
 use App\Models\BusinessHour;
 use Faker\Generator as Faker;
 
-$factory->define(BusinessHour::class, function (Faker $faker) {
+$factory->define(BusinessHour::class, static function (Faker $faker) {
     return [
         //
     ];

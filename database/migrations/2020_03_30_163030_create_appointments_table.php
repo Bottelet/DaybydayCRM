@@ -15,7 +15,7 @@ class CreateAppointmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('appointments', function (Blueprint $table) {
+        Schema::create('appointments', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->string('title');

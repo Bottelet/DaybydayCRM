@@ -16,7 +16,7 @@ class CreateAbsencesTable extends Migration
      */
     public function up()
     {
-        Schema::create('absences', function (Blueprint $table) {
+        Schema::create('absences', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->string('reason');

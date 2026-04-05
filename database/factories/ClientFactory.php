@@ -5,7 +5,7 @@
 use App\Models\Client;
 use Faker\Generator as Faker;
 
-$factory->define(Client::class, function (Faker $faker) {
+$factory->define(Client::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'vat' => $faker->randomNumber(8),
@@ -18,10 +18,10 @@ $factory->define(Client::class, function (Faker $faker) {
         'company_type' => 'ApS',
     ];
 });
-$factory->afterCreating(Client::class, function ($client, $faker) {
+$factory->afterCreating(Client::class, static function ($client, $faker) {
     factory(\App\Models\Contact::class)->create(
         [
-            'client_id' => $client->id
+            'client_id' => $client->id,
         ]
     );
 });

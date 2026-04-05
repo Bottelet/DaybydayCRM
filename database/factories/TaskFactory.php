@@ -6,7 +6,7 @@ use App\Models\Task;
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(Task::class, function (Faker $faker) {
+$factory->define(Task::class, static function (Faker $faker) {
     return [
         'title' => $faker->sentence,
         'external_id' => $faker->uuid,

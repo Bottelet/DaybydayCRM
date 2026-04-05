@@ -6,7 +6,7 @@ use App\Models\Lead;
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(Lead::class, function (Faker $faker) {
+$factory->define(Lead::class, static function (Faker $faker) {
     return [
         'title' => $faker->sentence,
         'external_id' => $faker->uuid,

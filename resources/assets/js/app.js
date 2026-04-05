@@ -1,3 +1,6 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
+
 /**n_xxx
  * First we will load all of this project's JavaScript dependencies which
  * include Vue and Vue Resource. This gives a great starting point for
@@ -9,7 +12,6 @@ import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
 import calendar from './components/Calendar.vue';
-import createAppointment from './components/AppointmentCreate.vue';
 import message from './components/Message.vue';
 import search from './components/Search.vue';
 import dynamictable from './components/DynamicTable.vue';
@@ -17,9 +19,8 @@ import invoiceLineModal from './components/InvoiceLineModal.vue';
 import passportclients from './components/passport/Clients.vue';
 import passportauthorizedclients from './components/passport/AuthorizedClients.vue';
 import passportpersonalaccesstokens from './components/passport/PersonalAccessTokens.vue';
-import 'element-ui/lib/theme-default/index.css';
+import 'element-ui/lib/theme-chalk/index.css';
 import VueCurrencyFilter from 'vue-currency-filter'
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -54,11 +55,10 @@ $("#menu-toggle").click(function (e) {
 
 $(document).ready(function () {
     $('.dropdown-toggle').dropdown();
-    $(".list-group-item").click(function () {
-        if ($('.list-group-item').hasClass('collapsed')) {
-            $(this).find('.sidebar-arrow').toggleClass("arrow-up").toggleClass("arrow-down");
-        } else {
-            $(this).find('.sidebar-arrow').toggleClass("arrow-down").toggleClass("arrow-up");
+    $(".list-group-item[data-toggle='collapse']").click(function (e) {
+        var target = $(this).attr('data-target') || $(this).attr('href');
+        if (target && target.startsWith('#')) {
+            $(target).collapse('toggle');
         }
     });
 });
@@ -160,7 +160,6 @@ var app = new Vue({
         search,
         dynamictable,
         calendar,
-        createAppointment,
         invoiceLineModal
     },
     //Used for global accessibilty to reload page on events

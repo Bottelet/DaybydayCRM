@@ -16,7 +16,7 @@ class CreateOffersTable extends Migration
      */
     public function up()
     {
-        Schema::create('offers', function (Blueprint $table) {
+        Schema::create('offers', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->dateTime('sent_at')->nullable();

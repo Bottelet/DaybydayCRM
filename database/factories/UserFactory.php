@@ -5,7 +5,7 @@
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(User::class, static function (Faker $faker) {
     return [
         'name' => $faker->name,
         'external_id' => $faker->uuid,
@@ -19,6 +19,6 @@ $factory->define(User::class, function (Faker $faker) {
     ];
 });
 
-$factory->afterCreating(User::class, function ($user, $faker) {
+$factory->afterCreating(User::class, static function ($user, $faker) {
     $user->department()->attach(\App\Models\Department::first()->id);
 });

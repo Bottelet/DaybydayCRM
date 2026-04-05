@@ -6,8 +6,8 @@ use App\Models\Project;
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(Project::class, function (Faker $faker) {
-    
+$factory->define(Project::class, static function (Faker $faker) {
+
     return [
         'title' => $faker->sentence,
         'external_id' => $faker->uuid,

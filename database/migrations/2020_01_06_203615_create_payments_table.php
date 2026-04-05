@@ -19,12 +19,12 @@ class CreatePaymentsTable extends Migration
 
         // Only drop the column if it exists
         if (Schema::hasColumn('invoices', 'payment_received_at')) {
-            Schema::table('invoices', function (Blueprint $table) {
+            Schema::table('invoices', static function (Blueprint $table) {
                 $table->dropColumn('payment_received_at');
             });
         }
 
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('payments', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->integer('amount');
@@ -70,7 +70,7 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('invoices', function ($table) {
+        Schema::table('invoices', static function ($table) {
             $table->dateTime('payment_received_at')->nullable();
         });
         $cpp = Permission::where('name', 'payment-create')->first();

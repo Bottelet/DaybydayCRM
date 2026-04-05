@@ -7,7 +7,7 @@ use App\Models\Task;
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(Appointment::class, function (Faker $faker) {
+$factory->define(Appointment::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'title' => $faker->word,
