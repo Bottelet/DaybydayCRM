@@ -47,10 +47,27 @@ $("#collapse1").click(function () {
 });
 
 //Sidebar menu
-$("#menu-toggle").click(function (e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-    $(".sidebar-brand").toggleClass("shownone");
+$(document).ready(function () {
+    // Desktop Nav Collapse
+    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function () {
+        $("#wrapper").toggleClass("myNavmenu-icons");
+        $("#myNavmenu .panel .list-group-item").addClass("collapsed");
+        $("#myNavmenu .collapse").removeClass("in");
+        $('#myNavmenu i.sidebar-arrow').removeClass("arrow-down").addClass("arrow-side");
+    });
+
+    // Mobile Nav Toggle
+    $('body').on('click', '#mobile-toggle', function (e) {
+        e.stopPropagation();
+        $("#wrapper").toggleClass("big-menu");
+    });
+
+    // Close mobile menu when clicking outside
+    $(document).click(function (e) {
+        if (!$(e.target).closest('#myNavmenu, #mobile-toggle').length) {
+            $("#wrapper").removeClass("big-menu");
+        }
+    });
 });
 
 $(document).ready(function () {
@@ -82,39 +99,6 @@ $(document).ready(function () {
 
 
 $(document).ready(function () {
-    $('body').on('click', '.menu-txt-toggle', function () {
-        $("body #wrapper").toggleClass("myNavmenu-icons");
-        $("#myNavmenu .panel .list-group-item").addClass("collapsed");
-        $("#myNavmenu .collapse").removeClass("in");
-        $('#myNavmenu i.ion-chevron-up').removeClass("arrow-down").addClass("arrow-up");
-    });
-    $('body').on('click', '#myNavmenu .list-group-item', function () {
-        $("body #wrapper").removeClass("myNavmenu-icons");
-    });
-
-    $("html").click(function (evt) {
-        var target = $(evt.target);
-        if (target.hasClass("mobile-toggle")) {
-            //if($('body #wrapper').hasClass('myNavmenu-icons')) {  } else {
-            setTimeout(function () {
-                $("body #wrapper").toggleClass("big-menu");
-            }, 0);
-        } else {
-
-            if (target.id == "myNavmenu")
-                return;
-            //For descendants of #myNavmenu being clicked, remove this check if you do not want to put constraint on descendants.
-            if ($(target).closest('#myNavmenu').length)
-                return;
-            if ($(target).closest('#mobile-toggle').length) {
-                //Do processing of click event here for every element except with id #myNavmenu
-                $("body #wrapper").toggleClass("big-menu");
-            } else {
-                $("body #wrapper").removeClass("big-menu");
-            }
-        }
-    });
-
     $('.view-offer-btn, #view-original-offer').on('click', function (e) {
         var offerExternalId = $(this).data('offer-external_id')
         var vuecomp = Vue.extend(invoiceLineModal);

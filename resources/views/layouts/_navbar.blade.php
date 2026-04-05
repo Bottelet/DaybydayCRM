@@ -1,5 +1,5 @@
 <!-- DESKTOP NAV --->
-<button type="button" class="navbar-toggle menu-txt-toggle" style="">
+<button type="button" id="menu-toggle" class="navbar-toggle menu-txt-toggle" style="">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
@@ -17,11 +17,11 @@
 
         <div class="navbar-icons__wrapper">
 
-            <div id="nav-toggle col-sm-6">
+            <div class="nav-toggle col-sm-6">
                 <search></search>
             </div>
             @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
-                <div id="nav-toggle col-sm-4">
+                <div class="nav-toggle col-sm-4">
                     <a href="{{route('settings.index')}}" style="text-decoration: none;">
                         <span class="top-bar-toggler">
                             <i class="flaticon-gear"></i>
@@ -30,7 +30,7 @@
                 </div>
             @endif
             @include('navigation.topbar.user-profile')
-            <div id="nav-toggle col-sm-2">
+            <div class="nav-toggle col-sm-2">
                 <a id="grid-action" role="button" data-toggle="dropdown">
                     <span class="top-bar-toggler">
                         <i class="flaticon-grid"></i>
