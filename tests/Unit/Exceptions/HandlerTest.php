@@ -3,10 +3,13 @@
 namespace Tests\Unit\Exceptions;
 
 use App\Exceptions\Handler;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
 class HandlerTest extends TestCase
@@ -14,14 +17,14 @@ class HandlerTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function handlerClassExtendsLaravelExceptionHandler()
+    public function handler_class_extends_laravel_exception_handler()
     {
         $handler = app(Handler::class);
         $this->assertInstanceOf(ExceptionHandler::class, $handler);
     }
 
     /** @test */
-    public function handlerDontReportListContainsExpectedExceptions()
+    public function handler_dont_report_list_contains_expected_exceptions()
     {
         $handler = new Handler(app());
         $reflection = new \ReflectionClass($handler);
@@ -29,15 +32,15 @@ class HandlerTest extends TestCase
         $property->setAccessible(true);
         $dontReport = $property->getValue($handler);
 
-        $this->assertContains(\Illuminate\Auth\AuthenticationException::class, $dontReport);
-        $this->assertContains(\Illuminate\Auth\Access\AuthorizationException::class, $dontReport);
-        $this->assertContains(\Illuminate\Validation\ValidationException::class, $dontReport);
-        $this->assertContains(\Illuminate\Database\Eloquent\ModelNotFoundException::class, $dontReport);
-        $this->assertContains(\Symfony\Component\HttpKernel\Exception\HttpException::class, $dontReport);
+        $this->assertContains(AuthenticationException::class, $dontReport);
+        $this->assertContains(AuthorizationException::class, $dontReport);
+        $this->assertContains(ValidationException::class, $dontReport);
+        $this->assertContains(ModelNotFoundException::class, $dontReport);
+        $this->assertContains(HttpException::class, $dontReport);
     }
 
     /** @test */
-    public function unauthenticatedReturnsJsonForJsonRequest()
+    public function unauthenticated_returns_json_for_json_request()
     {
         // Access an API route that requires authentication without credentials
         $response = $this->withHeaders(['Accept' => 'application/json'])
@@ -48,7 +51,7 @@ class HandlerTest extends TestCase
     }
 
     /** @test */
-    public function unauthenticatedRedirectsToLoginForWebRequest()
+    public function unauthenticated_redirects_to_login_for_web_request()
     {
         // Log out the user that TestCase sets up
         auth()->logout();
@@ -60,7 +63,7 @@ class HandlerTest extends TestCase
     }
 
     /** @test */
-    public function unauthenticatedJsonResponseHasCorrectStructure()
+    public function unauthenticated_json_response_has_correct_structure()
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');

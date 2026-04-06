@@ -59,14 +59,14 @@ class ApiControllerTest extends TestCase
 
     private ConcreteApiController $controller;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->controller = new ConcreteApiController();
+        $this->controller = new ConcreteApiController;
     }
 
     /** @test */
-    public function respondReturnsJsonResponseWithData()
+    public function respond_returns_json_response_with_data()
     {
         $data = ['key' => 'value'];
         $response = $this->controller->callRespond($data);
@@ -77,7 +77,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondReturnsJsonResponseWithCustomStatusCode()
+    public function respond_returns_json_response_with_custom_status_code()
     {
         $response = $this->controller->callRespond(['test' => true], 201);
 
@@ -86,7 +86,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondReturnsJsonResponseWithCustomHeaders()
+    public function respond_returns_json_response_with_custom_headers()
     {
         $headers = ['X-Custom-Header' => 'custom-value'];
         $response = $this->controller->callRespond(['data' => true], 200, $headers);
@@ -95,7 +95,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondSuccessReturnsStatus200WithNullData()
+    public function respond_success_returns_status200_with_null_data()
     {
         $response = $this->controller->callRespondSuccess();
 
@@ -105,7 +105,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondCreatedReturnsStatus201WithData()
+    public function respond_created_returns_status201_with_data()
     {
         $data = ['id' => 42, 'name' => 'Test'];
         $response = $this->controller->callRespondCreated($data);
@@ -116,7 +116,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondNoContentReturnsStatus204()
+    public function respond_no_content_returns_status204()
     {
         $response = $this->controller->callRespondNoContent();
 
@@ -125,7 +125,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondErrorReturnsCorrectStructure()
+    public function respond_error_returns_correct_structure()
     {
         $response = $this->controller->callRespondError('Something went wrong', 500);
 
@@ -139,7 +139,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondUnauthorizedReturnsStatus401()
+    public function respond_unauthorized_returns_status401()
     {
         $response = $this->controller->callRespondUnauthorized();
 
@@ -151,7 +151,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondUnauthorizedAcceptsCustomMessage()
+    public function respond_unauthorized_accepts_custom_message()
     {
         $response = $this->controller->callRespondUnauthorized('Custom unauthorized message');
 
@@ -161,7 +161,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondForbiddenReturnsStatus403()
+    public function respond_forbidden_returns_status403()
     {
         $response = $this->controller->callRespondForbidden();
 
@@ -173,7 +173,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondForbiddenAcceptsCustomMessage()
+    public function respond_forbidden_accepts_custom_message()
     {
         $response = $this->controller->callRespondForbidden('Access denied to this resource');
 
@@ -183,7 +183,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondNotFoundReturnsStatus404()
+    public function respond_not_found_returns_status404()
     {
         $response = $this->controller->callRespondNotFound();
 
@@ -195,7 +195,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondNotFoundAcceptsCustomMessage()
+    public function respond_not_found_accepts_custom_message()
     {
         $response = $this->controller->callRespondNotFound('Resource not found');
 
@@ -205,7 +205,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function respondErrorIncludesStatusCodeInErrorBody()
+    public function respond_error_includes_status_code_in_error_body()
     {
         $response = $this->controller->callRespondError('Not found', 404);
 
@@ -214,7 +214,7 @@ class ApiControllerTest extends TestCase
     }
 
     /** @test */
-    public function controllerDoesNotDependOnDingoApi()
+    public function controller_does_not_depend_on_dingo_api()
     {
         // Verify that the ApiController no longer requires the Dingo\Api\Routing\Helpers trait
         $uses = class_uses(ApiController::class);

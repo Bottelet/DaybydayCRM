@@ -13,7 +13,7 @@ class ProjectActionTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function constructorStoresProjectAndAction()
+    public function constructor_stores_project_and_action()
     {
         $project = factory(Project::class)->create();
         $action = 'created';
@@ -25,7 +25,7 @@ class ProjectActionTest extends TestCase
     }
 
     /** @test */
-    public function getProjectReturnsProjectModel()
+    public function get_project_returns_project_model()
     {
         $project = factory(Project::class)->create();
         $event = new ProjectAction($project, 'updated');
@@ -34,7 +34,7 @@ class ProjectActionTest extends TestCase
     }
 
     /** @test */
-    public function getActionReturnsActionString()
+    public function get_action_returns_action_string()
     {
         $project = factory(Project::class)->create();
         $event = new ProjectAction($project, 'deleted');
@@ -43,7 +43,7 @@ class ProjectActionTest extends TestCase
     }
 
     /** @test */
-    public function broadcastOnReturnsPrivateChannel()
+    public function broadcast_on_returns_private_channel()
     {
         $project = factory(Project::class)->create();
         $event = new ProjectAction($project, 'created');
@@ -53,7 +53,7 @@ class ProjectActionTest extends TestCase
     }
 
     /** @test */
-    public function eventPreservesProjectReferenceAfterConstruction()
+    public function event_preserves_project_reference_after_construction()
     {
         $project = factory(Project::class)->create();
         $event = new ProjectAction($project, 'test');
