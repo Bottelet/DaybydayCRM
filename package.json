@@ -16,7 +16,7 @@
     "sass-loader": "^16.0.3",
     "style-loader": "^4.0.0",
     "vue-loader": "^15.11.1",
-    "vue-template-compiler": "^2.7.16"
+    "vue-template-compiler": "2.6.10"
   },
   "dependencies": {
     "axios": "1.7.4",
