@@ -12,7 +12,7 @@ class AbsenceControllerTest extends TestCase
     use DatabaseTransactions, WithoutMiddleware;
 
     /** @test **/
-    public function canCreateAbsenceForOtherUser()
+    public function can_create_absence_for_other_user()
     {
         $user = factory(User::class)->create();
         $response = $this->json('POST', route('absence.store'), [
@@ -30,7 +30,7 @@ class AbsenceControllerTest extends TestCase
     }
 
     /** @test **/
-    public function creatingAbsenceForOtherUsersWithoutPermissionCreatesForUserItSelf()
+    public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
     {
         $actingUser = factory(User::class)->create();
         $this->actingAs($actingUser);
@@ -50,7 +50,7 @@ class AbsenceControllerTest extends TestCase
     }
 
     /** @test **/
-    public function notProvidingUserExternalIdCreatesAbsenceForAuthenticatedUser()
+    public function not_providing_user_external_id_creates_absence_for_authenticated_user()
     {
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',

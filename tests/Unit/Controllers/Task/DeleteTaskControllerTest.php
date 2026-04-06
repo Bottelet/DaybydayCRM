@@ -13,7 +13,7 @@ class DeleteTaskControllerTest extends TestCase
 
     private $task;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -23,7 +23,7 @@ class DeleteTaskControllerTest extends TestCase
     }
 
     /** @test */
-    public function deleteTask()
+    public function delete_task()
     {
         $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 

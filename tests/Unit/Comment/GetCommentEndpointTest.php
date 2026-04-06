@@ -18,7 +18,7 @@ class GetCommentEndpointTest extends TestCase
 
     private $project;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class GetCommentEndpointTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertEquals(url('comments/lead').DIRECTORY_SEPARATOR.$this->lead->external_id, $this->lead->getCreateCommentEndpoint());
         $this->assertEquals(url('comments/task').DIRECTORY_SEPARATOR.$this->task->external_id, $this->task->getCreateCommentEndpoint());

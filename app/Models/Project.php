@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends model implements Commentable
+class Project extends Model implements Commentable
 {
     use DeadlineTrait, SearchableTrait, SoftDeletes;
 
@@ -38,9 +38,9 @@ class Project extends model implements Commentable
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
+        // if (config('services.search.enabled')) {
         static::observe(ElasticSearchObserver::class);
-        //}
+        // }
     }
 
     public function getRouteKeyName()

@@ -12,7 +12,7 @@ class TaskObserverDeleteTest extends TestCase
 
     protected $task;
 
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $this->task = factory(Task::class)->create();
@@ -38,7 +38,7 @@ class TaskObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteTasksSoftDeletes()
+    public function delete_tasks_soft_deletes()
     {
         $this->assertNull($this->task->documents()->first()->deleted_at);
         $this->task->delete();
@@ -47,7 +47,7 @@ class TaskObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteTaskSoftDeletesRelations()
+    public function delete_task_soft_deletes_relations()
     {
         $this->assertNotEmpty($this->task->comments);
         $this->assertNotEmpty($this->task->activity);
@@ -70,7 +70,7 @@ class TaskObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function forceDeleteRemovesTaskFromDatabase()
+    public function force_delete_removes_task_from_database()
     {
         $taskId = $this->task->id;
 
@@ -83,7 +83,7 @@ class TaskObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function forceDeleteRemovesRelationsFromDatabase()
+    public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->task->comments->first()->id;
         $appointmentId = $this->task->appointments->first()->id;

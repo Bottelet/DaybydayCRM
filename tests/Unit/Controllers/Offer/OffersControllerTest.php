@@ -16,7 +16,7 @@ class OffersControllerTest extends TestCase
 
     protected $offer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

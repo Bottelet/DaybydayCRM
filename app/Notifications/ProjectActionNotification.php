@@ -39,7 +39,7 @@ class ProjectActionNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -93,7 +93,7 @@ class ProjectActionNotification extends Notification
         }
 
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
+            'assigned_user' => $notifiable->id, // Assigned user ID
             'created_user' => $this->project->creator->id,
             'message' => $text,
             'type' => Project::class,

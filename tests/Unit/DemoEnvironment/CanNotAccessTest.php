@@ -21,7 +21,7 @@ class CanNotAccessTest extends TestCase
 
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function updateSettings()
+    public function update_settings()
     {
         $response = $this->json('PATCH', route('settings.update', []));
         $this->assertEquals(302, $response->getStatusCode());
@@ -40,7 +40,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function accessIntegrationsPage()
+    public function access_integrations_page()
     {
         $response = $this->json('GET', route('integrations.index'));
         $this->assertEquals(302, $response->getStatusCode());
@@ -48,7 +48,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function connectIntegrationsIntegration()
+    public function connect_integrations_integration()
     {
         $response = $this->json('POST', route('integrations.store'));
         $this->assertEquals(302, $response->getStatusCode());
@@ -56,7 +56,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function deleteRole()
+    public function delete_role()
     {
         $role = factory(Role::class)->create();
 
@@ -86,7 +86,7 @@ class CanNotAccessTest extends TestCase
     // }
 
     /** @test */
-    public function deleteClient()
+    public function delete_client()
     {
         $client = factory(Client::class)->create();
 
@@ -96,7 +96,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function deleteUser()
+    public function delete_user()
     {
         $user = factory(User::class)->create();
 
@@ -106,7 +106,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function updateUser()
+    public function update_user()
     {
         $user = factory(User::class)->create();
 
@@ -116,7 +116,7 @@ class CanNotAccessTest extends TestCase
     }
 
     /** @test */
-    public function deleteDepartment()
+    public function delete_department()
     {
         $department = factory(Department::class)->create();
 

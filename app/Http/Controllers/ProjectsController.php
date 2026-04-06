@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProjectAction;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Models\Client;
 use App\Models\Document;
@@ -115,7 +116,7 @@ class ProjectsController extends Controller
         $insertedExternalId = $project->external_id;
 
         Session()->flash('flash_message', __('Project successfully added'));
-        event(new \App\Events\ProjectAction($project, self::CREATED));
+        event(new ProjectAction($project, self::CREATED));
 
         if (! is_null($request->images)) {
             foreach ($request->file('images') as $image) {
@@ -123,7 +124,7 @@ class ProjectsController extends Controller
             }
         }
 
-        //Hack to make dropzone js work, as it only called with AJAX and not form submit
+        // Hack to make dropzone js work, as it only called with AJAX and not form submit
         return response()->json(['project_external_id' => $project->external_id]);
     }
 
@@ -227,7 +228,7 @@ class ProjectsController extends Controller
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();
 
-        event(new \App\Events\ProjectAction($project, self::UPDATED_STATUS));
+        event(new ProjectAction($project, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Task status is updated'));
 
         return redirect()->back();
@@ -242,7 +243,7 @@ class ProjectsController extends Controller
         $project->user_assigned_id = $user_assigned_id;
         $project->save();
 
-        event(new \App\Events\ProjectAction($project, self::UPDATED_ASSIGN));
+        event(new ProjectAction($project, self::UPDATED_ASSIGN));
 
         Session()->flash('flash_message', __('New user is assigned'));
 
@@ -267,7 +268,7 @@ class ProjectsController extends Controller
         $input = $request =
             ['deadline' => $request->deadline_date.' '.$request->deadline_time.':00'];
         $project->fill($input)->save();
-        event(new \App\Events\ProjectAction($project, self::UPDATED_DEADLINE));
+        event(new ProjectAction($project, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New deadline is set'));
 
         return redirect()->back();

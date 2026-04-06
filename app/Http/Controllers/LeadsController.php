@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\LeadAction;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
 use App\Models\Client;
@@ -12,6 +13,7 @@ use App\Models\User;
 use App\Services\Invoice\InvoiceCalculator;
 use Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
@@ -56,7 +58,7 @@ class LeadsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create($client_external_id = null)
     {
@@ -73,7 +75,7 @@ class LeadsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  StoreLeadRequest|Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(StoreLeadRequest $request)
     {
@@ -94,7 +96,7 @@ class LeadsController extends Controller
             ]
         );
 
-        event(new \App\Events\LeadAction($lead, self::CREATED));
+        event(new LeadAction($lead, self::CREATED));
         session()->flash('flash_message', __('Lead successfully added'));
 
         return redirect()->route('leads.show', $lead->external_id);
@@ -147,7 +149,7 @@ class LeadsController extends Controller
         $input = array_replace($request->all());
         $lead->fill($input)->save();
 
-        event(new \App\Events\LeadAction($lead, self::UPDATED_ASSIGN));
+        event(new LeadAction($lead, self::UPDATED_ASSIGN));
         Session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
@@ -167,7 +169,7 @@ class LeadsController extends Controller
         }
         $lead = $this->findByExternalId($external_id);
         $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00')])->save();
-        event(new \App\Events\LeadAction($lead, self::UPDATED_DEADLINE));
+        event(new LeadAction($lead, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New follow up date is set'));
 
         return redirect()->back();
@@ -177,7 +179,7 @@ class LeadsController extends Controller
      * Display the specified resource.
      *
      * @param  int  $external_id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($external_id)
     {
@@ -217,7 +219,7 @@ class LeadsController extends Controller
         } else {
             $lead->fill($request->all())->save();
         }
-        event(new \App\Events\LeadAction($lead, self::UPDATED_STATUS));
+        event(new LeadAction($lead, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Lead status updated'));
 
         return redirect()->back();

@@ -2,6 +2,8 @@
 
 namespace App\Zizaco\Entrust\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
@@ -13,7 +15,7 @@ interface EntrustRoleInterface
     /**
      * Many-to-Many relations with the user model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function users();
 
@@ -21,7 +23,7 @@ interface EntrustRoleInterface
      * Many-to-Many relations with the permission model.
      * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function perms();
 

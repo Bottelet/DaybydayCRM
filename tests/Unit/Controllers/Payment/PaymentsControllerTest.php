@@ -20,7 +20,7 @@ class PaymentsControllerTest extends TestCase
 
     private $payment;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withoutMiddleware([VerifyCsrfToken::class]);

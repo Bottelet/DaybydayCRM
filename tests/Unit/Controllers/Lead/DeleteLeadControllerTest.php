@@ -16,7 +16,7 @@ class DeleteLeadControllerTest extends TestCase
 
     private $offer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ class DeleteLeadControllerTest extends TestCase
     }
 
     /** @test */
-    public function deleteLead()
+    public function delete_lead()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
@@ -41,7 +41,7 @@ class DeleteLeadControllerTest extends TestCase
     }
 
     /** @test */
-    public function deleteOffersIfFlagGiven()
+    public function delete_offers_if_flag_given()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
             'delete_offers' => 'on',
@@ -52,7 +52,7 @@ class DeleteLeadControllerTest extends TestCase
     }
 
     /** @test */
-    public function doNotDeleteOffersIfFlagIsNotGivenButRemoveReference()
+    public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
@@ -64,7 +64,7 @@ class DeleteLeadControllerTest extends TestCase
     }
 
     /** @test */
-    public function canDeleteLeadIfFlagIsGivenAndOffersDoesNotExists()
+    public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
         $this->lead->offers()->forceDelete();
 

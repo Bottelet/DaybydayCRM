@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Tenant;
+
 return [
 
     /*
@@ -50,7 +52,7 @@ return [
         'client' => env('DINERO_CLIENT_ID', null),
     ],
     'stripe' => [
-        'model' => App\Models\Tenant::class,
+        'model' => Tenant::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],

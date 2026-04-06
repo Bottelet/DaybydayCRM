@@ -13,7 +13,7 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
         $user = factory(User::class)->create([
             'password' => bcrypt('secretpassword'),
@@ -33,7 +33,7 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
-    public function testUserCanLoginSuccessfully()
+    public function test_user_can_login_successfully()
     {
         $user = factory(User::class)->create([
             'password' => bcrypt('secretpassword'),

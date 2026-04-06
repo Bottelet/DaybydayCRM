@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TaskAction;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Models\Client;
 use App\Models\Document;
@@ -149,7 +150,7 @@ class TasksController extends Controller
         $insertedExternalId = $task->external_id;
 
         Session()->flash('flash_message', __('Task successfully added'));
-        event(new \App\Events\TaskAction($task, self::CREATED));
+        event(new TaskAction($task, self::CREATED));
 
         if (! is_null($request->images)) {
             foreach ($request->file('images') as $image) {
@@ -157,7 +158,7 @@ class TasksController extends Controller
             }
         }
 
-        //Hack to make dropzone js work, as it only called with AJAX and not form submit
+        // Hack to make dropzone js work, as it only called with AJAX and not form submit
         return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $project ? $project->external_id : null]);
 
         return redirect()->route('tasks.show', $insertedExternalId);
@@ -260,7 +261,7 @@ class TasksController extends Controller
 
         $task = $this->findByExternalId($external_id);
         $task->fill($input)->save();
-        event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
+        event(new TaskAction($task, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Task status is updated'));
 
         return redirect()->back();
@@ -279,7 +280,7 @@ class TasksController extends Controller
             'project_id' => $project_id,
         ])->save();
 
-        //event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
+        // event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Task project is updated'));
 
         return redirect()->back();
@@ -298,7 +299,7 @@ class TasksController extends Controller
         $task->save();
         $task->refresh();
 
-        event(new \App\Events\TaskAction($task, self::UPDATED_ASSIGN));
+        event(new TaskAction($task, self::UPDATED_ASSIGN));
         Session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
@@ -319,7 +320,7 @@ class TasksController extends Controller
         $task = $this->findByExternalId($external_id);
         $task->fill(['deadline' => Carbon::parse($request->deadline_date)])->save();
 
-        event(new \App\Events\TaskAction($task, self::UPDATED_DEADLINE));
+        event(new TaskAction($task, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', 'New deadline is set');
 
         return redirect()->back();

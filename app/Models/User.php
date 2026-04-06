@@ -117,13 +117,13 @@ class User extends Authenticatable
 
     public function getNameAndDepartmentAttribute()
     {
-        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
         return $this->name.' '.'('.$this->department()->first()->name.')';
     }
 
     public function getNameAndDepartmentEagerLoadingAttribute()
     {
-        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
         return $this->name.' '.'('.$this->relations['department'][0]->name.')';
     }
 

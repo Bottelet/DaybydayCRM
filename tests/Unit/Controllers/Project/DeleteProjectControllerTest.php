@@ -16,7 +16,7 @@ class DeleteProjectControllerTest extends TestCase
 
     private $task;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,7 +28,7 @@ class DeleteProjectControllerTest extends TestCase
     }
 
     /** @test */
-    public function deleteProject()
+    public function delete_project()
     {
         $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
@@ -36,7 +36,7 @@ class DeleteProjectControllerTest extends TestCase
     }
 
     /** @test */
-    public function deleteTasksIfFlagGiven()
+    public function delete_tasks_if_flag_given()
     {
         $task = factory(Task::class)->create([
             'project_id' => $this->project->id,
@@ -52,7 +52,7 @@ class DeleteProjectControllerTest extends TestCase
     }
 
     /** @test */
-    public function removeProjectIdFromTaskIfFlagNotGiven()
+    public function remove_project_id_from_task_if_flag_not_given()
     {
         $task = factory(Task::class)->create([
             'project_id' => $this->project->id,
@@ -68,7 +68,7 @@ class DeleteProjectControllerTest extends TestCase
     }
 
     /** @test */
-    public function canDeleteProjectIfThereIsNoTasks()
+    public function can_delete_project_if_there_is_no_tasks()
     {
         $project = factory(Project::class)->create();
         $this->json('DELETE', route('projects.destroy', $project->external_id));

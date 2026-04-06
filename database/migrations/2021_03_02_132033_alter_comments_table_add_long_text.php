@@ -11,7 +11,7 @@ class AlterCommentsTableAddLongText extends Migration
      */
     public function up()
     {
-        \DB::statement('ALTER TABLE `comments` MODIFY `description` LONGTEXT');
+        DB::statement('ALTER TABLE `comments` MODIFY `description` LONGTEXT');
     }
 
     /**

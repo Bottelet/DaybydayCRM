@@ -13,7 +13,7 @@ class PaymentSource
 
     private const INTERCOMPANY = 'intercompany'; // Mellemregning
 
-    private const EXPENSES = 'expenses'; //Udlæg
+    private const EXPENSES = 'expenses'; // Udlæg
 
     /**
      * @var PaymentSource[]

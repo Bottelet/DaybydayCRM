@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Country;
 use App\Enums\InvoiceStatus;
+use App\Events\ClientAction;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\Client;
@@ -231,7 +232,7 @@ class ClientsController extends Controller
         ]);
 
         Session()->flash('flash_message', __('Client successfully added'));
-        event(new \App\Events\ClientAction($client, self::CREATED));
+        event(new ClientAction($client, self::CREATED));
 
         return redirect()->route('clients.index');
     }
@@ -292,7 +293,7 @@ class ClientsController extends Controller
     {
         $client = $this->findByExternalId($external_id);
 
-        //dd($client->appointments);
+        // dd($client->appointments);
         return view('clients.show')
             ->withClient($client)
             ->withCompanyname(Setting::first()->company)

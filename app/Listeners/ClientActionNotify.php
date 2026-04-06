@@ -20,12 +20,12 @@ class ClientActionNotify
      *
      * @return void
      */
-    public function handle(clientAction $event)
+    public function handle(ClientAction $event)
     {
         $client = $event->getClient();
         $action = $event->getAction();
 
-        $client->assignedUser->notify(new clientActionNotification(
+        $client->assignedUser->notify(new ClientActionNotification(
             $client,
             $action
         ));

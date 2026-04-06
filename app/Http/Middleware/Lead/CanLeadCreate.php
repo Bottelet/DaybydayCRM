@@ -3,13 +3,14 @@
 namespace App\Http\Middleware\Lead;
 
 use Closure;
+use Illuminate\Http\Request;
 
 class CanLeadCreate
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)

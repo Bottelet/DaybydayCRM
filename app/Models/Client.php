@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
 use App\Observers\ElasticSearchObserver;
 use App\Traits\SearchableTrait;
@@ -42,9 +43,9 @@ class Client extends Model
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
+        // if (config('services.search.enabled')) {
         static::observe(ElasticSearchObserver::class);
-        //}
+        // }
     }
 
     public function updateAssignee(User $user)
@@ -52,7 +53,7 @@ class Client extends Model
         $this->user_id = $user->id;
         $this->save();
 
-        event(new \App\Events\ClientAction($this, ClientsController::UPDATED_ASSIGN));
+        event(new ClientAction($this, ClientsController::UPDATED_ASSIGN));
     }
 
     public function displayValue()

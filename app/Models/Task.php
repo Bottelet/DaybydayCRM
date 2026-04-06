@@ -43,9 +43,9 @@ class Task extends Model implements Commentable
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
+        // if (config('services.search.enabled')) {
         static::observe(ElasticSearchObserver::class);
-        //}
+        // }
     }
 
     public function getRouteKeyName()
@@ -130,7 +130,7 @@ class Task extends Model implements Commentable
 
     public function canUpdateInvoice()
     {
-        //If there is no invoice, it should be possible, because it also creates
+        // If there is no invoice, it should be possible, because it also creates
         if (! $this->invoice) {
             return true;
         }

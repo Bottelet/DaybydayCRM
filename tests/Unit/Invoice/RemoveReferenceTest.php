@@ -13,7 +13,7 @@ class RemoveReferenceTest extends TestCase
 
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -24,7 +24,7 @@ class RemoveReferenceTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertNotNull($this->invoice->integration_invoice_id);
         $this->assertNotNull($this->invoice->integration_type);

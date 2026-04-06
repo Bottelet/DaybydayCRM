@@ -22,7 +22,7 @@ class AbsenceController extends Controller
         }
         $absences = Absence::select(['external_id', 'reason', 'start_at', 'end_at', 'user_id'])->with('user');
 
-        return Datatables::of($absences)
+        return DataTables::of($absences)
             ->editColumn('user_id', function ($absences) {
                 return $absences->user->name;
             })

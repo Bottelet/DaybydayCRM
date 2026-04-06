@@ -66,7 +66,7 @@ class SettingsController extends Controller
             }
         } else {
             for ($i = 1; $i < 8; $i++) {
-                \App\Models\BusinessHour::create([
+                BusinessHour::create([
                     'day' => $this->integerToDay()[$i],
                     'open_time' => '09:00',
                     'close_time' => '18:00',

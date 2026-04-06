@@ -40,7 +40,7 @@ class LeadActionNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -87,7 +87,7 @@ class LeadActionNotification extends Notification
         }
 
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
+            'assigned_user' => $notifiable->id, // Assigned user ID
             'created_user' => $this->lead->creator->id,
             'message' => $text,
             'type' => Lead::class,

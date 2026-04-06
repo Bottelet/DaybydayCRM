@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -13,9 +14,19 @@ abstract class TestCase extends BaseTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        // Run migrations before each test
+        Artisan::call('migrate:fresh');
 
-        $this->user = User::where('name', 'Admin')->first();
+        // Ensure "Admin" user exists
+        $this->user = User::firstOrCreate(
+            ['name' => 'Admin'],
+            [
+                'email' => 'admin@admin.com',
+                'password' => bcrypt('admin123'),
+            ]
+        );
+
+        parent::setUp();
 
         $this->actingAs($this->user);
     }

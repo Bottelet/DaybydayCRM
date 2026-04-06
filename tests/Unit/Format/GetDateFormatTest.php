@@ -12,7 +12,7 @@ class GetDateFormatTest extends TestCase
     /** @var GetDateFormat */
     protected $formatter;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -21,7 +21,7 @@ class GetDateFormatTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertEquals('H:i', $this->formatter->getCarbonTime());
         $this->assertEquals('dd/mm/yyyy', $this->formatter->getFrontendDate());
@@ -31,7 +31,7 @@ class GetDateFormatTest extends TestCase
     }
 
     /** @test */
-    public function happyPathWithHelpers()
+    public function happy_path_with_helpers()
     {
         $this->assertEquals('H:i', carbonTime());
         $this->assertEquals('dd/mm/yyyy', frontendDate());
@@ -41,7 +41,7 @@ class GetDateFormatTest extends TestCase
     }
 
     /** @test */
-    public function dateExpected()
+    public function date_expected()
     {
         $this->assertEquals('15:00', Carbon::parse('22-02-2020 15:00:00')->format($this->formatter->getCarbonTime()));
         $this->assertEquals('22/02/2020', Carbon::parse('22-02-2020 15:00:00')->format($this->formatter->getCarbonDate()));
