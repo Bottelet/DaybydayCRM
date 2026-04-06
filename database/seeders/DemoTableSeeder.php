@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
 use App\Enums\OfferStatus;
 use App\Models\Absence;
 use App\Models\Appointment;
@@ -9,10 +12,22 @@ use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
+<<<<<<< Updated upstream:database/seeders/DemoTableSeeder.php
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+=======
+use App\Models\Lead;
+use App\Models\Offer;
+use App\Models\Product;
+use App\Models\Project;
+use App\Models\RoleUser;
+use App\Models\Task;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Ramsey\Uuid\Uuid;
+>>>>>>> Stashed changes:database/seeds/DemoTableSeeder.php
 
 class DemoTableSeeder extends Seeder
 {

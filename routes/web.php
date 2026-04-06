@@ -36,7 +36,11 @@ Route::group(['middleware' => ['auth']], static function () {
     /**
      * Roles
      */
+<<<<<<< Updated upstream
     Route::group(['prefix' => 'roles'], static function () {
+=======
+    Route::group(['prefix' => 'roles'], function () {
+>>>>>>> Stashed changes
         Route::get('/data', 'RolesController@indexData')->name('roles.data');
         Route::patch('/update/{external_id}', 'RolesController@update');
     });

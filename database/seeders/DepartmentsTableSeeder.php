@@ -1,10 +1,15 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/DepartmentsTableSeeder.php
 namespace Database\Seeders;
 
 use App\Models\Department;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+=======
+use App\Models\Department;
+use Illuminate\Database\Seeder;
+>>>>>>> Stashed changes:database/seeds/DepartmentsTableSeeder.php
 use Ramsey\Uuid\Uuid;
 
 class DepartmentsTableSeeder extends Seeder

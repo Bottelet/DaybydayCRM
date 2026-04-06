@@ -7,9 +7,15 @@ use App\Models\Project;
 use App\Models\User;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
+<<<<<<< Updated upstream
 
 $factory->define(Project::class, static function (Faker $faker) {
 
+=======
+
+$factory->define(Project::class, function (Faker $faker) {
+
+>>>>>>> Stashed changes
     return [
         'title' => $faker->sentence,
         'external_id' => $faker->uuid,

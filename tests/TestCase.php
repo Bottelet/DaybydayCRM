@@ -3,11 +3,15 @@
 namespace Tests;
 
 use App\Models\User;
+<<<<<<< Updated upstream
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Str;
+=======
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+>>>>>>> Stashed changes
 
 abstract class TestCase extends BaseTestCase
 {

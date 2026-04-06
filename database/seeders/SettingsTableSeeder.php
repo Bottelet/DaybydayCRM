@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/SettingsTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/SettingsTableSeeder.php
 use App\Models\BusinessHour;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

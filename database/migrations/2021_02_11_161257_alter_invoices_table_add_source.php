@@ -16,7 +16,11 @@ class AlterInvoicesTableAddSource extends Migration
      */
     public function up()
     {
+<<<<<<< Updated upstream
         Schema::table('invoices', static function (Blueprint $table) {
+=======
+        Schema::table('invoices', function (Blueprint $table) {
+>>>>>>> Stashed changes
             $table->string('source_type')->nullable()->after('integration_type');
             $table->unsignedBigInteger('source_id')->nullable()->after('source_type');
             $table->index(['source_type', 'source_id']);

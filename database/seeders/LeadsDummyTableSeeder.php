@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/LeadsDummyTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/LeadsDummyTableSeeder.php
 use App\Models\Comment;
 use App\Models\Lead;
 use App\Models\User;

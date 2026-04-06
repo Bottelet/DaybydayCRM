@@ -21,7 +21,11 @@ $factory->define(Client::class, static function (Faker $faker) {
         'company_type' => 'ApS',
     ];
 });
+<<<<<<< Updated upstream
 $factory->afterCreating(Client::class, static function ($client, $faker) {
+=======
+$factory->afterCreating(Client::class, function ($client, $faker) {
+>>>>>>> Stashed changes
     factory(Contact::class)->create(
         [
             'client_id' => $client->id,

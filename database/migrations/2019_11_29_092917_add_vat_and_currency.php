@@ -13,7 +13,11 @@ class AddVatAndCurrency extends Migration
      */
     public function up()
     {
+<<<<<<< Updated upstream
         Schema::table('settings', static function (Blueprint $table) {
+=======
+        Schema::table('settings', function (Blueprint $table) {
+>>>>>>> Stashed changes
             $table->string('currency', 3)->default('USD')->after('company');
             $table->smallInteger('vat')->default(725)->after('currency');
         });
@@ -26,7 +30,11 @@ class AddVatAndCurrency extends Migration
      */
     public function down()
     {
+<<<<<<< Updated upstream
         Schema::table('settings', static function (Blueprint $table) {
+=======
+        Schema::table('settings', function (Blueprint $table) {
+>>>>>>> Stashed changes
             $table->dropColumn('currency');
             $table->dropColumn('vat');
         });

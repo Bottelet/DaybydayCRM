@@ -5,7 +5,10 @@ use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+<<<<<<< Updated upstream
 use Illuminate\Support\Str;
+=======
+>>>>>>> Stashed changes
 
 class CreateAbsencesTable extends Migration
 {

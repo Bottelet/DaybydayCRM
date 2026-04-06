@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/RolesTablesSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/RolesTablesSeeder.php
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Ramsey\Uuid\Uuid;

@@ -6,6 +6,10 @@ use App\Models\Integration;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\Authentication\GoogleDriveAuthenticator;
 use Google_Client;
+<<<<<<< Updated upstream
+=======
+use Google_Service_Drive;
+>>>>>>> Stashed changes
 
 class GoogleDrive implements FilesystemIntegration
 {
@@ -26,7 +30,7 @@ class GoogleDrive implements FilesystemIntegration
         $this->client->setScopes(['https://www.googleapis.com/auth/drive.file']);
         $this->client->fetchAccessTokenWithRefreshToken(Integration::where(['name' => get_class($this)])->first()->api_key);
 
-        $this->driveService = new \Google_Service_Drive($this->client);
+        $this->driveService = new Google_Service_Drive($this->client);
     }
 
     public function upload($folder, $filename, $file): array

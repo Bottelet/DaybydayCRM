@@ -4,8 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Appointment\UpdateAppointmentCalendarRequest;
 use App\Models\Appointment;
+<<<<<<< Updated upstream
 use App\Models\User;
 use Carbon\Carbon;
+=======
+use App\Models\Client;
+use App\Models\User;
+use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
+>>>>>>> Stashed changes
 
 class AppointmentsController extends Controller
 {
@@ -38,6 +45,54 @@ class AppointmentsController extends Controller
         return response($appointment);
     }
 
+<<<<<<< Updated upstream
+=======
+    public function store(CreateAppointmentCalendarRequest $request)
+    {
+        $client_id = null;
+        $user = User::where('external_id', $request->user)->first();
+
+        if ($request->client_external_id) {
+            $client_id = Client::where('external_id', $request->client_external_id)->first()->id;
+            if (! $client_id) {
+                return response(__('Client not found'), 422);
+            }
+        }
+
+        $request_type = null;
+        $request_id = null;
+        if ($request->source_type && $request->source_external_id) {
+            $request_type = $request->source_type;
+
+            $entry = $request_type::whereExternalId($request->source_external_id);
+            $request_id = $entry->id;
+        }
+
+        if (! $user) {
+            return response(__('User not found'), 422);
+        }
+
+        $startTime = str_replace(['am', 'pm', ' '], '', $request->start_time).':00';
+        $endTime = str_replace(['am', 'pm', ' '], '', $request->end_time).':00';
+
+        $appointment = Appointment::create([
+            'external_id' => Uuid::uuid4()->toString(),
+            'source_type' => $request_type,
+            'source_id' => $request_id,
+            'client_id' => $client_id,
+            'title' => $request->title,
+            'start_at' => Carbon::parse($request->start_date.' '.$startTime),
+            'end_at' => Carbon::parse($request->end_date.' '.$endTime),
+            'user_id' => $user->id,
+            'color' => $request->color,
+        ]);
+        $appointment->user_external_id = $user->external_id;
+        $appointment->start_at = $appointment->start_at;
+
+        return response($appointment);
+    }
+
+>>>>>>> Stashed changes
     public function destroy(Appointment $appointment)
     {
         if (! auth()->user()->can('appointment-delete')) {

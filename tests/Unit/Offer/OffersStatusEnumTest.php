@@ -1,6 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream
 namespace Tests\Unit\Offer;
+=======
+namespace Tests\Unit\Invoice;
+>>>>>>> Stashed changes
 
 use App\Enums\OfferStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

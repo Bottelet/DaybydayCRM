@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/TasksDummyTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/TasksDummyTableSeeder.php
 use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;

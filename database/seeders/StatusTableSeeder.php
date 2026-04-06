@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/StatusTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/StatusTableSeeder.php
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Status;

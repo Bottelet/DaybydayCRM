@@ -21,6 +21,10 @@ $factory->define(User::class, static function (Faker $faker) {
     ];
 });
 
+<<<<<<< Updated upstream
 $factory->afterCreating(User::class, static function ($user, $faker) {
+=======
+$factory->afterCreating(User::class, function ($user, $faker) {
+>>>>>>> Stashed changes
     $user->department()->attach(Department::first()->id);
 });

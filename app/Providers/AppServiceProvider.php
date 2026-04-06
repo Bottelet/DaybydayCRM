@@ -14,6 +14,10 @@ use App\Observers\ProjectObserver;
 use App\Observers\TaskObserver;
 use App\Repositories\Format\GetDateFormat;
 use Illuminate\Support\ServiceProvider;
+<<<<<<< Updated upstream
+=======
+use Laravel\Cashier\Cashier;
+>>>>>>> Stashed changes
 use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

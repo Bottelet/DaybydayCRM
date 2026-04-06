@@ -13,7 +13,11 @@ class AlterLeadsTableSupportQualified extends Migration
      */
     public function up()
     {
+<<<<<<< Updated upstream
         Schema::table('leads', static function (Blueprint $table) {
+=======
+        Schema::table('leads', function (Blueprint $table) {
+>>>>>>> Stashed changes
             $table->boolean('qualified')->index()->after('user_created_id')->default(false);
             $table->string('result')->after('qualified')->nullable();
             $table->integer('invoice_id')->unsigned()->nullable()->after('result');

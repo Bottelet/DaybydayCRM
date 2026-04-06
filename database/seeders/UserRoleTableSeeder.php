@@ -1,7 +1,10 @@
 <?php
 
+<<<<<<< Updated upstream:database/seeders/UserRoleTableSeeder.php
 namespace Database\Seeders;
 
+=======
+>>>>>>> Stashed changes:database/seeds/UserRoleTableSeeder.php
 use App\Models\RoleUser;
 use Illuminate\Database\Seeder;
 

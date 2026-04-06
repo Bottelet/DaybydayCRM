@@ -25,7 +25,11 @@ class RemoveQualifiedFromLeads extends Migration
      */
     public function down()
     {
+<<<<<<< Updated upstream
         Schema::table('leads', static function (Blueprint $table) {
+=======
+        Schema::table('leads', function (Blueprint $table) {
+>>>>>>> Stashed changes
             $table->boolean('qualified')->index()->after('user_created_id')->default(false);
         });
     }

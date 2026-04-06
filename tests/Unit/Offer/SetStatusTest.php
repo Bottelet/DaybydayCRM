@@ -1,7 +1,13 @@
 <?php
+<<<<<<< Updated upstream
 
 namespace Tests\Unit\Offer;
 
+=======
+
+namespace Tests\Unit\Invoice;
+
+>>>>>>> Stashed changes
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
