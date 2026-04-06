@@ -2,7 +2,15 @@
 
 namespace Database\Seeders;
 
+use DepartmentsTableSeeder;
 use Illuminate\Database\Seeder;
+use IndustriesTableSeeder;
+use RolePermissionTableSeeder;
+use RolesTablesSeeder;
+use SettingsTableSeeder;
+use StatusTableSeeder;
+use UserRoleTableSeeder;
+use UsersTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
