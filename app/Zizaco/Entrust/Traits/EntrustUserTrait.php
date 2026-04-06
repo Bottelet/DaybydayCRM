@@ -28,12 +28,23 @@ trait EntrustUserTrait
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            $roles = Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
                 return $this->roles()->get();
             });
         } else {
-            return $this->roles()->get();
+            $roles = $this->roles()->get();
         }
+
+        // Defensive: filter out any non-object roles and log a warning
+        return $roles->filter(function ($role) {
+            if (! is_object($role)) {
+                \Log::warning('EntrustUserTrait: Non-object found in cachedRoles for user ID '.$this->getKey().'. Value: '.print_r($role, true));
+
+                return false;
+            }
+
+            return true;
+        });
     }
 
     /**
@@ -128,11 +139,16 @@ trait EntrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            if (! is_object($role)) {
+                \Log::warning('EntrustUserTrait: Non-object found in hasRole for user ID '.$this->getKey().'. Value: '.print_r($role, true));
+
+                continue;
+            }
+            if ($role->name == $name) {
+                return true;
             }
         }
 
@@ -163,9 +179,15 @@ trait EntrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                // Validate against the Permission table
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            if (! is_object($role)) {
+                \Log::warning('EntrustUserTrait: Non-object found in can() for user ID '.$this->getKey().'. Value: '.print_r($role, true));
+
+                continue;
+            }
+            if (method_exists($role, 'cachedPermissions')) {
                 foreach ($role->cachedPermissions() as $perm) {
                     if (Str::is($permission, $perm->name)) {
                         return true;

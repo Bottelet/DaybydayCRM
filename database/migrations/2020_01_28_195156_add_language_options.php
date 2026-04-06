@@ -17,7 +17,7 @@ class AddLanguageOptions extends Migration
     public function up()
     {
         // Drop columns from users table only if they exist, using trait
-        Schema::table('users', static function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $this->dropColumnIfExists('users', $table, ['card_brand', 'stripe_id', 'card_last_four', 'trial_ends_at']);
         });
         // Add language column if it does not exist
@@ -63,11 +63,11 @@ class AddLanguageOptions extends Migration
             });
         }
         // Drop language column from users if it exists
-        Schema::table('users', static function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             $this->dropColumnIfExists('users', $table, 'language');
         });
         // Drop language column from settings if it exists
-        Schema::table('settings', static function (Blueprint $table) {
+        Schema::table('settings', function (Blueprint $table) {
             $this->dropColumnIfExists('settings', $table, 'language');
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;
