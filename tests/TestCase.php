@@ -7,6 +7,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
 
 abstract class TestCase extends BaseTestCase
@@ -18,7 +19,8 @@ abstract class TestCase extends BaseTestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        // Run migrations before each test
+        Artisan::call('migrate:fresh');
 
         // Ensure Faker\Generator is bound for legacy factories
         $this->app->singleton(Generator::class, function () {
@@ -35,7 +37,6 @@ abstract class TestCase extends BaseTestCase
                 'password' => bcrypt('admin123'),
             ]
         );
-
         $this->actingAs($this->user);
     }
 
