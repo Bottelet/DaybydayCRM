@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Search;
 
 use Elasticsearch\ClientBuilder;
@@ -15,6 +16,7 @@ class SearchService
             $builder = ClientBuilder::create()->setHosts($host);
             $this->elasticsearch = $builder->build();
         }
+
         return $this->elasticsearch;
     }
 
@@ -36,7 +38,7 @@ class SearchService
                 ],
             ],
         ];
-        if (!is_null($sortBy)) {
+        if (! is_null($sortBy)) {
             $params['body']['sort'] = [$sortBy => $sortDirection];
         }
 

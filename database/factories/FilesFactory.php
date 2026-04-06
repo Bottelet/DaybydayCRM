@@ -2,10 +2,9 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\Payment;
 use Faker\Generator as Faker;
 
-$factory->define(App\Models\File::class, function (Faker $faker) {
+$factory->define(App\Models\File::class, static function (Faker $faker) {
     return [
         //
     ];

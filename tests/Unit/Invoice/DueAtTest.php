@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
@@ -10,6 +11,7 @@ class DueAtTest extends TestCase
     use DatabaseTransactions;
 
     protected $invoice;
+
     protected $secondInvoice;
 
     public function setUp(): void
@@ -29,7 +31,7 @@ class DueAtTest extends TestCase
     public function ensureWeGetInvoicePastDueAt()
     {
         $invoices = Invoice::pastDueAt()->get();
-        
+
         $this->assertCount(1, $invoices);
         $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
@@ -39,21 +41,21 @@ class DueAtTest extends TestCase
     {
         $this->secondInvoice->due_at = null;
         $this->secondInvoice->save();
-        $invoices =  Invoice::pastDueAt()->get();
-        
+        $invoices = Invoice::pastDueAt()->get();
+
         $this->assertCount(0, $invoices);
     }
 
     /** @test */
     public function ensureWeDontGetInvoiceIfStatusIsPaid()
     {
-        $invoices =  Invoice::pastDueAt()->get();
+        $invoices = Invoice::pastDueAt()->get();
         $this->assertCount(1, $invoices);
 
-        $this->secondInvoice->status = "paid";
+        $this->secondInvoice->status = 'paid';
         $this->secondInvoice->save();
-        $invoices =  Invoice::pastDueAt()->get();
-        
+        $invoices = Invoice::pastDueAt()->get();
+
         $this->assertCount(0, $invoices);
     }
 }

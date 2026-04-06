@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateInvociesTable extends Migration
 {
@@ -12,7 +12,7 @@ class CreateInvociesTable extends Migration
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('invoices', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('status');

@@ -3,25 +3,20 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Lang;
-use App\Models\Task;
+use Illuminate\Notifications\Notification;
 
 class ProjectActionNotification extends Notification
 {
     use Queueable;
 
-
     private $project;
+
     private $action;
 
     /**
      * Create a new notification instance.
      * ProjectActionNotification constructor.
-     * @param $project
-     * @param $action
      */
     public function __construct($project, $action)
     {
@@ -65,45 +60,46 @@ class ProjectActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __(':title was created by :creator, and assigned to you', [
-                    'title' =>  $this->project->title,
+                    'title' => $this->project->title,
                     'creator' => $this->project->creator->name,
-                    ]);
+                ]);
                 break;
             case 'updated_status':
                 $text = __(':title was completed by :username', [
-                    'title' =>  $this->project->title,
-                    'username' =>  Auth()->user()->name,
-                    ]);
+                    'title' => $this->project->title,
+                    'username' => Auth()->user()->name,
+                ]);
                 break;
             case 'updated_time':
                 $text = __(':username inserted a new time for :title', [
-                    'title' =>  $this->project->title,
-                    'username' =>  Auth()->user()->name,
-                    ]);
+                    'title' => $this->project->title,
+                    'username' => Auth()->user()->name,
+                ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned a project to you', [
-                    'title' =>  $this->project->title,
-                    'username' =>  Auth()->user()->name,
-                    ]);
+                    'title' => $this->project->title,
+                    'username' => Auth()->user()->name,
+                ]);
                 break;
             case 'updated_deadline':
                 $text = __(':username updated the deadline for this :title', [
-                'title' => $this->project->title,
-                'username' =>  Auth()->user()->name
+                    'title' => $this->project->title,
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             default:
                 break;
         }
+
         return [
             'assigned_user' => $notifiable->id, //Assigned user ID
             'created_user' => $this->project->creator->id,
             'message' => $text,
-            'type' =>  Project::class,
-            'type_id' =>  $this->project->id,
-            'url' => url('projects/' . $this->project->external_id),
-            'action' => $this->action
+            'type' => Project::class,
+            'type_id' => $this->project->id,
+            'url' => url('projects/'.$this->project->external_id),
+            'action' => $this->action,
         ];
     }
 }

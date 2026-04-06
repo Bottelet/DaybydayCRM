@@ -1,12 +1,10 @@
 <?php
+
 namespace Tests\Unit\Client;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Client;
 use App\Models\User;
-
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Testing\Fakes\EventFake;
 use Tests\TestCase;
 
 class UpdateAssigneeTest extends TestCase
@@ -23,7 +21,7 @@ class UpdateAssigneeTest extends TestCase
 
         $this->client = factory(Client::class)->create([
 
-            'company_name' => 'Just something'
+            'company_name' => 'Just something',
         ]);
     }
 

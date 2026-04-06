@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
@@ -13,8 +14,11 @@ class GenerateInvoiceStatusTest extends TestCase
     use DatabaseTransactions;
 
     private $invoice;
+
     private $payment;
+
     private $invoiceLine;
+
     /**
      * @var \Illuminate\Contracts\Foundation\Application
      */
@@ -24,13 +28,13 @@ class GenerateInvoiceStatusTest extends TestCase
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
-            'sent_at' => today()
+            'sent_at' => today(),
         ]);
         $this->payment = factory(Payment::class)->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 1000,
             'payment_date' => today(),
-            'payment_source' => 'test'
+            'payment_source' => 'test',
         ]);
         $this->invoiceLine = factory(InvoiceLine::class)->create([
             'invoice_id' => $this->invoice->id,
@@ -126,7 +130,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
 
         $this->assertFalse($invoiceStatus->isUnPaid());
-        $this->assertEquals("paid", $invoiceStatus->getStatus());
+        $this->assertEquals('paid', $invoiceStatus->getStatus());
     }
 
     /** @test */
@@ -148,7 +152,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->invoice->save();
 
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
-        $this->assertEquals("draft", $invoiceStatus->getStatus());
+        $this->assertEquals('draft', $invoiceStatus->getStatus());
     }
 
     /** @test */
@@ -170,46 +174,46 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->invoice->sent_at = null;
         $this->invoice->save();
 
-        $this->assertEquals("draft", app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
+        $this->assertEquals('draft', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         $this->invoice->sent_at = today();
         $this->invoice->save();
 
-        $this->assertEquals("unpaid", app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
+        $this->assertEquals('unpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         factory(Payment::class)->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 1000,
             'payment_date' => today(),
-            'payment_source' => 'test'
+            'payment_source' => 'test',
         ]);
         $this->invoice->refresh();
-        $this->assertEquals("partial_paid", app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
+        $this->assertEquals('partial_paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         factory(Payment::class)->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 4000,
             'payment_date' => today(),
-            'payment_source' => 'test'
+            'payment_source' => 'test',
         ]);
 
-        $this->assertEquals("paid", app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
+        $this->assertEquals('paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         factory(Payment::class)->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 4000,
             'payment_date' => today(),
-            'payment_source' => 'test'
+            'payment_source' => 'test',
         ]);
 
-        $this->assertEquals("overpaid", app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
+        $this->assertEquals('overpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
     }
 
     /** @test */
     public function createStatusSavesToTheInvoiceModel()
     {
-        $this->assertNotEquals("partial_paid", $this->invoice->status);
+        $this->assertNotEquals('partial_paid', $this->invoice->status);
         app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->createStatus();
-        $this->assertEquals("partial_paid", $this->invoice->refresh()->status);
+        $this->assertEquals('partial_paid', $this->invoice->refresh()->status);
     }
 }

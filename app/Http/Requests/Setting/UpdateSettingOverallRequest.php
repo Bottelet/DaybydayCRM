@@ -25,7 +25,7 @@ class UpdateSettingOverallRequest extends FormRequest
     {
         return [
             'client_number' => 'required|integer',
-            'invoice_number' => 'required|integer'
+            'invoice_number' => 'required|integer',
         ];
     }
 }

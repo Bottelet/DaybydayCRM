@@ -3,10 +3,10 @@
 namespace Tests\Browser;
 
 use App\Models\Setting;
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
 use App\Models\User;
 use Faker\Factory as Faker;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class UserTest extends DuskTestCase
 {
@@ -22,7 +22,7 @@ class UserTest extends DuskTestCase
                 ->type('.dataTables_filter input', $user->name)
                 ->waitForText($user->name)
                 ->clickLink($user->name)
-                ->assertPathIs('/users/' . $user->external_id)
+                ->assertPathIs('/users/'.$user->external_id)
                 ->waitForText($user->name);
         });
     }
@@ -35,7 +35,7 @@ class UserTest extends DuskTestCase
         $user = factory(User::class)->create();
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/users/' . $user->external_id)
+                ->visit('/users/'.$user->external_id)
                 ->waitForText($user->name)
                 ->assertSee($user->primary_number)
                 ->assertSee($user->secondary_number);
@@ -52,16 +52,16 @@ class UserTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/create')
-                ->waitForText("Create user")
+                ->waitForText('Create user')
                 ->type('name', $faker->name)
                 ->type('email', $faker->email)
                 ->type('primary_number', $faker->randomNumber(8))
                 ->type('secondary_number', $faker->randomNumber(8))
                 ->type('address', $faker->secondaryAddress)
-                ->type('password', "Password123")
-                ->type('password_confirmation', "Password123")
-                ->select("roles", 1)
-                ->select("departments", 1)
+                ->type('password', 'Password123')
+                ->type('password_confirmation', 'Password123')
+                ->select('roles', 1)
+                ->select('departments', 1)
                 ->press('Create user')
                 ->assertSee('User successfully added');
         });

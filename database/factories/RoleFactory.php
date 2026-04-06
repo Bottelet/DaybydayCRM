@@ -5,7 +5,7 @@
 use App\Models\Role;
 use Faker\Generator as Faker;
 
-$factory->define(Role::class, function (Faker $faker) {
+$factory->define(Role::class, static function (Faker $faker) {
     return [
         'name' => 'factory',
         'external_id' => $faker->uuid,

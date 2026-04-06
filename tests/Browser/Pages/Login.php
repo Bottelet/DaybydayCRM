@@ -15,10 +15,10 @@ class Login extends UnauthenticatedPage
     {
         return '/login';
     }
+
     /**
      * Assert that the browser is on the page.
      *
-     * @param Browser $browser
      * @return void
      */
     public function assert(Browser $browser)
@@ -32,6 +32,7 @@ class Login extends UnauthenticatedPage
             ->assertSee('Login')
             ->assertSee('Forgot Your Password?');
     }
+
     /**
      * Get the element shortcuts for the page.
      *

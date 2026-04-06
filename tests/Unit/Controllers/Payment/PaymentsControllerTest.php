@@ -1,26 +1,23 @@
 <?php
+
 namespace Tests\Unit\Controllers\Payment;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Payment;
-use App\Models\Permission;
-use App\Models\PermissionRole;
-use App\Models\Project;
-use App\Models\RoleUser;
 use App\Models\User;
-use Carbon\Carbon;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class PaymentsControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
     private $invoice;
+
     private $invoiceLine;
+
     private $payment;
 
     public function setUp(): void
@@ -29,7 +26,7 @@ class PaymentsControllerTest extends TestCase
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = factory(Invoice::class)->create([
             'sent_at' => today(),
-            'status' => 'unpaid'
+            'status' => 'unpaid',
         ]);
 
         $this->payment = factory(Payment::class)->create();
@@ -70,9 +67,9 @@ class PaymentsControllerTest extends TestCase
 
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000,
-            'payment_date' => "2020-01-01",
-            'source' => "bank",
-            'description' => "AThisVeryColInvoice12313",
+            'payment_date' => '2020-01-01',
+            'source' => 'bank',
+            'description' => 'AThisVeryColInvoice12313',
         ]);
 
         $response->assertStatus(403);

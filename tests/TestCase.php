@@ -1,9 +1,9 @@
 <?php
+
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-
 use App\Models\User;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -29,7 +29,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param mixed $user
+     * @param  mixed  $user
      */
     public function setUser($user): void
     {

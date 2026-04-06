@@ -10,7 +10,6 @@ class RedirectIfNotSuperAdmin
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -19,6 +18,7 @@ class RedirectIfNotSuperAdmin
             return $next($request);
         }
         Session()->flash('flash_message_warning', __('Only Allowed for the user who registered the CRM'));
+
         return redirect()->back();
     }
 }

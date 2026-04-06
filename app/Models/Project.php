@@ -3,19 +3,18 @@
 namespace App\Models;
 
 use App\Observers\ElasticSearchObserver;
+use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Services\Comment\Commentable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends model implements Commentable
 {
-    use  SoftDeletes, SearchableTrait, DeadlineTrait;
-    const PROJECT_STATUS_CLOSED = "Closed";
+    use DeadlineTrait, SearchableTrait, SoftDeletes;
+
+    const PROJECT_STATUS_CLOSED = 'Closed';
 
     protected $searchableFields = ['title'];
 
@@ -104,14 +103,11 @@ class Project extends model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'project', 'external_id' => $this->external_id]);
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

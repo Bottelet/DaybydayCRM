@@ -17,71 +17,83 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3.9",
+        "php": "^8.2",
         "aws/aws-sdk-php": "^3.112",
-        "elasticsearch/elasticsearch": "^6.1",
+        "elasticsearch/elasticsearch": "^8.15.0",
         "google/apiclient": "^2.2",
-        "guzzlehttp/guzzle": "^6.3",
-        "laravel/cashier": "^10.2",
-        "laravel/framework": "^7.0",
+        "laravel/cashier": "*",
+        "laravel/framework": "^11.0",
         "laravel/helpers": "^1.1",
-        "laravel/tinker": "^2.0",
-        "laravel/ui": "^2.0",
-        "laravelcollective/html": "6.0.*@dev",
-        "league/flysystem-aws-s3-v3": "~1.0",
-        "league/flysystem-cached-adapter": "~1.0",
+        "laravel/legacy-factories": "^1.4",
+        "laravel/tinker": "^2.9",
+        "laravel/ui": "^v4.5.2",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "mews/purifier": "^3.1",
-        "predis/predis": "^1.1",
-        "ramsey/uuid": "^3.6",
+        "predis/predis": "^v2.2.2",
+        "ramsey/uuid": "^4.7.6",
         "spatie/dropbox-api": "^1.19",
-        "yajra/laravel-datatables-oracle": "~9.0"
+        "yajra/laravel-datatables-oracle": "^v11.1.5"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "~3.2",
-        "facade/ignition": "^2.0",
-        "fzaninotto/faker": "~1.8",
-        "laravel/dusk": "^5.8",
-        "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "^8.5",
-        "nunomaduro/collision":"^4.1",
-        "symfony/css-selector": "2.8.*|3.0.*",
-        "symfony/dom-crawler": "2.8.*|3.0.*"
+        "driftingly/rector-laravel": "^2.2",
+        "laravel/dusk": "^8.2.10",
+        "laravel/pint": "^1.13",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.1",
+        "phpunit/phpunit": "^11.0.1",
+        "rector/rector": "^2.4",
+        "symfony/css-selector": "^7.1.6",
+        "symfony/dom-crawler": "^7.1.6"
     },
     "autoload": {
         "files": [
             "app/helpers.php"
         ],
-        "classmap": [
-            "database"
-        ],
         "psr-4": {
             "App\\": "app/",
-            "Tests\\": "tests/"
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
-        "classmap": [
-        ]
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "@php artisan key:generate"
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate --graceful --ansi"
         ],
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover"
-        ],
-        "post-install-cmd": [
-            "php artisan route:cache"
+        "dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
         ]
     },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
     "config": {
+        "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

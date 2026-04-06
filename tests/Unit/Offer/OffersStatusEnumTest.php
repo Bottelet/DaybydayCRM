@@ -1,13 +1,12 @@
 <?php
-namespace Tests\Unit\Invoice;
+
+namespace Tests\Unit\Offer;
 
 use App\Enums\OfferStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\In;
 use Tests\TestCase;
 
-class OfferStatusEnumTest extends TestCase
+class OffersStatusEnumTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -16,54 +15,54 @@ class OfferStatusEnumTest extends TestCase
      */
     private $offerStatus;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->offerStatus = OfferStatus::won()->getStatus();
     }
 
     /** @test */
-    public function gettingSourceReturnsInstanceOfOfferStatus()
+    public function getting_source_returns_instance_of_offer_status()
     {
         $this->assertInstanceOf(OfferStatus::class, OfferStatus::fromStatus($this->offerStatus));
     }
 
     /** @test */
-    public function OfferStatusContainsBothDisplayAndSourceValue()
+    public function offer_status_contains_both_display_and_source_value()
     {
-        $this->assertObjectHasAttribute("status", OfferStatus::fromStatus($this->offerStatus));
-        $this->assertObjectHasAttribute("displayValue", OfferStatus::fromStatus($this->offerStatus));
+        $this->assertObjectHasAttribute('status', OfferStatus::fromStatus($this->offerStatus));
+        $this->assertObjectHasAttribute('displayValue', OfferStatus::fromStatus($this->offerStatus));
     }
 
     /** @test */
-    public function getDisplayValueFromStatus()
+    public function get_display_value_from_status()
     {
-        $this->assertEquals(OfferStatus::fromStatus($this->offerStatus)->getDisplayValue(), "Won");
+        $this->assertEquals(OfferStatus::fromStatus($this->offerStatus)->getDisplayValue(), 'Won');
     }
 
     /** @test */
-    public function sourceReturnsCorrectSourceInInstance()
+    public function source_returns_correct_source_in_instance()
     {
-        $this->assertEquals("lost", OfferStatus::lost()->getStatus());
+        $this->assertEquals('lost', OfferStatus::lost()->getStatus());
     }
 
     /** @test */
-    public function getStatusFromDisplayValue()
+    public function get_status_from_display_value()
     {
-        $this->assertEquals(OfferStatus::fromDisplayValue("Won"), OfferStatus::won()->getStatus());
+        $this->assertEquals(OfferStatus::fromDisplayValue('Won'), OfferStatus::won()->getStatus());
     }
 
     /** @test */
-    public function throwsExceptionIfSourceIsNotKnown()
+    public function throws_exception_if_source_is_not_known()
     {
         $this->expectException(\Exception::class);
-        OfferStatus::fromStatus("None existing source");
+        OfferStatus::fromStatus('None existing source');
     }
 
     /** @test */
-    public function throwsExceptionIfDisplayValueIsNotKnown()
+    public function throws_exception_if_display_value_is_not_known()
     {
         $this->expectException(\Exception::class);
-        OfferStatus::fromDisplayValue("None existing display value");
+        OfferStatus::fromDisplayValue('None existing display value');
     }
 }

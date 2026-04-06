@@ -1,18 +1,21 @@
 <?php
+
 namespace Tests\Unit\Controllers\User;
 
 use App\Models\Absence;
 use App\Models\User;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class UsersControllerCalendarTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
     protected $absenceWithInTime;
+
     protected $absenceWithToLate;
+
     protected $absenceWithToEarly;
 
     public function setUp(): void
@@ -23,20 +26,20 @@ class UsersControllerCalendarTest extends TestCase
             'user_id' => $this->user->id,
             'start_at' => now(),
             'end_at' => now()->addDay(),
-            'reason' => 'test'
+            'reason' => 'test',
         ]);
 
         $this->absenceWithToLate = factory(Absence::class)->create([
             'user_id' => $this->user->id,
             'start_at' => now()->addWeeks(5),
             'end_at' => now()->addWeeks(6),
-            'reason' => 'test'
+            'reason' => 'test',
         ]);
         $this->absenceWithToEarly = factory(Absence::class)->create([
             'user_id' => $this->user->id,
             'start_at' => now()->subWeeks(4),
             'end_at' => now()->subWeeks(3),
-            'reason' => 'test'
+            'reason' => 'test',
         ]);
     }
 
@@ -46,15 +49,15 @@ class UsersControllerCalendarTest extends TestCase
         $correctUser = null;
         $r = $this->json('GET', '/users/calendar-users/');
         foreach ($r->decodeResponseJson() as $user) {
-            if ($user["external_id"] == $this->user->external_id) {
+            if ($user['external_id'] == $this->user->external_id) {
                 $correctUser = $user;
             }
         }
 
-        $this->assertCount(1, $correctUser["absences"]);
-        $this->assertEquals($this->absenceWithInTime->start_at, $correctUser["absences"][0]["start_at"]);
-        $this->assertEquals($this->absenceWithInTime->end_at, $correctUser["absences"][0]["end_at"]);
+        $this->assertCount(1, $correctUser['absences']);
+        $this->assertEquals($this->absenceWithInTime->start_at, $correctUser['absences'][0]['start_at']);
+        $this->assertEquals($this->absenceWithInTime->end_at, $correctUser['absences'][0]['end_at']);
 
-        $this->assertCount(3, User::whereExternalId($correctUser["external_id"])->first()->absences);
+        $this->assertCount(3, User::whereExternalId($correctUser['external_id'])->first()->absences);
     }
 }

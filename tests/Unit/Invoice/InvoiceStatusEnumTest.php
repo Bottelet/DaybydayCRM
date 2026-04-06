@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Enums\InvoiceStatus;
@@ -29,26 +30,26 @@ class InvoiceStatusEnumTest extends TestCase
     /** @test */
     public function InvoiceStatusContainsBothDisplayAndStatusValue()
     {
-        $this->assertObjectHasAttribute("status", InvoiceStatus::fromStatus($this->paidStatus));
-        $this->assertObjectHasAttribute("displayValue", InvoiceStatus::fromStatus($this->paidStatus));
+        $this->assertObjectHasAttribute('status', InvoiceStatus::fromStatus($this->paidStatus));
+        $this->assertObjectHasAttribute('displayValue', InvoiceStatus::fromStatus($this->paidStatus));
     }
 
     /** @test */
     public function getDisplayValueFromStatus()
     {
-        $this->assertEquals(InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue(), "Paid");
+        $this->assertEquals(InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue(), 'Paid');
     }
 
     /** @test */
     public function statusReturnsCorrectStatusInInstance()
     {
-        $this->assertEquals(InvoiceStatus::draft()->getStatus(), "draft");
+        $this->assertEquals(InvoiceStatus::draft()->getStatus(), 'draft');
     }
 
     /** @test */
     public function getStatusFromDisplayValue()
     {
-        $this->assertEquals(InvoiceStatus::fromDisplayValue("Partially paid"), InvoiceStatus::partialPaid()->getStatus());
+        $this->assertEquals(InvoiceStatus::fromDisplayValue('Partially paid'), InvoiceStatus::partialPaid()->getStatus());
     }
 
     /** @test
@@ -56,7 +57,7 @@ class InvoiceStatusEnumTest extends TestCase
     public function throwsExceptionIfStatusIsNotKnown()
     {
         $this->expectException(\Exception::class);
-        InvoiceStatus::fromStatus("None existing status");
+        InvoiceStatus::fromStatus('None existing status');
     }
 
     /** @test
@@ -64,6 +65,6 @@ class InvoiceStatusEnumTest extends TestCase
     public function throwsExceptionIfDisplayValueIsNotKnown()
     {
         $this->expectException(\Exception::class);
-        InvoiceStatus::fromDisplayValue("None existing display value");
+        InvoiceStatus::fromDisplayValue('None existing display value');
     }
 }

@@ -5,7 +5,7 @@
 use App\Models\InvoiceLine;
 use Faker\Generator as Faker;
 
-$factory->define(InvoiceLine::class, function (Faker $faker) {
+$factory->define(InvoiceLine::class, static function (Faker $faker) {
     return [
         'title' => $faker->word,
         'external_id' => $faker->uuid,

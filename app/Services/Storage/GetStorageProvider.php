@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Storage;
 
 use App\Models\Integration;
@@ -11,7 +12,7 @@ class GetStorageProvider
         if ($integration) {
             return new $integration->name;
         } else {
-            return new Local();
+            return new Local;
         }
     }
 }

@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use App\Http\Controllers\ClientsController;
 use App\Observers\ElasticSearchObserver;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use  SearchableTrait, SoftDeletes;
+    use SearchableTrait, SoftDeletes;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 
@@ -122,9 +122,6 @@ class Client extends Model
         return self::where('external_id', $external_id)->first();
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

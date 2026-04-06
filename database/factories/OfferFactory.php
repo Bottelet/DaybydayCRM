@@ -9,7 +9,7 @@ use App\Models\Offer;
 use Faker\Generator as Faker;
 use Ramsey\Uuid\Uuid;
 
-$factory->define(Offer::class, function (Faker $faker) {
+$factory->define(Offer::class, static function (Faker $faker) {
     return [
         'external_id' => Uuid::uuid4()->toString(),
         'client_id' => factory(Client::class),

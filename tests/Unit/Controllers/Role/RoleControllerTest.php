@@ -5,7 +5,6 @@ namespace Tests\Unit\Controllers\Role;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\TestCase;
 
 class RoleControllerTest extends TestCase

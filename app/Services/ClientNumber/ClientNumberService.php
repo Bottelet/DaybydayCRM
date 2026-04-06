@@ -7,6 +7,7 @@ use App\Models\Setting;
 class ClientNumberService
 {
     private $setting;
+
     private $lockedSetting;
 
     public function __construct(ClientNumberConfig $config)
@@ -26,9 +27,10 @@ class ClientNumberService
         return $currentNumber;
     }
 
-    public function setClientNumber(Int $clientNumber)
+    public function setClientNumber(int $clientNumber)
     {
         $this->lockedSetting->client_number = $clientNumber;
+
         return $this->lockedSetting->save();
     }
 
@@ -40,6 +42,7 @@ class ClientNumberService
     private function increaseClientNumber()
     {
         $this->lockedSetting->client_number++;
+
         return $this->lockedSetting->save();
     }
 }

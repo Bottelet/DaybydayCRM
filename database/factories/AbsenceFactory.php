@@ -6,7 +6,7 @@ use App\Models\Absence;
 use App\Models\User;
 use Faker\Generator as Faker;
 
-$factory->define(Absence::class, function (Faker $faker) {
+$factory->define(Absence::class, static function (Faker $faker) {
     return [
         'external_id' => \Ramsey\Uuid\Uuid::uuid4()->toString(),
         'reason' => $faker->word,

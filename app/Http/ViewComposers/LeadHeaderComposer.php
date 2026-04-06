@@ -2,15 +2,14 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\View\View;
 use App\Models\Lead;
+use Illuminate\View\View;
 
 class LeadHeaderComposer
 {
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
      * @return void
      */
     public function compose(View $view)
@@ -18,9 +17,9 @@ class LeadHeaderComposer
         $lead = Lead::findOrFail($view->getData()['lead']['id']);
         /**
          * [User assigned the task]
+         *
          * @var contact
          */
-       
         $contact = $lead->user;
         $client = $lead->client;
         $contact_info = $client->contacts()->first();
