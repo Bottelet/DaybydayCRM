@@ -46,3 +46,19 @@ test-phpunit:
 
 test-artisan:
 	docker-compose exec php php artisan test
+
+# Run tests locally (not via docker-compose)
+phpunit-local:
+	vendor/bin/phpunit
+
+artisan-test-local:
+	php artisan test
+
+test-local: phpunit-local artisan-test-local
+# Run all Laravel clear commands (config, cache, route, view) via composer script
+aargh:
+	composer aargh
+
+# Run all Laravel clear commands inside Docker
+daargh:
+	docker-compose exec php composer aargh

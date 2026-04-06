@@ -1,6 +1,9 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 class IndustriesTableSeeder extends Seeder

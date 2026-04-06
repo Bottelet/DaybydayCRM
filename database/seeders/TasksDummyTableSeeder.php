@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;
@@ -22,7 +24,7 @@ class TasksDummyTableSeeder extends Seeder
             'user_created_id' => User::all()->random()->id,
             'user_assigned_id' => User::all()->random()->id,
         ])->each(function ($t) {
-            if (rand(1, 5) == 1) {
+            if (random_int(1, 5) == 1) {
                 $invoice = factory(Invoice::class)->create([
                     'client_id' => $t->client_id,
                 ]);

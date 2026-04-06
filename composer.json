@@ -18,33 +18,33 @@
     "type": "project",
     "require": {
         "php": "^8.2",
-        "aws/aws-sdk-php": "^3.112",
-        "elasticsearch/elasticsearch": "^8.15.0",
-        "google/apiclient": "^2.2",
-        "laravel/cashier": "*",
-        "laravel/framework": "^11.0",
-        "laravel/helpers": "^1.1",
-        "laravel/legacy-factories": "^1.4",
-        "laravel/tinker": "^2.9",
-        "laravel/ui": "^v4.5.2",
-        "league/flysystem-aws-s3-v3": "^3.0",
-        "mews/purifier": "^3.1",
-        "predis/predis": "^v2.2.2",
-        "ramsey/uuid": "^4.7.6",
-        "spatie/dropbox-api": "^1.19",
-        "yajra/laravel-datatables-oracle": "^v11.1.5"
+        "aws/aws-sdk-php": ">=3.376.3",
+        "elasticsearch/elasticsearch": ">=9.3",
+        "google/apiclient": ">=2.19.2",
+        "laravel/cashier": ">=16.5.1",
+        "laravel/framework": "^12.56",
+        "laravel/helpers": ">=1.8.3",
+        "laravel/legacy-factories": ">=1.4.2",
+        "laravel/ui": ">=4.6.3",
+        "league/flysystem-aws-s3-v3": ">=3.32",
+        "mews/purifier": ">=3.4.3",
+        "predis/predis": ">=3.4.2",
+        "ramsey/uuid": ">=4.9.2",
+        "spatie/dropbox-api": ">=1.24",
+        "yajra/laravel-datatables-oracle": ">=12.7"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "~3.2",
-        "driftingly/rector-laravel": "^2.2",
-        "laravel/dusk": "^8.2.10",
-        "laravel/pint": "^1.13",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.1",
-        "phpunit/phpunit": "^11.0.1",
-        "rector/rector": "^2.4",
-        "symfony/css-selector": "^7.1.6",
-        "symfony/dom-crawler": "^7.1.6"
+        "barryvdh/laravel-debugbar": ">=4.2.4",
+        "driftingly/rector-laravel": ">=2.2",
+        "laravel/dusk": ">=8.5",
+        "laravel/pint": ">=1.29",
+        "laravel/tinker": ">=3",
+        "mockery/mockery": ">=1.6.12",
+        "nunomaduro/collision": ">=8.9.2",
+        "phpunit/phpunit": ">=12.5.16",
+        "rector/rector": ">=2.4",
+        "symfony/css-selector": ">=7.4.8",
+        "symfony/dom-crawler": ">=7.4.8"
     },
     "autoload": {
         "files": [
@@ -62,6 +62,7 @@
         }
     },
     "scripts": {
+        "aargh": "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
@@ -79,8 +80,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
-        ]
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"]
     },
     "extra": {
         "laravel": {

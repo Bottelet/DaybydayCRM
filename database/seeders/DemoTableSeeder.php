@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Enums\OfferStatus;
 use App\Models\Absence;
 use App\Models\Appointment;

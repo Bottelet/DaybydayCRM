@@ -11,12 +11,19 @@ abstract class TestCase extends BaseTestCase
 
     protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::where('name', 'Admin')->first();
-
+        \Artisan::call('migrate:fresh');
+        // Ensure the Admin user exists for every test
+        $this->user = User::firstOrCreate(
+            ['name' => 'Admin'],
+            [
+                'email' => 'admin@admin.com',
+                'password' => bcrypt('admin123'),
+            ]
+        );
         $this->actingAs($this->user);
     }
 

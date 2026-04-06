@@ -10,6 +10,7 @@ namespace App\Zizaco\Entrust\Traits;
  */
 
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -39,7 +40,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function save(array $options = [])
-    {   //both inserts and updates
+    {   // both inserts and updates
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
@@ -51,7 +52,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function delete(array $options = [])
-    {   //soft or hard
+    {   // soft or hard
         $result = parent::delete($options);
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
@@ -64,7 +65,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function restore()
-    {   //soft delete undo's
+    {   // soft delete undo's
         $result = parent::restore();
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
@@ -76,7 +77,7 @@ trait EntrustUserTrait
     /**
      * Many-to-Many relations with Role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles()
     {
@@ -118,7 +119,9 @@ trait EntrustUserTrait
 
                 if ($hasRole && ! $requireAll) {
                     return true;
-                } elseif (! $hasRole && $requireAll) {
+                }
+
+                if (! $hasRole && $requireAll) {
                     return false;
                 }
             }
@@ -127,11 +130,11 @@ trait EntrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            if ($role->name == $name) {
+                return true;
             }
         }
 
@@ -162,13 +165,13 @@ trait EntrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                // Validate against the Permission table
-                foreach ($role->cachedPermissions() as $perm) {
-                    if (Str::is($permission, $perm->name)) {
-                        return true;
-                    }
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            // Validate against the Permission table
+            foreach ($role->cachedPermissions() as $perm) {
+                if (Str::is($permission, $perm->name)) {
+                    return true;
                 }
             }
         }
@@ -184,7 +187,7 @@ trait EntrustUserTrait
      * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      * @return array|bool
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function ability($roles, $permissions, $options = [])
     {

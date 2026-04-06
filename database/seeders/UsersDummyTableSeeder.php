@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Models\Absence;
 use App\Models\Department;
 use App\Models\User;
@@ -19,17 +21,15 @@ class UsersDummyTableSeeder extends Seeder
         $createDep->id = '2';
         $createDep->name = 'Nerds';
         $createDep->external_id = Uuid::uuid4();
-        $createDep->external_id = Uuid::uuid4();
         $createDep->save();
         $createDep = new Department;
         $createDep->id = '3';
         $createDep->name = 'Genius';
         $createDep->external_id = Uuid::uuid4();
-        $createDep->external_id = Uuid::uuid4();
         $createDep->save();
 
         factory(User::class, 5)->create()->each(function ($u) {
-            if (rand(1, 4) == 3) {
+            if (random_int(1, 4) == 3) {
                 factory(Absence::class)->create([
                     'user_id' => $u->id,
                 ]);
