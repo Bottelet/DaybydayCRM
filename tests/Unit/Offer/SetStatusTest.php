@@ -12,7 +12,7 @@ class SetStatusTest extends TestCase
 
     protected $offer;
 
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->offer = factory(Offer::class)->create();
