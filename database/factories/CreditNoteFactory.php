@@ -5,7 +5,7 @@
 use App\Models\CreditNote;
 use Faker\Generator as Faker;
 
-$factory->define(CreditNote::class, function (Faker $faker) {
+$factory->define(CreditNote::class, static function (Faker $faker) {
     return [
         //
     ];

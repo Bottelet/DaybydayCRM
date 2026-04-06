@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreateAbsencesTable extends Migration
 {
@@ -14,7 +16,7 @@ class CreateAbsencesTable extends Migration
      */
     public function up()
     {
-        Schema::create('absences', function (Blueprint $table) {
+        Schema::create('absences', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->string('reason');
@@ -31,6 +33,7 @@ class CreateAbsencesTable extends Migration
 
         /** Create new permissions */
         $acpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Manage absences',
             'name' => 'absence-manage',
             'description' => 'Be able to manage absences for all users',
@@ -39,13 +42,14 @@ class CreateAbsencesTable extends Migration
 
         /** Create new permissions */
         $vcpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'View absences',
             'name' => 'absence-view',
             'description' => 'Be able to view absences for all users and see who is absent today on the dashboard',
             'grouping' => 'hr',
         ]);
 
-        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$acpp->id, $vcpp->id]);
         }

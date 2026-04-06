@@ -10,6 +10,7 @@ class Tax
      * @var int
      */
     private $vatRate;
+
     /**
      * @var int
      */
@@ -31,15 +32,12 @@ class Tax
      *
      * @return int
      */
-    public function vatRate():float
+    public function vatRate(): float
     {
         return $this->vatRate;
     }
 
-    /**
-     * @return float
-     */
-    public function multipleVatRate():float
+    public function multipleVatRate(): float
     {
         return $this->multipleVatRate;
     }

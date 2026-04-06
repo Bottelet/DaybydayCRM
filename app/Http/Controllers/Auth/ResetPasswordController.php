@@ -17,13 +17,12 @@ class ResetPasswordController extends Controller
     | explore this trait and override any methods you wish to tweak.
     |
     */
-    public $redirectTo = "dashboard";
+    public $redirectTo = 'dashboard';
 
     use ResetsPasswords;
 
     /**
      * Create a new controller instance.
-     *
      */
     public function __construct()
     {

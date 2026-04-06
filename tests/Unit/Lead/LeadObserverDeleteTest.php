@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\Unit\User;
+namespace Tests\Unit\Lead;
 
-use Tests\TestCase;
 use App\Models\Lead;
-use App\Models\Client;
-use App\Models\Invoice;
+use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class LeadObserverDeleteTest extends TestCase
 {
@@ -21,15 +20,15 @@ class LeadObserverDeleteTest extends TestCase
 
         $this->lead->comments()->create([
             'description' => 'Test',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
         $this->lead->activity()->create([
-            'text' => "something happend!"
+            'text' => 'something happend!',
         ]);
         $this->lead->appointments()->create([
             'title' => 'Some appointment',
             'color' => '#FFFFF',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
     }
 
@@ -37,7 +36,7 @@ class LeadObserverDeleteTest extends TestCase
     public function deleteLeadsSoftDeletes()
     {
         $this->lead->delete();
-        
+
         $this->assertSoftDeleted($this->lead);
     }
 
@@ -58,19 +57,19 @@ class LeadObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->lead->comments()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->activity()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->appointments()->withTrashed()->first());
-        
+
     }
 
     /** @test */
     public function forceDeleteRemovesLeadFromDatabase()
     {
         $leadId = $this->lead->id;
-        
+
         $this->lead->forceDelete();
         $this->lead->refresh();
 
         $this->assertDatabaseMissing('leads', [
-            'id' => $leadId
+            'id' => $leadId,
         ]);
     }
 
@@ -80,36 +79,30 @@ class LeadObserverDeleteTest extends TestCase
         $commentId = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
         $activityId = $this->lead->activity->first()->id;
-        
+
         $this->lead->forceDelete();
         $this->lead->refresh();
 
         $this->assertDatabaseMissing('comments', [
-            'id' => $commentId
+            'id' => $commentId,
         ]);
         $this->assertDatabaseMissing('activities', [
-            'id' => $activityId
+            'id' => $activityId,
         ]);
         $this->assertDatabaseMissing('appointments', [
-            'id' => $appointmentId
+            'id' => $appointmentId,
         ]);
     }
 
     /** @test */
-    public function invoiceIsNotDeletedByObserver()
+    public function offerIsNotDeletedByObserver()
     {
-        $invoice = factory(Invoice::class)->create([
-            'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
-            'integration_invoice_id' => $this->lead->id,
-            'integration_type' => Lead::class,
+        $offer = factory(Offer::class)->create([
+            'source_id' => $this->lead->id,
         ]);
 
-        $this->lead->invoice_id = $invoice->id;
-        $this->lead->save();
-        
         $this->lead->forceDelete();
 
-        $this->assertNotNull($invoice->refresh());
+        $this->assertNotNull($offer->refresh());
     }
 }

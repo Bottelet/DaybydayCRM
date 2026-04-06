@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
-use Tests\TestCase;
-use App\Models\Lead;
 use App\Models\Invoice;
+use App\Models\Lead;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class RemoveReferenceTest extends TestCase
 {

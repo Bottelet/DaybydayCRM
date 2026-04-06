@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class Integrations extends Migration
 {
@@ -12,7 +12,7 @@ class Integrations extends Migration
      */
     public function up()
     {
-        Schema::create('integrations', function (Blueprint $table) {
+        Schema::create('integrations', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->integer('client_id')->nullable();

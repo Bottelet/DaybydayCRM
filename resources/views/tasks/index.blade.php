@@ -28,7 +28,7 @@
 
     <!-- DELETE MODAL SECTION -->
     <div id="deletion" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog ">
         <!-- Modal content-->
         <div class="modal-content">
         <form method="POST" id="deletion-form">
@@ -122,7 +122,7 @@
             var target = e.relatedTarget;
             var id = $(target).data('id');
             var title = $(target).data('title');
-            console.log(title);
+      
             $("#deletion-title").text(title);
             $('#deletion-form').attr('action', id)
 

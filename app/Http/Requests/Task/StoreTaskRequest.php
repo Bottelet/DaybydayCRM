@@ -30,7 +30,7 @@ class StoreTaskRequest extends FormRequest
             'user_assigned_id' => 'required',
             'user_created_id' => '',
             'client_external_id' => 'required',
-            'deadline' => ''
+            'deadline' => '',
         ];
     }
 }

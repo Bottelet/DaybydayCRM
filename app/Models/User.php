@@ -1,22 +1,19 @@
 <?php
+
 namespace App\Models;
 
-use Fenos\Notifynder\Notifable;
-use Illuminate\Notifications\Notifiable;
-use Cache;
-use App\Models\Client;
-use App\Zizaco\Entrust\Traits\EntrustUserTrait;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\Setting;
 use App\Api\v1\Models\Token;
+use App\Zizaco\Entrust\Traits\EntrustUserTrait;
+use Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
-    use Notifiable, EntrustUserTrait,  SoftDeletes, Billable;
+    use Billable, EntrustUserTrait,  Notifiable, SoftDeletes;
 
     public function restore()
     {
@@ -54,6 +51,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = ['id', 'password', 'password_confirmation', 'remember_token', 'image_path'];
+
     protected $appends = ['avatar'];
 
     protected $primaryKey = 'id';
@@ -98,24 +96,35 @@ class User extends Authenticatable
         return $this->hasMany(Token::class, 'user_id', 'id');
     }
 
+    public function canChangePasswordOn(User $user)
+    {
+        if ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE)) {
+            return true;
+        }
 
+        return false;
+    }
+
+    public function canChangeRole()
+    {
+        return $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE;
+    }
 
     public function isOnline()
     {
-        return Cache::has('user-is-online-' . $this->id);
+        return Cache::has('user-is-online-'.$this->id);
     }
 
     public function getNameAndDepartmentAttribute()
     {
         //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
+        return $this->name.' '.'('.$this->department()->first()->name.')';
     }
-
 
     public function getNameAndDepartmentEagerLoadingAttribute()
     {
         //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name . ' ' . '(' . $this->relations['department'][0]->name . ')';
+        return $this->name.' '.'('.$this->relations['department'][0]->name.')';
     }
 
     public function moveTasks($user_id)
@@ -148,6 +157,7 @@ class User extends Authenticatable
     public function getAvatarattribute()
     {
         $image_path = $this->image_path ? Storage::url($this->image_path) : '/images/default_avatar.jpg';
+
         return $image_path;
     }
 
@@ -165,7 +175,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param $external_id
+     * @param  $external_id
      * @return mixed
      */
     public function totalOpenAndClosedTasks()

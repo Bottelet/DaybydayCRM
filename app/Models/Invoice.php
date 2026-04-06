@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
-use App\Repositories\Money\Money;
+use App\Services\Invoice\InvoiceCalculator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -17,19 +18,25 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use  SoftDeletes;
+    use SoftDeletes;
 
-    const STATUS_SENT = "sent";
+    const STATUS_SENT = 'sent';
 
     protected $fillable = [
-        'sent_at',
         'status',
         'sent_at',
         'due_at',
         'client_id',
         'integration_invoice_id',
         'integration_type',
-        'external_id'
+        'source_id',
+        'source_type',
+        'external_id',
+        'offer_id',
+    ];
+
+    protected $dates = [
+        'due_at',
     ];
 
     /**
@@ -52,27 +59,14 @@ class Invoice extends Model
         return $this->hasMany(InvoiceLine::class);
     }
 
-    public function task()
+    public function offer()
     {
-        return $this->hasOne(Task::class);
+        return $this->belongsTo(Offer::class);
     }
 
-    public function lead()
+    public function source()
     {
-        return $this->hasOne(Lead::class);
-    }
-
-    public function reference()
-    {
-        if (!is_null($this->lead) && !is_null($this->task)) {
-            throw new \Exception("Invoice can't have both a reference to tasks and leads");
-        }
-
-        if (!is_null($this->lead())) {
-            return $this->lead();
-        } else {
-            return $this->task();
-        }
+        return $this->morphTo('source');
     }
 
     public function payments()
@@ -85,6 +79,7 @@ class Invoice extends Model
         if ($this->isSent()) {
             return false;
         }
+
         return true;
     }
 
@@ -98,12 +93,13 @@ class Invoice extends Model
         return $this->update([
             'integration_invoice_id' => null,
             'integration_type' => null,
+            'source_id' => null,
+            'source_type' => null,
         ]);
     }
 
     /**
-     * @param $contactId
-     * @param bool $sendMail
+     * @param  bool  $sendMail
      * @return array
      */
     public function invoice($contactId)
@@ -115,7 +111,7 @@ class Invoice extends Model
                 [
                     'currency' => Setting::first()->currency,
                     'show_lines_incl_vat' => true,
-                    'description' => $this->reference->title,
+                    'description' => $this->source->title,
                     'contact_id' => $contactId,
                     'invoice_lines' => $this->invoiceLines,
                 ]
@@ -129,7 +125,7 @@ class Invoice extends Model
 
         return [
             'invoice_number' => isset($booked) ? $booked->invoiceNumber : app(InvoiceNumberService::class)->nextInvoiceNumber(),
-            'due_at' => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14)
+            'due_at' => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14),
         ];
     }
 
@@ -138,17 +134,34 @@ class Invoice extends Model
         /** @var BillingIntegrationInterface $api */
         $api = Integration::initBillingIntegration();
 
-        if (!$api) {
+        if (! $api) {
             return false;
         }
 
         $api->sendInvoice($this, $subject, $message, $recipient, $attachPdf);
 
-        activity("task")
+        activity('task')
             ->performedOn($this)
-            ->withProperties(['action' => "sent_invoice"])
-            ->log("user has send the invoice to the customer");
+            ->withProperties(['action' => 'sent_invoice'])
+            ->log('user has send the invoice to the customer');
 
         return true;
+    }
+
+    public function scopePastDueAt($query)
+    {
+        return $query->where('due_at', '<', now())->NotFullyPaid();
+    }
+
+    public function scopeNotFullyPaid($query)
+    {
+        return $query->where('status', '!=', InvoiceStatus::paid()->getStatus());
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        $invoiceCalculator = new InvoiceCalculator($this);
+
+        return $invoiceCalculator->getTotalPrice();
     }
 }

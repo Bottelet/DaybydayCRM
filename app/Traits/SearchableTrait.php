@@ -34,7 +34,7 @@ trait SearchableTrait
     {
         $model = [];
         foreach ($this->toArray() as $key => $value) {
-            if (key_exists($key, array_flip($this->searchableFields))) {
+            if (array_key_exists($key, array_flip($this->searchableFields))) {
                 $model[$key] = $value;
             }
         }
@@ -50,6 +50,6 @@ trait SearchableTrait
 
     public function searchLink()
     {
-        return '/' .$this->getSearchType() . '/' . $this->external_id;
+        return '/'.$this->getSearchType().'/'.$this->external_id;
     }
 }

@@ -104,7 +104,6 @@
         $(document).ready(function () {
           $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
             var value = $("#client_external_id").val();
-            console.log(value);
             if(value == "new_client") {
               window.location.href = "/clients/create"
             }
@@ -165,7 +164,6 @@
                     myDropzone.processQueue();
 
                 } else {
-                    console.log($("#createProjectForm").serialize());
                     $.ajax({
                         type: 'post',
                         url: '{{route('projects.store')}}',
@@ -174,7 +172,6 @@
                             window.location.href = ("/projects/"+response.project_external_id)
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(jqXHR.responseJSON, textStatus);
                             if (jqXHR.responseJSON.errors.title != undefined) {
                                 $('.title-alert').show();
                             } else {

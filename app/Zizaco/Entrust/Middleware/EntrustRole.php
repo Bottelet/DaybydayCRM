@@ -1,11 +1,12 @@
-<?php namespace App\Zizaco\Entrust\Middleware;
+<?php
+
+namespace App\Zizaco\Entrust\Middleware;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
 use Closure;
@@ -19,8 +20,6 @@ class EntrustRole
 
     /**
      * Creates a new instance of the middleware.
-     *
-     * @param Guard $auth
      */
     public function __construct(Guard $auth)
     {
@@ -30,18 +29,16 @@ class EntrustRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Closure $next
-     * @param  $roles
+     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next, $roles)
     {
-        if (!is_array($roles)) {
+        if (! is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
         }
 
-        if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
+        if ($this->auth->guest() || ! $request->user()->hasRole($roles)) {
             abort(403);
         }
 

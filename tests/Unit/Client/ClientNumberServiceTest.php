@@ -1,13 +1,11 @@
 <?php
+
 namespace Tests\Unit\Client;
 
-use App\Services\ClientNumber\ClientNumberService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Client;
 use App\Models\User;
-
+use App\Services\ClientNumber\ClientNumberService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Testing\Fakes\EventFake;
 use Tests\TestCase;
 
 class ClientNumberServiceTest extends TestCase
@@ -15,6 +13,7 @@ class ClientNumberServiceTest extends TestCase
     use DatabaseTransactions;
 
     protected $client;
+
     /**
      * @var \Illuminate\Contracts\Foundation\Application
      */
@@ -28,11 +27,11 @@ class ClientNumberServiceTest extends TestCase
 
         $this->client = factory(Client::class)->create([
 
-            'company_name' => 'Just something'
+            'company_name' => 'Just something',
         ]);
 
         $this->clientNumberService = app(ClientNumberService::class);
-        $this->clientNumberService->setClientNumber("980200");
+        $this->clientNumberService->setClientNumber('980200');
     }
 
     /** @test */

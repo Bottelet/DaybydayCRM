@@ -12,8 +12,7 @@ class ActivityLogger
 
     protected $activity;
 
-    protected $defaultLogName = "default";
-
+    protected $defaultLogName = 'default';
 
     public function __construct(AuthManager $auth)
     {
@@ -27,25 +26,28 @@ class ActivityLogger
         }
         $model = $this->normalizeCauser($modelOrId);
         $this->getActivity()->causer()->associate($model);
+
         return $this;
     }
-
 
     public function withName(string $logName)
     {
         $this->getActivity()->log_name = $logName;
+
         return $this;
     }
 
     public function withProperties(array $properties)
     {
         $this->getActivity()->properties = collect($properties);
+
         return $this;
     }
 
     public function withProperty(string $key, $value)
     {
         $this->getActivity()->properties = $this->getActivity()->properties->put($key, $value);
+
         return $this;
     }
 
@@ -55,12 +57,14 @@ class ActivityLogger
         $activity->text = $text;
         $activity->save();
         $this->activity = null;
+
         return $activity;
     }
 
     public function performedOn(Model $model)
     {
         $this->getActivity()->source()->associate($model);
+
         return $this;
     }
 
@@ -83,7 +87,8 @@ class ActivityLogger
     protected static function getActivityModelInstance()
     {
         $activityModelClassName = self::determineActivityModel();
-        return new $activityModelClassName();
+
+        return new $activityModelClassName;
     }
 
     protected function normalizeCauser($modelOrId): Model
@@ -97,7 +102,7 @@ class ActivityLogger
         if ($model instanceof Model) {
             return $model;
         }
-        throw new \Exception("Normalizer failed");
+        throw new \Exception('Normalizer failed');
     }
 
     protected function getActivity()
@@ -109,6 +114,7 @@ class ActivityLogger
                 ->withProperties([])
                 ->causedBy($this->auth->guard()->user());
         }
+
         return $this->activity;
     }
 }

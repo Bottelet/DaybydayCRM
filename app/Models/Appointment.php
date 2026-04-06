@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Appointment extends Model
 {
     use SoftDeletes;
+
     protected $fillable = [
         'user_id',
         'source_id',
@@ -18,11 +19,12 @@ class Appointment extends Model
         'external_id',
         'title',
         'description',
-         'color',
+        'color',
         'client_id',
     ];
 
     protected $dates = ['start_at', 'end_at'];
+
     protected $hidden = ['id', 'user_id', 'source_type', 'source_id', 'client_id'];
 
     public function getRouteKeyName()

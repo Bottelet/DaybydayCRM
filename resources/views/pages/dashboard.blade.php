@@ -77,6 +77,12 @@
     </script>
 @endpush
         <!-- Small boxes (Stat box) -->
+        @if(isDemo())
+            <div class="alert alert-info">
+                <strong>Info!</strong> Data on the demo environment is reset every 24hr.
+            </div>
+        @endif
+
         <div class="row">
             <div class="col-lg-3 col-xs-6">
                 <!-- small box -->
@@ -109,7 +115,7 @@
                     <div class="icon">
                         <i class="ion ion-stats-bars"></i>
                     </div>
-                    <a href="{{route('leads.unqualified')}}" class="small-box-footer">{{ __('All Leads') }} <i
+                    <a href="{{route('leads.index')}}" class="small-box-footer">{{ __('All Leads') }} <i
                                 class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>

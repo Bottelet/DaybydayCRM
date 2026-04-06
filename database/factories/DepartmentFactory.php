@@ -5,11 +5,10 @@
 use App\Models\Department;
 use Faker\Generator as Faker;
 
-$factory->define(Department::class, function (Faker $faker) {
+$factory->define(Department::class, static function (Faker $faker) {
     return [
         'name' => 'factory',
         'external_id' => $faker->uuid,
         'description' => 'Mock Department',
-
     ];
 });

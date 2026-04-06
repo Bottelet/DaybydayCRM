@@ -2,26 +2,22 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Auth;
-use Lang;
 use App\Models\Client;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ClientActionNotification extends Notification
 {
     use Queueable;
 
     private $client;
+
     private $action;
 
     /**
      * Create a new notification instance.
      * ClientActionNotification constructor.
-     * @param $client
-     * @param $action
      */
     public function __construct($client, $action)
     {
@@ -71,7 +67,7 @@ class ClientActionNotification extends Notification
             case 'updated_assign':
                 $text = __(':username assigned :company to you', [
                     'company' => $this->client->company_name,
-                    'username' => Auth()->user()->name
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             default:
@@ -83,9 +79,9 @@ class ClientActionNotification extends Notification
             'created_user' => auth()->user()->id,
             'message' => $text,
             'type' => Client::class,
-            'type_id' =>  $this->client->id,
-            'url' =>  url('clients/' . $this->client->external_id),
-            'action' => $this->action
+            'type_id' => $this->client->id,
+            'url' => url('clients/'.$this->client->external_id),
+            'action' => $this->action,
         ];
     }
 }

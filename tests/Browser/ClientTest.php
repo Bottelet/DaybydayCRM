@@ -3,15 +3,12 @@
 namespace Tests\Browser;
 
 use App\Models\Client;
-use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\DuskTestCase;
 use App\Models\User;
-use Laravel\Dusk\Browser;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Faker\Factory as Faker;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class ClientTest extends DuskTestCase
 {
@@ -24,8 +21,8 @@ class ClientTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->addCookie("step_client_create", true)
-                ->addCookie("step_client_index", true)
+                ->addCookie('step_client_create', true)
+                ->addCookie('step_client_index', true)
                 ->visit('/clients')
                 ->type('.dataTables_filter input', $client->company_name)
                 ->waitForText($client->company_name)
@@ -33,7 +30,7 @@ class ClientTest extends DuskTestCase
                 ->assertSee($client->vat)
                 ->assertSee($client->address)
                 ->clickLink($client->company_name)
-                ->assertPathIs('/clients/' . $client->external_id)
+                ->assertPathIs('/clients/'.$client->external_id)
                 ->waitForText($client->primary_contact->name)
                 ->assertSee($client->primary_contact->name)
                 ->assertSee($client->company_name);
@@ -48,7 +45,7 @@ class ClientTest extends DuskTestCase
         $client = factory(Client::class)->create();
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id)
+                ->visit('/clients/'.$client->external_id)
                 ->waitForText($client->primary_contact->name)
                 ->assertSee($client->primary_contact->name)
                 ->assertSee($client->primary_contact->email)
@@ -67,27 +64,27 @@ class ClientTest extends DuskTestCase
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
-            'client_id' => $client->id
+            'client_id' => $client->id,
         ]);
         $lead = factory(Lead::class)->create([
-            'client_id' => $client->id
+            'client_id' => $client->id,
         ]);
 
         $client_2 = factory(Client::class)->create();
         $task_2 = factory(Task::class)->create([
-            'client_id' => $client_2->id
+            'client_id' => $client_2->id,
         ]);
         $lead_2 = factory(Lead::class)->create([
-            'client_id' => $client_2->id
+            'client_id' => $client_2->id,
         ]);
-        $this->browse(function (Browser $browser) use ($client, $task, $lead, $task_2, $lead_2) {
+        $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id);
-            #->clickddLink($task->title, 'a');
-                #->assertDontSee($task_2->title);
-                #->press('Leads')->element(".tablet")
-                #->assertSee($lead->title)
-                #->assertDontSee($lead_2->title);
+                ->visit('/clients/'.$client->external_id);
+            //->clickddLink($task->title, 'a');
+            //->assertDontSee($task_2->title);
+            //->press('Leads')->element(".tablet")
+            //->assertSee($lead->title)
+            //->assertDontSee($lead_2->title);
         });
     }
 
@@ -101,10 +98,10 @@ class ClientTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($client, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first());
-            $browser->visit('/clients/' . $client->external_id);
+            $browser->visit('/clients/'.$client->external_id);
             $browser->assertDontSee($user->email);
             $browser->assertDontSee($user->name);
-            $browser->click("#assignee-user");
+            $browser->click('#assignee-user');
             $browser->clickLink($user->name, 'span');
             $browser->seeLink($user->email);
             $browser->assertSee($user->name);
@@ -120,7 +117,7 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/create')
-                ->waitForText("Create Client")
+                ->waitForText('Create Client')
                 ->type('name', $faker->name)
                 ->type('email', $faker->email)
                 ->type('primary_number', $faker->randomNumber(8))
@@ -145,7 +142,7 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/create')
-                ->waitForText("Create Client")
+                ->waitForText('Create Client')
                 ->type('primary_number', $faker->randomNumber(8))
                 ->type('address', $faker->secondaryAddress)
                 ->type('zipcode', $faker->randomNumber(4))
@@ -171,7 +168,7 @@ class ClientTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id . '/edit')
+                ->visit('/clients/'.$client->external_id.'/edit')
                 ->assertInputValue('name', $client->primary_contact->name)
                 ->assertInputValue('email', $client->primary_contact->email)
                 ->assertInputValue('company_name', $client->company_name)
@@ -196,7 +193,7 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 //Assert new data is in use
-                ->visit('/clients/' . $client->external_id)
+                ->visit('/clients/'.$client->external_id)
                 ->assertSee($email)
                 ->assertSee($address)
                 ->assertSee($zip_code)

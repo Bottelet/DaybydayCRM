@@ -1,4 +1,5 @@
 <?php
+
 return [
     /*
      * DataTables search options.
@@ -33,10 +34,10 @@ return [
      * This is where you can register your custom dataTables builder.
      */
     'engines' => [
-        'eloquent'                    => \Yajra\DataTables\EloquentDataTable::class,
-        'query'                       => \Yajra\DataTables\QueryDataTable::class,
-        'collection'                  => \Yajra\DataTables\CollectionDataTable::class,
-        'resource'                    => \Yajra\DataTables\ApiResourceDataTable::class,
+        'eloquent' => \Yajra\DataTables\EloquentDataTable::class,
+        'query' => \Yajra\DataTables\QueryDataTable::class,
+        'collection' => \Yajra\DataTables\CollectionDataTable::class,
+        'resource' => \Yajra\DataTables\ApiResourceDataTable::class,
     ],
     /*
      * DataTables accepted builder to engine mapping.
@@ -94,7 +95,7 @@ return [
      * JsonResponse header and options config.
      */
     'json' => [
-        'header'  => [],
+        'header' => [],
         'options' => 0,
     ],
 ];

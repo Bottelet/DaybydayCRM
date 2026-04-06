@@ -25,3 +25,7 @@
             </form>
 
 @stop
+
+@push('scripts')
+@include('images._uploadAvatarPreview')
+@endpush

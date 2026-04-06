@@ -2,15 +2,14 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\View\View;
 use App\Models\Client;
+use Illuminate\View\View;
 
 class ClientHeaderComposer
 {
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
      * @return void
      */
     public function compose(View $view)
@@ -20,6 +19,7 @@ class ClientHeaderComposer
         $contact_info = $clients->contacts()->first();
         /**
          * [User assigned the client]
+         *
          * @var contact
          */
         $contact = $clients->user;

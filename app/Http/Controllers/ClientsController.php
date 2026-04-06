@@ -1,41 +1,40 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Enums\Country;
 use App\Enums\InvoiceStatus;
-use App\Models\Invoice;
+use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\UpdateClientRequest;
+use App\Models\Client;
+use App\Models\Contact;
+use App\Models\Industry;
+use App\Models\Integration;
+use App\Models\Setting;
 use App\Models\Status;
-use App\Models\Task;
+use App\Models\User;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Repositories\Money\MoneyConverter;
 use App\Services\ClientNumber\ClientNumberService;
 use App\Services\Invoice\InvoiceCalculator;
-use App\Services\Search\SearchService;
 use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
-use Config;
-use Dinero;
 use Datatables;
-use App\Models\Client;
-use App\Http\Requests;
 use Illuminate\Http\Request;
-use App\Models\Setting;
-use App\Http\Requests\Client\StoreClientRequest;
-use App\Http\Requests\Client\UpdateClientRequest;
-use App\Models\User;
-use App\Models\Integration;
-use App\Models\Industry;
 use Ramsey\Uuid\Uuid;
-use App\Models\Contact;
 
 class ClientsController extends Controller
 {
     const CREATED = 'created';
+
     const UPDATED_ASSIGN = 'updated_assign';
 
     protected $users;
+
     protected $clients;
+
     protected $settings;
+
     /**
      * @var FilesystemIntegration
      */
@@ -45,6 +44,7 @@ class ClientsController extends Controller
     {
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
+        $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 
     /**
@@ -57,30 +57,28 @@ class ClientsController extends Controller
 
     /**
      * Make json respnse for datatables
+     *
      * @return mixed
      */
     public function anyData()
     {
         $clients = Client::select(['external_id', 'company_name', 'vat', 'address']);
+
         return Datatables::of($clients)
-            ->addColumn('namelink', function ($clients) {
-                return '<a href="/clients/' . $clients->external_id . '" ">' . $clients->company_name . '</a>';
-            })
+            ->addColumn('namelink', '<a href="{{ route("clients.show",[$external_id]) }}">{{$company_name}}</a>')
             ->addColumn('view', '
-                <a href="{{ route(\'clients.show\', $external_id) }}" class="btn btn-link" >'  . __('View') . '</a>')
+                <a href="{{ route(\'clients.show\', $external_id) }}" class="btn btn-link" >'.__('View').'</a>')
             ->addColumn('edit', '
-                <a href="{{ route(\'clients.edit\', $external_id) }}" class="btn btn-link" >'  . __('Edit') . '</a>')
+                <a href="{{ route(\'clients.edit\', $external_id) }}" class="btn btn-link" >'.__('Edit').'</a>')
             ->addColumn('delete', '
                 <form action="{{ route(\'clients.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well\')"">
+            <input type="submit" name="submit" value="'.__('Delete').'" class="btn btn-link" onClick="return confirm(\'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well\')"">
             {{csrf_field()}}
             </form>')
-            ->rawColumns(['namelink','view','edit', 'delete'])
+            ->rawColumns(['namelink', 'view', 'edit', 'delete'])
             ->make(true);
     }
-
-
 
     public function taskDataTable($external_id)
     {
@@ -89,11 +87,8 @@ class ClientsController extends Controller
             ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )->get();
 
-
         return Datatables::of($tasks)
-            ->addColumn('titlelink', function ($tasks) {
-                return '<a href="' . route('tasks.show', $tasks->external_id) . '">' . $tasks->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format(carbonDate()) : '';
@@ -103,12 +98,12 @@ class ClientsController extends Controller
                     ->format(carbonDate()) : '';
             })
             ->editColumn('status_id', function ($tasks) {
-                return '<span class="label label-success" style="background-color:' . $tasks->status->color . '"> ' .$tasks->status->title . '</span>';
+                return '<span class="label label-success" style="background-color:'.$tasks->status->color.'"> '.$tasks->status->title.'</span>';
             })
             ->editColumn('assigned', function ($tasks) {
                 return $tasks->assigned_user->name;
             })
-            ->rawColumns(['titlelink','status_id'])
+            ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
 
@@ -120,9 +115,7 @@ class ClientsController extends Controller
         )->get();
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', function ($projects) {
-                return '<a href="' . route('projects.show', $projects->external_id) . '">' . $projects->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($projects) {
                 return $projects->created_at ? with(new Carbon($projects->created_at))
                     ->format(carbonDate()) : '';
@@ -132,12 +125,12 @@ class ClientsController extends Controller
                     ->format(carbonDate()) : '';
             })
             ->editColumn('status_id', function ($projects) {
-                return '<span class="label label-success" style="background-color:' . $projects->status->color . '"> ' .$projects->status->title . '</span>';
+                return '<span class="label label-success" style="background-color:'.$projects->status->color.'"> '.$projects->status->title.'</span>';
             })
             ->editColumn('assigned', function ($projects) {
                 return $projects->assignee->name;
             })
-            ->rawColumns(['titlelink','status_id'])
+            ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
 
@@ -147,10 +140,9 @@ class ClientsController extends Controller
         $leads = $client->leads()->with(['status'])->select(
             ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )->get();
+
         return Datatables::of($leads)
-            ->addColumn('titlelink', function ($leads) {
-                return '<a href="' . route('leads.show', $leads->external_id) . '">' . $leads->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('created_at', function ($leads) {
                 return $leads->created_at ? with(new Carbon($leads->created_at))
                     ->format(carbonDate()) : '';
@@ -160,13 +152,13 @@ class ClientsController extends Controller
                     ->format(carbonDate()) : '';
             })
             ->editColumn('status_id', function ($leads) {
-                return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> ' .
-                    $leads->status->title . '</span>';
+                return '<span class="label label-success" style="background-color:'.$leads->status->color.'"> '.
+                    $leads->status->title.'</span>';
             })
             ->editColumn('assigned', function ($leads) {
                 return $leads->assigned_user->name;
             })
-            ->rawColumns(['titlelink','status_id'])
+            ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
 
@@ -180,14 +172,15 @@ class ClientsController extends Controller
 
         return Datatables::of($invoices)
             ->editColumn('invoice_number', function ($invoices) {
-                return '<a href="' . url('invoices', $invoices->external_id) . '">' . ($invoices->invoice_number ?: 'X') . '</a>';
+                return '<a href="'.url('invoices', $invoices->external_id).'">'.($invoices->invoice_number ?: 'X').'</a>';
             })
             ->editColumn('total_amount', function ($invoices) {
                 $totalPrice = app(InvoiceCalculator::class, ['invoice' => $invoices])->getTotalPrice();
+
                 return app(MoneyConverter::class, ['money' => $totalPrice])->format();
             })
             ->editColumn('invoice_sent', function ($invoices) {
-                return $invoices->sent_at ? __('yes'): __('no');
+                return $invoices->sent_at ? __('yes') : __('no');
             })
             ->editColumn('status', function ($invoices) {
                 return __(InvoiceStatus::fromStatus($invoices->status)->getDisplayValue());
@@ -210,7 +203,6 @@ class ClientsController extends Controller
     }
 
     /**
-     * @param StoreClientRequest $request
      * @return mixed
      */
     public function store(StoreClientRequest $request)
@@ -226,7 +218,7 @@ class ClientsController extends Controller
             'industry_id' => $request->industry_id,
             'user_id' => $request->user_id,
             'client_number' => app(ClientNumberService::class)->setNextClientNumber(),
-            ]);
+        ]);
 
         $contact = Contact::create([
             'external_id' => Uuid::uuid4()->toString(),
@@ -235,16 +227,17 @@ class ClientsController extends Controller
             'primary_number' => $request->primary_number,
             'secondary_number' => $request->secondary_number,
             'client_id' => $client->id,
-            'is_primary' => true
+            'is_primary' => true,
         ]);
 
         Session()->flash('flash_message', __('Client successfully added'));
         event(new \App\Events\ClientAction($client, self::CREATED));
+
         return redirect()->route('clients.index');
     }
 
     /**
-     * @param Request $vatRequest
+     * @param  Request  $vatRequest
      * @return mixed
      */
     public function cvrapiStart(Request $request)
@@ -259,7 +252,6 @@ class ClientsController extends Controller
 
         $result = $this->cvrApi($vat, 'dk');
 
-
         return redirect()->back()
             ->with('data', $result);
     }
@@ -269,13 +261,13 @@ class ClientsController extends Controller
         if (empty($vat)) {
             // Print error message
 
-            return ('Please insert VAT');
+            return 'Please insert VAT';
         } else {
             // Start cURL
             $ch = curl_init();
 
             // Set cURL options
-            curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search=' . $vat . '&country=dk');
+            curl_setopt($ch, CURLOPT_URL, 'http://cvrapi.dk/api?search='.$vat.'&country=dk');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_USERAGENT, 'Daybyday');
 
@@ -293,12 +285,13 @@ class ClientsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $external_id
+     * @param  int  $external_id
      * @return mixed
      */
     public function show($external_id)
     {
         $client = $this->findByExternalId($external_id);
+
         //dd($client->appointments);
         return view('clients.show')
             ->withClient($client)
@@ -315,14 +308,14 @@ class ClientsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $external_id
+     * @param  int  $external_id
      * @return mixed
      */
     public function edit($external_id)
     {
         $client = $this->findByExternalId($external_id);
         $contact = $client->primaryContact;
-        $client = (object)array_merge($contact->toArray(), $client->toArray());
+        $client = (object) array_merge($contact->toArray(), $client->toArray());
 
         return view('clients.edit')
             ->withClient($client)
@@ -331,8 +324,6 @@ class ClientsController extends Controller
     }
 
     /**
-     * @param $external_id
-     * @param UpdateClientRequest $request
      * @return mixed
      */
     public function update($external_id, UpdateClientRequest $request)
@@ -347,7 +338,7 @@ class ClientsController extends Controller
             'company_type' => $request->company_type,
             'industry_id' => $request->industry_id,
             'user_id' => $request->user_id,
-            ])->save();
+        ])->save();
 
         $client->primaryContact->fill([
             'name' => $request->name,
@@ -355,15 +346,15 @@ class ClientsController extends Controller
             'primary_number' => $request->primary_number,
             'secondary_number' => $request->secondary_number,
             'client_id' => $client->id,
-            'is_primary' => true
+            'is_primary' => true,
         ])->save();
 
         Session()->flash('flash_message', __('Client successfully updated'));
+
         return redirect()->route('clients.index');
     }
 
     /**
-     * @param $external_id
      * @return mixed
      */
     public function destroy($external_id)
@@ -380,14 +371,13 @@ class ClientsController extends Controller
     }
 
     /**
-     * @param $external_id
-     * @param Request $request
      * @return mixed
      */
     public function updateAssign($external_id, Request $request)
     {
-        if (!auth()->user()->can('client-update')) {
-            Session()->flash('flash_message_warning', __("Not authorized"));
+        if (! auth()->user()->can('client-update')) {
+            Session()->flash('flash_message_warning', __('Not authorized'));
+
             return back();
         }
 
@@ -396,12 +386,11 @@ class ClientsController extends Controller
         $client->updateAssignee($user);
 
         Session()->flash('flash_message', __('New user is assigned'));
+
         return redirect()->back();
     }
 
-
     /**
-     * @param $client
      * @return mixed
      */
     public function getInvoices($client)

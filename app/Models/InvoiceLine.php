@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Repositories\Money\Money;
@@ -14,12 +15,12 @@ class InvoiceLine extends Model
         'external_id',
         'type',
         'quantity',
-        'task_id',
         'title',
         'comment',
         'price',
         'invoice_id',
         'product_id',
+        'offer_id',
     ];
 
     /**
@@ -52,14 +53,22 @@ class InvoiceLine extends Model
         return $this->quantity * $this->price;
     }
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+
     public function getTotalValueConvertedAttribute()
     {
         $money = new Money($this->quantity * $this->price);
+
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
+
     public function getPriceConvertedAttribute()
     {
         $money = new Money($this->price);
+
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
 }

@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Client;
-use App\Models\Status;
-use App\Models\Project;
-use App\Models\Integration;
-use App\Models\Document;
-use App\Services\Storage\GetStorageProvider;
-use Illuminate\Http\Request;
-use Datatables;
-use Carbon\Carbon;
 use App\Http\Requests\Project\StoreProjectRequest;
+use App\Models\Client;
+use App\Models\Document;
+use App\Models\Integration;
+use App\Models\Project;
+use App\Models\Status;
+use App\Models\User;
+use App\Services\Storage\GetStorageProvider;
+use Carbon\Carbon;
+use Datatables;
+use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
-use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 
 class ProjectsController extends Controller
 {
     const CREATED = 'created';
+
     const UPDATED_STATUS = 'updated_status';
+
     const UPDATED_TIME = 'updated_time';
+
     const UPDATED_ASSIGN = 'updated_assign';
+
     const UPDATED_DEADLINE = 'updated_deadline';
 
     public function indexData()
@@ -31,9 +34,7 @@ class ProjectsController extends Controller
         )->get();
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', function ($projects) {
-                return '<a href="projects/' . $projects->external_id . '" ">' . $projects->title . '</a>';
-            })
+            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;
             })
@@ -49,51 +50,52 @@ class ProjectsController extends Controller
                 return $projects->assignee->name;
             })
             ->editColumn('status_id', function ($projects) {
-                return '<span class="label label-success" style="background-color:' . $projects->status->color . '"> ' .
-                    $projects->status->title . '</span>';
+                return '<span class="label label-success" style="background-color:'.$projects->status->color.'"> '.
+                    $projects->status->title.'</span>';
             })
             ->addColumn('view', function ($projects) {
-                return '<a href="' . route("projects.show", $projects->external_id) . '" class="btn btn-link">' . __('View') .'</a>'
-                . '<a data-toggle="modal" data-id="'. route('projects.destroy',$projects->external_id) . '" data-title="'. $projects->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') .'</a>';
+                return '<a href="'.route('projects.show', $projects->external_id).'" class="btn btn-link">'.__('View').'</a>'
+                .'<a data-toggle="modal" data-id="'.route('projects.destroy', $projects->external_id).'" data-title="'.$projects->title.'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
             })
-            ->rawColumns(['titlelink','view', 'status_id'])
+            ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
     }
 
     public function index()
     {
         return view('projects.index')
-        ->withStatuses(Status::typeOfProject()->get());
+            ->withStatuses(Status::typeOfProject()->get());
     }
 
     public function destroy(Project $project, Request $request)
     {
         $deleteTasks = $request->delete_tasks ? true : false;
-        if($project->tasks && $deleteTasks) {
+        if ($project->tasks && $deleteTasks) {
             $project->tasks()->delete();
         } else {
             $project->tasks()->update(['project_id' => null]);
         }
-        
+
         $project->delete();
-        
+
         Session()->flash('flash_message', __('Project deleted'));
+
         return redirect()->back();
     }
 
-
     /**
-     * @param StoreTaskRequest $request
+     * @param  StoreTaskRequest  $request
      * @return mixed
      */
-    public function store(StoreProjectRequest $request) 
+    public function store(StoreProjectRequest $request)
     {
         if ($request->client_external_id) {
             $client = Client::whereExternalId($request->client_external_id);
         }
 
-        if(!$client) {
+        if (! $client) {
             Session()->flash('flash_message', __('Could not find client'));
+
             return redirect()->back();
         }
 
@@ -115,7 +117,7 @@ class ProjectsController extends Controller
         Session()->flash('flash_message', __('Project successfully added'));
         event(new \App\Events\ProjectAction($project, self::CREATED));
 
-        if (!is_null($request->images)) {
+        if (! is_null($request->images)) {
             foreach ($request->file('images') as $image) {
                 $this->upload($image, $project);
             }
@@ -127,20 +129,22 @@ class ProjectsController extends Controller
 
     private function upload($image, $project)
     {
-        if (!auth()->user()->can('task-upload-files')) {
+        if (! auth()->user()->can('task-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload images'));
+
             return redirect()->route('tasks.show', $project->external_id);
         }
         $file = $image;
-        $filename = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename = str_random(8).'_'.$file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
-        $size = $file->getClientSize();
+        $size = $file->getSize();
         $mbsize = $size / 1048576;
         $totaltsize = substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
             Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
             return redirect()->back();
         }
 
@@ -157,7 +161,7 @@ class ProjectsController extends Controller
             'source_type' => Project::class,
             'mime' => $file->getClientMimeType(),
             'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-            'integration_type' => get_class($fileSystem)
+            'integration_type' => get_class($fileSystem),
         ]);
     }
 
@@ -168,7 +172,7 @@ class ProjectsController extends Controller
      */
     public function create($client_external_id = null)
     {
-        $client =  Client::whereExternalId($client_external_id);
+        $client = Client::whereExternalId($client_external_id);
 
         return view('projects.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
@@ -190,8 +194,6 @@ class ProjectsController extends Controller
             $completionPercentage = round($completedTasks / $tasks * 100);
         }
 
-
-
         $collaborators = collect();
 
         $collaborators->push($project->assignee);
@@ -199,28 +201,28 @@ class ProjectsController extends Controller
             $collaborators->push($task->user);
         }
 
-
         return view('projects.show')
             ->withProject($project)
-            ->withStatuses(Status::typeOfTask()->get())
+            ->withStatuses(Status::typeOfProject()->get())
             ->withTasks($project->tasks)
             ->withCompletionPercentage($completionPercentage)
             ->withCollaborators($collaborators->unique())
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->withFiles($project->documents)
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
-        ;
+
     }
 
     public function updateStatus($external_id, Request $request)
     {
-        if (!auth()->user()->can('task-update-status')) {
+        if (! auth()->user()->can('task-update-status')) {
             session()->flash('flash_message_warning', __('You do not have permission to change task status'));
+
             return redirect()->route('tasks.show', $external_id);
         }
         $input = $request->all();
-        if ($request->ajax() && isset($input["statusExternalId"])) {
-            $input["status_id"] = Status::whereExternalId($input["statusExternalId"])->first()->id;
+        if ($request->ajax() && isset($input['statusExternalId'])) {
+            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
         }
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();
@@ -235,7 +237,7 @@ class ProjectsController extends Controller
     {
         $project = Project::with('assignee')->whereExternalId($external_id)->first();
 
-        $user_assigned_id= $request->user_assigned_id;
+        $user_assigned_id = $request->user_assigned_id;
 
         $project->user_assigned_id = $user_assigned_id;
         $project->save();
@@ -243,37 +245,40 @@ class ProjectsController extends Controller
         event(new \App\Events\ProjectAction($project, self::UPDATED_ASSIGN));
 
         Session()->flash('flash_message', __('New user is assigned'));
+
         return redirect()->back();
     }
 
     /**
      * Update the follow up date (Deadline)
-     * @param UpdateLeadFollowUpRequest $request
-     * @param $external_id
+     *
+     * @param  UpdateLeadFollowUpRequest  $request
      * @return mixed
      */
     public function updateDeadline(Request $request, $external_id)
     {
-        if (!auth()->user()->can('task-update-deadline')) {
+        if (! auth()->user()->can('task-update-deadline')) {
             session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
+
             return redirect()->route('tasks.show', $external_id);
         }
         $project = $this->findByExternalId($external_id);
         $input = $request->all();
         $input = $request =
-            ['deadline' => $request->deadline_date . " " . $request->deadline_time . ":00"];
+            ['deadline' => $request->deadline_date.' '.$request->deadline_time.':00'];
         $project->fill($input)->save();
         event(new \App\Events\ProjectAction($project, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New deadline is set'));
+
         return redirect()->back();
     }
 
     /**
-     * @param $id
+     * @param  $id
      * @return mixed
      */
     public function findByExternalId($external_id)
     {
-        return Project::whereExternalId($external_id)->first();
+        return Project::whereExternalId($external_id)->firstOrFail();
     }
 }

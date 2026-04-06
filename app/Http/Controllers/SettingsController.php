@@ -1,26 +1,21 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Enums\Country;
+use App\Http\Requests\Setting\UpdateSettingOverallRequest;
 use App\Models\BusinessHour;
+use App\Models\Setting;
 use App\Repositories\Currency\Currency;
 use App\Repositories\Format\GetDateFormat;
-use App\Repositories\Setting\GenerateSetting;
 use App\Repositories\Tax\Tax;
 use App\Services\ClientNumber\ClientNumberService;
 use App\Services\ClientNumber\ClientNumberValidator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Services\InvoiceNumber\InvoiceNumberValidator;
-use Auth;
 use Carbon\Carbon;
-use Ramsey\Uuid\Uuid;
-use Session;
-use App\Http\Requests;
-use App\Models\Setting;
-use App\Models\Permission;
 use Illuminate\Http\Request;
-use App\Models\Role;
-use App\Http\Requests\Setting\UpdateSettingOverallRequest;
+use Session;
 
 class SettingsController extends Controller
 {
@@ -30,6 +25,7 @@ class SettingsController extends Controller
     public function __construct()
     {
         $this->middleware('user.is.admin', ['only' => ['index']]);
+        $this->middleware('is.demo', ['except' => ['index']]);
     }
 
     /**
@@ -42,15 +38,15 @@ class SettingsController extends Controller
             ->withClientNumber(app(ClientNumberService::class)->nextClientNumber())
             ->withInvoiceNumber(app(InvoiceNumberService::class)->nextInvoiceNumber())
             ->withCurrencies(Currency::getAllCurrencies())
-            ->withCurrentCurrency(Setting::select("currency")->first()->currency)
+            ->withCurrentCurrency(Setting::select('currency')->first()->currency)
             ->withSettings(Setting::first())
             ->withBusinessHours($this->businessHours());
     }
 
     public function updateFirstStep(Request $request)
     {
-        $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
-        $end_time = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
+        $start_time = Carbon::parse('2020-01-01 '.$request->start_time.':00');
+        $end_time = Carbon::parse('2020-01-01 '.$request->end_time.':00');
         $settings = Setting::first();
 
         if ($start_time->gt($end_time)) {
@@ -61,7 +57,7 @@ class SettingsController extends Controller
             $end_time->addHour();
         }
         $businessHours = BusinessHour::all();
-        if($businessHours->isNotEmpty()) {
+        if ($businessHours->isNotEmpty()) {
             foreach (BusinessHour::all() as $businessHour) {
                 $businessHour->update([
                     'open_time' => $start_time->format('H:i:s'),
@@ -69,7 +65,7 @@ class SettingsController extends Controller
                 ]);
             }
         } else {
-            for ($i=1; $i < 8; $i++) {
+            for ($i = 1; $i < 8; $i++) {
                 \App\Models\BusinessHour::create([
                     'day' => $this->integerToDay()[$i],
                     'open_time' => '09:00',
@@ -79,25 +75,25 @@ class SettingsController extends Controller
             }
         }
 
-        if (!$request->company_name) {
+        if (! $request->company_name) {
             $request->company_name = uniqid();
         }
-        if (!$request->country) {
-            $request->country = "GB";
+        if (! $request->country) {
+            $request->country = 'GB';
         }
 
         $country = Country::fromCode($request->country);
-        $currency = app(Currency::class, ["code" => $country->getCurrencyCode()]);
+        $currency = app(Currency::class, ['code' => $country->getCurrencyCode()]);
 
         $settings->country = $request->country;
         $settings->company = $request->company_name;
         $settings->vat = $currency->getVatPercentage();
         $settings->currency = $currency->getCode();
-        $settings->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
+        $settings->language = strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
         $settings->save();
 
         $user = auth()->user();
-        $user->language = strtolower($country->getLanguage()) === "danish" ? "dk" : "en";
+        $user->language = strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
         $user->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
@@ -106,39 +102,39 @@ class SettingsController extends Controller
     }
 
     /**
-     * @param UpdateSettingOverallRequest $request
      * @return mixed
      */
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
         $setting = Setting::first();
 
-        if (!app(ClientNumberValidator::class)->validateClientNumber((int)$request->client_number)) {
+        if (! app(ClientNumberValidator::class)->validateClientNumber((int) $request->client_number)) {
             Session::flash('flash_message_warning', __('Client number invalid'));
+
             return redirect()->back();
         }
 
-
-        if (!app(InvoiceNumberValidator::class)->validateInvoiceNumber((int)$request->invoice_number)) {
+        if (! app(InvoiceNumberValidator::class)->validateInvoiceNumber((int) $request->invoice_number)) {
             Session::flash('flash_message_warning', __('Invoice number invalid'));
+
             return redirect()->back();
         }
-        if ($request->currency == $setting->currency && !empty($request->vat)) {
+        if ($request->currency == $setting->currency && ! empty($request->vat)) {
             $setting->vat = $request->vat * 100;
         } elseif (empty($request->vat)) {
             $request->vat = $setting->vat;
         } else {
-            if (app(Currency::class, ["code" => $request->currency])->hasCurrency($request->currency)) {
+            if (app(Currency::class, ['code' => $request->currency])->hasCurrency($request->currency)) {
                 $setting->currency = $request->currency;
                 if ($request->vat == $setting->vat / 100) {
-                    $setting->vat = app(Currency::class, ["code" => $request->currency])->getCurrency($request->currency)["vatPercentage"];
+                    $setting->vat = app(Currency::class, ['code' => $request->currency])->getCurrency($request->currency)['vatPercentage'];
                 } else {
                     $setting->vat = $request->vat * 100;
                 }
-            };
+            }
         }
-        $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
-        $end_time = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
+        $start_time = Carbon::parse('2020-01-01 '.$request->start_time.':00');
+        $end_time = Carbon::parse('2020-01-01 '.$request->end_time.':00');
         if ($start_time->gt($end_time)) {
             $end_tmp = clone $end_time;
             $end_time = $start_time;
@@ -156,7 +152,7 @@ class SettingsController extends Controller
 
         $setting->client_number = $request->client_number;
         $setting->invoice_number = $request->invoice_number;
-        isset($request->company) ? $setting->company = $request->company: null;
+        isset($request->company) ? $setting->company = $request->company : null;
         $setting->country = $request->country;
         $setting->language = $request->language;
         $setting->save();
@@ -164,6 +160,7 @@ class SettingsController extends Controller
         cache()->delete(GetDateFormat::CACHE_KEY);
 
         Session::flash('flash_message', __('Overall settings successfully updated'));
+
         return redirect()->back();
     }
 
@@ -171,7 +168,7 @@ class SettingsController extends Controller
     {
         return [
             'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
-            'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time
+            'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time,
         ];
     }
 
@@ -184,7 +181,7 @@ class SettingsController extends Controller
             4 => 'thursday',
             5 => 'friday',
             6 => 'saturday',
-            7 => 'sunday'
+            7 => 'sunday',
         ];
     }
 

@@ -4,9 +4,9 @@ namespace Tests\Unit\Controllers\User;
 
 use App\Models\Role;
 use App\Models\User;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class UsersControllerTest extends TestCase
 {
@@ -24,12 +24,11 @@ class UsersControllerTest extends TestCase
             'PATCH',
             route('users.update', $this->user->external_id),
             [
-                'name'        => $this->user->name,
-                'email'       => $this->user->email,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
                 'departments' => $this->user->department()->first()->id,
-                'roles'       => $targetRole->id,
+                'roles' => $targetRole->id,
             ])->assertRedirect();
-
 
         $this->assertEquals(
             [$targetRole->id],

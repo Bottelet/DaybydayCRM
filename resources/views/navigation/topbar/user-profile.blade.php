@@ -1,7 +1,7 @@
 <div class="topbar-user__wrapper">
     <ul class="nav navbar-nav navbar-right">
-        <li class="">
-            <a href="#" class="dropdown-toggle topbar-user__head" data-toggle="dropdown">
+        <li class="dropdown">
+            <a href="{{route('users.show', auth()->user()->external_id)}}" class="dropdown-toggle topbar-user__head" data-toggle="dropdown">
                 <span>@lang('Hi'),</span>
                 <span class="topbar-user__name">{{ auth()->user()->name }}</span>
                 <img src="{{ auth()->user()->avatar }}" class="topbar-user__image">

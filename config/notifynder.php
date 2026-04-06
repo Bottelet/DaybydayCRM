@@ -47,7 +47,7 @@ return [
      * the language you wish to translate ex 'it' or 'italian' and pass as
      * value an array with the translations
      */
-    'translations'  => [
+    'translations' => [
 
     ],
 ];

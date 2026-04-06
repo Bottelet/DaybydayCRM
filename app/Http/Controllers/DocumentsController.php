@@ -1,23 +1,15 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Local;
+use App\Models\Client;
+use App\Models\Document;
+use App\Models\Project;
 use App\Models\Task;
 use App\Services\Storage\GetStorageProvider;
-use Excel;
-use Session;
-use Validator;
-use DB;
-use Storage;
-use File;
-use App\Http\Requests;
-use App\Models\Setting;
-use App\Models\Document;
 use Illuminate\Http\Request;
-use App\Models\Client;
-use App\Models\Project;
 use Ramsey\Uuid\Uuid;
-use App\Models\Integration;
+use Session;
 
 class DocumentsController extends Controller
 {
@@ -31,15 +23,16 @@ class DocumentsController extends Controller
         $document = Document::whereExternalId($external_id)->first();
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
-        if (!$file) {
+        if (! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
+
             return redirect()->back();
         }
 
         return response($file, 200)
-              ->header('Content-Type', $document->mime)
-              ->header('Content-Disposition', 'inline')
-              ->header('filename', $document->original_filename);
+            ->header('Content-Type', $document->mime)
+            ->header('Content-Disposition', 'inline')
+            ->header('filename', $document->original_filename);
     }
 
     public function download($external_id)
@@ -47,8 +40,10 @@ class DocumentsController extends Controller
         $document = Document::whereExternalId($external_id)->first();
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
-        if (!$file) {
+
+        if (! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
+
             return redirect()->back();
         }
 
@@ -57,21 +52,22 @@ class DocumentsController extends Controller
             ->header('Content-Disposition', 'attachment')
             ->header('filename', $document->original_filename);
     }
+
     /**
-     * @param Request $request
-     * @param $id
+     * @param  $id
      * @return mixed
      */
     public function upload(Request $request, $external_id)
     {
-        if (!auth()->user()->can('document-upload')) {
+        if (! auth()->user()->can('document-upload')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload a document'));
+
             return redirect()->route('tasks.show', $external_id);
         }
         $client = Client::whereExternalId($external_id);
 
         $file = $request->file('file');
-        $filename = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename = str_random(8).'_'.$file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
         $size = $file->getSize();
@@ -80,6 +76,7 @@ class DocumentsController extends Controller
 
         if ($totaltsize > 15) {
             Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
             return redirect()->back();
         }
 
@@ -97,7 +94,7 @@ class DocumentsController extends Controller
                 'source_type' => Client::class,
                 'mime' => $file->getClientMimeType(),
                 'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                'integration_type' => get_class($fileSystem)
+                'integration_type' => get_class($fileSystem),
             ]
         );
         Document::create($input);
@@ -105,8 +102,7 @@ class DocumentsController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $id
+     * @param  $id
      * @return mixed
      */
     public function uploadToTask(Request $request, $external_id)
@@ -115,13 +111,12 @@ class DocumentsController extends Controller
         session()->flash('flash_message_warning', __('You do not have permission to upload images'));
         return redirect()->route('tasks.show', $task->external_id);
         }**/
-
         $task = Task::whereExternalId($external_id)->first();
 
-        if (!is_null($request->files)) {
+        if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
                 $file = $image;
-                $filename = str_random(8) . '_' . $file->getClientOriginalName();
+                $filename = str_random(8).'_'.$file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
                 $size = $file->getSize();
@@ -130,6 +125,7 @@ class DocumentsController extends Controller
 
                 if ($totaltsize > 15) {
                     Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
                     return redirect()->back();
                 }
 
@@ -146,17 +142,17 @@ class DocumentsController extends Controller
                     'source_type' => Task::class,
                     'mime' => $file->getClientMimeType(),
                     'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                    'integration_type' => get_class($fileSystem)
+                    'integration_type' => get_class($fileSystem),
                 ]);
             }
         }
         Session::flash('flash_message', __('File successfully uploaded'));
+
         return $task->external_id;
     }
 
     /**
-     * @param Request $request
-     * @param $id
+     * @param  $id
      * @return mixed
      */
     public function uploadToProject(Request $request, $external_id)
@@ -165,13 +161,12 @@ class DocumentsController extends Controller
         session()->flash('flash_message_warning', __('You do not have permission to upload images'));
         return redirect()->route('tasks.show', $task->external_id);
         }**/
-
         $project = Project::whereExternalId($external_id)->first();
 
-        if (!is_null($request->files)) {
+        if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
                 $file = $image;
-                $filename = str_random(8) . '_' . $file->getClientOriginalName();
+                $filename = str_random(8).'_'.$file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
                 $size = $file->getSize();
@@ -180,6 +175,7 @@ class DocumentsController extends Controller
 
                 if ($totaltsize > 15) {
                     Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
                     return redirect()->back();
                 }
 
@@ -198,26 +194,27 @@ class DocumentsController extends Controller
                     'source_type' => Project::class,
                     'mime' => $file->getClientMimeType(),
                     'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                    'integration_type' => get_class($fileSystem)
+                    'integration_type' => get_class($fileSystem),
                 ]);
             }
         }
         Session::flash('flash_message', __('File successfully uploaded'));
+
         return $project->external_id;
     }
 
-
     public function destroy($external_id)
     {
-        if (!auth()->user()->can('document-delete')) {
+        if (! auth()->user()->can('document-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete a document'));
+
             return redirect()->route('tasks.show', $external_id);
         }
         $fileSystem = GetStorageProvider::getStorage();
 
         $document = Document::whereExternalId($external_id)->first();
         $deleted = $fileSystem->delete($document);
-        if (!$deleted) {
+        if (! $deleted) {
             Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
         } else {
             Session()->flash('flash_message', __('File has been deleted'));
@@ -227,12 +224,10 @@ class DocumentsController extends Controller
         return redirect()->back();
     }
 
-
     /**
      * Opens invoce line creation modal
-     * @param Request $request
-     * @param $external_id Customer's external_id
      *
+     * @param  $external_id  Customer's external_id
      * @return View
      */
     public function uploadFilesModalView(Request $request, $external_id, $type)
@@ -251,6 +246,6 @@ class DocumentsController extends Controller
             ->withTitle($task->title)
             ->with('external_id', $external_id)
             ->withType($type)
-            ->withRoute(route('document.'. $type . '.upload', $external_id));
+            ->withRoute(route('document.'.$type.'.upload', $external_id));
     }
 }

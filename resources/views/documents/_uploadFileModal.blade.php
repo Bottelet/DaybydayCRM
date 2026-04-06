@@ -4,7 +4,7 @@
             <span>@lang('Drop files here or click to upload')</span>
         </div>
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <input type="submit" class="btn btn-md btn-brand movedown" id="createTask" value="{{__('Upload')}}" style="margin:1em;">
+        <input type="submit" class="btn btn-md btn-brand movedown" value="{{__('Upload')}}" style="margin:1em;">
     </form>
 @endif
 

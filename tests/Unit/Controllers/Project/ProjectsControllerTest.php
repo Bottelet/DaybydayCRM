@@ -1,14 +1,15 @@
 <?php
+
 namespace Tests\Unit\Controllers\Project;
 
+use App\Models\Client;
 use App\Models\Project;
 use App\Models\Status;
-use Carbon\Carbon;
-use Tests\TestCase;
-use App\Models\Client;
 use App\Models\User;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class ProjectsControllerTest extends TestCase
 {
@@ -28,13 +29,13 @@ class ProjectsControllerTest extends TestCase
     public function can_create_project()
     {
         $response = $this->json('POST', route('projects.store'), [
-                'title' => 'Project test',
-                'description' => 'This is a description',
-                'status_id' => factory(Status::class)->create(['source_type' => Project::class])->id,
-                'user_assigned_id' => $this->user->id,
-                'user_created_id' => $this->user->id,
-                'client_external_id' => $this->client->external_id,
-                'deadline' => '2020-01-01',
+            'title' => 'Project test',
+            'description' => 'This is a description',
+            'status_id' => factory(Status::class)->create(['source_type' => Project::class])->id,
+            'user_assigned_id' => $this->user->id,
+            'user_created_id' => $this->user->id,
+            'client_external_id' => $this->client->external_id,
+            'deadline' => '2020-01-01',
         ]);
 
         $projects = Project::where('user_assigned_id', $this->user->id);
@@ -50,7 +51,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertNotEquals($project->user_assigned_id, $this->user->id);
 
         $response = $this->json('PATCH', route('project.update.assignee', $project->external_id), [
-            'user_assigned_id' => $this->user->id
+            'user_assigned_id' => $this->user->id,
         ]);
 
         $this->assertEquals($project->refresh()->user_assigned_id, $this->user->id);
@@ -65,12 +66,11 @@ class ProjectsControllerTest extends TestCase
         $this->assertNotEquals($project->status_id, $status->id);
 
         $response = $this->json('PATCH', route('project.update.status', $project->external_id), [
-            'status_id' => $status->id
+            'status_id' => $status->id,
         ]);
 
         $this->assertEquals($project->refresh()->status_id, $status->id);
     }
-
 
     /** @test */
     public function can_update_deadline_for_project()

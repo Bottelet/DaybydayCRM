@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCreditNotesTable extends Migration
 {
@@ -15,7 +15,7 @@ class CreateCreditNotesTable extends Migration
     public function up()
     {
         return;
-        Schema::create('credit_notes', function (Blueprint $table) {
+        Schema::create('credit_notes', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
 

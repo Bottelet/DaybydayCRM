@@ -1,7 +1,21 @@
 {
-    "/js/app.js": "/js/app.js?id=789fd8e2563422e03e1f",
-    "/css/app.css": "/css/app.css?id=91a842e73623166df2a6",
-    "/css/vendor.css": "/css/vendor.css?id=b811c6eeacb848b1e769",
-    "/js/manifest.js": "/js/manifest.js?id=41f053ba9a94d81b39f8",
-    "/js/vendor.js": "/js/vendor.js?id=b7379326af6cddee3b84"
+    "/js/app.js": "/js/app.js?id=9e8bf29d97801e06496b051ea9f54574",
+    "/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff?313f7dacf2076822059d2dca26dedfc6": "/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff?313f7dacf2076822059d2dca26dedfc6?id=0247c77d2c5a659d863e30457c5a68d4",
+    "/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf?4520188144a17fb24a6af28a70dae0ce": "/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf?4520188144a17fb24a6af28a70dae0ce?id=cb8a55720e2088a069d64899157b0dba",
+    "/js/jquery-init.js": "/js/jquery-init.js?id=2a6df18665855041c7ee77fee66ecd37",
+    "/js/manifest.js": "/js/manifest.js?id=4d0b5e0dc75d45ffac2582494d0a6c46",
+    "/css/app.css": "/css/app.css?id=3251c0ae568d34996bf5dda2a987f1c4",
+    "/css/vendor.css": "/css/vendor.css?id=3bc3eb90f6b18665ad52271c19f02d70",
+    "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.eot?5be1347c682810f199c7f486f40c5974": "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.eot?5be1347c682810f199c7f486f40c5974?id=77ff91d7fa0317186a8eff6c9da3920e",
+    "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff2?be810be3a3e14c682a257d6eff341fe4": "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff2?be810be3a3e14c682a257d6eff341fe4?id=349344e92fb16221dd5621c254fdc45e",
+    "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff?82b1212e45a2bc35dd731913b27ad813": "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.woff?82b1212e45a2bc35dd731913b27ad813?id=f04acf366f6a53177950af7acfad3952",
+    "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.ttf?4692b9ec53fd5972caa2f2372ae20d16": "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.ttf?4692b9ec53fd5972caa2f2372ae20d16?id=3abf0f95c0a69984006e3778b65e513f",
+    "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.svg?060b2710bdbbe3dfe48b58d59bd5f1fb": "/fonts/vendor/bootstrap-sass/bootstrap/glyphicons-halflings-regular.svg?060b2710bdbbe3dfe48b58d59bd5f1fb?id=89889688147bd7575d6327160d64e760",
+    "/js/vendor.js": "/js/vendor.js?id=ac741ab7a24ef1f79d7703d4046cdd2d",
+    "/fonts/bootstrap/glyphicons-halflings-regular.eot": "/fonts/bootstrap/glyphicons-halflings-regular.eot?id=77ff91d7fa0317186a8eff6c9da3920e",
+    "/fonts/bootstrap/glyphicons-halflings-regular.svg": "/fonts/bootstrap/glyphicons-halflings-regular.svg?id=89889688147bd7575d6327160d64e760",
+    "/fonts/bootstrap/glyphicons-halflings-regular.ttf": "/fonts/bootstrap/glyphicons-halflings-regular.ttf?id=3abf0f95c0a69984006e3778b65e513f",
+    "/fonts/bootstrap/glyphicons-halflings-regular.woff": "/fonts/bootstrap/glyphicons-halflings-regular.woff?id=f04acf366f6a53177950af7acfad3952",
+    "/fonts/bootstrap/glyphicons-halflings-regular.woff2": "/fonts/bootstrap/glyphicons-halflings-regular.woff2?id=349344e92fb16221dd5621c254fdc45e",
+    "/css/bootstrap-select.min.css": "/css/bootstrap-select.min.css?id=486d7426635cb3698ca5bd4c50e5a7f7"
 }

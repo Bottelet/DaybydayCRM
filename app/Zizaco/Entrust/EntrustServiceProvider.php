@@ -1,11 +1,12 @@
-<?php namespace App\Zizaco\Entrust;
+<?php
+
+namespace App\Zizaco\Entrust;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
 use Illuminate\Support\ServiceProvider;
@@ -26,7 +27,6 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
 
         // Register blade directives
         $this->bladeDirectives();
@@ -51,7 +51,7 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function bladeDirectives()
     {
-        if (!class_exists('\Blade')) {
+        if (! class_exists('\Blade')) {
             return;
         }
 
@@ -61,7 +61,7 @@ class EntrustServiceProvider extends ServiceProvider
         });
 
         \Blade::directive('endrole', function ($expression) {
-            return "<?php endif; // Entrust::hasRole ?>";
+            return '<?php endif; // Entrust::hasRole ?>';
         });
 
         // Call to Entrust::can
@@ -70,7 +70,7 @@ class EntrustServiceProvider extends ServiceProvider
         });
 
         \Blade::directive('endpermission', function ($expression) {
-            return "<?php endif; // Entrust::can ?>";
+            return '<?php endif; // Entrust::can ?>';
         });
 
         // Call to Entrust::ability
@@ -79,7 +79,7 @@ class EntrustServiceProvider extends ServiceProvider
         });
 
         \Blade::directive('endability', function ($expression) {
-            return "<?php endif; // Entrust::ability ?>";
+            return '<?php endif; // Entrust::ability ?>';
         });
     }
 
@@ -105,7 +105,7 @@ class EntrustServiceProvider extends ServiceProvider
     private function registerCommands()
     {
         $this->app->singleton('command.entrust.migration', function ($app) {
-            return new MigrationCommand();
+            return new MigrationCommand;
         });
     }
 
@@ -130,7 +130,7 @@ class EntrustServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'command.entrust.migration'
+            'command.entrust.migration',
         ];
     }
 }

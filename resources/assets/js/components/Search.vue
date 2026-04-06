@@ -62,7 +62,6 @@
                 axios.get('/search/' + this.searchQuery + '/' + this.searchType , {
                     searchQuery: self.searchQuery
                 }).then(function (response) {
-                    console.log(response.data.hits.hits)
                     self.results = response.data.hits.hits
                 });
             },

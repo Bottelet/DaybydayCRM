@@ -1,18 +1,19 @@
-<?php namespace App\Zizaco\Entrust\Traits;
+<?php
+
+namespace App\Zizaco\Entrust\Traits;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
@@ -42,6 +43,7 @@ trait EntrustUserTrait
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+
         return parent::save($options);
     }
 
@@ -54,6 +56,7 @@ trait EntrustUserTrait
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+
         return $result;
     }
 
@@ -66,6 +69,7 @@ trait EntrustUserTrait
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+
         return $result;
     }
 
@@ -91,7 +95,7 @@ trait EntrustUserTrait
         parent::boot();
 
         static::deleting(function ($user) {
-            if (!method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
+            if (! method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
 
@@ -102,9 +106,8 @@ trait EntrustUserTrait
     /**
      * Checks if the user has a role by its name.
      *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
-     *
+     * @param  string|array  $name  Role name or array of role names.
+     * @param  bool  $requireAll  All roles in the array are required.
      * @return bool
      */
     public function hasRole($name, $requireAll = false)
@@ -113,9 +116,9 @@ trait EntrustUserTrait
             foreach ($name as $roleName) {
                 $hasRole = $this->hasRole($roleName);
 
-                if ($hasRole && !$requireAll) {
+                if ($hasRole && ! $requireAll) {
                     return true;
-                } elseif (!$hasRole && $requireAll) {
+                } elseif (! $hasRole && $requireAll) {
                     return false;
                 }
             }
@@ -138,9 +141,8 @@ trait EntrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
-     *
+     * @param  string|array  $permission  Permission string or array of permissions.
+     * @param  bool  $requireAll  All permissions in the array are required.
      * @return bool
      */
     public function can($permission, $requireAll = false)
@@ -149,9 +151,9 @@ trait EntrustUserTrait
             foreach ($permission as $permName) {
                 $hasPerm = $this->can($permName);
 
-                if ($hasPerm && !$requireAll) {
+                if ($hasPerm && ! $requireAll) {
                     return true;
-                } elseif (!$hasPerm && $requireAll) {
+                } elseif (! $hasPerm && $requireAll) {
                     return false;
                 }
             }
@@ -177,39 +179,38 @@ trait EntrustUserTrait
     /**
      * Checks role(s) and permission(s).
      *
-     * @param string|array $roles       Array of roles or comma separated string
-     * @param string|array $permissions Array of permissions or comma separated string.
-     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
+     * @param  string|array  $roles  Array of roles or comma separated string
+     * @param  string|array  $permissions  Array of permissions or comma separated string.
+     * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
+     * @return array|bool
      *
      * @throws \InvalidArgumentException
-     *
-     * @return array|bool
      */
     public function ability($roles, $permissions, $options = [])
     {
         // Convert string to array if that's what is passed in.
-        if (!is_array($roles)) {
+        if (! is_array($roles)) {
             $roles = explode(',', $roles);
         }
-        if (!is_array($permissions)) {
+        if (! is_array($permissions)) {
             $permissions = explode(',', $permissions);
         }
 
         // Set up default values and validate options.
-        if (!isset($options['validate_all'])) {
+        if (! isset($options['validate_all'])) {
             $options['validate_all'] = false;
         } else {
             if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException;
             }
         }
-        if (!isset($options['return_type'])) {
+        if (! isset($options['return_type'])) {
             $options['return_type'] = 'boolean';
         } else {
             if ($options['return_type'] != 'boolean' &&
                 $options['return_type'] != 'array' &&
                 $options['return_type'] != 'both') {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException;
             }
         }
 
@@ -226,8 +227,8 @@ trait EntrustUserTrait
         // If validate all and there is a false in either
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) ||
-            (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
+        if (($options['validate_all'] && ! (in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) ||
+            (! $options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
             $validateAll = true;
         } else {
             $validateAll = false;
@@ -246,7 +247,7 @@ trait EntrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param mixed $role
+     * @param  mixed  $role
      */
     public function attachRole($role)
     {
@@ -264,7 +265,7 @@ trait EntrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
-     * @param mixed $role
+     * @param  mixed  $role
      */
     public function detachRole($role)
     {
@@ -282,7 +283,7 @@ trait EntrustUserTrait
     /**
      * Attach multiple roles to a user
      *
-     * @param mixed $roles
+     * @param  mixed  $roles
      */
     public function attachRoles($roles)
     {
@@ -294,11 +295,11 @@ trait EntrustUserTrait
     /**
      * Detach multiple roles from a user
      *
-     * @param mixed $roles
+     * @param  mixed  $roles
      */
-    public function detachRoles($roles=null)
+    public function detachRoles($roles = null)
     {
-        if (!$roles) {
+        if (! $roles) {
             $roles = $this->roles()->get();
         }
 
@@ -310,8 +311,8 @@ trait EntrustUserTrait
     /**
      *Filtering users according to their role
      *
-     *@param string $role
-     *@return users collection
+     * @param  string  $role
+     * @return users collection
      */
     public function scopeWithRole($query, $role)
     {
