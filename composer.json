@@ -17,7 +17,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "aws/aws-sdk-php": ">=3.376.3",
         "elasticsearch/elasticsearch": ">=9.3",
         "google/apiclient": ">=2.19.2",
