@@ -188,13 +188,14 @@ trait EntrustUserTrait
             return $requireAll;
         }
 
-        foreach ($this->cachedRoles() as $role) {
-            if (! is_object($role)) {
-                \Log::warning('EntrustUserTrait: Non-object found in can() for user ID '.$this->getKey().'. Value: '.print_r($role, true));
+        foreach (
+            $this->cachedRoles() as $role
+        ) {
+            if (! is_object($role) || ! method_exists($role, 'cachedPermissions')) {
+                \Log::warning('EntrustUserTrait: $role is not an object or missing cachedPermissions in can() for user ID '.$this->getKey().'. Value: '.print_r($role, true));
 
                 continue;
             }
-            if (method_exists($role, 'cachedPermissions')) {
             foreach ($role->cachedPermissions() as $perm) {
                 if (! is_object($perm) || ! property_exists($perm, 'name')) {
                     \Log::warning('EntrustUserTrait: $perm is not an object or missing name in can() for user ID '.$this->getKey().'. Value: '.print_r($perm, true));
