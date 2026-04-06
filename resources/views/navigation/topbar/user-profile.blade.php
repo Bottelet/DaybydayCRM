@@ -55,7 +55,7 @@
                     </li>
                     <li class="topbar-user__list">
                         <a href="{{url('/logout')}}" class="btn btn-outline-metal btn-hover-brand btn-upper btn-font-dark btn-sm btn-bold" style="margin-top: 15px;
-    margin-left: 20px;">{{ __('Sign Out') }}</a>
+    margin-left: 20px;">{{ __('Sign Out') }} (please make post request, please)</a>
                     </li>
                 </ul>
             </ul>
