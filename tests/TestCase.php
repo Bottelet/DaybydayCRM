@@ -3,21 +3,21 @@
 namespace Tests;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Artisan;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use DatabaseMigrations;
 
     protected $user;
 
     protected function setUp(): void
     {
-        // Run migrations before each test
-        Artisan::call('migrate:fresh');
+        parent::setUp();
 
-        // Ensure "Admin" user exists
+        // Ensure "Admin" user exists after migrations
         $this->user = User::firstOrCreate(
             ['name' => 'Admin'],
             [
@@ -25,8 +25,6 @@ abstract class TestCase extends BaseTestCase
                 'password' => bcrypt('admin123'),
             ]
         );
-
-        parent::setUp();
 
         $this->actingAs($this->user);
     }

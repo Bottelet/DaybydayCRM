@@ -27,9 +27,14 @@ trait EntrustUserTrait
     {
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
+        $roleModel = Config::get('entrust.role');
         if (Cache::getStore() instanceof TaggableStore) {
-            $roles = Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
-                return $this->roles()->get();
+            $rolesArray = Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+                return $this->roles()->get()->toArray();
+            });
+            // Re-hydrate as Eloquent models
+            $roles = collect($rolesArray)->map(function ($roleArr) use ($roleModel) {
+                return (new $roleModel)->newFromBuilder($roleArr);
             });
         } else {
             $roles = $this->roles()->get();
