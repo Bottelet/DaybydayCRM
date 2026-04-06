@@ -17,7 +17,7 @@ class LeadsDummyTableSeeder extends Seeder
     public function run()
     {
         factory(Lead::class, 20)->create()->each(function ($l) {
-            if (rand(0, 5) == 1) {
+            if (random_int(0, 5) == 1) {
                 factory(Comment::class, 3)->create([
                     'source_type' => Lead::class,
                     'source_id' => $l->id,

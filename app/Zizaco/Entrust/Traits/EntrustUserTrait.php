@@ -135,7 +135,9 @@ trait EntrustUserTrait
 
                 if ($hasRole && ! $requireAll) {
                     return true;
-                } elseif (! $hasRole && $requireAll) {
+                }
+
+                if (! $hasRole && $requireAll) {
                     return false;
                 }
             }
@@ -151,8 +153,7 @@ trait EntrustUserTrait
                 \Log::warning('EntrustUserTrait: Non-object found in hasRole for user ID '.$this->getKey().'. Value: '.print_r($role, true));
 
                 continue;
-            }
-            if ($role->name == $name) {
+            }if ($role->name == $name) {
                 return true;
             }
         }
@@ -186,8 +187,7 @@ trait EntrustUserTrait
             return $requireAll;
         }
 
-        foreach (
-            $this->cachedRoles() as $role
+        foreach ($this->cachedRoles() as $role
         ) {
             if (! is_object($role) || ! method_exists($role, 'cachedPermissions')) {
                 \Log::warning('EntrustUserTrait: $role is not an object or missing cachedPermissions in can() for user ID '.$this->getKey().'. Value: '.print_r($role, true));

@@ -15,7 +15,7 @@ class OffersStatusEnumTest extends TestCase
      */
     private $offerStatus;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->offerStatus = OfferStatus::won()->getStatus();

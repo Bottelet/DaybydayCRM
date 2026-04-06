@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-
+    backupGlobals="false"
     bootstrap="vendor/autoload.php"
     colors="true"
-
-
-
+    processIsolation="false"
+    stopOnFailure="true"
+    stopOnError="true"
     failOnRisky="true"
     failOnWarning="true"
     beStrictAboutTestsThatDoNotTestAnything="false"
-    >
+>
     <testsuites>
         <testsuite name="Unit">
             <directory>./tests/Unit</directory>
@@ -19,15 +19,6 @@
             <directory>./tests/Feature</directory>
         </testsuite>-->
     </testsuites>
-    <!-- <source>
-        <include>
-            <directory>app</directory>
-        </include>
-    </source> -->
-    <coverage />
-    <!-- <extensions>
-        <extension class="Tests\Bootstrap" />
-    </extensions> -->
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
