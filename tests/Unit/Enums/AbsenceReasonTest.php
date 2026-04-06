@@ -20,8 +20,8 @@ class AbsenceReasonTest extends TestCase
     public function absenceReasonContainsBothReasonAndDisplayValue()
     {
         $reason = AbsenceReason::fromStatus('vacation');
-        $this->assertObjectHasAttribute('reason', $reason);
-        $this->assertObjectHasAttribute('displayValue', $reason);
+        $this->assertEquals('vacation', $reason->getReason());
+        $this->assertEquals('Vacation', $reason->getDisplayValue());
     }
 
     /** @test */
@@ -39,7 +39,7 @@ class AbsenceReasonTest extends TestCase
     /** @test */
     public function getReasonFromDisplayValue()
     {
-        $this->assertEquals(AbsenceReason::fromDisplayValue('Vacation'), AbsenceReason::vacation()->getReason());
+        $this->assertEquals('vacation', AbsenceReason::fromDisplayValue('Vacation')->getReason());
     }
 
     /** @test */
