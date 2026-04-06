@@ -40,7 +40,7 @@ class ClientActionNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -75,7 +75,7 @@ class ClientActionNotification extends Notification
         }
 
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
+            'assigned_user' => $notifiable->id, // Assigned user ID
             'created_user' => auth()->user()->id,
             'message' => $text,
             'type' => Client::class,

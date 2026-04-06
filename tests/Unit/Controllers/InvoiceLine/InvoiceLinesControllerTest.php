@@ -17,7 +17,7 @@ class InvoiceLinesControllerTest extends TestCase
 
     private $invoiceLine;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->withoutMiddleware([VerifyCsrfToken::class]);
@@ -28,7 +28,7 @@ class InvoiceLinesControllerTest extends TestCase
     }
 
     /** @test **/
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 

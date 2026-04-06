@@ -13,7 +13,7 @@ class ClientActionTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function constructorStoresClientAndAction()
+    public function constructor_stores_client_and_action()
     {
         $client = factory(Client::class)->create();
         $action = 'created';
@@ -25,7 +25,7 @@ class ClientActionTest extends TestCase
     }
 
     /** @test */
-    public function getClientReturnsClientModel()
+    public function get_client_returns_client_model()
     {
         $client = factory(Client::class)->create();
         $event = new ClientAction($client, 'updated');
@@ -34,7 +34,7 @@ class ClientActionTest extends TestCase
     }
 
     /** @test */
-    public function getActionReturnsActionString()
+    public function get_action_returns_action_string()
     {
         $client = factory(Client::class)->create();
         $event = new ClientAction($client, 'deleted');
@@ -43,7 +43,7 @@ class ClientActionTest extends TestCase
     }
 
     /** @test */
-    public function broadcastOnReturnsPrivateChannel()
+    public function broadcast_on_returns_private_channel()
     {
         $client = factory(Client::class)->create();
         $event = new ClientAction($client, 'created');
@@ -53,7 +53,7 @@ class ClientActionTest extends TestCase
     }
 
     /** @test */
-    public function eventPreservesClientReferenceAfterConstruction()
+    public function event_preserves_client_reference_after_construction()
     {
         $client = factory(Client::class)->create();
         $event = new ClientAction($client, 'test');

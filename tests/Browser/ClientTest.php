@@ -15,7 +15,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test user can access customer thorugh index page.
      */
-    public function testUserCanSeeClientsOnClientIndexAndGoToTheCustomerWithLink()
+    public function test_user_can_see_clients_on_client_index_and_go_to_the_customer_with_link()
     {
         $client = factory(Client::class)->create();
 
@@ -40,7 +40,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct information on customer page
      */
-    public function testICanSeeAllCustomerValuesOnShowPage()
+    public function test_i_can_see_all_customer_values_on_show_page()
     {
         $client = factory(Client::class)->create();
         $this->browse(function (Browser $browser) use ($client) {
@@ -60,7 +60,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct relations for customer, and not the wrong ones
      */
-    public function testICanSeeTaskAndLeadsRelatedToCustomerAndNotThoseWhoAreNotRelated()
+    public function test_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
@@ -80,18 +80,18 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/'.$client->external_id);
-            //->clickddLink($task->title, 'a');
-            //->assertDontSee($task_2->title);
-            //->press('Leads')->element(".tablet")
-            //->assertSee($lead->title)
-            //->assertDontSee($lead_2->title);
+            // ->clickddLink($task->title, 'a');
+            // ->assertDontSee($task_2->title);
+            // ->press('Leads')->element(".tablet")
+            // ->assertSee($lead->title)
+            // ->assertDontSee($lead_2->title);
         });
     }
 
     /**
      * Test i can assign a new user to client, and see the correct user info after new user is assigned
      */
-    public function testICanAssignANewUserToCustomer()
+    public function test_i_can_assign_a_new_user_to_customer()
     {
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
@@ -111,7 +111,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can create a new customer
      */
-    public function testICanCreateANewCustomer()
+    public function test_i_can_create_a_new_customer()
     {
         $faker = Faker::create();
         $this->browse(function (Browser $browser) use ($faker) {
@@ -136,7 +136,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test creating a new customer will fail if all values are not given
      */
-    public function testICantCreateANewCustomerWithoutNameCompanyAndEmail()
+    public function test_i_cant_create_a_new_customer_without_name_company_and_email()
     {
         $faker = Faker::create();
         $this->browse(function (Browser $browser) use ($faker) {
@@ -157,7 +157,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct information on customer page
      */
-    public function testICanUpdateAnExistingClient()
+    public function test_i_can_update_an_existing_client()
     {
         $faker = Faker::create();
         $client = factory(Client::class)->create();
@@ -188,11 +188,11 @@ class ClientTest extends DuskTestCase
                 ->press('Update client');
         });
 
-        //Had to split this in to two functions as i had to use element to locate the submit button.
-        //And can't chain it from submit. got error  Element is not clickable at point (966, 852)
+        // Had to split this in to two functions as i had to use element to locate the submit button.
+        // And can't chain it from submit. got error  Element is not clickable at point (966, 852)
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                //Assert new data is in use
+                // Assert new data is in use
                 ->visit('/clients/'.$client->external_id)
                 ->assertSee($email)
                 ->assertSee($address)

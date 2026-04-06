@@ -14,6 +14,8 @@ use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
 use Datatables;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
@@ -320,7 +322,7 @@ class UsersController extends Controller
         try {
             $user->delete();
             Session()->flash('flash_message', __('User successfully deleted'));
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             Session()->flash('flash_message_warning', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
         }
 
@@ -336,7 +338,7 @@ class UsersController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     private function allRoles()
     {

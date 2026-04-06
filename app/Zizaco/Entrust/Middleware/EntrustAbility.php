@@ -11,6 +11,7 @@ namespace App\Zizaco\Entrust\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
 
 class EntrustAbility
 {
@@ -29,7 +30,7 @@ class EntrustAbility
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  bool  $validateAll
      * @return mixed
      */

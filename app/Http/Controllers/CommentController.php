@@ -39,7 +39,7 @@ class CommentController extends Controller
             ]
         );
 
-        Session::flash('flash_message', __('Comment successfully added')); //Snippet in Master.blade.php
+        Session::flash('flash_message', __('Comment successfully added')); // Snippet in Master.blade.php
 
         return redirect()->back();
     }

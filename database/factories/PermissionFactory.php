@@ -1,9 +1,10 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
 use App\Models\Permission;
 use Faker\Factory as FakerFactory;
+use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Permission::class, static function () {
     $faker = FakerFactory::create();

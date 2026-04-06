@@ -12,7 +12,7 @@ class CanUpdateInvoiceTest extends TestCase
 
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -21,13 +21,13 @@ class CanUpdateInvoiceTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertTrue($this->invoice->canUpdateInvoice());
     }
 
     /** @test */
-    public function cantUpdateInvoiceIfItsSent()
+    public function cant_update_invoice_if_its_sent()
     {
         $this->invoice->sent_at = today();
         $this->invoice->save();

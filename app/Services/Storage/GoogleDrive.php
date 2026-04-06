@@ -49,7 +49,7 @@ class GoogleDrive implements FilesystemIntegration
                 ]
             );
             $rootFolder = $this->driveService->files->create($rootFolderBluePrint, [
-                //'data' => $content,
+                // 'data' => $content,
                 'mimeType' => 'image/jpeg',
                 'uploadType' => 'multipart',
                 'fields' => 'id']);

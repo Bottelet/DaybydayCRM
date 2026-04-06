@@ -13,7 +13,7 @@ class NewCommentTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function constructorStoresComment()
+    public function constructor_stores_comment()
     {
         $comment = factory(Comment::class)->create();
 
@@ -23,7 +23,7 @@ class NewCommentTest extends TestCase
     }
 
     /** @test */
-    public function commentPropertyIsPublic()
+    public function comment_property_is_public()
     {
         $comment = factory(Comment::class)->create();
         $event = new NewComment($comment);
@@ -32,7 +32,7 @@ class NewCommentTest extends TestCase
     }
 
     /** @test */
-    public function eventPreservesCommentDescription()
+    public function event_preserves_comment_description()
     {
         $comment = factory(Comment::class)->create(['description' => 'Test comment text']);
         $event = new NewComment($comment);
@@ -41,7 +41,7 @@ class NewCommentTest extends TestCase
     }
 
     /** @test */
-    public function eventCanBeDispatched()
+    public function event_can_be_dispatched()
     {
         Event::fake();
         $comment = factory(Comment::class)->create();

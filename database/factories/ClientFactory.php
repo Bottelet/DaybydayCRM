@@ -1,9 +1,12 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
 use App\Models\Client;
+use App\Models\Contact;
+use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Client::class, static function (Faker $faker) {
     return [
@@ -14,12 +17,12 @@ $factory->define(Client::class, static function (Faker $faker) {
         'city' => $faker->city(),
         'zipcode' => $faker->postcode(),
         'industry_id' => $faker->numberBetween($min = 1, $max = 25),
-        'user_id' => factory(App\Models\User::class),
+        'user_id' => factory(User::class),
         'company_type' => 'ApS',
     ];
 });
 $factory->afterCreating(Client::class, static function ($client, $faker) {
-    factory(\App\Models\Contact::class)->create(
+    factory(Contact::class)->create(
         [
             'client_id' => $client->id,
         ]

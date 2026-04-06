@@ -14,7 +14,7 @@ class DueAtTest extends TestCase
 
     protected $secondInvoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -28,7 +28,7 @@ class DueAtTest extends TestCase
     }
 
     /** @test */
-    public function ensureWeGetInvoicePastDueAt()
+    public function ensure_we_get_invoice_past_due_at()
     {
         $invoices = Invoice::pastDueAt()->get();
 
@@ -37,7 +37,7 @@ class DueAtTest extends TestCase
     }
 
     /** @test */
-    public function ensureWeDontGetInvoiceIfDueAtIsNull()
+    public function ensure_we_dont_get_invoice_if_due_at_is_null()
     {
         $this->secondInvoice->due_at = null;
         $this->secondInvoice->save();
@@ -47,7 +47,7 @@ class DueAtTest extends TestCase
     }
 
     /** @test */
-    public function ensureWeDontGetInvoiceIfStatusIsPaid()
+    public function ensure_we_dont_get_invoice_if_status_is_paid()
     {
         $invoices = Invoice::pastDueAt()->get();
         $this->assertCount(1, $invoices);

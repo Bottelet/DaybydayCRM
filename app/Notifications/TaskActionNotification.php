@@ -40,7 +40,7 @@ class TaskActionNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -94,7 +94,7 @@ class TaskActionNotification extends Notification
         }
 
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
+            'assigned_user' => $notifiable->id, // Assigned user ID
             'created_user' => $this->task->creator->id,
             'message' => $text,
             'type' => Task::class,

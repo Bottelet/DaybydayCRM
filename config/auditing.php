@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 /*
  * This file is part of laravel-auditing.
  *
@@ -22,7 +24,7 @@ return [
     |
     */
 
-    'model' => App\Models\User::class,
+    'model' => User::class,
 
     /*
     |--------------------------------------------------------------------------

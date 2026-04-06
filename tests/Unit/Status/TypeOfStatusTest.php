@@ -15,7 +15,7 @@ class TypeOfStatusTest extends TestCase
 
     private $task;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         factory(Status::class)->create([
@@ -34,7 +34,7 @@ class TypeOfStatusTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertNotNull(Status::typeOfTask()->get()->where('title', 'Hello'));
         $this->assertNotNull(Status::typeOfLead()->get()->where('title', 'Hello'));

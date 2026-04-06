@@ -13,7 +13,7 @@ class TaskActionTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function constructorStoresTaskAndAction()
+    public function constructor_stores_task_and_action()
     {
         $task = factory(Task::class)->create();
         $action = 'created';
@@ -25,7 +25,7 @@ class TaskActionTest extends TestCase
     }
 
     /** @test */
-    public function getTaskReturnsTaskModel()
+    public function get_task_returns_task_model()
     {
         $task = factory(Task::class)->create();
         $event = new TaskAction($task, 'updated');
@@ -34,7 +34,7 @@ class TaskActionTest extends TestCase
     }
 
     /** @test */
-    public function getActionReturnsActionString()
+    public function get_action_returns_action_string()
     {
         $task = factory(Task::class)->create();
         $event = new TaskAction($task, 'deleted');
@@ -43,7 +43,7 @@ class TaskActionTest extends TestCase
     }
 
     /** @test */
-    public function broadcastOnReturnsPrivateChannel()
+    public function broadcast_on_returns_private_channel()
     {
         $task = factory(Task::class)->create();
         $event = new TaskAction($task, 'created');
@@ -53,7 +53,7 @@ class TaskActionTest extends TestCase
     }
 
     /** @test */
-    public function eventPreservesTaskReferenceAfterConstruction()
+    public function event_preserves_task_reference_after_construction()
     {
         $task = factory(Task::class)->create();
         $event = new TaskAction($task, 'test');

@@ -2,6 +2,8 @@
 
 namespace App\Zizaco\Entrust;
 
+use Illuminate\Foundation\Application;
+
 /**
  * This class is the main entry point of entrust. Usually the interaction
  * with this class will be done through the Entrust Facade
@@ -13,14 +15,14 @@ class Entrust
     /**
      * Laravel application
      *
-     * @var \Illuminate\Foundation\Application
+     * @var Application
      */
     public $app;
 
     /**
      * Create a new confide instance.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return void
      */
     public function __construct($app)

@@ -18,7 +18,7 @@ class AppointmentsControllerTest extends TestCase
 
     protected $appointmentsWithToEarly;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = factory(User::class)->create();

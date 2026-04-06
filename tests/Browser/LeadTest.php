@@ -14,7 +14,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test user can access lead thorugh index page.
      */
-    public function testUserCanSeeLeadsOnLeadIndexAndGoToTheLeadWithLink()
+    public function test_user_can_see_leads_on_lead_index_and_go_to_the_lead_with_link()
     {
         $client = factory(Client::class)->create();
         $lead = factory(Lead::class)->create([
@@ -35,7 +35,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test user can access lead thorugh index page.
      */
-    public function testICanSeeAllTheCorrectInformationOnLeadInfoPage()
+    public function test_i_can_see_all_the_correct_information_on_lead_info_page()
     {
         $client = factory(Client::class)->create();
         $lead = factory(Lead::class)->create([
@@ -56,7 +56,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can assign a new user to the lead, and see the correct user info after new user is assigned
      */
-    public function testICanAssignANewUserToLead()
+    public function test_i_can_assign_a_new_user_to_lead()
     {
         $client = factory(Client::class)->create();
         $lead = factory(Lead::class)->create([
@@ -78,7 +78,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can close a open lead
      */
-    public function testICanChangeLeadStatus()
+    public function test_i_can_change_lead_status()
     {
         $client = factory(Client::class)->create();
         $lead = factory(Lead::class)->create([
@@ -98,7 +98,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can comment on a lead
      */
-    public function testICanAddANewCommentOnALead()
+    public function test_i_can_add_a_new_comment_on_a_lead()
     {
         $client = factory(Client::class)->create();
         $lead = factory(Lead::class)->create([
@@ -119,7 +119,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function testICanCreateANewLead()
+    public function test_i_can_create_a_new_lead()
     {
         $client = factory(Client::class)->create();
         $contact = $client->primary_contact;
@@ -142,7 +142,7 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function testICanGoToCreateNewClientInDropdownIfNoClientsExistsFromLead()
+    public function test_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_lead()
     {
         Client::query()->forceDelete();
 

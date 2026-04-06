@@ -9,6 +9,7 @@ namespace App\Zizaco\Entrust\Traits;
  * @license MIT
  */
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustPermissionTrait
@@ -16,7 +17,7 @@ trait EntrustPermissionTrait
     /**
      * Many-to-Many relations with role model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles()
     {

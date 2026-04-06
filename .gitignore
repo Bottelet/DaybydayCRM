@@ -25,6 +25,7 @@ Thumbs.db
 .env
 .env.backup
 .env.production
+.env.testing
 Homestead.yaml
 Homestead.json
 /auth.json
@@ -34,7 +35,6 @@ public/build/
 public/hot/
 public/storage/
 storage/pail/
-storage/debugbar/
 mix-manifest.json
 
 # === Cache & Logs ===

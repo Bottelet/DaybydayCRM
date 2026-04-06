@@ -12,6 +12,7 @@ use App\Models\InvoiceLine;
 use App\Models\Offer;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DemoTableSeeder extends Seeder
 {

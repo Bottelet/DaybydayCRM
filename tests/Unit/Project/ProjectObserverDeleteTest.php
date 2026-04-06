@@ -14,7 +14,7 @@ class ProjectObserverDeleteTest extends TestCase
 
     protected $project;
 
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $this->project = factory(Project::class)->create();
@@ -35,7 +35,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteProjectsSoftDeletes()
+    public function delete_projects_soft_deletes()
     {
         $this->assertNull($this->project->documents()->first()->deleted_at);
         $this->project->delete();
@@ -44,7 +44,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteProjectSoftDeletesRelations()
+    public function delete_project_soft_deletes_relations()
     {
         $this->assertNotEmpty($this->project->comments);
         $this->assertNotEmpty($this->project->activity);
@@ -64,7 +64,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function forceDeleteRemovesProjectFromDatabase()
+    public function force_delete_removes_project_from_database()
     {
         $projectId = $this->project->id;
 
@@ -77,7 +77,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function forceDeleteRemovesRelationsFromDatabase()
+    public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->project->comments->first()->id;
         $documentId = $this->project->documents->first()->id;
@@ -98,7 +98,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function invoiceIsNotDeletedByObserver()
+    public function invoice_is_not_deleted_by_observer()
     {
         $invoice = factory(Invoice::class)->create([
             'status' => 'Test',

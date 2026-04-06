@@ -13,7 +13,7 @@ class LeadActionTest extends TestCase
     use DatabaseTransactions;
 
     /** @test */
-    public function constructorStoresLeadAndAction()
+    public function constructor_stores_lead_and_action()
     {
         $lead = factory(Lead::class)->create();
         $action = 'created';
@@ -25,7 +25,7 @@ class LeadActionTest extends TestCase
     }
 
     /** @test */
-    public function getLeadReturnsLeadModel()
+    public function get_lead_returns_lead_model()
     {
         $lead = factory(Lead::class)->create();
         $event = new LeadAction($lead, 'updated');
@@ -34,7 +34,7 @@ class LeadActionTest extends TestCase
     }
 
     /** @test */
-    public function getActionReturnsActionString()
+    public function get_action_returns_action_string()
     {
         $lead = factory(Lead::class)->create();
         $event = new LeadAction($lead, 'deleted');
@@ -43,7 +43,7 @@ class LeadActionTest extends TestCase
     }
 
     /** @test */
-    public function broadcastOnReturnsPrivateChannel()
+    public function broadcast_on_returns_private_channel()
     {
         $lead = factory(Lead::class)->create();
         $event = new LeadAction($lead, 'created');
@@ -53,7 +53,7 @@ class LeadActionTest extends TestCase
     }
 
     /** @test */
-    public function eventPreservesLeadReferenceAfterConstruction()
+    public function event_preserves_lead_reference_after_construction()
     {
         $lead = factory(Lead::class)->create();
         $event = new LeadAction($lead, 'test');

@@ -11,7 +11,7 @@ use Tests\DuskTestCase;
 
 class ProjectTest extends DuskTestCase
 {
-    public function testUserCanSeeTasksOnProjectIndexAndGoToTheProjectWithLink()
+    public function test_user_can_see_tasks_on_project_index_and_go_to_the_project_with_link()
     {
         $project = factory(Project::class)->create([
             'status_id' => Status::typeOfProject()->where('title', 'open')->first()->id,
@@ -28,7 +28,7 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-    public function testICanCreateANewLead()
+    public function test_i_can_create_a_new_lead()
     {
         $client = factory(Client::class)->create();
         $contact = $client->primary_contact;
@@ -49,7 +49,7 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-    public function testCanCreateNewTaskFromProject()
+    public function test_can_create_new_task_from_project()
     {
         $project = factory(Project::class)->create();
 
@@ -65,7 +65,7 @@ class ProjectTest extends DuskTestCase
     /**
      * Test i can comment on a project
      */
-    public function testICanAddANewCommentOnAProject()
+    public function test_i_can_add_a_new_comment_on_a_project()
     {
         $project = factory(Project::class)->create();
         $this->browse(function (Browser $browser) use ($project) {
@@ -82,7 +82,7 @@ class ProjectTest extends DuskTestCase
     /**
      * Test i can close a open project
      */
-    public function testICanChangeStatusOnAOpenProject()
+    public function test_i_can_change_status_on_a_open_project()
     {
         $project = factory(Project::class)->create();
         $this->browse(function (Browser $browser) use ($project) {
@@ -95,7 +95,7 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-    public function testICanAssignANewUserToProject()
+    public function test_i_can_assign_a_new_user_to_project()
     {
         $project = factory(Project::class)->create();
         $user = factory(User::class)->create();
@@ -113,7 +113,7 @@ class ProjectTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function testICanGoToCreateNewClientInDropdownIfNoClientsExistsFromProject()
+    public function test_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_project()
     {
         Client::query()->forceDelete();
 

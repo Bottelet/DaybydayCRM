@@ -4,6 +4,7 @@ namespace App\Repositories\Role;
 
 use App\Models\Permission;
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class RoleRepository
@@ -19,7 +20,7 @@ class RoleRepository implements RoleRepositoryContract
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function allPermissions()
     {
@@ -27,11 +28,11 @@ class RoleRepository implements RoleRepositoryContract
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function allRoles()
     {
-        //Get rid of owner as the should only be one.
+        // Get rid of owner as the should only be one.
         return Role::all('display_name', 'id', 'name', 'external_id')->filter(function ($value, $key) {
             return $value->name != 'owner';
         });

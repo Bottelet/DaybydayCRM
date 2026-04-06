@@ -18,6 +18,7 @@ use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
 use Datatables;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
 
 class InvoicesController extends Controller
@@ -29,7 +30,7 @@ class InvoicesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -39,7 +40,7 @@ class InvoicesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Invoice $invoice)
     {

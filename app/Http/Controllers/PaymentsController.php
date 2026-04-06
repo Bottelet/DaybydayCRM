@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Services\Invoice\GenerateInvoiceStatus;
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
 
 class PaymentsController extends Controller
@@ -15,7 +16,7 @@ class PaymentsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -25,7 +26,7 @@ class PaymentsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      *
      * @throws \Exception
      */

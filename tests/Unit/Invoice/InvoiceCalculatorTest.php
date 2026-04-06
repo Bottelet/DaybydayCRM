@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Services\Invoice\InvoiceCalculator;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -20,11 +21,11 @@ class InvoiceCalculatorTest extends TestCase
     private $invoiceLine;
 
     /**
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Application
      */
     private $invoiceCalculator;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -46,7 +47,7 @@ class InvoiceCalculatorTest extends TestCase
     }
 
     /** @test */
-    public function getAmountDue()
+    public function get_amount_due()
     {
         $this->assertEquals(4000, $this->invoiceCalculator->getAmountDue()->getAmount());
     }
