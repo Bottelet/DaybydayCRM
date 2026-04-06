@@ -5,6 +5,7 @@ namespace Tests\Unit\Events;
 use App\Events\NewComment;
 use App\Models\Comment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class NewCommentTest extends TestCase
@@ -42,9 +43,11 @@ class NewCommentTest extends TestCase
     /** @test */
     public function eventCanBeDispatched()
     {
+        Event::fake();
         $comment = factory(Comment::class)->create();
-        $this->expectsEvents(NewComment::class);
 
         NewComment::dispatch($comment);
+
+        Event::assertDispatched(NewComment::class);
     }
 }
