@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'no_reply_mail' => 'noreply@exmaple.com',
+    'no_reply_mail' => 'noreply@example.com',
 
     /*
     |--------------------------------------------------------------------------
