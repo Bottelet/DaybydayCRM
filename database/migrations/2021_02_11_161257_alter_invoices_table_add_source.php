@@ -32,7 +32,7 @@ class AlterInvoicesTableAddSource extends Migration
             $table->dropForeign('tasks_invoice_id_foreign');
             $table->dropColumn('invoice_id');
         });
-        Schema::table('invoice_lines', static function (Blueprint $table) {
+        Schema::table('invoice_lines', function (Blueprint $table) {
             $table->integer('offer_id')->unsigned()->nullable()->after('price');
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade');
 
@@ -41,7 +41,7 @@ class AlterInvoicesTableAddSource extends Migration
             $table->dropColumn('invoice_id');
         });
 
-        Schema::table('invoice_lines', static function (Blueprint $table) {
+        Schema::table('invoice_lines', function (Blueprint $table) {
             $table->integer('invoice_id')->unsigned()->nullable()->after('price');
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             foreach ($this->invoiceLines as $invoiceLine) {
