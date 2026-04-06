@@ -5,6 +5,7 @@ namespace Tests\Unit\Client;
 use App\Models\Client;
 use App\Models\User;
 use App\Services\ClientNumber\ClientNumberService;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -15,11 +16,11 @@ class ClientNumberServiceTest extends TestCase
     protected $client;
 
     /**
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Application
      */
     private $clientNumberService;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -35,21 +36,21 @@ class ClientNumberServiceTest extends TestCase
     }
 
     /** @test */
-    public function setNextClientNumberTakesBiggestClientNumberAndAddOne()
+    public function set_next_client_number_takes_biggest_client_number_and_add_one()
     {
         $this->assertEquals(980200, $this->clientNumberService->setNextClientNumber());
         $this->assertEquals(980201, $this->clientNumberService->setNextClientNumber());
     }
 
     /** @test */
-    public function nextClientNumberTakesBiggestClientNumberAndDoesNotSetIt()
+    public function next_client_number_takes_biggest_client_number_and_does_not_set_it()
     {
         $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
         $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
     }
 
     /** @test */
-    public function manuallySetNextClientNumber()
+    public function manually_set_next_client_number()
     {
         $this->clientNumberService->setClientNumber(20000);
         $this->assertEquals(20000, $this->clientNumberService->nextClientNumber());

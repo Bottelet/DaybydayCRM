@@ -10,6 +10,7 @@ namespace App\Zizaco\Entrust\Traits;
  */
 
 use Illuminate\Cache\TaggableStore;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -39,7 +40,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function save(array $options = [])
-    {   //both inserts and updates
+    {   // both inserts and updates
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
@@ -51,7 +52,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function delete(array $options = [])
-    {   //soft or hard
+    {   // soft or hard
         $result = parent::delete($options);
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
@@ -64,7 +65,7 @@ trait EntrustUserTrait
      * {@inheritDoc}
      */
     public function restore()
-    {   //soft delete undo's
+    {   // soft delete undo's
         $result = parent::restore();
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
@@ -76,7 +77,7 @@ trait EntrustUserTrait
     /**
      * Many-to-Many relations with Role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles()
     {
@@ -184,7 +185,7 @@ trait EntrustUserTrait
      * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      * @return array|bool
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function ability($roles, $permissions, $options = [])
     {
