@@ -5,7 +5,6 @@ namespace Tests;
 use App\Models\User;
 use Faker\Factory;
 use Faker\Generator;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Str;
@@ -13,7 +12,6 @@ use Illuminate\Support\Str;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    use DatabaseMigrations;
 
     protected $user;
 
