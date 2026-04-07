@@ -4,6 +4,7 @@ namespace Tests\Unit\Task;
 
 use App\Models\Task;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskObserverDeleteTest extends TestCase
@@ -37,7 +38,7 @@ class TaskObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function delete_tasks_soft_deletes()
     {
         $this->assertNull($this->task->documents()->first()->deleted_at);
@@ -46,7 +47,7 @@ class TaskObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->task->documents()->withTrashed()->first());
     }
 
-    /** @test */
+    #[Test]
     public function delete_task_soft_deletes_relations()
     {
         $this->assertNotEmpty($this->task->comments);
@@ -69,7 +70,7 @@ class TaskObserverDeleteTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_task_from_database()
     {
         $taskId = $this->task->id;
@@ -82,7 +83,7 @@ class TaskObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->task->comments->first()->id;

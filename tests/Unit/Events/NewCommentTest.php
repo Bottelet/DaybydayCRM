@@ -6,13 +6,14 @@ use App\Events\NewComment;
 use App\Models\Comment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class NewCommentTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function constructor_stores_comment()
     {
         $comment = factory(Comment::class)->create();
@@ -22,7 +23,7 @@ class NewCommentTest extends TestCase
         $this->assertEquals($comment->id, $event->comment->id);
     }
 
-    /** @test */
+    #[Test]
     public function comment_property_is_public()
     {
         $comment = factory(Comment::class)->create();
@@ -31,7 +32,7 @@ class NewCommentTest extends TestCase
         $this->assertInstanceOf(Comment::class, $event->comment);
     }
 
-    /** @test */
+    #[Test]
     public function event_preserves_comment_description()
     {
         $comment = factory(Comment::class)->create(['description' => 'Test comment text']);
@@ -40,7 +41,7 @@ class NewCommentTest extends TestCase
         $this->assertEquals('Test comment text', $event->comment->description);
     }
 
-    /** @test */
+    #[Test]
     public function event_can_be_dispatched()
     {
         Event::fake();
@@ -51,21 +52,21 @@ class NewCommentTest extends TestCase
         Event::assertDispatched(NewComment::class);
     }
 
-    /** @test */
+    #[Test]
     public function event_uses_dispatchable_trait()
     {
         $traits = class_uses(NewComment::class);
         $this->assertContains('Illuminate\Foundation\Events\Dispatchable', $traits);
     }
 
-    /** @test */
+    #[Test]
     public function event_uses_serializes_models_trait()
     {
         $traits = class_uses(NewComment::class);
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    /** @test */
+    #[Test]
     public function dispatched_event_carries_correct_comment()
     {
         Event::fake();

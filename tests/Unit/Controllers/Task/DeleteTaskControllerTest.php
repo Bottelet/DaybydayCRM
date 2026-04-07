@@ -5,6 +5,7 @@ namespace Tests\Unit\Controllers\Task;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DeleteTaskControllerTest extends TestCase
@@ -22,7 +23,7 @@ class DeleteTaskControllerTest extends TestCase
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    /** @test */
+    #[Test]
     public function delete_task()
     {
         $this->json('DELETE', route('tasks.destroy', $this->task->external_id));

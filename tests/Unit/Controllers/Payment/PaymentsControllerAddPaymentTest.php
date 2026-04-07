@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PaymentsControllerAddPaymentTest extends TestCase
@@ -32,7 +33,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         ]);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_payment()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
@@ -47,7 +48,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(302);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_payment_with_decimals_dot_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
@@ -62,7 +63,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(302);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_payment_with_decimals_comma_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
@@ -77,7 +78,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(302);
     }
 
-    /** @test **/
+    #[Test]
     public function adding_payment_updates_invoice_status()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
@@ -91,7 +92,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $this->assertEquals('paid', $this->invoice->refresh()->status);
     }
 
-    /** @test **/
+    #[Test]
     public function adding_wrong_amount_parameter_return_error()
     {
         $this->actingAs($this->user)->get('/client/create');
@@ -106,7 +107,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test **/
+    #[Test]
     public function adding_wrong_source_parameter_return_error()
     {
         $this->actingAs($this->user)->get('/client/create');
@@ -121,7 +122,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test **/
+    #[Test]
     public function adding_invalid_payment_date_parameter_return_error()
     {
         $this->actingAs($this->user)->get('/client/create');
@@ -136,7 +137,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_payment_with_minus_amount()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
@@ -150,7 +151,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_negative_payment_with_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
@@ -172,7 +173,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
         $response->assertStatus(302);
     }
 
-    /** @test **/
+    #[Test]
     public function cant_add_payment_where_amount_is_0()
     {
         $this->actingAs($this->user)->get('/client/create');

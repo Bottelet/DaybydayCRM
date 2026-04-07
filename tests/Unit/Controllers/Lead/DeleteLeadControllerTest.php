@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DeleteLeadControllerTest extends TestCase
@@ -31,7 +32,7 @@ class DeleteLeadControllerTest extends TestCase
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    /** @test */
+    #[Test]
     public function delete_lead()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
@@ -40,7 +41,7 @@ class DeleteLeadControllerTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function delete_offers_if_flag_given()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
@@ -51,7 +52,7 @@ class DeleteLeadControllerTest extends TestCase
         $this->assertSoftDeleted('offers', ['id' => $this->offer->id]);
     }
 
-    /** @test */
+    #[Test]
     public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
@@ -63,7 +64,7 @@ class DeleteLeadControllerTest extends TestCase
         $this->assertNull(Offer::find($this->offer->source_id));
     }
 
-    /** @test */
+    #[Test]
     public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
         $this->lead->offers()->forceDelete();

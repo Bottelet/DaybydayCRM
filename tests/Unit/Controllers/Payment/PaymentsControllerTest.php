@@ -8,6 +8,7 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PaymentsControllerTest extends TestCase
@@ -38,7 +39,7 @@ class PaymentsControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_delete_payment()
     {
         $this->json('delete', route('payment.destroy', $this->payment->external_id));
@@ -47,7 +48,7 @@ class PaymentsControllerTest extends TestCase
         $this->assertNotNull(Payment::withTrashed()->find($this->payment->id));
     }
 
-    /** @test */
+    #[Test]
     public function cant_delete_payment_if_no_permission()
     {
         $this->actingAs(factory(User::class)->create());
@@ -60,7 +61,7 @@ class PaymentsControllerTest extends TestCase
         $this->assertNotNull(Payment::find($payment->id));
     }
 
-    /** @test */
+    #[Test]
     public function cant_create_payment_if_no_permission()
     {
         $this->actingAs(factory(User::class)->create());

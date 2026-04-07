@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Project;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProjectObserverDeleteTest extends TestCase
@@ -34,7 +35,7 @@ class ProjectObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function delete_projects_soft_deletes()
     {
         $this->assertNull($this->project->documents()->first()->deleted_at);
@@ -43,7 +44,7 @@ class ProjectObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
     }
 
-    /** @test */
+    #[Test]
     public function delete_project_soft_deletes_relations()
     {
         $this->assertNotEmpty($this->project->comments);
@@ -63,7 +64,7 @@ class ProjectObserverDeleteTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_project_from_database()
     {
         $projectId = $this->project->id;
@@ -76,7 +77,7 @@ class ProjectObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->project->comments->first()->id;
@@ -97,7 +98,7 @@ class ProjectObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function invoice_is_not_deleted_by_observer()
     {
         $invoice = factory(Invoice::class)->create([

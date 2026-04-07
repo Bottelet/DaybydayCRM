@@ -4,6 +4,7 @@ namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CanUpdateInvoiceTest extends TestCase
@@ -20,13 +21,13 @@ class CanUpdateInvoiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertTrue($this->invoice->canUpdateInvoice());
     }
 
-    /** @test */
+    #[Test]
     public function cant_update_invoice_if_its_sent()
     {
         $this->invoice->sent_at = today();

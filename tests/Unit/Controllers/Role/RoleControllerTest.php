@@ -5,13 +5,14 @@ namespace Tests\Unit\Controllers\Role;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RoleControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function unprivileged_user_cannot_change_roles()
     {
         $this->withoutMiddleware();
@@ -28,7 +29,7 @@ class RoleControllerTest extends TestCase
             ->assertRedirect();
     }
 
-    /** @test */
+    #[Test]
     public function unprivileged_user_cannot_access_roles()
     {
         /** @var User $user */

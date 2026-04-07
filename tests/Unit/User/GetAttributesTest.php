@@ -5,6 +5,7 @@ namespace Tests\Unit\User;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetAttributesTest extends TestCase
@@ -25,26 +26,26 @@ class GetAttributesTest extends TestCase
         $this->user->department()->sync([$department->id]);
     }
 
-    /** @test */
+    #[Test]
     public function get_name_and_department()
     {
         $this->assertEquals('Eye of the (Tiger)', $this->user->name_and_department);
     }
 
-    /** @test */
+    #[Test]
     public function get_name_and_department_with_eager_loading()
     {
         $userWithEasgerLoading = User::whereName($this->user->name)->with('department')->first();
         $this->assertEquals('Eye of the (Tiger)', $userWithEasgerLoading->name_and_department_eager_loading);
     }
 
-    /** @test */
+    #[Test]
     public function get_default_avatar_when_none_is_set()
     {
         $this->assertEquals('/images/default_avatar.jpg', $this->user->avatar);
     }
 
-    /** @test */
+    #[Test]
     public function get_path_when_image_is_set()
     {
         // Default is S3, but same logic for local driver

@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AppointmentsControllerTest extends TestCase
@@ -49,7 +50,7 @@ class AppointmentsControllerTest extends TestCase
         ]);
     }
 
-    /** @test * */
+    #[Test]
     public function can_get_appointments_within_time_slot()
     {
         $correctAppointment = null;

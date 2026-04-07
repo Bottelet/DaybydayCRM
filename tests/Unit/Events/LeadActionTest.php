@@ -6,13 +6,14 @@ use App\Events\LeadAction;
 use App\Models\Lead;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LeadActionTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function constructor_stores_lead_and_action()
     {
         $lead = factory(Lead::class)->create();
@@ -24,7 +25,7 @@ class LeadActionTest extends TestCase
         $this->assertEquals($action, $event->getAction());
     }
 
-    /** @test */
+    #[Test]
     public function get_lead_returns_lead_model()
     {
         $lead = factory(Lead::class)->create();
@@ -33,7 +34,7 @@ class LeadActionTest extends TestCase
         $this->assertInstanceOf(Lead::class, $event->getLead());
     }
 
-    /** @test */
+    #[Test]
     public function get_action_returns_action_string()
     {
         $lead = factory(Lead::class)->create();
@@ -42,7 +43,7 @@ class LeadActionTest extends TestCase
         $this->assertEquals('deleted', $event->getAction());
     }
 
-    /** @test */
+    #[Test]
     public function broadcast_on_returns_private_channel()
     {
         $lead = factory(Lead::class)->create();
@@ -52,7 +53,7 @@ class LeadActionTest extends TestCase
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
-    /** @test */
+    #[Test]
     public function event_preserves_lead_reference_after_construction()
     {
         $lead = factory(Lead::class)->create();
@@ -61,7 +62,7 @@ class LeadActionTest extends TestCase
         $this->assertEquals($lead->external_id, $event->getLead()->external_id);
     }
 
-    /** @test */
+    #[Test]
     public function action_can_be_non_string_value()
     {
         $lead = factory(Lead::class)->create();
@@ -70,21 +71,21 @@ class LeadActionTest extends TestCase
         $this->assertEquals(99, $event->getAction());
     }
 
-    /** @test */
+    #[Test]
     public function event_uses_interacts_with_sockets_trait()
     {
         $traits = class_uses(LeadAction::class);
         $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
     }
 
-    /** @test */
+    #[Test]
     public function event_uses_serializes_models_trait()
     {
         $traits = class_uses(LeadAction::class);
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    /** @test */
+    #[Test]
     public function broadcast_on_returns_channel_named_channel_name()
     {
         $lead = factory(Lead::class)->create();

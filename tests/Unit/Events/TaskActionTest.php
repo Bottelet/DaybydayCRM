@@ -6,13 +6,14 @@ use App\Events\TaskAction;
 use App\Models\Task;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TaskActionTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function constructor_stores_task_and_action()
     {
         $task = factory(Task::class)->create();
@@ -24,7 +25,7 @@ class TaskActionTest extends TestCase
         $this->assertEquals($action, $event->getAction());
     }
 
-    /** @test */
+    #[Test]
     public function get_task_returns_task_model()
     {
         $task = factory(Task::class)->create();
@@ -33,7 +34,7 @@ class TaskActionTest extends TestCase
         $this->assertInstanceOf(Task::class, $event->getTask());
     }
 
-    /** @test */
+    #[Test]
     public function get_action_returns_action_string()
     {
         $task = factory(Task::class)->create();
@@ -42,7 +43,7 @@ class TaskActionTest extends TestCase
         $this->assertEquals('deleted', $event->getAction());
     }
 
-    /** @test */
+    #[Test]
     public function broadcast_on_returns_private_channel()
     {
         $task = factory(Task::class)->create();
@@ -52,7 +53,7 @@ class TaskActionTest extends TestCase
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
-    /** @test */
+    #[Test]
     public function event_preserves_task_reference_after_construction()
     {
         $task = factory(Task::class)->create();

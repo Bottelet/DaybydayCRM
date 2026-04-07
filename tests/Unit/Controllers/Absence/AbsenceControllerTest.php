@@ -5,13 +5,14 @@ namespace Tests\Unit\Controllers\Absence;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AbsenceControllerTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    /** @test **/
+    #[Test]
     public function can_create_absence_for_other_user()
     {
         $user = factory(User::class)->create();
@@ -29,7 +30,7 @@ class AbsenceControllerTest extends TestCase
         $this->assertCount(1, $absences);
     }
 
-    /** @test **/
+    #[Test]
     public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
     {
         $actingUser = factory(User::class)->create();
@@ -49,7 +50,7 @@ class AbsenceControllerTest extends TestCase
         $this->assertCount(1, $actingUser->absences);
     }
 
-    /** @test **/
+    #[Test]
     public function not_providing_user_external_id_creates_absence_for_authenticated_user()
     {
         $response = $this->json('POST', route('absence.store'), [

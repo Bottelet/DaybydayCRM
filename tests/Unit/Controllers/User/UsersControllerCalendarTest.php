@@ -6,6 +6,7 @@ use App\Models\Absence;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class UsersControllerCalendarTest extends TestCase
@@ -43,7 +44,7 @@ class UsersControllerCalendarTest extends TestCase
         ]);
     }
 
-    /** @test * */
+    #[Test]
     public function can_get_absences_within_time_slot()
     {
         $correctUser = null;

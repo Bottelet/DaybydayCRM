@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Services\Invoice\GenerateInvoiceStatus;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GenerateInvoiceStatusTest extends TestCase
@@ -46,7 +47,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->generateInvoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
     }
 
-    /** @test */
+    #[Test]
     public function is_status_paid()
     {
         $this->assertFalse($this->generateInvoiceStatus->isPaid());
@@ -58,13 +59,13 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_status_partial_paid()
     {
         $this->assertTrue($this->generateInvoiceStatus->isPartialPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_status_over_paid()
     {
         $this->assertFalse($this->generateInvoiceStatus->isOverPaid());
@@ -76,7 +77,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isOverPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_status_un_paid()
     {
         $this->assertFalse($this->generateInvoiceStatus->isUnPaid());
@@ -87,7 +88,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isUnPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_status_draft()
     {
         $this->assertFalse($this->generateInvoiceStatus->isDraft());
@@ -100,7 +101,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isDraft());
     }
 
-    /** @test */
+    #[Test]
     public function is_only_partial_paid_if_values_is_between_invoice_amount()
     {
         $this->assertTrue($this->generateInvoiceStatus->isPartialPaid());
@@ -121,7 +122,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_not_unpaid_if_invoice_amount_is_zero()
     {
         $this->payment->forceDelete();
@@ -134,7 +135,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertEquals('paid', $invoiceStatus->getStatus());
     }
 
-    /** @test */
+    #[Test]
     public function is_paid_if_invoice_amount_is_zero_and_invoice_is_sent()
     {
         $this->payment->forceDelete();
@@ -144,7 +145,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isPaid());
     }
 
-    /** @test */
+    #[Test]
     public function is_draft_if_invoice_amount_is_zero_and_invoice_is_not_sent()
     {
         $this->payment->forceDelete();
@@ -156,7 +157,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertEquals('draft', $invoiceStatus->getStatus());
     }
 
-    /** @test */
+    #[Test]
     public function is_unpaid_if_invoice_amount_is_less_then_zero()
     {
         $this->assertFalse($this->generateInvoiceStatus->isUnPaid());
@@ -167,7 +168,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertTrue($invoiceStatus->isUnPaid());
     }
 
-    /** @test */
+    #[Test]
     public function get_status_of_invoice()
     {
         /** Clean up for complete flow */
@@ -210,7 +211,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->assertEquals('overpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
     }
 
-    /** @test */
+    #[Test]
     public function create_status_saves_to_the_invoice_model()
     {
         $this->assertNotEquals('partial_paid', $this->invoice->status);

@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InvoiceLinesControllerTest extends TestCase
@@ -27,7 +28,7 @@ class InvoiceLinesControllerTest extends TestCase
         ]);
     }
 
-    /** @test **/
+    #[Test]
     public function happy_path()
     {
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
@@ -38,7 +39,7 @@ class InvoiceLinesControllerTest extends TestCase
         $this->assertNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
     }
 
-    /** @test **/
+    #[Test]
     public function cant_delete_without_permission()
     {
         $user = factory(User::class)->create();

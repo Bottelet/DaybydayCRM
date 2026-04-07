@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetCommentEndpointTest extends TestCase
@@ -27,7 +28,7 @@ class GetCommentEndpointTest extends TestCase
         $this->project = factory(Project::class)->create();
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertEquals(url('comments/lead').DIRECTORY_SEPARATOR.$this->lead->external_id, $this->lead->getCreateCommentEndpoint());

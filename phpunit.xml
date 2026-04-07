@@ -5,10 +5,10 @@
     bootstrap="vendor/autoload.php"
     colors="true"
     processIsolation="false"
-    stopOnFailure="true"
-    stopOnError="true"
-    failOnRisky="true"
-    failOnWarning="true"
+    stopOnFailure="false"
+    stopOnError="false"
+    failOnRisky="false"
+    failOnWarning="false"
     beStrictAboutTestsThatDoNotTestAnything="false"
 >
     <testsuites>

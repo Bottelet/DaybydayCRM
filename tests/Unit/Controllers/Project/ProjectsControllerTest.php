@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProjectsControllerTest extends TestCase
@@ -25,7 +26,7 @@ class ProjectsControllerTest extends TestCase
         $this->client = factory(Client::class)->create();
     }
 
-    /** @test **/
+    #[Test]
     public function can_create_project()
     {
         $response = $this->json('POST', route('projects.store'), [
@@ -44,7 +45,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals($response->getData()->project_external_id, $projects->first()->external_id);
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_assignee()
     {
         $project = factory(Project::class)->create();
@@ -57,7 +58,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals($project->refresh()->user_assigned_id, $this->user->id);
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_status()
     {
         $project = factory(Project::class)->create();
@@ -72,7 +73,7 @@ class ProjectsControllerTest extends TestCase
         $this->assertEquals($project->refresh()->status_id, $status->id);
     }
 
-    /** @test */
+    #[Test]
     public function can_update_deadline_for_project()
     {
         $project = factory(Project::class)->create();

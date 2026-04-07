@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class OffersControllerTest extends TestCase
@@ -25,7 +26,7 @@ class OffersControllerTest extends TestCase
         $this->offer = factory(Offer::class)->create();
     }
 
-    /** @test **/
+    #[Test]
     public function can_create_offer()
     {
         $this->json('POST', route('create.offer', $this->lead->external_id), [
@@ -49,7 +50,7 @@ class OffersControllerTest extends TestCase
 
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_offer()
     {
         $this->assertCount(0, $this->offer->invoiceLines);
@@ -85,7 +86,7 @@ class OffersControllerTest extends TestCase
         $this->assertCount(3, $this->offer->invoiceLines);
     }
 
-    /** @test **/
+    #[Test]
     public function can_set_offer_as_won()
     {
         $this->assertEquals('in-progress', $this->offer->status);
@@ -100,7 +101,7 @@ class OffersControllerTest extends TestCase
 
     }
 
-    /** @test **/
+    #[Test]
     public function can_set_offer_as_lost()
     {
         $this->assertEquals('in-progress', $this->offer->status);

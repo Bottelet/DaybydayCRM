@@ -4,19 +4,20 @@ namespace Tests\Unit\Enums;
 
 use App\Enums\AbsenceReason;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AbsenceReasonTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function getting_reason_returns_instance_of_absence_reason()
     {
         $this->assertInstanceOf(AbsenceReason::class, AbsenceReason::fromStatus('vacation'));
     }
 
-    /** @test */
+    #[Test]
     public function absence_reason_contains_both_reason_and_display_value()
     {
         $reason = AbsenceReason::fromStatus('vacation');
@@ -24,46 +25,46 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Vacation', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function get_display_value_from_reason()
     {
         $this->assertEquals('Vacation', AbsenceReason::fromStatus('vacation')->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function reason_returns_correct_reason_in_instance()
     {
         $this->assertEquals('sick_leave', AbsenceReason::sickLeave()->getReason());
     }
 
-    /** @test */
+    #[Test]
     public function get_reason_from_display_value()
     {
         $this->assertEquals('vacation', AbsenceReason::fromDisplayValue('Vacation')->getReason());
     }
 
-    /** @test */
+    #[Test]
     public function throws_exception_if_reason_is_not_known()
     {
         $this->expectException(\Exception::class);
         AbsenceReason::fromStatus('non_existing_reason');
     }
 
-    /** @test */
+    #[Test]
     public function throws_exception_if_display_value_is_not_known()
     {
         $this->expectException(\Exception::class);
         AbsenceReason::fromDisplayValue('None existing display value');
     }
 
-    /** @test */
+    #[Test]
     public function values_returns_all_eight_absence_reasons()
     {
         $values = AbsenceReason::values();
         $this->assertCount(8, $values);
     }
 
-    /** @test */
+    #[Test]
     public function vacation_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::vacation();
@@ -72,7 +73,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Vacation', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function vacation_day_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::vacationDay();
@@ -80,7 +81,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('vacation_day', $reason->getReason());
     }
 
-    /** @test */
+    #[Test]
     public function sick_leave_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::sickLeave();
@@ -89,7 +90,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Sick leave', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function time_off_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::timeOff();
@@ -97,7 +98,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('time_off', $reason->getReason());
     }
 
-    /** @test */
+    #[Test]
     public function time_off_in_lieu_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::timeOffInLieu();
@@ -107,7 +108,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Time off in lieu', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function personal_leave_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::personalLeave();
@@ -116,7 +117,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Personal leave', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function flextime_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::flextime();
@@ -125,7 +126,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Flextime', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function other_factory_method_returns_correct_reason()
     {
         $reason = AbsenceReason::other();
@@ -134,42 +135,42 @@ class AbsenceReasonTest extends TestCase
         $this->assertEquals('Other', $reason->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function to_string_returns_reason_value()
     {
         $reason = AbsenceReason::vacation();
         $this->assertEquals('vacation', (string) $reason);
     }
 
-    /** @test */
+    #[Test]
     public function from_status_is_case_sensitive()
     {
         $this->expectException(\Exception::class);
         AbsenceReason::fromStatus('Vacation');
     }
 
-    /** @test */
+    #[Test]
     public function constructor_accepts_null_display_value()
     {
         $reason = new AbsenceReason('custom_reason', null);
         $this->assertEquals('custom_reason', $reason->getReason());
     }
 
-    /** @test */
+    #[Test]
     public function from_display_value_is_case_sensitive()
     {
         $this->expectException(\Exception::class);
         AbsenceReason::fromDisplayValue('vacation');
     }
 
-    /** @test */
+    #[Test]
     public function from_display_value_throws_for_partial_match()
     {
         $this->expectException(\Exception::class);
         AbsenceReason::fromDisplayValue('Vacatio');
     }
 
-    /** @test */
+    #[Test]
     public function values_are_cached_and_returns_same_instances()
     {
         $first = AbsenceReason::values();
@@ -177,7 +178,7 @@ class AbsenceReasonTest extends TestCase
         $this->assertSame($first, $second);
     }
 
-    /** @test */
+    #[Test]
     public function time_off_in_lieu_shares_reason_string_with_time_off()
     {
         $timeOff = AbsenceReason::timeOff();

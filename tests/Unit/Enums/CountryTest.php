@@ -4,13 +4,14 @@ namespace Tests\Unit\Enums;
 
 use App\Enums\Country;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CountryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function from_code_returns_correct_country_instance()
     {
         $country = Country::fromCode('DK');
@@ -18,35 +19,35 @@ class CountryTest extends TestCase
         $this->assertEquals('DK', $country->getCode());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_correct_display_value()
     {
         $country = Country::fromCode('DK');
         $this->assertEquals('Denmark', $country->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_correct_currency_code()
     {
         $country = Country::fromCode('DK');
         $this->assertEquals('DKK', $country->getCurrencyCode());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_correct_language()
     {
         $country = Country::fromCode('DK');
         $this->assertEquals('Danish', $country->getLanguage());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_correct_phone_code()
     {
         $country = Country::fromCode('DK');
         $this->assertEquals('+45', $country->getPhoneCode());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_format_array()
     {
         $country = Country::fromCode('DK');
@@ -57,7 +58,7 @@ class CountryTest extends TestCase
         $this->assertArrayHasKey('frontendDate', $format);
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_fallback_to_other_for_unknown_code()
     {
         $country = Country::fromCode('XX');
@@ -66,14 +67,14 @@ class CountryTest extends TestCase
         $this->assertEquals('Other', $country->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function values_returns_all_ten_countries()
     {
         $values = Country::values();
         $this->assertCount(10, $values);
     }
 
-    /** @test */
+    #[Test]
     public function values_contains_expected_country_codes()
     {
         $values = Country::values();
@@ -89,7 +90,7 @@ class CountryTest extends TestCase
         $this->assertArrayHasKey('OT', $values);
     }
 
-    /** @test */
+    #[Test]
     public function us_country_has_different_date_format()
     {
         $us = Country::fromCode('US');
@@ -98,7 +99,7 @@ class CountryTest extends TestCase
         $this->assertEquals('m/d/Y', $format['carbonDate']);
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_germany_correctly()
     {
         $country = Country::fromCode('DE');
@@ -107,7 +108,7 @@ class CountryTest extends TestCase
         $this->assertEquals('German', $country->getLanguage());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_united_kingdom_correctly()
     {
         $country = Country::fromCode('GB');
@@ -115,14 +116,14 @@ class CountryTest extends TestCase
         $this->assertEquals('+44', $country->getPhoneCode());
     }
 
-    /** @test */
+    #[Test]
     public function other_country_fallback_is_returned_for_empty_string()
     {
         $country = Country::fromCode('');
         $this->assertEquals('OT', $country->getCode());
     }
 
-    /** @test */
+    #[Test]
     public function country_constructor_sets_all_properties()
     {
         $country = new Country('TEST', [
@@ -141,7 +142,7 @@ class CountryTest extends TestCase
         $this->assertEquals(['frontendDate' => 'dd/mm/yyyy'], $country->getFormat());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_ot_directly_when_ot_is_requested()
     {
         $country = Country::fromCode('OT');
@@ -150,7 +151,7 @@ class CountryTest extends TestCase
         $this->assertEquals('Other', $country->getDisplayValue());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_sweden_correctly()
     {
         $country = Country::fromCode('SE');
@@ -159,7 +160,7 @@ class CountryTest extends TestCase
         $this->assertEquals('Swedish', $country->getLanguage());
     }
 
-    /** @test */
+    #[Test]
     public function from_code_returns_us_with_different_carbon_date_format()
     {
         $us = Country::fromCode('US');
@@ -168,7 +169,7 @@ class CountryTest extends TestCase
         $this->assertEquals('g:i A', $format['carbonTime']);
     }
 
-    /** @test */
+    #[Test]
     public function from_code_fallback_ot_has_expected_properties()
     {
         $country = Country::fromCode('ZZ');

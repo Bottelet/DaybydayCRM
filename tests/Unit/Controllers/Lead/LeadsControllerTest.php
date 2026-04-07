@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LeadsControllerTest extends TestCase
@@ -25,7 +26,7 @@ class LeadsControllerTest extends TestCase
         $this->client = factory(Client::class)->create();
     }
 
-    /** @test **/
+    #[Test]
     public function can_create_lead()
     {
         $response = $this->json('POST', route('leads.store'), [
@@ -44,7 +45,7 @@ class LeadsControllerTest extends TestCase
         $this->assertCount(1, $leads->get());
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_assignee()
     {
         $lead = factory(Lead::class)->create();
@@ -57,7 +58,7 @@ class LeadsControllerTest extends TestCase
         $this->assertEquals($lead->refresh()->user_assigned_id, $this->user->id);
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_status()
     {
         $lead = factory(Lead::class)->create();
@@ -72,7 +73,7 @@ class LeadsControllerTest extends TestCase
         $this->assertEquals($lead->refresh()->status_id, $status->id);
     }
 
-    /** @test */
+    #[Test]
     public function can_update_deadline_for_lead()
     {
         $lead = factory(Lead::class)->create();

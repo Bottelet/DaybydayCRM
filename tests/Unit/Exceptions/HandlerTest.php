@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
 
@@ -16,14 +17,14 @@ class HandlerTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /** @test */
+    #[Test]
     public function handler_class_extends_laravel_exception_handler()
     {
         $handler = app(Handler::class);
         $this->assertInstanceOf(ExceptionHandler::class, $handler);
     }
 
-    /** @test */
+    #[Test]
     public function handler_dont_report_list_contains_expected_exceptions()
     {
         $handler = new Handler(app());
@@ -39,7 +40,7 @@ class HandlerTest extends TestCase
         $this->assertContains(HttpException::class, $dontReport);
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_returns_json_for_json_request()
     {
         // Access an API route that requires authentication without credentials
@@ -50,7 +51,7 @@ class HandlerTest extends TestCase
         $response->assertJson(['error' => 'Unauthenticated.']);
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_redirects_to_login_for_web_request()
     {
         // Log out the user that TestCase sets up
@@ -62,7 +63,7 @@ class HandlerTest extends TestCase
         $response->assertRedirect();
     }
 
-    /** @test */
+    #[Test]
     public function unauthenticated_json_response_has_correct_structure()
     {
         $response = $this->withHeaders(['Accept' => 'application/json'])
