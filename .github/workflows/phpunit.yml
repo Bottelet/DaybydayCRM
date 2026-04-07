@@ -1,5 +1,5 @@
 name: Run tests
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   run-tests:
@@ -32,10 +32,10 @@ jobs:
           PORT: ${{ job.services.mysql.ports[3306] }}
         run: mysql -h 127.0.0.1 --port "$PORT" -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS daybyday_test;'
 
-      - name: Install dependencies
-        run: |
-          yarn install
-          yarn run dev
+      #- name: Install dependencies
+      #  run: |
+      #    yarn install
+      #    yarn run dev
 
       - name: Cache Composer dependencies
         uses: actions/cache@v3
