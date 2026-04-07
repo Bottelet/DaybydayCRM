@@ -9,8 +9,8 @@ use App\Zizaco\Entrust\EntrustServiceProvider;
 use App\Zizaco\Entrust\Middleware\EntrustAbility;
 use App\Zizaco\Entrust\Middleware\EntrustPermission;
 use App\Zizaco\Entrust\Middleware\EntrustRole;
-use Collective\Html\FormFacade;
-use Collective\Html\HtmlFacade;
+// use Collective\Html\FormFacade;
+// use Collective\Html\HtmlFacade;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
@@ -253,8 +253,8 @@ return [
         'URL' => URL::class,
         'Validator' => Validator::class,
         'View' => View::class,
-        'Form' => FormFacade::class,
-        'Html' => HtmlFacade::class,
+//        'Form' => FormFacade::class,
+//        'Html' => HtmlFacade::class,
         'Datatables' => Datatables::class,
         'Carbon' => Carbon\Carbon::class,
         'Notifty' => Notification::class,

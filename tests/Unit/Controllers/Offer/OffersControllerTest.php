@@ -30,7 +30,7 @@ class OffersControllerTest extends TestCase
     #[Test]
     public function can_create_offer()
     {
-        $this->markTestSkipped('Failed asserting that an object is not empty');
+        $this->markTestIncomplete('Failed asserting that an object is not empty');
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             'lines' => [
                 'title' => 'test line',
