@@ -28,7 +28,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function getting_source_returns_instance_of_payment_source()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertInstanceOf(PaymentSource::class, PaymentSource::fromSource($this->paymentSource));
     }
 
@@ -36,7 +35,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function payment_source_contains_both_display_and_source_value()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertTrue(property_exists(PaymentSource::fromSource($this->paymentSource), 'source'));
         $this->assertTrue(property_exists(PaymentSource::fromSource($this->paymentSource), 'displayValue'));
     }
@@ -45,7 +43,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function get_display_value_from_source()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertEquals(PaymentSource::fromSource($this->paymentSource)->getDisplayValue(), 'Bank');
     }
 
@@ -53,7 +50,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function source_returns_correct_source_in_instance()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertEquals('cash', PaymentSource::cash()->getSource());
     }
 
@@ -61,7 +57,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function get_source_from_display_value()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertEquals(PaymentSource::fromDisplayValue('Intercompany'), PaymentSource::interCompany()->getSource());
     }
 
@@ -69,7 +64,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function throws_exception_if_source_is_not_known()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->expectException(\Exception::class);
         PaymentSource::fromSource('None existing source');
     }
@@ -78,7 +72,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function throws_exception_if_display_value_is_not_known()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->expectException(\Exception::class);
         PaymentSource::fromDisplayValue('None existing display value');
     }
@@ -87,7 +80,6 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function get_validation_rules_for_payment_source()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $rule = PaymentSource::validationRules();
         $this->assertInstanceOf(In::class, $rule);
         $this->assertTrue(property_exists($rule, 'values'));

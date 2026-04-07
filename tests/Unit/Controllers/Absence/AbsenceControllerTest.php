@@ -17,7 +17,6 @@ class AbsenceControllerTest extends TestCase
     #[Group('repaired')]
     public function can_create_absence_for_other_user()
     {
-        $this->markTestIncomplete('repaired test');
         $user = factory(User::class)->create();
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',

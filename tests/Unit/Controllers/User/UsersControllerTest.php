@@ -18,7 +18,6 @@ class UsersControllerTest extends TestCase
     #[Group('repaired')]
     public function owner_can_update_user_role()
     {
-        $this->markTestIncomplete('repaired test');
         /** @var Role $targetRole */
         $targetRole = Role::first();
 

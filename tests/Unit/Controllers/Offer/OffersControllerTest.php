@@ -56,7 +56,6 @@ class OffersControllerTest extends TestCase
     #[Group('repaired')]
     public function can_update_offer()
     {
-        $this->markTestIncomplete('repaired test');
         $this->assertCount(0, $this->offer->invoiceLines);
         $this->json('POST', route('offer.update', $this->offer->external_id), [
             'lines' => [

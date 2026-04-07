@@ -34,7 +34,6 @@ class InvoiceLinesControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function happy_path()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->user->attachRole(Role::whereName('owner')->first());
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 

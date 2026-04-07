@@ -26,7 +26,6 @@ class TypeOfStatusTest extends TestCase
     #[Group('junie_repaired')]
     public function happy_path()
     {
-        $this->markTestIncomplete('error repaired by junie');
         factory(Status::class)->create([
             'source_type' => Task::class,
             'title' => 'Hello',

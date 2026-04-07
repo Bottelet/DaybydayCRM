@@ -33,7 +33,6 @@ class InvoiceStatusEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function invoice_status_contains_both_display_and_status_value()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'status'));
         $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'displayValue'));
     }

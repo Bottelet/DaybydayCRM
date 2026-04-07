@@ -13,9 +13,10 @@ This analysis outlines deep-seated architectural issues and technical debt in th
 - **Goal:** Convert all routes to the tuple-based syntax (e.g., `[ClientsController::class, 'index']`).
 
 ## 3. Architecture: Business Logic Leaks
-- **Problem:** Controllers currently handle complex business logic, including activity logging, notification sending, and multi-step data transformations.
+- **Problem:** Controllers currently handle complex business logic, including activity logging, notification sending, and multi-step data transformations. For example, `ClientsController@store` manually creates both a `Client` and a `Contact`, generates UUIDs, and interacts with a `ClientNumberService`.
+- **Problem:** The `cvrApi` method in `ClientsController` uses raw `curl` calls, which should be abstracted into a Service or a dedicated API client class.
 - **Problem:** This "fat controller" pattern makes the application harder to test and maintain. It leads to duplicate code across different entry points (e.g., Web vs API).
-- **Goal:** Introduce a Service Layer (or Action Classes) to encapsulate business logic. Controllers should only be responsible for request handling and response generation.
+- **Goal:** Introduce a Service Layer (or Action Classes) to encapsulate business logic. Controllers should only be responsible for request handling and response generation. Use Laravel's HTTP Client (`Http::`) instead of raw `curl`.
 
 ## 4. Architecture: Authorization & Permissions
 - **Problem:** Authorization is currently handled using Entrust, which is an older package. Some policy references in `AuthServiceProvider` point to files that no longer exist (e.g., `allowTaskComplete`).

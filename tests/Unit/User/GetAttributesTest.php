@@ -24,7 +24,6 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_name_and_department()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $department = factory(Department::class)->create([
             'name' => 'Tiger',
         ]);
@@ -40,7 +39,6 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_name_and_department_with_eager_loading()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $department = factory(Department::class)->create([
             'name' => 'Tiger',
         ]);
@@ -57,7 +55,6 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_default_avatar_when_none_is_set()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->user = factory(User::class)->create([
             'name' => 'Eye of the',
         ]);
@@ -69,7 +66,6 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_path_when_image_is_set()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->user = factory(User::class)->create([
             'name' => 'Eye of the',
         ]);

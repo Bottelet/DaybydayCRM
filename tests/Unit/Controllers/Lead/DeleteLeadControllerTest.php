@@ -39,7 +39,6 @@ class DeleteLeadControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function delete_lead()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
@@ -50,7 +49,6 @@ class DeleteLeadControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function delete_offers_if_flag_given()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
             'delete_offers' => 'on',
         ]);
@@ -63,7 +61,6 @@ class DeleteLeadControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
         $this->offer->refresh();
@@ -77,7 +74,6 @@ class DeleteLeadControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->lead->offers()->forceDelete();
 
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
