@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Role;
+use Illuminate\Database\Seeder;
 use Ramsey\Uuid\Uuid;
 
 class RolesTablesSeeder extends Seeder

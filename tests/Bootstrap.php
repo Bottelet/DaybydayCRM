@@ -1,11 +1,12 @@
 <?php
+
 namespace Tests;
 
+use Illuminate\Contracts\Console\Kernel;
 use PHPUnit\Runner\AfterLastTestHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
-use Illuminate\Contracts\Console\Kernel;
 
-class Bootstrap implements BeforeFirstTestHook, AfterLastTestHook
+class Bootstrap implements AfterLastTestHook, BeforeFirstTestHook
 {
     /*
     |--------------------------------------------------------------------------
@@ -18,6 +19,7 @@ class Bootstrap implements BeforeFirstTestHook, AfterLastTestHook
     |
     */
     use CreatesApplication;
+
     public function executeBeforeFirstTest(): void
     {
         $console = $this->createApplication()->make(Kernel::class);
@@ -29,6 +31,7 @@ class Bootstrap implements BeforeFirstTestHook, AfterLastTestHook
             $console->call($command);
         }
     }
+
     public function executeAfterLastTest(): void
     {
         array_map('unlink', glob('bootstrap/cache/*.phpunit.php'));

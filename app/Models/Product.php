@@ -8,8 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $appends = ['divided_price'];
-    protected $hidden=['id'];
-    
+
+    protected $hidden = ['id'];
+
     public function getRouteKeyName()
     {
         return 'external_id';
@@ -18,6 +19,7 @@ class Product extends Model
     public function getMoneyPriceAttribute()
     {
         $money = new Money($this->price);
+
         return $money;
     }
 
@@ -25,5 +27,4 @@ class Product extends Model
     {
         return $this->price / 100;
     }
-    
 }

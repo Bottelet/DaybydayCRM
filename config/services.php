@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Tenant;
+
 return [
 
     /*
@@ -25,7 +27,7 @@ return [
     ],
 
     'ses' => [
-        'key'    => env('SES_KEY'),
+        'key' => env('SES_KEY'),
         'secret' => env('SES_SECRET'),
         'region' => 'us-east-1',
     ],
@@ -34,7 +36,7 @@ return [
         'client' => env('DINERO_CLIENT_ID', null),
     ],
     'stripe' => [
-        'model'  => App\Models\Tenant::class,
+        'model' => Tenant::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],

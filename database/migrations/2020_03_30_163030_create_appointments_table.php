@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateAppointmentsTable extends Migration
 {
@@ -16,17 +17,17 @@ class CreateAppointmentsTable extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string("external_id");
-            $table->string("title");
-            $table->string("description")->nullable();
-            $table->nullableMorphs("source");
-            $table->string("color", 10);
+            $table->string('external_id');
+            $table->string('title');
+            $table->string('description')->nullable();
+            $table->nullableMorphs('source');
+            $table->string('color', 10);
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('client_id')->unsigned()->nullable();
             $table->foreign('client_id')->references('id')->on('clients');
-            $table->timestamp("start_at")->nullable();
-            $table->timestamp("end_at")->nullable();
+            $table->timestamp('start_at')->nullable();
+            $table->timestamp('end_at')->nullable();
 
             $table->timestamps();
         });
@@ -61,7 +62,7 @@ class CreateAppointmentsTable extends Migration
             'grouping' => 'appointment',
         ]);
 
-        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$cpp->id, $dpp->id, $epp->id, $scpp->id]);
         }

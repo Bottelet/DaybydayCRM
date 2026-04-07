@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 
-class Activity extends model
+class Activity extends Model
 {
     use SoftDeletes;
+
     /**
      * The database table used by the model.
      *
@@ -24,7 +25,9 @@ class Activity extends model
         'source_id',
         'properties',
     ];
+
     protected $guarded = ['id'];
+
     protected $casts = [
         'properties' => 'collection',
     ];

@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Repositories\Role;
 
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class RoleRepository
- * @package App\Repositories\Role
  */
 class RoleRepository implements RoleRepositoryContract
 {
@@ -19,7 +20,7 @@ class RoleRepository implements RoleRepositoryContract
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function allPermissions()
     {
@@ -27,28 +28,24 @@ class RoleRepository implements RoleRepositoryContract
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return Collection|static[]
      */
     public function allRoles()
     {
-        //Get rid of owner as the should only be one.
+        // Get rid of owner as the should only be one.
         return Role::all('display_name', 'id', 'name', 'external_id')->filter(function ($value, $key) {
-            return $value->name != "owner";
+            return $value->name != 'owner';
         });
     }
 
-    /**
-     * @param $requestData
-     */
     public function permissionsUpdate($requestData, $external_id)
     {
         $allowed_permissions = [];
 
         if ($requestData->input('permissions') != null) {
-            foreach ($requestData->input('permissions')
-                     as $permissionId => $permission) {
+            foreach ($requestData->input('permissions') as $permissionId => $permission) {
                 if ($permission === '1') {
-                    $allowed_permissions[] = (int)$permissionId;
+                    $allowed_permissions[] = (int) $permissionId;
                 }
             }
         } else {
@@ -61,9 +58,6 @@ class RoleRepository implements RoleRepositoryContract
         $role->save();
     }
 
-    /**
-     * @param $requestData
-     */
     public function create($requestData)
     {
         $roleName = $requestData->name;
@@ -71,13 +65,10 @@ class RoleRepository implements RoleRepositoryContract
         Role::create([
             'name' => strtolower($roleName),
             'display_name' => ucfirst($roleName),
-            'description' => $roleDescription
+            'description' => $roleDescription,
         ]);
     }
 
-    /**
-     * @param $id
-     */
     public function destroy($id)
     {
         $role = Role::findorFail($id);

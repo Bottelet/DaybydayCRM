@@ -3,12 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contact extends Model
 {
-    use  SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'external_id',
@@ -18,7 +17,7 @@ class Contact extends Model
         'secondary_number',
         'client_id',
         'is_primary',
-        ];
+    ];
 
     public function client()
     {

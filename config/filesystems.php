@@ -45,19 +45,19 @@ return [
 
         'local' => [
             'driver' => 'local',
-            'root'   => storage_path('app'),
+            'root' => storage_path('app'),
         ],
 
         'public' => [
-            'driver'     => 'local',
-            'root'       => storage_path('app/public'),
-            'url'        => env('APP_URL') . '/storage',
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
 
         'ftp' => [
-            'driver'   => 'ftp',
-            'host'     => 'ftp.example.com',
+            'driver' => 'ftp',
+            'host' => 'ftp.example.com',
             'username' => 'your-username',
             'password' => 'your-password',
 
@@ -71,7 +71,7 @@ return [
 
         's3' => [
             'driver' => 's3',
-            'key'    => null,
+            'key' => null,
             'secret' => null,
             'region' => 'eu-west-1',
             'bucket' => env('S3_STORAGE_PATH', null),
@@ -83,21 +83,21 @@ return [
         ],
 
         'rackspace' => [
-            'driver'    => 'rackspace',
-            'username'  => 'your-username',
-            'key'       => 'your-key',
+            'driver' => 'rackspace',
+            'username' => 'your-username',
+            'key' => 'your-key',
             'container' => 'your-container',
-            'endpoint'  => 'https://identity.api.rackspacecloud.com/v2.0/',
-            'region'    => 'IAD',
-            'url_type'  => 'publicURL',
+            'endpoint' => 'https://identity.api.rackspacecloud.com/v2.0/',
+            'region' => 'IAD',
+            'url_type' => 'publicURL',
         ],
         'dropbox' => [
-            'driver' => 'dropbox'
+            'driver' => 'dropbox',
         ],
         'google' => [
             'driver' => 'google',
             'folderId' => env('GOOGLE_DRIVE_FOLDER_ID', null),
-        ]
+        ],
 
     ],
 

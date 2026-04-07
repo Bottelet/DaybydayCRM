@@ -1,10 +1,12 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
+use App\Models\Client;
 use App\Models\Task;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Task::class, function (Faker $faker) {
     return [
@@ -13,7 +15,7 @@ $factory->define(Task::class, function (Faker $faker) {
         'description' => $faker->paragraph,
         'user_created_id' => factory(User::class),
         'user_assigned_id' => factory(User::class),
-        'client_id' => factory(\App\Models\Client::class),
+        'client_id' => factory(Client::class),
         'status_id' => $faker->numberBetween($min = 1, $max = 4),
         'deadline' => $faker->dateTimeThisYear($max = 'now'),
         'created_at' => $faker->dateTimeThisYear($max = 'now'),

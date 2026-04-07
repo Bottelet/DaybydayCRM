@@ -13,7 +13,7 @@ class Mail extends Model
         'email',
         'user_id',
         'send_at',
-        'sent_at'
+        'sent_at',
     ];
 
     protected $dates = ['sent_at', 'send_at'];

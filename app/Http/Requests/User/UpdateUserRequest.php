@@ -32,7 +32,7 @@ class UpdateUserRequest extends FormRequest
             'password' => 'sometimes|min:6|confirmed',
             'password_confirmation' => 'sometimes|min:6',
             'image_path' => '',
-            'departments' => 'required'
+            'departments' => 'required',
         ];
     }
 }

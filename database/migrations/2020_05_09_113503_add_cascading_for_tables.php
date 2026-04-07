@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddCascadingForTables extends Migration
 {
@@ -20,8 +20,8 @@ class AddCascadingForTables extends Migration
         Schema::table('tasks', function (Blueprint $table) {
             $table->dropForeign('tasks_project_id_foreign');
             $table->dropForeign('tasks_invoice_id_foreign');
-            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete("set null");
-            $table->foreign('project_id')->references('id')->on('projects')->onDelete("set null");
+            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
         });
         Schema::table('payments', function (Blueprint $table) {
             $table->dropForeign('payments_invoice_id_foreign');

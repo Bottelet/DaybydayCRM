@@ -12,7 +12,7 @@ return [
             'aws' => env('AWS_ELASTICSEARCH_ENABLED', false),
             'aws_region' => env('AWS_REGION', ''),
             'aws_key' => env('AWS_ACCESS_KEY_ID', ''),
-            'aws_secret' => env('AWS_SECRET_ACCESS_KEY', '')
-        ]
-    ]
+            'aws_secret' => env('AWS_SECRET_ACCESS_KEY', ''),
+        ],
+    ],
 ];

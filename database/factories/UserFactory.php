@@ -1,9 +1,11 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
+use App\Models\Department;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
@@ -20,5 +22,5 @@ $factory->define(User::class, function (Faker $faker) {
 });
 
 $factory->afterCreating(User::class, function ($user, $faker) {
-    $user->department()->attach(\App\Models\Department::first()->id);
+    $user->department()->attach(Department::first()->id);
 });

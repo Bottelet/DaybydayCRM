@@ -2,9 +2,8 @@
 
 namespace App\Observers;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
 use Aws\Credentials\CredentialProvider;
+use Elasticsearch\ClientBuilder;
 
 class ElasticSearchObserver
 {

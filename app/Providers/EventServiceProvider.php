@@ -17,21 +17,21 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\ClientActionNotify',
             'App\Listeners\ClientActionLog',
         ],
-         'App\Events\TaskAction' => [
+        'App\Events\TaskAction' => [
             'App\Listeners\TaskActionNotify',
             'App\Listeners\TaskActionLog',
-         ],
+        ],
         'App\Events\LeadAction' => [
             'App\Listeners\LeadActionNotify',
             'App\Listeners\LeadActionLog',
         ],
         'App\Events\NewComment' => [
-            'App\Listeners\NotiftyMentionedUsers'
+            'App\Listeners\NotiftyMentionedUsers',
         ],
         'App\Events\ProjectAction' => [
             'App\Listeners\ProjectActionNotify',
-            'App\Listeners\ProjectActionLog'
-        ]
+            'App\Listeners\ProjectActionLog',
+        ],
     ];
 
     /**

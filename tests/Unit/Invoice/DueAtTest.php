@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
@@ -10,9 +11,10 @@ class DueAtTest extends TestCase
     use DatabaseTransactions;
 
     protected $invoice;
+
     protected $secondInvoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -26,34 +28,34 @@ class DueAtTest extends TestCase
     }
 
     /** @test */
-    public function ensureWeGetInvoicePastDueAt()
+    public function ensure_we_get_invoice_past_due_at()
     {
         $invoices = Invoice::pastDueAt()->get();
-        
+
         $this->assertCount(1, $invoices);
         $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
 
     /** @test */
-    public function ensureWeDontGetInvoiceIfDueAtIsNull()
+    public function ensure_we_dont_get_invoice_if_due_at_is_null()
     {
         $this->secondInvoice->due_at = null;
         $this->secondInvoice->save();
-        $invoices =  Invoice::pastDueAt()->get();
-        
+        $invoices = Invoice::pastDueAt()->get();
+
         $this->assertCount(0, $invoices);
     }
 
     /** @test */
-    public function ensureWeDontGetInvoiceIfStatusIsPaid()
+    public function ensure_we_dont_get_invoice_if_status_is_paid()
     {
-        $invoices =  Invoice::pastDueAt()->get();
+        $invoices = Invoice::pastDueAt()->get();
         $this->assertCount(1, $invoices);
 
-        $this->secondInvoice->status = "paid";
+        $this->secondInvoice->status = 'paid';
         $this->secondInvoice->save();
-        $invoices =  Invoice::pastDueAt()->get();
-        
+        $invoices = Invoice::pastDueAt()->get();
+
         $this->assertCount(0, $invoices);
     }
 }

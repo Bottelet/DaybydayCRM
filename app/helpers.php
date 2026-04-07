@@ -1,66 +1,69 @@
 <?php
 
+use App\Repositories\Format\GetDateFormat;
+use App\Repositories\Money\MoneyConverter;
 use App\Services\Activity\ActivityLogger;
 
 if (! function_exists('activity')) {
-    function activity(string $logName = null): ActivityLogger
+    function activity(?string $logName = null): ActivityLogger
     {
-        $defaultLogName = "default";
+        $defaultLogName = 'default';
+
         return app(ActivityLogger::class)
             ->withname($logName ?? $defaultLogName);
     }
 }
 
 if (! function_exists('frontendDate')) {
-    function frontendDate(): String
+    function frontendDate(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getFrontendDate();
+        return app(GetDateFormat::class)->getFrontendDate();
     }
 }
 if (! function_exists('frontendTime')) {
-    function frontendTime(): String
+    function frontendTime(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getFrontendTime();
+        return app(GetDateFormat::class)->getFrontendTime();
     }
 }
 if (! function_exists('carbonTime')) {
-    function carbonTime(): String
+    function carbonTime(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonTime();
+        return app(GetDateFormat::class)->getCarbonTime();
     }
 }
 
 if (! function_exists('carbonFullDateWithText')) {
-    function carbonFullDateWithText(): String
+    function carbonFullDateWithText(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonFullDateWithText();
+        return app(GetDateFormat::class)->getCarbonFullDateWithText();
     }
 }
 
 if (! function_exists('carbonDateWithText')) {
-    function carbonDateWithText(): String
+    function carbonDateWithText(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonDateWithText();
+        return app(GetDateFormat::class)->getCarbonDateWithText();
     }
 }
 
 if (! function_exists('carbonDate')) {
-    function carbonDate(): String
+    function carbonDate(): string
     {
-        return app(\App\Repositories\Format\GetDateFormat::class)->getCarbonDate();
+        return app(GetDateFormat::class)->getCarbonDate();
     }
 }
 
 if (! function_exists('isDemo')) {
-    function isDemo(): String
+    function isDemo(): string
     {
-        return app()->environment() == "demo" ? 1 : 0;
+        return app()->environment() == 'demo' ? 1 : 0;
     }
 }
 
 if (! function_exists('formatMoney')) {
-    function formatMoney($amount, $useCode = false): String
+    function formatMoney($amount, $useCode = false): string
     {
-        return app(\App\Repositories\Money\MoneyConverter::class, ['money' => $amount])->format($useCode);
+        return app(MoneyConverter::class, ['money' => $amount])->format($useCode);
     }
 }

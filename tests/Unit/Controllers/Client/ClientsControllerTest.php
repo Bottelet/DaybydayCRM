@@ -1,16 +1,14 @@
 <?php
+
 namespace Tests\Unit\Controllers\Client;
 
-use App\Models\Contact;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Client;
-use App\Models\User;
+use App\Models\Contact;
 use App\Models\Industry;
-
-use Ramsey\Uuid\Uuid;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class ClientsControllerTest extends TestCase
 {
@@ -20,18 +18,18 @@ class ClientsControllerTest extends TestCase
     public function can_create_client()
     {
         $response = $this->json('POST', route('clients.store'), [
-                'name' => 'James Test',
-                'email' => 'james@test.com',
-                'primary_number' => '2342342342',
-                'secondary_number' => '423423432',
-                'vat' => '12312334',
-                'company_name' => 'James & Co',
-                'address' => 'james street',
-                'zipcode' => '2222',
-                'city' => 'Bond city',
-                'company_type' => 'Aps',
-                'industry_id' => Industry::first()->id,
-                'user_id' => User::first()->id,
+            'name' => 'James Test',
+            'email' => 'james@test.com',
+            'primary_number' => '2342342342',
+            'secondary_number' => '423423432',
+            'vat' => '12312334',
+            'company_name' => 'James & Co',
+            'address' => 'james street',
+            'zipcode' => '2222',
+            'city' => 'Bond city',
+            'company_type' => 'Aps',
+            'industry_id' => Industry::first()->id,
+            'user_id' => User::first()->id,
         ]);
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -60,7 +58,7 @@ class ClientsControllerTest extends TestCase
     {
         $client = factory(Client::class)->create(
             [
-                'vat' => "5898989898",
+                'vat' => '5898989898',
                 'company_type' => 'A/S',
                 'company_name' => 'Hello',
             ]
@@ -68,26 +66,26 @@ class ClientsControllerTest extends TestCase
 
         $contact = factory(Contact::class)->create(
             [
-                'name' => "Kristian",
+                'name' => 'Kristian',
                 'secondary_number' => '11111111',
                 'primary_number' => '2342342342',
-                'client_id' => $client->id
+                'client_id' => $client->id,
             ]
         );
 
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
-                'name' => 'Mads',
-                'email' => 'james@test.com',
-                'primary_number' => '2342342342',
-                'secondary_number' => '423423432',
-                'vat' => '12312335',
-                'company_name' => 'Hello',
-                'address' => 'mads street',
-                'zipcode' => '2222',
-                'city' => 'Bond city',
-                'company_type' => 'Aps',
-                'industry_id' => Industry::first()->id,
-                'user_id' => User::first()->id,
+            'name' => 'Mads',
+            'email' => 'james@test.com',
+            'primary_number' => '2342342342',
+            'secondary_number' => '423423432',
+            'vat' => '12312335',
+            'company_name' => 'Hello',
+            'address' => 'mads street',
+            'zipcode' => '2222',
+            'city' => 'Bond city',
+            'company_type' => 'Aps',
+            'industry_id' => Industry::first()->id,
+            'user_id' => User::first()->id,
         ]);
 
         $client = Client::where('vat', '12312335')->first();
@@ -102,7 +100,6 @@ class ClientsControllerTest extends TestCase
         $this->assertNull(Client::where('vat', '5898989898')->first());
     }
 
-
     /** @test **/
     public function can_update_assignee()
     {
@@ -111,13 +108,12 @@ class ClientsControllerTest extends TestCase
 
         $this->assertNotEquals($client->user_id, $user->id);
 
-        $r = $this->json('POST', '/clients/updateassign/' . $client->external_id, [
-            'user_external_id' => $user->external_id
+        $r = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
+            'user_external_id' => $user->external_id,
         ]);
 
         $this->assertEquals($client->refresh()->user_id, $user->id);
     }
-
 
     /** @test **/
     public function cant_update_assignee_without_permission()
@@ -127,8 +123,8 @@ class ClientsControllerTest extends TestCase
         $this->setUser($user);
         $this->assertNotEquals($client->user_id, $user->id);
 
-        $response = $this->json('POST', '/clients/updateassign/' . $client->external_id, [
-            'user_external_id' => $user->external_id
+        $response = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
+            'user_external_id' => $user->external_id,
         ]);
 
         $response->assertStatus(302);

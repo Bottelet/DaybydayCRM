@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddVatAndCurrency extends Migration
 {
@@ -14,8 +14,8 @@ class AddVatAndCurrency extends Migration
     public function up()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->string("currency", 3)->default("USD")->after("company");
-            $table->smallInteger("vat")->default(725)->after("currency");
+            $table->string('currency', 3)->default('USD')->after('company');
+            $table->smallInteger('vat')->default(725)->after('currency');
         });
     }
 
@@ -27,8 +27,8 @@ class AddVatAndCurrency extends Migration
     public function down()
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->dropColumn("currency");
-            $table->dropColumn("vat");
+            $table->dropColumn('currency');
+            $table->dropColumn('vat');
         });
     }
 }

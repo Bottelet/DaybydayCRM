@@ -2,17 +2,16 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Lead;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Queue\SerializesModels;
 
 class LeadAction
 {
     private $lead;
+
     private $action;
 
     use InteractsWithSockets, SerializesModels;
@@ -21,6 +20,7 @@ class LeadAction
     {
         return $this->lead;
     }
+
     public function getAction()
     {
         return $this->action;
@@ -29,8 +29,6 @@ class LeadAction
     /**
      * Create a new event instance.
      * LeadAction constructor.
-     * @param Lead $lead
-     * @param $action
      */
     public function __construct(Lead $lead, $action)
     {

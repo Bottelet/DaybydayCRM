@@ -1,10 +1,11 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
-use Tests\TestCase;
-use App\Models\Lead;
 use App\Models\Invoice;
+use App\Models\Lead;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class RemoveReferenceTest extends TestCase
 {
@@ -12,7 +13,7 @@ class RemoveReferenceTest extends TestCase
 
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
@@ -23,7 +24,7 @@ class RemoveReferenceTest extends TestCase
     }
 
     /** @test */
-    public function happyPath()
+    public function happy_path()
     {
         $this->assertNotNull($this->invoice->integration_invoice_id);
         $this->assertNotNull($this->invoice->integration_type);

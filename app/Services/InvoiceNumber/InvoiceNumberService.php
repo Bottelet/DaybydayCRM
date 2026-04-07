@@ -7,6 +7,7 @@ use App\Models\Setting;
 class InvoiceNumberService
 {
     private $setting;
+
     private $lockedSetting;
 
     public function __construct(InvoiceNumberConfig $config)
@@ -26,9 +27,10 @@ class InvoiceNumberService
         return $currentNumber;
     }
 
-    public function setInvoiceNumber(Int $invoiceNumber)
+    public function setInvoiceNumber(int $invoiceNumber)
     {
         $this->lockedSetting->invoice_number = $invoiceNumber;
+
         return $this->lockedSetting->save();
     }
 
@@ -40,6 +42,7 @@ class InvoiceNumberService
     private function increaseInvoiceNumber()
     {
         $this->lockedSetting->invoice_number++;
+
         return $this->lockedSetting->save();
     }
 }

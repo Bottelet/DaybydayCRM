@@ -1,8 +1,8 @@
 <?php
 
+use App\Models\Department;
 use Illuminate\Database\Seeder;
 use Ramsey\Uuid\Uuid;
-use App\Models\Department;
 
 class DepartmentsTableSeeder extends Seeder
 {
@@ -19,9 +19,9 @@ class DepartmentsTableSeeder extends Seeder
         $department->name = 'Management';
         $department->save();
 
-        \DB::table('department_user')->insert([
+        DB::table('department_user')->insert([
             'department_id' => 1,
-            'user_id' => 1
+            'user_id' => 1,
         ]);
     }
 }

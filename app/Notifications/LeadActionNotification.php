@@ -2,26 +2,22 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Auth;
-use Lang;
 use App\Models\Lead;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class LeadActionNotification extends Notification
 {
     use Queueable;
 
     private $lead;
+
     private $action;
 
     /**
      * Create a new notification instance.
      * LeadActionNotification constructor.
-     * @param $lead
-     * @param $action
      */
     public function __construct($lead, $action)
     {
@@ -44,7 +40,7 @@ class LeadActionNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -65,38 +61,39 @@ class LeadActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __(':title was created by :creator and assigned to you', [
-                'title' => $this->lead->title,
-                'creator' => $this->lead->creator->name
+                    'title' => $this->lead->title,
+                    'creator' => $this->lead->creator->name,
                 ]);
                 break;
             case 'updated_status':
                 $text = __(':title was completed by :username', [
-                'title' => $this->lead->title,
-                'username' =>  Auth()->user()->name
+                    'title' => $this->lead->title,
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_deadline':
                 $text = __(':username updated the deadline for this :title', [
-                'title' => $this->lead->title,
-                'username' =>  Auth()->user()->name
+                    'title' => $this->lead->title,
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned a lead to you', [
-                'username' =>  Auth()->user()->name
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             default:
                 break;
         }
+
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
+            'assigned_user' => $notifiable->id, // Assigned user ID
             'created_user' => $this->lead->creator->id,
             'message' => $text,
             'type' => Lead::class,
-            'type_id' =>  $this->lead->id,
-            'url' => url('leads/' . $this->lead->external_id),
-            'action' => $this->action
+            'type_id' => $this->lead->id,
+            'url' => url('leads/'.$this->lead->external_id),
+            'action' => $this->action,
         ];
     }
 }

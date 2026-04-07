@@ -11,9 +11,9 @@ trait SearchableTrait
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
+        // if (config('services.search.enabled')) {
         static::observe(ElasticSearchObserver::class);
-        //}
+        // }
     }
 
     public function getSearchIndex()
@@ -34,7 +34,7 @@ trait SearchableTrait
     {
         $model = [];
         foreach ($this->toArray() as $key => $value) {
-            if (key_exists($key, array_flip($this->searchableFields))) {
+            if (array_key_exists($key, array_flip($this->searchableFields))) {
                 $model[$key] = $value;
             }
         }
@@ -50,6 +50,6 @@ trait SearchableTrait
 
     public function searchLink()
     {
-        return '/' .$this->getSearchType() . '/' . $this->external_id;
+        return '/'.$this->getSearchType().'/'.$this->external_id;
     }
 }

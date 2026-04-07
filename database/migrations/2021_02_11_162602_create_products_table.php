@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateProductsTable extends Migration
 {
@@ -49,7 +50,7 @@ class CreateProductsTable extends Migration
             'grouping' => 'product',
         ]);
 
-        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$p1->id, $p2->id, $p3->id]);
         }

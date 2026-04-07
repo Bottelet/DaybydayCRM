@@ -2,11 +2,11 @@
 
 namespace Tests\Unit\Project;
 
-use Tests\TestCase;
-use App\Models\Project;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class ProjectObserverDeleteTest extends TestCase
 {
@@ -14,28 +14,28 @@ class ProjectObserverDeleteTest extends TestCase
 
     protected $project;
 
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $this->project = factory(Project::class)->create();
 
         $this->project->comments()->create([
             'description' => 'Test',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
         $this->project->activity()->create([
-            'text' => "something happend!"
+            'text' => 'something happend!',
         ]);
         $this->project->documents()->create([
-            'size' => "56",
-            'path' => "/someplace/orignal-uuid.png",
-            'original_filename' => "original.png",
-            'mime' => "png",
+            'size' => '56',
+            'path' => '/someplace/orignal-uuid.png',
+            'original_filename' => 'original.png',
+            'mime' => 'png',
         ]);
     }
 
     /** @test */
-    public function deleteProjectsSoftDeletes()
+    public function delete_projects_soft_deletes()
     {
         $this->assertNull($this->project->documents()->first()->deleted_at);
         $this->project->delete();
@@ -44,7 +44,7 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     /** @test */
-    public function deleteProjectSoftDeletesRelations()
+    public function delete_project_soft_deletes_relations()
     {
         $this->assertNotEmpty($this->project->comments);
         $this->assertNotEmpty($this->project->activity);
@@ -60,45 +60,45 @@ class ProjectObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->project->comments()->withTrashed()->first());
         $this->assertSoftDeleted($this->project->activity()->withTrashed()->first());
         $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
-        
+
     }
 
     /** @test */
-    public function forceDeleteRemovesProjectFromDatabase()
+    public function force_delete_removes_project_from_database()
     {
         $projectId = $this->project->id;
-        
+
         $this->project->forceDelete();
         $this->project->refresh();
 
         $this->assertDatabaseMissing('projects', [
-            'id' => $projectId
+            'id' => $projectId,
         ]);
     }
 
     /** @test */
-    public function forceDeleteRemovesRelationsFromDatabase()
+    public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->project->comments->first()->id;
         $documentId = $this->project->documents->first()->id;
         $activityId = $this->project->activity->first()->id;
-        
+
         $this->project->forceDelete();
         $this->project->refresh();
 
         $this->assertDatabaseMissing('comments', [
-            'id' => $commentId
+            'id' => $commentId,
         ]);
         $this->assertDatabaseMissing('activities', [
-            'id' => $activityId
+            'id' => $activityId,
         ]);
         $this->assertDatabaseMissing('documents', [
-            'id' => $documentId
+            'id' => $documentId,
         ]);
     }
 
     /** @test */
-    public function invoiceIsNotDeletedByObserver()
+    public function invoice_is_not_deleted_by_observer()
     {
         $invoice = factory(Invoice::class)->create([
             'status' => 'Test',
@@ -109,15 +109,11 @@ class ProjectObserverDeleteTest extends TestCase
 
         $this->project->invoice_id = $invoice->id;
         $this->project->save();
-        
+
         $this->project->forceDelete();
 
         $this->assertNotNull($invoice->refresh());
     }
 
-    
-    public function tasksIsNotDeletedByObserver()
-    {
-    
-    }
+    public function tasksIsNotDeletedByObserver() {}
 }

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionsTableSeeder extends Seeder
 {
@@ -15,7 +15,6 @@ class PermissionsTableSeeder extends Seeder
         /**
          * User Permission
          */
-        
         $createUser = new Permission;
         $createUser->display_name = 'Create user';
         $createUser->name = 'user-create';
@@ -33,15 +32,13 @@ class PermissionsTableSeeder extends Seeder
         $deleteUser = new Permission;
         $deleteUser->display_name = 'Delete user';
         $deleteUser->name = 'user-delete';
-        $deleteUser->description = "Be able to delete a user";
+        $deleteUser->description = 'Be able to delete a user';
         $deleteUser->grouping = 'user';
         $deleteUser->save();
 
-
         /**
-        * Client Permission
-        */
-        
+         * Client Permission
+         */
         $createClient = new Permission;
         $createClient->display_name = 'Create client';
         $createClient->name = 'client-create';
@@ -78,9 +75,8 @@ class PermissionsTableSeeder extends Seeder
         $deleteDocument->save();
 
         /**
-        * Tasks Permission
-        */
-        
+         * Tasks Permission
+         */
         $createTask = new Permission;
         $createTask->display_name = 'Create task';
         $createTask->name = 'task-create';
@@ -102,27 +98,26 @@ class PermissionsTableSeeder extends Seeder
         $updateTask->grouping = 'task';
         $updateTask->save();
 
-        $assignNewUserTask = new Permission();
+        $assignNewUserTask = new Permission;
         $assignNewUserTask->display_name = 'Change assigned user';
         $assignNewUserTask->name = 'can-assign-new-user-to-task';
         $assignNewUserTask->description = 'Permission to change the assigned user on a task';
         $assignNewUserTask->grouping = 'task';
         $assignNewUserTask->save();
 
-        $changeLinkedProject = new Permission();
+        $changeLinkedProject = new Permission;
         $changeLinkedProject->display_name = 'Changed linked project';
         $changeLinkedProject->name = 'task-update-linked-project';
         $changeLinkedProject->description = 'Be able to change the project which is linked to a task';
         $changeLinkedProject->grouping = 'task';
         $changeLinkedProject->save();
 
-        $taskUploadFiles = new Permission();
+        $taskUploadFiles = new Permission;
         $taskUploadFiles->display_name = 'Upload files to task';
         $taskUploadFiles->name = 'task-upload-files';
         $taskUploadFiles->description = 'Allowed to upload files for a task';
         $taskUploadFiles->grouping = 'task';
         $taskUploadFiles->save();
-
 
         $invoicePermission = new Permission;
         $invoicePermission->display_name = 'Modify invoice lines on a invoice / task';
@@ -139,22 +134,22 @@ class PermissionsTableSeeder extends Seeder
         $invoicePermission->save();
 
         $invoicePermission = new Permission;
-        $invoicePermission->display_name = "Send invoices to clients";
+        $invoicePermission->display_name = 'Send invoices to clients';
         $invoicePermission->name = 'invoice-send';
-        $invoicePermission->description = "Be able to set an invoice as send to an customer (Or Send it if billing integration is active)";
+        $invoicePermission->description = 'Be able to set an invoice as send to an customer (Or Send it if billing integration is active)';
         $invoicePermission->grouping = 'invoice';
         $invoicePermission->save();
 
         $invoicePermission = new Permission;
-        $invoicePermission->display_name = "Set an invoice as paid";
+        $invoicePermission->display_name = 'Set an invoice as paid';
         $invoicePermission->name = 'invoice-pay';
-        $invoicePermission->description = "Be able to set an invoice as paid or not paid";
+        $invoicePermission->description = 'Be able to set an invoice as paid or not paid';
         $invoicePermission->grouping = 'invoice';
         $invoicePermission->save();
 
         /**
-        * Leads Permission
-        */
+         * Leads Permission
+         */
         $createLead = new Permission;
         $createLead->display_name = 'Create lead';
         $createLead->name = 'lead-create';
@@ -176,7 +171,7 @@ class PermissionsTableSeeder extends Seeder
         $updateLead->grouping = 'lead';
         $updateLead->save();
 
-        $assignNewUserLead = new Permission();
+        $assignNewUserLead = new Permission;
         $assignNewUserLead->display_name = 'Change assigned user';
         $assignNewUserLead->name = 'can-assign-new-user-to-lead';
         $assignNewUserLead->description = 'Permission to change the assigned user on a lead';
@@ -184,9 +179,8 @@ class PermissionsTableSeeder extends Seeder
         $assignNewUserLead->save();
 
         /**
-        * Project Permission
-        */
-        
+         * Project Permission
+         */
         $createproject = new Permission;
         $createproject->display_name = 'Create project';
         $createproject->name = 'project-create';
@@ -208,14 +202,14 @@ class PermissionsTableSeeder extends Seeder
         $updateproject->grouping = 'project';
         $updateproject->save();
 
-        $assignNewUserproject = new Permission();
+        $assignNewUserproject = new Permission;
         $assignNewUserproject->display_name = 'Change assigned user';
         $assignNewUserproject->name = 'can-assign-new-user-to-project';
         $assignNewUserproject->description = 'Permission to change the assigned user on a project';
         $assignNewUserproject->grouping = 'project';
         $assignNewUserproject->save();
 
-        $projectUploadFiles = new Permission();
+        $projectUploadFiles = new Permission;
         $projectUploadFiles->display_name = 'Upload files to project';
         $projectUploadFiles->name = 'project-upload-files';
         $projectUploadFiles->description = 'Allowed to upload files for a project';
