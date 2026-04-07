@@ -215,6 +215,8 @@
                     'method' => 'post',
                     'route' => ['invoice.sent', $invoice->external_id],
                     ]) !!}
+                    <input type="checkbox" name="remise" id="remise" value="{{ $reduction }}"> Get reduction of {{$reduction}} % on this invoice
+                    <p></p>
                     @if($apiconnected)
                     <p>{{ __('We have found this contact from your billing integration, do you wish for us to create the invoice in your your billing system as well?, than please choose a contact below') }}</p>
                     <select name="invoiceContact"

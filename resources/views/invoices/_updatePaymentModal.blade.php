@@ -9,8 +9,9 @@
 <div class="modal-body">
     <div class="row">
         <div class="col-lg-12">
-            <p class="text-align-center" style="font-size:1.4em; font-weight: 300;">@lang('Amount due')</p>
+            <p class="text-align-center" style="font-size:1.4em; font-weight: 300;">@lang('Amount due be')</p>
             <p class="text-align-center lead" style="font-size:2.4em; line-height: 1; font-weight: 300;">{{$amountDueFormatted}}</p>
+            <input type="hidden" name="amount_due" value="{{$amountDue->getBigDecimalAmount()}}">
             <hr>
         </div>
         <div class="col-lg-6">

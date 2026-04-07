@@ -6,39 +6,25 @@ use Ramsey\Uuid\Uuid;
 
 class RolesTablesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        $super_adminRole = new Role;
-        $super_adminRole->display_name = 'Owner';
-        $super_adminRole->external_id = Uuid::uuid4();
-        $super_adminRole->name = 'owner';
-        $super_adminRole->description = 'Owner';
-        $super_adminRole->save();
+        $roles = [
+            ['id' => 1, 'name' => 'owner', 'display_name' => 'Owner'],
+            ['id' => 2, 'name' => 'administrator', 'display_name' => 'Administrator'],
+            ['id' => 3, 'name' => 'manager', 'display_name' => 'Manager'],
+            ['id' => 4, 'name' => 'employee', 'display_name' => 'Employee']
+        ];
 
-        $adminRole = new Role;
-        $adminRole->display_name = 'Administrator';
-        $adminRole->external_id = Uuid::uuid4();
-        $adminRole->name = 'administrator';
-        $adminRole->description = 'System Administrator';
-        $adminRole->save();
-
-        $editorRole = new Role;
-        $editorRole->display_name = 'Manager';
-        $editorRole->external_id = Uuid::uuid4();
-        $editorRole->name = 'manager';
-        $editorRole->description = 'System Manager';
-        $editorRole->save();
-
-        $employeeRole = new Role;
-        $employeeRole->display_name = 'Employee';
-        $employeeRole->external_id = Uuid::uuid4();
-        $employeeRole->name = 'employee';
-        $employeeRole->description = 'Employee';
-        $employeeRole->save();
+        foreach ($roles as $role) {
+            Role::updateOrCreate(
+                ['name' => $role['name']],
+                [
+                    'external_id' => Uuid::uuid4(),
+                    'display_name' => $role['display_name'],
+                    'description' => $role['display_name'],
+                    'id' => $role['id']
+                ]
+            );
+        }
     }
 }

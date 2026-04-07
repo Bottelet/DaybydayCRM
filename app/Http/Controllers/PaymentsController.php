@@ -54,6 +54,11 @@ class PaymentsController extends Controller
             return redirect()->route('invoices.show', $invoice->external_id);
         }
 
+        if($request->amount_due < $request->amount) {
+            session()->flash('flash_message_warning', __("Amount can't be greater than due amount"));
+            return redirect()->back();
+        }
+
         $payment = Payment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'amount' => $request->amount * 100,

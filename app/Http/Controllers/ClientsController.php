@@ -19,14 +19,20 @@ use Datatables;
 use App\Models\Client;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\Setting;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Models\User;
 use App\Models\Integration;
+use App\Models\Project;
 use App\Models\Industry;
+use App\Models\InvoiceLine;
 use Ramsey\Uuid\Uuid;
 use App\Models\Contact;
+
+
+use App\Services\Database\DatabaseService;
 
 class ClientsController extends Controller
 {
@@ -41,11 +47,15 @@ class ClientsController extends Controller
      */
     private $filesystem;
 
-    public function __construct()
+    protected $databaseService;
+
+    public function __construct(DatabaseService $databaseService)
     {
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('is.demo', ['only' => ['destroy']]);
+
+        $this->databaseService = $databaseService;
     }
 
     /**
@@ -431,5 +441,9 @@ class ClientsController extends Controller
     public function listAllIndustries()
     {
         return Industry::pluck('name', 'id');
+    }
+
+    public function exportClient(Request $request){
+        $this->databaseService->exportCsv($request);
     }
 }

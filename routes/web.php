@@ -56,6 +56,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/upload/{external_id}', 'DocumentsController@upload')->name('document.upload');
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
+        
+        Route::get('/export', 'ClientsController@exportClient')->name('clients.export');
     });
     Route::resource('clients', 'ClientsController');
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
@@ -141,6 +143,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/indexData', 'DepartmentsController@indexData')->name('departments.indexDataTable');
     });
     Route::resource('departments', 'DepartmentsController');
+
+    /**
+     * Database
+     */
+    
+     Route::group(['prefix' => 'database'], function () {
+        Route::get('/', 'DatabaseController@index')->name('database.index');
+        Route::get('/import', 'DatabaseController@import')->name('database.import');
+        Route::get('/reset', 'DatabaseController@truncateAllExcept')->name('database.reset');
+        Route::post('/importCsv', 'DatabaseController@importCsv')->name('database.import.csv');
+     });
 
     /**
      * Integrations
