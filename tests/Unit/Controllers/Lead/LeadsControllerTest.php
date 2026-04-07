@@ -64,7 +64,7 @@ class LeadsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markAsIncomplete('failure repaired by junie');
+        $this->markTestIncomplete('failure repaired by junie');
         $lead = factory(Lead::class)->create();
         $status = factory(Status::class)->create();
 
@@ -81,7 +81,7 @@ class LeadsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_deadline_for_lead()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $lead = factory(Lead::class)->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [

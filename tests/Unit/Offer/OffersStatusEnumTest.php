@@ -4,6 +4,7 @@ namespace Tests\Unit\Offer;
 
 use App\Enums\OfferStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ class OffersStatusEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function offer_status_contains_both_display_and_source_value()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $this->assertTrue(property_exists(OfferStatus::fromStatus($this->offerStatus), 'status'));
         $this->assertTrue(property_exists(OfferStatus::fromStatus($this->offerStatus), 'displayValue'));
     }

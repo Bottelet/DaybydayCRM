@@ -10,6 +10,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -79,7 +80,7 @@ class TasksControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markAsIncomplete('failure repaired by junie');
+        $this->markTestIncomplete('failure repaired by junie');
         $task = factory(Task::class)->create();
         $status = factory(Status::class)->create();
 
@@ -96,7 +97,7 @@ class TasksControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_deadline_for_task()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $task = factory(Task::class)->create();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [

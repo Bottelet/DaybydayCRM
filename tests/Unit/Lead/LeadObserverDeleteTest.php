@@ -5,6 +5,7 @@ namespace Tests\Unit\Lead;
 use App\Models\Lead;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -37,7 +38,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Group('junie_repaired')]
     public function delete_leads_soft_deletes()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $this->lead->delete();
 
         $this->assertSoftDeleted($this->lead);
@@ -47,7 +48,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Group('junie_repaired')]
     public function delete_leadsoft_deletes_relations()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $this->assertNotEmpty($this->lead->comments);
         $this->assertNotEmpty($this->lead->activity);
         $this->assertNotEmpty($this->lead->appointments);
@@ -69,7 +70,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Group('junie_repaired')]
     public function force_delete_removes_lead_from_database()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $leadId = $this->lead->id;
 
         $this->lead->forceDelete();
@@ -84,7 +85,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Group('junie_repaired')]
     public function force_delete_removes_relations_from_database()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $commentId = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
         $activityId = $this->lead->activity->first()->id;
@@ -107,7 +108,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Group('junie_repaired')]
     public function offer_is_not_deleted_by_observer()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $offer = factory(Offer::class)->create([
             'source_id' => $this->lead->id,
         ]);

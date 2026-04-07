@@ -4,6 +4,7 @@ namespace Tests\Unit\Invoice;
 
 use App\Enums\InvoiceStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -32,7 +33,7 @@ class InvoiceStatusEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function invoice_status_contains_both_display_and_status_value()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'status'));
         $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'displayValue'));
     }

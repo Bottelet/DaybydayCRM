@@ -6,6 +6,7 @@ use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -57,7 +58,7 @@ class AppointmentsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_get_appointments_within_time_slot()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $correctAppointment = null;
         $r = $this->json('GET', '/appointments/data');
 

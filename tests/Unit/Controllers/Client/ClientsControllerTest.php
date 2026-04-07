@@ -8,6 +8,7 @@ use App\Models\Industry;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -59,7 +60,7 @@ class ClientsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_client()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $client = factory(Client::class)->create(
             [
                 'vat' => '5898989898',

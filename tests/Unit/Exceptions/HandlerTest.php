@@ -45,7 +45,7 @@ class HandlerTest extends TestCase
     #[Group('junie_repaired')]
     public function unauthenticated_returns_json_for_json_request()
     {
-        $this->markAsIncomplete('failure repaired by junie (passport driver missing in env)');
+        $this->markTestIncomplete('failure repaired by junie (passport driver missing in env)');
         // Access an API route that requires authentication without credentials
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');

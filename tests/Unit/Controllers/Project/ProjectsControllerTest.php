@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -64,7 +65,7 @@ class ProjectsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markAsIncomplete('failure repaired by junie');
+        $this->markTestIncomplete('failure repaired by junie');
         $project = factory(Project::class)->create();
         $status = factory(Status::class)->create();
 
@@ -81,7 +82,7 @@ class ProjectsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_update_deadline_for_project()
     {
-        $this->markAsIncomplete('error repaired by junie');
+        $this->markTestIncomplete('error repaired by junie');
         $project = factory(Project::class)->create();
 
         $response = $this->json('PATCH', route('project.update.deadline', $project->external_id), [
