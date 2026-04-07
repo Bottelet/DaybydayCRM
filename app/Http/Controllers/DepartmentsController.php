@@ -68,7 +68,7 @@ class DepartmentsController extends Controller
             'name' => $request->name,
             'description' => $request->description
         ]);
-        Session::flash('flash_message', __('Successfully created new department'));
+        session()->flash('flash_message', __('Successfully created new department'));
         return redirect()->route('departments.index');
     }
 
@@ -81,7 +81,7 @@ class DepartmentsController extends Controller
         $department = Department::whereExternalId($external_id)->first();
 
         if (!$department->users->isEmpty()) {
-            Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
+            session()->flash('flash_message_warning', __("Can't delete department with users, please remove users"));
             return redirect()->route('departments.index');
         }
         $department->delete();

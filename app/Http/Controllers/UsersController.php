@@ -176,7 +176,7 @@ class UsersController extends Controller
     {
         $settings = Setting::first();
         if (User::count() >= $settings->max_users) {
-            Session::flash('flash_message_warning', __('Max number of users reached'));
+            session()->flash('flash_message_warning', __('Max number of users reached'));
             return redirect()->back();
         }
         $path = null;
@@ -203,7 +203,7 @@ class UsersController extends Controller
         $user->department()->attach($request->departments);
         $user->save();
 
-        Session::flash('flash_message', __('User successfully added'));
+        session()->flash('flash_message', __('User successfully added'));
         return redirect()->route('users.index');
     }
 
@@ -281,7 +281,7 @@ class UsersController extends Controller
         $user->fill($input)->save();
         $role = $user->roles->first();
         if ($role && $role->name == Role::OWNER_ROLE && $owners->count() <= 1) {
-            Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
+            session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
             if(auth()->user()->canChangeRole() ) {
                 $user->roles()->sync([$request->roles]);
@@ -289,7 +289,7 @@ class UsersController extends Controller
         }
         $user->department()->sync([$department]);
 
-        Session()->flash('flash_message', __('User successfully updated'));
+        session()->flash('flash_message', __('User successfully updated'));
         return redirect()->back();
     }
 
@@ -302,7 +302,7 @@ class UsersController extends Controller
         $user = $this->findByExternalId($external_id);
 
         if ($user->hasRole('owner')) {
-            return Session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
+            return session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
         }
 
         if ($request->tasks == "move_all_tasks" && $request->task_user != "") {
@@ -317,9 +317,9 @@ class UsersController extends Controller
 
         try {
             $user->delete();
-            Session()->flash('flash_message', __('User successfully deleted'));
+            session()->flash('flash_message', __('User successfully deleted'));
         } catch (\Illuminate\Database\QueryException $e) {
-            Session()->flash('flash_message_warning', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
+            session()->flash('flash_message_warning', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
         }
 
         return redirect()->route('users.index');

@@ -250,6 +250,23 @@ class Country
 
                     ]
                 ]),
+                "ID" => new Country("ID", [
+                    "displayValue" => "Indonesia",
+                    "currencyCode" => "IDR",
+                    "language" => "Bahasa Indonesia",
+                    "phoneCode" => "+62",
+                    "format" => [
+                        "frontendDate" => "dd/mm/yyyy",
+                        "frontendTime" => "h:i a",
+                        "momentjsDayAndDateWithText" => "ddd D MMMM",
+                        "momentJsTime" => "HH:mm",
+                        "carbonDate" => "d/m/Y",
+                        "carbonTime" => "H:i",
+                        "carbonFullDateWithText" => "d, F Y H:i",
+                        "carbonDateWithText" => "d, F Y"
+
+                    ]
+                ]),
                 "OT" => new Country("OT", [
                     "displayValue" => "Other",
                     "currencyCode" => "EUR",

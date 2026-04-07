@@ -148,7 +148,7 @@ class InvoicesController extends Controller
         $invoice = $this->findByExternalId($external_id);
 
         if (!$invoice->canUpdateInvoice()) {
-            Session::flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
+            session()->flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
             return redirect()->back();
         }
 

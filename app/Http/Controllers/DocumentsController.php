@@ -80,7 +80,7 @@ class DocumentsController extends Controller
         $totaltsize = substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+            session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
             return redirect()->back();
         }
 
@@ -102,7 +102,7 @@ class DocumentsController extends Controller
             ]
         );
         Document::create($input);
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
     }
 
     /**
@@ -130,7 +130,7 @@ class DocumentsController extends Controller
                 $totaltsize = substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
-                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
                     return redirect()->back();
                 }
 
@@ -151,7 +151,7 @@ class DocumentsController extends Controller
                 ]);
             }
         }
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
         return $task->external_id;
     }
 
@@ -180,7 +180,7 @@ class DocumentsController extends Controller
                 $totaltsize = substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
-                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
                     return redirect()->back();
                 }
 
@@ -203,7 +203,7 @@ class DocumentsController extends Controller
                 ]);
             }
         }
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
         return $project->external_id;
     }
 
@@ -219,9 +219,9 @@ class DocumentsController extends Controller
         $document = Document::whereExternalId($external_id)->first();
         $deleted = $fileSystem->delete($document);
         if (!$deleted) {
-            Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
+            session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
         } else {
-            Session()->flash('flash_message', __('File has been deleted'));
+            session()->flash('flash_message', __('File has been deleted'));
         }
         $document->delete();
 
