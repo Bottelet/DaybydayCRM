@@ -60,4 +60,27 @@ class ClientActionTest extends TestCase
 
         $this->assertEquals($client->external_id, $event->getClient()->external_id);
     }
+
+    /** @test */
+    public function action_can_be_non_string_value()
+    {
+        $client = factory(Client::class)->create();
+        $event = new ClientAction($client, 42);
+
+        $this->assertEquals(42, $event->getAction());
+    }
+
+    /** @test */
+    public function event_uses_interacts_with_sockets_trait()
+    {
+        $traits = class_uses(ClientAction::class);
+        $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
+    }
+
+    /** @test */
+    public function event_uses_serializes_models_trait()
+    {
+        $traits = class_uses(ClientAction::class);
+        $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
+    }
 }

@@ -50,4 +50,31 @@ class NewCommentTest extends TestCase
 
         Event::assertDispatched(NewComment::class);
     }
+
+    /** @test */
+    public function event_uses_dispatchable_trait()
+    {
+        $traits = class_uses(NewComment::class);
+        $this->assertContains('Illuminate\Foundation\Events\Dispatchable', $traits);
+    }
+
+    /** @test */
+    public function event_uses_serializes_models_trait()
+    {
+        $traits = class_uses(NewComment::class);
+        $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
+    }
+
+    /** @test */
+    public function dispatched_event_carries_correct_comment()
+    {
+        Event::fake();
+        $comment = factory(Comment::class)->create(['description' => 'dispatch check']);
+
+        NewComment::dispatch($comment);
+
+        Event::assertDispatched(NewComment::class, function ($event) use ($comment) {
+            return $event->comment->id === $comment->id;
+        });
+    }
 }

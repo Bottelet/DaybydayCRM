@@ -60,4 +60,37 @@ class LeadActionTest extends TestCase
 
         $this->assertEquals($lead->external_id, $event->getLead()->external_id);
     }
+
+    /** @test */
+    public function action_can_be_non_string_value()
+    {
+        $lead = factory(Lead::class)->create();
+        $event = new LeadAction($lead, 99);
+
+        $this->assertEquals(99, $event->getAction());
+    }
+
+    /** @test */
+    public function event_uses_interacts_with_sockets_trait()
+    {
+        $traits = class_uses(LeadAction::class);
+        $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
+    }
+
+    /** @test */
+    public function event_uses_serializes_models_trait()
+    {
+        $traits = class_uses(LeadAction::class);
+        $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
+    }
+
+    /** @test */
+    public function broadcast_on_returns_channel_named_channel_name()
+    {
+        $lead = factory(Lead::class)->create();
+        $event = new LeadAction($lead, 'created');
+
+        $channel = $event->broadcastOn();
+        $this->assertInstanceOf(PrivateChannel::class, $channel);
+    }
 }

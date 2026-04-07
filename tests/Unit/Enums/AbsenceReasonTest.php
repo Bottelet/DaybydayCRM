@@ -147,4 +147,43 @@ class AbsenceReasonTest extends TestCase
         $this->expectException(\Exception::class);
         AbsenceReason::fromStatus('Vacation');
     }
+
+    /** @test */
+    public function constructor_accepts_null_display_value()
+    {
+        $reason = new AbsenceReason('custom_reason', null);
+        $this->assertEquals('custom_reason', $reason->getReason());
+    }
+
+    /** @test */
+    public function from_display_value_is_case_sensitive()
+    {
+        $this->expectException(\Exception::class);
+        AbsenceReason::fromDisplayValue('vacation');
+    }
+
+    /** @test */
+    public function from_display_value_throws_for_partial_match()
+    {
+        $this->expectException(\Exception::class);
+        AbsenceReason::fromDisplayValue('Vacatio');
+    }
+
+    /** @test */
+    public function values_are_cached_and_returns_same_instances()
+    {
+        $first = AbsenceReason::values();
+        $second = AbsenceReason::values();
+        $this->assertSame($first, $second);
+    }
+
+    /** @test */
+    public function time_off_in_lieu_shares_reason_string_with_time_off()
+    {
+        $timeOff = AbsenceReason::timeOff();
+        $timeOffInLieu = AbsenceReason::timeOffInLieu();
+
+        $this->assertEquals($timeOff->getReason(), $timeOffInLieu->getReason());
+        $this->assertNotEquals($timeOff->getDisplayValue(), $timeOffInLieu->getDisplayValue());
+    }
 }

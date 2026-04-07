@@ -220,4 +220,40 @@ class ApiControllerTest extends TestCase
         $uses = class_uses(ApiController::class);
         $this->assertNotContains('Dingo\Api\Routing\Helpers', $uses);
     }
+
+    /** @test */
+    public function respond_with_empty_array_returns_empty_json_object()
+    {
+        $response = $this->controller->callRespond([]);
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals([], $response->getData(true));
+    }
+
+    /** @test */
+    public function respond_with_nested_data_preserves_structure()
+    {
+        $data = ['user' => ['id' => 1, 'name' => 'Alice'], 'roles' => ['admin', 'editor']];
+        $response = $this->controller->callRespond($data);
+
+        $this->assertEquals($data, $response->getData(true));
+    }
+
+    /** @test */
+    public function respond_error_message_and_status_code_are_both_in_body()
+    {
+        $response = $this->controller->callRespondError('Bad Request', 400);
+
+        $data = $response->getData(true);
+        $this->assertEquals('Bad Request', $data['errors']['message']);
+        $this->assertEquals(400, $data['errors']['status_code']);
+        $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function controller_extends_illuminate_routing_controller()
+    {
+        $this->assertInstanceOf(\Illuminate\Routing\Controller::class, $this->controller);
+    }
 }

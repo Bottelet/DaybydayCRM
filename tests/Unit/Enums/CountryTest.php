@@ -140,4 +140,40 @@ class CountryTest extends TestCase
         $this->assertEquals('+999', $country->getPhoneCode());
         $this->assertEquals(['frontendDate' => 'dd/mm/yyyy'], $country->getFormat());
     }
+
+    /** @test */
+    public function from_code_returns_ot_directly_when_ot_is_requested()
+    {
+        $country = Country::fromCode('OT');
+        $this->assertInstanceOf(Country::class, $country);
+        $this->assertEquals('OT', $country->getCode());
+        $this->assertEquals('Other', $country->getDisplayValue());
+    }
+
+    /** @test */
+    public function from_code_returns_sweden_correctly()
+    {
+        $country = Country::fromCode('SE');
+        $this->assertEquals('Sweden', $country->getDisplayValue());
+        $this->assertEquals('SEK', $country->getCurrencyCode());
+        $this->assertEquals('Swedish', $country->getLanguage());
+    }
+
+    /** @test */
+    public function from_code_returns_us_with_different_carbon_date_format()
+    {
+        $us = Country::fromCode('US');
+        $format = $us->getFormat();
+        $this->assertEquals('m/d/Y', $format['carbonDate']);
+        $this->assertEquals('g:i A', $format['carbonTime']);
+    }
+
+    /** @test */
+    public function from_code_fallback_ot_has_expected_properties()
+    {
+        $country = Country::fromCode('ZZ');
+        $this->assertEquals('EUR', $country->getCurrencyCode());
+        $this->assertEquals('English', $country->getLanguage());
+        $this->assertEquals('+44', $country->getPhoneCode());
+    }
 }
