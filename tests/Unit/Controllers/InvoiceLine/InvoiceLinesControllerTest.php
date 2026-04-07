@@ -5,6 +5,7 @@ namespace Tests\Unit\Controllers\InvoiceLine;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -35,6 +36,15 @@ class InvoiceLinesControllerTest extends TestCase
     public function happy_path()
     {
         $this->user->attachRole(Role::whereName('owner')->first());
+
+        $role = $this->user->roles->first();
+        if ($role) {
+            $permission = Permission::where('name', 'modify-invoice-lines')->first();
+            if ($permission && ! $role->hasPermission($permission->name)) {
+                $role->attachPermission($permission);
+            }
+        }
+
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
         $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
