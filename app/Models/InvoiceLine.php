@@ -32,6 +32,23 @@ class InvoiceLine extends Model
         return 'external_id';
     }
 
+
+    public function setPriceAttribute($value)
+    {
+        if($value<0){
+            throw new \Exception("Price must be greater than 0");
+        }
+        $this->attributes['price'] = $value;
+    }
+
+    public function setQuantityAttribute($value)
+    {
+        if($value<0){
+            throw new \Exception("Quantity must be greater than 0");
+        }
+        $this->attributes['quantity'] = $value;
+    }
+
     public function tasks()
     {
         return $this->belongsTo(Task::class);

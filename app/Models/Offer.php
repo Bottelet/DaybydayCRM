@@ -20,6 +20,19 @@ class Offer extends Model
         'external_id'
     ];
 
+    public static function getTotalWon()
+    {
+       return Offer::where(['status'=>OfferStatus::won()])->count();
+    }
+    public static function getTotalLost()
+    {
+        return Offer::where(['status'=>OfferStatus::lost()])->count();
+    }
+    public static function getTotalInProgress()
+    {
+        return Offer::where(['status'=>OfferStatus::inProgress()])->count();
+    }
+
     public function getRouteKeyName()
     {
         return 'external_id';

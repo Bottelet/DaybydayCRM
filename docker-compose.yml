@@ -58,8 +58,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=daybyday
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
+
     networks:
       - service_net
 

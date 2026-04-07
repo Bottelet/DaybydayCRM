@@ -177,6 +177,7 @@ class User extends Authenticatable
         return collect(['keys' => $keys, 'counts' => $counts]);
     }
 
+
     /**
      * @param $external_id
      * @return mixed

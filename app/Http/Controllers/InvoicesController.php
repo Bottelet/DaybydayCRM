@@ -30,7 +30,7 @@ use App\Models\Offer;
 use App\Models\Product;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\ConfigurationRemise;
 class InvoicesController extends Controller
 {
     protected $clients;
@@ -78,15 +78,23 @@ class InvoicesController extends Controller
 
         $invoiceCalculator = new InvoiceCalculator($invoice);
         $totalPrice = $invoiceCalculator->getTotalPrice();
+        $finalPrice = $invoiceCalculator->getFinalPrice();
         $subPrice = $invoiceCalculator->getSubTotal();
         $vatPrice = $invoiceCalculator->getVatTotal();
         $amountDue = $invoiceCalculator->getAmountDue();
-        
+        $currentdiscount=0;
+        if(ConfigurationRemise::first())
+        {
+            $currentdiscount=ConfigurationRemise::first()->discount;
+        }
+
+
         return view('invoices.show')
             ->withInvoice($invoice)
             ->withApiconnected($apiConnected)
             ->withContacts($invoiceContacts)
-            ->withfinalPrice(app(MoneyConverter::class, ['money' => $totalPrice])->format())
+            ->withtotalPrice(app(MoneyConverter::class, ['money' => $totalPrice])->format())
+            ->withfinalPrice(app(MoneyConverter::class, ['money' => $finalPrice])->format())
             ->withsubPrice(app(MoneyConverter::class, ['money' => $subPrice])->format())
             ->withVatPrice(app(MoneyConverter::class, ['money' => $vatPrice])->format())
             ->withAmountDueFormatted(app(MoneyConverter::class, ['money' => $amountDue])->format())
@@ -94,8 +102,11 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDue($amountDue)
             ->withSource($invoice->source)
+            ->withCurrentDiscount($currentdiscount)
             ->withCompanyName(Setting::first()->company);
     }
+
+
 
 
     /**
@@ -116,6 +127,18 @@ class InvoicesController extends Controller
             session()->flash('flash_message_warning', __('Invoice already sent'));
             return redirect()->route('invoices.show', $external_id);
         }
+
+        $reduction=$request->boolean('reduction');
+        $invoice->pourcentagereduction=0;
+        if($reduction){
+            if(ConfigurationRemise::first())
+            {
+                $invoice->pourcentagereduction=ConfigurationRemise::first()->discount;
+            }
+        }
+
+
+
 
         $result = $invoice->invoice($request->invoiceContact);
         if ($request->sendMail && $request->invoiceContact) {

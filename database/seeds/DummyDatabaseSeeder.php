@@ -9,11 +9,16 @@ class DummyDatabaseSeeder extends Seeder
      *
      * @return void
      */
+
     public function run()
     {
-        $this->call('UsersDummyTableSeeder');
-        $this->call('ClientsDummyTableSeeder');
-        $this->call('TasksDummyTableSeeder');
-        $this->call('LeadsDummyTableSeeder');
+        $this->call(UsersDummyTableSeeder::class);
+        sleep(1);
+        $this->call(ClientsDummyTableSeeder::class);
+        sleep(1);
+        $this->call(TasksDummyTableSeeder::class);
+        sleep(1);
+        $this->call(LeadsDummyTableSeeder::class);
     }
+
 }

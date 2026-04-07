@@ -33,6 +33,20 @@ class Task extends Model implements Commentable
         'deadline',
         'project_id',
     ];
+
+    /**
+     * Récupère un projet par son titre
+     *
+     * @param string $name
+     * @return Client|null
+     */
+    public static function findByTitle($name)
+    {
+        return self::where('title', $name)->first();
+    }
+
+
+
     protected $dates = ['deadline'];
 
     protected $hidden = ['remember_token'];

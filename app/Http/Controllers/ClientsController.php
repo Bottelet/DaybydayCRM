@@ -48,6 +48,13 @@ class ClientsController extends Controller
         $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 
+    public function getAll()
+    {
+        $clients = Client::where(
+            ['deleted_at' => null],
+        )->get();
+        return response()->json($clients);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -78,6 +85,7 @@ class ClientsController extends Controller
             ->rawColumns(['namelink', 'view','edit', 'delete'])
             ->make(true);
     }
+
 
 
 

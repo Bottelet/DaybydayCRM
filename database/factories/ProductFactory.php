@@ -15,5 +15,6 @@ $factory->define(Product::class, function (Faker $faker) {
         'price' => $faker->numberBetween(1000,10000),
         'default_type' => 'hours',
         'archived' => false,
+
     ];
 });

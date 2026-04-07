@@ -46,6 +46,10 @@ class Lead extends Model implements Commentable
     protected $hidden = ['remember_token'];
 
 
+    public static function findByTitle($title)
+    {
+        return self::where('title', $title)->first();
+    }
     public static function boot()
     {
         parent::boot();

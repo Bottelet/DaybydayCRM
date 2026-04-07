@@ -35,6 +35,8 @@ class PagesController extends Controller
 
         $tasks = Task::whereBetween('created_at', [$startDate, now()])->get();
         $leads = Lead::whereBetween('created_at', [$startDate, now()])->get();
+
+
         foreach ($tasks as $task) {
             $datasheet[$task->created_at->format(carbonDate())]["monthly"]["tasks"]++;
         }
@@ -47,7 +49,7 @@ class PagesController extends Controller
         } else {
             $absences = Absence::with('user')->groupBy('user_id')->where('start_at', '>=', today())->orWhere('end_at', '>', today())->get();
         }
-
+        #var_dump($datasheet);
         return view('pages.dashboard')
             ->withUsers(User::with(['department'])->get())
             ->withDatasheet($datasheet)

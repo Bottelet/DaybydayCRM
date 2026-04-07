@@ -36,6 +36,17 @@ class Client extends Model
         'user_id',
         'client_number'];
 
+    /**
+     * Récupère un projet par son titre
+     *
+     * @param string $name
+     * @return Client|null
+     */
+    public static function findByName($name)
+    {
+        return self::where('company_name', $name)->first();
+    }
+
     public static function boot()
     {
         parent::boot();
