@@ -36,6 +36,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": ">=4.2.4",
         "driftingly/rector-laravel": ">=2.2",
+        "fakerphp/faker": "^1.23",
         "laravel/dusk": ">=8.5",
         "laravel/pint": ">=1.29",
         "laravel/tinker": ">=3",
@@ -79,7 +80,8 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"]
+            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"npm run dev\" --names=server,queue,logs,vite"
+        ]
     },
     "extra": {
         "laravel": {
