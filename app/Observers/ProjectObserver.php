@@ -10,9 +10,6 @@ class ProjectObserver
 
     public function __construct()
     {
-        if (app()->environment('testing')) {
-            return;
-        }
         $this->relations = [
             'comments',
             'activity',

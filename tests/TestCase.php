@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\Role;
 use App\Models\User;
 use Faker\Factory;
 use Faker\Generator;
@@ -38,6 +39,7 @@ abstract class TestCase extends BaseTestCase
                 'password' => bcrypt('admin123'),
             ]
         );
+        $this->user->attachRole(Role::where('name', 'owner')->first());
         $this->actingAs($this->user);
     }
 
