@@ -18,7 +18,7 @@
     "type": "project",
     "require": {
         "php": "^8.3",
-        "aws/aws-sdk-php": ">=3.376.3",
+        "aws/aws-sdk-php": ">=3.376.4",
         "elasticsearch/elasticsearch": ">=9.3",
         "google/apiclient": ">=2.19.2",
         "laravel/cashier": ">=16.5.1",
@@ -36,12 +36,12 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": ">=4.2.4",
         "driftingly/rector-laravel": ">=2.2",
-        "fakerphp/faker": "^1.23",
+        "fakerphp/faker": "^1.24.1",
         "laravel/dusk": ">=8.5",
         "laravel/pint": ">=1.29",
         "laravel/tinker": ">=3",
         "mockery/mockery": ">=1.6.12",
-        "nunomaduro/collision": ">=8.9.2",
+        "nunomaduro/collision": ">=8.9.3",
         "phpunit/phpunit": ">=12.5.16",
         "rector/rector": ">=2.4",
         "symfony/css-selector": ">=7.4.8",
