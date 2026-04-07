@@ -31,7 +31,6 @@ class OffersControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function can_create_offer()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             [
                 'title' => 'test line',
