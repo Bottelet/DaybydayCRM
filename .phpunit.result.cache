@@ -1,1 +1,0 @@
-{"version":2,"defects":{"Tests\\Unit\\Client\\ClientNumberServiceTest::set_next_client_number_takes_biggest_client_number_and_add_one":8,"Tests\\Unit\\Client\\ClientNumberServiceTest::next_client_number_takes_biggest_client_number_and_does_not_set_it":8,"Tests\\Unit\\Client\\ClientNumberServiceTest::manually_set_next_client_number":8},"times":[]}
