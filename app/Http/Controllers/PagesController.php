@@ -52,12 +52,12 @@ class PagesController extends Controller
                         ->orWhere('end_at', '>', today());
                 })
                 ->whereRaw(
-                    "start_at = (
+                    'start_at = (
                         select max(a2.start_at)
                         from absences as a2
                         where a2.user_id = absences.user_id
                           and (a2.start_at >= ? or a2.end_at > ?)
-                    )",
+                    )',
                     [today(), today()]
                 )
                 ->orderBy('user_id')

@@ -5,6 +5,7 @@ namespace Tests\Unit\Api;
 use App\Api\v1\Controllers\ApiController;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use Tests\TestCase;
 
 /**
@@ -254,6 +255,6 @@ class ApiControllerTest extends TestCase
     /** @test */
     public function controller_extends_illuminate_routing_controller()
     {
-        $this->assertInstanceOf(\Illuminate\Routing\Controller::class, $this->controller);
+        $this->assertInstanceOf(Controller::class, $this->controller);
     }
 }

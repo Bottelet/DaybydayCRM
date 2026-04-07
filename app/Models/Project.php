@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\ElasticSearchObserver;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
@@ -34,13 +33,6 @@ class Project extends Model implements Commentable
     public static function boot()
     {
         parent::boot();
-
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        // if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        // }
     }
 
     public function getRouteKeyName()

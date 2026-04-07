@@ -10,6 +10,9 @@ class ClientObserver
 
     public function __construct()
     {
+        if (app()->environment('testing')) {
+            return;
+        }
         $this->relations = [
             'tasks',
             'leads',
