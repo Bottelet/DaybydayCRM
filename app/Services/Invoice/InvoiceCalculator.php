@@ -45,6 +45,21 @@ class InvoiceCalculator
         return new Money($price);
     }
 
+    public function getFinalPrice(): Money
+    {
+
+
+        $price=$this->getTotalPrice()->getAmount();
+
+
+        $pourcentage=$this->invoice->pourcentagereduction;
+
+
+        $result=$price-($price*($pourcentage/100));
+
+        return new Money($result);
+    }
+
     public function getSubTotal(): Money
     {
         $price = 0;
@@ -58,7 +73,7 @@ class InvoiceCalculator
 
     public function getAmountDue()
     {
-        return new Money($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
+        return new Money($this->getFinalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
     }
 
     public function getInvoice()

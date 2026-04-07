@@ -10,5 +10,6 @@ $factory->define(Invoice::class, function (Faker $faker) {
         'external_id' => $faker->uuid,
         'status' => 'draft',
         'client_id' => factory(\App\Models\Client::class),
+        'source_type'=>App\Models\Lead::class,
     ];
 });

@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 use Session;
-use App\Http\Requests;
 use App\Models\Department;
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use Datatables;
@@ -16,6 +16,35 @@ class DepartmentsController extends Controller
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
         $this->middleware('is.demo', ['only' => ['destroy']]);
     }
+
+
+    /*
+     * Importer departement
+     *  */
+    public function import(Request $request)
+    {
+        $request->validate(['csv_file' => 'required|file|mimes:csv,txt']);
+        $csvfile=$request->file('csv_file');
+        try {
+            DB::beginTransaction();
+            if(($handle=fopen($csvfile,"r"))!==false){
+                $firstRow = fgetcsv($handle, 1000, ';');
+                while(($data=fgetcsv($handle, 1000, ';')) !== false){
+                    $row=array_combine($firstRow, $data);
+                    $department=new Department($row);
+                    $department->save();
+                }
+                fclose($handle);
+            }
+            DB::commit();
+        }
+        catch(\Exception $e){
+            DB::rollback();
+            echo $e->getMessage();
+        }
+        return redirect()->route('departments.index')->with('success', 'Departments imported');
+    }
+
 
     /**
      * @return mixed

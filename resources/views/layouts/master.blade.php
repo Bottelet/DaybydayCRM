@@ -54,6 +54,20 @@
             <a href="{{route('users.show', \Auth::user()->external_id)}}" class=" list-group-item"
                data-parent="#MainMenu"><i
                         class="fa fa-user sidebar-icon"></i><span id="menu-txt">{{ __('Profile') }}</span> </a>
+
+
+            <a href="{{route('import.load')}}"  class=" list-group-item"  data-parent="#MainMenu">
+                <i
+                        class="fa fa-upload"></i>
+                <span id="menu-txt">{{ __('Upload') }}</span>
+            </a>
+            <a href="{{route('reinitialise.load')}}"  class=" list-group-item"  data-parent="#MainMenu">
+                <i
+                        class="fa fa-refresh sidebar-icon"></i>
+                <span id="menu-txt">{{ __('Reset') }}</span>
+            </a>
+
+
             <a href="#clients" class=" list-group-item" data-toggle="collapse" data-parent="#MainMenu"><i
                         class="fa fa-user-secret sidebar-icon"></i><span id="menu-txt">{{ __('Clients') }}</span>
                 <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
@@ -119,10 +133,10 @@
                 class="fa fa-dollar sidebar-icon"></i><span id="menu-txt">{{ __('Sales') }}</span>
                 <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
             <div class="collapse" id="sales">
-            <a href="{{ route('invoices.overdue')}}" class="list-group-item childlist"> 
+            <a href="{{ route('invoices.overdue')}}" class="list-group-item childlist">
                 <i class="bullet-point"><span></span></i> {{ __('Overdue') }}
             </a>
-            <a href="{{ route('products.index')}}" class="list-group-item childlist"> 
+            <a href="{{ route('products.index')}}" class="list-group-item childlist">
                 <i class="bullet-point"><span></span></i> {{ __('Products') }}
             </a>
             </div>
@@ -172,6 +186,11 @@
                                 class="bullet-point"><span></span></i> {{ __('Integrations') }}</a>
                 </div>
             @endif
+
+
+
+
+
         </div>
     </nav>
 

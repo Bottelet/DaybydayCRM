@@ -19,6 +19,22 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'PagesController@dashboard');
     Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
 
+    /*
+     *
+     *Reinitialise
+     **/
+    Route::group(['prefix' => 'reinitialise'], function () {
+        Route::get('/', 'ReinitialiseController@index')->name('reinitialise.load');
+        Route::post('/clean', 'ReinitialiseController@reset')->name('reinitialise.reset');
+    });
+
+
+    Route::group(['prefix' => 'import'], function () {
+        Route::get('/', 'ImportController@index')->name('import.load');
+        Route::post('/', 'ImportController@upload')->name('import.import');
+    });
+
+
     /**
      * Users
      */
@@ -61,6 +77,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
+
+
 
 
     /**
@@ -139,6 +157,7 @@ Route::group(['middleware' => ['auth']], function () {
      */
     Route::group(['prefix' => 'departments'], function () {
         Route::get('/indexData', 'DepartmentsController@indexData')->name('departments.indexDataTable');
+        Route::post('/import', 'DepartmentsController@import')->name('departments.import');
     });
     Route::resource('departments', 'DepartmentsController');
 

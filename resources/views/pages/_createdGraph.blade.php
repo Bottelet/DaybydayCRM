@@ -6,6 +6,7 @@
     </div>
     <div class="tablet__body">
         <div class="tablet__items">
+
             <graphline class="chart" :datasheet="{{json_encode($datasheet)}}"></graphline>
         </div>
     </div>

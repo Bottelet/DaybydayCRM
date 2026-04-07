@@ -10,11 +10,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Services\Comment\Commentable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+
+
 use Carbon\Carbon;
 
 class Project extends model implements Commentable
 {
     use  SoftDeletes, SearchableTrait, DeadlineTrait;
+
+
     const PROJECT_STATUS_CLOSED = "Closed";
 
     protected $searchableFields = ['title'];
@@ -29,6 +33,19 @@ class Project extends model implements Commentable
         'client_id',
         'deadline',
     ];
+
+    /**
+     * Récupère un projet par son titre
+     *
+     * @param string $title
+     * @return Project|null
+     */
+    public static function getByTitle($title)
+    {
+        return self::where('title', $title)->first();
+    }
+
+
 
     protected $dates = ['deadline'];
 

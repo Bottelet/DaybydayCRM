@@ -15,6 +15,18 @@ class Product extends Model
         return 'external_id';
     }
 
+    public function setPriceAttribute($value)
+    {
+        echo "miset prixproduit ah io a!";
+        if($value<0){
+            throw new \Exception("Product price must be greater than 0");
+        }
+        $this->attributes['price'] = $value;
+    }
+    public  static  function findByName($name){
+        return self::where('name', $name)->first();
+    }
+
     public function getMoneyPriceAttribute()
     {
         $money = new Money($this->price);

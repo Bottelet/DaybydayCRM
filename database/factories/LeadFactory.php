@@ -2,6 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Enums\LeadStatus;
 use App\Models\Lead;
 use App\Models\User;
 use Faker\Generator as Faker;
@@ -14,7 +15,7 @@ $factory->define(Lead::class, function (Faker $faker) {
         'user_created_id' => factory(User::class),
         'user_assigned_id' => factory(User::class),
         'client_id' => factory(\App\Models\Client::class),
-        'status_id' => $faker->numberBetween($min = 5, $max = 8),
+        'status_id' => LeadStatus::open()->id,
         'deadline' => $faker->dateTimeThisYear($max = 'now'),
         'created_at' => $faker->dateTimeThisYear($max = 'now'),
         'updated_at' => $faker->dateTimeThisYear($max = 'now'),

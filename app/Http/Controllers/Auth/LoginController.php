@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-
+use Illuminate\Validation\ValidationException;
 class LoginController extends Controller
 {
     /*
@@ -36,4 +36,28 @@ class LoginController extends Controller
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
+
+    public function apiLogin(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'email' => 'required|email',
+                'password' => 'required|string',
+            ]);
+            if ($this->attemptLogin($request)) {
+                $user = $this->guard()->user();
+                return response()->json(['success' => true, 'message' => 'connexion', 'user' => $user]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Authentication failed.Please try again.']);
+        }
+        catch (ValidationException $e) {
+            return response()->json(['success' => false, 'message' => 'Login failed ','errors' => $e->errors()]);
+        }
+        catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Login failed: '.$e->getMessage()]);
+        }
+
+    }
+
 }

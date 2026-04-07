@@ -25,3 +25,4 @@ $factory->afterCreating(Client::class, function ($client, $faker) {
         ]
     );
 });
+

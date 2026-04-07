@@ -62,6 +62,9 @@
                             @endif
                         @endif
 
+
+
+
                         <!-- Vat Total price--->
                             <div class="tablet__item" style="padding: 0;">
                                 <div class="tablet__item__info">
@@ -84,10 +87,21 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="tablet__item" style="padding: 0;">
+                                <div class="tablet__item__info">
+                                    <span>@lang('Total')</span>
+                                </div>
+                                <div class="tablet__item__toolbar">
+                                    <div class="dropdown dropdown-inline">
+                                        <span>{{$totalPrice}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         <!-- Total price--->
                             <div class="tablet__item" style="padding: 0;">
                                 <div class="tablet__item__info">
-                                    <span class="final-price">@lang('Total')</span>
+                                    <span class="final-price">@lang('Final Price')</span>
                                 </div>
                                 <div class="tablet__item__toolbar">
                                     <div class="dropdown dropdown-inline">
@@ -199,6 +213,8 @@
             
         </div>
     </div>
+
+
 @if(!$invoice->sent_at)
 <div class="modal fade" id="SendInvoiceModalConfirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -248,9 +264,13 @@
 
                     <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact->name, "company" => $companyName, "price" => $finalPrice])</textarea>
                 </div>
+                <label>Current discount {{$currentDiscount}} %</label>
+                <label>@lang("Discount") <input type="checkbox"  name="reduction"></label>
+
                 <input type="submit" value="{{__('Send invoice')}}" class="btn btn-md btn-brand btn-full-width closebtn" id="close-invoice">
             {!! Form::close() !!}
             </div>
+
 
         </div>
     </div>
