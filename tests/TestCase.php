@@ -21,6 +21,7 @@ abstract class TestCase extends BaseTestCase
 
         // Run migrations before each test
         Artisan::call('migrate:fresh');
+        Artisan::call('db:seed');
 
         // Ensure Faker\Generator is bound for legacy factories
         $this->app->singleton(Generator::class, function () {
