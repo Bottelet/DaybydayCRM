@@ -16,7 +16,7 @@ class InvoiceLinesTable extends Migration
             $table->increments('id');
             $table->string('external_id');
             $table->string('title');
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->integer('price');
             $table->integer('invoice_id')->unsigned();
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');

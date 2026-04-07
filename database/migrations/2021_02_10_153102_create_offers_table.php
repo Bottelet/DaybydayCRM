@@ -18,7 +18,7 @@ class CreateOffersTable extends Migration
     {
         Schema::create('offers', static function (Blueprint $table) {
             $table->increments('id');
-            $table->string('external_id');
+            $table->string('external_id')->default('');
             $table->dateTime('sent_at')->nullable();
             $table->nullableMorphs('source');
             $table->integer('client_id')->unsigned();

@@ -26,9 +26,9 @@ class CreatePaymentsTable extends Migration
 
         Schema::create('payments', static function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('external_id');
+            $table->string('external_id')->default('');
             $table->integer('amount');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->string('payment_source');
             $table->date('payment_date');
             $table->string('integration_payment_id')->nullable();

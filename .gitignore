@@ -44,6 +44,7 @@ mix-manifest.json
 /.phpunit.result.cache
 _ide_helper.php
 phpunit.txt
+/phpu*.txt
 stan.txt
 todo.txt
 
