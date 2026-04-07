@@ -4,12 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Document extends Model
 {
     use SoftDeletes;
 
     protected $fillable = ['name', 'size', 'path', 'original_filename', 'client_id', 'external_id', 'mime', 'integration_id', 'integration_type', 'source_type', 'source_id'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (!$model->external_id) {
+                $model->external_id = (string) Str::uuid();
+            }
+        });
+    }
 
     public function clients()
     {
