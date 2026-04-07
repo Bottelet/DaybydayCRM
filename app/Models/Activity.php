@@ -40,6 +40,10 @@ class Activity extends Model
             if (empty($activity->external_id)) {
                 $activity->external_id = Uuid::uuid4()->toString();
             }
+
+            if (empty($activity->ip_address)) {
+                $activity->ip_address = request()->ip() ?: '127.0.0.1';
+            }
         });
     }
 

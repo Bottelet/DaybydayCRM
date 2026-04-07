@@ -294,7 +294,9 @@ trait EntrustUserTrait
             $role = $role['id'];
         }
 
-        $this->roles()->attach($role);
+        if (! $this->roles()->where($this->roles()->getRelated()->getTable().'.id', $role)->exists()) {
+            $this->roles()->attach($role);
+        }
     }
 
     /**
