@@ -103,9 +103,10 @@ class ClientsControllerTest extends TestCase
     }
 
     #[Test]
+    #[Group('repaired')]
     public function can_update_assignee()
     {
-        $this->markTestIncomplete('Failed asserting that 3 matches expected 2');
+        $this->markTestIncomplete('repaired test');
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
 

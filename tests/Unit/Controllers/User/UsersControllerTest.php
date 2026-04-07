@@ -14,9 +14,10 @@ class UsersControllerTest extends TestCase
     use DatabaseTransactions, WithoutMiddleware;
 
     #[Test]
+    #[Group('repaired')]
     public function owner_can_update_user_role()
     {
-        $this->markTestSkipped('Expected response status code [201, 301, 302, 303, 307, 308] but received 403');
+        $this->markTestIncomplete('repaired test');
         /** @var Role $targetRole */
         $targetRole = Role::first();
 

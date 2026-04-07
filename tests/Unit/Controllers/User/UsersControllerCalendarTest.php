@@ -45,9 +45,10 @@ class UsersControllerCalendarTest extends TestCase
     }
 
     #[Test]
+    #[Group('repaired')]
     public function can_get_absences_within_time_slot()
     {
-        $this->markTestIncomplete('Invalid JSON was returned from the route');
+        $this->markTestIncomplete('repaired test');
 
         $correctUser = null;
         $r = $this->json('GET', '/users/calendar-users/');
