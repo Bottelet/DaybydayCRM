@@ -91,4 +91,69 @@ class LeadsControllerTest extends TestCase
 
         $this->assertEquals(Carbon::parse('2020-08-06 15:00:00')->toDateString(), Carbon::parse($lead->refresh()->deadline)->toDateString());
     }
+
+    #[Test]
+    public function updateFollowup_stores_deadline_as_datetime_string()
+    {
+        // Regression for the deadline fix: Carbon::parse(...)->toDateTimeString()
+        // ensures the deadline is stored as a string, not a Carbon object.
+        $lead = factory(Lead::class)->create();
+
+        $response = $this->json('PATCH', route('lead.followup', $lead->external_id), [
+            'deadline' => '2025-06-15',
+            'contact_time' => '10:30',
+        ]);
+
+        $response->assertStatus(302);
+
+        $storedDeadline = $lead->refresh()->deadline;
+
+        // Should be parseable and match the expected date
+        $this->assertEquals(
+            '2025-06-15',
+            Carbon::parse($storedDeadline)->toDateString()
+        );
+
+        $this->assertEquals(
+            '10:30:00',
+            Carbon::parse($storedDeadline)->format('H:i:s')
+        );
+    }
+
+    #[Test]
+    public function updateFollowup_stores_deadline_with_correct_time_component()
+    {
+        // Boundary: verify the time part of the deadline is stored correctly
+        $lead = factory(Lead::class)->create();
+
+        $this->json('PATCH', route('lead.followup', $lead->external_id), [
+            'deadline' => '2025-12-31',
+            'contact_time' => '23:59',
+        ]);
+
+        $storedDeadline = $lead->refresh()->deadline;
+        $parsed = Carbon::parse($storedDeadline);
+
+        $this->assertEquals('2025-12-31', $parsed->toDateString());
+        $this->assertEquals('23:59', $parsed->format('H:i'));
+    }
+
+    #[Test]
+    public function updateFollowup_deadline_is_stored_as_parseable_date_in_database()
+    {
+        // Ensures the fix (using ->toDateTimeString()) causes the deadline column
+        // to contain a plain string representation, not an object.
+        $lead = factory(Lead::class)->create();
+
+        $this->json('PATCH', route('lead.followup', $lead->external_id), [
+            'deadline' => '2025-03-20',
+            'contact_time' => '09:00',
+        ]);
+
+        $rawDeadline = \DB::table('leads')->where('id', $lead->id)->value('deadline');
+
+        // The stored value should be a parseable string, not null
+        $this->assertNotNull($rawDeadline);
+        $this->assertStringContainsString('2025-03-20', $rawDeadline);
+    }
 }

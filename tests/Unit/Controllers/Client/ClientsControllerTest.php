@@ -141,4 +141,46 @@ class ClientsControllerTest extends TestCase
 
         $this->assertNotEquals($client->refresh()->user_id, $user->id);
     }
+
+    #[Test]
+    public function can_update_client_without_primary_contact()
+    {
+        // Create test data instead of relying on seeded data
+        $industry = factory(Industry::class)->create();
+        $user = factory(User::class)->create();
+
+        $client = factory(Client::class)->create([
+            'vat' => '9999999999',
+            'company_type' => 'A/S',
+            'company_name' => 'NoPrimary Co',
+        ]);
+
+        // The ClientFactory afterCreating hook creates a primary contact.
+        // Delete all contacts so the client has no primary contact for this test.
+        $client->contacts()->forceDelete();
+
+        $response = $this->json('PATCH', route('clients.update', $client->external_id), [
+            'name' => 'No Contact Name',
+            'email' => 'noprimary@test.com',
+            'primary_number' => '1234567890',
+            'secondary_number' => '0987654321',
+            'vat' => '8888888888',
+            'company_name' => 'NoPrimary Co Updated',
+            'address' => 'no contact street',
+            'zipcode' => '1111',
+            'city' => 'Null City',
+            'company_type' => 'ApS',
+            'industry_id' => $industry->id,
+            'user_id' => $user->id,
+        ]);
+
+        // Should succeed and redirect, not crash with null property access
+        $response->assertStatus(302);
+        $response->assertSessionHas('flash_message');
+
+        $updatedClient = Client::where('vat', '8888888888')->first();
+        $this->assertNotNull($updatedClient);
+        $this->assertEquals('NoPrimary Co Updated', $updatedClient->company_name);
+        $this->assertNull($updatedClient->primaryContact);
+    }
 }
