@@ -42,10 +42,8 @@ class HandlerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function unauthenticated_returns_json_for_json_request()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
         // Access an API route that requires authentication without credentials
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');

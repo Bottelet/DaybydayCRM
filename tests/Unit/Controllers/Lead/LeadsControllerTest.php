@@ -61,12 +61,10 @@ class LeadsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $lead = factory(Lead::class)->create();
-        $status = factory(Status::class)->create();
+        $status = factory(Status::class)->create(['source_type' => Lead::class]);
 
         $this->assertNotEquals($lead->status_id, $status->id);
 
@@ -78,10 +76,8 @@ class LeadsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_deadline_for_lead()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $lead = factory(Lead::class)->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [

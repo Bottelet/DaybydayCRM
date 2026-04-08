@@ -31,10 +31,8 @@ class InvoiceLinesControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('keeps_failing')]
     public function happy_path()
     {
-        $this->markTestIncomplete('keeps failing on object comparison, external id maybe, no matter what');
         $this->user->attachRole(Role::whereName('owner')->first());
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());

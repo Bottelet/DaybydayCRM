@@ -62,12 +62,10 @@ class ProjectsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $project = factory(Project::class)->create();
-        $status = factory(Status::class)->create();
+        $status = factory(Status::class)->create(['source_type' => Project::class]);
 
         $this->assertNotEquals($project->status_id, $status->id);
 
@@ -79,10 +77,8 @@ class ProjectsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_deadline_for_project()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $project = factory(Project::class)->create();
 
         $response = $this->json('PATCH', route('project.update.deadline', $project->external_id), [

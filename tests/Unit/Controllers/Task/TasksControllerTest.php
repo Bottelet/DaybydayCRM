@@ -77,12 +77,10 @@ class TasksControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $task = factory(Task::class)->create();
-        $status = factory(Status::class)->create();
+        $status = factory(Status::class)->create(['source_type' => Task::class]);
 
         $this->assertNotEquals($task->status_id, $status->id);
 
@@ -94,10 +92,8 @@ class TasksControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_deadline_for_task()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $task = factory(Task::class)->create();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [
