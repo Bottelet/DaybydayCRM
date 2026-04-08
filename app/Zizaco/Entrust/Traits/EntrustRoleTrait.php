@@ -178,7 +178,8 @@ trait EntrustRoleTrait
             return $this->attachPermissions($permission);
         }
 
-        $this->perms()->attach($permission);
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->perms()->syncWithoutDetaching([$permission]);
     }
 
     /**
@@ -208,8 +209,23 @@ trait EntrustRoleTrait
      */
     public function attachPermissions($permissions)
     {
-        foreach ($permissions as $permission) {
-            $this->attachPermission($permission);
+        // Collect permission IDs
+        $permissionIds = collect($permissions)->map(function ($permission) {
+            if (is_object($permission)) {
+                return $permission->getKey();
+            }
+            if (is_array($permission)) {
+                return $permission['id'] ?? $permission;
+            }
+            return $permission;
+        })->toArray();
+
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->perms()->syncWithoutDetaching($permissionIds);
+        
+        // Clear cache
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
     }
 

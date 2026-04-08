@@ -281,6 +281,7 @@ trait EntrustUserTrait
 
     /**
      * Alias to eloquent many-to-many relation's attach() method.
+     * Uses syncWithoutDetaching to prevent duplicate key errors.
      *
      * @param  mixed  $role
      */
@@ -294,12 +295,12 @@ trait EntrustUserTrait
             $role = $role['id'];
         }
 
-        if (! $this->roles()->where($this->roles()->getRelated()->getTable().'.id', $role)->exists()) {
-            $this->roles()->attach($role);
-            // Clear the cache after attaching a role
-            if (Cache::getStore() instanceof TaggableStore) {
-                Cache::tags(Config::get('entrust.role_user_table'))->flush();
-            }
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->roles()->syncWithoutDetaching([$role]);
+        
+        // Clear the cache after attaching a role
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
     }
 
@@ -327,13 +328,29 @@ trait EntrustUserTrait
 
     /**
      * Attach multiple roles to a user
+     * Uses syncWithoutDetaching to prevent duplicate key errors.
      *
      * @param  mixed  $roles
      */
     public function attachRoles($roles)
     {
-        foreach ($roles as $role) {
-            $this->attachRole($role);
+        // Collect role IDs
+        $roleIds = collect($roles)->map(function ($role) {
+            if (is_object($role)) {
+                return $role->getKey();
+            }
+            if (is_array($role)) {
+                return $role['id'] ?? $role;
+            }
+            return $role;
+        })->toArray();
+
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->roles()->syncWithoutDetaching($roleIds);
+        
+        // Clear cache
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
     }
 
