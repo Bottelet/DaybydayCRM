@@ -69,6 +69,14 @@ class LeadAssignmentAuthorizationTest extends TestCase
     #[Test]
     public function authorized_user_can_reassign_lead()
     {
+        $originalAssignee = $this->lead->user_assigned_id;
+        
+        // Verify the authorized user has the permission
+        $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-lead'));
+        
+        // Verify initial state
+        $this->assertEquals($this->authorizedUser->id, $originalAssignee);
+
         $response = $this->actingAs($this->authorizedUser)
             ->patch(route('lead.update.assignee', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
@@ -76,6 +84,12 @@ class LeadAssignmentAuthorizationTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('flash_message');
+        
+        // Verify assignment was updated in database
+        $this->assertDatabaseHas('leads', [
+            'id' => $this->lead->id,
+            'user_assigned_id' => $this->newAssignee->id,
+        ]);
         $this->assertEquals($this->newAssignee->id, $this->lead->refresh()->user_assigned_id);
     }
 
@@ -83,6 +97,9 @@ class LeadAssignmentAuthorizationTest extends TestCase
     public function unauthorized_user_cannot_reassign_lead()
     {
         $originalAssignee = $this->lead->user_assigned_id;
+        
+        // Verify the unauthorized user does NOT have the permission
+        $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-lead'));
 
         $response = $this->actingAs($this->unauthorizedUser)
             ->patch(route('lead.update.assignee', $this->lead->external_id), [
@@ -90,7 +107,13 @@ class LeadAssignmentAuthorizationTest extends TestCase
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this lead'));
+        
+        // Verify assignment was NOT changed in database
+        $this->assertDatabaseHas('leads', [
+            'id' => $this->lead->id,
+            'user_assigned_id' => $originalAssignee,
+        ]);
         $this->assertEquals($originalAssignee, $this->lead->refresh()->user_assigned_id);
     }
 }
