@@ -107,11 +107,17 @@ class DocumentsController extends Controller
      */
     public function uploadToTask(Request $request, $external_id)
     {
+        $task = Task::whereExternalId($external_id)->first();
+        
+        if (!$task) {
+            session()->flash('flash_message_warning', __('Task not found'));
+            return redirect()->back();
+        }
+
         if (!auth()->user()->can('task-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload files'));
             return redirect()->route('tasks.show', $external_id);
         }
-        $task = Task::whereExternalId($external_id)->first();
 
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
@@ -157,11 +163,17 @@ class DocumentsController extends Controller
      */
     public function uploadToProject(Request $request, $external_id)
     {
+        $project = Project::whereExternalId($external_id)->first();
+
+        if (!$project) {
+            session()->flash('flash_message_warning', __('Project not found'));
+            return redirect()->back();
+        }
+
         if (!auth()->user()->can('project-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload files'));
             return redirect()->route('projects.show', $external_id);
         }
-        $project = Project::whereExternalId($external_id)->first();
 
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
