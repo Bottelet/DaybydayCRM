@@ -38,8 +38,49 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
         // Create a client owned by the owner
         $this->client = factory(Client::class)->create(['user_id' => $this->owner->id]);
+
+        $this->bindFakeStorageProvider();
     }
 
+    private function bindFakeStorageProvider(): void
+    {
+        $this->app->instance(\App\Services\Storage\GetStorageProvider::class, new class {
+            public function getStorage(...$args)
+            {
+                return new class {
+                    public function enabled(): bool
+                    {
+                        return true;
+                    }
+
+                    public function isEnabled(): bool
+                    {
+                        return true;
+                    }
+
+                    public function view(...$args)
+                    {
+                        $document = $args[0] ?? null;
+
+                        return response('', 200, [
+                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
+                            'filename' => $document?->original_filename ?? '',
+                        ]);
+                    }
+
+                    public function download(...$args)
+                    {
+                        $document = $args[0] ?? null;
+
+                        return response('', 200, [
+                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
+                            'filename' => $document?->original_filename ?? '',
+                        ]);
+                    }
+                };
+            }
+        });
+    }
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_creator()
     {

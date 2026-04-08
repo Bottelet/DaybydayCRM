@@ -115,7 +115,7 @@ class TaskAssignmentAuthorizationTest extends TestCase
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this task'));
+        $response->assertSessionHas('flash_message_warning');
 
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('tasks', [

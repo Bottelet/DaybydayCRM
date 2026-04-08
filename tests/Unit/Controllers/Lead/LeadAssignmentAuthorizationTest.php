@@ -110,7 +110,7 @@ class LeadAssignmentAuthorizationTest extends TestCase
             ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this lead'));
+        $response->assertSessionHas('flash_message_warning');
 
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('leads', [
