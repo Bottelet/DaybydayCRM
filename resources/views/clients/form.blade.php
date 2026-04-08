@@ -3,38 +3,22 @@
 </div>
 <div class="col-sm-9" id="primaryContact">
     <div class="form-group">
-        {!! Form::label('name', __('Name'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('name',  
-            isset($data['owners']) ? $data['owners'][0]['name'] : null, 
-            ['class' => 'form-control']) 
-        !!}
+        <label for="name" class="control-label thin-weight">{{ __('Name') }}:</label>
+        <input type="text" name="name" class="form-control" value="{{ old('name', isset($data['owners']) ? $data['owners'][0]['name'] : (isset($client) ? $client->name : '')) }}">
     </div>
     <div class="form-group">
-        {!! Form::label('email', __('Email'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::email('email',
-            isset($data['email']) ? $data['email'] : null, 
-            ['class' => 'form-control']) 
-        !!}
+        <label for="email" class="control-label thin-weight">{{ __('Email') }}:</label>
+        <input type="email" name="email" class="form-control" value="{{ old('email', isset($data['email']) ? $data['email'] : (isset($client) ? $client->email : '')) }}">
     </div>
     <div class="form-inline">
     <div class="form-group col-sm-6 removeleft">
-        {!! Form::label('primary_number', __('Primary number'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('primary_number',  
-            isset($data['phone']) ? $data['phone'] : null, 
-            ['class' => 'form-control']) 
-        !!}
+        <label for="primary_number" class="control-label thin-weight">{{ __('Primary number') }}:</label>
+        <input type="text" name="primary_number" class="form-control" value="{{ old('primary_number', isset($data['phone']) ? $data['phone'] : (isset($client) ? $client->primary_number : '')) }}">
     </div>
 
     <div class="form-group col-sm-6 removeleft removeright">
-        {!! Form::label('secondary_number', __('Secondary number'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('secondary_number',  
-            null, 
-            ['class' => 'form-control']) 
-        !!}
+        <label for="secondary_number" class="control-label thin-weight">{{ __('Secondary number') }}:</label>
+        <input type="text" name="secondary_number" class="form-control" value="{{ old('secondary_number', isset($client) ? $client->secondary_number : '') }}">
     </div>
 </div>
 </div>
@@ -46,69 +30,44 @@
 <div class="col-sm-9" id="businessInfo">
     <div class="form-inline">
     <div class="form-group col-sm-6 removeleft">
-        {!! Form::label('vat', __('Vat'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('vat',
-            isset($data['vat']) ?$data['vat'] : null,
-            ['class' => 'form-control']) 
-        !!}
+        <label for="vat" class="control-label thin-weight">{{ __('Vat') }}:</label>
+        <input type="text" name="vat" class="form-control" value="{{ old('vat', isset($data['vat']) ? $data['vat'] : (isset($client) ? $client->vat : '')) }}">
     </div>
 
     <div class="form-group col-sm-6 removeleft removeright">
-        {!! Form::label('company_name', __('Company name'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('company_name',
-            isset($data['name']) ? $data['name'] : null, 
-            ['class' => 'form-control']) 
-        !!}
+        <label for="company_name" class="control-label thin-weight">{{ __('Company name') }}:</label>
+        <input type="text" name="company_name" class="form-control" value="{{ old('company_name', isset($data['name']) ? $data['name'] : (isset($client) ? $client->company_name : '')) }}">
     </div>
 </div>
 <div class="form-group">
-    {!! Form::label('address', __('Address'). ':', ['class' => 'control-label thin-weight']) !!}
-    {!! 
-        Form::text('address',
-        isset($data['address']) ? $data['address'] : null, 
-        ['class' => 'form-control'])
-    !!}
+    <label for="address" class="control-label thin-weight">{{ __('Address') }}:</label>
+    <input type="text" name="address" class="form-control" value="{{ old('address', isset($data['address']) ? $data['address'] : (isset($client) ? $client->address : '')) }}">
 </div>
 
 <div class="form-inline">
     <div class="form-group col-sm-4 removeleft">
-        {!! Form::label('zipcode', __('Zipcode'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('zipcode',
-             isset($data['zipcode']) ? $data['zipcode'] : null, 
-             ['class' => 'form-control']) 
-        !!}
+        <label for="zipcode" class="control-label thin-weight">{{ __('Zipcode') }}:</label>
+        <input type="text" name="zipcode" class="form-control" value="{{ old('zipcode', isset($data['zipcode']) ? $data['zipcode'] : (isset($client) ? $client->zipcode : '')) }}">
     </div>
 
     <div class="form-group col-sm-8 removeleft removeright">
-        {!! Form::label('city', __('City'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! 
-            Form::text('city',
-            isset($data['city']) ? $data['city'] : null,
-            ['class' => 'form-control']) 
-        !!}
+        <label for="city" class="control-label thin-weight">{{ __('City') }}:</label>
+        <input type="text" name="city" class="form-control" value="{{ old('city', isset($data['city']) ? $data['city'] : (isset($client) ? $client->city : '')) }}">
     </div>
 </div>
 <div class="form-group">
-
-    {!! Form::label('company_type', __('Company type'). ':', ['class' => 'control-label thin-weight']) !!}
-    {!!
-        Form::text('company_type',
-        isset($data['companydesc']) ? $data['companydesc'] : null,
-        ['class' => 'form-control'])
-    !!}
+    <label for="company_type" class="control-label thin-weight">{{ __('Company type') }}:</label>
+    <input type="text" name="company_type" class="form-control" value="{{ old('company_type', isset($data['companydesc']) ? $data['companydesc'] : (isset($client) ? $client->company_type : '')) }}">
 </div>
 <div class="form-group">
-    {!! Form::label('industry', __('Industry'). ':', ['class' => 'control-label thin-weight']) !!}
-    {!!
-        Form::select('industry_id',
-        $industries,
-        null,
-        ['class' => 'form-control ui search selection top right pointing search-select',
-        'id' => 'search-select'])
-    !!}
+    <label for="industry" class="control-label thin-weight">{{ __('Industry') }}:</label>
+    <select name="industry_id" class="form-control ui search selection top right pointing search-select" id="search-select">
+        @foreach($industries as $id => $name)
+            <option value="{{ $id }}" {{ old('industry_id', isset($client) ? $client->industry_id : '') == $id ? 'selected' : '' }}>
+                {{ $name }}
+            </option>
+        @endforeach
+    </select>
 </div>
 </div>
 <hr>
@@ -117,14 +76,19 @@
 </div>
 <div class="col-sm-9" id="assignUser">
     <div class="form-group">
-        {!! Form::label('user_id', __('Assign user'). ':', ['class' => 'control-label thin-weight']) !!}
-        {!! Form::select('user_id', $users, null, ['class' => 'form-control ui search selection top right pointing search-select', 'id' => 'search-select']) !!}
-
+        <label for="user_id" class="control-label thin-weight">{{ __('Assign user') }}:</label>
+        <select name="user_id" class="form-control ui search selection top right pointing search-select" id="search-select">
+            @foreach($users as $id => $name)
+                <option value="{{ $id }}" {{ old('user_id', isset($client) ? $client->user_id : '') == $id ? 'selected' : '' }}>
+                    {{ $name }}
+                </option>
+            @endforeach
+        </select>
     </div>
 </div>
 <hr>
 <div class="col-sm-10">
-    {!! Form::submit($submitButtonText, ['class' => 'btn btn-md btn-brand', 'id' => 'submitClient']) !!}
+    <input type="submit" value="{{ $submitButtonText }}" class="btn btn-md btn-brand" id="submitClient">
 </div>
 <div class="col-sm-2">
 
