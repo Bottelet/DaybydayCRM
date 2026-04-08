@@ -85,7 +85,7 @@ class LeadsControllerTest extends TestCase
             'contact_time' => '15:00',
         ]);
 
-        $this->assertEquals(Carbon::parse('2020-08-06 15:00:00')->toDateString(), Carbon::parse($lead->refresh()->deadline)->toDateString());
+        $this->assertDatesEqual('2020-08-06 15:00:00', $lead->refresh()->deadline);
     }
 
     #[Test]
