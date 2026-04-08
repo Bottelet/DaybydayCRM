@@ -30,6 +30,10 @@ class AppointmentsController extends Controller
 
     public function update(UpdateAppointmentCalendarRequest $request, Appointment $appointment)
     {
+        if (! auth()->user()->can('appointment-update')) {
+            return response('Access denied', 403);
+        }
+
         $appointment->start_at = Carbon::parse($request->start)->setTimezone('Europe/Copenhagen');
         $appointment->end_at = Carbon::parse($request->end)->setTimezone('Europe/Copenhagen');
         $appointment->user()->associate(User::where('external_id', $request->group)->first());

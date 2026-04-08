@@ -30,6 +30,7 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('user.create', ['only' => ['create']]);
+        $this->middleware('user.update', ['only' => ['edit', 'update']]);
         $this->middleware('is.demo', ['only' => ['update', 'destroy']]);
     }
 

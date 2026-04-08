@@ -12,8 +12,26 @@ class SearchController extends Controller
             return response()->json(app(SearchService::class)->search($query, $type));
         }
 
-        $type = ucfirst(rtrim($type, 's'));
-        $class = '\\App\\Models\\'.$type;
+        // Allowlist of searchable model types to prevent arbitrary class instantiation
+        $allowedTypes = [
+            'client' => \App\Models\Client::class,
+            'clients' => \App\Models\Client::class,
+            'task' => \App\Models\Task::class,
+            'tasks' => \App\Models\Task::class,
+            'project' => \App\Models\Project::class,
+            'projects' => \App\Models\Project::class,
+            'lead' => \App\Models\Lead::class,
+            'leads' => \App\Models\Lead::class,
+            'user' => \App\Models\User::class,
+            'users' => \App\Models\User::class,
+        ];
+
+        $typeLower = strtolower($type);
+        if (!isset($allowedTypes[$typeLower])) {
+            return response()->json(['error' => 'Invalid search type'], 400);
+        }
+
+        $class = $allowedTypes[$typeLower];
         $searchClass = new $class;
         $result['hits'] = [];
         foreach ($searchClass->getSearchableFields() as $searchableField) {
