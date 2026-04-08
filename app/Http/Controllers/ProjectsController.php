@@ -230,7 +230,7 @@ class ProjectsController extends Controller
         $input = $request->only(['status_id']);
         if ($request->ajax() && isset($request->statusExternalId)) {
             $status = Status::whereExternalId($request->statusExternalId)->first();
-            if (!$status) {
+            if (! $status) {
                 return response()->json(['error' => __('Invalid status')], 400);
             }
             $input['status_id'] = $status->id;
