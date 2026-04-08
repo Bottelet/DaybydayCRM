@@ -269,11 +269,8 @@ class TasksController extends Controller
         }
         $input = $request->only(['status_id']);
 
-        if ($request->ajax() && isset($request->statusExternalId)) {
-            $status = Status::whereExternalId($request->statusExternalId)->first();
-            if ($status) {
-                $input['status_id'] = $status->id;
-            }
+        if ($request->ajax() && isset($input['statusExternalId'])) {
+            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
         }
 
         if (! isset($input['status_id']) || ! $input['status_id']) {

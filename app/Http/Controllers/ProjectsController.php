@@ -240,12 +240,9 @@ class ProjectsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->only(['status_id']);
-        if ($request->ajax() && isset($request->statusExternalId)) {
-            $status = Status::whereExternalId($request->statusExternalId)->first();
-            if ($status) {
-                $input['status_id'] = $status->id;
-            }
+        $input = $request->all();
+        if ($request->ajax() && isset($input['statusExternalId'])) {
+            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
         }
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();

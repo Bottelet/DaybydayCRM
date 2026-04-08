@@ -36,10 +36,6 @@ class LeadsController extends Controller
                 abort(403);
             }
 
-            return $next($request);
-        }, ['only' => ['destroy', 'destroyJson']]);
-    }
-
     public function index()
     {
         return view('leads.index')
