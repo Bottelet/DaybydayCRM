@@ -30,6 +30,15 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('user.create', ['only' => ['create']]);
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! auth()->user()->can('user-delete')) {
+                session()->flash('flash_message_warning', __('You do not have permission to view this page'));
+
+                return redirect()->back();
+            }
+
+            return $next($request);
+        }, ['only' => ['destroy']]);
         $this->middleware('is.demo', ['only' => ['update', 'destroy']]);
     }
 

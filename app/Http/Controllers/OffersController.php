@@ -15,6 +15,12 @@ use Ramsey\Uuid\Uuid;
 
 class OffersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:offer-create', ['only' => ['create']]);
+        $this->middleware('permission:offer-edit', ['only' => ['update', 'won', 'lost']]);
+    }
+
     public function getOfferInvoiceLinesJson(Offer $offer)
     {
         return $offer->invoiceLines()->with(['product' => function ($q) {
