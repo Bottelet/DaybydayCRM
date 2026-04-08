@@ -227,10 +227,32 @@ class ProjectsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+        $input = $request->only(['status_id']);
+        
+        if ($request->ajax() && isset($request->statusExternalId)) {
+            $status = Status::whereExternalId($request->statusExternalId)->first();
+            if (! $status) {
+                if ($request->ajax()) {
+                    return response()->json(['error' => __('Invalid status')], 400);
+                }
+                session()->flash('flash_message_warning', __('Invalid status'));
+                return redirect()->back();
+            }
+            $input['status_id'] = $status->id;
         }
+
+        // Validate that the status_id belongs to project statuses
+        if (isset($input['status_id'])) {
+            $validStatus = Status::typeOfProject()->where('id', $input['status_id'])->exists();
+            if (! $validStatus) {
+                if ($request->ajax()) {
+                    return response()->json(['error' => __('Invalid status for project')], 400);
+                }
+                session()->flash('flash_message_warning', __('Invalid status for project'));
+                return redirect()->back();
+            }
+        }
+
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();
 

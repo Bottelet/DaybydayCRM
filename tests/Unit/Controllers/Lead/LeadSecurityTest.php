@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
@@ -125,5 +126,53 @@ class LeadSecurityTest extends TestCase
 
         // Title should not be changed
         $this->assertNotEquals('Hacked Title', $this->lead->title);
+    }
+
+    #[Test]
+    public function update_status_rejects_invalid_status_type()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        // Create a status that belongs to a different type (Task instead of Lead)
+        $taskStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $originalStatus = $this->lead->status_id;
+
+        // Attempt to assign a Task status to a Lead
+        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+            'status_id' => $taskStatus->id,
+        ]);
+
+        $this->lead->refresh();
+
+        // Status should NOT be changed because it's not a valid lead status
+        $this->assertEquals($originalStatus, $this->lead->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));
+    }
+
+    #[Test]
+    public function update_status_rejects_nonexistent_status_id()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $originalStatus = $this->lead->status_id;
+
+        // Attempt to assign a non-existent status ID
+        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+            'status_id' => 999999,
+        ]);
+
+        $this->lead->refresh();
+
+        // Status should NOT be changed
+        $this->assertEquals($originalStatus, $this->lead->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));
     }
 }

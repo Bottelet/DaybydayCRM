@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Project;
 
+use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Role;
@@ -115,5 +116,53 @@ class ProjectSecurityTest extends TestCase
 
         $this->project->refresh();
         $this->assertEquals($newStatus->id, $this->project->status_id);
+    }
+
+    #[Test]
+    public function update_status_rejects_invalid_status_type()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        // Create a status that belongs to a different type (Lead instead of Project)
+        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $originalStatus = $this->project->status_id;
+
+        // Attempt to assign a Lead status to a Project
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+            'status_id' => $leadStatus->id,
+        ]);
+
+        $this->project->refresh();
+
+        // Status should NOT be changed because it's not a valid project status
+        $this->assertEquals($originalStatus, $this->project->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));
+    }
+
+    #[Test]
+    public function update_status_rejects_nonexistent_status_id()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $originalStatus = $this->project->status_id;
+
+        // Attempt to assign a non-existent status ID
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+            'status_id' => 999999,
+        ]);
+
+        $this->project->refresh();
+
+        // Status should NOT be changed
+        $this->assertEquals($originalStatus, $this->project->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Tests\Unit\Controllers\Task;
 
+use App\Models\Lead;
 use App\Models\Permission;
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
@@ -115,5 +117,53 @@ class TaskSecurityTest extends TestCase
 
         $this->task->refresh();
         $this->assertEquals($newStatus->id, $this->task->status_id);
+    }
+
+    #[Test]
+    public function update_status_rejects_invalid_status_type()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        // Create a status that belongs to a different type (Lead instead of Task)
+        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $originalStatus = $this->task->status_id;
+
+        // Attempt to assign a Lead status to a Task
+        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
+            'status_id' => $leadStatus->id,
+        ]);
+
+        $this->task->refresh();
+
+        // Status should NOT be changed because it's not a valid task status
+        $this->assertEquals($originalStatus, $this->task->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
+    }
+
+    #[Test]
+    public function update_status_rejects_nonexistent_status_id()
+    {
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $originalStatus = $this->task->status_id;
+
+        // Attempt to assign a non-existent status ID
+        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
+            'status_id' => 999999,
+        ]);
+
+        $this->task->refresh();
+
+        // Status should NOT be changed
+        $this->assertEquals($originalStatus, $this->task->status_id);
+        
+        // Should show warning message
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
     }
 }

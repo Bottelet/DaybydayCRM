@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\Lead;
+use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
+
 class SearchController extends Controller
 {
     public function search($query, $type)
@@ -26,8 +32,8 @@ class SearchController extends Controller
             return response()->json(['error' => 'Invalid search type'], 400);
         }
 
-        $type = ucfirst(rtrim($type, 's'));
-        $class = '\\App\\Models\\'.$type;
+        // Use the validated class from allowlist to prevent arbitrary class instantiation
+        $class = $allowedTypes[$typeLower];
         $searchClass = new $class;
         $result['hits'] = [];
         foreach ($searchClass->getSearchableFields() as $searchableField) {
