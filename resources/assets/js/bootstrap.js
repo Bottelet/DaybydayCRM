@@ -24,6 +24,15 @@ window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
+ * Set the base URL for axios from the global DayByDay configuration.
+ * This ensures that all axios requests work correctly when the app
+ * is installed in a subdirectory.
+ */
+if (typeof DayByDay !== 'undefined' && DayByDay.baseUrl) {
+    window.axios.defaults.baseURL = DayByDay.baseUrl;
+}
+
+/**
  * We'll register a HTTP interceptor to attach the "CSRF" header to each of
  * the outgoing requests issued by this application. The CSRF middleware
  * included with Laravel will automatically verify the header's value.
