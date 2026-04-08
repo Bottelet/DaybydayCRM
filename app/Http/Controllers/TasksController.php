@@ -262,7 +262,12 @@ class TasksController extends Controller
         $input = $request->only(['status_id']);
 
         if ($request->ajax() && isset($request->statusExternalId)) {
-            $input['status_id'] = Status::whereExternalId($request->statusExternalId)->first()->id;
+            $status = Status::whereExternalId($request->statusExternalId)->first();
+            if (!$status) {
+                session()->flash('flash_message_warning', __('Invalid status'));
+                return redirect()->back();
+            }
+            $input['status_id'] = $status->id;
         }
 
         $task = $this->findByExternalId($external_id);
