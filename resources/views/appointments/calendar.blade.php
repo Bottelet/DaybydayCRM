@@ -7,6 +7,13 @@
   <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
   <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{{ asset(elixir('css/bootstrap-select.min.css')) }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}"/>
+  <script>
+    var DayByDay =  {
+      csrfToken: "{{csrf_token()}}",
+      baseUrl: "{{url('/')}}"
+    }
+  </script>
 </head>
 <body>
 <div id="wrapper">
@@ -29,8 +36,8 @@
   echo json_encode($trans);
   ?>;
 </script>
-<script src="/js/manifest.js"></script>
-<script src="/js/vendor.js"></script>
+<script src="{{ asset('js/manifest.js') }}"></script>
+<script src="{{ asset('js/vendor.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/picker.js') }}"></script>
 
