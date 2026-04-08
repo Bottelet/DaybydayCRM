@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Document;
+use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Services\Storage\GetStorageProvider;
@@ -283,7 +284,7 @@ class DocumentsController extends Controller
     {
         $user = auth()->user();
         
-        // Load the source model (Task, Client, Lead, or Project)
+        // Load the source model via the morphTo relationship
         $source = $document->source_type::find($document->source_id);
         
         if (!$source) {
@@ -310,7 +311,7 @@ class DocumentsController extends Controller
             return $source->user_id === $user->id;
         }
         
-        if ($document->source_type === 'App\Models\Lead') {
+        if ($document->source_type === Lead::class) {
             // User can access if they created or are assigned to the lead
             return $source->user_created_id === $user->id 
                 || $source->user_assigned_id === $user->id
