@@ -5,6 +5,7 @@ namespace Tests\Unit\Invoice;
 use App\Models\Invoice;
 use App\Models\Lead;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class RemoveReferenceTest extends TestCase
@@ -23,7 +24,7 @@ class RemoveReferenceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertNotNull($this->invoice->integration_invoice_id);

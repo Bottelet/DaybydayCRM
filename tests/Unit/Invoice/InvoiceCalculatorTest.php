@@ -8,6 +8,7 @@ use App\Models\Payment;
 use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InvoiceCalculatorTest extends TestCase
@@ -46,7 +47,7 @@ class InvoiceCalculatorTest extends TestCase
         $this->invoiceCalculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
     }
 
-    /** @test */
+    #[Test]
     public function get_amount_due()
     {
         $this->assertEquals(4000, $this->invoiceCalculator->getAmountDue()->getAmount());

@@ -13,7 +13,7 @@ class AlterLeadsTableSupportQualified extends Migration
      */
     public function up()
     {
-        Schema::table('leads', function (Blueprint $table) {
+        Schema::table('leads', static function (Blueprint $table) {
             $table->boolean('qualified')->index()->after('user_created_id')->default(false);
             $table->string('result')->after('qualified')->nullable();
             $table->integer('invoice_id')->unsigned()->nullable()->after('result');
@@ -28,7 +28,7 @@ class AlterLeadsTableSupportQualified extends Migration
      */
     public function down()
     {
-        Schema::table('leads', function (Blueprint $table) {
+        Schema::table('leads', static function (Blueprint $table) {
             $table->dropColumn('qualified');
             $table->dropColumn('result');
             $table->dropColumn('invoice_id');

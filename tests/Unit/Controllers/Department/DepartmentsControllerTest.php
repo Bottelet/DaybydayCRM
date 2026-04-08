@@ -5,13 +5,14 @@ namespace Tests\Unit\Controllers\Department;
 use App\Models\Department;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DepartmentsControllerTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    /** @test **/
+    #[Test]
     public function can_create_department()
     {
         $response = $this->json('POST', route('departments.store'), [
@@ -23,7 +24,7 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNotNull(Department::where('name', 'Test Department')->first());
     }
 
-    /** @test **/
+    #[Test]
     public function can_delete_department()
     {
         $department = factory(Department::class)->create();
@@ -33,7 +34,7 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
     }
 
-    /** @test **/
+    #[Test]
     public function cant_delete_department_if_user_is_associated()
     {
         $department = factory(Department::class)->create();

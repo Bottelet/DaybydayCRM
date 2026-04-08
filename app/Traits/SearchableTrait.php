@@ -6,14 +6,14 @@ use App\Observers\ElasticSearchObserver;
 
 trait SearchableTrait
 {
-    public static function boot()
+    public static function bootSearchableTrait()
     {
         // This makes it easy to toggle the search feature flag
         // on and off. This is going to prove useful later on
         // when deploy the new search engine to a live app.
-        // if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        // }
+        if (! app()->environment('testing')) {
+            static::observe(ElasticSearchObserver::class);
+        }
     }
 
     public function getSearchIndex()

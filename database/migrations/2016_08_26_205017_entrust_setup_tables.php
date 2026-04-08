@@ -13,7 +13,7 @@ class EntrustSetupTables extends Migration
     public function up()
     {
         // Create table for storing roles
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('roles', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('name');
@@ -23,7 +23,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for associating roles to users (Many-to-Many)
-        Schema::create('role_user', function (Blueprint $table) {
+        Schema::create('role_user', static function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->integer('role_id')->unsigned();
 
@@ -36,7 +36,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for storing permissions
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('permissions', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('name')->unique();
@@ -47,7 +47,7 @@ class EntrustSetupTables extends Migration
         });
 
         // Create table for associating permissions to roles (Many-to-Many)
-        Schema::create('permission_role', function (Blueprint $table) {
+        Schema::create('permission_role', static function (Blueprint $table) {
             $table->integer('permission_id')->unsigned();
             $table->integer('role_id')->unsigned();
 

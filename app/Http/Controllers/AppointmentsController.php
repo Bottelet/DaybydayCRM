@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Appointment\CreateAppointmentCalendarRequest;
 use App\Http\Requests\Appointment\UpdateAppointmentCalendarRequest;
 use App\Models\Appointment;
-use App\Models\Client;
 use App\Models\User;
 use Carbon\Carbon;
-use Ramsey\Uuid\Uuid;
 
 class AppointmentsController extends Controller
 {

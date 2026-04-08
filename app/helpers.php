@@ -57,7 +57,7 @@ if (! function_exists('carbonDate')) {
 if (! function_exists('isDemo')) {
     function isDemo(): string
     {
-        return app()->environment() == 'demo' ? 1 : 0;
+        return app()->environment() == 'demo' ? '1' : '0';
     }
 }
 

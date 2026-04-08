@@ -1,3 +1,5 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 
 window._ = require('lodash');
 
@@ -7,7 +9,6 @@ window._ = require('lodash');
  * code may be modified to fit the specific needs of your application.
  */
 
-window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
 window.selectpicker = require('bootstrap-select');
 /**

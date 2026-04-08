@@ -529,5 +529,10 @@
   "vat": "vat",
   "week": "week",
   "yellow": "yellow",
-  "yes": "yes"
+  "yes": "yes",
+  "You do not have permission to view this document": "You do not have permission to view this document",
+  "You do not have permission to download this document": "You do not have permission to download this document",
+  "You do not have permission to assign users to this task": "You do not have permission to assign users to this task",
+  "You do not have permission to assign users to this project": "You do not have permission to assign users to this project",
+  "You do not have permission to assign users to this lead": "You do not have permission to assign users to this lead"
 }

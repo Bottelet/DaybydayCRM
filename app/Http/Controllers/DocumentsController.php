@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Document;
+use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Services\Storage\GetStorageProvider;
@@ -20,7 +21,19 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
+        // Eager load the source relationship to avoid N+1 queries
+        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+
+        if (! $document) {
+            abort(404);
+        }
+
+        // Check if user has permission to view document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            session()->flash('flash_message_warning', __('You do not have permission to view this document'));
+            return redirect()->back();
+        }
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
         if (! $file) {
@@ -37,7 +50,19 @@ class DocumentsController extends Controller
 
     public function download($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
+        // Eager load the source relationship to avoid N+1 queries
+        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+
+        if (! $document) {
+            abort(404);
+        }
+
+        // Check if user has permission to download document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            session()->flash('flash_message_warning', __('You do not have permission to download this document'));
+            return redirect()->back();
+        }
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
 
@@ -247,5 +272,67 @@ class DocumentsController extends Controller
             ->with('external_id', $external_id)
             ->withType($type)
             ->withRoute(route('document.'.$type.'.upload', $external_id));
+    }
+
+    /**
+     * Check if the authenticated user can access the document
+     * User can access document if they are assigned to or created the source resource
+     * or if they have ownership of the associated client
+     *
+     * @param  Document  $document
+     * @return bool
+     */
+    private function canAccessDocument($document)
+    {
+        $user = auth()->user();
+
+        // Use the morphTo relationship to get the source model
+        $source = $document->sourceable;
+
+        if (!$source) {
+            return false;
+        }
+
+        // For Client source type, check user_id
+        if ($document->source_type === Client::class) {
+            return $source->user_id === $user->id;
+        }
+
+        // For Task, Project, and Lead - check creator, assignee, or client ownership
+        $assignableTypes = [Task::class, Project::class, Lead::class];
+        
+        if (in_array($document->source_type, $assignableTypes)) {
+            return $this->userOwnsAssignableSource($source, $user);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user owns an assignable source (Task, Project, Lead)
+     * via creation, assignment, or client ownership
+     *
+     * @param  mixed  $source
+     * @param  User  $user
+     * @return bool
+     */
+    private function userOwnsAssignableSource($source, $user)
+    {
+        // Check if user created the source
+        if (isset($source->user_created_id) && $source->user_created_id === $user->id) {
+            return true;
+        }
+
+        // Check if user is assigned to the source
+        if (isset($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
+            return true;
+        }
+
+        // Check if user owns the client associated with the source
+        if (isset($source->client->user_id) && $source->client->user_id === $user->id) {
+            return true;
+        }
+
+        return false;
     }
 }

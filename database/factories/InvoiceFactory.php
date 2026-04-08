@@ -7,7 +7,7 @@ use App\Models\Invoice;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Invoice::class, function (Faker $faker) {
+$factory->define(Invoice::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'status' => 'draft',

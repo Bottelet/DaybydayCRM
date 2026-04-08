@@ -8,7 +8,7 @@ use App\Models\User;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Lead::class, function (Faker $faker) {
+$factory->define(Lead::class, static function (Faker $faker) {
     return [
         'title' => $faker->sentence,
         'external_id' => $faker->uuid,

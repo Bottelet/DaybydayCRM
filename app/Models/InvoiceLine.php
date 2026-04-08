@@ -6,6 +6,7 @@ use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
 
 class InvoiceLine extends Model
 {
@@ -22,6 +23,22 @@ class InvoiceLine extends Model
         'product_id',
         'offer_id',
     ];
+
+    /**
+     * Bootstrap the model and its traits.
+     * Automatically generates a UUID for external_id if not provided.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($invoiceLine) {
+            if (empty($invoiceLine->external_id)) {
+                $invoiceLine->external_id = Uuid::uuid4()->toString();
+            }
+        });
+    }
 
     /**
      * Get the route key for the model.

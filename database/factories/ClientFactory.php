@@ -8,7 +8,7 @@ use App\Models\User;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Client::class, function (Faker $faker) {
+$factory->define(Client::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'vat' => $faker->randomNumber(8),
@@ -21,7 +21,7 @@ $factory->define(Client::class, function (Faker $faker) {
         'company_type' => 'ApS',
     ];
 });
-$factory->afterCreating(Client::class, function ($client, $faker) {
+$factory->afterCreating(Client::class, static function ($client, $faker) {
     factory(Contact::class)->create(
         [
             'client_id' => $client->id,

@@ -5,6 +5,7 @@ use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreateAppointmentsTable extends Migration
 {
@@ -15,7 +16,7 @@ class CreateAppointmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('appointments', function (Blueprint $table) {
+        Schema::create('appointments', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->string('title');
@@ -34,6 +35,7 @@ class CreateAppointmentsTable extends Migration
 
         /** Create new permissions */
         $scpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'View calendar',
             'name' => 'calendar-view',
             'description' => 'Be able to view the calendar for appointments',
@@ -41,6 +43,7 @@ class CreateAppointmentsTable extends Migration
         ]);
         /** Create new permissions */
         $cpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Add appointment',
             'name' => 'appointment-create',
             'description' => 'Be able to create a new appointment for a user',
@@ -49,6 +52,7 @@ class CreateAppointmentsTable extends Migration
 
         /** Create new permissions */
         $epp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Edit appointment',
             'name' => 'appointment-edit',
             'description' => 'Be able to edit appointment such as times and title',
@@ -56,6 +60,7 @@ class CreateAppointmentsTable extends Migration
         ]);
 
         $dpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Delete appointment',
             'name' => 'appointment-delete',
             'description' => 'Be able to delete an appointment',

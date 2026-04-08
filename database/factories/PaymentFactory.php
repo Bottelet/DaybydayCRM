@@ -7,7 +7,7 @@ use App\Models\Payment;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Payment::class, function (Faker $faker) {
+$factory->define(Payment::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'invoice_id' => factory(Invoice::class),

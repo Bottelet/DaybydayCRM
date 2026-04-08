@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ClientNumber\ClientNumberService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ClientNumberServiceTest extends TestCase
@@ -35,21 +36,21 @@ class ClientNumberServiceTest extends TestCase
         $this->clientNumberService->setClientNumber('980200');
     }
 
-    /** @test */
+    #[Test]
     public function set_next_client_number_takes_biggest_client_number_and_add_one()
     {
         $this->assertEquals(980200, $this->clientNumberService->setNextClientNumber());
         $this->assertEquals(980201, $this->clientNumberService->setNextClientNumber());
     }
 
-    /** @test */
+    #[Test]
     public function next_client_number_takes_biggest_client_number_and_does_not_set_it()
     {
         $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
         $this->assertEquals(980200, $this->clientNumberService->nextClientNumber());
     }
 
-    /** @test */
+    #[Test]
     public function manually_set_next_client_number()
     {
         $this->clientNumberService->setClientNumber(20000);

@@ -291,6 +291,12 @@ class TasksController extends Controller
      */
     public function updateAssign($external_id, Request $request)
     {
+        if (! auth()->user()->can('can-assign-new-user-to-task')) {
+            session()->flash('flash_message_warning', __('You do not have permission to assign users to this task'));
+
+            return redirect()->route('tasks.show', $external_id);
+        }
+
         $task = Task::with('user')->whereExternalId($external_id)->first();
 
         $user_assigned_id = $request->user_assigned_id;

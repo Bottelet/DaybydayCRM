@@ -14,7 +14,7 @@ class CreateCreditLinesTable extends Migration
     public function up()
     {
         return;
-        Schema::create('credit_lines', function (Blueprint $table) {
+        Schema::create('credit_lines', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
             $table->string('title');

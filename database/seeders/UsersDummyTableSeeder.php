@@ -1,0 +1,47 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Absence;
+use App\Models\Department;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Ramsey\Uuid\Uuid;
+
+class UsersDummyTableSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $createDep = new Department;
+        $createDep->id = '2';
+        $createDep->name = 'Nerds';
+        $createDep->external_id = Uuid::uuid4();
+        $createDep->save();
+        $createDep = new Department;
+        $createDep->id = '3';
+        $createDep->name = 'Genius';
+        $createDep->external_id = Uuid::uuid4();
+        $createDep->save();
+
+        factory(User::class, 5)->create()->each(function ($u) {
+            if (random_int(1, 4) == 3) {
+                factory(Absence::class)->create([
+                    'user_id' => $u->id,
+                ]);
+            }
+        });
+
+        $u = User::query()->latest()->first();
+        factory(Absence::class)->create([
+            'user_id' => $u->id,
+            'start_at' => now()->subDays(2),
+            'end_at' => now()->addDays(1),
+        ]);
+
+    }
+}

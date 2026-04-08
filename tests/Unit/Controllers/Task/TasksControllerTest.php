@@ -10,6 +10,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class TasksControllerTest extends TestCase
@@ -26,7 +28,9 @@ class TasksControllerTest extends TestCase
         $this->client = factory(Client::class)->create();
     }
 
-    /** @test **/
+    #[Test]
+    #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_create_task()
     {
         $response = $this->json('POST', route('tasks.store'), [
@@ -45,7 +49,7 @@ class TasksControllerTest extends TestCase
         $this->assertEquals($response->getData()->task_external_id, $tasks->first()->external_id);
     }
 
-    /** @test **/
+    #[Test]
     public function can_add_project_on_task()
     {
         $project = factory(Project::class)->create();
@@ -59,7 +63,7 @@ class TasksControllerTest extends TestCase
         $this->assertNotNull($task->refresh()->project_id);
     }
 
-    /** @test **/
+    #[Test]
     public function can_update_assignee()
     {
         $task = factory(Task::class)->create();
@@ -72,7 +76,9 @@ class TasksControllerTest extends TestCase
         $this->assertEquals($task->refresh()->user_assigned_id, $this->user->id);
     }
 
-    /** @test **/
+    #[Test]
+    #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_status()
     {
         $task = factory(Task::class)->create();
@@ -87,7 +93,9 @@ class TasksControllerTest extends TestCase
         $this->assertEquals($task->refresh()->status_id, $status->id);
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_deadline_for_task()
     {
         $task = factory(Task::class)->create();
@@ -97,10 +105,10 @@ class TasksControllerTest extends TestCase
             'deadline_time' => '00:00',
         ]);
 
-        $this->assertEquals(Carbon::parse('2020-08-06')->toDate(), $task->refresh()->deadline->toDate());
+        $this->assertEquals(Carbon::parse('2020-08-06')->toDateString(), Carbon::parse($task->refresh()->deadline)->toDateString());
     }
 
-    /** @test */
+    #[Test]
     public function can_list_tasks()
     {
         factory(Task::class)->create();

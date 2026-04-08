@@ -5,6 +5,8 @@ namespace Tests\Unit\Lead;
 use App\Models\Lead;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LeadObserverDeleteTest extends TestCase
@@ -32,7 +34,8 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function delete_leads_soft_deletes()
     {
         $this->lead->delete();
@@ -40,7 +43,8 @@ class LeadObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->lead);
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function delete_leadsoft_deletes_relations()
     {
         $this->assertNotEmpty($this->lead->comments);
@@ -60,7 +64,8 @@ class LeadObserverDeleteTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function force_delete_removes_lead_from_database()
     {
         $leadId = $this->lead->id;
@@ -73,7 +78,8 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->lead->comments->first()->id;
@@ -94,7 +100,8 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function offer_is_not_deleted_by_observer()
     {
         $offer = factory(Offer::class)->create([

@@ -2,8 +2,7 @@
 
 namespace App\Observers;
 
-use Aws\Credentials\CredentialProvider;
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
 
 class ElasticSearchObserver
 {
@@ -11,10 +10,21 @@ class ElasticSearchObserver
 
     public function __construct()
     {
-        $host = config('elasticsearch.hosts');
-        $provider = CredentialProvider::defaultProvider();
+        // Disable Elasticsearch integration in testing environment
+        if (app()->environment('testing')) {
+            $this->elasticsearch = null;
+
+            return;
+        }
+        $hosts = config('elasticsearch.hosts');
+        $formattedHosts = [];
+        foreach ($hosts as $host) {
+            $scheme = $host['scheme'] ?? 'http';
+            $formattedHosts[] = $scheme.'://'.(($host['user'] ?? null) ? $host['user'].':'.$host['pass'].'@' : '').$host['host'].':'.$host['port'];
+        }
+
         if (is_null($this->elasticsearch)) {
-            $builder = ClientBuilder::create()->setHosts($host);
+            $builder = ClientBuilder::create()->setHosts($formattedHosts);
             $this->elasticsearch = $builder->build();
         }
     }

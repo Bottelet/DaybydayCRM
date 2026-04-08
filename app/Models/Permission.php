@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
     protected $fillable = [
+        'external_id',
         'display_name',
         'name',
         'description',

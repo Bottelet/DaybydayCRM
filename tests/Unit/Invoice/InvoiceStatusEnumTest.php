@@ -4,6 +4,8 @@ namespace Tests\Unit\Invoice;
 
 use App\Enums\InvoiceStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InvoiceStatusEnumTest extends TestCase
@@ -21,32 +23,33 @@ class InvoiceStatusEnumTest extends TestCase
         $this->paidStatus = InvoiceStatus::paid()->getStatus();
     }
 
-    /** @test */
+    #[Test]
     public function getting_status_returns_instance_of_invoice_status()
     {
         $this->assertInstanceOf(InvoiceStatus::class, InvoiceStatus::fromStatus($this->paidStatus));
     }
 
-    /** @test */
+    #[Test]
+    #[Group('junie_repaired')]
     public function invoice_status_contains_both_display_and_status_value()
     {
-        $this->assertObjectHasAttribute('status', InvoiceStatus::fromStatus($this->paidStatus));
-        $this->assertObjectHasAttribute('displayValue', InvoiceStatus::fromStatus($this->paidStatus));
+        $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'status'));
+        $this->assertTrue(property_exists(InvoiceStatus::fromStatus($this->paidStatus), 'displayValue'));
     }
 
-    /** @test */
+    #[Test]
     public function get_display_value_from_status()
     {
         $this->assertEquals(InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue(), 'Paid');
     }
 
-    /** @test */
+    #[Test]
     public function status_returns_correct_status_in_instance()
     {
         $this->assertEquals(InvoiceStatus::draft()->getStatus(), 'draft');
     }
 
-    /** @test */
+    #[Test]
     public function get_status_from_display_value()
     {
         $this->assertEquals(InvoiceStatus::fromDisplayValue('Partially paid'), InvoiceStatus::partialPaid()->getStatus());

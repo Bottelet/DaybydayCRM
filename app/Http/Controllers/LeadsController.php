@@ -80,7 +80,7 @@ class LeadsController extends Controller
     public function store(StoreLeadRequest $request)
     {
         if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id);
+            $client = Client::whereExternalId($request->client_external_id)->first();
         }
 
         $lead = Lead::create(
@@ -144,6 +144,12 @@ class LeadsController extends Controller
 
     public function updateAssign($external_id, Request $request)
     {
+        if (! auth()->user()->can('can-assign-new-user-to-lead')) {
+            session()->flash('flash_message_warning', __('You do not have permission to assign users to this lead'));
+
+            return redirect()->route('leads.show', $external_id);
+        }
+
         $lead = $this->findByExternalId($external_id);
         $input = $request->get('user_assigned_id');
         $input = array_replace($request->all());
@@ -168,7 +174,7 @@ class LeadsController extends Controller
             return redirect()->route('tasks.show', $external_id);
         }
         $lead = $this->findByExternalId($external_id);
-        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00')])->save();
+        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00')->toDateTimeString()])->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New follow up date is set'));
 

@@ -16,7 +16,7 @@ class AlterInvoicesTableAddSource extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', static function (Blueprint $table) {
             $table->string('source_type')->nullable()->after('integration_type');
             $table->unsignedBigInteger('source_id')->nullable()->after('source_type');
             $table->index(['source_type', 'source_id']);
@@ -24,11 +24,11 @@ class AlterInvoicesTableAddSource extends Migration
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('set null');
         });
 
-        Schema::table('leads', function (Blueprint $table) {
+        Schema::table('leads', static function (Blueprint $table) {
             $table->dropForeign('leads_invoice_id_foreign');
             $table->dropColumn('invoice_id');
         });
-        Schema::table('tasks', function (Blueprint $table) {
+        Schema::table('tasks', static function (Blueprint $table) {
             $table->dropForeign('tasks_invoice_id_foreign');
             $table->dropColumn('invoice_id');
         });

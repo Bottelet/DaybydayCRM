@@ -5,10 +5,22 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Appointment extends Model
 {
     use SoftDeletes;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($appointment) {
+            if (empty($appointment->external_id)) {
+                $appointment->external_id = (string) Str::uuid();
+            }
+        });
+    }
 
     protected $fillable = [
         'user_id',

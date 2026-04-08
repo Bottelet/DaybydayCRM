@@ -16,6 +16,7 @@ class ActivityModelBootTest extends TestCase
     use DatabaseTransactions;
 
     private User $user;
+
     private Task $task;
 
     protected function setUp(): void
@@ -46,7 +47,7 @@ class ActivityModelBootTest extends TestCase
         $customExternalId = 'custom-external-id-12345';
         $customIpAddress = '127.0.0.1';
 
-        $activity = new Activity();
+        $activity = new Activity;
         $activity->forceFill([
             'external_id' => $customExternalId,
             'ip_address' => $customIpAddress,
@@ -67,7 +68,7 @@ class ActivityModelBootTest extends TestCase
     #[Test]
     public function activity_generates_unique_external_ids_for_each_record()
     {
-        $activity1 = new Activity();
+        $activity1 = new Activity;
         $activity1->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
             'ip_address' => '127.0.0.1',
@@ -79,7 +80,7 @@ class ActivityModelBootTest extends TestCase
         ]);
         $activity1->save();
 
-        $activity2 = new Activity();
+        $activity2 = new Activity;
         $activity2->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
             'ip_address' => '127.0.0.1',

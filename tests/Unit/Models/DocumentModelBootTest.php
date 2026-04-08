@@ -17,6 +17,7 @@ class DocumentModelBootTest extends TestCase
     use DatabaseTransactions;
 
     private User $user;
+
     private Client $client;
 
     protected function setUp(): void

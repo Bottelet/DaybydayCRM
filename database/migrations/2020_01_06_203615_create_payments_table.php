@@ -5,6 +5,7 @@ use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreatePaymentsTable extends Migration
 {
@@ -15,15 +16,19 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function ($table) {
-            $table->dropColumn('payment_received_at');
-        });
 
-        Schema::create('payments', function (Blueprint $table) {
+        // Only drop the column if it exists
+        if (Schema::hasColumn('invoices', 'payment_received_at')) {
+            Schema::table('invoices', static function (Blueprint $table) {
+                $table->dropColumn('payment_received_at');
+            });
+        }
+
+        Schema::create('payments', static function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('external_id');
+            $table->string('external_id')->default('');
             $table->integer('amount');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->string('payment_source');
             $table->date('payment_date');
             $table->string('integration_payment_id')->nullable();
@@ -37,6 +42,7 @@ class CreatePaymentsTable extends Migration
 
         /** Create new permissions */
         $cpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Add payment',
             'name' => 'payment-create',
             'description' => 'Be able to add a new payment on a invoice',
@@ -44,6 +50,7 @@ class CreatePaymentsTable extends Migration
         ]);
 
         $dpp = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Delete payment',
             'name' => 'payment-delete',
             'description' => 'Be able to delete a payment',
@@ -63,7 +70,7 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::table('invoices', function ($table) {
+        Schema::table('invoices', static function ($table) {
             $table->dateTime('payment_received_at')->nullable();
         });
         $cpp = Permission::where('name', 'payment-create')->first();

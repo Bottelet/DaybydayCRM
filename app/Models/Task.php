@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\ElasticSearchObserver;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;

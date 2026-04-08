@@ -16,7 +16,7 @@ class CreateCreditNotesTable extends Migration
     public function up()
     {
         return;
-        Schema::create('credit_notes', function (Blueprint $table) {
+        Schema::create('credit_notes', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
 

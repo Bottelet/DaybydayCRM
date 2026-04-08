@@ -5,6 +5,7 @@ namespace Tests\Unit\Format;
 use App\Models\Setting;
 use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class GetDateFormatTest extends TestCase
@@ -20,7 +21,7 @@ class GetDateFormatTest extends TestCase
         $this->formatter = app(GetDateFormat::class);
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertEquals('H:i', $this->formatter->getCarbonTime());
@@ -30,7 +31,7 @@ class GetDateFormatTest extends TestCase
         $this->assertEquals('d/m/Y', $this->formatter->getCarbonDate());
     }
 
-    /** @test */
+    #[Test]
     public function happy_path_with_helpers()
     {
         $this->assertEquals('H:i', carbonTime());
@@ -40,7 +41,7 @@ class GetDateFormatTest extends TestCase
         $this->assertEquals('d/m/Y', carbonDate());
     }
 
-    /** @test */
+    #[Test]
     public function date_expected()
     {
         $this->assertEquals('15:00', Carbon::parse('22-02-2020 15:00:00')->format($this->formatter->getCarbonTime()));

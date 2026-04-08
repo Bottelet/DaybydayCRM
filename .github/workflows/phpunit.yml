@@ -24,18 +24,13 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
 
       - name: Create daybyday testing database
         env:
           PORT: ${{ job.services.mysql.ports[3306] }}
         run: mysql -h 127.0.0.1 --port "$PORT" -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS daybyday_test;'
-
-      #- name: Install dependencies
-      #  run: |
-      #    yarn install
-      #    yarn run dev
 
       - name: Cache Composer dependencies
         uses: actions/cache@v3

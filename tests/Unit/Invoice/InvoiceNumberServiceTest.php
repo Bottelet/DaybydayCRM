@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class InvoiceNumberServiceTest extends TestCase
@@ -33,21 +34,21 @@ class InvoiceNumberServiceTest extends TestCase
         $this->invoiceNumberService = app(InvoiceNumberService::class);
     }
 
-    /** @test */
+    #[Test]
     public function set_next_invoice_number_takes_biggest_invoice_number_and_add_one()
     {
         $this->assertEquals(10000, $this->invoiceNumberService->setNextInvoiceNumber());
         $this->assertEquals(10001, $this->invoiceNumberService->setNextInvoiceNumber());
     }
 
-    /** @test */
+    #[Test]
     public function next_invoice_number_takes_biggest_invoice_number_and_does_not_add_one()
     {
         $this->assertEquals(10000, $this->invoiceNumberService->nextInvoiceNumber());
         $this->assertEquals(10000, $this->invoiceNumberService->nextInvoiceNumber());
     }
 
-    /** @test */
+    #[Test]
     public function manually_set_next_invoice_number()
     {
         $this->invoiceNumberService->setInvoiceNumber(20000);

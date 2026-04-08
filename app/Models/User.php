@@ -83,7 +83,7 @@ class User extends Authenticatable
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class);
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function absences()
