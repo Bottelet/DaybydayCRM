@@ -27,7 +27,7 @@ class SearchController extends Controller
         ];
 
         $typeLower = strtolower($type);
-        if (!isset($allowedTypes[$typeLower])) {
+        if (! isset($allowedTypes[$typeLower])) {
             return response()->json(['error' => 'Invalid search type'], 400);
         }
 

@@ -228,7 +228,7 @@ class ProjectsController extends Controller
             return redirect()->route('tasks.show', $external_id);
         }
         $input = $request->only(['status_id']);
-        if ($request->ajax() && isset($request->statusExternalId)) {
+        if ($request->ajax() && $request->has('statusExternalId')) {
             $status = Status::whereExternalId($request->statusExternalId)->first();
             if (! $status) {
                 return response()->json(['error' => __('Invalid status')], 400);
