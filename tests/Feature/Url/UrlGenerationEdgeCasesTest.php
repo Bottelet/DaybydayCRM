@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 /**
  * Edge case tests for URL generation in various scenarios
- * 
+ *
  * This test suite covers edge cases including:
  * - Multiple subdirectory levels
  * - Special characters in URLs
@@ -25,7 +25,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/projects/crm/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost/projects/crm/public/tasks', $url);
     }
 
@@ -35,7 +35,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/daybydaycrm/public/']);
 
         $url = url('/tasks');
-        
+
         // Laravel's url() helper should handle trailing slashes
         $this->assertStringContainsString('/tasks', $url);
         $this->assertStringNotContainsString('//tasks', $url);
@@ -47,7 +47,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
 
         $url = url('/');
-        
+
         $this->assertEquals('http://localhost/daybydaycrm/public', $url);
     }
 
@@ -57,7 +57,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
 
         $url = url('tasks');
-        
+
         $this->assertEquals('http://localhost/daybydaycrm/public/tasks', $url);
     }
 
@@ -67,7 +67,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://192.168.1.1/crm']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://192.168.1.1/crm/tasks', $url);
     }
 
@@ -77,7 +77,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost:3000/crm']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost:3000/crm/tasks', $url);
     }
 
@@ -87,7 +87,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'https://example.com:8443/crm/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('https://example.com:8443/crm/public/tasks', $url);
     }
 
@@ -97,8 +97,8 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $externalId = '12345-abcde';
-        $url = url('/add-documents/' . $externalId . '/task');
-        
+        $url = url('/add-documents/'.$externalId.'/task');
+
         $this->assertEquals('http://localhost/crm/add-documents/12345-abcde/task', $url);
     }
 
@@ -108,8 +108,8 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $externalId = 'abc-123_xyz';
-        $url = url('/tasks/' . $externalId);
-        
+        $url = url('/tasks/'.$externalId);
+
         $this->assertEquals('http://localhost/crm/tasks/abc-123_xyz', $url);
     }
 
@@ -119,7 +119,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://crm.example.com/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://crm.example.com/public/tasks', $url);
     }
 
@@ -129,7 +129,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://crm.example.com']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://crm.example.com/tasks', $url);
     }
 
@@ -139,7 +139,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $url = url('/tasks?status=active&user=123');
-        
+
         $this->assertEquals('http://localhost/crm/tasks?status=active&user=123', $url);
     }
 
@@ -149,7 +149,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $url = url('/tasks#section1');
-        
+
         $this->assertEquals('http://localhost/crm/tasks#section1', $url);
     }
 
@@ -161,7 +161,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         $response = $this->get(route('tasks.index'));
 
         $response->assertStatus(200);
-        
+
         // Verify DayByDay.baseUrl is set
         $response->assertSee('var DayByDay', false);
         $response->assertSee('baseUrl:', false);
@@ -174,11 +174,11 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm/public']);
 
         $phpUrl = url('/products/creator');
-        
+
         // Simulate what JavaScript would construct
         $jsBaseUrl = config('app.url');
-        $jsUrl = $jsBaseUrl . '/products/creator';
-        
+        $jsUrl = $jsBaseUrl.'/products/creator';
+
         $this->assertEquals($phpUrl, $jsUrl);
     }
 
@@ -189,7 +189,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
 
         $url1 = url('/tasks');
         $url2 = url('/tasks');
-        
+
         $this->assertEquals($url1, $url2);
     }
 
@@ -199,7 +199,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $url = url('/api/v1/projects/123/tasks/456/documents');
-        
+
         $this->assertEquals('http://localhost/crm/api/v1/projects/123/tasks/456/documents', $url);
     }
 
@@ -209,7 +209,7 @@ class UrlGenerationEdgeCasesTest extends TestCase
         config(['app.url' => 'http://localhost']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost/tasks', $url);
     }
 
@@ -220,9 +220,9 @@ class UrlGenerationEdgeCasesTest extends TestCase
 
         $type = 'task';
         $externalId = 'abc123';
-        
-        $url = url('/' . $type . 's/' . $externalId);
-        
+
+        $url = url('/'.$type.'s/'.$externalId);
+
         $this->assertEquals('http://localhost/crm/tasks/abc123', $url);
     }
 }

@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 /**
  * Test DocumentsController upload modal view for subdirectory URL generation
- * 
+ *
  * This test ensures that the upload modal generates correct URLs and properly
  * validates the type parameter for task, client, and project entities.
  */
@@ -21,7 +21,9 @@ class DocumentsControllerUploadModalTest extends TestCase
     use DatabaseTransactions, WithoutMiddleware;
 
     private $task;
+
     private $project;
+
     private $client;
 
     protected function setUp(): void
@@ -45,7 +47,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_view_returns_correct_view_for_task()
     {
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
         $response->assertViewIs('documents._uploadFileModal');
@@ -54,7 +56,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_view_returns_correct_view_for_project()
     {
-        $response = $this->get('/add-documents/' . $this->project->external_id . '/project');
+        $response = $this->get('/add-documents/'.$this->project->external_id.'/project');
 
         $response->assertStatus(200);
         $response->assertViewIs('documents._uploadFileModal');
@@ -63,7 +65,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_view_returns_correct_view_for_client()
     {
-        $response = $this->get('/add-documents/' . $this->client->external_id . '/client');
+        $response = $this->get('/add-documents/'.$this->client->external_id.'/client');
 
         $response->assertStatus(200);
         $response->assertViewIs('documents._uploadFileModal');
@@ -72,7 +74,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_passes_correct_type_to_view_for_task()
     {
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
         $response->assertViewHas('type', 'task');
@@ -81,7 +83,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_passes_correct_type_to_view_for_project()
     {
-        $response = $this->get('/add-documents/' . $this->project->external_id . '/project');
+        $response = $this->get('/add-documents/'.$this->project->external_id.'/project');
 
         $response->assertStatus(200);
         $response->assertViewHas('type', 'project');
@@ -90,7 +92,7 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_passes_correct_type_to_view_for_client()
     {
-        $response = $this->get('/add-documents/' . $this->client->external_id . '/client');
+        $response = $this->get('/add-documents/'.$this->client->external_id.'/client');
 
         $response->assertStatus(200);
         $response->assertViewHas('type', 'client');
@@ -100,11 +102,11 @@ class DocumentsControllerUploadModalTest extends TestCase
     public function upload_modal_contains_correct_route_map_for_task()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
-        
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
-        
+
         // Check that the route map contains the correct mapping
         $response->assertSee("'task': 'tasks'", false);
     }
@@ -113,11 +115,11 @@ class DocumentsControllerUploadModalTest extends TestCase
     public function upload_modal_contains_correct_route_map_for_project()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
-        
-        $response = $this->get('/add-documents/' . $this->project->external_id . '/project');
+
+        $response = $this->get('/add-documents/'.$this->project->external_id.'/project');
 
         $response->assertStatus(200);
-        
+
         // Check that the route map contains the correct mapping
         $response->assertSee("'project': 'projects'", false);
     }
@@ -126,11 +128,11 @@ class DocumentsControllerUploadModalTest extends TestCase
     public function upload_modal_contains_correct_route_map_for_client()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
-        
-        $response = $this->get('/add-documents/' . $this->client->external_id . '/client');
+
+        $response = $this->get('/add-documents/'.$this->client->external_id.'/client');
 
         $response->assertStatus(200);
-        
+
         // Check that the route map contains the correct mapping
         $response->assertSee("'client': 'clients'", false);
     }
@@ -139,11 +141,11 @@ class DocumentsControllerUploadModalTest extends TestCase
     public function upload_modal_contains_base_url_in_subdirectory()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
-        
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
-        
+
         // Check that the base URL is correctly set
         $response->assertSee('http://localhost/daybydaycrm/public', false);
     }
@@ -152,11 +154,11 @@ class DocumentsControllerUploadModalTest extends TestCase
     public function upload_modal_contains_base_url_at_root()
     {
         config(['app.url' => 'http://localhost']);
-        
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
-        
+
         // Check that the base URL is correctly set
         $response->assertSee('http://localhost', false);
     }
@@ -164,23 +166,23 @@ class DocumentsControllerUploadModalTest extends TestCase
     /** @test */
     public function upload_modal_contains_fail_fast_error_handling()
     {
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
-        
+
         // Check that the error handling exists
-        $response->assertSee("if (!routeName) {", false);
+        $response->assertSee('if (!routeName) {', false);
         $response->assertSee("console.error('Invalid type:", false);
-        $response->assertSee("return;", false);
+        $response->assertSee('return;', false);
     }
 
     /** @test */
     public function upload_modal_has_no_fallback_for_invalid_types()
     {
-        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+        $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
 
         $response->assertStatus(200);
-        
+
         // Ensure no fallback exists (this would be like: || type + 's')
         $response->assertDontSee("|| '{{", false);
     }

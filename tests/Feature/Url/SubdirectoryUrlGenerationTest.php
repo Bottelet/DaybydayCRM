@@ -12,7 +12,7 @@ use Tests\TestCase;
 
 /**
  * Test URL generation for subdirectory installations
- * 
+ *
  * This test ensures that URLs are generated correctly when the application
  * is installed in a subdirectory (e.g., http://localhost/daybydaycrm/public/)
  * instead of at the domain root.
@@ -22,7 +22,9 @@ class SubdirectoryUrlGenerationTest extends TestCase
     use DatabaseTransactions, WithoutMiddleware;
 
     private $task;
+
     private $project;
+
     private $client;
 
     protected function setUp(): void
@@ -46,7 +48,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost/daybydaycrm/public/tasks', $url);
     }
 
@@ -57,7 +59,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         config(['app.url' => 'http://localhost']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost/tasks', $url);
     }
 
@@ -69,9 +71,9 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.show', $this->task->external_id));
 
         $response->assertStatus(200);
-        
+
         // The view should contain the correct URL for document upload
-        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->task->external_id . '/task';
+        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/'.$this->task->external_id.'/task';
         $response->assertSee($expectedUrl, false);
     }
 
@@ -83,8 +85,8 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('projects.show', $this->project->external_id));
 
         $response->assertStatus(200);
-        
-        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->project->external_id . '/project';
+
+        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/'.$this->project->external_id.'/project';
         $response->assertSee($expectedUrl, false);
     }
 
@@ -96,7 +98,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('products.index'));
 
         $response->assertStatus(200);
-        
+
         $expectedUrl = 'http://localhost/daybydaycrm/public/products/creator';
         $response->assertSee($expectedUrl, false);
     }
@@ -109,7 +111,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.create'));
 
         $response->assertStatus(200);
-        
+
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
         $response->assertSee($expectedUrl, false);
     }
@@ -122,7 +124,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('projects.create'));
 
         $response->assertStatus(200);
-        
+
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
         $response->assertSee($expectedUrl, false);
     }
@@ -135,7 +137,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('leads.create'));
 
         $response->assertStatus(200);
-        
+
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
         $response->assertSee($expectedUrl, false);
     }
@@ -148,7 +150,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('users.index'));
 
         $response->assertStatus(200);
-        
+
         $expectedUrl = 'http://localhost/daybydaycrm/public/users';
         $response->assertSee($expectedUrl, false);
     }
@@ -161,7 +163,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.index'));
 
         $response->assertStatus(200);
-        
+
         // Check that DayByDay.baseUrl is set correctly
         $response->assertSee('baseUrl: "http://localhost/daybydaycrm/public"', false);
     }
@@ -174,7 +176,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.index'));
 
         $response->assertStatus(200);
-        
+
         $response->assertSee('baseUrl: "http://localhost"', false);
     }
 
@@ -184,7 +186,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         config(['app.url' => 'https://example.com/crm/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('https://example.com/crm/public/tasks', $url);
     }
 
@@ -194,7 +196,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         config(['app.url' => 'http://localhost:8080/daybydaycrm/public']);
 
         $url = url('/tasks');
-        
+
         $this->assertEquals('http://localhost:8080/daybydaycrm/public/tasks', $url);
     }
 
@@ -206,7 +208,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.index'));
 
         $response->assertStatus(200);
-        
+
         // JS assets should use asset() helper, not hardcoded paths
         $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
         $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
@@ -220,7 +222,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('tasks.index'));
 
         $response->assertStatus(200);
-        
+
         // JS assets should work at root too
         $response->assertSee('http://localhost/js/manifest.js', false);
         $response->assertSee('http://localhost/js/vendor.js', false);
@@ -234,7 +236,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('appointments.calendar'));
 
         $response->assertStatus(200);
-        
+
         // Calendar should also load assets correctly
         $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
         $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
@@ -248,7 +250,7 @@ class SubdirectoryUrlGenerationTest extends TestCase
         $response = $this->get(route('appointments.calendar'));
 
         $response->assertStatus(200);
-        
+
         // Calendar should have DayByDay.baseUrl for axios
         $response->assertSee('baseUrl: "http://localhost/daybydaycrm/public"', false);
     }
