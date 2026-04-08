@@ -5,7 +5,6 @@ namespace Tests\Unit\Models;
 use App\Models\Activity;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
@@ -28,17 +27,24 @@ class ActivityModelBootTest extends TestCase
     }
 
     #[Test]
-    public function activity_requires_external_id_and_ip_address_when_created_directly()
+    public function activity_auto_generates_external_id_and_ip_address_when_not_provided()
     {
-        $this->expectException(QueryException::class);
-
-        Activity::create([
+        $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id' => $this->user->id,
             'source_type' => Task::class,
             'source_id' => $this->task->id,
             'text' => 'Test activity',
         ]);
+
+        $this->assertNotNull($activity->external_id);
+        $this->assertNotEmpty($activity->external_id);
+        $this->assertNotNull($activity->ip_address);
+        $this->assertNotEmpty($activity->ip_address);
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
+            $activity->external_id
+        );
     }
 
     #[Test]
