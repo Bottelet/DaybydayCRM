@@ -16,6 +16,8 @@ This directory contains comprehensive tests for verifying that URL generation wo
   - Product creator modals
   - User deletion AJAX calls
 - Master layout contains correct DayByDay.baseUrl configuration
+- JS assets (manifest.js, vendor.js) load with correct paths
+- Calendar page assets and configuration
 - Tests both HTTP and HTTPS with various port configurations
 
 **Edge Cases Tested**:
@@ -23,6 +25,7 @@ This directory contains comprehensive tests for verifying that URL generation wo
 - Root installations (e.g., `/`)
 - HTTPS with subdirectories
 - Custom ports with subdirectories (e.g., `:8080/crm`)
+- Asset loading in both master layout and calendar view
 
 ### 2. UrlGenerationEdgeCasesTest.php
 **Purpose**: Tests edge cases and unusual URL configurations.

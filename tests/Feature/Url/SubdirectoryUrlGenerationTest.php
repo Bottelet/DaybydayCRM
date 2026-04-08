@@ -197,4 +197,59 @@ class SubdirectoryUrlGenerationTest extends TestCase
         
         $this->assertEquals('http://localhost:8080/daybydaycrm/public/tasks', $url);
     }
+
+    /** @test */
+    public function master_layout_loads_js_assets_with_correct_subdirectory_path()
+    {
+        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+
+        $response = $this->get(route('tasks.index'));
+
+        $response->assertStatus(200);
+        
+        // JS assets should use asset() helper, not hardcoded paths
+        $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
+    }
+
+    /** @test */
+    public function master_layout_loads_js_assets_at_root_installation()
+    {
+        config(['app.url' => 'http://localhost']);
+
+        $response = $this->get(route('tasks.index'));
+
+        $response->assertStatus(200);
+        
+        // JS assets should work at root too
+        $response->assertSee('http://localhost/js/manifest.js', false);
+        $response->assertSee('http://localhost/js/vendor.js', false);
+    }
+
+    /** @test */
+    public function calendar_page_loads_js_assets_with_correct_subdirectory_path()
+    {
+        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+
+        $response = $this->get(route('appointments.calendar'));
+
+        $response->assertStatus(200);
+        
+        // Calendar should also load assets correctly
+        $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
+    }
+
+    /** @test */
+    public function calendar_page_contains_base_url_configuration()
+    {
+        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+
+        $response = $this->get(route('appointments.calendar'));
+
+        $response->assertStatus(200);
+        
+        // Calendar should have DayByDay.baseUrl for axios
+        $response->assertSee('baseUrl: "http://localhost/daybydaycrm/public"', false);
+    }
 }
