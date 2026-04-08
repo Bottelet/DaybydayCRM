@@ -94,30 +94,32 @@ class OffersControllerTest extends TestCase
     #[Test]
     public function can_set_offer_as_won()
     {
-        $this->assertEquals('in-progress', $this->offer->status);
+        $offer = factory(Offer::class)->create();
+        
+        $this->assertEquals('in-progress', $offer->status);
         $this->json('POST', route('offer.won'), [
-            'offer_external_id' => $this->offer->external_id,
+            'offer_external_id' => $offer->external_id,
         ]);
 
-        $this->offer->refresh();
+        $offer->refresh();
 
-        $this->assertEquals('won', $this->offer->status);
-        $this->assertNotNull($this->offer->invoice);
-
+        $this->assertEquals('won', $offer->status);
+        $this->assertNotNull($offer->invoice);
     }
 
     #[Test]
     public function can_set_offer_as_lost()
     {
-        $this->assertEquals('in-progress', $this->offer->status);
+        $offer = factory(Offer::class)->create();
+        
+        $this->assertEquals('in-progress', $offer->status);
         $this->json('POST', route('offer.lost'), [
-            'offer_external_id' => $this->offer->external_id,
+            'offer_external_id' => $offer->external_id,
         ]);
 
-        $this->offer->refresh();
+        $offer->refresh();
 
-        $this->assertEquals('lost', $this->offer->status);
-        $this->assertNull($this->offer->invoice);
-
+        $this->assertEquals('lost', $offer->status);
+        $this->assertNull($offer->invoice);
     }
 }
