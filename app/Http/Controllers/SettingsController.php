@@ -24,7 +24,7 @@ class SettingsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('user.is.admin', ['only' => ['index']]);
+        $this->middleware('user.is.admin', ['only' => ['index', 'updateOverall', 'updateFirstStep']]);
         $this->middleware('is.demo', ['except' => ['index']]);
     }
 

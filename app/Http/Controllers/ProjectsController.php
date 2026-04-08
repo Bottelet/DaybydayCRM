@@ -28,6 +28,12 @@ class ProjectsController extends Controller
 
     const UPDATED_DEADLINE = 'updated_deadline';
 
+    public function __construct()
+    {
+        $this->middleware('can:project-delete', ['only' => ['destroy']]);
+        $this->middleware('can:can-assign-new-user-to-project', ['only' => ['updateAssign']]);
+    }
+
     public function indexData()
     {
         $projects = Project::with(['assignee', 'status', 'client'])->select(
@@ -221,9 +227,9 @@ class ProjectsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+        $input = $request->only(['status_id']);
+        if ($request->ajax() && isset($request->statusExternalId)) {
+            $input['status_id'] = Status::whereExternalId($request->statusExternalId)->first()->id;
         }
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();

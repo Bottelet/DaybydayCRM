@@ -31,6 +31,7 @@ class LeadsController extends Controller
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
+        $this->middleware('can:lead-delete', ['only' => ['destroy', 'destroyJson']]);
     }
 
     public function index()
@@ -145,8 +146,7 @@ class LeadsController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         $lead = $this->findByExternalId($external_id);
-        $input = $request->get('user_assigned_id');
-        $input = array_replace($request->all());
+        $input = $request->only(['user_assigned_id']);
         $lead->fill($input)->save();
 
         event(new LeadAction($lead, self::UPDATED_ASSIGN));
@@ -217,7 +217,7 @@ class LeadsController extends Controller
             $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
             $lead->save();
         } else {
-            $lead->fill($request->all())->save();
+            $lead->fill($request->only(['status_id']))->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Lead status updated'));

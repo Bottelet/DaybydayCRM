@@ -38,6 +38,8 @@ class TasksController extends Controller
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
+        $this->middleware('can:task-delete', ['only' => ['destroy']]);
+        $this->middleware('can:task-update-linked-project', ['only' => ['updateProject']]);
     }
 
     /**
@@ -253,10 +255,10 @@ class TasksController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
+        $input = $request->only(['status_id']);
 
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+        if ($request->ajax() && isset($request->statusExternalId)) {
+            $input['status_id'] = Status::whereExternalId($request->statusExternalId)->first()->id;
         }
 
         $task = $this->findByExternalId($external_id);

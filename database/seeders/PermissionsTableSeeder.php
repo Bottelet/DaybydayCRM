@@ -104,6 +104,12 @@ class PermissionsTableSeeder extends Seeder
                 'description' => 'Allowed to upload files for a task',
                 'grouping' => 'task',
             ],
+            [
+                'display_name' => 'Delete task',
+                'name' => 'task-delete',
+                'description' => 'Permission to delete a task',
+                'grouping' => 'task',
+            ],
             // Invoice
             [
                 'display_name' => 'Modify invoice lines on a invoice / task',
@@ -154,6 +160,12 @@ class PermissionsTableSeeder extends Seeder
                 'description' => 'Permission to change the assigned user on a lead',
                 'grouping' => 'lead',
             ],
+            [
+                'display_name' => 'Delete lead',
+                'name' => 'lead-delete',
+                'description' => 'Permission to delete a lead',
+                'grouping' => 'lead',
+            ],
             // Project
             [
                 'display_name' => 'Create project',
@@ -183,6 +195,12 @@ class PermissionsTableSeeder extends Seeder
                 'display_name' => 'Upload files to project',
                 'name' => 'project-upload-files',
                 'description' => 'Allowed to upload files for a project',
+                'grouping' => 'project',
+            ],
+            [
+                'display_name' => 'Delete project',
+                'name' => 'project-delete',
+                'description' => 'Permission to delete a project',
                 'grouping' => 'project',
             ],
             // Payment
