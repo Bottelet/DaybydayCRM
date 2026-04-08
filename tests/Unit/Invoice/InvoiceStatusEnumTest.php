@@ -55,16 +55,14 @@ class InvoiceStatusEnumTest extends TestCase
         $this->assertEquals(InvoiceStatus::fromDisplayValue('Partially paid'), InvoiceStatus::partialPaid()->getStatus());
     }
 
-    /** @test
-     */
+    #[Test]
     public function throws_exception_if_status_is_not_known()
     {
         $this->expectException(\Exception::class);
         InvoiceStatus::fromStatus('None existing status');
     }
 
-    /** @test
-     */
+    #[Test]
     public function throws_exception_if_display_value_is_not_known()
     {
         $this->expectException(\Exception::class);
