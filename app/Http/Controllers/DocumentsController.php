@@ -26,8 +26,8 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        // Eager load the source relationship to avoid N+1 queries
-        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+        // Eager load the source and nested client relationships to avoid N+1 queries
+        $document = Document::with(['sourceable', 'sourceable.client'])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
@@ -56,8 +56,8 @@ class DocumentsController extends Controller
 
     public function download($external_id)
     {
-        // Eager load the source relationship to avoid N+1 queries
-        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+        // Eager load the source and nested client relationships to avoid N+1 queries
+        $document = Document::with(['sourceable', 'sourceable.client'])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
@@ -324,17 +324,17 @@ class DocumentsController extends Controller
     private function userOwnsAssignableSource($source, $user)
     {
         // Check if user created the source
-        if (isset($source->user_created_id) && $source->user_created_id === $user->id) {
+        if (! is_null($source->user_created_id) && $source->user_created_id === $user->id) {
             return true;
         }
 
         // Check if user is assigned to the source
-        if (isset($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
+        if (! is_null($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
             return true;
         }
 
         // Check if user owns the client associated with the source
-        if (isset($source->client->user_id) && $source->client->user_id === $user->id) {
+        if ($source->client && ! is_null($source->client->user_id) && $source->client->user_id === $user->id) {
             return true;
         }
 
