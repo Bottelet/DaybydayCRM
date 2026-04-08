@@ -1,11 +1,12 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
-use App\Models\Payment;
+use App\Models\File;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(App\Models\File::class, function (Faker $faker) {
+$factory->define(File::class, static function (Faker $faker) {
     return [
         //
     ];

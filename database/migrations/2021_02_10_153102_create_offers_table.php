@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class CreateOffersTable extends Migration
 {
@@ -14,9 +16,9 @@ class CreateOffersTable extends Migration
      */
     public function up()
     {
-        Schema::create('offers', function (Blueprint $table) {
+        Schema::create('offers', static function (Blueprint $table) {
             $table->increments('id');
-            $table->string('external_id');
+            $table->string('external_id')->default('');
             $table->dateTime('sent_at')->nullable();
             $table->nullableMorphs('source');
             $table->integer('client_id')->unsigned();
@@ -27,6 +29,7 @@ class CreateOffersTable extends Migration
         });
 
         $p1 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Add offer',
             'name' => 'offer-create',
             'description' => 'Be able to create an offer',
@@ -34,6 +37,7 @@ class CreateOffersTable extends Migration
         ]);
 
         $p2 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Edit offer',
             'name' => 'offer-edit',
             'description' => 'Be able to edit an offer',
@@ -41,13 +45,14 @@ class CreateOffersTable extends Migration
         ]);
 
         $p3 = Permission::create([
+            'external_id' => Str::uuid()->toString(),
             'display_name' => 'Delete offer',
             'name' => 'offer-delete',
             'description' => 'Be able to delete an offer',
             'grouping' => 'offer',
         ]);
 
-        $roles = \App\Models\Role::whereIn('name', ['owner', 'administrator'])->get();
+        $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$p1->id, $p2->id, $p3->id]);
         }

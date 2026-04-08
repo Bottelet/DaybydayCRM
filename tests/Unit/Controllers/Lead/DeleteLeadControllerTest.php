@@ -1,22 +1,25 @@
 <?php
+
 namespace Tests\Unit\Controllers\Lead;
 
-use Tests\TestCase;
+use App\Enums\OfferStatus;
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
-use App\Models\Client;
-use App\Models\Invoice;
-use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class DeleteLeadControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
     private $lead;
+
     private $offer;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -26,35 +29,38 @@ class DeleteLeadControllerTest extends TestCase
             'source_id' => $this->lead->id,
             'source_type' => Lead::class,
             'client_id' => $this->lead->client_id,
+            'status' => OfferStatus::inProgress()->getStatus(),
         ]);
-        
+
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    /** @test */
-    public function deleteLead()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function delete_lead()
     {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
-        
+
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
-        
+
     }
 
-    /** @test */
-    public function deleteOffersIfFlagGiven()
-    {   
+    #[Test]
+    #[Group('junie_repaired')]
+    public function delete_offers_if_flag_given()
+    {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
-            'delete_offers' => "on"
+            'delete_offers' => 'on',
         ]);
-        
-        
+
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
         $this->assertSoftDeleted('offers', ['id' => $this->offer->id]);
     }
 
-    /** @test */
-    public function doNotDeleteOffersIfFlagIsNotGivenButRemoveReference()
-    {   
+    #[Test]
+    #[Group('junie_repaired')]
+    public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
+    {
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
         $this->offer->refresh();
@@ -64,16 +70,16 @@ class DeleteLeadControllerTest extends TestCase
         $this->assertNull(Offer::find($this->offer->source_id));
     }
 
-
-    /** @test */
-    public function canDeleteLeadIfFlagIsGivenAndOffersDoesNotExists()
-    {   
+    #[Test]
+    #[Group('junie_repaired')]
+    public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
+    {
         $this->lead->offers()->forceDelete();
-        
+
         $this->json('DELETE', route('leads.destroy', $this->lead->external_id), [
-            'delete_offers' => "on"
+            'delete_offers' => 'on',
         ]);
-        
+
         $this->assertNotNull($this->lead->refresh()->deleted_at);
     }
 }

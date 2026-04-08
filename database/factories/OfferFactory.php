@@ -1,15 +1,16 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
 use App\Enums\OfferStatus;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Offer;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 use Ramsey\Uuid\Uuid;
 
-$factory->define(Offer::class, function (Faker $faker) {
+$factory->define(Offer::class, static function (Faker $faker) {
     return [
         'external_id' => Uuid::uuid4()->toString(),
         'client_id' => factory(Client::class),

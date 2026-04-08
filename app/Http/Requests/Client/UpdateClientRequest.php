@@ -35,7 +35,7 @@ class UpdateClientRequest extends FormRequest
             'secondary_number' => 'max:10',
             'industry' => '',
             'company_type' => '',
-            'user_id' => 'required'
+            'user_id' => 'required',
         ];
     }
 }

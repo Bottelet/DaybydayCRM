@@ -1,14 +1,16 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
+use App\Models\Client;
 use App\Models\Invoice;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Invoice::class, function (Faker $faker) {
+$factory->define(Invoice::class, static function (Faker $faker) {
     return [
         'external_id' => $faker->uuid,
         'status' => 'draft',
-        'client_id' => factory(\App\Models\Client::class),
+        'client_id' => factory(Client::class),
     ];
 });

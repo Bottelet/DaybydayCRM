@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use App\Observers\ElasticSearchObserver;
+use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Services\Comment\Commentable;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-use Carbon\Carbon;
-
-class Project extends model implements Commentable
+class Project extends Model implements Commentable
 {
-    use  SoftDeletes, SearchableTrait, DeadlineTrait;
-    const PROJECT_STATUS_CLOSED = "Closed";
+    use DeadlineTrait, SearchableTrait, SoftDeletes;
+
+    const PROJECT_STATUS_CLOSED = 'Closed';
 
     protected $searchableFields = ['title'];
 
@@ -35,13 +33,6 @@ class Project extends model implements Commentable
     public static function boot()
     {
         parent::boot();
-
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        //}
     }
 
     public function getRouteKeyName()
@@ -104,14 +95,11 @@ class Project extends model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'project', 'external_id' => $this->external_id]);
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

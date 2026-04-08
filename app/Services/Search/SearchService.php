@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Search;
 
 use Elasticsearch\ClientBuilder;
@@ -9,18 +10,33 @@ class SearchService
 
     public function getClient()
     {
-        $host = config('elasticsearch.hosts');
+        if (app()->environment('testing')) {
+            return null;
+        }
+
+        $hosts = config('elasticsearch.hosts');
+        $formattedHosts = [];
+        foreach ($hosts as $host) {
+            $scheme = $host['scheme'] ?? 'http';
+            $formattedHosts[] = $scheme.'://'.(($host['user'] ?? null) ? $host['user'].':'.$host['pass'].'@' : '').$host['host'].':'.$host['port'];
+        }
 
         if (is_null($this->elasticsearch)) {
-            $builder = ClientBuilder::create()->setHosts($host);
+            $builder = ClientBuilder::create()->setHosts($formattedHosts);
             $this->elasticsearch = $builder->build();
         }
+
         return $this->elasticsearch;
     }
 
     public function search($query, $type = 'clients', $prPage = 5, $offset = 0, $sortBy = null, $sortDirection = 'desc')
     {
         $elasticClient = $this->getClient();
+
+        if (is_null($elasticClient)) {
+            return ['hits' => ['total' => 0, 'hits' => []]];
+        }
+
         $params = [
             'index' => $type,
             'type' => $type,
@@ -36,7 +52,7 @@ class SearchService
                 ],
             ],
         ];
-        if (!is_null($sortBy)) {
+        if (! is_null($sortBy)) {
             $params['body']['sort'] = [$sortBy => $sortDirection];
         }
 

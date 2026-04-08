@@ -25,7 +25,7 @@ class StoreDepartmentRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'description' => ''
+            'description' => '',
         ];
     }
 }

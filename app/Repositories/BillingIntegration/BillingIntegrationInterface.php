@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\BillingIntegration;
 
 use App\Models\Client;
@@ -7,7 +8,7 @@ use App\Models\Payment;
 
 interface BillingIntegrationInterface
 {
-    const INTEGRATION_TYPE = "billing";
+    const INTEGRATION_TYPE = 'billing';
 
     public function getClient();
 
@@ -19,7 +20,7 @@ interface BillingIntegrationInterface
 
     public function sendInvoice(Invoice $invoice, $subject, $message, $recipient, $attachPdf = false);
 
-    public function getContacts($filter = "");
+    public function getContacts($filter = '');
 
     public function getPrimaryContact(Client $client);
 

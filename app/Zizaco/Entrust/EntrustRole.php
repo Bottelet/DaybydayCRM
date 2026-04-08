@@ -1,11 +1,12 @@
-<?php namespace App\Zizaco\Entrust;
+<?php
+
+namespace App\Zizaco\Entrust;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
 use App\Zizaco\Entrust\Contracts\EntrustRoleInterface;
@@ -26,8 +27,6 @@ class EntrustRole extends Model implements EntrustRoleInterface
 
     /**
      * Creates a new instance of the model.
-     *
-     * @param array $attributes
      */
     public function __construct(array $attributes = [])
     {

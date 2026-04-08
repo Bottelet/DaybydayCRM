@@ -1,17 +1,67 @@
-/vendor
-.idea/*
-/node_modules
+######################################################################
+# Laravel & PHP Project .gitignore (Professionalized)
+######################################################################
+
+# === Composer & Vendor ===
+/vendor/
+
+# === Node & Frontend ===
+/node_modules/
+bower_components/
+
+# === IDE & Editor Files ===
+.idea/
+/.idea/
+/.vscode/
+/.phpintel/
+/.phpactor.json
+/.phpunit*
+/.fleet/
+/.zed/
+/.nova/
+Thumbs.db
+.DS_Store
+
+# === Environment & Config ===
+.env
+.env.backup
+.env.production
+.env.testing
 Homestead.yaml
 Homestead.json
-.env
-bower_components
+/auth.json
 
-.docker/flarepoint-db/*
-
-# PHP Intel cache
-.phpintel/
-
-# PHP CS Fixer cache
-.php_cs.cache
-storage/debugbar/
+# === Build & Asset Artifacts ===
 public/build/
+public/hot/
+public/storage/
+storage/pail/
+mix-manifest.json
+
+# === Cache & Logs ===
+*.log
+/.phpunit.cache
+/.phpunit.result.cache
+_ide_helper.php
+phpunit.txt
+/phpu*.txt
+stan.txt
+todo.txt
+
+# === Database & Docker ===
+.docker/flarepoint-db/*
+storage/*.key
+
+# === Miscellaneous ===
+/storage/framework/
+/storage/logs/
+/storage/app/
+
+# === PHP Tools & Static Analysis ===
+.php_cs.cache
+
+# === Laravel Debugbar ===
+storage/debugbar/
+
+# === Custom Exclusions ===
+# (Add any project-specific ignores below)

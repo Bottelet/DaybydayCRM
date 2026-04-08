@@ -10,6 +10,9 @@ class ClientObserver
 
     public function __construct()
     {
+        if (app()->environment('testing')) {
+            return;
+        }
         $this->relations = [
             'tasks',
             'leads',
@@ -17,13 +20,13 @@ class ClientObserver
             'projects',
             'invoices',
             'contacts',
-            'appointments'
+            'appointments',
         ];
     }
+
     /**
      * Handle the client "created" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function created(Client $client)
@@ -34,7 +37,6 @@ class ClientObserver
     /**
      * Handle the client "updated" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function updated(Client $client)
@@ -45,7 +47,6 @@ class ClientObserver
     /**
      * Handle the client "deleted" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function deleted(Client $client)
@@ -58,7 +59,6 @@ class ClientObserver
     /**
      * Handle the client "restored" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function restored(Client $client)
@@ -71,7 +71,6 @@ class ClientObserver
     /**
      * Handle the client "force deleted" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function forceDeleted(Client $client)

@@ -21,7 +21,6 @@ class TaskObserver
     /**
      * Handle the task "deleted" event.
      *
-     * @param  \App\Models\Task  $task
      * @return void
      */
     public function deleted(Task $task)
@@ -34,7 +33,6 @@ class TaskObserver
     /**
      * Handle the task "restored" event.
      *
-     * @param  \App\Models\Task  $task
      * @return void
      */
     public function restored(Task $task)
@@ -47,7 +45,6 @@ class TaskObserver
     /**
      * Handle the task "force deleted" event.
      *
-     * @param  \App\Models\Task  $task
      * @return void
      */
     public function forceDeleted(Task $task)

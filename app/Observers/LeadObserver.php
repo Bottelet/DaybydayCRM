@@ -13,15 +13,13 @@ class LeadObserver
         $this->relations = [
             'comments',
             'activity',
-            'appointments'
+            'appointments',
         ];
     }
-
 
     /**
      * Handle the lead "created" event.
      *
-     * @param  \App\Models\Lead  $lead
      * @return void
      */
     public function created(Lead $lead)
@@ -32,7 +30,6 @@ class LeadObserver
     /**
      * Handle the lead "updated" event.
      *
-     * @param  \App\Models\Lead  $lead
      * @return void
      */
     public function updated(Lead $lead)
@@ -43,7 +40,6 @@ class LeadObserver
     /**
      * Handle the lead "deleted" event.
      *
-     * @param  \App\Models\Lead  $lead
      * @return void
      */
     public function deleted(Lead $lead)
@@ -56,7 +52,6 @@ class LeadObserver
     /**
      * Handle the lead "restored" event.
      *
-     * @param  \App\Models\Lead  $lead
      * @return void
      */
     public function restored(Lead $lead)
@@ -69,7 +64,6 @@ class LeadObserver
     /**
      * Handle the lead "force deleted" event.
      *
-     * @param  \App\Models\Lead  $lead
      * @return void
      */
     public function forceDeleted(Lead $lead)

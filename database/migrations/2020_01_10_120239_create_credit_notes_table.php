@@ -1,9 +1,10 @@
 <?php
 
 use App\Models\Permission;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Role;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCreditNotesTable extends Migration
 {
@@ -15,7 +16,7 @@ class CreateCreditNotesTable extends Migration
     public function up()
     {
         return;
-        Schema::create('credit_notes', function (Blueprint $table) {
+        Schema::create('credit_notes', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('external_id');
 
@@ -40,7 +41,7 @@ class CreateCreditNotesTable extends Migration
             'grouping' => 'credit-note',
         ]);
 
-        $roles = \App\Models\Role::where('name', 'owner')->get();
+        $roles = Role::where('name', 'owner')->get();
         foreach ($roles as $role) {
             $role->permissions()->attach([$cpp->id, $dpp->id]);
         }
@@ -56,7 +57,7 @@ class CreateCreditNotesTable extends Migration
         return;
         $cpp = Permission::where('name', 'credit-note-create')->firstOrFail();
         $dpp = Permission::where('name', 'credit-note-delete')->firstOrFail();
-        $roles = \App\Models\Role::where('name', 'owner')->get();
+        $roles = Role::where('name', 'owner')->get();
         foreach ($roles as $role) {
             $role->permissions()->detach([$cpp->id, $dpp->id]);
         }

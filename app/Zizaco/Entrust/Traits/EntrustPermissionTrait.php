@@ -1,13 +1,15 @@
-<?php namespace App\Zizaco\Entrust\Traits;
+<?php
+
+namespace App\Zizaco\Entrust\Traits;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustPermissionTrait
@@ -15,7 +17,7 @@ trait EntrustPermissionTrait
     /**
      * Many-to-Many relations with role model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function roles()
     {
@@ -34,7 +36,7 @@ trait EntrustPermissionTrait
         parent::boot();
 
         static::deleting(function ($permission) {
-            if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
+            if (! method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }
 

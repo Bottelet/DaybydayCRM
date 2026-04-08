@@ -1,11 +1,11 @@
 <?php
+
 namespace App\Models;
 
+use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
-use App\Observers\ElasticSearchObserver;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use  SearchableTrait, SoftDeletes;
+    use SearchableTrait, SoftDeletes;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 
@@ -39,12 +39,6 @@ class Client extends Model
     public static function boot()
     {
         parent::boot();
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        //}
     }
 
     public function updateAssignee(User $user)
@@ -52,7 +46,7 @@ class Client extends Model
         $this->user_id = $user->id;
         $this->save();
 
-        event(new \App\Events\ClientAction($this, ClientsController::UPDATED_ASSIGN));
+        event(new ClientAction($this, ClientsController::UPDATED_ASSIGN));
     }
 
     public function displayValue()
@@ -107,7 +101,7 @@ class Client extends Model
         return $this->hasOne(Contact::class)->whereIsPrimary(true);
     }
 
-    public function getprimaryContactAttribute()
+    public function getPrimaryContactAttribute()
     {
         return $this->hasMany(Contact::class)->whereIsPrimary(true)->first();
     }
@@ -122,9 +116,6 @@ class Client extends Model
         return self::where('external_id', $external_id)->first();
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

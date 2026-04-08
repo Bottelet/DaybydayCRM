@@ -5,10 +5,23 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Appointment extends Model
 {
     use SoftDeletes;
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($appointment) {
+            if (empty($appointment->external_id)) {
+                $appointment->external_id = (string) Str::uuid();
+            }
+        });
+    }
+
     protected $fillable = [
         'user_id',
         'source_id',
@@ -23,6 +36,7 @@ class Appointment extends Model
     ];
 
     protected $dates = ['start_at', 'end_at'];
+
     protected $hidden = ['id', 'user_id', 'source_type', 'source_id', 'client_id'];
 
     public function getRouteKeyName()

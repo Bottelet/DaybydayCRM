@@ -1,11 +1,10 @@
 <?php
+
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use App\Models\InvoiceLine;
-use App\Models\Payment;
-use App\Services\Invoice\GenerateInvoiceStatus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CanUpdateInvoiceTest extends TestCase
@@ -14,22 +13,22 @@ class CanUpdateInvoiceTest extends TestCase
 
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->invoice = factory(Invoice::class)->create([
-            'sent_at' => null
+            'sent_at' => null,
         ]);
     }
 
-    /** @test */
-    public function happyPath()
+    #[Test]
+    public function happy_path()
     {
         $this->assertTrue($this->invoice->canUpdateInvoice());
     }
 
-    /** @test */
-    public function cantUpdateInvoiceIfItsSent()
+    #[Test]
+    public function cant_update_invoice_if_its_sent()
     {
         $this->invoice->sent_at = today();
         $this->invoice->save();

@@ -1,32 +1,30 @@
 <?php
+
 namespace Tests\Unit\Controllers\Department;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Client;
-use App\Models\User;
 use App\Models\Department;
-use Ramsey\Uuid\Uuid;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class DepartmentsControllerTest extends TestCase
 {
     use DatabaseTransactions, WithoutMiddleware;
 
-    /** @test **/
+    #[Test]
     public function can_create_department()
     {
         $response = $this->json('POST', route('departments.store'), [
-                'name' => 'Test Department',
-                'description' => 'This is a test department',
+            'name' => 'Test Department',
+            'description' => 'This is a test department',
         ]);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertNotNull(Department::where('name', 'Test Department')->first());
     }
 
-    /** @test **/
+    #[Test]
     public function can_delete_department()
     {
         $department = factory(Department::class)->create();
@@ -36,7 +34,7 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
     }
 
-    /** @test **/
+    #[Test]
     public function cant_delete_department_if_user_is_associated()
     {
         $department = factory(Department::class)->create();
@@ -45,7 +43,7 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
 
         $this->json('DELETE', route('departments.destroy', $department->external_id));
-        $this->assertNotNull(\Session::all()["flash_message_warning"]);
+        $this->assertNotNull(\Session::all()['flash_message_warning']);
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
     }
 }

@@ -1,11 +1,10 @@
 <?php
+
 namespace Tests;
 
-use PHPUnit\Runner\AfterLastTestHook;
-use PHPUnit\Runner\BeforeFirstTestHook;
 use Illuminate\Contracts\Console\Kernel;
 
-class Bootstrap implements BeforeFirstTestHook, AfterLastTestHook
+class Bootstrap
 {
     /*
     |--------------------------------------------------------------------------
@@ -18,18 +17,21 @@ class Bootstrap implements BeforeFirstTestHook, AfterLastTestHook
     |
     */
     use CreatesApplication;
-    public function executeBeforeFirstTest(): void
+
+    public static function setUpBeforeClass(): void
     {
-        $console = $this->createApplication()->make(Kernel::class);
+        $console = (new self)->createApplication()->make(Kernel::class);
         $commands = [
             'config:cache',
             'event:cache',
+            'migrate:fresh', // Ensure all tables exist in the in-memory SQLite DB
         ];
         foreach ($commands as $command) {
             $console->call($command);
         }
     }
-    public function executeAfterLastTest(): void
+
+    public static function tearDownAfterClass(): void
     {
         array_map('unlink', glob('bootstrap/cache/*.phpunit.php'));
     }

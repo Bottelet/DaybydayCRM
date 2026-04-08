@@ -1,53 +1,56 @@
 <?php
+
 namespace Tests\Unit\Deadline;
 
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Carbon\Carbon;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class DeadlineTest extends TestCase
 {
-    /** @var $task Task */
+    /** @var Task */
     private $task;
-    /** @var $lead Lead  */
+
+    /** @var Lead */
     private $lead;
-    /** @var $project Project  */
+
+    /** @var Project */
     private $project;
 
-    public function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->task = factory(Task::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
         $this->lead = factory(Lead::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
         $this->project = factory(Project::class)->create(
             [
-                'deadline' => Carbon::now()->addHour()
+                'deadline' => Carbon::now()->addHour(),
             ]
         );
     }
 
-    /** @test */
-    public function notOverDeadline()
+    #[Test]
+    public function not_over_deadline()
     {
         $this->assertFalse($this->lead->isOverDeadline());
         $this->assertFalse($this->task->isOverDeadline());
         $this->assertFalse($this->project->isOverDeadline());
     }
 
-    /** @test */
-    public function overDeadline()
+    #[Test]
+    public function over_deadline()
     {
         $this->task->deadline = Carbon::now()->subDay();
         $this->lead->deadline = Carbon::now()->subDay();
@@ -58,8 +61,8 @@ class DeadlineTest extends TestCase
         $this->assertTrue($this->project->isOverDeadline());
     }
 
-    /** @test */
-    public function isNotCloseToDeadline()
+    #[Test]
+    public function is_not_close_to_deadline()
     {
         $this->task->deadline = Carbon::now()->addDays(3);
         $this->lead->deadline = Carbon::now()->addDays(3);
@@ -70,23 +73,23 @@ class DeadlineTest extends TestCase
         $this->assertFalse($this->project->isCloseToDeadline());
     }
 
-    /** @test */
-    public function IsCloseToDeadline()
+    #[Test]
+    public function is_close_to_deadline()
     {
         $this->assertTrue($this->lead->isCloseToDeadline());
         $this->assertTrue($this->task->isCloseToDeadline());
         $this->assertTrue($this->project->isCloseToDeadline());
     }
 
-    /** @test */
-    public function getDaysUntilDeadline()
+    #[Test]
+    public function get_days_until_deadline()
     {
         $this->task->deadline = Carbon::now()->addDays(3);
         $this->lead->deadline = Carbon::now()->addDays(3);
         $this->project->deadline = Carbon::now()->addDays(3);
 
-        $this->assertEquals($this->lead->days_until_deadline, 3);
-        $this->assertEquals($this->task->days_until_deadline, 3);
-        $this->assertEquals($this->project->days_until_deadline, 3);
+        $this->assertEquals(3, $this->lead->days_until_deadline);
+        $this->assertEquals(3, $this->task->days_until_deadline);
+        $this->assertEquals(3, $this->project->days_until_deadline);
     }
 }

@@ -1,29 +1,28 @@
 <?php
+
 namespace App\Api\v1\Controllers;
 
-use Dingo\Api\Routing\Helpers;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
     /**
      * Return generic json response with the given data.
      *
-     * @param $data
-     * @param int $statusCode
-     * @param array $headers
-     * @return \Illuminate\Http\JsonResponse
+     * @param  int  $statusCode
+     * @param  array  $headers
+     * @return JsonResponse
      */
     protected function respond($data, $statusCode = 200, $headers = [])
     {
         return response()->json($data, $statusCode, $headers);
     }
-    
+
     /**
      * Respond with success.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function respondSuccess()
     {
@@ -33,8 +32,7 @@ class ApiController extends Controller
     /**
      * Respond with created.
      *
-     * @param $data
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function respondCreated($data)
     {
@@ -44,7 +42,7 @@ class ApiController extends Controller
     /**
      * Respond with no content.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function respondNoContent()
     {
@@ -54,25 +52,23 @@ class ApiController extends Controller
     /**
      * Respond with error.
      *
-     * @param $message
-     * @param $statusCode
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function respondError($message, $statusCode)
     {
         return $this->respond([
             'errors' => [
                 'message' => $message,
-                'status_code' => $statusCode
-            ]
+                'status_code' => $statusCode,
+            ],
         ], $statusCode);
     }
 
     /**
      * Respond with unauthorized.
      *
-     * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param  string  $message
+     * @return JsonResponse
      */
     protected function respondUnauthorized($message = 'Unauthorized')
     {
@@ -82,8 +78,8 @@ class ApiController extends Controller
     /**
      * Respond with forbidden.
      *
-     * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param  string  $message
+     * @return JsonResponse
      */
     protected function respondForbidden($message = 'Forbidden')
     {
@@ -93,8 +89,8 @@ class ApiController extends Controller
     /**
      * Respond with not found.
      *
-     * @param string $message
-     * @return \Illuminate\Http\JsonResponse
+     * @param  string  $message
+     * @return JsonResponse
      */
     protected function respondNotFound($message = 'Not Found')
     {

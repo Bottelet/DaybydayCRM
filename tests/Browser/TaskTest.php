@@ -3,19 +3,18 @@
 namespace Tests\Browser;
 
 use App\Models\Client;
-use App\Models\Task;
 use App\Models\Status;
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use App\Models\Task;
 use App\Models\User;
+use Laravel\Dusk\Browser;
+use Tests\DuskTestCase;
 
 class TaskTest extends DuskTestCase
 {
     /**
      * Test user can access task thorugh index page.
      */
-    public function testUserCanSeeTasksOnTaskIndexAndGoToTheTaskWithLink()
+    public function test_user_can_see_tasks_on_task_index_and_go_to_the_task_with_link()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
@@ -29,7 +28,7 @@ class TaskTest extends DuskTestCase
                 ->type('.dataTables_filter input', $task->title)
                 ->waitForText($task->title)
                 ->clickLink($task->title)
-                ->assertPathIs('/tasks/' . $task->external_id)
+                ->assertPathIs('/tasks/'.$task->external_id)
                 ->waitForText($task->title);
         });
     }
@@ -37,17 +36,17 @@ class TaskTest extends DuskTestCase
     /**
      * Test user can access task thorugh index page.
      */
-    public function testICanSeeAllTheCorrectInformationOnTaskInfoPage()
+    public function test_i_can_see_all_the_correct_information_on_task_info_page()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
 
         $this->browse(function (Browser $browser) use ($task) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/tasks/' . $task->external_id)
+                ->visit('/tasks/'.$task->external_id)
                 ->waitForText($task->title)
                 ->assertSee($task->description)
                 ->assertsee(date(carbonDateWithText(), strtotime($task->created_at)))
@@ -59,18 +58,18 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can assign a new user to the task, and see the correct user info after new user is assigned
      */
-    public function testICanAssignANewUserToTask()
+    public function test_i_can_assign_a_new_user_to_task()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
         $user = factory(User::class)->create();
 
         $this->browse(function (Browser $browser) use ($task, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/tasks/' . $task->external_id)
+                ->visit('/tasks/'.$task->external_id)
                 ->click('#assignee-user')
                 ->clickLink($user->name)
                 ->waitForText($user->name)
@@ -81,78 +80,77 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can close a open task
      */
-    public function testICanCloseAOpenTask()
+    public function test_i_can_close_a_open_task()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
 
         $this->browse(function (Browser $browser) use ($task) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/tasks/' . $task->external_id)
+                ->visit('/tasks/'.$task->external_id)
                 ->assertSee($task->status->title)
                 ->click('#status-text')
-                ->clickLink("Pending")
-                ->assertSee("Pending");
+                ->clickLink('Pending')
+                ->assertSee('Pending');
         });
     }
 
     /**
      * Test i can comment on a task
      */
-    public function testICanAddANewCommentOnATask()
+    public function test_i_can_add_a_new_comment_on_a_task()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
 
         $this->browse(function (Browser $browser) use ($task) {
             $browser->driver->executeScript('window.scrollTo(0, 600)');
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/tasks/' . $task->external_id)
-                ->type('.note-editable', "This is a test comment")
-                ->press("Add Comment")
-                ->assertSee("This is a test comment")
-                ->assertSee("Comment by: Admin");
+                ->visit('/tasks/'.$task->external_id)
+                ->type('.note-editable', 'This is a test comment')
+                ->press('Add Comment')
+                ->assertSee('This is a test comment')
+                ->assertSee('Comment by: Admin');
         });
     }
-
 
     /**
      * Test i can add time to a task
      */
-    public function testICanAddANewTimeToTask()
+    public function test_i_can_add_a_new_time_to_task()
     {
         $client = factory(Client::class)->create();
         $task = factory(Task::class)->create([
             'client_id' => $client->id,
-            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id
+            'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
 
         $this->browse(function (Browser $browser) use ($task) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/tasks/' . $task->external_id)
-                ->click("#time-manager")
+                ->visit('/tasks/'.$task->external_id)
+                ->click('#time-manager')
                 ->pause(200) // Wait for modal to popup
-                ->type("title", "This is a test time title")
-                ->type("comment", "This is a short comment about what has been made")
-                ->type("price", 200)
-                ->type("quantity", 4)
-                ->select("type", "hours")
-                ->press("Register time")
-                ->waitForText("Time has been updated")
-                ->assertSee("Time has been updated");
+                ->type('title', 'This is a test time title')
+                ->type('comment', 'This is a short comment about what has been made')
+                ->type('price', 200)
+                ->type('quantity', 4)
+                ->select('type', 'hours')
+                ->press('Register time')
+                ->waitForText('Time has been updated')
+                ->assertSee('Time has been updated');
         });
     }
 
     /**
      * Test i can create a new task
      */
-    public function testICanCreateANewTask()
+    public function test_i_can_create_a_new_task()
     {
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
@@ -161,32 +159,32 @@ class TaskTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/tasks/create')
-                ->type('title', "This is a test task title")
-                ->type(".note-editable", "This is a short comment about the task")
+                ->type('title', 'This is a test task title')
+                ->type('.note-editable', 'This is a short comment about the task')
                 ->select('user_assigned_id', $user->id)
                 ->select('client_external_id', $client->external_id)
-                ->press("Create task")
-                ->waitForText("Task successfully added")
+                ->press('Create task')
+                ->waitForText('Task successfully added')
                 ->assertSee($user->name)
                 ->assertSee($contact->name)
-                ->assertSee("This is a test task title");
+                ->assertSee('This is a test task title');
         });
     }
 
     /**
      * Test i can create a new task
      */
-    public function testICanGoToCreateNewClientInDropdownIfNoClientsExistsFromTask()
+    public function test_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_task()
     {
         Client::query()->forceDelete();
-        
+
         $user = factory(User::class)->create();
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/tasks/create')
                 ->select('user_assigned_id', $user->id)
-                ->select('client_external_id', "new_client")
+                ->select('client_external_id', 'new_client')
                 ->assertPathIs('/clients/create');
         });
     }

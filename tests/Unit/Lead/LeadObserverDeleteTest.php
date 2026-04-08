@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Lead;
 
-use Tests\TestCase;
 use App\Models\Lead;
-use App\Models\Client;
-use App\Models\Invoice;
 use App\Models\Offer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class LeadObserverDeleteTest extends TestCase
 {
@@ -15,35 +15,37 @@ class LeadObserverDeleteTest extends TestCase
 
     protected $lead;
 
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $this->lead = factory(Lead::class)->create();
 
         $this->lead->comments()->create([
             'description' => 'Test',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
         $this->lead->activity()->create([
-            'text' => "something happend!"
+            'text' => 'something happend!',
         ]);
         $this->lead->appointments()->create([
             'title' => 'Some appointment',
             'color' => '#FFFFF',
-            'user_id' => $this->user->id
+            'user_id' => $this->user->id,
         ]);
     }
 
-    /** @test */
-    public function deleteLeadsSoftDeletes()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function delete_leads_soft_deletes()
     {
         $this->lead->delete();
-        
+
         $this->assertSoftDeleted($this->lead);
     }
 
-    /** @test */
-    public function deleteLeadsoftDeletesRelations()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function delete_leadsoft_deletes_relations()
     {
         $this->assertNotEmpty($this->lead->comments);
         $this->assertNotEmpty($this->lead->activity);
@@ -59,45 +61,48 @@ class LeadObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->lead->comments()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->activity()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->appointments()->withTrashed()->first());
-        
+
     }
 
-    /** @test */
-    public function forceDeleteRemovesLeadFromDatabase()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function force_delete_removes_lead_from_database()
     {
         $leadId = $this->lead->id;
-        
+
         $this->lead->forceDelete();
         $this->lead->refresh();
 
         $this->assertDatabaseMissing('leads', [
-            'id' => $leadId
+            'id' => $leadId,
         ]);
     }
 
-    /** @test */
-    public function forceDeleteRemovesRelationsFromDatabase()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
         $activityId = $this->lead->activity->first()->id;
-        
+
         $this->lead->forceDelete();
         $this->lead->refresh();
 
         $this->assertDatabaseMissing('comments', [
-            'id' => $commentId
+            'id' => $commentId,
         ]);
         $this->assertDatabaseMissing('activities', [
-            'id' => $activityId
+            'id' => $activityId,
         ]);
         $this->assertDatabaseMissing('appointments', [
-            'id' => $appointmentId
+            'id' => $appointmentId,
         ]);
     }
 
-    /** @test */
-    public function offerIsNotDeletedByObserver()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function offer_is_not_deleted_by_observer()
     {
         $offer = factory(Offer::class)->create([
             'source_id' => $this->lead->id,

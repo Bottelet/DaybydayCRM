@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Traits;
 
 use Carbon\Carbon;
 
 trait DeadlineTrait
 {
-    public function isOverDeadline():bool
+    public function isOverDeadline(): bool
     {
         if ($this->isClosed()) {
             return false;
@@ -14,16 +15,12 @@ trait DeadlineTrait
         return $this->deadline < Carbon::now();
     }
 
-    /**
-     * @param Int $days
-     * @return bool
-     */
-    public function isCloseToDeadline(Int $days = 2):bool
+    public function isCloseToDeadline(int $days = 2): bool
     {
         return $this->deadline < Carbon::now()->addDays($days);
     }
 
-    public function getDaysUntilDeadlineAttribute(): Int
+    public function getDaysUntilDeadlineAttribute(): int
     {
         return Carbon::now()->startOfDay()->diffInDays($this->deadline, false);
     }

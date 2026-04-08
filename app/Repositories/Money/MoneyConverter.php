@@ -1,5 +1,6 @@
 <?php
-namespace  App\Repositories\Money;
+
+namespace App\Repositories\Money;
 
 class MoneyConverter
 {
@@ -12,7 +13,8 @@ class MoneyConverter
 
     /**
      * Format amount to currency equivalent string.
-     * @param bool $useCode
+     *
+     * @param  bool  $useCode
      * @return string
      */
     public function format($useCode = true)
@@ -25,18 +27,22 @@ class MoneyConverter
             return $this->symbolAfterFormat();
         }
     }
+
     public function codeFormat()
     {
-        return $this->currencyFormat() . ' ' . $this->money->getCurrency()->getCode();
+        return $this->currencyFormat().' '.$this->money->getCurrency()->getCode();
     }
+
     public function symbolBeforeFormat()
     {
         return $this->money->getCurrency()->getSymbol().$this->currencyFormat();
     }
+
     public function symbolAfterFormat()
     {
-        return $this->currencyFormat() . ' ' . $this->money->getCurrency()->getSymbol();
+        return $this->currencyFormat().' '.$this->money->getCurrency()->getSymbol();
     }
+
     /**
      * Get amount formatted to currency.
      *

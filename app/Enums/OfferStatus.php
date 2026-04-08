@@ -7,31 +7,33 @@ use Exception;
 class OfferStatus
 {
     private const IN_PROGRESS = 'in-progress';
+
     private const LOST = 'lost';
+
     private const WON = 'won';
 
     /**
      * @var OfferStatus[]
      */
     private static $values = null;
+
     /**
      * @var string
      */
     private $status;
+
     /**
      * @var string
      */
     private $displayValue;
 
-    public function __construct(string $status, string $displayValue = null)
+    public function __construct(string $status, ?string $displayValue = null)
     {
         $this->status = $status;
         $this->displayValue = $displayValue;
     }
 
     /**
-     * @param string $status
-     * @return OfferStatus
      * @throws Exception
      */
     public static function fromStatus(string $status): OfferStatus
@@ -41,12 +43,13 @@ class OfferStatus
                 return $offerStatus;
             }
         }
-        throw new Exception('Unknown invoice status: ' . $status);
+        throw new Exception('Unknown invoice status: '.$status);
     }
 
     /**
-     * @param string $displayValue
+     * @param  string  $displayValue
      * @return OfferStatus
+     *
      * @throws Exception
      */
     public static function fromDisplayValue($displayValue)
@@ -56,7 +59,7 @@ class OfferStatus
                 return $offerStatus;
             }
         }
-        throw new Exception('Unknown invoice status display value: ' . $displayValue);
+        throw new Exception('Unknown invoice status display value: '.$displayValue);
     }
 
     /**
@@ -71,44 +74,30 @@ class OfferStatus
                 self::WON => new OfferStatus(self::WON, 'Won'),
             ];
         }
+
         return self::$values;
     }
 
-    /**
-     * @return OfferStatus
-     */
     public static function inProgress(): OfferStatus
     {
         return self::values()[self::IN_PROGRESS];
     }
 
-    /**
-     * @return OfferStatus
-     */
     public static function lost(): OfferStatus
     {
         return self::values()[self::LOST];
     }
 
-    /**
-     * @return OfferStatus
-     */
     public static function won(): OfferStatus
     {
         return self::values()[self::WON];
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @return string
-     */
     public function getDisplayValue(): string
     {
         return $this->displayValue;

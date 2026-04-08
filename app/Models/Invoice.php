@@ -1,16 +1,14 @@
 <?php
+
 namespace App\Models;
 
-use Carbon\Carbon;
-use App\Enums\OfferStatus;
 use App\Enums\InvoiceStatus;
-use App\Repositories\Money\Money;
-use Illuminate\Database\Eloquent\Model;
-use App\Services\Invoice\InvoiceCalculator;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
+use App\Services\Invoice\InvoiceCalculator;
+use App\Services\InvoiceNumber\InvoiceNumberService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property mixed sent_at
@@ -22,7 +20,7 @@ class Invoice extends Model
 {
     use SoftDeletes;
 
-    const STATUS_SENT = "sent";
+    const STATUS_SENT = 'sent';
 
     protected $fillable = [
         'status',
@@ -81,6 +79,7 @@ class Invoice extends Model
         if ($this->isSent()) {
             return false;
         }
+
         return true;
     }
 
@@ -100,8 +99,7 @@ class Invoice extends Model
     }
 
     /**
-     * @param $contactId
-     * @param bool $sendMail
+     * @param  bool  $sendMail
      * @return array
      */
     public function invoice($contactId)
@@ -127,7 +125,7 @@ class Invoice extends Model
 
         return [
             'invoice_number' => isset($booked) ? $booked->invoiceNumber : app(InvoiceNumberService::class)->nextInvoiceNumber(),
-            'due_at' => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14)
+            'due_at' => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14),
         ];
     }
 
@@ -136,16 +134,16 @@ class Invoice extends Model
         /** @var BillingIntegrationInterface $api */
         $api = Integration::initBillingIntegration();
 
-        if (!$api) {
+        if (! $api) {
             return false;
         }
 
         $api->sendInvoice($this, $subject, $message, $recipient, $attachPdf);
 
-        activity("task")
+        activity('task')
             ->performedOn($this)
-            ->withProperties(['action' => "sent_invoice"])
-            ->log("user has send the invoice to the customer");
+            ->withProperties(['action' => 'sent_invoice'])
+            ->log('user has send the invoice to the customer');
 
         return true;
     }
@@ -163,6 +161,7 @@ class Invoice extends Model
     public function getTotalPriceAttribute()
     {
         $invoiceCalculator = new InvoiceCalculator($this);
+
         return $invoiceCalculator->getTotalPrice();
     }
 }

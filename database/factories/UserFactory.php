@@ -1,11 +1,13 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
+use App\Models\Department;
 use App\Models\User;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(User::class, static function (Faker $faker) {
     return [
         'name' => $faker->name,
         'external_id' => $faker->uuid,
@@ -19,6 +21,6 @@ $factory->define(User::class, function (Faker $faker) {
     ];
 });
 
-$factory->afterCreating(User::class, function ($user, $faker) {
-    $user->department()->attach(\App\Models\Department::first()->id);
+$factory->afterCreating(User::class, static function ($user, $faker) {
+    $user->department()->attach(Department::first()->id);
 });

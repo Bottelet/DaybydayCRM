@@ -1,68 +1,72 @@
 <?php
+
 namespace Tests\Unit\DemoEnvironment;
 
-use Tests\TestCase;
+use App\Http\Middleware\RedirectIfDemo;
+use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Client;
+use App\Models\Department;
 use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Client;
-use App\Models\Department;
-use App\Http\Middleware\RedirectIfDemo;
-use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class CanNotAccessTest extends TestCase
 {
     use DatabaseTransactions;
 
     private $task;
+
     private $invoice;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        
-        app()->detectEnvironment(function() { return 'demo'; });        
+
+        app()->detectEnvironment(function () {
+            return 'demo';
+        });
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    /** @test */
-    public function updateSettings()
+    #[Test]
+    public function update_settings()
     {
         $response = $this->json('PATCH', route('settings.update', []));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-    /** @test */
-    public function accessIntegrationsPage()
+    #[Test]
+    public function access_integrations_page()
     {
         $response = $this->json('GET', route('integrations.index'));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-
-    /** @test */
-    public function connectIntegrationsIntegration()
+    #[Test]
+    public function connect_integrations_integration()
     {
         $response = $this->json('POST', route('integrations.store'));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-    /** @test */
-    public function deleteRole()
+    #[Test]
+    public function delete_role()
     {
         $role = factory(Role::class)->create();
 
         $response = $this->json('DELETE', route('roles.destroy', $role->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-    // /** @test */
+    // #[Test]
     // public function deleteTask()
     // {
     //     $task = factory(Task::class)->create();
@@ -72,7 +76,7 @@ class CanNotAccessTest extends TestCase
     //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
     // }
 
-    // /** @test */
+    // #[Test]
     // public function deleteLead()
     // {
     //     $lead = factory(Lead::class)->create();
@@ -81,46 +85,44 @@ class CanNotAccessTest extends TestCase
     //     $this->assertEquals(302, $response->getStatusCode());
     //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
     // }
-    
-    /** @test */
-    public function deleteClient()
+
+    #[Test]
+    public function delete_client()
     {
         $client = factory(Client::class)->create();
 
         $response = $this->json('DELETE', route('clients.destroy', $client->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-    /** @test */
-    public function deleteUser()
+    #[Test]
+    public function delete_user()
     {
         $user = factory(User::class)->create();
 
         $response = $this->json('DELETE', route('users.destroy', $user->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-
-    /** @test */
-    public function updateUser()
+    #[Test]
+    public function update_user()
     {
         $user = factory(User::class)->create();
 
         $response = $this->json('PATCH', route('users.update', $user->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
 
-    /** @test */
-    public function deleteDepartment()
+    #[Test]
+    public function delete_department()
     {
         $department = factory(Department::class)->create();
 
         $response = $this->json('DELETE', route('departments.destroy', $department->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }
-
 }
