@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Api\v1\Models\Token;
+use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
 use Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +14,7 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use Billable, EntrustUserTrait,  Notifiable, SoftDeletes;
+    use Billable, EntrustUserTrait, Notifiable, SoftDeletes, HasExternalId;
 
     public function restore()
     {

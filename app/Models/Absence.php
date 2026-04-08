@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class Absence extends Model
 {
+    use HasExternalId;
     protected $fillable = [
         'external_id',
         'reason',

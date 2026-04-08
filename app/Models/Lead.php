@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Observers\ElasticSearchObserver;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -23,7 +24,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Lead extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes;
+    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
 
     protected $searchableFields = ['title'];
 

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasExternalId;
 
     protected $fillable = [
         'user_id',

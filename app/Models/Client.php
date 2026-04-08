@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
 use App\Observers\ElasticSearchObserver;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use SearchableTrait, SoftDeletes;
+    use SearchableTrait, SoftDeletes, HasExternalId;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 

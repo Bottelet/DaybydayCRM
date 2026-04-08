@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Repositories\Money\Money;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasExternalId;
     protected $appends = ['divided_price'];
 
     protected $hidden = ['id'];

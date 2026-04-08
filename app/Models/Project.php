@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Observers\ElasticSearchObserver;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes;
+    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
 
     const PROJECT_STATUS_CLOSED = 'Closed';
 
