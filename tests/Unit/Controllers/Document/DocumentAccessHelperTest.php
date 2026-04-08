@@ -45,8 +45,9 @@ class DocumentAccessHelperTest extends TestCase
         ]);
 
         // Use reflection to test private helper method
-        // This method is intentionally private as it's an internal implementation detail
-        // Testing via reflection ensures the helper logic works correctly
+        // Testing private methods via reflection allows us to verify the helper's logic in isolation,
+        // providing granular test coverage beyond what's possible through the public API alone.
+        // The helper method is intentionally private as it's an internal implementation detail.
         $controller = new \App\Http\Controllers\DocumentsController();
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
@@ -93,7 +94,8 @@ class DocumentAccessHelperTest extends TestCase
         $method->setAccessible(true);
 
         $this->actingAs($this->owner);
-        // Need to load the client relationship
+        // Eager load the client relationship since the helper method checks $source->client->user_id
+        // Without loading, accessing the relationship could cause a query or null reference
         $task->load('client');
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
         
