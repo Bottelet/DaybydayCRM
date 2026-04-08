@@ -18,5 +18,6 @@ $factory->define(Appointment::class, static function (Faker $faker) {
         'user_id' => factory(User::class),
         'source_type' => Task::class,
         'source_id' => factory(Task::class),
+        'color' => '#000000',
     ];
 });

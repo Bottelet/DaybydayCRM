@@ -37,10 +37,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_add_payment()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000,
@@ -54,10 +52,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_add_payment_with_decimals_dot_separator()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000.234,
@@ -71,10 +67,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_add_payment_with_decimals_comma_separator()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000, 234,
@@ -88,10 +82,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function adding_payment_updates_invoice_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 50,
@@ -104,10 +96,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function adding_wrong_amount_parameter_return_error()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -121,10 +111,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function adding_wrong_source_parameter_return_error()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -138,10 +126,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function adding_invalid_payment_date_parameter_return_error()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -155,10 +141,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_add_payment_with_minus_amount()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => -50,
@@ -171,10 +155,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_add_negative_payment_with_separator()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->assertTrue($this->invoice->payments->isEmpty());
         $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => -5000, 234,
@@ -195,10 +177,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function cant_add_payment_where_amount_is_0()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
