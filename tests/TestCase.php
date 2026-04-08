@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Config;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -16,6 +17,9 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Mock problematic auth guards for testing
+        Config::set('auth.guards.api.driver', 'session');
 
         $this->user = User::where('name', 'Admin')->first();
 
