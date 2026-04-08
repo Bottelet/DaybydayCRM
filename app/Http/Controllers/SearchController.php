@@ -2,18 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Search\SearchService;
+use App\Models\Client;
+use App\Models\Lead;
+use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
 
 class SearchController extends Controller
 {
     public function search($query, $type)
     {
-        if (config('services.elasticsearch.enabled')) {
-            return response()->json(app(SearchService::class)->search($query, $type));
+        // Allowlist of searchable model types to prevent arbitrary class instantiation
+        $allowedTypes = [
+            'client' => Client::class,
+            'clients' => Client::class,
+            'task' => Task::class,
+            'tasks' => Task::class,
+            'project' => Project::class,
+            'projects' => Project::class,
+            'lead' => Lead::class,
+            'leads' => Lead::class,
+            'user' => User::class,
+            'users' => User::class,
+        ];
+
+        // Normalize and validate type before selecting backend
+        $typeLower = strtolower($type);
+        if (! isset($allowedTypes[$typeLower])) {
+            return response()->json(['error' => 'Invalid search type'], 400);
         }
 
-        $type = ucfirst(rtrim($type, 's'));
-        $class = '\\App\\Models\\'.$type;
+        // Use the validated class from allowlist to prevent arbitrary class instantiation
+        $class = $allowedTypes[$typeLower];
         $searchClass = new $class;
         $result['hits'] = [];
         foreach ($searchClass->getSearchableFields() as $searchableField) {
