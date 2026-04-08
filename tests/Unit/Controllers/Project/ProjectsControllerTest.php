@@ -86,6 +86,6 @@ class ProjectsControllerTest extends TestCase
             'deadline_time' => '00:00',
         ]);
 
-        $this->assertEquals(Carbon::parse('2020-08-06')->toDateString(), Carbon::parse($project->refresh()->deadline)->toDateString());
+        $this->assertDatesEqual('2020-08-06', $project->refresh()->deadline);
     }
 }
