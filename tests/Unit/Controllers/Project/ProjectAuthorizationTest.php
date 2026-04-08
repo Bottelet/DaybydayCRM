@@ -127,7 +127,7 @@ class ProjectAuthorizationTest extends TestCase
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
         ]);
-        $statusPermission = Permission::where('name', 'task-update-status')->first();
+        $statusPermission = Permission::where('name', 'project-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);
 
         $user = factory(User::class)->create();

@@ -235,20 +235,23 @@ class ProjectsController extends Controller
 
     public function updateStatus($external_id, Request $request)
     {
-        if (! auth()->user()->can('task-update-status')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task status'));
+        if (! auth()->user()->can('project-update-status')) {
+            session()->flash('flash_message_warning', __('You do not have permission to change project status'));
 
-            return redirect()->route('tasks.show', $external_id);
+            return redirect()->route('projects.show', $external_id);
         }
         $input = $request->all();
         if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+            $status = Status::whereExternalId($input['statusExternalId'])->first();
+            if ($status) {
+                $input['status_id'] = $status->id;
+            }
         }
         $project = $this->findByExternalId($external_id);
-        $project->fill($input)->save();
+        $project->fill($request->only(['status_id']))->save();
 
         event(new ProjectAction($project, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task status is updated'));
+        Session()->flash('flash_message', __('Project status updated'));
 
         return redirect()->back();
     }

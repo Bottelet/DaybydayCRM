@@ -209,7 +209,7 @@ class LeadsController extends Controller
         if (! auth()->user()->can('lead-update-status')) {
             session()->flash('flash_message_warning', __('You do not have permission to change lead status'));
 
-            return redirect()->route('tasks.show', $external_id);
+            return redirect()->route('leads.show', $external_id);
         }
         $lead = $this->findByExternalId($external_id);
         if (isset($request->closeLead) && $request->closeLead === true) {
