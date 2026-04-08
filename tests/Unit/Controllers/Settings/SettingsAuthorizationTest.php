@@ -37,6 +37,7 @@ class SettingsAuthorizationTest extends TestCase
                 'name' => 'employee',
                 'display_name' => 'Employee',
                 'description' => 'Regular employee',
+                'external_id' => uniqid('employee-role-', true),
             ]);
         }
         $this->nonAdminUser = factory(User::class)->create();

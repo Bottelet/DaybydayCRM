@@ -30,8 +30,21 @@ class ProjectsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('can:project-delete', ['only' => ['destroy']]);
-        $this->middleware('can:can-assign-new-user-to-project', ['only' => ['updateAssign']]);
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! auth()->user()->can('project-delete')) {
+                abort(403);
+            }
+
+            return $next($request);
+        }, ['only' => ['destroy']]);
+
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! auth()->user()->can('can-assign-new-user-to-project')) {
+                abort(403);
+            }
+
+            return $next($request);
+        }, ['only' => ['updateAssign']]);
     }
 
     public function indexData()

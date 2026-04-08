@@ -17,9 +17,9 @@ class OffersController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('can:offer-create', ['only' => ['create']]);
-        $this->middleware('can:offer-edit', ['only' => ['update', 'won', 'lost']]);
-        $this->middleware('can:offer-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:offer-create', ['only' => ['create']]);
+        $this->middleware('permission:offer-edit', ['only' => ['update', 'won', 'lost']]);
+        $this->middleware('permission:offer-delete', ['only' => ['destroy']]);
     }
 
     public function getOfferInvoiceLinesJson(Offer $offer)

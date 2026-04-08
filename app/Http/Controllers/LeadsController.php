@@ -31,7 +31,13 @@ class LeadsController extends Controller
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
-        $this->middleware('can:lead-delete', ['only' => ['destroy', 'destroyJson']]);
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! auth()->user()->can('lead-delete')) {
+                abort(403);
+            }
+
+            return $next($request);
+        }, ['only' => ['destroy', 'destroyJson']]);
     }
 
     public function index()

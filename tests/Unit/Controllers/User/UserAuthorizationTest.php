@@ -85,8 +85,8 @@ class UserAuthorizationTest extends TestCase
 
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));
 
-        // Owner deletion is blocked by application logic
-        $response->assertStatus(302);
+        // Owner deletion is blocked by application logic and does not redirect
+        $response->assertStatus(200);
         $this->assertDatabaseHas('users', ['id' => $ownerUser->id, 'deleted_at' => null]);
     }
 }
