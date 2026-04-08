@@ -18,7 +18,8 @@
 - `app/Http/Controllers/DocumentsController.php`
 
 **Tests Added**:
-- `tests/Unit/Controllers/Document/DocumentsControllerAuthorizationTest.php` (18 tests)
+- `tests/Unit/Controllers/Document/DocumentsControllerAuthorizationTest.php` (15 tests)
+- `tests/Unit/Controllers/Document/DocumentAccessHelperTest.php` (4 tests)
 - `database/factories/DocumentFactory.php`
 
 ### Medium-High: Missing Permission Checks in Assignment Methods
@@ -45,7 +46,7 @@ All permission checks align with existing permissions defined in `PermissionsTab
 - Used Eloquent `sourceable` morphTo relationship for better code clarity
 - Added eager loading to prevent N+1 query issues
 - Removed trailing whitespace
-- Added comprehensive test coverage (24 new tests total)
+- Added comprehensive test coverage (25 new tests total: 15 document authorization + 4 helper + 6 assignment)
 
 ### Security Impact
 **Before**: 
