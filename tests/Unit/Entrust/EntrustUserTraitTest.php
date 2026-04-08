@@ -19,7 +19,7 @@ class EntrustUserTraitTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private User $user;
+    protected $user;
 
     private Role $role;
 
