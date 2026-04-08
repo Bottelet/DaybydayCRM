@@ -74,13 +74,6 @@ class DeleteLeadControllerTest extends TestCase
     public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
         $lead = factory(Lead::class)->create();
-        $offer = Offer::create([
-            'source_id' => $lead->id,
-            'source_type' => Lead::class,
-            'client_id' => $lead->client_id,
-            'status' => OfferStatus::inProgress()->getStatus(),
-        ]);
-        
         $lead->offers()->forceDelete();
 
         $this->json('DELETE', route('leads.destroy', $lead->external_id), [
