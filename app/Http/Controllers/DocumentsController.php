@@ -21,6 +21,17 @@ class DocumentsController extends Controller
     public function view($external_id)
     {
         $document = Document::whereExternalId($external_id)->first();
+        
+        if (! $document) {
+            abort(404);
+        }
+        
+        // Check if user has permission to view document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            session()->flash('flash_message_warning', __('You do not have permission to view this document'));
+            return redirect()->back();
+        }
+        
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
         if (! $file) {
@@ -38,6 +49,17 @@ class DocumentsController extends Controller
     public function download($external_id)
     {
         $document = Document::whereExternalId($external_id)->first();
+        
+        if (! $document) {
+            abort(404);
+        }
+        
+        // Check if user has permission to download document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            session()->flash('flash_message_warning', __('You do not have permission to download this document'));
+            return redirect()->back();
+        }
+        
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
 
@@ -247,5 +269,54 @@ class DocumentsController extends Controller
             ->with('external_id', $external_id)
             ->withType($type)
             ->withRoute(route('document.'.$type.'.upload', $external_id));
+    }
+
+    /**
+     * Check if the authenticated user can access the document
+     * User can access document if they are assigned to or created the source resource
+     * or if they have ownership of the associated client
+     *
+     * @param  Document  $document
+     * @return bool
+     */
+    private function canAccessDocument($document)
+    {
+        $user = auth()->user();
+        
+        // Load the source model (Task, Client, Lead, or Project)
+        $source = $document->source_type::find($document->source_id);
+        
+        if (!$source) {
+            return false;
+        }
+        
+        // Check based on source type
+        if ($document->source_type === Task::class) {
+            // User can access if they created or are assigned to the task
+            return $source->user_created_id === $user->id 
+                || $source->user_assigned_id === $user->id
+                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
+        }
+        
+        if ($document->source_type === Project::class) {
+            // User can access if they created or are assigned to the project
+            return $source->user_created_id === $user->id 
+                || $source->user_assigned_id === $user->id
+                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
+        }
+        
+        if ($document->source_type === Client::class) {
+            // User can access if they are assigned to the client
+            return $source->user_id === $user->id;
+        }
+        
+        if ($document->source_type === 'App\Models\Lead') {
+            // User can access if they created or are assigned to the lead
+            return $source->user_created_id === $user->id 
+                || $source->user_assigned_id === $user->id
+                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
+        }
+        
+        return false;
     }
 }
