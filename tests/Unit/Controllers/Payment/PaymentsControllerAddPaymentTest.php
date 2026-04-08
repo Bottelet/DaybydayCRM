@@ -98,7 +98,6 @@ class PaymentsControllerAddPaymentTest extends TestCase
     #[Test]
     public function adding_wrong_amount_parameter_return_error()
     {
-        $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 'a string',
@@ -113,7 +112,6 @@ class PaymentsControllerAddPaymentTest extends TestCase
     #[Test]
     public function adding_wrong_source_parameter_return_error()
     {
-        $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000,
@@ -128,7 +126,6 @@ class PaymentsControllerAddPaymentTest extends TestCase
     #[Test]
     public function adding_invalid_payment_date_parameter_return_error()
     {
-        $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000,
@@ -155,16 +152,24 @@ class PaymentsControllerAddPaymentTest extends TestCase
     }
 
     #[Test]
-    public function can_add_negative_payment_with_separator()
+    public function can_add_negative_payment_with_comma_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
-        $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => -5000, 234,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
         ]);
 
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
+        $response->assertStatus(302);
+    }
+
+    #[Test]
+    public function can_add_negative_payment_with_dot_separator()
+    {
+        $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => -5000.234,
             'payment_date' => '2020-01-01',
@@ -179,7 +184,6 @@ class PaymentsControllerAddPaymentTest extends TestCase
     #[Test]
     public function cant_add_payment_where_amount_is_0()
     {
-        $this->actingAs($this->user)->get('/client/create');
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 0,
