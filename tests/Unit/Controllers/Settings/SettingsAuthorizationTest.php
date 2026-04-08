@@ -16,7 +16,9 @@ class SettingsAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private User $adminUser;
+
     private User $nonAdminUser;
+
     private Setting $setting;
 
     protected function setUp(): void
@@ -32,7 +34,7 @@ class SettingsAuthorizationTest extends TestCase
 
         // Create non-admin user
         $employeeRole = Role::where('name', 'employee')->first();
-        if (!$employeeRole) {
+        if (! $employeeRole) {
             $employeeRole = Role::create([
                 'name' => 'employee',
                 'display_name' => 'Employee',

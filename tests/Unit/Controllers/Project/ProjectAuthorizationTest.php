@@ -19,7 +19,9 @@ class ProjectAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Project $project;
+
     private User $userWithPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

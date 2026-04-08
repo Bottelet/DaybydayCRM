@@ -17,7 +17,9 @@ class UserAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private User $targetUser;
+
     private User $userWithPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

@@ -18,7 +18,9 @@ class ClientAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Client $client;
+
     private User $userWithPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

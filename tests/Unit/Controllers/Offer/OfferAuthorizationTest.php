@@ -20,9 +20,13 @@ class OfferAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Lead $lead;
+
     private Offer $offer;
+
     private User $userWithCreatePermission;
+
     private User $userWithEditPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

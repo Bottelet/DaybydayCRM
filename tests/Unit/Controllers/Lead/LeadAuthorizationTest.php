@@ -19,7 +19,9 @@ class LeadAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Lead $lead;
+
     private User $userWithPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

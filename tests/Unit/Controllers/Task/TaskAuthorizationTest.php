@@ -20,7 +20,9 @@ class TaskAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Task $task;
+
     private User $userWithPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void

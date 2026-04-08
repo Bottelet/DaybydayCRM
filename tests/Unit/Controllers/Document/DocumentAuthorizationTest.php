@@ -20,9 +20,13 @@ class DocumentAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private Task $task;
+
     private Project $project;
+
     private User $userWithTaskUploadPermission;
+
     private User $userWithProjectUploadPermission;
+
     private User $userWithoutPermission;
 
     protected function setUp(): void
@@ -82,7 +86,7 @@ class DocumentAuthorizationTest extends TestCase
             'files' => [$file],
         ]);
 
-        // Since this is integration test and file system may not be configured, 
+        // Since this is integration test and file system may not be configured,
         // we mainly check that authorization passes (not 403)
         $this->assertNotEquals(403, $response->status());
     }

@@ -17,7 +17,7 @@ class Document extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (!$model->external_id) {
+            if (! $model->external_id) {
                 $model->external_id = (string) Str::uuid();
             }
         });
