@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contact extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasExternalId;
 
     protected $fillable = [
         'external_id',

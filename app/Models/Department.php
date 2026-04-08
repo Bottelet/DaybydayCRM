@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
+    use HasExternalId;
     protected $fillable =
         [
             'name',

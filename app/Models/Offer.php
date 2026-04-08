@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\OfferStatus;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasExternalId;
 
     protected $fillable = [
         'sent_at',
@@ -21,10 +22,7 @@ class Offer extends Model
         'external_id',
     ];
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function invoiceLines()
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Repositories\Money\Money;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Payment extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasExternalId;
 
     protected $fillable = [
         'external_id',
@@ -26,15 +27,7 @@ class Payment extends Model
 
     protected $dates = ['payment_date'];
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function getPriceAttribute()
     {

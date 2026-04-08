@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
+    use HasExternalId;
     const OWNER_ROLE = 'owner';
 
     const ADMIN_ROLE = 'administrator';
