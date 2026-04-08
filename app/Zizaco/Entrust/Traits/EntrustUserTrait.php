@@ -2,13 +2,6 @@
 
 namespace App\Zizaco\Entrust\Traits;
 
-/**
- * This file is part of Entrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- */
-
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
@@ -18,32 +11,39 @@ use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
-    /**
-     * Big block of caching functionality.
-     *
-     * @return mixed Roles
-     */
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
+        $cacheKey = 'entrust_roles_for_user_' . $this->$userPrimaryKey;
         $roleModel = Config::get('entrust.role');
+
         if (Cache::getStore() instanceof TaggableStore) {
-            $rolesArray = Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
-                return $this->roles()->get()->toArray();
-            });
-            // Re-hydrate as Eloquent models
-            $roles = collect($rolesArray)->map(function ($roleArr) use ($roleModel) {
-                return (new $roleModel)->newFromBuilder($roleArr);
-            });
+            $rolesArray = Cache::tags(
+                Config::get('entrust.role_user_table')
+            )->remember(
+                $cacheKey,
+                Config::get('cache.ttl'),
+                function () {
+                    return $this->roles()->get()->toArray();
+                }
+            );
+
+            $roles = collect($rolesArray)->map(
+                function ($roleArr) use ($roleModel) {
+                    return (new $roleModel)
+                        ->newFromBuilder($roleArr);
+                }
+            );
         } else {
             $roles = $this->roles()->get();
         }
 
-        // Defensive: filter out any non-object roles and log a warning
         return $roles->filter(function ($role) {
-            if (! is_object($role)) {
-                \Log::warning('EntrustUserTrait: Non-object found in cachedRoles for user ID '.$this->getKey().'. Value: '.print_r($role, true));
+            if (!is_object($role)) {
+                \Log::warning(
+                    'EntrustUserTrait: Non-object found in cachedRoles for user ID ' .
+                    $this->getKey()
+                );
 
                 return false;
             }
@@ -52,67 +52,62 @@ trait EntrustUserTrait
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function save(array $options = [])
-    {   // both inserts and updates
+    {
         if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(
+                Config::get('entrust.role_user_table')
+            )->flush();
         }
 
         return parent::save($options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function delete(array $options = [])
-    {   // soft or hard
-        $result = parent::delete($options);
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-
-        return $result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function restore()
-    {   // soft delete undo's
-        $result = parent::restore();
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-
-        return $result;
-    }
-
-    /**
-     * Many-to-Many relations with Role.
-     *
-     * @return BelongsToMany
-     */
-    public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), Config::get('entrust.user_foreign_key'), Config::get('entrust.role_foreign_key'));
+        $result = parent::delete($options);
+
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(
+                Config::get('entrust.role_user_table')
+            )->flush();
+        }
+
+        return $result;
     }
 
-    /**
-     * Boot the user model
-     * Attach event listener to remove the many-to-many records when trying to delete
-     * Will NOT delete any records if the user model uses soft deletes.
-     *
-     * @return void|bool
-     */
+    public function restore()
+    {
+        $result = parent::restore();
+
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(
+                Config::get('entrust.role_user_table')
+            )->flush();
+        }
+
+        return $result;
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Config::get('entrust.role'),
+            Config::get('entrust.role_user_table'),
+            Config::get('entrust.user_foreign_key'),
+            Config::get('entrust.role_foreign_key')
+        );
+    }
+
     public static function boot()
     {
         parent::boot();
 
         static::deleting(function ($user) {
-            if (! method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
+            if (!method_exists(
+                Config::get('auth.providers.users.model'),
+                'bootSoftDeletes'
+            )) {
                 $user->roles()->sync([]);
             }
 
@@ -120,40 +115,29 @@ trait EntrustUserTrait
         });
     }
 
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|array  $name  Role name or array of role names.
-     * @param  bool  $requireAll  All roles in the array are required.
-     * @return bool
-     */
     public function hasRole($name, $requireAll = false)
     {
         if (is_array($name)) {
             foreach ($name as $roleName) {
                 $hasRole = $this->hasRole($roleName);
 
-                if ($hasRole && ! $requireAll) {
+                if ($hasRole && !$requireAll) {
                     return true;
                 }
 
-                if (! $hasRole && $requireAll) {
+                if (!$hasRole && $requireAll) {
                     return false;
                 }
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
             return $requireAll;
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if (! is_object($role)) {
-                \Log::warning('EntrustUserTrait: Non-object found in hasRole for user ID '.$this->getKey().'. Value: '.print_r($role, true));
-
+            if (!is_object($role)) {
                 continue;
             }
+
             if ($role->name == $name) {
                 return true;
             }
@@ -162,46 +146,38 @@ trait EntrustUserTrait
         return false;
     }
 
-    /**
-     * Check if user has a permission by its name.
-     *
-     * @param  string|array  $permission  Permission string or array of permissions.
-     * @param  bool  $requireAll  All permissions in the array are required.
-     * @return bool
-     */
     public function can($permission, $requireAll = false)
     {
         if (is_array($permission)) {
             foreach ($permission as $permName) {
                 $hasPerm = $this->can($permName);
 
-                if ($hasPerm && ! $requireAll) {
+                if ($hasPerm && !$requireAll) {
                     return true;
-                } elseif (! $hasPerm && $requireAll) {
+                }
+
+                if (!$hasPerm && $requireAll) {
                     return false;
                 }
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
-            // Return the value of $requireAll;
             return $requireAll;
         }
 
-        foreach (
-            $this->cachedRoles() as $role
-        ) {
-            if (! is_object($role) || ! method_exists($role, 'cachedPermissions')) {
-                \Log::warning('EntrustUserTrait: $role is not an object or missing cachedPermissions in can() for user ID '.$this->getKey().'. Value: '.print_r($role, true));
-
+        foreach ($this->cachedRoles() as $role) {
+            if (!is_object($role)
+                || !method_exists($role, 'cachedPermissions')
+            ) {
                 continue;
             }
-            foreach ($role->cachedPermissions() as $perm) {
-                if (! is_object($perm) || ! property_exists($perm, 'name')) {
-                    \Log::warning('EntrustUserTrait: $perm is not an object or missing name in can() for user ID '.$this->getKey().'. Value: '.print_r($perm, true));
 
+            foreach ($role->cachedPermissions() as $perm) {
+                if (!is_object($perm)
+                    || !property_exists($perm, 'name')
+                ) {
                     continue;
                 }
+
                 if (Str::is($permission, $perm->name)) {
                     return true;
                 }
@@ -211,72 +187,69 @@ trait EntrustUserTrait
         return false;
     }
 
-    /**
-     * Checks role(s) and permission(s).
-     *
-     * @param  string|array  $roles  Array of roles or comma separated string
-     * @param  string|array  $permissions  Array of permissions or comma separated string.
-     * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
-     * @return array|bool
-     *
-     * @throws InvalidArgumentException
-     */
     public function ability($roles, $permissions, $options = [])
     {
-        // Convert string to array if that's what is passed in.
-        if (! is_array($roles)) {
+        if (!is_array($roles)) {
             $roles = explode(',', $roles);
         }
-        if (! is_array($permissions)) {
+
+        if (!is_array($permissions)) {
             $permissions = explode(',', $permissions);
         }
 
-        // Set up default values and validate options.
-        if (! isset($options['validate_all'])) {
+        if (!isset($options['validate_all'])) {
             $options['validate_all'] = false;
-        } else {
-            if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
-                throw new InvalidArgumentException;
-            }
-        }
-        if (! isset($options['return_type'])) {
-            $options['return_type'] = 'boolean';
-        } else {
-            if ($options['return_type'] != 'boolean' &&
-                $options['return_type'] != 'array' &&
-                $options['return_type'] != 'both') {
-                throw new InvalidArgumentException;
-            }
         }
 
-        // Loop through roles and permissions and check each.
+        if (!isset($options['return_type'])) {
+            $options['return_type'] = 'boolean';
+        }
+
         $checkedRoles = [];
         $checkedPermissions = [];
+
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->hasRole($role);
-        }
-        foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedRoles[$role] =
+                $this->hasRole($role);
         }
 
-        // If validate all and there is a false in either
-        // Check that if validate all, then there should not be any false.
-        // Check that if not validate all, there must be at least one true.
-        if (($options['validate_all'] && ! (in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) ||
-            (! $options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
+        foreach ($permissions as $permission) {
+            $checkedPermissions[$permission] =
+                $this->can($permission);
+        }
+
+        if (
+            ($options['validate_all']
+                && !in_array(false, $checkedRoles)
+                && !in_array(false, $checkedPermissions))
+            ||
+            (!$options['validate_all']
+                && (in_array(true, $checkedRoles)
+                || in_array(true, $checkedPermissions)))
+        ) {
             $validateAll = true;
         } else {
             $validateAll = false;
         }
 
-        // Return based on option
-        if ($options['return_type'] == 'boolean') {
+        if ($options['return_type'] === 'boolean') {
             return $validateAll;
-        } elseif ($options['return_type'] == 'array') {
-            return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
-        } else {
-            return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
         }
+
+        if ($options['return_type'] === 'array') {
+            return [
+                'roles' => $checkedRoles,
+                'permissions' => $checkedPermissions,
+            ];
+        }
+
+        return [
+            $validateAll,
+            [
+                'roles' => $checkedRoles,
+                'permissions' => $checkedPermissions,
+            ],
+        ];
     }
 
     /**
@@ -287,13 +260,11 @@ trait EntrustUserTrait
      */
     public function attachRole($role)
     {
-        if (is_object($role)) {
-            $role = $role->getKey();
-        }
+        $roleId = $this->resolveRoleId($role);
 
-        if (is_array($role)) {
-            $role = $role['id'];
-        }
+        $this->roles()->syncWithoutDetaching([
+            $roleId,
+        ]);
 
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->roles()->syncWithoutDetaching([$role]);
@@ -304,26 +275,13 @@ trait EntrustUserTrait
         }
     }
 
-    /**
-     * Alias to eloquent many-to-many relation's detach() method.
-     *
-     * @param  mixed  $role
-     */
     public function detachRole($role)
     {
-        if (is_object($role)) {
-            $role = $role->getKey();
-        }
+        $roleId = $this->resolveRoleId($role);
 
-        if (is_array($role)) {
-            $role = $role['id'];
-        }
+        $this->roles()->detach($roleId);
 
-        $this->roles()->detach($role);
-        // Clear the cache after detaching a role
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
+        $this->flushRoleCache();
     }
 
     /**
@@ -352,16 +310,21 @@ trait EntrustUserTrait
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
         }
+
+        if (empty($ids)) {
+            return;
+        }
+
+        $this->roles()->syncWithoutDetaching(
+            $ids
+        );
+
+        $this->flushRoleCache();
     }
 
-    /**
-     * Detach multiple roles from a user
-     *
-     * @param  mixed  $roles
-     */
     public function detachRoles($roles = null)
     {
-        if (! $roles) {
+        if (!$roles) {
             $roles = $this->roles()->get();
         }
 
@@ -370,16 +333,35 @@ trait EntrustUserTrait
         }
     }
 
-    /**
-     *Filtering users according to their role
-     *
-     * @param  string  $role
-     * @return users collection
-     */
+    protected function resolveRoleId($role): int
+    {
+        if (is_object($role)) {
+            return (int) $role->getKey();
+        }
+
+        if (is_array($role)) {
+            return (int) $role['id'];
+        }
+
+        return (int) $role;
+    }
+
+    protected function flushRoleCache(): void
+    {
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(
+                Config::get('entrust.role_user_table')
+            )->flush();
+        }
+    }
+
     public function scopeWithRole($query, $role)
     {
-        return $query->whereHas('roles', function ($query) use ($role) {
-            $query->where('name', $role);
-        });
+        return $query->whereHas(
+            'roles',
+            function ($query) use ($role) {
+                $query->where('name', $role);
+            }
+        );
     }
 }
