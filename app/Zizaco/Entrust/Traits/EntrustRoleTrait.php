@@ -171,7 +171,11 @@ trait EntrustRoleTrait
     public function attachPermission($permission)
     {
         if (is_object($permission)) {
-            $permission = $permission->getKey();
+            $permissionId = $permission->getKey();
+            if (empty($permissionId) || ! is_numeric($permissionId)) {
+                throw new \InvalidArgumentException('Permission object does not have a valid ID. Ensure the permission is saved before attaching.');
+            }
+            $permission = $permissionId;
         }
 
         if (is_array($permission)) {
