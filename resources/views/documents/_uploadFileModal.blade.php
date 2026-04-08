@@ -36,7 +36,8 @@
         });
 
         myDropzone.on("success", function(file, response) {
-            window.location.href = '{{url('/'.$type.'s')}}' + "/" + response
+            var baseUrl = '{{url('/'.$type.'s')}}';
+            window.location.href = baseUrl + "/" + response;
         });
 
         myDropzone.on("processing", function(file, response) {
