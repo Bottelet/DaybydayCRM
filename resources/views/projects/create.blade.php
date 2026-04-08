@@ -169,7 +169,7 @@
                         url: '{{route('projects.store')}}',
                         data: $("#createProjectForm").serialize(),
                         success: function(response){
-                            window.location.href = ("/projects/"+response.project_external_id)
+                            window.location.href = '{{url('/projects')}}' + "/" + response.project_external_id
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             if (jqXHR.responseJSON.errors.title != undefined) {
