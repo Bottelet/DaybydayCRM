@@ -13,7 +13,7 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Carbon\Carbon;
+use Carbon;
 use Datatables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
@@ -261,18 +261,8 @@ class TasksController extends Controller
         }
         $input = $request->only(['status_id']);
 
-        if ($request->ajax() && $request->has('statusExternalId')) {
-            $status = Status::typeOfTask()->whereExternalId($request->statusExternalId)->first();
-            if (! $status) {
-                return response()->json(['error' => __('Invalid status')], 400);
-            }
-            $input['status_id'] = $status->id;
-        } elseif (isset($input['status_id'])) {
-            // Validate status_id is a task status
-            $validStatus = Status::typeOfTask()->find($input['status_id']);
-            if (! $validStatus) {
-                return response()->json(['error' => __('Invalid status for task')], 400);
-            }
+        if ($request->ajax() && isset($input['statusExternalId'])) {
+            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
         }
 
         $task = $this->findByExternalId($external_id);

@@ -1,0 +1,59 @@
+--
+There were 11 failures:
+1) Tests\Unit\Controllers\Absence\AbsenceControllerTest::can_create_absence_for_other_user
+Failed asserting that actual size 0 matches expected size 1.
+/var/www/projects/day/tests/Unit/Controllers/Absence/AbsenceControllerTest.php:30
+
+2) Tests\Unit\Controllers\Client\ClientsControllerTest::can_update_assignee
+Failed asserting that 3 matches expected 2.
+/var/www/projects/day/tests/Unit/Controllers/Client/ClientsControllerTest.php:117
+
+3) Tests\Unit\Controllers\Lead\LeadsControllerTest::can_create_lead
+Failed asserting that actual size 0 matches expected size 1.
+/var/www/projects/day/tests/Unit/Controllers/Lead/LeadsControllerTest.php:45
+
+4) Tests\Unit\Controllers\Offer\OffersControllerTest::can_create_offer
+Failed asserting that an object is not empty.
+/var/www/projects/day/tests/Unit/Controllers/Offer/OffersControllerTest.php:46
+
+5) Tests\Unit\Controllers\Offer\OffersControllerTest::can_update_offer
+Failed asserting that actual size 0 matches expected size 3.
+/var/www/projects/day/tests/Unit/Controllers/Offer/OffersControllerTest.php:86
+
+6) Tests\Unit\Controllers\Project\ProjectsControllerTest::can_create_project
+Failed asserting that actual size 0 matches expected size 1.
+/var/www/projects/day/tests/Unit/Controllers/Project/ProjectsControllerTest.php:44
+
+7) Tests\Unit\Controllers\Task\TasksControllerTest::can_create_task
+Failed asserting that actual size 0 matches expected size 1.
+/var/www/projects/day/tests/Unit/Controllers/Task/TasksControllerTest.php:45
+
+8) Tests\Unit\Controllers\User\UsersControllerCalendarTest::can_get_absences_within_time_slot
+Invalid JSON was returned from the route.
+/var/www/projects/day/tests/Unit/Controllers/User/UsersControllerCalendarTest.php:52
+
+9) Tests\Unit\Controllers\User\UsersControllerTest::owner_can_update_user_role
+Expected response status code [201, 301, 302, 303, 307, 308] but received 403.
+Failed asserting that false is true.
+/var/www/projects/day/tests/Unit/Controllers/User/UsersControllerTest.php:30
+
+10) Tests\Unit\Exceptions\HandlerTest::unauthenticated_returns_json_for_json_request
+Expected response status code [401] but received 500.
+Failed asserting that 500 is identical to 401.
+
+The following exception occurred during the last request:
+InvalidArgumentException: Auth driver [passport] for guard [api] is not defined. in /var/www/projects/day/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php:98
+Stack trace:
+/var/www/projects/day/tests/Unit/Exceptions/HandlerTest.php:72
+----------------------------------------------------------------------------------
+Auth driver [passport] for guard [api] is not defined.
+
+11) Tests\Unit\Exceptions\HandlerTest::unauthenticated_json_response_has_correct_structure
+Expected response status code [401] but received 500.
+Failed asserting that 500 is identical to 401.
+The following exception occurred during the last request:
+InvalidArgumentException: Auth driver [passport] for guard [api] is not defined. in /var/www/projects/day/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php:98
+----------------------------------------------------------------------------------
+Auth driver [passport] for guard [api] is not defined.
+Stack trace:
+/var/www/projects/day/tests/Unit/Exceptions/HandlerTest.php:72

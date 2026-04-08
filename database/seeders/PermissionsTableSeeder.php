@@ -218,12 +218,6 @@ class PermissionsTableSeeder extends Seeder
                 'grouping' => 'appointment',
             ],
             [
-                'display_name' => 'Update appointment',
-                'name' => 'appointment-update',
-                'description' => 'Be able to update appointment details',
-                'grouping' => 'appointment',
-            ],
-            [
                 'display_name' => 'Delete appointment',
                 'name' => 'appointment-delete',
                 'description' => 'Be able to delete an appointment',

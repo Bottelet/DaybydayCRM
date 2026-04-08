@@ -2,13 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Models\Lead;
-use App\Models\Project;
-use App\Models\Task;
-use App\Models\User;
-use App\Services\Search\SearchService;
-
 class SearchController extends Controller
 {
     public function search($query, $type)
@@ -33,11 +26,8 @@ class SearchController extends Controller
             return response()->json(['error' => 'Invalid search type'], 400);
         }
 
-        if (config('services.elasticsearch.enabled')) {
-            return response()->json(app(SearchService::class)->search($query, $typeLower));
-        }
-
-        $class = $allowedTypes[$typeLower];
+        $type = ucfirst(rtrim($type, 's'));
+        $class = '\\App\\Models\\'.$type;
         $searchClass = new $class;
         $result['hits'] = [];
         foreach ($searchClass->getSearchableFields() as $searchableField) {
