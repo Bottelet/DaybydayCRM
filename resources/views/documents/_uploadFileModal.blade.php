@@ -1,3 +1,10 @@
+{{--
+    Upload File Modal
+    Variables:
+    - $type: Validated by DocumentsController (task, client, or project)
+    - $route: The upload route
+    - $external_id: The entity's external ID
+--}}
 @if(Entrust::can('document-upload'))
     <form method="POST" id="uploadFiles" action="{{ $route }}">
         <div class="dropzone dz-default dz-message" id="dropzone-images">

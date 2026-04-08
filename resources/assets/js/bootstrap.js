@@ -27,6 +27,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * Set the base URL for axios from the global DayByDay configuration.
  * This ensures that all axios requests work correctly when the app
  * is installed in a subdirectory.
+ * 
+ * Note: DayByDay is defined in master.blade.php before this script loads,
+ * so it will always be available. The typeof check is defensive programming.
  */
 if (typeof DayByDay !== 'undefined' && DayByDay.baseUrl) {
     window.axios.defaults.baseURL = DayByDay.baseUrl;
