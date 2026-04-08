@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Invoice::class, function (Faker $faker) {
     return [
-        'external_id' => $faker->uuid,
         'status' => 'draft',
         'client_id' => factory(Client::class),
     ];

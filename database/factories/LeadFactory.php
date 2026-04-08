@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(Lead::class, function (Faker $faker) {
     return [
         'title' => $faker->sentence,
-        'external_id' => $faker->uuid,
         'description' => $faker->paragraph,
         'user_created_id' => factory(User::class),
         'user_assigned_id' => factory(User::class),

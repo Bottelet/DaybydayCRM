@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Appointment::class, function (Faker $faker) {
     return [
-        'external_id' => $faker->uuid,
         'title' => $faker->word,
         'description' => $faker->text,
         'start_at' => now(),

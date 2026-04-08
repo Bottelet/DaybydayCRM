@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Client::class, function (Faker $faker) {
     return [
-        'external_id' => $faker->uuid,
         'vat' => $faker->randomNumber(8),
         'company_name' => $faker->company(),
         'address' => $faker->secondaryAddress(),

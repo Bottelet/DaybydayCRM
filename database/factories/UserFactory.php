@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
-        'external_id' => $faker->uuid,
         'email' => $faker->email,
         'password' => bcrypt('secretpassword'),
         'address' => $faker->secondaryAddress(),

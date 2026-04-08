@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Status::class, function (Faker $faker) {
     return [
-        'external_id' => $faker->uuid,
         'title' => $faker->word,
         'color' => '#000',
 
