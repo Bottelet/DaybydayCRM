@@ -43,7 +43,14 @@
         });
 
         myDropzone.on("success", function(file, response) {
-            var baseUrl = '{{url('/'.$type.'s')}}';
+            // Map entity types to their plural route names (Laravel resource routes)
+            var typeRouteMap = {
+                'task': 'tasks',
+                'project': 'projects',
+                'client': 'clients'
+            };
+            var routeName = typeRouteMap['{{$type}}'] || '{{$type}}s';
+            var baseUrl = '{{url('/')}}' + '/' + routeName;
             window.location.href = baseUrl + "/" + response;
         });
 
