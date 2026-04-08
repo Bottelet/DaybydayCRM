@@ -145,6 +145,10 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_update_client_without_primary_contact()
     {
+        // Create test data instead of relying on seeded data
+        $industry = factory(Industry::class)->create();
+        $user = factory(User::class)->create();
+
         $client = factory(Client::class)->create([
             'vat' => '9999999999',
             'company_type' => 'A/S',
@@ -166,8 +170,8 @@ class ClientsControllerTest extends TestCase
             'zipcode' => '1111',
             'city' => 'Null City',
             'company_type' => 'ApS',
-            'industry_id' => Industry::first()->id,
-            'user_id' => User::first()->id,
+            'industry_id' => $industry->id,
+            'user_id' => $user->id,
         ]);
 
         // Should succeed and redirect, not crash with null property access
