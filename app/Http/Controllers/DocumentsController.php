@@ -14,6 +14,11 @@ use Session;
 
 class DocumentsController extends Controller
 {
+    /**
+     * Source types that support assignable ownership checks
+     */
+    private const ASSIGNABLE_TYPES = [Task::class, Project::class, Lead::class];
+
     public function __construct()
     {
         $this->middleware('filesystem.is.enabled');
@@ -291,7 +296,7 @@ class DocumentsController extends Controller
         // Use the morphTo relationship to get the source model
         $source = $document->sourceable;
 
-        if (!$source) {
+        if (! $source) {
             return false;
         }
 
@@ -301,9 +306,7 @@ class DocumentsController extends Controller
         }
 
         // For Task, Project, and Lead - check creator, assignee, or client ownership
-        $assignableTypes = [Task::class, Project::class, Lead::class];
-        
-        if (in_array($document->source_type, $assignableTypes)) {
+        if (in_array($document->source_type, self::ASSIGNABLE_TYPES)) {
             return $this->userOwnsAssignableSource($source, $user);
         }
 
