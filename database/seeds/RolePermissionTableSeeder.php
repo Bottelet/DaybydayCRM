@@ -1,7 +1,9 @@
 <?php
 
-use Illuminate\Database\Seeder;
+use App\Models\Permission;
 use App\Models\PermissionRole;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
 
 class RolePermissionTableSeeder extends Seeder
 {
@@ -12,19 +14,19 @@ class RolePermissionTableSeeder extends Seeder
      */
     public function run()
     {
-        $role = \App\Models\Role::where('name', \App\Models\Role::OWNER_ROLE)->first();
-        foreach (\App\Models\Permission::all() as $permission) {
+        $role = Role::where('name', Role::OWNER_ROLE)->first();
+        foreach (Permission::all() as $permission) {
             PermissionRole::create([
-               'role_id' => $role->id,
-               'permission_id' => $permission->id
+                'role_id' => $role->id,
+                'permission_id' => $permission->id,
             ]);
         }
 
-        $role = \App\Models\Role::where('name', \App\Models\Role::ADMIN_ROLE)->first();
-        foreach (\App\Models\Permission::all() as $permission) {
+        $role = Role::where('name', Role::ADMIN_ROLE)->first();
+        foreach (Permission::all() as $permission) {
             PermissionRole::create([
-               'role_id' => $role->id,
-               'permission_id' => $permission->id
+                'role_id' => $role->id,
+                'permission_id' => $permission->id,
             ]);
         }
     }
