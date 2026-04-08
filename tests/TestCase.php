@@ -59,4 +59,43 @@ abstract class TestCase extends BaseTestCase
         $this->user = $user;
         $this->actingAs($user);
     }
+
+    /**
+     * Assign the owner role to the test user.
+     *
+     * @return $this
+     */
+    public function asOwner()
+    {
+        $this->user->attachRole(Role::whereName('owner')->first());
+        return $this;
+    }
+
+    /**
+     * Assign the administrator role to the test user.
+     *
+     * @return $this
+     */
+    public function asAdmin()
+    {
+        $this->user->attachRole(Role::whereName('administrator')->first());
+        return $this;
+    }
+
+    /**
+     * Custom assertion to compare dates accurately regardless of format.
+     *
+     * @param  mixed  $expected
+     * @param  mixed  $actual
+     * @param  string  $message
+     * @return void
+     */
+    public function assertDatesEqual($expected, $actual, $message = '')
+    {
+        $this->assertEquals(
+            \Carbon\Carbon::parse($expected)->toDateTimeString(),
+            \Carbon\Carbon::parse($actual)->toDateTimeString(),
+            $message
+        );
+    }
 }
