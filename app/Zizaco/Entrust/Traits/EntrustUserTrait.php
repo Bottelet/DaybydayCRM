@@ -296,6 +296,10 @@ trait EntrustUserTrait
 
         if (! $this->roles()->where($this->roles()->getRelated()->getTable().'.id', $role)->exists()) {
             $this->roles()->attach($role);
+            // Clear the cache after attaching a role
+            if (Cache::getStore() instanceof TaggableStore) {
+                Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            }
         }
     }
 
@@ -315,6 +319,10 @@ trait EntrustUserTrait
         }
 
         $this->roles()->detach($role);
+        // Clear the cache after detaching a role
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+        }
     }
 
     /**
