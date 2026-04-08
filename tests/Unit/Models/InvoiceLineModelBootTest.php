@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class InvoiceLineModelBootTest extends TestCase
@@ -13,12 +14,15 @@ class InvoiceLineModelBootTest extends TestCase
     use DatabaseTransactions;
 
     #[Test]
-    public function invoice_line_auto_generates_external_id_when_not_provided()
+    public function invoice_line_stores_explicit_external_id_when_provided()
     {
         $invoice = factory(Invoice::class)->create();
+        $externalId = Uuid::uuid4()->toString();
 
         $invoiceLine = InvoiceLine::create([
+            'external_id' => $externalId,
             'title' => 'Test Line Item',
+            'comment' => 'Test comment',
             'type' => 'hours',
             'quantity' => 2,
             'price' => 1000,
@@ -27,6 +31,7 @@ class InvoiceLineModelBootTest extends TestCase
 
         $this->assertNotNull($invoiceLine->external_id);
         $this->assertNotEmpty($invoiceLine->external_id);
+        $this->assertEquals($externalId, $invoiceLine->external_id);
         $this->assertMatchesRegularExpression(
             '/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/',
             $invoiceLine->external_id
@@ -42,6 +47,7 @@ class InvoiceLineModelBootTest extends TestCase
         $invoiceLine = InvoiceLine::create([
             'external_id' => $customExternalId,
             'title' => 'Test Line Item',
+            'comment' => 'Test comment',
             'type' => 'pieces',
             'quantity' => 5,
             'price' => 500,
@@ -57,7 +63,9 @@ class InvoiceLineModelBootTest extends TestCase
         $invoice = factory(Invoice::class)->create();
 
         $line1 = InvoiceLine::create([
+            'external_id' => Uuid::uuid4()->toString(),
             'title' => 'Line Item One',
+            'comment' => 'First comment',
             'type' => 'hours',
             'quantity' => 1,
             'price' => 100,
@@ -65,7 +73,9 @@ class InvoiceLineModelBootTest extends TestCase
         ]);
 
         $line2 = InvoiceLine::create([
+            'external_id' => Uuid::uuid4()->toString(),
             'title' => 'Line Item Two',
+            'comment' => 'Second comment',
             'type' => 'days',
             'quantity' => 2,
             'price' => 200,

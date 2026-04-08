@@ -341,14 +341,16 @@ class ClientsController extends Controller
             'user_id' => $request->user_id,
         ])->save();
 
-        $client->primaryContact->fill([
-            'name' => $request->name,
-            'email' => $request->email,
-            'primary_number' => $request->primary_number,
-            'secondary_number' => $request->secondary_number,
-            'client_id' => $client->id,
-            'is_primary' => true,
-        ])->save();
+        if ($client->primaryContact) {
+            $client->primaryContact->fill([
+                'name' => $request->name,
+                'email' => $request->email,
+                'primary_number' => $request->primary_number,
+                'secondary_number' => $request->secondary_number,
+                'client_id' => $client->id,
+                'is_primary' => true,
+            ])->save();
+        }
 
         Session()->flash('flash_message', __('Client successfully updated'));
 

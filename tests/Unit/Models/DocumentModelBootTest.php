@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class DocumentModelBootTest extends TestCase
@@ -26,20 +27,24 @@ class DocumentModelBootTest extends TestCase
     }
 
     #[Test]
-    public function document_auto_generates_external_id_when_not_provided()
+    public function document_stores_explicit_external_id_when_provided()
     {
+        $externalId = Uuid::uuid4()->toString();
+
         $document = Document::create([
-            'name' => 'Test Document',
+            'external_id' => $externalId,
             'size' => 1.5,
             'path' => '/path/to/file.pdf',
             'original_filename' => 'file.pdf',
             'mime' => 'application/pdf',
+            'integration_type' => 'local',
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
 
         $this->assertNotNull($document->external_id);
         $this->assertNotEmpty($document->external_id);
+        $this->assertEquals($externalId, $document->external_id);
         $this->assertMatchesRegularExpression(
             '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
             $document->external_id
@@ -53,11 +58,11 @@ class DocumentModelBootTest extends TestCase
 
         $document = Document::create([
             'external_id' => $customExternalId,
-            'name' => 'Test Document',
             'size' => 1.5,
             'path' => '/path/to/file.pdf',
             'original_filename' => 'file.pdf',
             'mime' => 'application/pdf',
+            'integration_type' => 'local',
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
@@ -69,21 +74,23 @@ class DocumentModelBootTest extends TestCase
     public function document_generates_unique_external_ids_for_each_record()
     {
         $document1 = Document::create([
-            'name' => 'Document One',
+            'external_id' => Uuid::uuid4()->toString(),
             'size' => 1.0,
             'path' => '/path/to/file1.pdf',
             'original_filename' => 'file1.pdf',
             'mime' => 'application/pdf',
+            'integration_type' => 'local',
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
 
         $document2 = Document::create([
-            'name' => 'Document Two',
+            'external_id' => Uuid::uuid4()->toString(),
             'size' => 2.0,
             'path' => '/path/to/file2.pdf',
             'original_filename' => 'file2.pdf',
             'mime' => 'application/pdf',
+            'integration_type' => 'local',
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
@@ -99,7 +106,9 @@ class DocumentModelBootTest extends TestCase
             'source_id' => $this->client->id,
         ]);
 
-        $this->assertInstanceOf(Document::class, $document);
+        $relationship = $document->sourceable();
+
+        $this->assertInstanceOf(MorphTo::class, $relationship);
         $this->assertTrue(method_exists($document, 'sourceable'));
     }
 

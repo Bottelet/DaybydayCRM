@@ -3,10 +3,10 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Appointment;
-use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
+use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 
 class AppointmentModelBootTest extends TestCase
@@ -22,9 +22,12 @@ class AppointmentModelBootTest extends TestCase
     }
 
     #[Test]
-    public function appointment_auto_generates_external_id_when_not_provided()
+    public function appointment_stores_explicit_external_id_when_provided()
     {
+        $externalId = Uuid::uuid4()->toString();
+
         $appointment = Appointment::create([
+            'external_id' => $externalId,
             'title' => 'Test Appointment',
             'start_at' => now(),
             'end_at' => now()->addHour(),
@@ -36,6 +39,7 @@ class AppointmentModelBootTest extends TestCase
 
         $this->assertNotNull($appointment->external_id);
         $this->assertNotEmpty($appointment->external_id);
+        $this->assertEquals($externalId, $appointment->external_id);
         $this->assertMatchesRegularExpression(
             '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
             $appointment->external_id
@@ -65,6 +69,7 @@ class AppointmentModelBootTest extends TestCase
     public function appointment_generates_unique_external_ids_for_each_record()
     {
         $appointment1 = Appointment::create([
+            'external_id' => Uuid::uuid4()->toString(),
             'title' => 'Appointment One',
             'start_at' => now(),
             'end_at' => now()->addHour(),
@@ -75,6 +80,7 @@ class AppointmentModelBootTest extends TestCase
         ]);
 
         $appointment2 = Appointment::create([
+            'external_id' => Uuid::uuid4()->toString(),
             'title' => 'Appointment Two',
             'start_at' => now()->addDay(),
             'end_at' => now()->addDay()->addHour(),

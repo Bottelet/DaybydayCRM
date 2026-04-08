@@ -19,7 +19,6 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_create_client()
     {
-        $this->markTestIncomplete('This test is skipped because it is not working');
         $response = $this->json('POST', route('clients.store'), [
             'name' => 'James Test',
             'email' => 'james@test.com',
@@ -57,10 +56,8 @@ class ClientsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_client()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $client = factory(Client::class)->create(
             [
                 'vat' => '5898989898',
@@ -75,7 +72,6 @@ class ClientsControllerTest extends TestCase
                 'secondary_number' => '11111111',
                 'primary_number' => '2342342342',
                 'client_id' => $client->id,
-                'is_primary' => true,
             ]
         );
 
@@ -107,10 +103,8 @@ class ClientsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_assignee()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
 
@@ -151,8 +145,9 @@ class ClientsControllerTest extends TestCase
             'company_name' => 'NoPrimary Co',
         ]);
 
-        // Deliberately do NOT create a primary contact for this client.
-        // The previous code would crash (null->fill()), the new null-check prevents this.
+        // The ClientFactory afterCreating hook creates a primary contact.
+        // Delete all contacts so the client has no primary contact for this test.
+        $client->contacts()->forceDelete();
 
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
             'name' => 'No Contact Name',

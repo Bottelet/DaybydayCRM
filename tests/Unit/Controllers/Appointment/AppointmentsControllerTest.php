@@ -55,10 +55,8 @@ class AppointmentsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_get_appointments_within_time_slot()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $correctAppointment = null;
         $r = $this->json('GET', '/appointments/data');
 
@@ -75,12 +73,12 @@ class AppointmentsControllerTest extends TestCase
     }
 
     #[Test]
-    public function appointment_store_endpoint_does_not_exist()
+    public function appointment_store_endpoint_exists()
     {
-        // The store() method was removed from AppointmentsController in this PR.
-        // There should be no route registered for POST /appointments.
+        // The store() method exists in AppointmentsController and the route is registered.
         $response = $this->json('POST', '/appointments');
-        $response->assertStatus(404);
+
+        $this->assertNotEquals(404, $response->getStatusCode());
     }
 
     #[Test]
