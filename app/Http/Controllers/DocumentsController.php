@@ -146,6 +146,11 @@ class DocumentsController extends Controller
         }**/
         $task = Task::whereExternalId($external_id)->first();
 
+        if (! $task) {
+            session()->flash('flash_message_warning', __('Task not found'));
+            return redirect()->back();
+        }
+
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
                 $file = $image;
@@ -195,6 +200,11 @@ class DocumentsController extends Controller
         return redirect()->route('tasks.show', $task->external_id);
         }**/
         $project = Project::whereExternalId($external_id)->first();
+
+        if (! $project) {
+            session()->flash('flash_message_warning', __('Project not found'));
+            return redirect()->back();
+        }
 
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
