@@ -93,7 +93,7 @@ class LeadsControllerTest extends TestCase
     }
 
     #[Test]
-    public function updateFollowup_stores_deadline_as_datetime_string()
+    public function update_followup_stores_deadline_as_datetime_string()
     {
         // Regression for the deadline fix: Carbon::parse(...)->toDateTimeString()
         // ensures the deadline is stored as a string, not a Carbon object.
@@ -121,7 +121,7 @@ class LeadsControllerTest extends TestCase
     }
 
     #[Test]
-    public function updateFollowup_stores_deadline_with_correct_time_component()
+    public function update_followup_stores_deadline_with_correct_time_component()
     {
         // Boundary: verify the time part of the deadline is stored correctly
         $lead = factory(Lead::class)->create();
@@ -139,7 +139,7 @@ class LeadsControllerTest extends TestCase
     }
 
     #[Test]
-    public function updateFollowup_deadline_is_stored_as_parseable_date_in_database()
+    public function update_followup_deadline_is_stored_as_parseable_date_in_database()
     {
         // Ensures the fix (using ->toDateTimeString()) causes the deadline column
         // to contain a plain string representation, not an object.
