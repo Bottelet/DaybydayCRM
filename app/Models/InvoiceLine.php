@@ -24,6 +24,12 @@ class InvoiceLine extends Model
         'offer_id',
     ];
 
+    /**
+     * Bootstrap the model and its traits.
+     * Automatically generates a UUID for external_id if not provided.
+     *
+     * @return void
+     */
     public static function boot()
     {
         parent::boot();
