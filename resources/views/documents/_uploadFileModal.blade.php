@@ -36,7 +36,7 @@
         });
 
         myDropzone.on("success", function(file, response) {
-            window.location.href = ("/{{$type}}" + "s/" + response)
+            window.location.href = '{{url('/'.$type.'s')}}' + "/" + response
         });
 
         myDropzone.on("processing", function(file, response) {
