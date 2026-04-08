@@ -2,24 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Appointment extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasExternalId;
 
     protected static function boot()
     {
         parent::boot();
-
-        static::creating(function ($appointment) {
-            if (empty($appointment->external_id)) {
-                $appointment->external_id = (string) Str::uuid();
-            }
-        });
+        // HasExternalId trait handles external_id generation
     }
 
     protected $fillable = [
@@ -39,10 +34,7 @@ class Appointment extends Model
 
     protected $hidden = ['id', 'user_id', 'source_type', 'source_id', 'client_id'];
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     protected function serializeDate(DateTimeInterface $date)
     {

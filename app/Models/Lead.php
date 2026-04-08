@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @property string title
@@ -22,7 +22,7 @@ use Ramsey\Uuid\Uuid;
  */
 class Lead extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes;
+    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
 
     protected $searchableFields = ['title'];
 
@@ -48,12 +48,10 @@ class Lead extends Model implements Commentable
     public static function boot()
     {
         parent::boot();
+        // HasExternalId trait handles external_id generation
     }
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
     {
