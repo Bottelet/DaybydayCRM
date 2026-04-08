@@ -63,19 +63,19 @@ This plan proposes refactorings to make the test suite more robust and easier to
        ```php
        // BEFORE (BAD - two related requests in one test)
        public function can_add_negative_payment_with_separator() {
-           $this->json('POST', route('payment.add', ...), ['amount' => -5000, 234]);
+           $this->json('POST', route('payment.add', ...), ['amount' => '-5000,234']);
            $response = $this->json('POST', route('payment.add', ...), ['amount' => -5000.234]);
            // Second request depends on first!
        }
        
-       // AFTER (GOOD - one assertion per test)
+       // AFTER (GOOD - one assertion per test, single request each)
        public function can_add_negative_payment_with_comma_separator() {
-           $response = $this->json('POST', route('payment.add', ...), ['amount' => -5000, 234]);
+           $response = $this->json('POST', route('payment.add', ...), ['amount' => '-5000,234']);
            $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
        }
        
        public function can_add_negative_payment_with_dot_separator() {
-           $response = $this->json('POST', route('payment.add', ...), ['amount' => -5000.234]);
+           $response = $this->json('POST', route('payment.add', ...), ['amount' => '-5000.234']);
            $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
        }
        ```

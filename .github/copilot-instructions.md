@@ -1,14 +1,91 @@
 # DaybydayCRM AI Agent Instructions
 
 ## Core Principles & Documentation
-- **Refer to .junie/*.md:** For detailed structural analysis, fundamental architectural problems, error repair plans, and refactoring strategies, always consult the files in the `.junie/` directory.
+- **Refer to .github/*.md:** For detailed structural analysis, fundamental architectural problems, error repair plans, and refactoring strategies, always consult the files in the `.github/` directory.
 - **Detailed Instructions:**
-  - `.junie/error_repair_plan.md`: Common test failures and their specific fixes.
-  - `.junie/refactor_plan.md`: Roadmap for modernizing the codebase.
-  - `.junie/structural_analysis.md`: Analysis of current code/test suite weaknesses.
-  - `.junie/fundamental_analysis.md`: Deep architectural issues and technical debt.
+  - `.github/error_repair_plan.md`: Common test failures and their specific fixes.
+  - `.github/refactor_plan.md`: Roadmap for modernizing the codebase.
+  - `.github/structural_analysis.md`: Analysis of current code/test suite weaknesses.
+  - `.github/fundamental_analysis.md`: Deep architectural issues and technical debt.
+  - `.github/test_isolation_refactor.md`: **CRITICAL** - Comprehensive plan to eliminate test interdependencies and the cascade problem.
 
 ## Testing & Database Guidelines
+
+### Test Isolation Requirements (CRITICAL - MUST FOLLOW)
+
+**PROHIBITED: Brittle Tests**
+
+Tests MUST NOT:
+
+1. **Compare different types without normalization**
+   ```php
+   // ❌ PROHIBITED - Carbon object vs string
+   $this->assertEquals($model->created_at, $json['created_at']);
+   
+   // ✅ REQUIRED - Normalize to same format
+   $this->assertEquals($model->created_at->toISOString(), $json['created_at']);
+   ```
+
+2. **Depend on other tests' side effects**
+   ```php
+   // ❌ PROHIBITED - Relies on another test creating data
+   public function test_update_client() {
+       $client = Client::first(); // What if no clients exist?
+   }
+   
+   // ✅ REQUIRED - Create own data
+   public function test_update_client() {
+       $client = factory(Client::class)->create();
+   }
+   ```
+
+3. **Make unrelated HTTP requests**
+   ```php
+   // ❌ PROHIBITED - Why is this here?
+   public function test_payment_validation() {
+       $this->get('/client/create'); // Side effect setup - NEVER DO THIS
+       $response = $this->post('/payment', [...]);
+   }
+   
+   // ✅ REQUIRED - Direct setup
+   public function test_payment_validation() {
+       // If you need session data, set it explicitly:
+       session(['key' => 'value']);
+       $response = $this->post('/payment', [...]);
+   }
+   ```
+
+4. **Make multiple requests in one test** (unless explicitly testing a workflow sequence)
+   ```php
+   // ❌ PROHIBITED - Second request depends on first
+   public function test_feature() {
+       $this->post('/create', [...]);
+       $response = $this->get('/list'); // Depends on POST creating data
+   }
+   
+   // ✅ REQUIRED - Separate tests
+   public function test_can_create() {
+       $response = $this->post('/create', [...]);
+       $response->assertStatus(201);
+   }
+   
+   public function test_can_list() {
+       factory(Model::class)->create(); // Create own test data
+       $response = $this->get('/list');
+       $response->assertOk();
+   }
+   ```
+
+### Test Isolation Checklist
+
+Every test MUST:
+- ✅ Create its own test data (no dependencies on seeders or other tests)
+- ✅ Use DatabaseTransactions trait (RefreshDatabase after test suite is green)
+- ✅ Be runnable in any order (random, first, last, alone)
+- ✅ Clean up after itself (trait handles this automatically)
+- ✅ Have ONE clear purpose (test one behavior)
+- ✅ Have ONE HTTP request (unless explicitly testing a sequence/workflow)
+- ✅ Normalize data types before assertions (dates, numbers, etc.)
 
 ### Common Test Issues & Solutions
 
@@ -23,8 +100,16 @@
   - Avoid `assertObjectHasAttribute`. Use `assertTrue(property_exists($object, 'attribute'))` instead.
   - Use `#[Test]` and `#[Group('...')]` attributes instead of `@test` and `@group` annotations.
 
-- **Date Comparisons:**
-  - Prefer `toDateString()` over `toDate()` or other methods that might return objects when strings are expected, especially when comparing with database values.
+- **Date Comparisons (CRITICAL - Prevents Brittle Tests):**
+  - **NEVER** directly compare Carbon objects with strings
+  - **ALWAYS** normalize to the same format before comparison:
+    ```php
+    // ✅ CORRECT
+    $this->assertEquals($model->created_at->toISOString(), $response->json('created_at'));
+    
+    // Or use custom helper if available:
+    $this->assertDateEquals($model->created_at, $response->json('created_at'));
+    ```
 
 ### Model Boot Methods
 

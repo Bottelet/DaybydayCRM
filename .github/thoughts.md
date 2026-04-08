@@ -58,7 +58,7 @@ The second batch revealed additional, more specific issues:
 ### Pattern Recognition - Phase 2
 
 **Pattern 4: Missing Database Field Defaults**
-```
+```text
 SQLSTATE[HY000]: General error: 1364 Field 'color' doesn't have a default value
 SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
 SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value
@@ -70,21 +70,21 @@ Affected:
 - Offer: missing `status` field
 
 **Pattern 5: PHPUnit 10 Incompatibility**
-```
+```text
 Error: Call to undefined method assertObjectHasAttribute()
 ```
 - Affected: InvoiceStatusEnumTest, OffersStatusEnumTest, PaymentSourceEnumTest (4 tests)
 - Root cause: `assertObjectHasAttribute()` removed in PHPUnit 10
 
 **Pattern 6: Date Comparison Method Errors**
-```
+```text
 Error: Call to a member function toDate() on string
 ```
 - Affected: Deadline update tests for Lead, Project, Task (3 tests)
 - Root cause: `toDate()` called on a string instead of Carbon object
 
 **Pattern 7: Null Property Access**
-```
+```text
 ErrorException: Attempt to read property "vat" on null
 ErrorException: Attempt to read property "amount" on null
 ```
@@ -92,7 +92,7 @@ ErrorException: Attempt to read property "amount" on null
 - Root cause: Missing related models or incorrect test setup
 
 **Pattern 8: Test Interdependency (Hidden Coupling)**
-```
+```text
 Tests that rely on side effects from other tests or make unrelated HTTP requests
 ```
 - Affected: PaymentsControllerAddPaymentTest (multiple tests)

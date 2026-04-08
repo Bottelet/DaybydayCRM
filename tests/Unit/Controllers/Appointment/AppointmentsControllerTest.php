@@ -68,8 +68,8 @@ class AppointmentsControllerTest extends TestCase
             }
         }
 
-        $this->assertEquals($this->appointmentsWithInTime->start_at, $correctAppointment['start_at']);
-        $this->assertEquals($this->appointmentsWithInTime->end_at, $correctAppointment['end_at']);
+        $this->assertEquals($this->appointmentsWithInTime->start_at->toISOString(), $correctAppointment['start_at']);
+        $this->assertEquals($this->appointmentsWithInTime->end_at->toISOString(), $correctAppointment['end_at']);
 
         $this->assertCount(3, User::whereExternalId($this->user->external_id)->first()->appointments);
     }
