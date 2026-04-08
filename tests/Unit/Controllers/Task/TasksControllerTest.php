@@ -30,9 +30,9 @@ class TasksControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_create_task()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $response = $this->json('POST', route('tasks.store'), [
             'title' => 'Task test',
             'description' => 'This is a description',
@@ -78,9 +78,9 @@ class TasksControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $task = factory(Task::class)->create();
         $status = factory(Status::class)->create();
 
@@ -95,9 +95,9 @@ class TasksControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_deadline_for_task()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $task = factory(Task::class)->create();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [

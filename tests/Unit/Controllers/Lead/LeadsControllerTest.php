@@ -28,9 +28,9 @@ class LeadsControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_create_lead()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $response = $this->json('POST', route('leads.store'), [
             'title' => 'Lead test',
             'description' => 'This is a description',
@@ -62,9 +62,9 @@ class LeadsControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_status()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $lead = factory(Lead::class)->create();
         $status = factory(Status::class)->create();
 
@@ -79,9 +79,9 @@ class LeadsControllerTest extends TestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    #[Group('security')]
     public function can_update_deadline_for_lead()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $lead = factory(Lead::class)->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [

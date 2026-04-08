@@ -1,0 +1,117 @@
+<?php
+
+namespace Tests\Unit\Controllers\Project;
+
+use App\Models\Project;
+use App\Models\Role;
+use App\Models\Status;
+use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+
+#[Group('security')]
+#[Group('project-controller')]
+class ProjectSecurityTest extends TestCase
+{
+    use DatabaseTransactions;
+
+    protected $project;
+    protected $unauthorizedUser;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->project = factory(Project::class)->create();
+
+        // Create a user without project-delete permission
+        $this->unauthorizedUser = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $this->unauthorizedUser->attachRole($role);
+    }
+
+    #[Test]
+    public function authorized_user_can_delete_project()
+    {
+        // Give user permission to delete projects
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'project-delete']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+
+        $response->assertRedirect();
+        $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
+    }
+
+    #[Test]
+    public function unauthorized_user_cannot_delete_project()
+    {
+        $this->actingAs($this->unauthorizedUser);
+
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning');
+        $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
+    }
+
+    #[Test]
+    public function update_status_only_accepts_status_id_field()
+    {
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+        $originalAssignee = $this->project->user_assigned_id;
+
+        // Attempt to change both status_id and user_assigned_id (mass assignment attack)
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+            'status_id' => $newStatus->id,
+            'user_assigned_id' => $this->user->id, // This should be ignored
+            'title' => 'Hacked Title', // This should be ignored
+        ]);
+
+        $this->project->refresh();
+
+        // Status should be updated
+        $this->assertEquals($newStatus->id, $this->project->status_id);
+        
+        // But user_assigned_id should NOT be changed (mass assignment protection)
+        $this->assertEquals($originalAssignee, $this->project->user_assigned_id);
+        
+        // Title should not be changed
+        $this->assertNotEquals('Hacked Title', $this->project->title);
+    }
+
+    #[Test]
+    public function update_status_with_invalid_status_external_id_returns_error()
+    {
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+            'statusExternalId' => 'invalid-uuid-12345',
+        ], ['X-Requested-With' => 'XMLHttpRequest']);
+
+        $response->assertStatus(400)
+            ->assertJson(['error' => __('Invalid status')]);
+    }
+
+    #[Test]
+    public function update_status_via_ajax_with_valid_external_id()
+    {
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+
+        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+            'statusExternalId' => $newStatus->external_id,
+        ], ['X-Requested-With' => 'XMLHttpRequest']);
+
+        $this->project->refresh();
+        $this->assertEquals($newStatus->id, $this->project->status_id);
+    }
+}
