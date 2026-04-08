@@ -237,7 +237,7 @@
 
             @if(Entrust::can('task-upload-files') && $filesystem_integration)
             $('#add-files').on('click', function () {
-                $('#add-files-modal .modal-content').load('{{url('/add-documents/'.$tasks->external_id)}}' + '/task');
+                $('#add-files-modal .modal-content').load('{{url('/add-documents/'.$tasks->external_id.'/task')}}');
                 $('#add-files-modal').modal('show');
             });
             @endif
