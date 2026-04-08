@@ -231,8 +231,7 @@ class ProjectsController extends Controller
         if ($request->ajax() && isset($request->statusExternalId)) {
             $status = Status::whereExternalId($request->statusExternalId)->first();
             if (!$status) {
-                session()->flash('flash_message_warning', __('Invalid status'));
-                return redirect()->back();
+                return response()->json(['error' => 'Invalid status'], 400);
             }
             $input['status_id'] = $status->id;
         }
