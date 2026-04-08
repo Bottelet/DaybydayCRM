@@ -48,25 +48,4 @@ When repairing a test:
 1.  Add the `#[Group('junie_repaired')]` attribute to the test method.
 2.  Add `$this->markTestIncomplete('error repaired by junie');` (or 'failure repaired by junie').
 3.  Implement the fix.
-
-## 7. Authorization & Security Tests
-- **Document Access Control (CWE-639, CWE-862):**
-    - Document view/download operations require ownership validation via `canAccessDocument()` method
-    - Access granted if user:
-        - Created the source entity (Task/Project/Lead)
-        - Is assigned to the source entity
-        - Owns the associated Client
-    - Test coverage in `tests/Unit/Controllers/Document/DocumentsControllerAuthorizationTest.php`
-    
-- **Assignment Permission Checks:**
-    - Tasks: Require `can-assign-new-user-to-task` permission
-    - Projects: Require `can-assign-new-user-to-project` permission
-    - Leads: Require `can-assign-new-user-to-lead` permission
-    - Test coverage in respective `*AssignmentAuthorizationTest.php` files
-    
-- **Testing Authorization:**
-    - Create users with and without required permissions
-    - Use `actingAs($user)` to simulate authenticated requests
-    - Test both authorized and unauthorized access scenarios
-    - Verify session flash messages for denied access
 4.  Remove the `'error incomplete by junie'` marker if it was previously added during the investigation phase.

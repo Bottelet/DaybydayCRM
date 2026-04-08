@@ -1,0 +1,120 @@
+10) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+11) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_dot_separator
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+12) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_comma_separator
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+13) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_payment_updates_invoice_status
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+14) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_amount_parameter_return_error
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+15) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_source_parameter_return_error
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+16) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_invalid_payment_date_parameter_return_error
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+17) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_minus_amount
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+18) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_negative_payment_with_separator
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+19) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::cant_add_payment_where_amount_is_0
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:25
+
+20) Tests\Unit\Controllers\Payment\PaymentsControllerTest::can_delete_payment
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerTest.php:29
+
+21) Tests\Unit\Controllers\Payment\PaymentsControllerTest::cant_delete_payment_if_no_permission
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerTest.php:29
+
+22) Tests\Unit\Controllers\Payment\PaymentsControllerTest::cant_create_payment_if_no_permission
+Illuminate\Database\UniqueConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1-1' for key 'PRIMARY' (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `role_user` (`role_id`, `user_id`) values (1, 1))
+/var/www/projects/day/app/Zizaco/Entrust/Traits/EntrustUserTrait.php:297
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerTest.php:29
+
+29) Tests\Unit\Lead\LeadObserverDeleteTest::delete_leads_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 75eae484-d194-4917-9d66-ef193ce9166a, 2026-04-07 14:42:02, 2026-04-07 14:42:02))
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+30) Tests\Unit\Lead\LeadObserverDeleteTest::delete_leadsoft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 5337c0dc-9cc8-437a-8b88-216310ab01c3, 2026-04-07 14:42:11, 2026-04-07 14:42:11))
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+31) Tests\Unit\Lead\LeadObserverDeleteTest::force_delete_removes_lead_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 7973f145-f88c-4048-a64d-32ab3e97b01a, 2026-04-07 14:42:20, 2026-04-07 14:42:20))
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+32) Tests\Unit\Lead\LeadObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 23958a64-7c5c-4c01-8e20-e77e61809178, 2026-04-07 14:42:29, 2026-04-07 14:42:29))
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+33) Tests\Unit\Lead\LeadObserverDeleteTest::offer_is_not_deleted_by_observer
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, eefff3d1-b597-4014-9679-2b05b1c4d578, 2026-04-07 14:42:38, 2026-04-07 14:42:38))
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+37) Tests\Unit\Project\ProjectObserverDeleteTest::delete_projects_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, d0a2958f-22d4-4613-9b76-4dc1dd4fd9cc, 2026-04-07 14:44:42, 2026-04-07 14:44:42))
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+38) Tests\Unit\Project\ProjectObserverDeleteTest::delete_project_soft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, f3305974-454d-4b27-a437-0ab41e9c6bfc, 2026-04-07 14:44:44, 2026-04-07 14:44:44))
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+39) Tests\Unit\Project\ProjectObserverDeleteTest::force_delete_removes_project_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 179b0378-5c65-4b4a-b6ad-f59bad0a3c94, 2026-04-07 14:44:47, 2026-04-07 14:44:47))
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+40) Tests\Unit\Project\ProjectObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, da1cba45-12b1-410c-bf05-92b97371741d, 2026-04-07 14:44:49, 2026-04-07 14:44:49))
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+41) Tests\Unit\Project\ProjectObserverDeleteTest::invoice_is_not_deleted_by_observer
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, d195c90b-d388-41cb-a2a9-2355d3d396e7, 2026-04-07 14:44:51, 2026-04-07 14:44:51))
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+42) Tests\Unit\Task\TaskObserverDeleteTest::delete_tasks_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 0180ee8c-70d8-4dbc-be06-b5ebd7c0d557, 2026-04-07 14:44:56, 2026-04-07 14:44:56))
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+43) Tests\Unit\Task\TaskObserverDeleteTest::delete_task_soft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 99db99f5-58de-4875-a997-b0f2af5c2e1d, 2026-04-07 14:44:58, 2026-04-07 14:44:58))
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+44) Tests\Unit\Task\TaskObserverDeleteTest::force_delete_removes_task_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 5a7b8791-764e-453b-b3f0-7257dcdbabe8, 2026-04-07 14:45:01, 2026-04-07 14:45:01))
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+45) Tests\Unit\Task\TaskObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'ip_address' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_test, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `external_id`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, bbf801be-c28d-46c4-9562-6d8ec7253d5f, 2026-04-07 14:45:03, 2026-04-07 14:45:03))
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
