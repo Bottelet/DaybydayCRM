@@ -241,7 +241,7 @@ class ProjectsController extends Controller
 
             return redirect()->route('projects.show', $external_id);
         }
-        
+
         $project = Project::with('assignee')->whereExternalId($external_id)->first();
 
         $user_assigned_id = $request->user_assigned_id;

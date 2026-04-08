@@ -149,7 +149,7 @@ class LeadsController extends Controller
 
             return redirect()->route('leads.show', $external_id);
         }
-        
+
         $lead = $this->findByExternalId($external_id);
         $input = $request->get('user_assigned_id');
         $input = array_replace($request->all());

@@ -296,7 +296,7 @@ class TasksController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        
+
         $task = Task::with('user')->whereExternalId($external_id)->first();
 
         $user_assigned_id = $request->user_assigned_id;

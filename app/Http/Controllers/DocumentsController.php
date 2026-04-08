@@ -21,18 +21,19 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
-        
+        // Eager load the source relationship to avoid N+1 queries
+        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+
         if (! $document) {
             abort(404);
         }
-        
+
         // Check if user has permission to view document via source ownership
         if (! $this->canAccessDocument($document)) {
             session()->flash('flash_message_warning', __('You do not have permission to view this document'));
             return redirect()->back();
         }
-        
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
         if (! $file) {
@@ -49,18 +50,19 @@ class DocumentsController extends Controller
 
     public function download($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
-        
+        // Eager load the source relationship to avoid N+1 queries
+        $document = Document::with('sourceable')->whereExternalId($external_id)->first();
+
         if (! $document) {
             abort(404);
         }
-        
+
         // Check if user has permission to download document via source ownership
         if (! $this->canAccessDocument($document)) {
             session()->flash('flash_message_warning', __('You do not have permission to download this document'));
             return redirect()->back();
         }
-        
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
 
@@ -283,41 +285,41 @@ class DocumentsController extends Controller
     private function canAccessDocument($document)
     {
         $user = auth()->user();
-        
-        // Load the source model via the morphTo relationship
-        $source = $document->source_type::find($document->source_id);
-        
+
+        // Use the morphTo relationship to get the source model
+        $source = $document->sourceable;
+
         if (!$source) {
             return false;
         }
-        
+
         // Check based on source type
         if ($document->source_type === Task::class) {
             // User can access if they created or are assigned to the task
-            return $source->user_created_id === $user->id 
+            return $source->user_created_id === $user->id
                 || $source->user_assigned_id === $user->id
                 || (isset($source->client->user_id) && $source->client->user_id === $user->id);
         }
-        
+
         if ($document->source_type === Project::class) {
             // User can access if they created or are assigned to the project
-            return $source->user_created_id === $user->id 
+            return $source->user_created_id === $user->id
                 || $source->user_assigned_id === $user->id
                 || (isset($source->client->user_id) && $source->client->user_id === $user->id);
         }
-        
+
         if ($document->source_type === Client::class) {
             // User can access if they are assigned to the client
             return $source->user_id === $user->id;
         }
-        
+
         if ($document->source_type === Lead::class) {
             // User can access if they created or are assigned to the lead
-            return $source->user_created_id === $user->id 
+            return $source->user_created_id === $user->id
                 || $source->user_assigned_id === $user->id
                 || (isset($source->client->user_id) && $source->client->user_id === $user->id);
         }
-        
+
         return false;
     }
 }
