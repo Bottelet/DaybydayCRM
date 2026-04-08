@@ -15,7 +15,7 @@ class ActivityModelBootTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private User $user;
+    protected $user;
 
     private Task $task;
 

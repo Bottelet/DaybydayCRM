@@ -13,7 +13,7 @@ class AppointmentModelBootTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private User $user;
+    protected $user;
 
     protected function setUp(): void
     {
