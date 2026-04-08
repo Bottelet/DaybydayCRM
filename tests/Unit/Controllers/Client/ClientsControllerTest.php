@@ -19,7 +19,6 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_create_client()
     {
-        $this->markTestIncomplete('This test is skipped because it is not working');
         $response = $this->json('POST', route('clients.store'), [
             'name' => 'James Test',
             'email' => 'james@test.com',
@@ -57,10 +56,8 @@ class ClientsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_client()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $client = factory(Client::class)->create(
             [
                 'vat' => '5898989898',
@@ -75,7 +72,6 @@ class ClientsControllerTest extends TestCase
                 'secondary_number' => '11111111',
                 'primary_number' => '2342342342',
                 'client_id' => $client->id,
-                'is_primary' => true,
             ]
         );
 
@@ -107,10 +103,8 @@ class ClientsControllerTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_update_assignee()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
 
@@ -140,5 +134,43 @@ class ClientsControllerTest extends TestCase
         $response->assertSessionHas('flash_message_warning');
 
         $this->assertNotEquals($client->refresh()->user_id, $user->id);
+    }
+
+    #[Test]
+    public function can_update_client_without_primary_contact()
+    {
+        $client = factory(Client::class)->create([
+            'vat' => '9999999999',
+            'company_type' => 'A/S',
+            'company_name' => 'NoPrimary Co',
+        ]);
+
+        // The ClientFactory afterCreating hook creates a primary contact.
+        // Delete all contacts so the client has no primary contact for this test.
+        $client->contacts()->forceDelete();
+
+        $response = $this->json('PATCH', route('clients.update', $client->external_id), [
+            'name' => 'No Contact Name',
+            'email' => 'noprimary@test.com',
+            'primary_number' => '1234567890',
+            'secondary_number' => '0987654321',
+            'vat' => '8888888888',
+            'company_name' => 'NoPrimary Co Updated',
+            'address' => 'no contact street',
+            'zipcode' => '1111',
+            'city' => 'Null City',
+            'company_type' => 'ApS',
+            'industry_id' => Industry::first()->id,
+            'user_id' => User::first()->id,
+        ]);
+
+        // Should succeed and redirect, not crash with null property access
+        $response->assertStatus(302);
+        $response->assertSessionHas('flash_message');
+
+        $updatedClient = Client::where('vat', '8888888888')->first();
+        $this->assertNotNull($updatedClient);
+        $this->assertEquals('NoPrimary Co Updated', $updatedClient->company_name);
+        $this->assertNull($updatedClient->primaryContact);
     }
 }
