@@ -44,7 +44,12 @@ mix-manifest.json
 /.phpunit.result.cache
 _ide_helper.php
 phpunit.txt
-/phpu*.txt
+phpu*.txt
+phpu_art_test.txt
+phpu_failures_bckp1.txt
+phpu_failures_bckp2.txt
+phpunit_bckp1.txt
+phpunit_bckp2.txt
 stan.txt
 todo.txt
 
