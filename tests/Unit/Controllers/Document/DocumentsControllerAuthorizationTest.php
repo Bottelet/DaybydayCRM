@@ -5,9 +5,7 @@ namespace Tests\Unit\Controllers\Document;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Lead;
-use App\Models\Permission;
 use App\Models\Project;
-use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -23,7 +21,9 @@ class DocumentsControllerAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private User $owner;
+
     private User $otherUser;
+
     private Client $client;
 
     protected function setUp(): void
@@ -32,10 +32,10 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
         // Create owner user
         $this->owner = factory(User::class)->create();
-        
+
         // Create another user who should NOT have access
         $this->otherUser = factory(User::class)->create();
-        
+
         // Create a client owned by the owner
         $this->client = factory(Client::class)->create(['user_id' => $this->owner->id]);
     }
@@ -122,7 +122,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_cannot_view_document_attached_to_another_users_task()
     {
         $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        
+
         // Create a task owned by other user
         $task = factory(Task::class)->create([
             'user_created_id' => $this->otherUser->id,
@@ -193,7 +193,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_cannot_view_document_attached_to_another_users_project()
     {
         $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        
+
         $project = factory(Project::class)->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
@@ -256,7 +256,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_cannot_view_document_attached_to_another_users_lead()
     {
         $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        
+
         $lead = factory(Lead::class)->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
@@ -293,7 +293,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_cannot_view_document_attached_to_another_users_client()
     {
         $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        
+
         $document = factory(Document::class)->create([
             'source_type' => Client::class,
             'source_id' => $otherClient->id,
@@ -330,7 +330,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_cannot_download_document_attached_to_another_users_task()
     {
         $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        
+
         $task = factory(Task::class)->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
@@ -353,7 +353,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function returns_404_when_document_not_found()
     {
         $fakeUuid = Str::uuid();
-        
+
         // Verify document doesn't exist in database
         $this->assertDatabaseMissing('documents', [
             'external_id' => $fakeUuid,

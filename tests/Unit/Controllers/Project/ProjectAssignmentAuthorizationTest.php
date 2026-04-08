@@ -19,8 +19,11 @@ class ProjectAssignmentAuthorizationTest extends TestCase
     use DatabaseTransactions;
 
     private User $authorizedUser;
+
     private User $unauthorizedUser;
+
     private User $newAssignee;
+
     private Project $project;
 
     protected function setUp(): void
@@ -70,10 +73,10 @@ class ProjectAssignmentAuthorizationTest extends TestCase
     public function authorized_user_can_reassign_project()
     {
         $originalAssignee = $this->project->user_assigned_id;
-        
+
         // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-project'));
-        
+
         // Verify initial state
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
 
@@ -84,7 +87,7 @@ class ProjectAssignmentAuthorizationTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('flash_message');
-        
+
         // Verify assignment was updated in database
         $this->assertDatabaseHas('projects', [
             'id' => $this->project->id,
@@ -97,7 +100,7 @@ class ProjectAssignmentAuthorizationTest extends TestCase
     public function unauthorized_user_cannot_reassign_project()
     {
         $originalAssignee = $this->project->user_assigned_id;
-        
+
         // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-project'));
 
@@ -108,7 +111,7 @@ class ProjectAssignmentAuthorizationTest extends TestCase
 
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this project'));
-        
+
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('projects', [
             'id' => $this->project->id,

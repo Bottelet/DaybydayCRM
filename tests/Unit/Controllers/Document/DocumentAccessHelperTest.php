@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Document;
 
+use App\Http\Controllers\DocumentsController;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Task;
@@ -18,7 +19,9 @@ class DocumentAccessHelperTest extends TestCase
     use DatabaseTransactions;
 
     private User $owner;
+
     private User $otherUser;
+
     private Client $client;
 
     protected function setUp(): void
@@ -48,14 +51,14 @@ class DocumentAccessHelperTest extends TestCase
         // Testing private methods via reflection allows us to verify the helper's logic in isolation,
         // providing granular test coverage beyond what's possible through the public API alone.
         // The helper method is intentionally private as it's an internal implementation detail.
-        $controller = new \App\Http\Controllers\DocumentsController();
+        $controller = new DocumentsController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
         $this->actingAs($this->owner);
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
-        
+
         $this->assertTrue($result, 'Owner should have access via user_created_id');
     }
 
@@ -68,14 +71,14 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $controller = new \App\Http\Controllers\DocumentsController();
+        $controller = new DocumentsController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
         $this->actingAs($this->owner);
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
-        
+
         $this->assertTrue($result, 'Owner should have access via user_assigned_id');
     }
 
@@ -88,7 +91,7 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $controller = new \App\Http\Controllers\DocumentsController();
+        $controller = new DocumentsController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
@@ -98,7 +101,7 @@ class DocumentAccessHelperTest extends TestCase
         // Without loading, accessing the relationship could cause a query or null reference
         $task->load('client');
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
-        
+
         $this->assertTrue($result, 'Owner should have access via client ownership');
     }
 
@@ -112,7 +115,7 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $otherClient->id,
         ]);
 
-        $controller = new \App\Http\Controllers\DocumentsController();
+        $controller = new DocumentsController;
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
@@ -120,7 +123,7 @@ class DocumentAccessHelperTest extends TestCase
         $this->actingAs($this->owner);
         $task->load('client');
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
-        
+
         $this->assertFalse($result, 'Owner should NOT have access to other user\'s task');
     }
 }
