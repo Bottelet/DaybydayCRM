@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\User;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -16,6 +17,7 @@ class UserSecurityTest extends TestCase
     use DatabaseTransactions;
 
     protected $targetUser;
+
     protected $unauthorizedUser;
 
     protected function setUp(): void
@@ -23,7 +25,7 @@ class UserSecurityTest extends TestCase
         parent::setUp();
 
         $this->targetUser = factory(User::class)->create();
-        
+
         // Create a user without user-update permission
         $this->unauthorizedUser = factory(User::class)->create();
         $role = Role::where('name', 'employee')->first();
@@ -87,11 +89,11 @@ class UserSecurityTest extends TestCase
         $manager = factory(User::class)->create();
         $managerRole = Role::where('name', 'manager')->first();
         $manager->attachRole($managerRole);
-        
+
         // Add user-update permission to manager
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-update']);
+        $permission = Permission::firstOrCreate(['name' => 'user-update']);
         $managerRole->attachPermission($permission);
-        
+
         $this->actingAs($manager);
 
         $originalPassword = $this->targetUser->password;

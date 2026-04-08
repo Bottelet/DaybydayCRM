@@ -3,6 +3,7 @@
 namespace Tests\Unit\Controllers\Document;
 
 use App\Models\Integration;
+use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
@@ -20,7 +21,9 @@ class DocumentSecurityTest extends TestCase
     use DatabaseTransactions;
 
     protected $task;
+
     protected $project;
+
     protected $unauthorizedUser;
 
     protected function setUp(): void
@@ -46,7 +49,7 @@ class DocumentSecurityTest extends TestCase
     public function authorized_user_can_upload_file_to_task()
     {
         // Give user permission to upload files to tasks
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-upload-files']);
+        $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
@@ -77,7 +80,7 @@ class DocumentSecurityTest extends TestCase
     public function authorized_user_can_upload_file_to_project()
     {
         // Give user permission to upload files to projects
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'project-upload-files']);
+        $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
@@ -107,7 +110,7 @@ class DocumentSecurityTest extends TestCase
     #[Test]
     public function upload_to_nonexistent_task_returns_error()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-upload-files']);
+        $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
@@ -123,7 +126,7 @@ class DocumentSecurityTest extends TestCase
     #[Test]
     public function upload_to_nonexistent_project_returns_error()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'project-upload-files']);
+        $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
         $file = UploadedFile::fake()->create('document.pdf', 100);

@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Client;
+use App\Models\Lead;
+use App\Models\Project;
+use App\Models\Task;
+use App\Models\User;
 use App\Services\Search\SearchService;
 
 class SearchController extends Controller
@@ -10,16 +15,16 @@ class SearchController extends Controller
     {
         // Allowlist of searchable model types to prevent arbitrary class instantiation
         $allowedTypes = [
-            'client' => \App\Models\Client::class,
-            'clients' => \App\Models\Client::class,
-            'task' => \App\Models\Task::class,
-            'tasks' => \App\Models\Task::class,
-            'project' => \App\Models\Project::class,
-            'projects' => \App\Models\Project::class,
-            'lead' => \App\Models\Lead::class,
-            'leads' => \App\Models\Lead::class,
-            'user' => \App\Models\User::class,
-            'users' => \App\Models\User::class,
+            'client' => Client::class,
+            'clients' => Client::class,
+            'task' => Task::class,
+            'tasks' => Task::class,
+            'project' => Project::class,
+            'projects' => Project::class,
+            'lead' => Lead::class,
+            'leads' => Lead::class,
+            'user' => User::class,
+            'users' => User::class,
         ];
 
         // Normalize and validate type before selecting backend

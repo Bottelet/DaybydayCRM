@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Task;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
@@ -18,6 +19,7 @@ class TaskSecurityTest extends TestCase
     use DatabaseTransactions;
 
     protected $task;
+
     protected $unauthorizedUser;
 
     protected function setUp(): void
@@ -36,7 +38,7 @@ class TaskSecurityTest extends TestCase
     public function authorized_user_can_delete_task()
     {
         // Give user permission to delete tasks
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-delete']);
+        $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
@@ -60,7 +62,7 @@ class TaskSecurityTest extends TestCase
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
@@ -77,10 +79,10 @@ class TaskSecurityTest extends TestCase
 
         // Status should be updated
         $this->assertEquals($newStatus->id, $this->task->status_id);
-        
+
         // But user_assigned_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalAssignee, $this->task->user_assigned_id);
-        
+
         // Title should not be changed
         $this->assertNotEquals('Hacked Title', $this->task->title);
     }
@@ -88,7 +90,7 @@ class TaskSecurityTest extends TestCase
     #[Test]
     public function update_status_with_invalid_status_external_id_returns_error()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
@@ -102,7 +104,7 @@ class TaskSecurityTest extends TestCase
     #[Test]
     public function update_status_via_ajax_with_valid_external_id()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);

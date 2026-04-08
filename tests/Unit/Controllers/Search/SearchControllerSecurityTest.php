@@ -22,7 +22,7 @@ class SearchControllerSecurityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create test data for searching
         factory(Client::class)->create(['company_name' => 'Test Company']);
         factory(Task::class)->create(['title' => 'Test Task']);

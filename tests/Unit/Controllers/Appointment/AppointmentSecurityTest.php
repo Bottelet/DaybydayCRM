@@ -3,6 +3,7 @@
 namespace Tests\Unit\Controllers\Appointment;
 
 use App\Models\Appointment;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -17,6 +18,7 @@ class AppointmentSecurityTest extends TestCase
     use DatabaseTransactions;
 
     protected $appointment;
+
     protected $unauthorizedUser;
 
     protected function setUp(): void
@@ -39,7 +41,7 @@ class AppointmentSecurityTest extends TestCase
     public function authorized_user_can_update_appointment()
     {
         // Give user permission to update appointments
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'appointment-update']);
+        $permission = Permission::firstOrCreate(['name' => 'appointment-update']);
         $this->user->roles->first()->attachPermission($permission);
 
         $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
@@ -86,7 +88,7 @@ class AppointmentSecurityTest extends TestCase
     public function authorized_user_can_delete_appointment()
     {
         // Give user permission to delete appointments
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'appointment-delete']);
+        $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
         $response = $this->json('DELETE', route('appointments.destroy', $this->appointment->external_id));

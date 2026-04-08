@@ -3,6 +3,7 @@
 namespace Tests\Unit\Controllers\Lead;
 
 use App\Models\Lead;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
@@ -18,6 +19,7 @@ class LeadSecurityTest extends TestCase
     use DatabaseTransactions;
 
     protected $lead;
+
     protected $unauthorizedUser;
 
     protected function setUp(): void
@@ -36,7 +38,7 @@ class LeadSecurityTest extends TestCase
     public function authorized_user_can_delete_lead()
     {
         // Give user permission to delete leads
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'lead-delete']);
+        $permission = Permission::firstOrCreate(['name' => 'lead-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
         $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
@@ -71,7 +73,7 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_assign_only_accepts_user_assigned_id_field()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'lead-assigned']);
+        $permission = Permission::firstOrCreate(['name' => 'lead-assigned']);
         $this->user->roles->first()->attachPermission($permission);
 
         $newUser = factory(User::class)->create();
@@ -89,10 +91,10 @@ class LeadSecurityTest extends TestCase
 
         // user_assigned_id should be updated
         $this->assertEquals($newUser->id, $this->lead->user_assigned_id);
-        
+
         // But status_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalStatus, $this->lead->status_id);
-        
+
         // Title should not be changed
         $this->assertEquals($originalTitle, $this->lead->title);
     }
@@ -100,7 +102,7 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'lead-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $newStatus = factory(Status::class)->create(['source_type' => Lead::class]);
@@ -117,10 +119,10 @@ class LeadSecurityTest extends TestCase
 
         // Status should be updated
         $this->assertEquals($newStatus->id, $this->lead->status_id);
-        
+
         // But user_assigned_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalAssignee, $this->lead->user_assigned_id);
-        
+
         // Title should not be changed
         $this->assertNotEquals('Hacked Title', $this->lead->title);
     }
