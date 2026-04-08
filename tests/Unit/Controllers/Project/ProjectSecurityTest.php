@@ -137,7 +137,7 @@ class ProjectSecurityTest extends TestCase
 
         // Status should NOT be changed because it's not a valid project status
         $this->assertEquals($originalStatus, $this->project->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));
@@ -160,7 +160,7 @@ class ProjectSecurityTest extends TestCase
 
         // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->project->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));

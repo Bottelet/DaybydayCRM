@@ -147,7 +147,7 @@ class LeadSecurityTest extends TestCase
 
         // Status should NOT be changed because it's not a valid lead status
         $this->assertEquals($originalStatus, $this->lead->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));
@@ -170,7 +170,7 @@ class LeadSecurityTest extends TestCase
 
         // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->lead->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));

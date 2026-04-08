@@ -268,6 +268,7 @@ class TasksController extends Controller
                     return response()->json(['error' => __('Invalid status')], 400);
                 }
                 session()->flash('flash_message_warning', __('Invalid status'));
+
                 return redirect()->back();
             }
             $input['status_id'] = $status->id;
@@ -281,6 +282,7 @@ class TasksController extends Controller
                     return response()->json(['error' => __('Invalid status for task')], 400);
                 }
                 session()->flash('flash_message_warning', __('Invalid status for task'));
+
                 return redirect()->back();
             }
         }

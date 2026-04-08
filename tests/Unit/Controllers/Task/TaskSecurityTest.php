@@ -4,7 +4,6 @@ namespace Tests\Unit\Controllers\Task;
 
 use App\Models\Lead;
 use App\Models\Permission;
-use App\Models\Project;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
@@ -138,7 +137,7 @@ class TaskSecurityTest extends TestCase
 
         // Status should NOT be changed because it's not a valid task status
         $this->assertEquals($originalStatus, $this->task->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
@@ -161,7 +160,7 @@ class TaskSecurityTest extends TestCase
 
         // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->task->status_id);
-        
+
         // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
