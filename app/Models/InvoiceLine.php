@@ -37,7 +37,6 @@ class InvoiceLine extends Model
     }
 
     // getRouteKeyName() is provided by HasExternalId trait
-    }
 
     public function tasks()
     {
