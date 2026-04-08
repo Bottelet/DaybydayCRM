@@ -70,6 +70,12 @@ class ProjectsController extends Controller
 
     public function destroy(Project $project, Request $request)
     {
+        if (! auth()->user()->can('project-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete projects'));
+
+            return redirect()->back();
+        }
+
         $deleteTasks = $request->delete_tasks ? true : false;
         if ($project->tasks && $deleteTasks) {
             $project->tasks()->delete();
@@ -221,9 +227,9 @@ class ProjectsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+        $input = $request->only(['status_id']);
+        if ($request->ajax() && isset($request->statusExternalId)) {
+            $input['status_id'] = Status::whereExternalId($request->statusExternalId)->first()->id;
         }
         $project = $this->findByExternalId($external_id);
         $project->fill($input)->save();

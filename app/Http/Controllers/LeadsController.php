@@ -104,6 +104,12 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead, Request $request)
     {
+        if (! auth()->user()->can('lead-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
+
+            return redirect()->back();
+        }
+
         $deleteOffers = $request->delete_offers ? true : false;
         if ($lead->offers && $deleteOffers) {
             $lead->offers()->delete();
@@ -125,6 +131,10 @@ class LeadsController extends Controller
 
     public function destroyJson(Lead $lead, Request $request)
     {
+        if (! auth()->user()->can('lead-delete')) {
+            return response('Access denied', 403);
+        }
+
         $deleteOffers = $request->delete_offers ? true : false;
         if ($lead->offers && $deleteOffers) {
             $lead->offers()->delete();
@@ -145,8 +155,7 @@ class LeadsController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         $lead = $this->findByExternalId($external_id);
-        $input = $request->get('user_assigned_id');
-        $input = array_replace($request->all());
+        $input = $request->only(['user_assigned_id']);
         $lead->fill($input)->save();
 
         event(new LeadAction($lead, self::UPDATED_ASSIGN));
@@ -217,7 +226,7 @@ class LeadsController extends Controller
             $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
             $lead->save();
         } else {
-            $lead->fill($request->all())->save();
+            $lead->fill($request->only(['status_id']))->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));
         Session()->flash('flash_message', __('Lead status updated'));

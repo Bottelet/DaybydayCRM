@@ -166,6 +166,12 @@ class TasksController extends Controller
 
     public function destroy(Task $task, Request $request)
     {
+        if (! auth()->user()->can('task-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete tasks'));
+
+            return redirect()->back();
+        }
+
         $deleteInvoice = $request->delete_invoice ? true : false;
 
         if ($task->invoice && $deleteInvoice) {
@@ -253,10 +259,10 @@ class TasksController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
+        $input = $request->only(['status_id']);
 
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+        if ($request->ajax() && isset($request->statusExternalId)) {
+            $input['status_id'] = Status::whereExternalId($request->statusExternalId)->first()->id;
         }
 
         $task = $this->findByExternalId($external_id);
