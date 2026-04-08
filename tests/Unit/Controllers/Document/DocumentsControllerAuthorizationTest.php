@@ -56,11 +56,20 @@ class DocumentsControllerAuthorizationTest extends TestCase
             'source_id' => $task->id,
         ]);
 
+        // Verify document exists in database
+        $this->assertDatabaseHas('documents', [
+            'id' => $document->id,
+            'source_type' => Task::class,
+            'source_id' => $task->id,
+        ]);
+
         // Owner should be able to view (they created the task)
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
 
         $response->assertStatus(200);
+        $response->assertHeader('Content-Type', $document->mime);
+        $response->assertHeader('filename', $document->original_filename);
     }
 
     #[Test]
@@ -127,12 +136,17 @@ class DocumentsControllerAuthorizationTest extends TestCase
             'source_id' => $task->id,
         ]);
 
+        // Verify task and document are owned by other user
+        $this->assertEquals($this->otherUser->id, $task->user_created_id);
+        $this->assertEquals($this->otherUser->id, $task->user_assigned_id);
+        $this->assertEquals($this->otherUser->id, $otherClient->user_id);
+
         // Owner should NOT be able to view
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
 
         $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertSessionHas('flash_message_warning', __('You do not have permission to view this document'));
     }
 
     #[Test]
@@ -332,14 +346,21 @@ class DocumentsControllerAuthorizationTest extends TestCase
             ->get(route('document.download', $document->external_id));
 
         $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertSessionHas('flash_message_warning', __('You do not have permission to download this document'));
     }
 
     #[Test]
     public function returns_404_when_document_not_found()
     {
+        $fakeUuid = Str::uuid();
+        
+        // Verify document doesn't exist in database
+        $this->assertDatabaseMissing('documents', [
+            'external_id' => $fakeUuid,
+        ]);
+
         $response = $this->actingAs($this->owner)
-            ->get(route('document.view', Str::uuid()));
+            ->get(route('document.view', $fakeUuid));
 
         $response->assertStatus(404);
     }

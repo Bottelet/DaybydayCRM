@@ -237,7 +237,7 @@ class ProjectsController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         if (! auth()->user()->can('can-assign-new-user-to-project')) {
-            session()->flash('flash_message_warning', __('You do not have permission to assign users to projects'));
+            session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
 
             return redirect()->route('projects.show', $external_id);
         }

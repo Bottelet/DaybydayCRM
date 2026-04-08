@@ -293,31 +293,44 @@ class DocumentsController extends Controller
             return false;
         }
 
-        // Check based on source type
-        if ($document->source_type === Task::class) {
-            // User can access if they created or are assigned to the task
-            return $source->user_created_id === $user->id
-                || $source->user_assigned_id === $user->id
-                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
-        }
-
-        if ($document->source_type === Project::class) {
-            // User can access if they created or are assigned to the project
-            return $source->user_created_id === $user->id
-                || $source->user_assigned_id === $user->id
-                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
-        }
-
+        // For Client source type, check user_id
         if ($document->source_type === Client::class) {
-            // User can access if they are assigned to the client
             return $source->user_id === $user->id;
         }
 
-        if ($document->source_type === Lead::class) {
-            // User can access if they created or are assigned to the lead
-            return $source->user_created_id === $user->id
-                || $source->user_assigned_id === $user->id
-                || (isset($source->client->user_id) && $source->client->user_id === $user->id);
+        // For Task, Project, and Lead - check creator, assignee, or client ownership
+        $assignableTypes = [Task::class, Project::class, Lead::class];
+        
+        if (in_array($document->source_type, $assignableTypes)) {
+            return $this->userOwnsAssignableSource($source, $user);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user owns an assignable source (Task, Project, Lead)
+     * via creation, assignment, or client ownership
+     *
+     * @param  mixed  $source
+     * @param  User  $user
+     * @return bool
+     */
+    private function userOwnsAssignableSource($source, $user)
+    {
+        // Check if user created the source
+        if (isset($source->user_created_id) && $source->user_created_id === $user->id) {
+            return true;
+        }
+
+        // Check if user is assigned to the source
+        if (isset($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
+            return true;
+        }
+
+        // Check if user owns the client associated with the source
+        if (isset($source->client->user_id) && $source->client->user_id === $user->id) {
+            return true;
         }
 
         return false;
