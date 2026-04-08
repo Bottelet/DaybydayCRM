@@ -11,7 +11,7 @@ use App\Models\Setting;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\Invoice\InvoiceCalculator;
-use Carbon;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
@@ -226,6 +226,14 @@ class LeadsController extends Controller
             $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
             $lead->save();
         } else {
+            $statusId = $request->input('status_id');
+            // Validate that the status_id belongs to lead statuses
+            $validStatus = Status::typeOfLead()->where('id', $statusId)->exists();
+            if (! $validStatus) {
+                session()->flash('flash_message_warning', __('Invalid status for lead'));
+
+                return redirect()->back();
+            }
             $lead->fill($request->only(['status_id']))->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));

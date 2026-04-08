@@ -8,10 +8,6 @@ class SearchController extends Controller
 {
     public function search($query, $type)
     {
-        if (config('services.elasticsearch.enabled')) {
-            return response()->json(app(SearchService::class)->search($query, $type));
-        }
-
         // Allowlist of searchable model types to prevent arbitrary class instantiation
         $allowedTypes = [
             'client' => \App\Models\Client::class,
@@ -26,9 +22,14 @@ class SearchController extends Controller
             'users' => \App\Models\User::class,
         ];
 
+        // Normalize and validate type before selecting backend
         $typeLower = strtolower($type);
         if (! isset($allowedTypes[$typeLower])) {
             return response()->json(['error' => 'Invalid search type'], 400);
+        }
+
+        if (config('services.elasticsearch.enabled')) {
+            return response()->json(app(SearchService::class)->search($query, $typeLower));
         }
 
         $class = $allowedTypes[$typeLower];
