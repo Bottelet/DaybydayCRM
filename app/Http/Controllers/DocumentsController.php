@@ -31,6 +31,7 @@ class DocumentsController extends Controller
         // Check if user has permission to view document via source ownership
         if (! $this->canAccessDocument($document)) {
             session()->flash('flash_message_warning', __('You do not have permission to view this document'));
+
             return redirect()->back();
         }
 
@@ -60,6 +61,7 @@ class DocumentsController extends Controller
         // Check if user has permission to download document via source ownership
         if (! $this->canAccessDocument($document)) {
             session()->flash('flash_message_warning', __('You do not have permission to download this document'));
+
             return redirect()->back();
         }
 
@@ -289,7 +291,7 @@ class DocumentsController extends Controller
         // Use the morphTo relationship to get the source model
         $source = $document->sourceable;
 
-        if (!$source) {
+        if (! $source) {
             return false;
         }
 
@@ -300,7 +302,7 @@ class DocumentsController extends Controller
 
         // For Task, Project, and Lead - check creator, assignee, or client ownership
         $assignableTypes = [Task::class, Project::class, Lead::class];
-        
+
         if (in_array($document->source_type, $assignableTypes)) {
             return $this->userOwnsAssignableSource($source, $user);
         }
