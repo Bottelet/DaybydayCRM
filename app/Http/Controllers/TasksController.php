@@ -38,6 +38,20 @@ class TasksController extends Controller
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            abort_unless($user && $user->can('task-delete'), 403);
+
+            return $next($request);
+        }, ['only' => ['destroy']]);
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            abort_unless($user && $user->can('task-update-linked-project'), 403);
+
+            return $next($request);
+        }, ['only' => ['updateProject']]);
     }
 
     /**
@@ -287,6 +301,17 @@ class TasksController extends Controller
             }
         }
 
+        if (! isset($input['status_id']) || ! $input['status_id']) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'message' => __('Unable to update task status: invalid status provided.'),
+                ], 422);
+            }
+
+            session()->flash('flash_message_warning', __('Unable to update task status: invalid status provided.'));
+
+            return redirect()->back();
+        }
         $task = $this->findByExternalId($external_id);
         $task->fill($input)->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
