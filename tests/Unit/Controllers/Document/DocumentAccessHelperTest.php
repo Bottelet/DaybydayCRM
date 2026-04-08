@@ -44,7 +44,9 @@ class DocumentAccessHelperTest extends TestCase
             'source_id' => $task->id,
         ]);
 
-        // Test via reflection to access private method
+        // Use reflection to test private helper method
+        // This method is intentionally private as it's an internal implementation detail
+        // Testing via reflection ensures the helper logic works correctly
         $controller = new \App\Http\Controllers\DocumentsController();
         $reflection = new \ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');

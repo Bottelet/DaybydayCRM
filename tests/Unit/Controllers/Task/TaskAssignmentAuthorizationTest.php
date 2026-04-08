@@ -74,7 +74,8 @@ class TaskAssignmentAuthorizationTest extends TestCase
         // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-task'));
         
-        // Verify initial state
+        // Verify initial state - ensure we're actually changing the assignment
+        // This prevents false positives from reassigning to the same user
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
         $this->assertNotEquals($this->newAssignee->id, $originalAssignee);
 
