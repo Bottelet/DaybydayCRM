@@ -178,6 +178,11 @@ trait EntrustRoleTrait
             return $this->attachPermissions($permission);
         }
 
+        // Validate that we have a valid permission ID
+        if (empty($permission) || ! is_numeric($permission)) {
+            throw new \InvalidArgumentException('Invalid permission ID provided to attachPermission');
+        }
+
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->perms()->syncWithoutDetaching([$permission]);
     }
