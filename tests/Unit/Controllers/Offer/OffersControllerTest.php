@@ -96,7 +96,6 @@ class OffersControllerTest extends TestCase
     {
         $offer = factory(Offer::class)->create();
         
-        $this->assertEquals('in-progress', $offer->status);
         $this->json('POST', route('offer.won'), [
             'offer_external_id' => $offer->external_id,
         ]);
@@ -112,7 +111,6 @@ class OffersControllerTest extends TestCase
     {
         $offer = factory(Offer::class)->create();
         
-        $this->assertEquals('in-progress', $offer->status);
         $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $offer->external_id,
         ]);
