@@ -44,12 +44,17 @@
 
         myDropzone.on("success", function(file, response) {
             // Map entity types to their plural route names (Laravel resource routes)
+            // $type is validated by DocumentsController to be: task, client, or project
             var typeRouteMap = {
                 'task': 'tasks',
                 'project': 'projects',
                 'client': 'clients'
             };
-            var routeName = typeRouteMap['{{$type}}'] || '{{$type}}s';
+            var routeName = typeRouteMap['{{$type}}'];
+            if (!routeName) {
+                console.error('Invalid type: {{$type}}');
+                return;
+            }
             var baseUrl = '{{url('/')}}' + '/' + routeName;
             window.location.href = baseUrl + "/" + response;
         });
