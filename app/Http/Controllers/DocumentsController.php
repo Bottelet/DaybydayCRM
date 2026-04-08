@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
@@ -318,7 +319,7 @@ class DocumentsController extends Controller
      * via creation, assignment, or client ownership
      *
      * @param  mixed  $source
-     * @param  \App\Models\User  $user
+     * @param  User  $user
      * @return bool
      */
     private function userOwnsAssignableSource($source, $user)

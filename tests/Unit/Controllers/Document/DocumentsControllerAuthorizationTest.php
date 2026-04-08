@@ -8,6 +8,7 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\Storage\GetStorageProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
@@ -44,10 +45,12 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
     private function bindFakeStorageProvider(): void
     {
-        $this->app->instance(\App\Services\Storage\GetStorageProvider::class, new class {
+        $this->app->instance(GetStorageProvider::class, new class
+        {
             public function getStorage(...$args)
             {
-                return new class {
+                return new class
+                {
                     public function enabled(): bool
                     {
                         return true;
@@ -81,6 +84,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
             }
         });
     }
+
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_creator()
     {

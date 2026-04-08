@@ -32,7 +32,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function attachRole_does_not_create_duplicate_role_assignment()
+    public function attach_role_does_not_create_duplicate_role_assignment()
     {
         // Attach the role once
         $this->user->attachRole($this->role);
@@ -50,7 +50,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function attachRole_accepts_role_object()
+    public function attach_role_accepts_role_object()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();
@@ -61,7 +61,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function attachRole_accepts_role_id()
+    public function attach_role_accepts_role_id()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();
@@ -72,7 +72,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function attachRole_accepts_role_array()
+    public function attach_role_accepts_role_array()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();
@@ -83,7 +83,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function attachRole_called_multiple_times_results_in_only_one_db_entry()
+    public function attach_role_called_multiple_times_results_in_only_one_db_entry()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();
@@ -98,7 +98,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function cachedRoles_returns_eloquent_model_instances()
+    public function cached_roles_returns_eloquent_model_instances()
     {
         $cachedRoles = $this->user->cachedRoles();
 
@@ -109,7 +109,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function cachedRoles_returns_collection_with_correct_roles()
+    public function cached_roles_returns_collection_with_correct_roles()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();
@@ -122,7 +122,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function cachedRoles_returns_empty_when_no_roles_attached()
+    public function cached_roles_returns_empty_when_no_roles_attached()
     {
         $user = factory(User::class)->create();
         // Ensure the user has no roles
@@ -134,7 +134,7 @@ class EntrustUserTraitTest extends TestCase
     }
 
     #[Test]
-    public function hasRole_works_correctly_after_attachRole_fix()
+    public function has_role_works_correctly_after_attach_role_fix()
     {
         $user = factory(User::class)->create();
         $adminRole = Role::where('name', 'administrator')->first();

@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(Document::class, function (Faker $faker) {
     return [
         'size' => $faker->randomFloat(2, 0.1, 100),
-        'path' => '/storage/documents/' . $faker->uuid . '.pdf',
-        'original_filename' => $faker->word . '.pdf',
+        'path' => '/storage/documents/'.$faker->uuid.'.pdf',
+        'original_filename' => $faker->word.'.pdf',
         'mime' => 'application/pdf',
         'integration_type' => 'local',
         'source_type' => Client::class,

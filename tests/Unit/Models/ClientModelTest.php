@@ -13,7 +13,7 @@ class ClientModelTest extends TestCase
     use DatabaseTransactions;
 
     #[Test]
-    public function getPrimaryContactAttribute_returns_null_when_no_contacts_exist()
+    public function get_primary_contact_attribute_returns_null_when_no_contacts_exist()
     {
         $client = factory(Client::class)->create();
         // Remove any contacts created by the factory afterCreating hook
@@ -23,7 +23,7 @@ class ClientModelTest extends TestCase
     }
 
     #[Test]
-    public function getPrimaryContactAttribute_returns_null_when_no_primary_contact()
+    public function get_primary_contact_attribute_returns_null_when_no_primary_contact()
     {
         $client = factory(Client::class)->create();
         // Remove contacts created by factory, then add one that is NOT primary
@@ -38,7 +38,7 @@ class ClientModelTest extends TestCase
     }
 
     #[Test]
-    public function getPrimaryContactAttribute_returns_primary_contact_when_one_exists()
+    public function get_primary_contact_attribute_returns_primary_contact_when_one_exists()
     {
         $client = factory(Client::class)->create();
         $client->contacts()->forceDelete();
@@ -56,7 +56,7 @@ class ClientModelTest extends TestCase
     }
 
     #[Test]
-    public function getPrimaryContactAttribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
+    public function get_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
     {
         $client = factory(Client::class)->create();
         $client->contacts()->forceDelete();
@@ -79,7 +79,7 @@ class ClientModelTest extends TestCase
     }
 
     #[Test]
-    public function primaryContact_magic_attribute_is_accessible_via_correct_camelCase_method_name()
+    public function primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
     {
         $client = factory(Client::class)->create();
         $client->contacts()->forceDelete();
@@ -99,7 +99,7 @@ class ClientModelTest extends TestCase
     }
 
     #[Test]
-    public function getPrimaryContactAttribute_returns_null_on_fresh_client_without_contacts()
+    public function get_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
     {
         // Regression: before the fix, calling ->primaryContact on a client without
         // contacts would throw "Attempt to read property on null"

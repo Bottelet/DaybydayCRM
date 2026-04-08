@@ -29,7 +29,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function allRoles_excludes_owner_role()
+    public function all_roles_excludes_owner_role()
     {
         $roles = $this->repository->allRoles();
 
@@ -38,7 +38,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function allRoles_returns_roles_with_required_columns()
+    public function all_roles_returns_roles_with_required_columns()
     {
         $roles = $this->repository->allRoles();
 
@@ -53,7 +53,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function allRoles_returns_collection_of_role_models()
+    public function all_roles_returns_collection_of_role_models()
     {
         $roles = $this->repository->allRoles();
 
@@ -63,7 +63,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function allRoles_includes_administrator_role()
+    public function all_roles_includes_administrator_role()
     {
         $roles = $this->repository->allRoles();
         $roleNames = $roles->pluck('name')->toArray();
@@ -72,7 +72,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function listAllRoles_returns_display_names_keyed_by_id()
+    public function list_all_roles_returns_display_names_keyed_by_id()
     {
         $roles = $this->repository->listAllRoles();
 
@@ -86,7 +86,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function listAllRoles_does_not_include_owner()
+    public function list_all_roles_does_not_include_owner()
     {
         $roles = $this->repository->listAllRoles();
         $displayNames = $roles->toArray();
@@ -100,7 +100,7 @@ class RoleRepositoryTest extends TestCase
     }
 
     #[Test]
-    public function allRoles_is_not_broken_by_column_selection_fix()
+    public function all_roles_is_not_broken_by_column_selection_fix()
     {
         // Regression: before the fix, passing columns as individual arguments
         // (Role::all('display_name', 'id', ...)) would not work as expected in

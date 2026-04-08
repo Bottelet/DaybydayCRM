@@ -36,6 +36,10 @@ class LeadsController extends Controller
                 abort(403);
             }
 
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         return view('leads.index')
