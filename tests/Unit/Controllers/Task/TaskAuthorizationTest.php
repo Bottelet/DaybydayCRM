@@ -31,6 +31,16 @@ class TaskAuthorizationTest extends TestCase
 
         $this->task = factory(Task::class)->create();
 
+        // Create or find task-delete permission
+        $deletePermission = Permission::firstOrCreate(
+            ['name' => 'task-delete'],
+            [
+                'display_name' => 'Delete task',
+                'description' => 'Permission to delete task',
+                'grouping' => 'task',
+            ]
+        );
+
         // Create role with task-delete permission
         $roleWithPermission = Role::create([
             'name' => 'task-deleter',
@@ -38,7 +48,6 @@ class TaskAuthorizationTest extends TestCase
             'description' => 'Can delete tasks',
             'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
-        $deletePermission = Permission::where('name', 'task-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without task-delete permission

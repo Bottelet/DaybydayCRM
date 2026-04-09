@@ -30,7 +30,21 @@ class UserSecurityTest extends TestCase
             factory(Department::class)->create();
         }
 
+        // Ensure a default role exists
+        $defaultRole = Role::firstOrCreate(
+            ['name' => 'employee'],
+            [
+                'display_name' => 'Employee',
+                'description' => 'Default employee role',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            ]
+        );
+
         $this->targetUser = factory(User::class)->create();
+        // Ensure targetUser has a role
+        if ($this->targetUser->roles->isEmpty()) {
+            $this->targetUser->attachRole($defaultRole);
+        }
 
         // Create a user without user-update permission
         $this->unauthorizedUser = factory(User::class)->create();

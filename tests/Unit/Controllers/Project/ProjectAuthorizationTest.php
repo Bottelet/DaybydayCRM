@@ -30,6 +30,16 @@ class ProjectAuthorizationTest extends TestCase
 
         $this->project = factory(Project::class)->create();
 
+        // Create or find project-delete permission
+        $deletePermission = Permission::firstOrCreate(
+            ['name' => 'project-delete'],
+            [
+                'display_name' => 'Delete project',
+                'description' => 'Permission to delete project',
+                'grouping' => 'project',
+            ]
+        );
+
         // Create role with project-delete permission
         $roleWithPermission = Role::create([
             'name' => 'project-deleter',
@@ -37,7 +47,6 @@ class ProjectAuthorizationTest extends TestCase
             'description' => 'Can delete projects',
             'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
-        $deletePermission = Permission::where('name', 'project-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without project-delete permission
