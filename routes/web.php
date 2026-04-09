@@ -189,10 +189,9 @@ Route::group(['middleware' => ['auth']], static function () {
      * Offers
      */
     Route::group(['prefix' => 'offer'], static function () {
-        Route::get('/create', 'OffersController@showCreate')->name('offers.create');
-        Route::post('/won', 'OffersController@won')->name('offers.won');
+        Route::post('/won', 'OffersController@won')->name('offer.won');
         Route::post('/lost', 'OffersController@lost')->name('offer.lost');
-        Route::post('/{offer}/update', 'OffersController@update')->name('offers.update');
+        Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
         Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
 

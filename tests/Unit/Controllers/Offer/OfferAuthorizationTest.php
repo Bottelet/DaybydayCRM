@@ -221,7 +221,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $response = $this->json('POST', route('offers.lost'), [
+        $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
