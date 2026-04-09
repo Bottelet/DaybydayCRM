@@ -148,6 +148,8 @@ class PaymentsControllerAddPaymentTest extends TestCase
             'description' => 'A random description',
         ]);
 
+        $response->assertRedirect();
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
     }
 

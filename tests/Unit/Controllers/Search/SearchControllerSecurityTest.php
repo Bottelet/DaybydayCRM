@@ -126,8 +126,8 @@ class SearchControllerSecurityTest extends TestCase
     #[Test]
     public function search_rejects_class_path_injection()
     {
-        // Try to use full class path
-        $response = $this->json('GET', '/search/Test/App\\Models\\User');
+        // Try to use full class path (URL encoded backslashes)
+        $response = $this->json('GET', '/search/Test/App%5CModels%5CUser');
 
         $response->assertStatus(400)
             ->assertJson(['error' => 'Invalid search type']);
