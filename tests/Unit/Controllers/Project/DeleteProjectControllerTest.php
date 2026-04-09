@@ -3,8 +3,11 @@
 namespace Tests\Unit\Controllers\Project;
 
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Permission;
 use App\Models\Project;
+use App\Models\Role;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,9 +20,18 @@ class DeleteProjectControllerTest extends TestCase
 
     private $task;
 
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->user = factory(User::class)->create();
+        $role = Role::firstOrCreate(['name' => 'employee']);
+        $permission = Permission::firstOrCreate(['name' => 'project-delete']);
+        $role->attachPermission($permission);
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
 
         $this->project = factory(Project::class)->create();
         $this->task = factory(Task::class)->create([

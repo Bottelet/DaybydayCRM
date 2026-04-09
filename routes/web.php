@@ -31,7 +31,12 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::resource('users', 'UsersController');
+    Route::resource('users', 'UsersController', [
+        'middleware' => [
+            'user.update' => 'update',
+            'permission:user-delete' => 'destroy',
+        ],
+    ]);
 
     /**
      * Roles
@@ -57,7 +62,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::resource('clients', 'ClientsController');
+    Route::resource('clients', 'ClientsController', ['middleware' => ['client.delete' => 'destroy']]);
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
@@ -79,7 +84,12 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::resource('tasks', 'TasksController');
+    Route::resource('tasks', 'TasksController', [
+        'middleware' => [
+            'task.delete' => 'destroy',
+            'task.update.status' => 'updateStatus',
+        ],
+    ]);
 
     /**
      * Leads
@@ -89,15 +99,21 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('leads.updateAssign');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee'); // Alias
+        Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('leads.updateStatus'); // Alias
-        Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
-        Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
+        Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup')
+            ->middleware('permission:lead-update-deadline');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::resource('leads', 'LeadsController');
+    Route::resource('leads', 'LeadsController', [
+        'middleware' => [
+            'lead.delete' => 'destroy',
+            'lead.update.status' => 'updateStatus',
+        ],
+    ]);
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /**
@@ -125,7 +141,12 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::resource('projects', 'ProjectsController');
+    Route::resource('projects', 'ProjectsController', [
+        'middleware' => [
+            'project.delete' => 'destroy',
+            'project.update.status' => 'updateStatus',
+        ],
+    ]);
     /**
      * Settings
      */
@@ -202,7 +223,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
         Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
-    
+
     // Additional route aliases for backward compatibility
     Route::post('/offers/won', 'OffersController@won')->name('offers.won');
     Route::post('/offers/lost', 'OffersController@lost')->name('offers.lost');

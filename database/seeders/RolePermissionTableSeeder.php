@@ -18,12 +18,12 @@ class RolePermissionTableSeeder extends Seeder
     {
         $ownerRole = Role::where('name', Role::OWNER_ROLE)->first();
         $allPermissions = Permission::all()->pluck('id')->toArray();
-        
+
         // Use syncWithoutDetaching to prevent duplicate key errors
         $ownerRole->perms()->syncWithoutDetaching($allPermissions);
 
         $adminRole = Role::where('name', Role::ADMIN_ROLE)->first();
-        
+
         // Use syncWithoutDetaching to prevent duplicate key errors
         $adminRole->perms()->syncWithoutDetaching($allPermissions);
     }

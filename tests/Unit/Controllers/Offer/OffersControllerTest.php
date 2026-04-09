@@ -5,6 +5,9 @@ namespace Tests\Unit\Controllers\Offer;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,9 +21,18 @@ class OffersControllerTest extends TestCase
 
     protected $offer;
 
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->user = factory(User::class)->create();
+        $role = Role::firstOrCreate(['name' => 'employee']);
+        $permission = Permission::firstOrCreate(['name' => 'offer-edit']);
+        $role->attachPermission($permission);
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->lead = factory(Lead::class)->create();
@@ -95,7 +107,7 @@ class OffersControllerTest extends TestCase
     public function can_set_offer_as_won()
     {
         $offer = factory(Offer::class)->create();
-        
+
         $this->json('POST', route('offer.won'), [
             'offer_external_id' => $offer->external_id,
         ]);
@@ -110,7 +122,7 @@ class OffersControllerTest extends TestCase
     public function can_set_offer_as_lost()
     {
         $offer = factory(Offer::class)->create();
-        
+
         $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $offer->external_id,
         ]);

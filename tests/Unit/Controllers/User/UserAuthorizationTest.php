@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -33,7 +34,7 @@ class UserAuthorizationTest extends TestCase
             'name' => 'user-deleter',
             'display_name' => 'User Deleter',
             'description' => 'Can delete users',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $deletePermission = Permission::where('name', 'user-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
@@ -43,7 +44,7 @@ class UserAuthorizationTest extends TestCase
             'name' => 'user-viewer',
             'display_name' => 'User Viewer',
             'description' => 'Cannot delete users',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -89,8 +90,8 @@ class UserAuthorizationTest extends TestCase
 
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));
 
-        // Owner deletion is blocked by application logic and does not redirect
-        $response->assertStatus(200);
+        // Owner deletion is blocked by application logic and redirects back
+        $response->assertStatus(302);
         $this->assertDatabaseHas('users', ['id' => $ownerUser->id, 'deleted_at' => null]);
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceLine extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId, SoftDeletes;
 
     protected $fillable = [
         'external_id',

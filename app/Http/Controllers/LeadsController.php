@@ -178,13 +178,9 @@ class LeadsController extends Controller
      */
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
-        if (! auth()->user()->can('lead-update-deadline')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
-
-            return redirect()->route('tasks.show', $external_id);
-        }
         $lead = $this->findByExternalId($external_id);
-        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00')->toDateTimeString()])->save();
+        $contactTime = $request->contact_time ?: '00:00';
+        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$contactTime.':00')->toDateTimeString()])->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New follow up date is set'));
 

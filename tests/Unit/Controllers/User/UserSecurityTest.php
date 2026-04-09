@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class UserSecurityTest extends TestCase
             [
                 'display_name' => 'Employee',
                 'description' => 'Default employee role',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -47,7 +48,9 @@ class UserSecurityTest extends TestCase
         }
         // Ensure targetUser has a department
         if ($this->targetUser->department->isEmpty()) {
-            $this->targetUser->department()->attach(Department::first()->id);
+            $department = Department::first();
+            $this->targetUser->department()->attach($department->id);
+            $this->targetUser->load('department');
         }
 
         // Create a user without user-update permission

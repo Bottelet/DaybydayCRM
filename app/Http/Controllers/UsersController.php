@@ -315,7 +315,9 @@ class UsersController extends Controller
         $user = $this->findByExternalId($external_id);
 
         if ($user->hasRole('owner')) {
-            return Session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
+            Session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
+
+            return redirect()->back();
         }
 
         if ($request->tasks == 'move_all_tasks' && $request->task_user != '') {

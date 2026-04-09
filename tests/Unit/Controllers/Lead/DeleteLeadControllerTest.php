@@ -6,6 +6,9 @@ use App\Enums\OfferStatus;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -14,9 +17,19 @@ class DeleteLeadControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->user = factory(User::class)->create();
+        $role = Role::firstOrCreate(['name' => 'employee']);
+        $permission = Permission::firstOrCreate(['name' => 'lead-delete']);
+        $role->attachPermission($permission);
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
+
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 

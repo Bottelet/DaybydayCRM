@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class ClientAuthorizationTest extends TestCase
                 'display_name' => 'Delete client',
                 'description' => 'Permission to delete client',
                 'grouping' => 'client',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -45,7 +46,7 @@ class ClientAuthorizationTest extends TestCase
             'name' => 'client-deleter',
             'display_name' => 'Client Deleter',
             'description' => 'Can delete clients',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -54,7 +55,7 @@ class ClientAuthorizationTest extends TestCase
             'name' => 'client-viewer',
             'display_name' => 'Client Viewer',
             'description' => 'Cannot delete clients',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users

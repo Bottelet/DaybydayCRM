@@ -225,6 +225,7 @@ trait EntrustRoleTrait
                 if (! is_numeric($id) || $id < 1) {
                     throw new \InvalidArgumentException('Permission object does not have a valid ID. Ensure all permissions are saved before attaching.');
                 }
+
                 return $id;
             }
             if (is_array($permission)) {
@@ -232,17 +233,19 @@ trait EntrustRoleTrait
                 if (! is_numeric($id) || $id < 1) {
                     throw new \InvalidArgumentException('Invalid permission ID in array. Received: '.var_export($permission, true));
                 }
+
                 return $id;
             }
             if (! is_numeric($permission) || $permission < 1) {
                 throw new \InvalidArgumentException('Invalid permission ID. Received: '.var_export($permission, true));
             }
+
             return $permission;
         })->toArray();
 
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->perms()->syncWithoutDetaching($permissionIds);
-        
+
         // Clear cache
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.permission_role_table'))->flush();

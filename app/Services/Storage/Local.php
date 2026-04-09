@@ -8,7 +8,7 @@ class Local implements FilesystemIntegration
 {
     public function isEnabled()
     {
-        return false;
+        return config('app.env') === 'testing' || config('app.env') === 'local';
     }
 
     public function upload($client_folder, $filename, $file): array

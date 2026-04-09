@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Api\v1\Models\Token;
 use App\Traits\HasExternalId;
+use App\Traits\SearchableTrait;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
 use Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +15,9 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use Billable, EntrustUserTrait, HasExternalId, Notifiable, SoftDeletes;
+    use Billable, EntrustUserTrait, HasExternalId, Notifiable, SearchableTrait, SoftDeletes;
+
+    protected $searchableFields = ['name', 'email'];
 
     public function restore()
     {
@@ -190,5 +193,15 @@ class User extends Authenticatable
         }
 
         return collect(['keys' => $keys, 'counts' => $counts]);
+    }
+
+    public function displayValue()
+    {
+        return $this->name;
+    }
+
+    public function getSearchableFields(): array
+    {
+        return $this->searchableFields;
     }
 }

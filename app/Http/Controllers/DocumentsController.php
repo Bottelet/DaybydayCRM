@@ -148,6 +148,7 @@ class DocumentsController extends Controller
 
         if (! $task) {
             session()->flash('flash_message_warning', __('Task not found'));
+
             return redirect()->back();
         }
 
@@ -203,6 +204,7 @@ class DocumentsController extends Controller
 
         if (! $project) {
             session()->flash('flash_message_warning', __('Project not found'));
+
             return redirect()->back();
         }
 

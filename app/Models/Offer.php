@@ -18,7 +18,6 @@ class Offer extends Model
         'client_id',
         'source_id',
         'source_type',
-        'status',
         'external_id',
     ];
 

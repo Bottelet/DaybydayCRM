@@ -10,6 +10,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -48,7 +49,7 @@ class OfferAuthorizationTest extends TestCase
                 'display_name' => 'Create offer',
                 'description' => 'Permission to create offer',
                 'grouping' => 'offer',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -59,7 +60,7 @@ class OfferAuthorizationTest extends TestCase
                 'display_name' => 'Edit offer',
                 'description' => 'Permission to edit offer',
                 'grouping' => 'offer',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -68,7 +69,7 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-creator',
             'display_name' => 'Offer Creator',
             'description' => 'Can create offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithCreatePermission->attachPermission($createPermission);
 
@@ -77,7 +78,7 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-editor',
             'display_name' => 'Offer Editor',
             'description' => 'Can edit offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithEditPermission->attachPermission($editPermission);
 
@@ -86,7 +87,7 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-viewer',
             'display_name' => 'Offer Viewer',
             'description' => 'Cannot manage offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users

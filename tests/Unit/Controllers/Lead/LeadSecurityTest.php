@@ -65,7 +65,7 @@ class LeadSecurityTest extends TestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', '/leads/' . $this->lead->external_id . '/json');
+        $response = $this->json('DELETE', '/leads/'.$this->lead->external_id.'/json');
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);

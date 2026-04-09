@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -45,7 +46,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-deleter',
             'display_name' => 'Project Deleter',
             'description' => 'Can delete projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -54,7 +55,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-viewer',
             'display_name' => 'Project Viewer',
             'description' => 'Cannot delete projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -96,7 +97,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-assigner',
             'display_name' => 'Project Assigner',
             'description' => 'Can assign projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $assignPermission = Permission::where('name', 'can-assign-new-user-to-project')->first();
         $roleWithPermission->attachPermission($assignPermission);
@@ -138,7 +139,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'status-updater',
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $statusPermission = Permission::where('name', 'project-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);
