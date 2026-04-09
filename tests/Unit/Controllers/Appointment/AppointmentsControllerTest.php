@@ -28,13 +28,13 @@ class AppointmentsControllerTest extends TestCase
         $this->user = factory(User::class)->create();
         $role = Role::where('name', 'employee')->first();
         $this->user->attachRole($role);
-        
+
         // Give user permissions for appointment operations
         $editPermission = Permission::firstOrCreate(['name' => 'appointment-edit']);
         $deletePermission = Permission::firstOrCreate(['name' => 'appointment-delete']);
         $this->user->roles->first()->attachPermission($editPermission);
         $this->user->roles->first()->attachPermission($deletePermission);
-        
+
         $this->actingAs($this->user);
         $this->appointmentsWithInTime = factory(Appointment::class)->create([
             'user_id' => $this->user->id,

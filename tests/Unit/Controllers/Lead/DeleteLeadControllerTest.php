@@ -10,6 +10,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -29,7 +30,7 @@ class DeleteLeadControllerTest extends TestCase
             [
                 'display_name' => 'Employee',
                 'description' => 'Employee role',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
         $permission = Permission::firstOrCreate(
@@ -37,7 +38,7 @@ class DeleteLeadControllerTest extends TestCase
             [
                 'display_name' => 'Delete leads',
                 'description' => 'Permission to delete leads',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
         $role->attachPermission($permission);
