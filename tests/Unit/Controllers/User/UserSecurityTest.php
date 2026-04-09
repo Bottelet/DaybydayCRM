@@ -94,7 +94,16 @@ class UserSecurityTest extends TestCase
     {
         // Test that non-owners can't change passwords of other users
         $manager = factory(User::class)->create();
-        $managerRole = Role::where('name', 'manager')->first();
+        
+        // Create or get manager role
+        $managerRole = Role::firstOrCreate(
+            ['name' => 'manager'],
+            [
+                'display_name' => 'Manager',
+                'description' => 'Manager role',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            ]
+        );
         $manager->attachRole($managerRole);
 
         // Add user-update permission to manager
