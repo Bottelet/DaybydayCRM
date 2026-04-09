@@ -25,7 +25,10 @@ class Payment extends Model
         'invoice_id',
     ];
 
-    protected $dates = ['payment_date'];
+    protected $casts = [
+        'payment_date' => 'date',
+        'deleted_at' => 'datetime',
+    ];
 
     // getRouteKeyName() is provided by HasExternalId trait
 
