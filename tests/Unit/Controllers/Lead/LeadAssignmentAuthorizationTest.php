@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class LeadAssignmentAuthorizationTest extends TestCase
             [
                 'display_name' => 'Assign users to leads',
                 'description' => 'Can assign users to leads',
-                'external_id' => \Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -46,7 +47,7 @@ class LeadAssignmentAuthorizationTest extends TestCase
             [
                 'display_name' => 'Lead Assigner',
                 'description' => 'Can assign leads',
-                'external_id' => \Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
         $authorizedRole->perms()->sync([$permission->id]);

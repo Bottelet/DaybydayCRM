@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -36,7 +37,7 @@ class ProjectAssignmentAuthorizationTest extends TestCase
             [
                 'display_name' => 'Assign users to projects',
                 'description' => 'Can assign users to projects',
-                'external_id' => \Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -46,7 +47,7 @@ class ProjectAssignmentAuthorizationTest extends TestCase
             [
                 'display_name' => 'Project Assigner',
                 'description' => 'Can assign projects',
-                'external_id' => \Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
         $authorizedRole->perms()->sync([$permission->id]);
