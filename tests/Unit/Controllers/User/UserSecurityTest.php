@@ -3,12 +3,10 @@
 namespace Tests\Unit\Controllers\User;
 
 use App\Http\Middleware\VerifyCsrfToken;
-use App\Models\Department;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -27,42 +25,15 @@ class UserSecurityTest extends TestCase
     {
         parent::setUp();
 
-        // Ensure at least one department exists for the factory afterCreating callback
-        if (Department::count() === 0) {
-            factory(Department::class)->create();
-        }
-
-        // Ensure a default role exists
-        $defaultRole = Role::firstOrCreate(
-            ['name' => 'employee'],
-            [
-                'display_name' => 'Employee',
-                'description' => 'Default employee role',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-
+        // Create target user (factory now handles department and role attachment)
         $this->targetUser = factory(User::class)->create();
-        // Ensure targetUser has a role
-        if ($this->targetUser->roles->isEmpty()) {
-            $this->targetUser->attachRole($defaultRole);
-        }
-        // Ensure targetUser has a department
-        if ($this->targetUser->department->isEmpty()) {
-            $department = Department::first();
-            $this->targetUser->department()->attach($department->id);
-            $this->targetUser->load('department');
-        }
 
-        // Create and authenticate a user with default role
+        // Create and authenticate a user
         $this->user = factory(User::class)->create();
-        $this->user->attachRole($defaultRole);
         $this->actingAs($this->user);
 
         // Create a user without user-update permission
         $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
