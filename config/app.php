@@ -250,6 +250,7 @@ return [
         'Schema' => Schema::class,
         'Session' => Session::class,
         'Storage' => Storage::class,
+        'Str' => Illuminate\Support\Str::class,
         'URL' => URL::class,
         'Validator' => Validator::class,
         'View' => View::class,
