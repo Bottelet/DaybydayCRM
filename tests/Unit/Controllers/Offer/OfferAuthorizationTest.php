@@ -86,7 +86,7 @@ class OfferAuthorizationTest extends TestCase
 
         $newLead = factory(Lead::class)->create();
 
-        $response = $this->json('POST', route('offers.create', $newLead->external_id), [
+        $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
                 'title' => 'Test Item',
                 'type' => 'hours',
@@ -107,7 +107,7 @@ class OfferAuthorizationTest extends TestCase
 
         $newLead = factory(Lead::class)->create();
 
-        $response = $this->json('POST', route('offers.create', $newLead->external_id), [
+        $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
                 'title' => 'Test Item',
                 'type' => 'hours',
@@ -126,7 +126,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
-        $response = $this->json('PATCH', route('offers.update', $this->offer->external_id), [
+        $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title' => 'Updated Item',
                 'type' => 'hours',
@@ -144,7 +144,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $response = $this->json('PATCH', route('offers.update', $this->offer->external_id), [
+        $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title' => 'Updated Item',
                 'type' => 'hours',
@@ -162,7 +162,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
-        $response = $this->json('POST', route('offers.won'), [
+        $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -177,7 +177,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $response = $this->json('POST', route('offers.won'), [
+        $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -190,7 +190,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
-        $response = $this->json('POST', route('offers.lost'), [
+        $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
