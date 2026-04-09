@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.377.0",
+            "version": "3.378.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "573c569d20710a902446688a0439b53fef256e3a"
+                "reference": "c7a07701703e95c888a24959d5ea426c3d374240"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/573c569d20710a902446688a0439b53fef256e3a",
-                "reference": "573c569d20710a902446688a0439b53fef256e3a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c7a07701703e95c888a24959d5ea426c3d374240",
+                "reference": "c7a07701703e95c888a24959d5ea426c3d374240",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.377.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.378.1"
             },
-            "time": "2026-04-07T18:14:36+00:00"
+            "time": "2026-04-09T18:16:50+00:00"
         },
         {
             "name": "brick/math",
@@ -9304,22 +9304,22 @@
         },
         {
             "name": "nunomaduro/pao",
-            "version": "v0.1.3",
+            "version": "v0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/pao.git",
-                "reference": "4c5db4a762b1a99a91d6249892b356a1f0681a33"
+                "reference": "32a74492ce54379ef91323c965121f6a38b6bde4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/pao/zipball/4c5db4a762b1a99a91d6249892b356a1f0681a33",
-                "reference": "4c5db4a762b1a99a91d6249892b356a1f0681a33",
+                "url": "https://api.github.com/repos/nunomaduro/pao/zipball/32a74492ce54379ef91323c965121f6a38b6bde4",
+                "reference": "32a74492ce54379ef91323c965121f6a38b6bde4",
                 "shasum": ""
             },
             "require": {
                 "ext-simplexml": "*",
                 "php": "^8.3",
-                "shipfastlabs/agent-detector": "^1.1.0"
+                "shipfastlabs/agent-detector": "^1.1.2"
             },
             "conflict": {
                 "laravel/framework": "<12.0",
@@ -9330,7 +9330,7 @@
             "require-dev": {
                 "brianium/paratest": "^7.20.0",
                 "laravel/pint": "^1.29.0",
-                "orchestra/testbench": "^10.11.0 || ^11.0.0",
+                "orchestra/testbench": "^10.11.0 || ^11.1.0",
                 "pestphp/pest": "^4.4.3 || ^5.0.0",
                 "pestphp/pest-plugin-type-coverage": "^4.0.3 || ^5.0.0",
                 "phpstan/phpstan": "^2.1.46",
@@ -9373,6 +9373,7 @@
             "keywords": [
                 "Agent",
                 "PHPStan",
+                "dev",
                 "json",
                 "paratest",
                 "pest",
@@ -9382,7 +9383,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nunomaduro/pao/issues",
-                "source": "https://github.com/nunomaduro/pao/tree/v0.1.3"
+                "source": "https://github.com/nunomaduro/pao/tree/v0.1.4"
             },
             "funding": [
                 {
@@ -9398,7 +9399,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-08T15:22:27+00:00"
+            "time": "2026-04-09T14:45:19+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -9520,16 +9521,16 @@
         },
         {
             "name": "php-debugbar/php-debugbar",
-            "version": "v3.7.3",
+            "version": "v3.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-debugbar/php-debugbar.git",
-                "reference": "ea965a77f10b3824881b0ae7dba70d2038a9df84"
+                "reference": "af82a54530c56919ce3c6fba1942a247ac9f6777"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/ea965a77f10b3824881b0ae7dba70d2038a9df84",
-                "reference": "ea965a77f10b3824881b0ae7dba70d2038a9df84",
+                "url": "https://api.github.com/repos/php-debugbar/php-debugbar/zipball/af82a54530c56919ce3c6fba1942a247ac9f6777",
+                "reference": "af82a54530c56919ce3c6fba1942a247ac9f6777",
                 "shasum": ""
             },
             "require": {
@@ -9606,7 +9607,7 @@
             ],
             "support": {
                 "issues": "https://github.com/php-debugbar/php-debugbar/issues",
-                "source": "https://github.com/php-debugbar/php-debugbar/tree/v3.7.3"
+                "source": "https://github.com/php-debugbar/php-debugbar/tree/v3.7.4"
             },
             "funding": [
                 {
@@ -9618,7 +9619,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-08T07:22:30+00:00"
+            "time": "2026-04-09T11:28:41+00:00"
         },
         {
             "name": "php-debugbar/symfony-bridge",
@@ -11279,16 +11280,16 @@
         },
         {
             "name": "shipfastlabs/agent-detector",
-            "version": "v1.1.0",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipfastlabs/agent-detector.git",
-                "reference": "eefb18b61968a59a0428a4f75bee2e21596fe949"
+                "reference": "98abb0aa0950e62b9125143daad171ef42cb467d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipfastlabs/agent-detector/zipball/eefb18b61968a59a0428a4f75bee2e21596fe949",
-                "reference": "eefb18b61968a59a0428a4f75bee2e21596fe949",
+                "url": "https://api.github.com/repos/shipfastlabs/agent-detector/zipball/98abb0aa0950e62b9125143daad171ef42cb467d",
+                "reference": "98abb0aa0950e62b9125143daad171ef42cb467d",
                 "shasum": ""
             },
             "require": {
@@ -11334,7 +11335,7 @@
             ],
             "support": {
                 "issues": "https://github.com/shipfastlabs/agent-detector/issues",
-                "source": "https://github.com/shipfastlabs/agent-detector/tree/v1.1.0"
+                "source": "https://github.com/shipfastlabs/agent-detector/tree/v1.1.2"
             },
             "funding": [
                 {
@@ -11342,7 +11343,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-11T22:59:30+00:00"
+            "time": "2026-04-09T14:17:25+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
@@ -11520,16 +11521,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.1.6",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8"
+                "reference": "1b99650e7ffcad232624a260bc7fbdec2ffc407c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
-                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/1b99650e7ffcad232624a260bc7fbdec2ffc407c",
+                "reference": "1b99650e7ffcad232624a260bc7fbdec2ffc407c",
                 "shasum": ""
             },
             "require": {
@@ -11576,9 +11577,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.1.6"
+                "source": "https://github.com/webmozarts/assert/tree/2.2.0"
             },
-            "time": "2026-02-27T10:28:38+00:00"
+            "time": "2026-04-09T16:54:47+00:00"
         }
     ],
     "aliases": [],
