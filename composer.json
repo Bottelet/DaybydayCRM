@@ -35,6 +35,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": ">=4.2.4",
+        "brianium/paratest": "^7.20",
         "driftingly/rector-laravel": ">=2.2",
         "fakerphp/faker": "^1.24.1",
         "laravel/dusk": ">=8.5",
@@ -42,6 +43,7 @@
         "laravel/tinker": ">=3",
         "mockery/mockery": ">=1.6.12",
         "nunomaduro/collision": ">=8.9.3",
+        "nunomaduro/pao": "^0.1",
         "phpunit/phpunit": ">=12.5.16",
         "rector/rector": ">=2.4",
         "symfony/css-selector": ">=7.4.8",
