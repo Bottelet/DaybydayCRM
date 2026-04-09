@@ -112,6 +112,13 @@ class PermissionsTableSeeder extends Seeder
         $changeLinkedProject->grouping = 'task';
         $changeLinkedProject->save();
 
+        $deleteTask = new Permission;
+        $deleteTask->display_name = 'Delete task';
+        $deleteTask->name = 'task-delete';
+        $deleteTask->description = 'Permission to delete task';
+        $deleteTask->grouping = 'task';
+        $deleteTask->save();
+
         $taskUploadFiles = new Permission;
         $taskUploadFiles->display_name = 'Upload files to task';
         $taskUploadFiles->name = 'task-upload-files';
@@ -178,6 +185,13 @@ class PermissionsTableSeeder extends Seeder
         $assignNewUserLead->grouping = 'lead';
         $assignNewUserLead->save();
 
+        $deleteLead = new Permission;
+        $deleteLead->display_name = 'Delete lead';
+        $deleteLead->name = 'lead-delete';
+        $deleteLead->description = 'Permission to delete lead';
+        $deleteLead->grouping = 'lead';
+        $deleteLead->save();
+
         /**
          * Project Permission
          */
@@ -208,6 +222,13 @@ class PermissionsTableSeeder extends Seeder
         $assignNewUserproject->description = 'Permission to change the assigned user on a project';
         $assignNewUserproject->grouping = 'project';
         $assignNewUserproject->save();
+
+        $deleteProject = new Permission;
+        $deleteProject->display_name = 'Delete project';
+        $deleteProject->name = 'project-delete';
+        $deleteProject->description = 'Permission to delete project';
+        $deleteProject->grouping = 'project';
+        $deleteProject->save();
 
         $projectUploadFiles = new Permission;
         $projectUploadFiles->display_name = 'Upload files to project';
