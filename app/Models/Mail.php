@@ -16,7 +16,10 @@ class Mail extends Model
         'sent_at',
     ];
 
-    protected $dates = ['sent_at', 'send_at'];
+    protected $casts = [
+        'sent_at' => 'datetime',
+        'send_at' => 'datetime',
+    ];
 
     public function user()
     {

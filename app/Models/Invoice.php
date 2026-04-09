@@ -36,8 +36,9 @@ class Invoice extends Model
         'offer_id',
     ];
 
-    protected $dates = [
-        'due_at',
+    protected $casts = [
+        'due_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     // getRouteKeyName() is provided by HasExternalId trait
