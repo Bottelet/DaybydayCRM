@@ -100,5 +100,8 @@ class Kernel extends HttpKernel
         'can' => Authorize::class,
         'guest' => RedirectIfAuthenticated::class,
         'throttle' => ThrottleRequests::class,
+        'role' => \App\Zizaco\Entrust\Middleware\EntrustRole::class,
+        'permission' => \App\Zizaco\Entrust\Middleware\EntrustPermission::class,
+        'ability' => \App\Zizaco\Entrust\Middleware\EntrustAbility::class,
     ];
 }

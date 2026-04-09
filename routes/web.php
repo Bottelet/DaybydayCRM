@@ -31,12 +31,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::resource('users', 'UsersController', [
-        'middleware' => [
-            'user.update' => 'update',
-            'permission:user-delete' => 'destroy',
-        ],
-    ]);
+    Route::middleware(['user.update'])->group(function () {
+        Route::resource('users', 'UsersController')->only(['update']);
+    });
+    Route::middleware(['permission:user-delete'])->group(function () {
+        Route::resource('users', 'UsersController')->only(['destroy']);
+    });
+    Route::resource('users', 'UsersController')->except(['update', 'destroy']);
 
     /**
      * Roles
@@ -62,7 +63,10 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::resource('clients', 'ClientsController', ['middleware' => ['client.delete' => 'destroy']]);
+    Route::middleware(['client.delete'])->group(function () {
+        Route::resource('clients', 'ClientsController')->only(['destroy']);
+    });
+    Route::resource('clients', 'ClientsController')->except(['destroy']);
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
@@ -84,12 +88,10 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::resource('tasks', 'TasksController', [
-        'middleware' => [
-            'task.delete' => 'destroy',
-            'task.update.status' => 'updateStatus',
-        ],
-    ]);
+    Route::middleware(['permission:task-delete'])->group(function () {
+        Route::resource('tasks', 'TasksController')->only(['destroy']);
+    });
+    Route::resource('tasks', 'TasksController')->except(['destroy']);
 
     /**
      * Leads
@@ -108,12 +110,10 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::resource('leads', 'LeadsController', [
-        'middleware' => [
-            'lead.delete' => 'destroy',
-            'lead.update.status' => 'updateStatus',
-        ],
-    ]);
+    Route::middleware(['permission:lead-delete'])->group(function () {
+        Route::resource('leads', 'LeadsController')->only(['destroy']);
+    });
+    Route::resource('leads', 'LeadsController')->except(['destroy']);
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /**
@@ -141,12 +141,10 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::resource('projects', 'ProjectsController', [
-        'middleware' => [
-            'project.delete' => 'destroy',
-            'project.update.status' => 'updateStatus',
-        ],
-    ]);
+    Route::middleware(['permission:project-delete'])->group(function () {
+        Route::resource('projects', 'ProjectsController')->only(['destroy']);
+    });
+    Route::resource('projects', 'ProjectsController')->except(['destroy']);
     /**
      * Settings
      */
