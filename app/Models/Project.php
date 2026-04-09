@@ -29,7 +29,10 @@ class Project extends Model implements Commentable
         'deadline',
     ];
 
-    protected $dates = ['deadline'];
+    protected $casts = [
+        'deadline' => 'date',
+        'deleted_at' => 'datetime',
+    ];
 
     public static function boot()
     {
