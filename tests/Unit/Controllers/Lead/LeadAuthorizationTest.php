@@ -74,7 +74,7 @@ class LeadAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithPermission);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertStatus(302); // Redirect on success
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
