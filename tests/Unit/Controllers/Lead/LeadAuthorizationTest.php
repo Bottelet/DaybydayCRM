@@ -37,6 +37,7 @@ class LeadAuthorizationTest extends TestCase
                 'display_name' => 'Delete lead',
                 'description' => 'Permission to delete lead',
                 'grouping' => 'lead',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
             ]
         );
 
@@ -45,6 +46,7 @@ class LeadAuthorizationTest extends TestCase
             'name' => 'lead-deleter',
             'display_name' => 'Lead Deleter',
             'description' => 'Can delete leads',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -53,6 +55,7 @@ class LeadAuthorizationTest extends TestCase
             'name' => 'lead-viewer',
             'display_name' => 'Lead Viewer',
             'description' => 'Cannot delete leads',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -97,6 +100,7 @@ class LeadAuthorizationTest extends TestCase
                 'display_name' => 'Assign users to leads',
                 'description' => 'Can assign users to leads',
                 'grouping' => 'lead',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
             ]
         );
 
@@ -104,6 +108,7 @@ class LeadAuthorizationTest extends TestCase
             'name' => 'lead-assigner',
             'display_name' => 'Lead Assigner',
             'description' => 'Can assign leads',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($assignPermission);
 
@@ -142,6 +147,7 @@ class LeadAuthorizationTest extends TestCase
                 'display_name' => 'Update lead status',
                 'description' => 'Permission to update lead status',
                 'grouping' => 'lead',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
             ]
         );
 
@@ -149,6 +155,7 @@ class LeadAuthorizationTest extends TestCase
             'name' => 'lead-status-updater',
             'display_name' => 'Lead Status Updater',
             'description' => 'Can update lead status',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($statusPermission);
 
