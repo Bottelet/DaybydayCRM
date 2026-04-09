@@ -99,7 +99,7 @@ class ClientsControllerTest extends TestCase
         ]);
 
         $client = Client::where('vat', '12312335')->first();
-        $this->assertNotNull($client, 'Client with updated VAT should exist');
+        $this->assertNotNull($client, 'Client should exist with updated VAT number 12312335');
         $this->assertEquals($client->vat, '12312335');
         $this->assertEquals($client->company_type, 'Aps');
         $this->assertEquals($client->company_name, 'Hello');

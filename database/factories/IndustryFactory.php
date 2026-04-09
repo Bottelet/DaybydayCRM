@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Industry::class, static function (Faker $faker) {
     return [
-        'external_id' => $faker->uuid,
+        'external_id' => $faker->uuid(),
         'name' => $faker->randomElement([
             'Accommodations',
             'Accounting',
