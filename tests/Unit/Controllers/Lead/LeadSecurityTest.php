@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Lead;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Role;
@@ -29,10 +30,18 @@ class LeadSecurityTest extends TestCase
 
         $this->lead = factory(Lead::class)->create();
 
+        // Create and authenticate a user with default role
+        $this->user = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
+
         // Create a user without lead-delete permission
         $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
         $this->unauthorizedUser->attachRole($role);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -81,8 +90,8 @@ class LeadSecurityTest extends TestCase
         $originalStatus = $this->lead->status_id;
         $originalTitle = $this->lead->title;
 
-        // Attempt to change multiple fields (mass assignment attack)
-        $response = $this->json('PATCH', route('lead.update.assignee', $this->lead->external_id), [
+        // Use PATCH (route is PATCH)
+        $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
             'status_id' => 999, // This should be ignored
             'title' => 'Hacked Title', // This should be ignored
@@ -109,7 +118,7 @@ class LeadSecurityTest extends TestCase
         $newStatus = factory(Status::class)->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
 
-        // Attempt to change both status_id and user_assigned_id (mass assignment attack)
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
@@ -138,7 +147,7 @@ class LeadSecurityTest extends TestCase
         $taskStatus = factory(Status::class)->create(['source_type' => Task::class]);
         $originalStatus = $this->lead->status_id;
 
-        // Attempt to assign a Task status to a Lead
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $taskStatus->id,
         ]);
@@ -161,7 +170,7 @@ class LeadSecurityTest extends TestCase
 
         $originalStatus = $this->lead->status_id;
 
-        // Attempt to assign a non-existent status ID
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => 999999,
         ]);

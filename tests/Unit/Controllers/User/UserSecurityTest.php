@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\User;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Department;
 use App\Models\Permission;
 use App\Models\Role;
@@ -53,10 +54,18 @@ class UserSecurityTest extends TestCase
             $this->targetUser->load('department');
         }
 
+        // Create and authenticate a user with default role
+        $this->user = factory(User::class)->create();
+        $this->user->attachRole($defaultRole);
+        $this->actingAs($this->user);
+
         // Create a user without user-update permission
         $this->unauthorizedUser = factory(User::class)->create();
         $role = Role::where('name', 'employee')->first();
         $this->unauthorizedUser->attachRole($role);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]

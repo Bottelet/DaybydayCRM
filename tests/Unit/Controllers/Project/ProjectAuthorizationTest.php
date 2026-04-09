@@ -65,6 +65,7 @@ class ProjectAuthorizationTest extends TestCase
         $this->userWithoutPermission = factory(User::class)->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
+        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
@@ -99,7 +100,7 @@ class ProjectAuthorizationTest extends TestCase
             'description' => 'Can assign projects',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $assignPermission = Permission::where('name', 'can-assign-new-user-to-project')->first();
+        $assignPermission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-project']);
         $roleWithPermission->attachPermission($assignPermission);
 
         $user = factory(User::class)->create();
@@ -108,6 +109,7 @@ class ProjectAuthorizationTest extends TestCase
 
         $newUser = factory(User::class)->create();
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
@@ -124,6 +126,7 @@ class ProjectAuthorizationTest extends TestCase
         $newUser = factory(User::class)->create();
         $originalAssignee = $this->project->user_assigned_id;
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
@@ -141,7 +144,7 @@ class ProjectAuthorizationTest extends TestCase
             'description' => 'Can update status',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $statusPermission = Permission::where('name', 'project-update-status')->first();
+        $statusPermission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $roleWithPermission->attachPermission($statusPermission);
 
         $user = factory(User::class)->create();
@@ -152,6 +155,7 @@ class ProjectAuthorizationTest extends TestCase
         $originalTitle = $this->project->title;
         $originalDescription = $this->project->description;
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('projects.updateStatus', $this->project->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',

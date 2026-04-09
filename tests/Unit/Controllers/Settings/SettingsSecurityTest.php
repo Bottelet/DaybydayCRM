@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Settings;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -25,6 +26,15 @@ class SettingsSecurityTest extends TestCase
         $this->nonAdminUser = factory(User::class)->create();
         $role = Role::where('name', 'employee')->first();
         $this->nonAdminUser->attachRole($role);
+
+        // Create and authenticate an admin user
+        $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
+        $this->user = factory(User::class)->create();
+        $this->user->attachRole($adminRole);
+        $this->actingAs($this->user);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -48,7 +58,7 @@ class SettingsSecurityTest extends TestCase
     #[Test]
     public function admin_can_update_overall_settings()
     {
-        $response = $this->json('POST', route('settings.updateOverall'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Test Company',
             'country' => 'GB',
             'language' => 'en',
@@ -67,7 +77,7 @@ class SettingsSecurityTest extends TestCase
     {
         $this->actingAs($this->nonAdminUser);
 
-        $response = $this->json('POST', route('settings.updateOverall'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Hacked Company',
             'country' => 'GB',
             'language' => 'en',

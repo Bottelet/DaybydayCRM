@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Task;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Role;
@@ -29,10 +30,18 @@ class TaskSecurityTest extends TestCase
 
         $this->task = factory(Task::class)->create();
 
+        // Create and authenticate a user with default role
+        $this->user = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
+
         // Create a user without task-delete permission
         $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
         $this->unauthorizedUser->attachRole($role);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -69,7 +78,7 @@ class TaskSecurityTest extends TestCase
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
 
-        // Attempt to change both status_id and user_assigned_id (mass assignment attack)
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
@@ -94,6 +103,7 @@ class TaskSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
         ], ['X-Requested-With' => 'XMLHttpRequest']);
@@ -110,6 +120,7 @@ class TaskSecurityTest extends TestCase
 
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => $newStatus->external_id,
         ], ['X-Requested-With' => 'XMLHttpRequest']);
@@ -128,7 +139,7 @@ class TaskSecurityTest extends TestCase
         $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
         $originalStatus = $this->task->status_id;
 
-        // Attempt to assign a Lead status to a Task
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $leadStatus->id,
         ]);
@@ -151,7 +162,7 @@ class TaskSecurityTest extends TestCase
 
         $originalStatus = $this->task->status_id;
 
-        // Attempt to assign a non-existent status ID
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => 999999,
         ]);

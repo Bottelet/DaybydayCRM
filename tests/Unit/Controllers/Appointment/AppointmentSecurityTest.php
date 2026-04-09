@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Appointment;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Appointment;
 use App\Models\Permission;
 use App\Models\Role;
@@ -25,6 +26,12 @@ class AppointmentSecurityTest extends TestCase
     {
         parent::setUp();
 
+        // Create and authenticate a user with default role
+        $this->user = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $this->user->attachRole($role);
+        $this->actingAs($this->user);
+
         $this->appointment = factory(Appointment::class)->create([
             'user_id' => $this->user->id,
             'start_at' => now(),
@@ -33,8 +40,10 @@ class AppointmentSecurityTest extends TestCase
 
         // Create a user without appointment-update permission
         $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
         $this->unauthorizedUser->attachRole($role);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -44,10 +53,12 @@ class AppointmentSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'appointment-update']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertStatus(200);
@@ -75,10 +86,12 @@ class AppointmentSecurityTest extends TestCase
         $basicRole = Role::where('name', 'employee')->first();
         $this->user->attachRole($basicRole);
 
-        $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertStatus(403);
