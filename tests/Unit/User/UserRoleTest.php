@@ -25,7 +25,7 @@ class UserRoleTest extends TestCase
     }
 
     #[Test]
-    public function factory_state_withRole_attaches_specified_role()
+    public function factory_state_with_role_attaches_specified_role()
     {
         // When using the 'withRole' state with 'employee', user should have employee role
         $user = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
@@ -36,7 +36,7 @@ class UserRoleTest extends TestCase
     }
 
     #[Test]
-    public function factory_state_withRole_supports_different_roles()
+    public function factory_state_with_role_supports_different_roles()
     {
         // Test employee role
         $employee = factory(User::class)->state('withRole', ['role' => 'employee'])->create();

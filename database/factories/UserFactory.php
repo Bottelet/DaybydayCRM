@@ -37,7 +37,7 @@ $factory->state(User::class, 'withRole', function () {
     return [];
 })->afterCreatingState(User::class, 'withRole', function ($user, $faker, $attributes) {
     $roleName = $attributes['role'] ?? 'employee';
-    
+
     // Map common role name variations
     $roleNames = [
         'employee' => ['name' => 'employee', 'display_name' => 'Employee'],
@@ -46,17 +46,17 @@ $factory->state(User::class, 'withRole', function () {
         'admin' => ['name' => 'administrator', 'display_name' => 'Administrator'],
         'manager' => ['name' => 'manager', 'display_name' => 'Manager'],
     ];
-    
+
     $roleData = $roleNames[$roleName] ?? ['name' => $roleName, 'display_name' => ucfirst($roleName)];
-    
+
     $role = Role::firstOrCreate(
         ['name' => $roleData['name']],
         [
             'display_name' => $roleData['display_name'],
-            'description' => $roleData['display_name'] . ' role',
+            'description' => $roleData['display_name'].' role',
             'external_id' => Str::uuid()->toString(),
         ]
     );
-    
+
     $user->attachRole($role);
 });

@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -94,14 +95,14 @@ class UserSecurityTest extends TestCase
     {
         // Test that non-owners can't change passwords of other users
         $manager = factory(User::class)->create();
-        
+
         // Create or get manager role
         $managerRole = Role::firstOrCreate(
             ['name' => 'manager'],
             [
                 'display_name' => 'Manager',
                 'description' => 'Manager role',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
         $manager->attachRole($managerRole);
