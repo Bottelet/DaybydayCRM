@@ -24,8 +24,22 @@ class DeleteLeadControllerTest extends TestCase
         parent::setUp();
 
         $this->user = factory(User::class)->create();
-        $role = Role::firstOrCreate(['name' => 'employee']);
-        $permission = Permission::firstOrCreate(['name' => 'lead-delete']);
+        $role = Role::firstOrCreate(
+            ['name' => 'employee'],
+            [
+                'display_name' => 'Employee',
+                'description' => 'Employee role',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            ]
+        );
+        $permission = Permission::firstOrCreate(
+            ['name' => 'lead-delete'],
+            [
+                'display_name' => 'Delete leads',
+                'description' => 'Permission to delete leads',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            ]
+        );
         $role->attachPermission($permission);
         $this->user->attachRole($role);
         $this->actingAs($this->user);
