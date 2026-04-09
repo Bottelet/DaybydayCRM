@@ -30,7 +30,11 @@ class Appointment extends Model
         'client_id',
     ];
 
-    protected $dates = ['start_at', 'end_at'];
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['id', 'user_id', 'source_type', 'source_id', 'client_id'];
 

@@ -19,7 +19,10 @@ class Absence extends Model
 
     ];
 
-    protected $dates = ['start_at', 'end_at'];
+    protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
+    ];
 
     protected $hidden = ['id', 'user_id'];
 

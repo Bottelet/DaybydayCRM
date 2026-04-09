@@ -41,7 +41,10 @@ class Lead extends Model implements Commentable
         'invoice_id',
     ];
 
-    protected $dates = ['deadline'];
+    protected $casts = [
+        'deadline' => 'date',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
 
