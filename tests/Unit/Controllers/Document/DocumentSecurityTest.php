@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Document;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Project;
@@ -43,6 +44,8 @@ class DocumentSecurityTest extends TestCase
             'name' => 'local',
             'api_type' => 'file',
         ]);
+
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
