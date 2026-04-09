@@ -33,7 +33,10 @@ class Task extends Model implements Commentable
         'project_id',
     ];
 
-    protected $dates = ['deadline'];
+    protected $casts = [
+        'deadline' => 'date',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
 
