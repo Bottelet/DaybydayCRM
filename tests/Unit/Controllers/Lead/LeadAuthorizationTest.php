@@ -30,13 +30,22 @@ class LeadAuthorizationTest extends TestCase
 
         $this->lead = factory(Lead::class)->create();
 
+        // Create or get the lead-delete permission
+        $deletePermission = Permission::firstOrCreate(
+            ['name' => 'lead-delete'],
+            [
+                'display_name' => 'Delete lead',
+                'description' => 'Permission to delete lead',
+                'grouping' => 'lead',
+            ]
+        );
+
         // Create role with lead-delete permission
         $roleWithPermission = Role::create([
             'name' => 'lead-deleter',
             'display_name' => 'Lead Deleter',
             'description' => 'Can delete leads',
         ]);
-        $deletePermission = Permission::where('name', 'lead-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without lead-delete permission
@@ -81,12 +90,21 @@ class LeadAuthorizationTest extends TestCase
     #[Test]
     public function lead_update_assign_only_accepts_user_assigned_id_field()
     {
+        // Create or get the permission
+        $assignPermission = Permission::firstOrCreate(
+            ['name' => 'can-assign-new-user-to-lead'],
+            [
+                'display_name' => 'Assign users to leads',
+                'description' => 'Can assign users to leads',
+                'grouping' => 'lead',
+            ]
+        );
+
         $roleWithPermission = Role::create([
             'name' => 'lead-assigner',
             'display_name' => 'Lead Assigner',
             'description' => 'Can assign leads',
         ]);
-        $assignPermission = Permission::where('name', 'can-assign-new-user-to-lead')->first();
         $roleWithPermission->attachPermission($assignPermission);
 
         $user = factory(User::class)->create();
@@ -117,12 +135,21 @@ class LeadAuthorizationTest extends TestCase
     #[Test]
     public function lead_update_status_only_accepts_status_id_field()
     {
+        // Create or get the permission
+        $statusPermission = Permission::firstOrCreate(
+            ['name' => 'lead-update-status'],
+            [
+                'display_name' => 'Update lead status',
+                'description' => 'Permission to update lead status',
+                'grouping' => 'lead',
+            ]
+        );
+
         $roleWithPermission = Role::create([
             'name' => 'lead-status-updater',
             'display_name' => 'Lead Status Updater',
             'description' => 'Can update lead status',
         ]);
-        $statusPermission = Permission::where('name', 'lead-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);
 
         $user = factory(User::class)->create();

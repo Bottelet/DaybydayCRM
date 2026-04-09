@@ -41,13 +41,32 @@ class OfferAuthorizationTest extends TestCase
             'status' => OfferStatus::inProgress()->getStatus(),
         ]);
 
+        // Create or get the offer-create permission
+        $createPermission = Permission::firstOrCreate(
+            ['name' => 'offer-create'],
+            [
+                'display_name' => 'Create offer',
+                'description' => 'Permission to create offer',
+                'grouping' => 'offer',
+            ]
+        );
+
+        // Create or get the offer-edit permission
+        $editPermission = Permission::firstOrCreate(
+            ['name' => 'offer-edit'],
+            [
+                'display_name' => 'Edit offer',
+                'description' => 'Permission to edit offer',
+                'grouping' => 'offer',
+            ]
+        );
+
         // Create role with offer-create permission
         $roleWithCreatePermission = Role::create([
             'name' => 'offer-creator',
             'display_name' => 'Offer Creator',
             'description' => 'Can create offers',
         ]);
-        $createPermission = Permission::where('name', 'offer-create')->first();
         $roleWithCreatePermission->attachPermission($createPermission);
 
         // Create role with offer-edit permission
@@ -56,7 +75,6 @@ class OfferAuthorizationTest extends TestCase
             'display_name' => 'Offer Editor',
             'description' => 'Can edit offers',
         ]);
-        $editPermission = Permission::where('name', 'offer-edit')->first();
         $roleWithEditPermission->attachPermission($editPermission);
 
         // Create role without any offer permissions

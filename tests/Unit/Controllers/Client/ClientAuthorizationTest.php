@@ -29,13 +29,22 @@ class ClientAuthorizationTest extends TestCase
 
         $this->client = factory(Client::class)->create();
 
+        // Create or get the client-delete permission
+        $deletePermission = Permission::firstOrCreate(
+            ['name' => 'client-delete'],
+            [
+                'display_name' => 'Delete client',
+                'description' => 'Permission to delete client',
+                'grouping' => 'client',
+            ]
+        );
+
         // Create role with client-delete permission
         $roleWithPermission = Role::create([
             'name' => 'client-deleter',
             'display_name' => 'Client Deleter',
             'description' => 'Can delete clients',
         ]);
-        $deletePermission = Permission::where('name', 'client-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without client-delete permission
