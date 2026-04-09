@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Absence extends Model
 {
     use HasExternalId;
+
     protected $fillable = [
         'external_id',
         'reason',

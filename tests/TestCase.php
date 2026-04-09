@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -68,6 +69,7 @@ abstract class TestCase extends BaseTestCase
     public function asOwner()
     {
         $this->user->attachRole(Role::whereName('owner')->first());
+
         return $this;
     }
 
@@ -79,6 +81,7 @@ abstract class TestCase extends BaseTestCase
     public function asAdmin()
     {
         $this->user->attachRole(Role::whereName('administrator')->first());
+
         return $this;
     }
 
@@ -93,8 +96,8 @@ abstract class TestCase extends BaseTestCase
     public function assertDatesEqual($expected, $actual, $message = '')
     {
         $this->assertEquals(
-            \Carbon\Carbon::parse($expected)->toDateTimeString(),
-            \Carbon\Carbon::parse($actual)->toDateTimeString(),
+            Carbon::parse($expected)->toDateTimeString(),
+            Carbon::parse($actual)->toDateTimeString(),
             $message
         );
     }

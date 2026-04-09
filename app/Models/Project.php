@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
+    use DeadlineTrait, HasExternalId, SearchableTrait, SoftDeletes;
 
     const PROJECT_STATUS_CLOSED = 'Closed';
 

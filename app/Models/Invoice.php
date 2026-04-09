@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId, SoftDeletes;
 
     const STATUS_SENT = 'sent';
 

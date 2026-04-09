@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Environment;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +27,7 @@ class ProjectFilesConfigurationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->rootPath = realpath(__DIR__ . '/../../..');
+        $this->rootPath = realpath(__DIR__.'/../../..');
     }
 
     // -------------------------------------------------------------------------
@@ -124,7 +123,7 @@ class ProjectFilesConfigurationTest extends TestCase
     public function env_testing_file_exists(): void
     {
         $this->assertFileExists(
-            $this->rootPath . '/.env.testing',
+            $this->rootPath.'/.env.testing',
             '.env.testing must exist so PHPUnit can load test-specific environment values'
         );
     }
@@ -468,7 +467,7 @@ class ProjectFilesConfigurationTest extends TestCase
      */
     private function readFile(string $relativePath): string
     {
-        $fullPath = $this->rootPath . '/' . $relativePath;
+        $fullPath = $this->rootPath.'/'.$relativePath;
         $this->assertFileExists($fullPath, "Expected project file not found: {$relativePath}");
 
         return file_get_contents($fullPath);
@@ -481,8 +480,8 @@ class ProjectFilesConfigurationTest extends TestCase
     private function parseEnvFile(string $relativePath): array
     {
         $content = $this->readFile($relativePath);
-        $lines   = explode("\n", $content);
-        $vars    = [];
+        $lines = explode("\n", $content);
+        $vars = [];
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -495,7 +494,7 @@ class ProjectFilesConfigurationTest extends TestCase
             // KEY=VALUE  (value may be quoted or unquoted)
             if (str_contains($line, '=')) {
                 [$key, $value] = explode('=', $line, 2);
-                $key   = trim($key);
+                $key = trim($key);
                 $value = trim($value, " \t\"'");
                 $vars[$key] = $value;
             }

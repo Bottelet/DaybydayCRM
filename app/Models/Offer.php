@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId, SoftDeletes;
 
     protected $fillable = [
         'sent_at',

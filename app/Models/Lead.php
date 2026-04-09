@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Lead extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
+    use DeadlineTrait, HasExternalId, SearchableTrait, SoftDeletes;
 
     protected $searchableFields = ['title'];
 

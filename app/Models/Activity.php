@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class Activity extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId, SoftDeletes;
 
     /**
      * The database table used by the model.
@@ -38,7 +38,7 @@ class Activity extends Model
         parent::boot();
         static::creating(function ($activity) {
             // HasExternalId trait handles external_id generation
-            
+
             if (empty($activity->ip_address)) {
                 $activity->ip_address = request()->ip() ?: '127.0.0.1';
             }

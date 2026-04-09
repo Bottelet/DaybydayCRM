@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Payment extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId, SoftDeletes;
 
     protected $fillable = [
         'external_id',

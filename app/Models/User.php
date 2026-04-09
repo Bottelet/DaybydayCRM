@@ -14,7 +14,7 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use Billable, EntrustUserTrait, Notifiable, SoftDeletes, HasExternalId;
+    use Billable, EntrustUserTrait, HasExternalId, Notifiable, SoftDeletes;
 
     public function restore()
     {

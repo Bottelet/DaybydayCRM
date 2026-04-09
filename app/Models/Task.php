@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Task extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
+    use DeadlineTrait, HasExternalId, SearchableTrait, SoftDeletes;
 
     const TASK_STATUS_CLOSED = 'closed';
 

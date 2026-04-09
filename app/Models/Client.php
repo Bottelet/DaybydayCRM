@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use SearchableTrait, SoftDeletes, HasExternalId;
+    use HasExternalId, SearchableTrait, SoftDeletes;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 
