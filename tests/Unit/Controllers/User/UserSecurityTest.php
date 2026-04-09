@@ -45,6 +45,10 @@ class UserSecurityTest extends TestCase
         if ($this->targetUser->roles->isEmpty()) {
             $this->targetUser->attachRole($defaultRole);
         }
+        // Ensure targetUser has a department
+        if ($this->targetUser->department->isEmpty()) {
+            $this->targetUser->department()->attach(Department::first()->id);
+        }
 
         // Create a user without user-update permission
         $this->unauthorizedUser = factory(User::class)->create();
