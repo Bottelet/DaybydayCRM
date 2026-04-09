@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\User;
 
+use App\Models\Department;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -23,6 +24,11 @@ class UserSecurityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Ensure at least one department exists for the factory afterCreating callback
+        if (Department::count() === 0) {
+            factory(Department::class)->create();
+        }
 
         $this->targetUser = factory(User::class)->create();
 
