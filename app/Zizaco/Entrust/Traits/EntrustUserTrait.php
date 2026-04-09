@@ -265,9 +265,6 @@ trait EntrustUserTrait
         $this->roles()->syncWithoutDetaching([
             $roleId,
         ]);
-
-        // Use syncWithoutDetaching to prevent duplicate key errors
-        $this->roles()->syncWithoutDetaching([$role]);
         
         // Clear the cache after attaching a role
         if (Cache::getStore() instanceof TaggableStore) {
