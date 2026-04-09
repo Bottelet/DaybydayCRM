@@ -36,6 +36,7 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'task-deleter',
             'display_name' => 'Task Deleter',
             'description' => 'Can delete tasks',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $deletePermission = Permission::where('name', 'task-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
@@ -45,6 +46,7 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'task-viewer',
             'display_name' => 'Task Viewer',
             'description' => 'Cannot delete tasks',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -88,6 +90,7 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'project-updater',
             'display_name' => 'Project Updater',
             'description' => 'Can update task project',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $updateProjectPermission = Permission::where('name', 'task-update-linked-project')->first();
         $roleWithPermission->attachPermission($updateProjectPermission);
@@ -126,6 +129,7 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'status-updater',
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $statusPermission = Permission::where('name', 'task-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);

@@ -41,6 +41,7 @@ class DocumentAuthorizationTest extends TestCase
             'name' => 'task-uploader',
             'display_name' => 'Task Uploader',
             'description' => 'Can upload files to tasks',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $taskUploadPermission = Permission::where('name', 'task-upload-files')->first();
         $roleWithTaskUpload->attachPermission($taskUploadPermission);
@@ -50,6 +51,7 @@ class DocumentAuthorizationTest extends TestCase
             'name' => 'project-uploader',
             'display_name' => 'Project Uploader',
             'description' => 'Can upload files to projects',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $projectUploadPermission = Permission::where('name', 'project-upload-files')->first();
         $roleWithProjectUpload->attachPermission($projectUploadPermission);
@@ -59,6 +61,7 @@ class DocumentAuthorizationTest extends TestCase
             'name' => 'document-viewer',
             'display_name' => 'Document Viewer',
             'description' => 'Cannot upload files',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users
