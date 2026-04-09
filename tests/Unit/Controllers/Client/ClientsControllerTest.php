@@ -59,11 +59,17 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_update_client()
     {
+        // Create required dependencies
+        $industry = factory(Industry::class)->create();
+        $user = factory(User::class)->create();
+
         $client = factory(Client::class)->create(
             [
                 'vat' => '5898989898',
                 'company_type' => 'A/S',
                 'company_name' => 'Hello',
+                'industry_id' => $industry->id,
+                'user_id' => $user->id,
             ]
         );
 
@@ -88,11 +94,12 @@ class ClientsControllerTest extends TestCase
             'zipcode' => '2222',
             'city' => 'Bond city',
             'company_type' => 'Aps',
-            'industry_id' => Industry::first()->id,
-            'user_id' => User::first()->id,
+            'industry_id' => $industry->id,
+            'user_id' => $user->id,
         ]);
 
         $client = Client::where('vat', '12312335')->first();
+        $this->assertNotNull($client, 'Client with updated VAT should exist');
         $this->assertEquals($client->vat, '12312335');
         $this->assertEquals($client->company_type, 'Aps');
         $this->assertEquals($client->company_name, 'Hello');
