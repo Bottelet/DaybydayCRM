@@ -25,15 +25,15 @@ class UserSecurityTest extends TestCase
     {
         parent::setUp();
 
-        // Create target user (factory now handles department and role attachment)
-        $this->targetUser = factory(User::class)->create();
+        // Create target user with employee role for testing
+        $this->targetUser = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
 
-        // Create and authenticate a user
-        $this->user = factory(User::class)->create();
+        // Create and authenticate a user with employee role
+        $this->user = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
         $this->actingAs($this->user);
 
         // Create a user without user-update permission
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);

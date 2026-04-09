@@ -29,15 +29,34 @@ $factory->afterCreating(User::class, static function ($user, $faker) {
         factory(Department::class)->create();
     }
     $user->department()->attach(Department::first()->id);
+});
 
-    // Ensure default employee role exists and attach it to user
-    $defaultRole = Role::firstOrCreate(
-        ['name' => 'employee'],
+// Factory state: User with a specific role attached
+// Usage: factory(User::class)->state('withRole', ['role' => 'employee'])->create()
+$factory->state(User::class, 'withRole', function () {
+    return [];
+})->afterCreatingState(User::class, 'withRole', function ($user, $faker, $attributes) {
+    $roleName = $attributes['role'] ?? 'employee';
+    
+    // Map common role name variations
+    $roleNames = [
+        'employee' => ['name' => 'employee', 'display_name' => 'Employee'],
+        'owner' => ['name' => 'owner', 'display_name' => 'Owner'],
+        'administrator' => ['name' => 'administrator', 'display_name' => 'Administrator'],
+        'admin' => ['name' => 'administrator', 'display_name' => 'Administrator'],
+        'manager' => ['name' => 'manager', 'display_name' => 'Manager'],
+    ];
+    
+    $roleData = $roleNames[$roleName] ?? ['name' => $roleName, 'display_name' => ucfirst($roleName)];
+    
+    $role = Role::firstOrCreate(
+        ['name' => $roleData['name']],
         [
-            'display_name' => 'Employee',
-            'description' => 'Default employee role',
+            'display_name' => $roleData['display_name'],
+            'description' => $roleData['display_name'] . ' role',
             'external_id' => Str::uuid()->toString(),
         ]
     );
-    $user->attachRole($defaultRole);
+    
+    $user->attachRole($role);
 });

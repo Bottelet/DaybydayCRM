@@ -125,11 +125,7 @@ class EntrustUserTraitTest extends TestCase
     public function cached_roles_returns_empty_when_no_roles_attached()
     {
         $user = factory(User::class)->create();
-        // Factory now attaches a default role, so remove all roles explicitly
-        $user->roles()->detach();
-        
-        // Clear the cache to ensure we're testing fresh data
-        \Cache::flush();
+        // Factory doesn't attach roles by default, so user has no roles
 
         $cachedRoles = $user->cachedRoles();
 
