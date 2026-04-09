@@ -39,7 +39,7 @@ class InvoiceLinesControllerTest extends TestCase
         $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
         $r->assertStatus(302);
-        $this->assertNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
+        $this->assertSoftDeleted('invoice_lines', ['external_id' => $this->invoiceLine->external_id]);
     }
 
     #[Test]
