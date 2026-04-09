@@ -78,7 +78,6 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'tasks'], static function () {
         Route::get('/data', 'TasksController@anyData')->name('tasks.data');
         Route::patch('/updatestatus/{external_id}', 'TasksController@updateStatus')->name('task.update.status');
-        Route::patch('/updatestatus/{external_id}', 'TasksController@updateStatus')->name('tasks.updateStatus'); // Alias
         Route::patch('/updateassign/{external_id}', 'TasksController@updateAssign')->name('task.update.assignee');
         Route::post('/updatestatus/{external_id}', 'TasksController@updateStatus');
         Route::post('/updateassign/{external_id}', 'TasksController@updateAssign');
@@ -101,10 +100,8 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
         Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('leads.updateAssign');
-        Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee'); // Alias
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
-        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('leads.updateStatus'); // Alias
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
         Route::patch('/update-deadline/{external_id}', 'LeadsController@updateDeadline')->name('lead.update.deadline');
         Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup')
@@ -135,14 +132,10 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'projects'], static function () {
         Route::get('/data', 'ProjectsController@indexData')->name('projects.index.data');
         Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('project.update.status');
-        Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('projects.updateStatus'); // Alias
         Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('project.update.assignee');
-        Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('projects.updateAssign'); // Alias
         Route::post('/updatestatus/{external_id}', 'ProjectsController@updateStatus');
         Route::post('/updateassign/{external_id}', 'ProjectsController@updateAssign');
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
-        Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('project.update.status');
-        Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('project.update.assignee');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
     Route::middleware(['permission:project-delete'])->group(function () {
@@ -155,9 +148,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'settings'], static function () {
         Route::get('/', 'SettingsController@index')->name('settings.index');
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.updateOverall');
-        Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backward compatibility
         Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.updateFirstStep');
-        Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.first-step'); // Alias
         Route::get('/business-hours', 'SettingsController@businessHours')->name('settings.business_hours');
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
     });

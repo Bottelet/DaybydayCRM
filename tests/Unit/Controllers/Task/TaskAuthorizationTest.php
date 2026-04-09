@@ -152,7 +152,7 @@ class TaskAuthorizationTest extends TestCase
         $originalTitle = $this->task->title;
         $originalDescription = $this->task->description;
 
-        $response = $this->json('PATCH', route('tasks.updateStatus', $this->task->external_id), [
+        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',

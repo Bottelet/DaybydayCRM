@@ -110,7 +110,7 @@ class ProjectAuthorizationTest extends TestCase
         $newUser = factory(User::class)->create();
 
         // Use PATCH (route is PATCH)
-        $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
+        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -127,7 +127,7 @@ class ProjectAuthorizationTest extends TestCase
         $originalAssignee = $this->project->user_assigned_id;
 
         // Use PATCH (route is PATCH)
-        $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
+        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -156,7 +156,7 @@ class ProjectAuthorizationTest extends TestCase
         $originalDescription = $this->project->description;
 
         // Use PATCH (route is PATCH)
-        $response = $this->json('PATCH', route('projects.updateStatus', $this->project->external_id), [
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',

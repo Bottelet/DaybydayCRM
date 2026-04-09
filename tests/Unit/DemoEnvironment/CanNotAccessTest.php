@@ -35,7 +35,7 @@ class CanNotAccessTest extends TestCase
     #[Test]
     public function update_settings()
     {
-        $response = $this->json('PATCH', route('settings.update', []));
+        $response = $this->json('PATCH', route('settings.updateOverall', []));
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
     }

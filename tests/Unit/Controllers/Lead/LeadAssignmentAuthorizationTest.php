@@ -82,7 +82,7 @@ class LeadAssignmentAuthorizationTest extends TestCase
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
 
         $response = $this->actingAs($this->authorizedUser)
-            ->patch(route('lead.update.assignee', $this->lead->external_id), [
+            ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
@@ -106,7 +106,7 @@ class LeadAssignmentAuthorizationTest extends TestCase
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-lead'));
 
         $response = $this->actingAs($this->unauthorizedUser)
-            ->patch(route('lead.update.assignee', $this->lead->external_id), [
+            ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 

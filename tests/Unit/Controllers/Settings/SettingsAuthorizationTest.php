@@ -71,7 +71,7 @@ class SettingsAuthorizationTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        $response = $this->json('PATCH', route('settings.update'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Test Company',
             'vat' => 25,
             'currency' => 'USD',
@@ -94,7 +94,7 @@ class SettingsAuthorizationTest extends TestCase
 
         $originalCompany = $this->setting->company;
 
-        $response = $this->json('PATCH', route('settings.update'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Malicious Company',
             'vat' => 25,
             'currency' => 'USD',

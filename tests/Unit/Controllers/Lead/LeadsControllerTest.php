@@ -53,7 +53,7 @@ class LeadsControllerTest extends TestCase
         $lead = factory(Lead::class)->create();
         $this->assertNotEquals($lead->user_assigned_id, $this->user->id);
 
-        $response = $this->json('PATCH', route('lead.update.assignee', $lead->external_id), [
+        $response = $this->json('PATCH', route('leads.updateAssign', $lead->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 

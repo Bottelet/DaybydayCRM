@@ -168,7 +168,7 @@ class LeadAuthorizationTest extends TestCase
         $originalTitle = $this->lead->title;
         $originalDescription = $this->lead->description;
 
-        $response = $this->json('PATCH', route('leads.updateStatus', $this->lead->external_id), [
+        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',
