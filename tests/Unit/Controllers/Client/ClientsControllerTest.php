@@ -5,6 +5,8 @@ namespace Tests\Unit\Controllers\Client;
 use App\Models\Client;
 use App\Models\Contact;
 use App\Models\Industry;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -58,6 +60,14 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_update_client()
     {
+        // Create authenticated user with client-update permission
+        $authUser = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $authUser->attachRole($role);
+        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
+        $authUser->roles->first()->attachPermission($updatePermission);
+        $this->actingAs($authUser);
+
         // Create required dependencies
         $industry = factory(Industry::class)->create();
         $user = factory(User::class)->create();
@@ -113,6 +123,14 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_update_assignee()
     {
+        // Create authenticated user with client-update permission
+        $authUser = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $authUser->attachRole($role);
+        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
+        $authUser->roles->first()->attachPermission($updatePermission);
+        $this->actingAs($authUser);
+
         $client = factory(Client::class)->create();
         $user = factory(User::class)->create();
 
@@ -147,6 +165,14 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_update_client_without_primary_contact()
     {
+        // Create authenticated user with client-update permission
+        $authUser = factory(User::class)->create();
+        $role = Role::where('name', 'employee')->first();
+        $authUser->attachRole($role);
+        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
+        $authUser->roles->first()->attachPermission($updatePermission);
+        $this->actingAs($authUser);
+
         // Create test data instead of relying on seeded data
         $industry = factory(Industry::class)->create();
         $user = factory(User::class)->create();

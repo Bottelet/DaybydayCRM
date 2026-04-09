@@ -73,7 +73,7 @@ class ClientAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithPermission);
 
-        $response = $this->json('DELETE', route('clients.destroy', $this->client->external_id));
+        $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         $response->assertStatus(302); // Redirect on success
         $this->assertSoftDeleted('clients', ['id' => $this->client->id]);
@@ -84,7 +84,7 @@ class ClientAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $response = $this->json('DELETE', route('clients.destroy', $this->client->external_id));
+        $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('clients', ['id' => $this->client->id, 'deleted_at' => null]);
