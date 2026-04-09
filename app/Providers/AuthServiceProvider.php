@@ -46,7 +46,7 @@ class AuthServiceProvider extends ServiceProvider
                         continue;
                     }
 
-                    if (Str::is($ability, $perm->name)) {
+                    if (Str::is($perm->name, $ability)) {
                         return true;
                     }
                 }
