@@ -63,22 +63,14 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
                     public function view(...$args)
                     {
-                        $document = $args[0] ?? null;
-
-                        return response('', 200, [
-                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
-                            'filename' => $document?->original_filename ?? '',
-                        ]);
+                        // Return file content (string), not a response object
+                        return 'fake file content';
                     }
 
                     public function download(...$args)
                     {
-                        $document = $args[0] ?? null;
-
-                        return response('', 200, [
-                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
-                            'filename' => $document?->original_filename ?? '',
-                        ]);
+                        // Return file content (string), not a response object
+                        return 'fake file content';
                     }
                 };
             }
