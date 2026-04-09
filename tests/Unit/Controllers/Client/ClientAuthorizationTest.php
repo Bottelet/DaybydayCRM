@@ -36,6 +36,7 @@ class ClientAuthorizationTest extends TestCase
                 'display_name' => 'Delete client',
                 'description' => 'Permission to delete client',
                 'grouping' => 'client',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
             ]
         );
 
@@ -44,6 +45,7 @@ class ClientAuthorizationTest extends TestCase
             'name' => 'client-deleter',
             'display_name' => 'Client Deleter',
             'description' => 'Can delete clients',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -52,6 +54,7 @@ class ClientAuthorizationTest extends TestCase
             'name' => 'client-viewer',
             'display_name' => 'Client Viewer',
             'description' => 'Cannot delete clients',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users

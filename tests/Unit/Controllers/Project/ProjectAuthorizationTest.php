@@ -35,6 +35,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-deleter',
             'display_name' => 'Project Deleter',
             'description' => 'Can delete projects',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $deletePermission = Permission::where('name', 'project-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
@@ -44,6 +45,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-viewer',
             'display_name' => 'Project Viewer',
             'description' => 'Cannot delete projects',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -85,6 +87,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-assigner',
             'display_name' => 'Project Assigner',
             'description' => 'Can assign projects',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $assignPermission = Permission::where('name', 'can-assign-new-user-to-project')->first();
         $roleWithPermission->attachPermission($assignPermission);
@@ -126,6 +129,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'status-updater',
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $statusPermission = Permission::where('name', 'project-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);

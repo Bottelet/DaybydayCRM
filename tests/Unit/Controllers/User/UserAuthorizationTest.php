@@ -33,6 +33,7 @@ class UserAuthorizationTest extends TestCase
             'name' => 'user-deleter',
             'display_name' => 'User Deleter',
             'description' => 'Can delete users',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
         $deletePermission = Permission::where('name', 'user-delete')->first();
         $roleWithPermission->attachPermission($deletePermission);
@@ -42,6 +43,7 @@ class UserAuthorizationTest extends TestCase
             'name' => 'user-viewer',
             'display_name' => 'User Viewer',
             'description' => 'Cannot delete users',
+            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
         ]);
 
         // Create users
