@@ -79,12 +79,13 @@ class AppointmentsControllerTest extends TestCase
     {
         $newAssignee = factory(User::class)->create();
 
-        $response = $this->json('POST', route('appointments.update', $this->appointmentsWithInTime->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointmentsWithInTime->external_id), [
             'start_date' => now()->toDateString(),
             'start_time' => now()->format('H:i'),
             'end_date' => now()->addHour()->toDateString(),
             'end_time' => now()->addHour()->format('H:i'),
             'user' => $newAssignee->external_id,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertSuccessful();
@@ -98,7 +99,9 @@ class AppointmentsControllerTest extends TestCase
     {
         $appointmentExternalId = $this->appointmentsWithInTime->external_id;
 
-        $response = $this->json('DELETE', route('appointments.destroy', $appointmentExternalId));
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $appointmentExternalId), [
+            '_token' => csrf_token(),
+        ]);
 
         $response->assertSuccessful();
         $this->assertNull(Appointment::whereExternalId($appointmentExternalId)->first());

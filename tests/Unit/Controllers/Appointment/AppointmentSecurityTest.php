@@ -104,7 +104,10 @@ class AppointmentSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $response = $this->json('DELETE', route('appointments.destroy', $this->appointment->external_id));
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
+            '_token' => csrf_token(),
+        ]);
 
         $response->assertStatus(200);
         $this->assertSoftDeleted('appointments', ['id' => $this->appointment->id]);
@@ -115,7 +118,10 @@ class AppointmentSecurityTest extends TestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', route('appointments.destroy', $this->appointment->external_id));
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
+            '_token' => csrf_token(),
+        ]);
 
         $response->assertStatus(403);
     }
