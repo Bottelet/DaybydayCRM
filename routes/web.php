@@ -85,8 +85,8 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'leads'], static function () {
         Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
         Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
-        Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee');
-        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('leads.updateStatus');
+        Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('leads.updateAssign');
+        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
         Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'settings'], static function () {
         Route::get('/', 'SettingsController@index')->name('settings.index');
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.updateOverall');
+        Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backward compatibility
         Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.updateFirstStep');
         Route::get('/business-hours', 'SettingsController@businessHours')->name('settings.business_hours');
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
