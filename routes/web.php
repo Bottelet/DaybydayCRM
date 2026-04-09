@@ -170,6 +170,7 @@ Route::group(['middleware' => ['auth']], static function () {
 
     Route::get('/money-format', 'InvoicesController@moneyFormat')->name('money.format');
     Route::post('/invoice/create/offer/{lead}', 'OffersController@create')->name('create.offer');
+    Route::post('/offers/create/{lead}', 'OffersController@create')->name('offers.create');
     Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
     /**
@@ -194,6 +195,11 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
         Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
+    
+    // Additional route aliases for backward compatibility
+    Route::post('/offers/won', 'OffersController@won')->name('offers.won');
+    Route::post('/offers/lost', 'OffersController@lost')->name('offers.lost');
+    Route::post('/offers/{offer}/update', 'OffersController@update')->name('offers.update');
 
     /**
      * Documents
