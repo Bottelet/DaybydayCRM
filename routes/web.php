@@ -91,7 +91,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
-        Route::delete('/{lead}/json', 'LeadsController@destroyJson');
+        Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
     Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
@@ -189,9 +189,10 @@ Route::group(['middleware' => ['auth']], static function () {
      * Offers
      */
     Route::group(['prefix' => 'offer'], static function () {
-        Route::post('/won', 'OffersController@won')->name('offer.won');
+        Route::get('/create', 'OffersController@showCreate')->name('offers.create');
+        Route::post('/won', 'OffersController@won')->name('offers.won');
         Route::post('/lost', 'OffersController@lost')->name('offer.lost');
-        Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
+        Route::post('/{offer}/update', 'OffersController@update')->name('offers.update');
         Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
 
