@@ -50,7 +50,7 @@ class AppointmentSecurityTest extends TestCase
     public function authorized_user_can_update_appointment()
     {
         // Give user permission to update appointments
-        $permission = Permission::firstOrCreate(['name' => 'appointment-update']);
+        $permission = Permission::firstOrCreate(['name' => 'appointment-edit']);
         $this->user->roles->first()->attachPermission($permission);
 
         // Use withSession to provide CSRF token
