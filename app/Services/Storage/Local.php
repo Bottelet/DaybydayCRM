@@ -13,7 +13,10 @@ class Local implements FilesystemIntegration
 
     public function upload($client_folder, $filename, $file): array
     {
-        return [];
+        return [
+            'file_path' => $filename,
+            'id' => $filename,
+        ];
     }
 
     public function delete($full_path): bool

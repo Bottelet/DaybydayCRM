@@ -320,8 +320,10 @@ class ProjectsController extends Controller
         }
         $project = $this->findByExternalId($external_id);
         $input = $request->all();
-        $input = $request =
-            ['deadline' => $request->deadline_date.' '.$request->deadline_time.':00'];
+        if (isset($request->deadline_date)) {
+            $deadlineTime = $request->deadline_time ?: '00:00';
+            $input['deadline'] = $request->deadline_date.' '.$deadlineTime.':00';
+        }
         $project->fill($input)->save();
         event(new ProjectAction($project, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New deadline is set'));

@@ -180,7 +180,12 @@ class LeadsController extends Controller
     {
         $lead = $this->findByExternalId($external_id);
         $contactTime = $request->contact_time ?: '00:00';
-        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$contactTime.':00')->toDateTimeString()])->save();
+        $deadline = $request->deadline;
+        // Check if deadline is already a full datetime string or just a date
+        if (strlen($deadline) <= 10) {
+            $deadline = $deadline.' '.$contactTime.':00';
+        }
+        $lead->fill(['deadline' => Carbon::parse($deadline)->toDateTimeString()])->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
         Session()->flash('flash_message', __('New follow up date is set'));
 

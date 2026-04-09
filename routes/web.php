@@ -31,7 +31,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::middleware(['user.update'])->group(function () {
+    Route::middleware(['permission:user-update'])->group(function () {
         Route::resource('users', 'UsersController')->only(['update']);
     });
     Route::middleware(['permission:user-delete'])->group(function () {
@@ -59,11 +59,12 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/leaddata/{external_id}', 'ClientsController@leadDataTable')->name('clients.leadDataTable');
         Route::get('/invoicedata/{external_id}', 'ClientsController@invoiceDataTable')->name('clients.invoiceDataTable');
         Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
+        Route::patch('/updateassignee/{external_id}', 'ClientsController@updateAssignee')->name('clients.updateAssignee');
         Route::post('/upload/{external_id}', 'DocumentsController@upload')->name('document.upload');
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::middleware(['client.delete'])->group(function () {
+    Route::middleware(['permission:client-delete'])->group(function () {
         Route::resource('clients', 'ClientsController')->only(['destroy']);
     });
     Route::resource('clients', 'ClientsController')->except(['destroy']);
@@ -105,6 +106,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
         Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('leads.updateStatus'); // Alias
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
+        Route::patch('/update-deadline/{external_id}', 'LeadsController@updateDeadline')->name('lead.update.deadline');
         Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup')
             ->middleware('permission:lead-update-deadline');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
@@ -139,6 +141,8 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updatestatus/{external_id}', 'ProjectsController@updateStatus');
         Route::post('/updateassign/{external_id}', 'ProjectsController@updateAssign');
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
+        Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('project.update.status');
+        Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('project.update.assignee');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
     Route::middleware(['permission:project-delete'])->group(function () {
@@ -153,6 +157,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.updateOverall');
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backward compatibility
         Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.updateFirstStep');
+        Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.first-step'); // Alias
         Route::get('/business-hours', 'SettingsController@businessHours')->name('settings.business_hours');
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
     });

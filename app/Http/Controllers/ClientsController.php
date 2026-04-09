@@ -385,7 +385,11 @@ class ClientsController extends Controller
             return back();
         }
 
-        $user = User::where('external_id', $request->user_external_id)->first();
+        $userExternalId = $request->user_external_id ?: $request->user_assigned_id;
+        $user = User::where('external_id', $userExternalId)->first();
+        if (! $user && is_numeric($userExternalId)) {
+            $user = User::find($userExternalId);
+        }
         $client = Client::with('user')->where('external_id', $external_id)->first();
         $client->updateAssignee($user);
 

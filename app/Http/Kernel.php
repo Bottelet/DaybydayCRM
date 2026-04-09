@@ -22,6 +22,9 @@ use App\Http\Middleware\Translation;
 use App\Http\Middleware\User\CanUserCreate;
 use App\Http\Middleware\User\CanUserUpdate;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Zizaco\Entrust\Middleware\EntrustAbility;
+use App\Zizaco\Entrust\Middleware\EntrustPermission;
+use App\Zizaco\Entrust\Middleware\EntrustRole;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -100,8 +103,8 @@ class Kernel extends HttpKernel
         'can' => Authorize::class,
         'guest' => RedirectIfAuthenticated::class,
         'throttle' => ThrottleRequests::class,
-        'role' => \App\Zizaco\Entrust\Middleware\EntrustRole::class,
-        'permission' => \App\Zizaco\Entrust\Middleware\EntrustPermission::class,
-        'ability' => \App\Zizaco\Entrust\Middleware\EntrustAbility::class,
+        'role' => EntrustRole::class,
+        'permission' => EntrustPermission::class,
+        'ability' => EntrustAbility::class,
     ];
 }
