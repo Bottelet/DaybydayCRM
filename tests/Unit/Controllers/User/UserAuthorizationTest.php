@@ -27,7 +27,7 @@ class UserAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->targetUser = factory(User::class)->create();
+        $this->targetUser = User::factory()->create();
 
         // Create role with user-delete permission
         $roleWithPermission = Role::create([
@@ -48,10 +48,10 @@ class UserAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
         
         // Explicitly clear the permissions cache
@@ -88,7 +88,7 @@ class UserAuthorizationTest extends TestCase
         $this->actingAs($this->userWithPermission);
 
         $ownerRole = Role::where('name', 'owner')->first();
-        $ownerUser = factory(User::class)->create();
+        $ownerUser = User::factory()->create();
         $ownerUser->attachRole($ownerRole);
 
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));

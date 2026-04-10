@@ -28,16 +28,16 @@ class TaskSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
         // Create and authenticate a user with default role
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->user->attachRole($role);
         $this->actingAs($this->user);
 
         // Create a user without task-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
         $this->unauthorizedUser->attachRole($role);
         
         // Explicitly clear the permissions cache
@@ -81,7 +81,7 @@ class TaskSecurityTest extends TestCase
         $this->user->roles->first()->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
-        $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $newStatus = Status::factory()->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
 
         // Use PATCH (route is PATCH)
@@ -126,7 +126,7 @@ class TaskSecurityTest extends TestCase
         $this->user->roles->first()->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
-        $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $newStatus = Status::factory()->create(['source_type' => Task::class]);
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
@@ -145,7 +145,7 @@ class TaskSecurityTest extends TestCase
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Create a status that belongs to a different type (Lead instead of Task)
-        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->task->status_id;
 
         // Use PATCH (route is PATCH)
