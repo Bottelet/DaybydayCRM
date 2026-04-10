@@ -9,53 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-/**
- * Concrete subclass to expose protected methods for testing.
- */
-class ConcreteApiController extends ApiController
-{
-    public function callRespond($data, $statusCode = 200, $headers = [])
-    {
-        return $this->respond($data, $statusCode, $headers);
-    }
-
-    public function callRespondSuccess()
-    {
-        return $this->respondSuccess();
-    }
-
-    public function callRespondCreated($data)
-    {
-        return $this->respondCreated($data);
-    }
-
-    public function callRespondNoContent()
-    {
-        return $this->respondNoContent();
-    }
-
-    public function callRespondError($message, $statusCode)
-    {
-        return $this->respondError($message, $statusCode);
-    }
-
-    public function callRespondUnauthorized($message = 'Unauthorized')
-    {
-        return $this->respondUnauthorized($message);
-    }
-
-    public function callRespondForbidden($message = 'Forbidden')
-    {
-        return $this->respondForbidden($message);
-    }
-
-    public function callRespondNotFound($message = 'Not Found')
-    {
-        return $this->respondNotFound($message);
-    }
-}
-
-class ApiControllerAbstractTest extends AbstractTestCase
+class ApiControllerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
@@ -99,7 +53,6 @@ class ApiControllerAbstractTest extends AbstractTestCase
     #[Test]
     public function respond_success_returns_status200_with_null_data()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
         $response = $this->controller->callRespondSuccess();
 
         $this->assertInstanceOf(JsonResponse::class, $response);

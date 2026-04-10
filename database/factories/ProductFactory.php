@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Factories;
+
 /** @var Factory $factory */
 
 use App\Models\Product;

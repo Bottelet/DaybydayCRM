@@ -48,7 +48,7 @@ class UsersControllerCalendarAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_get_absences_within_time_slot()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $correctUser = null;
         $r = $this->json('GET', '/users/calendar-users/');
         foreach ($r->json() as $user) {

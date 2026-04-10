@@ -20,7 +20,6 @@ class ClientsControllerAbstractTest extends AbstractTestCase
     #[Test]
     public function can_create_client()
     {
-        $this->markTestIncomplete('This test is skipped because it is not working');
         $response = $this->json('POST', route('clients.store'), [
             'name' => 'James Test',
             'email' => 'james@test.com',

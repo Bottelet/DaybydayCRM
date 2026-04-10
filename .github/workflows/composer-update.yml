@@ -1,172 +1,91 @@
-name: Composer Update Manager
+name: composer-update
 
 on:
   workflow_dispatch:
     inputs:
-      update_type:
-        description: 'Update type'
+      test_group:
+        description: 'Which tests to run'
         required: true
-        default: 'update'
+        default: 'full'
         type: choice
         options:
-          - update
-          - update-all
-          - update-with-deps
-          - update-with-all-deps
-          - install
-          - validate
-          - outdated
-          - bump-deps
-      packages:
-        description: 'Specific packages to update (optional, space-separated)'
+          - full
+          - smoke
+          - crud
+          - api
+          - custom
+      custom_group_name:
+        description: 'Custom PHPUnit group name (only used if "custom" selected above)'
         required: false
         type: string
-      ignore_platform_reqs:
-        description: 'Ignore platform requirements'
-        required: false
-        default: false
-        type: boolean
-      prefer_lowest:
-        description: 'Prefer lowest versions'
-        required: false
-        default: false
-        type: boolean
-      prefer_stable:
-        description: 'Prefer stable versions'
-        required: false
-        default: true
-        type: boolean
 
 jobs:
-  composer-update:
-    name: Composer Update
+  tests:
+    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} tests
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [8.2, 8.3, 8.4]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: ${{ matrix.php }}
+          coverage: none
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
+      - name: Wait for MySQL
         run: |
-          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -ppassword --silent; then
+              echo "MySQL ready!"
+              break
+            fi
+            sleep 2
+          done
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+      - name: Prepare .env
+        run: cp .env.ci .env.testing
 
-      - name: Configure Git
+      - name: Install Composer dependencies
+        run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Create test DBs for parallel
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          for i in {1..8}; do
+            mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test_$i CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          done
 
-      - name: Run Composer Validate
-        if: ${{ inputs.update_type == 'validate' }}
-        run: composer validate --strict
+      - name: Run migrations
+        run: php artisan migrate --seed
 
-      - name: Check Outdated Packages
-        if: ${{ inputs.update_type == 'outdated' }}
+      - name: Run tests (selected group/suite)
         run: |
-          echo "## Outdated Packages" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          composer outdated --direct || true
-          composer outdated --direct >> $GITHUB_STEP_SUMMARY || true
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Run Composer Install
-        if: ${{ inputs.update_type == 'install' }}
-        run: |
-          composer install --no-ansi --no-interaction --optimize-autoloader --prefer-dist \
-          ${{ inputs.ignore_platform_reqs && '--ignore-platform-reqs' || '' }}
-
-      - name: Run Composer Update (basic)
-        if: ${{ inputs.update_type == 'update' }}
-        run: |
-          composer update --no-ansi --no-interaction --optimize-autoloader --prefer-dist \
-          ${{ inputs.ignore_platform_reqs && '--ignore-platform-reqs' || '' }} \
-          ${{ inputs.prefer_lowest && '--prefer-lowest' || '' }} \
-          ${{ inputs.prefer_stable && '--prefer-stable' || '' }} \
-          ${{ inputs.packages || '' }}
-
-      - name: Run Composer Update (with dependencies)
-        if: ${{ inputs.update_type == 'update-with-deps' }}
-        run: |
-          composer update --with-dependencies --no-ansi --no-interaction --optimize-autoloader --prefer-dist \
-          ${{ inputs.ignore_platform_reqs && '--ignore-platform-reqs' || '' }} \
-          ${{ inputs.prefer_lowest && '--prefer-lowest' || '' }} \
-          ${{ inputs.prefer_stable && '--prefer-stable' || '' }} \
-          ${{ inputs.packages || '' }}
-
-      - name: Run Composer Update (with all dependencies)
-        if: ${{ inputs.update_type == 'update-with-all-deps' }}
-        run: |
-          composer update --with-all-dependencies --no-ansi --no-interaction --optimize-autoloader --prefer-dist \
-          ${{ inputs.ignore_platform_reqs && '--ignore-platform-reqs' || '' }} \
-          ${{ inputs.prefer_lowest && '--prefer-lowest' || '' }} \
-          ${{ inputs.prefer_stable && '--prefer-stable' || '' }} \
-          ${{ inputs.packages || '' }}
-
-      - name: Run Composer Update (all packages)
-        if: ${{ inputs.update_type == 'update-all' }}
-        run: |
-          composer update --no-ansi --no-interaction --optimize-autoloader --prefer-dist \
-          ${{ inputs.ignore_platform_reqs && '--ignore-platform-reqs' || '' }} \
-          ${{ inputs.prefer_lowest && '--prefer-lowest' || '' }} \
-          ${{ inputs.prefer_stable && '--prefer-stable' || '' }}
-
-      - name: Bump Dependencies
-        if: ${{ inputs.update_type == 'bump-deps' }}
-        run: |
-          composer bump --no-ansi --no-interaction \
-          ${{ inputs.packages || '' }}
-
-      - name: Show changes
-        if: ${{ inputs.update_type != 'outdated' && inputs.update_type != 'validate' }}
-        run: |
-          echo "## Composer Changes" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          git diff composer.json composer.lock >> $GITHUB_STEP_SUMMARY || true
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-
-      - name: Commit and push changes
-        if: ${{ inputs.update_type != 'outdated' && inputs.update_type != 'validate' }}
-        run: |
-          git add composer.json composer.lock
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-            echo "status=no-changes" >> $GITHUB_OUTPUT
+          if [ "${{ github.event.inputs.test_group }}" = "full" ]; then
+            ./vendor/bin/phpunit --testdox
+          elif [ "${{ github.event.inputs.test_group }}" = "custom" ]; then
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="${{ github.event.inputs.custom_group_name }}" --testdox
           else
-            git commit -m "chore: composer ${{ inputs.update_type }}${{ inputs.packages && format(' for {0}', inputs.packages) || '' }}
-            
-            Update type: ${{ inputs.update_type }}
-            Packages: ${{ inputs.packages || 'all' }}
-            Ignore platform: ${{ inputs.ignore_platform_reqs }}
-            Prefer stable: ${{ inputs.prefer_stable }}
-            
-            [skip ci]"
-            git push
-            echo "status=committed" >> $GITHUB_OUTPUT
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="${{ github.event.inputs.test_group }}" --testdox
           fi
-        id: commit
-
-      - name: Summary
-        if: always()
-        run: |
-          echo "## Workflow Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Update Type:** ${{ inputs.update_type }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Packages:** ${{ inputs.packages || 'all' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Ignore Platform Reqs:** ${{ inputs.ignore_platform_reqs }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Prefer Stable:** ${{ inputs.prefer_stable }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status:** ${{ steps.commit.outputs.status || 'completed' }}" >> $GITHUB_STEP_SUMMARY

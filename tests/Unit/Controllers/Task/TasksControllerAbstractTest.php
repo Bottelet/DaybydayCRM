@@ -33,7 +33,7 @@ class TasksControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_task()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $response = $this->json('POST', route('tasks.store'), [
             'title' => 'Task test',
             'description' => 'This is a description',

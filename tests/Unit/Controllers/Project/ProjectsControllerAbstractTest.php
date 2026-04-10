@@ -29,7 +29,7 @@ class ProjectsControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_project()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $response = $this->json('POST', route('projects.store'), [
             'title' => 'Project test',
             'description' => 'This is a description',

@@ -17,7 +17,7 @@ class AbsenceControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_absence_for_other_user()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $user = User::factory()->create();
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',
@@ -37,7 +37,7 @@ class AbsenceControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $actingUser = User::factory()->create();
         $this->actingAs($actingUser);
 
@@ -59,7 +59,7 @@ class AbsenceControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function not_providing_user_external_id_creates_absence_for_authenticated_user()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',
             'start_date' => '2020-01-01',
