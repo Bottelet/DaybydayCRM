@@ -73,7 +73,6 @@ class TaskSecurityTest extends TestCase
         $response->assertStatus(403);
         $this->assertDatabaseHas('tasks', ['id' => $this->task->id, 'deleted_at' => null]);
     }
-    }
 
     #[Test]
     public function update_status_only_accepts_status_id_field()
