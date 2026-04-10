@@ -7,14 +7,13 @@ use App\Models\Project;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProjectsControllerTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
 
     private $client;
 
@@ -22,8 +21,8 @@ class ProjectsControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
-        $this->client = factory(Client::class)->create();
+        $this->user = User::factory()->create();
+        $this->client = Client::factory()->create();
     }
 
     #[Test]
@@ -34,7 +33,7 @@ class ProjectsControllerTest extends TestCase
         $response = $this->json('POST', route('projects.store'), [
             'title' => 'Project test',
             'description' => 'This is a description',
-            'status_id' => factory(Status::class)->create(['source_type' => Project::class])->id,
+            'status_id' => Status::factory()->create(['source_type' => Project::class])->id,
             'user_assigned_id' => $this->user->id,
             'user_created_id' => $this->user->id,
             'client_external_id' => $this->client->external_id,
@@ -50,7 +49,7 @@ class ProjectsControllerTest extends TestCase
     #[Test]
     public function can_update_assignee()
     {
-        $project = factory(Project::class)->create();
+        $project = Project::factory()->create();
         $this->assertNotEquals($project->user_assigned_id, $this->user->id);
 
         $response = $this->json('PATCH', route('project.update.assignee', $project->external_id), [
@@ -63,8 +62,8 @@ class ProjectsControllerTest extends TestCase
     #[Test]
     public function can_update_status()
     {
-        $project = factory(Project::class)->create();
-        $status = factory(Status::class)->create(['source_type' => Project::class]);
+        $project = Project::factory()->create();
+        $status = Status::factory()->create(['source_type' => Project::class]);
 
         $this->assertNotEquals($project->status_id, $status->id);
 
@@ -78,7 +77,7 @@ class ProjectsControllerTest extends TestCase
     #[Test]
     public function can_update_deadline_for_project()
     {
-        $project = factory(Project::class)->create();
+        $project = Project::factory()->create();
 
         $response = $this->json('PATCH', route('project.update.deadline', $project->external_id), [
             'deadline_date' => '2020-08-06',
