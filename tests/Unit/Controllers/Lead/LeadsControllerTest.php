@@ -8,13 +8,12 @@ use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class LeadsControllerTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
 
     private $client;
 
@@ -22,19 +21,16 @@ class LeadsControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
-        $this->client = factory(Client::class)->create();
+        $this->client = Client::factory()->create();
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function can_create_lead()
     {
-        $this->markTestIncomplete('failure repaired by junie');
         $response = $this->json('POST', route('leads.store'), [
             'title' => 'Lead test',
             'description' => 'This is a description',
-            'status_id' => factory(Status::class)->create(['source_type' => Lead::class])->id,
+            'status_id' => Status::factory()->create(['source_type' => Lead::class])->id,
             'user_assigned_id' => $this->user->id,
             'user_created_id' => $this->user->id,
             'client_external_id' => $this->client->external_id,
@@ -50,7 +46,7 @@ class LeadsControllerTest extends TestCase
     #[Test]
     public function can_update_assignee()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $this->assertNotEquals($lead->user_assigned_id, $this->user->id);
 
         $response = $this->json('PATCH', route('leads.updateAssign', $lead->external_id), [
@@ -63,8 +59,8 @@ class LeadsControllerTest extends TestCase
     #[Test]
     public function can_update_status()
     {
-        $lead = factory(Lead::class)->create();
-        $status = factory(Status::class)->create(['source_type' => Lead::class]);
+        $lead = Lead::factory()->create();
+        $status = Status::factory()->create(['source_type' => Lead::class]);
 
         $this->assertNotEquals($lead->status_id, $status->id);
 
@@ -78,7 +74,7 @@ class LeadsControllerTest extends TestCase
     #[Test]
     public function can_update_deadline_for_lead()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline' => '2020-08-06',
@@ -93,7 +89,7 @@ class LeadsControllerTest extends TestCase
     {
         // Regression for the deadline fix: Carbon::parse(...)->toDateTimeString()
         // ensures the deadline is stored as a string, not a Carbon object.
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
         $response = $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline' => '2025-06-15',
@@ -120,7 +116,7 @@ class LeadsControllerTest extends TestCase
     public function update_followup_stores_deadline_with_correct_time_component()
     {
         // Boundary: verify the time part of the deadline is stored correctly
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline' => '2025-12-31',
@@ -139,7 +135,7 @@ class LeadsControllerTest extends TestCase
     {
         // Ensures the fix (using ->toDateTimeString()) causes the deadline column
         // to contain a plain string representation, not an object.
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline' => '2025-03-20',
