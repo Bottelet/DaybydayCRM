@@ -26,15 +26,15 @@ class DeleteProjectControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'project-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
         $this->actingAs($this->user);
 
-        $this->project = factory(Project::class)->create();
-        $this->task = factory(Task::class)->create([
+        $this->project = Project::factory()->create();
+        $this->task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -51,7 +51,7 @@ class DeleteProjectControllerTest extends TestCase
     #[Test]
     public function delete_tasks_if_flag_given()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
@@ -67,7 +67,7 @@ class DeleteProjectControllerTest extends TestCase
     #[Test]
     public function remove_project_id_from_task_if_flag_not_given()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
@@ -83,7 +83,7 @@ class DeleteProjectControllerTest extends TestCase
     #[Test]
     public function can_delete_project_if_there_is_no_tasks()
     {
-        $project = factory(Project::class)->create();
+        $project = Project::factory()->create();
         $this->json('DELETE', route('projects.destroy', $project->external_id));
 
         $this->assertnotNull($project->refresh()->deleted_at);

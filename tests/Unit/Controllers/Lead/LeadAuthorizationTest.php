@@ -29,7 +29,7 @@ class LeadAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
 
         // Create or get the lead-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -60,10 +60,10 @@ class LeadAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -113,11 +113,11 @@ class LeadAuthorizationTest extends TestCase
         ]);
         $roleWithPermission->attachPermission($assignPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalTitle = $this->lead->title;
         $originalDescription = $this->lead->description;
 
@@ -160,7 +160,7 @@ class LeadAuthorizationTest extends TestCase
         ]);
         $roleWithPermission->attachPermission($statusPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 

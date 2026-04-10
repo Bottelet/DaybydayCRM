@@ -28,7 +28,7 @@ class ClientAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = factory(Client::class)->create();
+        $this->client = Client::factory()->create();
 
         // Create or get the client-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -59,10 +59,10 @@ class ClientAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);

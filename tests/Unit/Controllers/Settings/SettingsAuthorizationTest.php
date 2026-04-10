@@ -29,7 +29,7 @@ class SettingsAuthorizationTest extends TestCase
 
         // Create admin user
         $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
-        $this->adminUser = factory(User::class)->create();
+        $this->adminUser = User::factory()->create();
         $this->adminUser->attachRole($adminRole);
 
         // Create non-admin user
@@ -42,7 +42,7 @@ class SettingsAuthorizationTest extends TestCase
                 'external_id' => uniqid('employee-role-', true),
             ]);
         }
-        $this->nonAdminUser = factory(User::class)->create();
+        $this->nonAdminUser = User::factory()->create();
         $this->nonAdminUser->attachRole($employeeRole);
     }
 

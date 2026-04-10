@@ -28,16 +28,16 @@ class LeadSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
 
         // Create and authenticate a user with default role
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->user->attachRole($role);
         $this->actingAs($this->user);
 
         // Create a user without lead-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
         $this->unauthorizedUser->attachRole($role);
 
         // Disable CSRF middleware for all tests
@@ -86,7 +86,7 @@ class LeadSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'lead-assigned']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalStatus = $this->lead->status_id;
         $originalTitle = $this->lead->title;
 
@@ -115,7 +115,7 @@ class LeadSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
 
         // Use PATCH (route is PATCH)
@@ -144,7 +144,7 @@ class LeadSecurityTest extends TestCase
         $this->user->roles->first()->attachPermission($permission);
 
         // Create a status that belongs to a different type (Task instead of Lead)
-        $taskStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $taskStatus = Status::factory()->create(['source_type' => Task::class]);
         $originalStatus = $this->lead->status_id;
 
         // Use PATCH (route is PATCH)

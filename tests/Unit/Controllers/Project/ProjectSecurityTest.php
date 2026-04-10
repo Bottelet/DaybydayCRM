@@ -27,10 +27,10 @@ class ProjectSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         // Create a user without project-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->unauthorizedUser->attachRole($role);
     }
@@ -66,7 +66,7 @@ class ProjectSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
         $originalAssignee = $this->project->user_assigned_id;
 
         // Attempt to change both status_id and user_assigned_id (mass assignment attack)
@@ -108,7 +108,7 @@ class ProjectSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
 
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'statusExternalId' => $newStatus->external_id,
@@ -125,7 +125,7 @@ class ProjectSecurityTest extends TestCase
         $this->user->roles->first()->attachPermission($permission);
 
         // Create a status that belongs to a different type (Lead instead of Project)
-        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->project->status_id;
 
         // Attempt to assign a Lead status to a Project
