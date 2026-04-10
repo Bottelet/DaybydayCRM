@@ -93,6 +93,10 @@ class ProjectsController extends Controller
         if (! auth()->user()->can('project-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete projects'));
 
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to delete projects')], 403);
+            }
+
             return redirect()->back();
         }
 
@@ -106,6 +110,10 @@ class ProjectsController extends Controller
         $project->delete();
 
         Session()->flash('flash_message', __('Project deleted'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Project deleted')], 200);
+        }
 
         return redirect()->back();
     }

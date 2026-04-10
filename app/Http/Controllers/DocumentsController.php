@@ -189,7 +189,7 @@ class DocumentsController extends Controller
         }
         Session::flash('flash_message', __('File successfully uploaded'));
 
-        return $task->external_id;
+        return response()->json(['external_id' => $task->external_id], 200);
     }
 
     /**
@@ -249,7 +249,7 @@ class DocumentsController extends Controller
         }
         Session::flash('flash_message', __('File successfully uploaded'));
 
-        return $project->external_id;
+        return response()->json(['external_id' => $project->external_id], 200);
     }
 
     public function destroy($external_id)
