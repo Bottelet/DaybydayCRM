@@ -13,7 +13,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
 
     protected $task;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->task = Task::factory()->create();

@@ -15,7 +15,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
 
     protected $project;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->project = Project::factory()->create();
