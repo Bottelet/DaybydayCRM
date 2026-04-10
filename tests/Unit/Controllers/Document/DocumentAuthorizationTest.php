@@ -34,8 +34,8 @@ class DocumentAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
-        $this->project = factory(Project::class)->create();
+        $this->task = Task::factory()->create();
+        $this->project = Project::factory()->create();
 
         // Create role with task-upload-files permission
         $roleWithTaskUpload = Role::create([
@@ -66,13 +66,13 @@ class DocumentAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithTaskUploadPermission = factory(User::class)->create();
+        $this->userWithTaskUploadPermission = User::factory()->create();
         $this->userWithTaskUploadPermission->attachRole($roleWithTaskUpload);
 
-        $this->userWithProjectUploadPermission = factory(User::class)->create();
+        $this->userWithProjectUploadPermission = User::factory()->create();
         $this->userWithProjectUploadPermission->attachRole($roleWithProjectUpload);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);

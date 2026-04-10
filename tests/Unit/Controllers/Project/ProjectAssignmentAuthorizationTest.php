@@ -53,18 +53,18 @@ class ProjectAssignmentAuthorizationTest extends TestCase
         $authorizedRole->perms()->sync([$permission->id]);
 
         // Create authorized user
-        $this->authorizedUser = factory(User::class)->create();
+        $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
 
         // Create unauthorized user
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
 
         // Create user to assign to
-        $this->newAssignee = factory(User::class)->create();
+        $this->newAssignee = User::factory()->create();
 
         // Create project
-        $client = factory(Client::class)->create();
-        $this->project = factory(Project::class)->create([
+        $client = Client::factory()->create();
+        $this->project = Project::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);

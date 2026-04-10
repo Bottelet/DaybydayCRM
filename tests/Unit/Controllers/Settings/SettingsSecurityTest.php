@@ -23,13 +23,13 @@ class SettingsSecurityTest extends TestCase
         parent::setUp();
 
         // Create a non-admin user
-        $this->nonAdminUser = factory(User::class)->create();
+        $this->nonAdminUser = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->nonAdminUser->attachRole($role);
 
         // Create and authenticate an admin user
         $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $this->user->attachRole($adminRole);
         $this->actingAs($this->user);
 

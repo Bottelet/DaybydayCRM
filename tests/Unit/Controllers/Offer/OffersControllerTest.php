@@ -27,7 +27,7 @@ class OffersControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'offer-edit']);
         $role->attachPermission($permission);
@@ -35,8 +35,8 @@ class OffersControllerTest extends TestCase
         $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->lead = factory(Lead::class)->create();
-        $this->offer = factory(Offer::class)->create();
+        $this->lead = Lead::factory()->create();
+        $this->offer = Offer::factory()->create();
     }
 
     #[Test]
@@ -106,7 +106,7 @@ class OffersControllerTest extends TestCase
     #[Test]
     public function can_set_offer_as_won()
     {
-        $offer = factory(Offer::class)->create();
+        $offer = Offer::factory()->create();
 
         $this->json('POST', route('offer.won'), [
             'offer_external_id' => $offer->external_id,
@@ -121,7 +121,7 @@ class OffersControllerTest extends TestCase
     #[Test]
     public function can_set_offer_as_lost()
     {
-        $offer = factory(Offer::class)->create();
+        $offer = Offer::factory()->create();
 
         $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $offer->external_id,

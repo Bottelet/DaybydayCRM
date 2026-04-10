@@ -27,19 +27,19 @@ class AppointmentSecurityTest extends TestCase
         parent::setUp();
 
         // Create and authenticate a user with default role
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->user->attachRole($role);
         $this->actingAs($this->user);
 
-        $this->appointment = factory(Appointment::class)->create([
+        $this->appointment = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now(),
             'end_at' => now()->addHour(),
         ]);
 
         // Create a user without appointment-update permission
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
         $this->unauthorizedUser->attachRole($role);
 
         // Disable CSRF middleware for all tests

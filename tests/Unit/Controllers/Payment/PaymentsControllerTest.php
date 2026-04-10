@@ -28,13 +28,13 @@ class PaymentsControllerTest extends TestCase
         parent::setUp();
         $this->user->attachRole(Role::whereName('owner')->first());
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
             'status' => 'unpaid',
         ]);
 
-        $this->payment = factory(Payment::class)->create();
-        $this->invoiceLine = factory(InvoiceLine::class)->create([
+        $this->payment = Payment::factory()->create();
+        $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
             'price' => 5000,
             'quantity' => 1,
@@ -55,8 +55,8 @@ class PaymentsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function cant_delete_payment_if_no_permission()
     {
-        $this->actingAs(factory(User::class)->create());
-        $payment = factory(Payment::class)->create();
+        $this->actingAs(User::factory()->create());
+        $payment = Payment::factory()->create();
 
         $response = $this->json('delete', route('payment.destroy', $payment->external_id));
 
@@ -69,7 +69,7 @@ class PaymentsControllerTest extends TestCase
     #[Group('junie_repaired')]
     public function cant_create_payment_if_no_permission()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->actingAs(User::factory()->create());
 
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount' => 5000,

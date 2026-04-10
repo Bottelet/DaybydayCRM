@@ -29,7 +29,7 @@ class ProjectAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         // Create or find project-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -59,10 +59,10 @@ class ProjectAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         // Disable CSRF middleware for all tests
@@ -103,11 +103,11 @@ class ProjectAuthorizationTest extends TestCase
         $assignPermission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-project']);
         $roleWithPermission->attachPermission($assignPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
@@ -123,7 +123,7 @@ class ProjectAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalAssignee = $this->project->user_assigned_id;
 
         // Use PATCH (route is PATCH)
@@ -147,7 +147,7 @@ class ProjectAuthorizationTest extends TestCase
         $statusPermission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $roleWithPermission->attachPermission($statusPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 

@@ -23,11 +23,11 @@ class PaymentsControllerAddPaymentTest extends TestCase
         parent::setUp();
         $this->user->attachRole(Role::whereName('owner')->first());
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
             'status' => 'unpaid',
         ]);
-        $this->invoiceLine = factory(InvoiceLine::class)->create([
+        $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
             'price' => 5000,
             'quantity' => 1,

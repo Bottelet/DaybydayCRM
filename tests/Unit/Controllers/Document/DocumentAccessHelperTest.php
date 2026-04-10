@@ -28,21 +28,21 @@ class DocumentAccessHelperTest extends TestCase
     {
         parent::setUp();
 
-        $this->owner = factory(User::class)->create();
-        $this->otherUser = factory(User::class)->create();
-        $this->client = factory(Client::class)->create(['user_id' => $this->owner->id]);
+        $this->owner = User::factory()->create();
+        $this->otherUser = User::factory()->create();
+        $this->client = Client::factory()->create(['user_id' => $this->owner->id]);
     }
 
     #[Test]
     public function helper_method_correctly_identifies_ownership_via_creator()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
@@ -65,7 +65,7 @@ class DocumentAccessHelperTest extends TestCase
     #[Test]
     public function helper_method_correctly_identifies_ownership_via_assignee()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->owner->id,
             'client_id' => $this->client->id,
@@ -85,7 +85,7 @@ class DocumentAccessHelperTest extends TestCase
     #[Test]
     public function helper_method_correctly_identifies_ownership_via_client()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $this->client->id,
@@ -108,8 +108,8 @@ class DocumentAccessHelperTest extends TestCase
     #[Test]
     public function helper_method_correctly_denies_access_to_non_owner()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
-        $task = factory(Task::class)->create([
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $otherClient->id,

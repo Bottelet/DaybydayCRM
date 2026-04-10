@@ -34,7 +34,7 @@ class OfferAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
         $this->offer = Offer::create([
             'source_id' => $this->lead->id,
             'source_type' => Lead::class,
@@ -91,13 +91,13 @@ class OfferAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithCreatePermission = factory(User::class)->create();
+        $this->userWithCreatePermission = User::factory()->create();
         $this->userWithCreatePermission->attachRole($roleWithCreatePermission);
 
-        $this->userWithEditPermission = factory(User::class)->create();
+        $this->userWithEditPermission = User::factory()->create();
         $this->userWithEditPermission->attachRole($roleWithEditPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -108,7 +108,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithCreatePermission);
 
-        $newLead = factory(Lead::class)->create();
+        $newLead = Lead::factory()->create();
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
@@ -129,7 +129,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $newLead = factory(Lead::class)->create();
+        $newLead = Lead::factory()->create();
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [

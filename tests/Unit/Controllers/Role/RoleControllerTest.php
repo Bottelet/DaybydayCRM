@@ -17,12 +17,12 @@ class RoleControllerTest extends TestCase
     {
         $this->withoutMiddleware();
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->actingAs($user);
 
         /** @var Role $role */
-        $role = factory(Role::class)->create();
+        $role = Role::factory()->create();
         $user->roles()->save($role);
 
         $this->patch("/roles/update/{$role->external_id}")
@@ -33,12 +33,12 @@ class RoleControllerTest extends TestCase
     public function unprivileged_user_cannot_access_roles()
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->actingAs($user);
 
         /** @var Role $role */
-        $role = factory(Role::class)->create();
+        $role = Role::factory()->create();
         $user->roles()->save($role);
 
         $this->get("/roles/{$role->external_id}")

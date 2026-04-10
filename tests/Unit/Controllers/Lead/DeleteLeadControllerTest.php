@@ -24,7 +24,7 @@ class DeleteLeadControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::firstOrCreate(
             ['name' => 'employee'],
             [
@@ -55,7 +55,7 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function delete_lead()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
         $this->json('DELETE', route('leads.destroy', $lead->external_id));
 
@@ -65,7 +65,7 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function delete_offers_if_flag_given()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $offer = Offer::create([
             'source_id' => $lead->id,
             'source_type' => Lead::class,
@@ -84,7 +84,7 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $offer = Offer::create([
             'source_id' => $lead->id,
             'source_type' => Lead::class,
@@ -104,7 +104,7 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $lead->offers()->forceDelete();
 
         $this->json('DELETE', route('leads.destroy', $lead->external_id), [

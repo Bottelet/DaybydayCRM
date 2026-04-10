@@ -32,16 +32,16 @@ class DocumentSecurityTest extends TestCase
         parent::setUp();
 
         // Create and authenticate a user
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $this->user->attachRole($role);
         $this->actingAs($this->user);
 
-        $this->task = factory(Task::class)->create();
-        $this->project = factory(Project::class)->create();
+        $this->task = Task::factory()->create();
+        $this->project = Project::factory()->create();
 
         // Create a user without upload permissions
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
         $this->unauthorizedUser->attachRole($role);
 
         // Mock file storage integration

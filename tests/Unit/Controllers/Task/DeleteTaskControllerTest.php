@@ -23,9 +23,9 @@ class DeleteTaskControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $role->attachPermission($permission);
