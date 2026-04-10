@@ -19,7 +19,7 @@ class ContactFactory extends \Illuminate\Database\Eloquent\Factories\Factory
             'email' => $this->faker->email,
             'primary_number' => $this->faker->randomNumber(8),
             'secondary_number' => $this->faker->randomNumber(8),
-            'client_id' => 1,
+            'client_id' => Client::factory(),
             'is_primary' => 1,
         ];
     }
