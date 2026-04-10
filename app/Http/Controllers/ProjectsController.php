@@ -12,7 +12,8 @@ use App\Models\Status;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
-use Datatables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 

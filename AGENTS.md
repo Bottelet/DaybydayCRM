@@ -27,8 +27,11 @@
   - Asset compilation: `webpack.mix.js` and legacy `gulpfile.js` (Elixir) for SASS/JS.
 - **Test:**
   - PHP: `vendor/bin/phpunit` (config in `phpunit.xml`).
+  - ParaTest: Use `vendor/bin/paratest` or `make paratest` for parallel test execution.
   - Browser: `php artisan dusk` for browser tests.
   - CI: See `.github/workflows/phpunit.yml` for GitHub Actions setup.
+- **Makefile & Docker:**
+  - Use the `Makefile` for standardized build, test, and Docker workflows. Key targets: `setup`, `phpunit`, `paratest`, `docker-setup`, `docker-phpunit`, etc. (see Makefile for full list).
 - **Database:**
   - Migrations: `php artisan migrate`.
   - Factories: `database/factories/` for test/dummy data.
@@ -42,6 +45,14 @@
 - **Permissions:**
   - Role/permission checks via Entrust (`app/Zizaco/Entrust/`).
   - Middleware like `user.is.admin`, `is.demo` restrict access to sensitive routes.
+- **Testing Conventions:**
+  - All tests must follow the isolation and normalization rules in `.github/copilot-instructions.md`:
+    - Each test creates its own data (no reliance on seeders or other tests)
+    - Only one HTTP request per test (unless testing a workflow)
+    - Normalize data types before assertions (e.g., dates)
+    - Use `owner` or `administrator` roles in tests as needed
+    - Never compare Carbon objects to strings directly—normalize first
+  - See `.github/error_repair_plan.md` for common test failures and fixes.
 - **Integrations:**
   - Billing and file storage integrations are managed via `integrations` table and repository interfaces.
   - Example: Dropbox and Google Drive for file storage, Dinero for billing.

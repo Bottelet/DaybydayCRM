@@ -24,6 +24,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \App\Models\Setting::updateOrCreate(['name' => 'invoice_number'], ['value' => '10000', 'invoice_number' => '10000']);
 
         $this->user = User::factory()->create();
 

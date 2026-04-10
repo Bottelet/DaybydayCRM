@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
-use Cache;
-use Carbon;
+use Illuminate\Support\Carbon;
 use Closure;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class LogLastUserActivity
 {

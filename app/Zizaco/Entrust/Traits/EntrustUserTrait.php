@@ -6,8 +6,8 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Log;
 
 trait EntrustUserTrait
 {

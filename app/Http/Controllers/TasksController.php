@@ -13,12 +13,13 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Carbon;
-use Datatables;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class TasksController extends Controller
 {
@@ -77,7 +78,7 @@ class TasksController extends Controller
                 ->all()
         );
 
-        return Datatables::of($tasks)
+        return DataTables::of($tasks)
             ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;

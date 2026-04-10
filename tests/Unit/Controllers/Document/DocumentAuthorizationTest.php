@@ -44,7 +44,12 @@ class DocumentAuthorizationTest extends AbstractTestCase
             'description' => 'Can upload files to tasks',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $taskUploadPermission = Permission::where('name', 'task-upload-files')->first();
+        $taskUploadPermission = Permission::firstOrCreate(['name' => 'task-upload-files'], [
+            'display_name' => 'Upload task files',
+            'description' => 'Can upload files to tasks',
+            'grouping' => 'task',
+            'external_id' => Str::uuid()->toString(),
+        ]);
         $roleWithTaskUpload->attachPermission($taskUploadPermission);
 
         // Create role with project-upload-files permission
@@ -54,7 +59,12 @@ class DocumentAuthorizationTest extends AbstractTestCase
             'description' => 'Can upload files to projects',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $projectUploadPermission = Permission::where('name', 'project-upload-files')->first();
+        $projectUploadPermission = Permission::firstOrCreate(['name' => 'project-upload-files'], [
+            'display_name' => 'Upload project files',
+            'description' => 'Can upload files to projects',
+            'grouping' => 'project',
+            'external_id' => Str::uuid()->toString(),
+        ]);
         $roleWithProjectUpload->attachPermission($projectUploadPermission);
 
         // Create role without upload permissions

@@ -17,7 +17,7 @@ class GetDateFormatTest extends AbstractTestCase
     {
         parent::setUp();
 
-        Setting::first()->update(['country' => 'GB']);
+        Setting::updateOrCreate(['name' => 'vat'], ['value' => '25', 'country' => 'GB']);
         $this->formatter = app(GetDateFormat::class);
     }
 

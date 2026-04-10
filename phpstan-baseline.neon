@@ -1,0 +1,187 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:create\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:destroy\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:edit\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:index\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:show\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:store\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditLinesController\:\:update\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditLinesController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:create\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:destroy\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:edit\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:index\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:show\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:store\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\CreditNoteController\:\:update\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/CreditNoteController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\PaymentsController\:\:index\(\) should return Illuminate\\Http\\Response but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Http/Controllers/PaymentsController.php
+
+		-
+			message: '#^Call to static method flash\(\) on an unknown class App\\Http\\Controllers\\Session\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/ProjectsController.php
+
+		-
+			message: '#^Class Yajra\\DataTables\\DataTables referenced with incorrect case\: Yajra\\Datatables\\Datatables\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: app/Http/Controllers/RolesController.php
+
+		-
+			message: '#^Call to static method flash\(\) on an unknown class App\\Http\\Controllers\\Session\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/TasksController.php
+
+		-
+			message: '#^Call to static method readAll\(\) on an unknown class App\\Http\\Controllers\\Notifynder\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Http/Controllers/TasksController.php
+
+		-
+			message: '#^Undefined variable\: \$notification$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Jobs/ProcessNotifications.php
+
+		-
+			message: '#^Method App\\Notifications\\ClientActionNotification\:\:toMail\(\) should return Illuminate\\Notifications\\Messages\\MailMessage but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Notifications/ClientActionNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\LeadActionNotification\:\:toMail\(\) should return Illuminate\\Notifications\\Messages\\MailMessage but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Notifications/LeadActionNotification.php
+
+		-
+			message: '#^Class App\\Notifications\\Project not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Notifications/ProjectActionNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\ProjectActionNotification\:\:toMail\(\) should return Illuminate\\Notifications\\Messages\\MailMessage but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Notifications/ProjectActionNotification.php
+
+		-
+			message: '#^Method App\\Notifications\\TaskActionNotification\:\:toMail\(\) should return Illuminate\\Notifications\\Messages\\MailMessage but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Notifications/TaskActionNotification.php
+
+		-
+			message: '#^Call to an undefined static method League\\Config\\Exception\\InvalidConfigurationException\:\:modelIsNotValid\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Services/Activity/ActivityLogger.php
+
+		-
+			message: '#^Instantiated class App\\Services\\Storage\\Google_Service_Drive not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Services/Storage/GoogleDrive.php
+
+		-
+			message: '#^Method App\\Services\\Storage\\GoogleDrive\:\:revokeAccess\(\) should return bool but return statement is missing\.$#'
+			identifier: return.missing
+			count: 1
+			path: app/Services/Storage/GoogleDrive.php
+
+		-
+			message: '#^Result of method App\\Zizaco\\Entrust\\EntrustRole\:\:attachPermissions\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: app/Zizaco/Entrust/EntrustRole.php
+
+		-
+			message: '#^Result of method App\\Zizaco\\Entrust\\EntrustRole\:\:detachPermissions\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: app/Zizaco/Entrust/EntrustRole.php
+
+		-
+			message: '#^Instantiated class App\\Zizaco\\Entrust\\MigrationCommand not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Zizaco/Entrust/EntrustServiceProvider.php

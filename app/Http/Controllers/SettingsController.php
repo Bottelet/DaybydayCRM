@@ -15,7 +15,7 @@ use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Services\InvoiceNumber\InvoiceNumberValidator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class SettingsController extends Controller
 {

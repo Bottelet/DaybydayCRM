@@ -26,7 +26,8 @@ class PaymentsControllerTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user->attachRole(Role::whereName('owner')->first());
+        $role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
+        $this->user->attachRole($role);
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),

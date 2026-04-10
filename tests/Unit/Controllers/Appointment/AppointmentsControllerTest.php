@@ -25,7 +25,7 @@ class AppointmentsControllerTest extends AbstractTestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
+        $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $this->user->attachRole($role);
 
         // Give user permissions for appointment operations

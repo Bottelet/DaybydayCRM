@@ -20,7 +20,7 @@ use App\Services\ClientNumber\ClientNumberService;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 use Exception;

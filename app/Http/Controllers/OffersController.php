@@ -56,7 +56,6 @@ class OffersController extends Controller
             'external_id' => Uuid::uuid4()->toString(),
             'source_id' => $lead->id,
             'source_type' => Lead::class,
-            'status' => OfferStatus::inProgress()->getStatus(),
         ]);
 
         foreach ($request->all() as $line) {

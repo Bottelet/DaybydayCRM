@@ -164,7 +164,11 @@ class LeadAuthorizationTest extends AbstractTestCase
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::typeOfLead()->where('id', '!=', $this->lead->status_id)->first();
+        $newStatus = Status::factory()->create(['context' => 'lead']);
+        while ($newStatus->id == $this->lead->status_id) {
+            $newStatus = Status::factory()->create(['context' => 'lead']);
+        }
+
         $originalTitle = $this->lead->title;
         $originalDescription = $this->lead->description;
 

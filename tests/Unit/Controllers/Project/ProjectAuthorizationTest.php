@@ -151,7 +151,10 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::typeOfProject()->where('id', '!=', $this->project->status_id)->first();
+        $newStatus = Status::factory()->create(['context' => 'project']);
+        while ($newStatus->id == $this->project->status_id) {
+            $newStatus = Status::factory()->create(['context' => 'project']);
+        }
         $originalTitle = $this->project->title;
         $originalDescription = $this->project->description;
 

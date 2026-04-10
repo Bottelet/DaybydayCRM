@@ -106,7 +106,11 @@ class TaskAuthorizationTest extends AbstractTestCase
             'description' => 'Can update task project',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $updateProjectPermission = Permission::where('name', 'task-update-linked-project')->first();
+        $updateProjectPermission = Permission::firstOrCreate(['name' => 'task-update-linked-project'], [
+            'display_name' => 'Update task linked project',
+            'description' => 'Can update task project',
+            'grouping' => 'task',
+        ]);
         $roleWithPermission->attachPermission($updateProjectPermission);
 
         $user = User::factory()->create();
@@ -145,14 +149,21 @@ class TaskAuthorizationTest extends AbstractTestCase
             'description' => 'Can update status',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $statusPermission = Permission::where('name', 'task-update-status')->first();
+        $statusPermission = Permission::firstOrCreate(['name' => 'task-update-status'], [
+            'display_name' => 'Update task status',
+            'description' => 'Can update task status',
+            'grouping' => 'task',
+        ]);
         $roleWithPermission->attachPermission($statusPermission);
 
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::typeOfTask()->where('id', '!=', $this->task->status_id)->first();
+        $newStatus = Status::factory()->create(['context' => 'task']);
+        while ($newStatus->id == $this->task->status_id) {
+            $newStatus = Status::factory()->create(['context' => 'task']);
+        }
         $originalTitle = $this->task->title;
         $originalDescription = $this->task->description;
 

@@ -6,6 +6,7 @@ use App\Models\Activity;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
 use Exception;
+use League\Config\Exception\InvalidConfigurationException;
 
 class ActivityLogger
 {
@@ -79,7 +80,7 @@ class ActivityLogger
         $activityModel = Activity::class;
         if (! is_a($activityModel, Activity::class, true)
             || ! is_a($activityModel, Model::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($activityModel);
+            throw InvalidConfigurationException::modelIsNotValid($activityModel);
         }
 
         return $activityModel;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Session;
+use Illuminate\Support\Facades\Session;
 use Exception;
 
 class CommentController extends Controller
@@ -27,7 +27,7 @@ class CommentController extends Controller
         ];
 
         if (! array_key_exists($request->type, $modelsMapping)) {
-            Session::flash('flash_message_warning', __('Could not create comment, type not found! Please contact Daybyday support'));
+            \Illuminate\Support\Facades\Session::flash('flash_message_warning', __('Could not create comment, type not found! Please contact Daybyday support'));
             throw new Exception('Could not create comment with type '.$request->type);
         }
 

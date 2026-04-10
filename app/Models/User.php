@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Api\v1\Models\Token;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -102,10 +101,10 @@ class User extends Authenticatable
         return $this->hasMany(Absence::class);
     }
 
-    public function tokens()
+    /*public function tokens()
     {
         return $this->hasMany(Token::class, 'user_id', 'id');
-    }
+    }*/
 
     public function canChangePasswordOn(User $user)
     {

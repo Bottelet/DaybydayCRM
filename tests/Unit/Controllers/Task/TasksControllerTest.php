@@ -26,6 +26,8 @@ class TasksControllerTest extends AbstractTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
+        $role = \App\Models\Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $this->user->attachRole($role);
         $this->client = Client::factory()->create();
     }
 

@@ -7,6 +7,7 @@ namespace Database\Factories;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\User;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Factory;
 
 class LeadFactory extends \Illuminate\Database\Eloquent\Factories\Factory

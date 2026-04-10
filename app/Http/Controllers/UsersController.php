@@ -13,13 +13,13 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class UsersController extends Controller
 {

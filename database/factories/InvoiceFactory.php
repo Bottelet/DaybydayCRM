@@ -2,11 +2,9 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
-
+use App\Enums\InvoiceStatus;
 use App\Models\Client;
 use App\Models\Invoice;
-use Illuminate\Database\Eloquent\Factory;
 
 class InvoiceFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {
@@ -16,7 +14,7 @@ class InvoiceFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => $this->faker->uuid,
-            'status' => 'draft',
+            'status' => InvoiceStatus::draft(),
             'client_id' => Client::factory(),
         ];
     }

@@ -20,6 +20,9 @@ class ClientsControllerTest extends AbstractTestCase
     #[Test]
     public function can_create_client()
     {
+        $industry = Industry::factory()->create();
+        $user = User::factory()->create();
+
         $response = $this->json('POST', route('clients.store'), [
             'name' => 'James Test',
             'email' => 'james@test.com',
@@ -31,8 +34,8 @@ class ClientsControllerTest extends AbstractTestCase
             'zipcode' => '2222',
             'city' => 'Bond city',
             'company_type' => 'Aps',
-            'industry_id' => Industry::first()->id,
-            'user_id' => User::first()->id,
+            'industry_id' => $industry->id,
+            'user_id' => $user->id,
         ]);
 
         $this->assertEquals(302, $response->getStatusCode());
@@ -61,7 +64,7 @@ class ClientsControllerTest extends AbstractTestCase
     {
         // Create authenticated user with client-update permission
         $authUser = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
+        $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);

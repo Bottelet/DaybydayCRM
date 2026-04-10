@@ -11,7 +11,7 @@ use App\Models\Setting;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\Invoice\InvoiceCalculator;
-use Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
@@ -95,7 +95,7 @@ class LeadsController extends Controller
                 'title' => $request->title,
                 'description' => clean($request->description),
                 'user_assigned_id' => $request->user_assigned_id,
-                'deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00'),
+                'deadline' => \Illuminate\Support\Carbon::parse($request->deadline.' '.$request->contact_time.':00'),
                 'status_id' => $request->status_id,
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),

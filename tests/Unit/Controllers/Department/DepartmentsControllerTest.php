@@ -6,7 +6,7 @@ use App\Models\Department;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class DepartmentsControllerTest extends AbstractTestCase
 {

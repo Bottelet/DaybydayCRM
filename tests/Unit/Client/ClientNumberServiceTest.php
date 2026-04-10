@@ -25,6 +25,8 @@ class ClientNumberServiceTest extends AbstractTestCase
     {
         parent::setUp();
 
+        Setting::updateOrCreate(['name' => 'client_number'], ['value' => '980200', 'client_number' => '980200']);
+
         $this->user = User::factory()->create();
 
         $this->client = Client::factory()->create([

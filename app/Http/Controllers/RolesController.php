@@ -8,7 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 use Yajra\Datatables\Datatables;
 
 class RolesController extends Controller

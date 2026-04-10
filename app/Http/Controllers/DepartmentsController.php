@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use App\Models\Department;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class DepartmentsController extends Controller
 {

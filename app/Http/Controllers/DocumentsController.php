@@ -11,7 +11,7 @@ use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class DocumentsController extends Controller
 {

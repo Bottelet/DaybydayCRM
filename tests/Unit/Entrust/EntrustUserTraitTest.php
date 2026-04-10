@@ -27,9 +27,8 @@ class EntrustUserTraitTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->user = User::factory()->create();
-        $this->role = Role::where('name', 'owner')->first();
+        $this->role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
     }
 
     #[Test]
@@ -54,7 +53,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function attach_role_accepts_role_object()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         $user->attachRole($adminRole);
 
@@ -65,7 +64,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function attach_role_accepts_role_id()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         $user->attachRole($adminRole->id);
 
@@ -76,7 +75,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function attach_role_accepts_role_array()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         $user->attachRole(['id' => $adminRole->id]);
 
@@ -87,7 +86,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function attach_role_called_multiple_times_results_in_only_one_db_entry()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         // Call attachRole 3 times for the same role
         $user->attachRole($adminRole);
@@ -113,7 +112,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function cached_roles_returns_collection_with_correct_roles()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
         $user->attachRole($adminRole);
 
         $cachedRoles = $user->cachedRoles();
@@ -137,7 +136,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     public function has_role_works_correctly_after_attach_role_fix()
     {
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         $this->assertFalse($user->hasRole('administrator'), 'User should not have role before attaching');
 
