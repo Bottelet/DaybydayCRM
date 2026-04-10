@@ -50,6 +50,9 @@ class AppointmentSecurityTest extends AbstractTestCase
         $permission = Permission::firstOrCreate(['name' => 'appointment-edit']);
         $this->user->roles->first()->attachPermission($permission);
 
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'start' => now()->addDay()->toISOString(),
@@ -100,6 +103,9 @@ class AppointmentSecurityTest extends AbstractTestCase
         // Give user permission to delete appointments
         $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
         $this->user->roles->first()->attachPermission($permission);
+
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [

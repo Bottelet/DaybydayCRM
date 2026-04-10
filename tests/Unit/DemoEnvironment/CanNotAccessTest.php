@@ -89,6 +89,9 @@ class CanNotAccessTest extends AbstractTestCase
     #[Test]
     public function delete_client()
     {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
         $client = Client::factory()->create();
 
         $response = $this->json('DELETE', route('clients.destroy', $client->external_id));
@@ -99,6 +102,9 @@ class CanNotAccessTest extends AbstractTestCase
     #[Test]
     public function delete_user()
     {
+        $authUser = User::factory()->create();
+        $this->actingAs($authUser);
+
         $user = User::factory()->create();
 
         $response = $this->json('DELETE', route('users.destroy', $user->external_id));
@@ -109,6 +115,9 @@ class CanNotAccessTest extends AbstractTestCase
     #[Test]
     public function update_user()
     {
+        $authUser = User::factory()->create();
+        $this->actingAs($authUser);
+
         $user = User::factory()->create();
 
         $response = $this->json('PATCH', route('users.update', $user->external_id));
