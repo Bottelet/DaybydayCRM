@@ -32,6 +32,16 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
+        // CRITICAL: Bind fake storage provider BEFORE creating users/entities
+        // The filesystem middleware checks this during requests
+        $this->bindFakeStorageProvider();
+
+        // Create file storage integration so the filesystem middleware passes
+        Integration::create([
+            'name' => 'local',
+            'api_type' => 'file',
+        ]);
+
         // Create owner user
         $this->owner = User::factory()->create();
 
@@ -40,14 +50,6 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
 
         // Create a client owned by the owner
         $this->client = Client::factory()->create(['user_id' => $this->owner->id]);
-
-        // Create file storage integration so the filesystem middleware passes
-        Integration::create([
-            'name' => 'local',
-            'api_type' => 'file',
-        ]);
-
-        $this->bindFakeStorageProvider();
     }
 
     private function bindFakeStorageProvider(): void
