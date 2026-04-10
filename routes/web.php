@@ -148,6 +148,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'settings'], static function () {
         Route::get('/', 'SettingsController@index')->name('settings.index');
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.updateOverall');
+        Route::patch('/', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backwards compatibility
         Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.updateFirstStep');
         Route::get('/business-hours', 'SettingsController@businessHours')->name('settings.business_hours');
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
