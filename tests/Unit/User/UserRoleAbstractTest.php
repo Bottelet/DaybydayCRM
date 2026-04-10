@@ -28,7 +28,7 @@ class UserRoleAbstractTest extends AbstractTestCase
     public function factory_state_with_role_attaches_specified_role()
     {
         // When using the 'withRole' state with 'employee', user should have employee role
-        $user = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $user = User::factory()->withRole('employee')->create();
 
         $this->assertEquals(1, $user->roles->count());
         $this->assertEquals('employee', $user->roles->first()->name);
@@ -39,19 +39,19 @@ class UserRoleAbstractTest extends AbstractTestCase
     public function factory_state_with_role_supports_different_roles()
     {
         // Test employee role
-        $employee = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $employee = User::factory()->withRole('employee')->create();
         $this->assertEquals('employee', $employee->roles->first()->name);
 
         // Test owner role
-        $owner = User::factory()->state('withRole', ['role' => 'owner'])->create();
+        $owner = User::factory()->withRole('owner')->create();
         $this->assertEquals('owner', $owner->roles->first()->name);
 
         // Test administrator role
-        $admin = User::factory()->state('withRole', ['role' => 'administrator'])->create();
+        $admin = User::factory()->withRole('administrator')->create();
         $this->assertEquals('administrator', $admin->roles->first()->name);
 
         // Test manager role
-        $manager = User::factory()->state('withRole', ['role' => 'manager'])->create();
+        $manager = User::factory()->withRole('manager')->create();
         $this->assertEquals('manager', $manager->roles->first()->name);
     }
 
@@ -59,9 +59,9 @@ class UserRoleAbstractTest extends AbstractTestCase
     public function multiple_users_can_share_the_same_role_via_factory_state()
     {
         // Create multiple users with employee role
-        $user1 = User::factory()->state('withRole', ['role' => 'employee'])->create();
-        $user2 = User::factory()->state('withRole', ['role' => 'employee'])->create();
-        $user3 = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $user1 = User::factory()->withRole('employee')->create();
+        $user2 = User::factory()->withRole('employee')->create();
+        $user3 = User::factory()->withRole('employee')->create();
 
         // All should have the employee role
         $this->assertEquals('employee', $user1->roles->first()->name);
@@ -84,7 +84,7 @@ class UserRoleAbstractTest extends AbstractTestCase
     #[Test]
     public function user_role_relationship_is_accessible_when_using_factory_state()
     {
-        $user = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $user = User::factory()->withRole('employee')->create();
 
         // Test that we can access role properties via the relationship
         $this->assertNotNull($user->roles);

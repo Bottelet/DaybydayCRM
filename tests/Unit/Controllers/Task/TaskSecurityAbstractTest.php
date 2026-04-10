@@ -32,14 +32,11 @@ class TaskSecurityAbstractTest extends AbstractTestCase
         $this->task = Task::factory()->create();
 
         // Create and authenticate a user with default role
-        $this->user = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->user->attachRole($role);
+        $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
         // Create a user without task-delete permission
-        $this->unauthorizedUser = User::factory()->create();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
         // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();

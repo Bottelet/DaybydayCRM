@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Controllers\Settings;
 
-use App\Models\Role;
+use App\Models\BusinessHour;
 use App\Models\Setting;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -25,25 +25,30 @@ class SettingsAuthorizationAbstractTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->setting = Setting::first();
+        $this->setting = Setting::first() ?: Setting::create([
+            'company' => 'Default Company',
+            'vat' => 25,
+            'currency' => 'USD',
+            'language' => 'en',
+            'country' => 'US',
+            'client_number' => 1,
+            'invoice_number' => 1,
+            'max_users' => 10,
+        ]);
+
+        // Create business hours for the setting
+        foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day) {
+            BusinessHour::firstOrCreate(
+                ['day' => $day],
+                ['open_time' => '09:00:00', 'close_time' => '17:00:00']
+            );
+        }
 
         // Create admin user
-        $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
-        $this->adminUser = User::factory()->create();
-        $this->adminUser->attachRole($adminRole);
+        $this->adminUser = User::factory()->withRole('administrator')->create();
 
         // Create non-admin user
-        $employeeRole = Role::where('name', 'employee')->first();
-        if (! $employeeRole) {
-            $employeeRole = Role::create([
-                'name' => 'employee',
-                'display_name' => 'Employee',
-                'description' => 'Regular employee',
-                'external_id' => uniqid('employee-role-', true),
-            ]);
-        }
-        $this->nonAdminUser = User::factory()->create();
-        $this->nonAdminUser->attachRole($employeeRole);
+        $this->nonAdminUser = User::factory()->withRole('employee')->create();
     }
 
     #[Test]

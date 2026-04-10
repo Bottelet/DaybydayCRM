@@ -6,6 +6,7 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,14 +28,14 @@ class UserSecurityTest extends AbstractTestCase
         parent::setUp();
 
         // Create target user with employee role for testing
-        $this->targetUser = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $this->targetUser = User::factory()->withRole('employee')->create();
 
         // Create and authenticate a user with employee role
-        $this->user = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
         // Create a user without user-update permission
-        $this->unauthorizedUser = User::factory()->state('withRole', ['role' => 'employee'])->create();
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -43,6 +44,9 @@ class UserSecurityTest extends AbstractTestCase
     #[Test]
     public function authorized_user_can_edit_user()
     {
+        $this->asAdmin();
+        Cache::tags('role_user')->flush();
+
         $response = $this->json('GET', route('users.edit', $this->targetUser->external_id));
 
         $response->assertStatus(200);
@@ -51,7 +55,9 @@ class UserSecurityTest extends AbstractTestCase
     #[Test]
     public function unauthorized_user_cannot_edit_user()
     {
-        $this->actingAs($this->unauthorizedUser);
+        // Use a user that truly has no update permission
+        $plainUser = User::factory()->withRole('employee')->create();
+        $this->actingAs($plainUser);
 
         $response = $this->json('GET', route('users.edit', $this->targetUser->external_id));
 
@@ -61,6 +67,9 @@ class UserSecurityTest extends AbstractTestCase
     #[Test]
     public function authorized_user_can_update_user()
     {
+        $this->asAdmin();
+        Cache::tags('role_user')->flush();
+
         $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
             'name' => 'Updated Name',
             'email' => $this->targetUser->email,

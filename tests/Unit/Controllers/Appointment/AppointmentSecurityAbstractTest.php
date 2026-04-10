@@ -27,9 +27,7 @@ class AppointmentSecurityAbstractTest extends AbstractTestCase
         parent::setUp();
 
         // Create and authenticate a user with default role
-        $this->user = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->user->attachRole($role);
+        $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
         $this->appointment = Appointment::factory()->create([
@@ -39,8 +37,7 @@ class AppointmentSecurityAbstractTest extends AbstractTestCase
         ]);
 
         // Create a user without appointment-update permission
-        $this->unauthorizedUser = User::factory()->create();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -83,8 +80,8 @@ class AppointmentSecurityAbstractTest extends AbstractTestCase
     {
         // Remove all permissions from user
         $this->user->roles()->detach();
-        $basicRole = Role::where('name', 'employee')->first();
-        $this->user->attachRole($basicRole);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [

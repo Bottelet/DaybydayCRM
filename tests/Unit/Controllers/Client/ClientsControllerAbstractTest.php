@@ -127,9 +127,7 @@ class ClientsControllerAbstractTest extends AbstractTestCase
     public function can_update_assignee()
     {
         // Create authenticated user with client-update permission
-        $authUser = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $authUser->attachRole($role);
+        $authUser = User::factory()->withRole('employee')->create();
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
 
@@ -173,9 +171,7 @@ class ClientsControllerAbstractTest extends AbstractTestCase
     public function can_update_client_without_primary_contact()
     {
         // Create authenticated user with client-update permission
-        $authUser = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $authUser->attachRole($role);
+        $authUser = User::factory()->withRole('employee')->create();
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
 

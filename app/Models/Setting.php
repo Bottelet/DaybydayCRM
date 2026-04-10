@@ -17,6 +17,9 @@ class Setting extends Model
         'currency',
         'vat',
         'language',
+        'max_users',
+        'start_time',
+        'end_time',
     ];
 
     public function user()

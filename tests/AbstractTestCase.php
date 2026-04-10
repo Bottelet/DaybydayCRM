@@ -2,10 +2,12 @@
 
 namespace Tests;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Cache;
 use Artisan;
 
 abstract class AbstractTestCase extends BaseTestCase
@@ -64,7 +66,16 @@ abstract class AbstractTestCase extends BaseTestCase
      */
     public function asOwner()
     {
-        $this->user->attachRole(Role::whereName('owner')->first());
+        $role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner', 'description' => 'Owner role', 'external_id' => 'owner-role-id']);
+
+        // Also ensure user-update permission exists and is attached to owner role
+        $permission = Permission::firstOrCreate(['name' => 'user-update'], ['display_name' => 'Update User', 'description' => 'Update user permission']);
+        if (! $role->hasPermission('user-update')) {
+            $role->attachPermission($permission);
+        }
+
+        $this->user->attachRole($role);
+        Cache::tags('role_user')->flush();
 
         return $this;
     }
@@ -76,7 +87,16 @@ abstract class AbstractTestCase extends BaseTestCase
      */
     public function asAdmin()
     {
-        $this->user->attachRole(Role::whereName('administrator')->first());
+        $role = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator', 'description' => 'Administrator role', 'external_id' => 'admin-role-id']);
+
+        // Also ensure user-update permission exists and is attached to admin role
+        $permission = Permission::firstOrCreate(['name' => 'user-update'], ['display_name' => 'Update User', 'description' => 'Update user permission']);
+        if (! $role->hasPermission('user-update')) {
+            $role->attachPermission($permission);
+        }
+
+        $this->user->attachRole($role);
+        Cache::tags('role_user')->flush();
 
         return $this;
     }

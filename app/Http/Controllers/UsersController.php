@@ -349,7 +349,8 @@ class UsersController extends Controller
      */
     private function allRoles()
     {
-        if (auth()->user()->roles->first()->name == Role::OWNER_ROLE) {
+        $role = auth()->user()->roles->first();
+        if ($role && $role->name == Role::OWNER_ROLE) {
             return Role::all('display_name', 'id', 'name', 'external_id')->sortBy('display_name');
         }
 

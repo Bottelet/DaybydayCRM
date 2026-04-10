@@ -5,7 +5,6 @@ namespace Tests\Unit\Controllers\Project;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Project;
-use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -30,9 +29,7 @@ class ProjectSecurityAbstractTest extends AbstractTestCase
         $this->project = Project::factory()->create();
 
         // Create a user without project-delete permission
-        $this->unauthorizedUser = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
     }
 
     #[Test]

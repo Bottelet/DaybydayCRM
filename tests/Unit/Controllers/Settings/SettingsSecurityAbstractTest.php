@@ -3,7 +3,6 @@
 namespace Tests\Unit\Controllers\Settings;
 
 use App\Http\Middleware\VerifyCsrfToken;
-use App\Models\Role;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -23,14 +22,10 @@ class SettingsSecurityAbstractTest extends AbstractTestCase
         parent::setUp();
 
         // Create a non-admin user
-        $this->nonAdminUser = User::factory()->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->nonAdminUser->attachRole($role);
+        $this->nonAdminUser = User::factory()->withRole('employee')->create();
 
         // Create and authenticate an admin user
-        $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
-        $this->user = User::factory()->create();
-        $this->user->attachRole($adminRole);
+        $this->user = User::factory()->withRole('administrator')->create();
         $this->actingAs($this->user);
 
         // Disable CSRF middleware for all tests

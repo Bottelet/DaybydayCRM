@@ -37,7 +37,7 @@ class UserAuthorizationAbstractTest extends AbstractTestCase
             'description' => 'Can delete users',
             'external_id' => Str::uuid()->toString(),
         ]);
-        $deletePermission = Permission::where('name', 'user-delete')->first();
+        $deletePermission = Permission::firstOrCreate(['name' => 'user-delete'], ['display_name' => 'Delete User', 'description' => 'Delete user permission']);
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without user-delete permission
@@ -88,9 +88,7 @@ class UserAuthorizationAbstractTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithPermission);
 
-        $ownerRole = Role::where('name', 'owner')->first();
-        $ownerUser = User::factory()->create();
-        $ownerUser->attachRole($ownerRole);
+        $ownerUser = User::factory()->withRole('owner')->create();
 
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));
 

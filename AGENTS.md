@@ -9,7 +9,7 @@
   - `app/Repositories/`: Abstractions for integrations (Billing, Filesystem).
   - `resources/views/`: Blade templates, organized by feature.
   - `routes/`: Route definitions (`web.php`, `api.php`).
-  - `database/factories/`, `migrations/`, `seeds/`: Standard Laravel data setup.
+  - `database/factories/`, `migrations/`, `seeders/`: Standard Laravel data setup.
 
 ## Architecture & Data Flow
 - **Service Boundaries:**

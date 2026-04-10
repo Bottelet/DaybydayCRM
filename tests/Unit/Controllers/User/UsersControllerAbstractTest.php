@@ -4,6 +4,7 @@ namespace Tests\Unit\Controllers\User;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -17,24 +18,29 @@ class UsersControllerAbstractTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function owner_can_update_user_role()
     {
+        $this->asOwner();
+        Cache::tags('role_user')->flush();
+
+        // Create a different user to update, because we can't demote the only owner
+        $targetUser = User::factory()->withRole('employee')->create();
 
         /** @var Role $targetRole */
-        $targetRole = Role::first();
+        $targetRole = Role::firstOrCreate(['name' => 'manager'], ['display_name' => 'Manager', 'description' => 'Manager role']);
 
         $this->json(
             'PATCH',
-            route('users.update', $this->user->external_id),
+            route('users.update', $targetUser->external_id),
             [
-                'name' => $this->user->name,
-                'email' => $this->user->email,
-                'departments' => $this->user->department()->first()->id,
+                'name' => $targetUser->name,
+                'email' => $targetUser->email,
+                'departments' => $targetUser->department()->first()->id,
                 'roles' => $targetRole->id,
             ]
         )->assertRedirect();
 
         $this->assertEquals(
             [$targetRole->id],
-            $this->user->roles()->get()->pluck('id')->toArray()
+            $targetUser->roles()->get()->pluck('id')->toArray()
         );
     }
 
@@ -42,8 +48,7 @@ class UsersControllerAbstractTest extends AbstractTestCase
     public function only_owner_role_can_update_user()
     {
         /** @var User $manager */
-        $manager = User::factory()->create();
-        $manager->roles()->save(Role::whereName('manager')->first());
+        $manager = User::factory()->withRole('manager')->create();
         $this->actingAs($manager);
 
         $this->json(
