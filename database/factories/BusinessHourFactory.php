@@ -11,7 +11,9 @@ class BusinessHourFactory extends \Illuminate\Database\Eloquent\Factories\Factor
     public function definition()
     {
         return [
-            //
+            'day' => 'monday',
+            'open_time' => '09:00',
+            'close_time' => '18:00',
         ];
     }
 }

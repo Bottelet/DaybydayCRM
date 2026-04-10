@@ -5,7 +5,6 @@ namespace Tests\Unit\Controllers\Payment;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
-use App\Models\Role;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +20,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user->attachRole(Role::whereName('owner')->first());
+        $this->asOwner();
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),

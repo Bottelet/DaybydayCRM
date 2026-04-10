@@ -161,6 +161,11 @@ class LeadsController extends Controller
 
     public function updateAssign($external_id, Request $request)
     {
+        if (! auth()->user()->can('can-assign-new-user-to-lead')) {
+            session()->flash('flash_message_warning', __('You do not have permission to assign leads'));
+
+            return redirect()->back();
+        }
         $lead = $this->findByExternalId($external_id);
         $input = $request->only(['user_assigned_id']);
         $lead->fill($input)->save();

@@ -57,7 +57,7 @@ class ApiControllerTest extends AbstractTestCase
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('null', $response->getContent());
+        $this->assertEquals('{}', $response->getContent());
     }
 
     #[Test]

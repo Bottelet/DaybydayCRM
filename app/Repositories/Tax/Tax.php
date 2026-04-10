@@ -44,7 +44,9 @@ class Tax
 
     public function percentage()
     {
-        return Setting::select('vat')->first()->vat / 100;
+        $setting = Setting::select('vat')->first();
+
+        return ($setting ? $setting->vat : 21) / 100;
     }
 
     private function integerToVatRate()

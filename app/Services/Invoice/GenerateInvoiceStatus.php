@@ -39,11 +39,11 @@ class GenerateInvoiceStatus
         if ($this->isDraft()) {
             return InvoiceStatus::draft()->getStatus();
         }
-        if ($this->isUnPaid()) {
-            return InvoiceStatus::unpaid()->getStatus();
-        }
         if ($this->isPaid()) {
             return InvoiceStatus::paid()->getStatus();
+        }
+        if ($this->isUnPaid()) {
+            return InvoiceStatus::unpaid()->getStatus();
         }
         if ($this->isPartialPaid()) {
             return InvoiceStatus::partialPaid()->getStatus();

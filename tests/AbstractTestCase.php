@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use App\Models\Setting;
+use App\Models\BusinessHour;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -39,6 +41,16 @@ abstract class AbstractTestCase extends BaseTestCase
         $ownerRole = Role::query()->where('name', 'owner')->first() ?? Role::factory()->create(['name' => 'owner']);
         $this->user->roles()->attach($ownerRole->id);
 
+        $setting = Setting::first() ?? Setting::factory()->create();
+        if (BusinessHour::count() == 0) {
+            foreach (['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as $day) {
+                BusinessHour::factory()->create([
+                    'day' => $day,
+                    'settings_id' => $setting->id,
+                ]);
+            }
+        }
+
         $this->actingAs($this->user);
     }
 
@@ -69,9 +81,17 @@ abstract class AbstractTestCase extends BaseTestCase
         $role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner', 'description' => 'Owner role', 'external_id' => 'owner-role-id']);
 
         // Also ensure user-update permission exists and is attached to owner role
-        $permission = Permission::firstOrCreate(['name' => 'user-update'], ['display_name' => 'Update User', 'description' => 'Update user permission']);
-        if (! $role->hasPermission('user-update')) {
-            $role->attachPermission($permission);
+        $permissions = [
+            'user-update' => ['display_name' => 'Update User', 'description' => 'Update user permission'],
+            'payment-create' => ['display_name' => 'Create Payment', 'description' => 'Create payment permission'],
+            'payment-delete' => ['display_name' => 'Delete Payment', 'description' => 'Delete payment permission'],
+        ];
+
+        foreach ($permissions as $name => $details) {
+            $permission = Permission::firstOrCreate(['name' => $name], $details);
+            if (! $role->hasPermission($name)) {
+                $role->attachPermission($permission);
+            }
         }
 
         $this->user->attachRole($role);
