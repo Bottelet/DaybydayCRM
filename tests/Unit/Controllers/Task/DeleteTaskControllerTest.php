@@ -32,8 +32,9 @@ class DeleteTaskControllerTest extends AbstractTestCase
         $role->attachPermission($permission);
         $this->user->attachRole($role);
 
-        // Explicitly clear the permissions cache
+        // Explicitly clear both permission caches
         Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
 
         $this->actingAs($this->user);
         $this->withoutMiddleware(VerifyCsrfToken::class);

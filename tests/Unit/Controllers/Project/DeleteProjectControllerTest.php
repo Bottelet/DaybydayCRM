@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,6 +32,11 @@ class DeleteProjectControllerTest extends AbstractTestCase
         $permission = Permission::firstOrCreate(['name' => 'project-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
+        
+        // Explicitly clear both permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        
         $this->actingAs($this->user);
 
         $this->project = Project::factory()->create();
