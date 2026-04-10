@@ -43,8 +43,13 @@ class InvoiceLinesControllerTest extends TestCase
         );
         
         $ownerRole = Role::whereName('owner')->first();
-        $ownerRole->attachPermission($permission);
-        $this->user->attachRole($ownerRole);
+        if ($ownerRole) {
+            $ownerRole->attachPermission($permission);
+            $this->user->attachRole($ownerRole);
+        }
+        
+        // Explicitly clear the permissions cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
