@@ -14,7 +14,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
 
     protected $lead;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->lead = Lead::factory()->create();
