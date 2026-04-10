@@ -5,15 +5,14 @@ namespace Tests;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
-use Faker\Factory;
-use Faker\Generator;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
+use Artisan;
 
 abstract class AbstractTestCase extends BaseTestCase
 {
     use CreatesApplication;
+
+    protected static $schemaIsUpToDate = false; // <-- add this (for this process)
 
     protected $user;
 
@@ -21,26 +20,23 @@ abstract class AbstractTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // Run migrations before each test
-        Artisan::call('migrate:fresh');
-        Artisan::call('db:seed');
+        if (! static::$schemaIsUpToDate) {
+            // The app container & facades are initialized HERE
+            Artisan::call('migrate:fresh', ['--seed' => true]);
+            static::$schemaIsUpToDate = true;
+        }
 
-        // Ensure Faker\Generator is bound for legacy factories
-        $this->app->singleton(Generator::class, function () {
-            return Factory::create();
-        });
+        // Every test: build fresh, unique data only!
+        $this->user = User::factory()->create([
+            // Unique email for this test!
+            'email' => fake()->unique()->safeEmail,
+            'name' => 'Admin',
+        ]);
 
-        // Ensure "Admin" user exists after migrations
+        // Attach role using factories/helpers, not first()
+        $ownerRole = Role::query()->where('name', 'owner')->first() ?? Role::factory()->create(['name' => 'owner']);
+        $this->user->roles()->attach($ownerRole->id);
 
-        $this->user = User::firstOrCreate(
-            ['name' => 'Admin'],
-            [
-                'external_id' => (string) Str::uuid(),
-                'email' => 'admin@admin.com',
-                'password' => bcrypt('admin123'),
-            ]
-        );
-        $this->user->attachRole(Role::where('name', 'owner')->first());
         $this->actingAs($this->user);
     }
 

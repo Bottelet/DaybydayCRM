@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('user-controller')]
-class UserSecurityAbstractTest extends AbstractTestCase
+class UserSecurityTest extends AbstractTestCase
 {
     use RefreshDatabase;
 

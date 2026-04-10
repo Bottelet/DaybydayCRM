@@ -1,11 +1,10 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Appointment;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factory;
 
 class AppointmentFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {

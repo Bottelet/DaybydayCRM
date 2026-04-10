@@ -1,9 +1,8 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
 use App\Models\BusinessHour;
-use Illuminate\Database\Eloquent\Factory;
 
 class BusinessHourFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 {

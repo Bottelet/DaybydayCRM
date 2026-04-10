@@ -2,44 +2,13 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
-
+use App\Models\User;
 use App\Models\Department;
 use App\Models\Role;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-// Factory state: User with a specific role attached
-// Usage: factory(User::class)->state('withRole', ['role' => 'employee'])->create()
-$factory->state(User::class, 'withRole', function () {
-    return [];
-})->afterCreatingState(User::class, 'withRole', function ($user, $faker, $attributes) {
-    $roleName = $attributes['role'] ?? 'employee';
-
-    // Map common role name variations
-    $roleNames = [
-        'employee' => ['name' => 'employee', 'display_name' => 'Employee'],
-        'owner' => ['name' => 'owner', 'display_name' => 'Owner'],
-        'administrator' => ['name' => 'administrator', 'display_name' => 'Administrator'],
-        'admin' => ['name' => 'administrator', 'display_name' => 'Administrator'],
-        'manager' => ['name' => 'manager', 'display_name' => 'Manager'],
-    ];
-
-    $roleData = $roleNames[$roleName] ?? ['name' => $roleName, 'display_name' => ucfirst($roleName)];
-
-    $role = Role::firstOrCreate(
-        ['name' => $roleData['name']],
-        [
-            'display_name' => $roleData['display_name'],
-            'description' => $roleData['display_name'].' role',
-            'external_id' => Str::uuid()->toString(),
-        ]
-    );
-
-    $user->attachRole($role);
-});
-class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+class UserFactory extends Factory
 {
     protected $model = User::class;
 
@@ -48,7 +17,7 @@ class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
         return [
             'name' => $this->faker->name,
             'external_id' => $this->faker->uuid,
-            'email' => $this->faker->email,
+            'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('secretpassword'),
             'address' => $this->faker->secondaryAddress(),
             'primary_number' => $this->faker->randomNumber(8),
@@ -60,12 +29,44 @@ class UserFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 
     public function configure()
     {
-        return $this->afterCreating(static function ($user) {
-            // Ensure at least one department exists
-            if (Department::count() === 0) {
-                Department::factory()->create();
-            }
-            $user->department()->attach(Department::first()->id);
+        return $this->afterCreating(function (User $user) {
+            // Ensure at least one department exists in parallel-safe manner
+            $department = Department::first() ?? Department::factory()->create();
+            $user->department()->attach($department->id);
+        });
+    }
+
+    /**
+     * Attach a role to the user (parallel-safe).
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function withRole(string $roleName = 'employee')
+    {
+        return $this->afterCreating(function (User $user) use ($roleName) {
+            $roleData = [
+                'employee' => ['name' => 'employee', 'display_name' => 'Employee'],
+                'owner' => ['name' => 'owner', 'display_name' => 'Owner'],
+                'administrator' => ['name' => 'administrator', 'display_name' => 'Administrator'],
+                'admin' => ['name' => 'administrator', 'display_name' => 'Administrator'],
+                'manager' => ['name' => 'manager', 'display_name' => 'Manager'],
+            ];
+
+            $data = $roleData[$roleName] ?? [
+                'name' => $roleName,
+                'display_name' => ucfirst($roleName),
+            ];
+
+            $role = Role::firstOrCreate(
+                ['name' => $data['name']],
+                [
+                    'display_name' => $data['display_name'],
+                    'description' => $data['display_name'].' role',
+                    'external_id' => Str::uuid()->toString(),
+                ]
+            );
+
+            $user->attachRole($role);
         });
     }
 }
