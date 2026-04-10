@@ -5,9 +5,12 @@ namespace Tests\Unit\Controllers\InvoiceLine;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -33,23 +36,23 @@ class InvoiceLinesControllerTest extends TestCase
     public function happy_path()
     {
         // Ensure the permission exists and is attached to the user's role
-        $permission = \App\Models\Permission::firstOrCreate(
+        $permission = Permission::firstOrCreate(
             ['name' => 'modify-invoice-lines'],
             [
                 'display_name' => 'Modify invoice lines',
                 'description' => 'Permission to modify invoice lines',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
-        
+
         $ownerRole = Role::whereName('owner')->first();
         if ($ownerRole) {
             $ownerRole->attachPermission($permission);
             $this->user->attachRole($ownerRole);
         }
-        
+
         // Explicitly clear the permissions cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 

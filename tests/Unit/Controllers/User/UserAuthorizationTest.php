@@ -7,6 +7,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -53,9 +54,9 @@ class UserAuthorizationTest extends TestCase
 
         $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
-        
+
         // Explicitly clear the permissions cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }

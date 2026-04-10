@@ -11,6 +11,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -59,9 +60,9 @@ class DocumentSecurityTest extends TestCase
         // Give user permission to upload files to tasks
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -93,9 +94,9 @@ class DocumentSecurityTest extends TestCase
         // Give user permission to upload files to projects
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -126,9 +127,9 @@ class DocumentSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -145,9 +146,9 @@ class DocumentSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 

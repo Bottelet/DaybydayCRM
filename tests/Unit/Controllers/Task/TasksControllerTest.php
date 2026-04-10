@@ -3,12 +3,14 @@
 namespace Tests\Unit\Controllers\Task;
 
 use App\Models\Client;
+use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -82,11 +84,11 @@ class TasksControllerTest extends TestCase
         $status = Status::factory()->create(['source_type' => Task::class]);
 
         $this->assertNotEquals($task->status_id, $status->id);
-        
+
         // Ensure user has permission
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.status', $task->external_id), [
             'status_id' => $status->id,
@@ -99,11 +101,11 @@ class TasksControllerTest extends TestCase
     public function can_update_deadline_for_task()
     {
         $task = Task::factory()->create();
-        
+
         // Ensure user has permission
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-deadline']);
+        $permission = Permission::firstOrCreate(['name' => 'task-update-deadline']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [
             'deadline_date' => '2020-08-06',

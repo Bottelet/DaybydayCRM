@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
@@ -68,9 +69,9 @@ class TaskAssignmentAuthorizationTest extends TestCase
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);
-        
+
         // Explicitly clear the permissions cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
     }
 
     #[Test]

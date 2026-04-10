@@ -9,6 +9,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -65,10 +66,10 @@ class ClientsControllerTest extends TestCase
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+        Cache::tags('role_user')->flush();
+
         $this->actingAs($authUser);
 
         // Create required dependencies
@@ -132,10 +133,10 @@ class ClientsControllerTest extends TestCase
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+        Cache::tags('role_user')->flush();
+
         $this->actingAs($authUser);
 
         $client = Client::factory()->create();
@@ -178,10 +179,10 @@ class ClientsControllerTest extends TestCase
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
-        
+
         // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+        Cache::tags('role_user')->flush();
+
         $this->actingAs($authUser);
 
         // Create test data instead of relying on seeded data

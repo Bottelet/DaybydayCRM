@@ -10,6 +10,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -43,10 +44,10 @@ class DeleteLeadControllerTest extends TestCase
         );
         $role->attachPermission($permission);
         $this->user->attachRole($role);
-        
+
         // Explicitly clear the permissions cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+        Cache::tags('role_user')->flush();
+
         $this->actingAs($this->user);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);

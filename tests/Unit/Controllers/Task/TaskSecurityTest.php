@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -39,9 +40,9 @@ class TaskSecurityTest extends TestCase
         // Create a user without task-delete permission
         $this->unauthorizedUser = User::factory()->create();
         $this->unauthorizedUser->attachRole($role);
-        
+
         // Explicitly clear the permissions cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -53,9 +54,9 @@ class TaskSecurityTest extends TestCase
         // Give user permission to delete tasks
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
-        
+
         // Clear cache after attaching permission
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
@@ -79,7 +80,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $newStatus = Status::factory()->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
@@ -108,7 +109,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
@@ -124,7 +125,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $newStatus = Status::factory()->create(['source_type' => Task::class]);
 
@@ -142,7 +143,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         // Create a status that belongs to a different type (Lead instead of Task)
         $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
@@ -168,7 +169,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        Cache::tags('role_user')->flush();
 
         $originalStatus = $this->task->status_id;
 
