@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use DB;
 
 class LeadsControllerTest extends TestCase
 {
@@ -141,7 +142,7 @@ class LeadsControllerTest extends TestCase
             'contact_time' => '09:00',
         ]);
 
-        $rawDeadline = \DB::table('leads')->where('id', $lead->id)->value('deadline');
+        $rawDeadline = DB::table('leads')->where('id', $lead->id)->value('deadline');
 
         // The stored value should be a parseable string, not null
         $this->assertNotNull($rawDeadline);

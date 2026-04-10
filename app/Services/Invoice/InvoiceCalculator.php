@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Offer;
 use App\Repositories\Money\Money;
 use App\Repositories\Tax\Tax;
+use Exception;
 
 class InvoiceCalculator
 {
@@ -22,9 +23,9 @@ class InvoiceCalculator
     public function __construct($invoice)
     {
         if (! $invoice instanceof Invoice && ! $invoice instanceof Offer) {
-            throw new \Exception('Not correct type for Invoice Calculator');
+            throw new Exception('Not correct type for Invoice Calculator');
         }
-        $this->tax = new Tax;
+        $this->tax = new Tax();
         $this->invoice = $invoice;
     }
 

@@ -64,7 +64,7 @@ class ApiControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->controller = new ConcreteApiController;
+        $this->controller = new ConcreteApiController();
     }
 
     #[Test]

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
+use Log;
 
 trait EntrustUserTrait
 {
@@ -29,7 +30,7 @@ trait EntrustUserTrait
 
             $roles = collect($rolesArray)->map(
                 function ($roleArr) use ($roleModel) {
-                    return (new $roleModel)
+                    return (new $roleModel())
                         ->newFromBuilder($roleArr);
                 }
             );
@@ -39,7 +40,7 @@ trait EntrustUserTrait
 
         return $roles->filter(function ($role) {
             if (! is_object($role)) {
-                \Log::warning(
+                Log::warning(
                     'EntrustUserTrait: Non-object found in cachedRoles for user ID '.
                     $this->getKey()
                 );

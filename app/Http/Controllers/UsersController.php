@@ -201,7 +201,7 @@ class UsersController extends Controller
             $path = Storage::put($settings->external_id, $file);
         }
 
-        $user = new User;
+        $user = new User();
         $user->name = $request->name;
         $user->external_id = Uuid::uuid4()->toString();
         $user->email = $request->email;

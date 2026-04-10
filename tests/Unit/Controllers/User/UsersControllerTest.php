@@ -29,7 +29,8 @@ class UsersControllerTest extends TestCase
                 'email' => $this->user->email,
                 'departments' => $this->user->department()->first()->id,
                 'roles' => $targetRole->id,
-            ])->assertRedirect();
+            ]
+        )->assertRedirect();
 
         $this->assertEquals(
             [$targetRole->id],

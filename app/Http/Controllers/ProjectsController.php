@@ -18,15 +18,15 @@ use Ramsey\Uuid\Uuid;
 
 class ProjectsController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_STATUS = 'updated_status';
+    public const UPDATED_STATUS = 'updated_status';
 
-    const UPDATED_TIME = 'updated_time';
+    public const UPDATED_TIME = 'updated_time';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
-    const UPDATED_DEADLINE = 'updated_deadline';
+    public const UPDATED_DEADLINE = 'updated_deadline';
 
     public function __construct()
     {

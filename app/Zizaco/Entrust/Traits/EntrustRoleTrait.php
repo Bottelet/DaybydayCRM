@@ -13,6 +13,7 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use InvalidArgumentException;
 
 trait EntrustRoleTrait
 {
@@ -173,7 +174,7 @@ trait EntrustRoleTrait
         if (is_object($permission)) {
             $permissionId = $permission->getKey();
             if (! is_numeric($permissionId) || $permissionId < 1) {
-                throw new \InvalidArgumentException('Permission object does not have a valid ID. Ensure the permission is saved before attaching.');
+                throw new InvalidArgumentException('Permission object does not have a valid ID. Ensure the permission is saved before attaching.');
             }
             $permission = $permissionId;
         }
@@ -184,7 +185,7 @@ trait EntrustRoleTrait
 
         // Validate that we have a valid permission ID (must be numeric and > 0)
         if (! is_numeric($permission) || $permission < 1) {
-            throw new \InvalidArgumentException('Invalid permission ID provided to attachPermission. Received: '.var_export($permission, true));
+            throw new InvalidArgumentException('Invalid permission ID provided to attachPermission. Received: '.var_export($permission, true));
         }
 
         // Use syncWithoutDetaching to prevent duplicate key errors
@@ -223,7 +224,7 @@ trait EntrustRoleTrait
             if (is_object($permission)) {
                 $id = $permission->getKey();
                 if (! is_numeric($id) || $id < 1) {
-                    throw new \InvalidArgumentException('Permission object does not have a valid ID. Ensure all permissions are saved before attaching.');
+                    throw new InvalidArgumentException('Permission object does not have a valid ID. Ensure all permissions are saved before attaching.');
                 }
 
                 return $id;
@@ -231,13 +232,13 @@ trait EntrustRoleTrait
             if (is_array($permission)) {
                 $id = $permission['id'] ?? $permission;
                 if (! is_numeric($id) || $id < 1) {
-                    throw new \InvalidArgumentException('Invalid permission ID in array. Received: '.var_export($permission, true));
+                    throw new InvalidArgumentException('Invalid permission ID in array. Received: '.var_export($permission, true));
                 }
 
                 return $id;
             }
             if (! is_numeric($permission) || $permission < 1) {
-                throw new \InvalidArgumentException('Invalid permission ID. Received: '.var_export($permission, true));
+                throw new InvalidArgumentException('Invalid permission ID. Received: '.var_export($permission, true));
             }
 
             return $permission;

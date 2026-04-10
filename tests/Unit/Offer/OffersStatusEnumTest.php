@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Exception;
 
 class OffersStatusEnumTest extends TestCase
 {
@@ -58,14 +59,14 @@ class OffersStatusEnumTest extends TestCase
     #[Test]
     public function throws_exception_if_source_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         OfferStatus::fromStatus('None existing source');
     }
 
     #[Test]
     public function throws_exception_if_display_value_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         OfferStatus::fromDisplayValue('None existing display value');
     }
 }

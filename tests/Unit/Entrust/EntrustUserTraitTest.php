@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Exception;
 
 /**
  * Tests for the EntrustUserTrait changes introduced in this PR:
@@ -156,7 +157,7 @@ class EntrustUserTraitTest extends TestCase
             $user->attachRole($adminRole);
             $user->attachRole($adminRole);
             $this->assertTrue(true, 'No exception was thrown for duplicate attach');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail('attachRole threw an exception on duplicate: '.$e->getMessage());
         }
     }

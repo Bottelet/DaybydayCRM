@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Session;
 
 class AbsenceControllerTest extends TestCase
 {
@@ -28,7 +29,7 @@ class AbsenceControllerTest extends TestCase
         ]);
 
         $absences = $user->absences;
-        $this->assertNotNull(\Session::all()['flash_message']);
+        $this->assertNotNull(Session::all()['flash_message']);
         $this->assertCount(1, $absences);
     }
 
@@ -67,7 +68,7 @@ class AbsenceControllerTest extends TestCase
             'comment' => 'Sick kid',
         ]);
 
-        $this->assertNotNull(\Session::all()['flash_message']);
+        $this->assertNotNull(Session::all()['flash_message']);
         $this->assertCount(1, auth()->user()->absences);
     }
 }

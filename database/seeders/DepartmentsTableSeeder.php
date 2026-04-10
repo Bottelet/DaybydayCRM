@@ -16,7 +16,7 @@ class DepartmentsTableSeeder extends Seeder
      */
     public function run()
     {
-        $department = new Department;
+        $department = new Department();
         $department->id = '1';
         $department->external_id = Uuid::uuid4();
         $department->name = 'Management';

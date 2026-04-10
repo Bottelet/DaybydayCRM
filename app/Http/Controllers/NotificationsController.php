@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Auth;
 
 class NotificationsController extends Controller
 {
@@ -27,7 +28,7 @@ class NotificationsController extends Controller
      */
     public function markAll()
     {
-        $user = User::find(\Auth::id());
+        $user = User::find(Auth::id());
 
         foreach ($user->unreadNotifications as $notification) {
             $notification->markAsRead();

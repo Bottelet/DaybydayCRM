@@ -5,6 +5,7 @@ namespace App\Services\Invoice;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Repositories\Money\Money;
+use Exception;
 
 class GenerateInvoiceStatus
 {
@@ -50,7 +51,7 @@ class GenerateInvoiceStatus
         if ($this->isOverPaid()) {
             return InvoiceStatus::overpaid()->getStatus();
         }
-        throw new \Exception("Can't generate invoice status for invoice: ".$this->invoice->id);
+        throw new Exception("Can't generate invoice status for invoice: ".$this->invoice->id);
     }
 
     public function isDraft(): bool

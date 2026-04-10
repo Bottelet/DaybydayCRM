@@ -45,12 +45,10 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
     private function bindFakeStorageProvider(): void
     {
-        $this->app->instance(GetStorageProvider::class, new class
-        {
+        $this->app->instance(GetStorageProvider::class, new class () {
             public function getStorage(...$args)
             {
-                return new class
-                {
+                return new class () {
                     public function enabled(): bool
                     {
                         return true;

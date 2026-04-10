@@ -17,12 +17,12 @@ class UsersDummyTableSeeder extends Seeder
      */
     public function run()
     {
-        $createDep = new Department;
+        $createDep = new Department();
         $createDep->id = '2';
         $createDep->name = 'Nerds';
         $createDep->external_id = Uuid::uuid4();
         $createDep->save();
-        $createDep = new Department;
+        $createDep = new Department();
         $createDep->id = '3';
         $createDep->name = 'Genius';
         $createDep->external_id = Uuid::uuid4();

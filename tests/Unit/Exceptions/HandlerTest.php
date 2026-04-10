@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
+use ReflectionClass;
 
 class HandlerTest extends TestCase
 {
@@ -29,7 +30,7 @@ class HandlerTest extends TestCase
     public function handler_dont_report_list_contains_expected_exceptions()
     {
         $handler = new Handler(app());
-        $reflection = new \ReflectionClass($handler);
+        $reflection = new ReflectionClass($handler);
         $property = $reflection->getProperty('dontReport');
         $property->setAccessible(true);
         $dontReport = $property->getValue($handler);

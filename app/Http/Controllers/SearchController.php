@@ -7,6 +7,7 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use stdClass;
 
 class SearchController extends Controller
 {
@@ -34,13 +35,13 @@ class SearchController extends Controller
 
         // Use the validated class from allowlist to prevent arbitrary class instantiation
         $class = $allowedTypes[$typeLower];
-        $searchClass = new $class;
+        $searchClass = new $class();
         $result['hits'] = [];
         foreach ($searchClass->getSearchableFields() as $searchableField) {
             $classes = $searchClass->where($searchableField, 'LIKE', '%'.$query.'%')->get();
             foreach ($classes as $class) {
-                $source = new \stdClass;
-                $source->_source = new \stdClass;
+                $source = new stdClass();
+                $source->_source = new stdClass();
                 if (! $class->displayValue() || ! $class->searchLink()) {
                     continue;
                 }

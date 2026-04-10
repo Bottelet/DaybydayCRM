@@ -17,18 +17,20 @@ use Carbon;
 use Datatables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Auth;
+use Exception;
 
 class TasksController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_STATUS = 'updated_status';
+    public const UPDATED_STATUS = 'updated_status';
 
-    const UPDATED_TIME = 'updated_time';
+    public const UPDATED_TIME = 'updated_time';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
-    const UPDATED_DEADLINE = 'updated_deadline';
+    public const UPDATED_DEADLINE = 'updated_deadline';
 
     protected $invoices;
 
@@ -70,7 +72,7 @@ class TasksController extends Controller
         $tasks = Task::with(['user', 'status', 'client'])->select(
             collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
                 ->map(function ($field) {
-                    return (new Task)->qualifyColumn($field);
+                    return (new Task())->qualifyColumn($field);
                 })
                 ->all()
         );
@@ -241,7 +243,7 @@ class TasksController extends Controller
     /**
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function show(Request $request, $external_id)
     {
@@ -397,7 +399,7 @@ class TasksController extends Controller
      */
     public function marked()
     {
-        Notifynder::readAll(\Auth::id());
+        Notifynder::readAll(Auth::id());
 
         return redirect()->back();
     }

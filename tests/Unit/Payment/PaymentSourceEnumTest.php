@@ -8,6 +8,7 @@ use Illuminate\Validation\Rules\In;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Exception;
 
 class PaymentSourceEnumTest extends TestCase
 {
@@ -64,7 +65,7 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function throws_exception_if_source_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         PaymentSource::fromSource('None existing source');
     }
 
@@ -72,7 +73,7 @@ class PaymentSourceEnumTest extends TestCase
     #[Group('junie_repaired')]
     public function throws_exception_if_display_value_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         PaymentSource::fromDisplayValue('None existing display value');
     }
 

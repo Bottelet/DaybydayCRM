@@ -6,6 +6,7 @@ use App\Enums\AbsenceReason;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Exception;
 
 class AbsenceReasonTest extends TestCase
 {
@@ -46,14 +47,14 @@ class AbsenceReasonTest extends TestCase
     #[Test]
     public function throws_exception_if_reason_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         AbsenceReason::fromStatus('non_existing_reason');
     }
 
     #[Test]
     public function throws_exception_if_display_value_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         AbsenceReason::fromDisplayValue('None existing display value');
     }
 
@@ -145,7 +146,7 @@ class AbsenceReasonTest extends TestCase
     #[Test]
     public function from_status_is_case_sensitive()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         AbsenceReason::fromStatus('Vacation');
     }
 
@@ -159,14 +160,14 @@ class AbsenceReasonTest extends TestCase
     #[Test]
     public function from_display_value_is_case_sensitive()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         AbsenceReason::fromDisplayValue('vacation');
     }
 
     #[Test]
     public function from_display_value_throws_for_partial_match()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         AbsenceReason::fromDisplayValue('Vacatio');
     }
 

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class RedirectIfDemo
 {
-    const MEESAGE = 'This action is not allowed in the demo.';
+    public const MEESAGE = 'This action is not allowed in the demo.';
 
     /**
      * Handle an incoming request.

@@ -3,6 +3,7 @@
 namespace App\Zizaco\Entrust\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use InvalidArgumentException;
 
 /**
  * This file is part of Entrust,
@@ -45,7 +46,7 @@ interface EntrustUserInterface
      * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      * @return array|bool
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function ability($roles, $permissions, $options = []);
 

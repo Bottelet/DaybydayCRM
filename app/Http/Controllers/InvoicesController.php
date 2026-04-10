@@ -20,6 +20,7 @@ use Datatables;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
+use Exception;
 
 class InvoicesController extends Controller
 {
@@ -128,7 +129,7 @@ class InvoicesController extends Controller
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function newItem($external_id, AddInvoiceLine $request)
     {

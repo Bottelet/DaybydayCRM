@@ -9,7 +9,7 @@ class GetDateFormat
 {
     private $format;
 
-    const CACHE_KEY = 'country_date_format';
+    public const CACHE_KEY = 'country_date_format';
 
     public function __construct()
     {

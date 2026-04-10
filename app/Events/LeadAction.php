@@ -10,11 +10,12 @@ use Illuminate\Queue\SerializesModels;
 
 class LeadAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $lead;
 
     private $action;
-
-    use InteractsWithSockets, SerializesModels;
 
     public function getLead()
     {

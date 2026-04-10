@@ -33,7 +33,7 @@ class DemoTableSeeder extends Seeder
             $this->createData($user);
         });
 
-        $newrole = new RoleUser;
+        $newrole = new RoleUser();
         $newrole->role_id = '2';
         $newrole->user_id = '2';
         $newrole->timestamps = false;

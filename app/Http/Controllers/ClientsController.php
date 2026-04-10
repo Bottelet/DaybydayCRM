@@ -23,12 +23,13 @@ use Carbon\Carbon;
 use Datatables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Exception;
 
 class ClientsController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
     protected $users;
 
@@ -367,7 +368,7 @@ class ClientsController extends Controller
             $client = $this->findByExternalId($external_id);
             $client->delete();
             Session()->flash('flash_message', __('Client successfully deleted'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Session()->flash('flash_message_warning', __('Client could not be deleted, contact Daybyday support'));
         }
 

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use ReflectionClass;
 
 #[Group('security')]
 #[Group('document_authorization')]
@@ -51,8 +52,8 @@ class DocumentAccessHelperTest extends TestCase
         // Testing private methods via reflection allows us to verify the helper's logic in isolation,
         // providing granular test coverage beyond what's possible through the public API alone.
         // The helper method is intentionally private as it's an internal implementation detail.
-        $controller = new DocumentsController;
-        $reflection = new \ReflectionClass($controller);
+        $controller = new DocumentsController();
+        $reflection = new ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
@@ -71,8 +72,8 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $controller = new DocumentsController;
-        $reflection = new \ReflectionClass($controller);
+        $controller = new DocumentsController();
+        $reflection = new ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
@@ -91,8 +92,8 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $this->client->id,
         ]);
 
-        $controller = new DocumentsController;
-        $reflection = new \ReflectionClass($controller);
+        $controller = new DocumentsController();
+        $reflection = new ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
@@ -115,8 +116,8 @@ class DocumentAccessHelperTest extends TestCase
             'client_id' => $otherClient->id,
         ]);
 
-        $controller = new DocumentsController;
-        $reflection = new \ReflectionClass($controller);
+        $controller = new DocumentsController();
+        $reflection = new ReflectionClass($controller);
         $method = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 

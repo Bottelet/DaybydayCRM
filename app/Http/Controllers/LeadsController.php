@@ -18,13 +18,13 @@ use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_STATUS = 'updated_status';
+    public const UPDATED_STATUS = 'updated_status';
 
-    const UPDATED_DEADLINE = 'updated_deadline';
+    public const UPDATED_DEADLINE = 'updated_deadline';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
     public function __construct()
     {

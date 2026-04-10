@@ -25,7 +25,7 @@ class RoleRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new RoleRepository;
+        $this->repository = new RoleRepository();
     }
 
     #[Test]

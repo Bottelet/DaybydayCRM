@@ -13,6 +13,7 @@ use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Laravel\Dusk\TestCase as BaseTestCase;
+use Exception;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -71,7 +72,7 @@ abstract class DuskTestCase extends BaseTestCase
     public function createTaskWithRelations($attributes = [])
     {
         if (! array_has($attributes, 'client_id')) {
-            throw new \Exception('Client id is required');
+            throw new Exception('Client id is required');
         }
         if (! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
             $user_id = User::whereEmail('admin@admin.com')->first()->id;
@@ -86,7 +87,7 @@ abstract class DuskTestCase extends BaseTestCase
     public function createLeadWithRelations($attributes = [])
     {
         if (! array_has($attributes, 'client_id')) {
-            throw new \Exception('Client id is required');
+            throw new Exception('Client id is required');
         }
 
         if (! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
@@ -106,7 +107,7 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected function driver()
     {
-        $options = (new ChromeOptions)->addArguments([
+        $options = (new ChromeOptions())->addArguments([
             '--disable-gpu',
             '--headless',
             '--window-size=1920,1920',

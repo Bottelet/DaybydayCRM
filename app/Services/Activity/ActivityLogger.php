@@ -5,6 +5,7 @@ namespace App\Services\Activity;
 use App\Models\Activity;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
+use Exception;
 
 class ActivityLogger
 {
@@ -88,7 +89,7 @@ class ActivityLogger
     {
         $activityModelClassName = self::determineActivityModel();
 
-        return new $activityModelClassName;
+        return new $activityModelClassName();
     }
 
     protected function normalizeCauser($modelOrId): Model
@@ -102,7 +103,7 @@ class ActivityLogger
         if ($model instanceof Model) {
             return $model;
         }
-        throw new \Exception('Normalizer failed');
+        throw new Exception('Normalizer failed');
     }
 
     protected function getActivity()

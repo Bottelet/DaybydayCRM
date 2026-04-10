@@ -6,6 +6,7 @@ use App\Models\Department;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Session;
 
 class DepartmentsControllerTest extends TestCase
 {
@@ -42,7 +43,7 @@ class DepartmentsControllerTest extends TestCase
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
 
         $this->json('DELETE', route('departments.destroy', $department->external_id));
-        $this->assertNotNull(\Session::all()['flash_message_warning']);
+        $this->assertNotNull(Session::all()['flash_message_warning']);
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
     }
 }

@@ -64,8 +64,11 @@ class EnvironmentConfigurationTest extends TestCase
     {
         $sessionDriver = config('session.driver');
         $this->assertNotEmpty($sessionDriver, 'Session driver must be configured');
-        $this->assertContains($sessionDriver, ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'],
-            'Session driver must be a valid Laravel session driver');
+        $this->assertContains(
+            $sessionDriver,
+            ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'],
+            'Session driver must be a valid Laravel session driver'
+        );
     }
 
     /**
@@ -84,8 +87,11 @@ class EnvironmentConfigurationTest extends TestCase
     public function mail_mailer_does_not_send_real_emails_in_test_environment(): void
     {
         $mailer = config('mail.default');
-        $this->assertContains($mailer, ['array', 'log'],
-            'Mail mailer must be array or log in tests to prevent real email delivery');
+        $this->assertContains(
+            $mailer,
+            ['array', 'log'],
+            'Mail mailer must be array or log in tests to prevent real email delivery'
+        );
     }
 
     /**

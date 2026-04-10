@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Config;
 
 class GetAttributesTest extends TestCase
 {
@@ -71,7 +72,7 @@ class GetAttributesTest extends TestCase
         ]);
 
         // Default is S3, but same logic for local driver
-        \Config::set('filesystems.default', 'local');
+        Config::set('filesystems.default', 'local');
         $this->user->image_path = 'tiger.jpg';
 
         $this->assertEquals('/storage/tiger.jpg', $this->user->avatar);
