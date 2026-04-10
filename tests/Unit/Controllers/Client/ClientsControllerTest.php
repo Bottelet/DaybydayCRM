@@ -83,8 +83,9 @@ class ClientsControllerTest extends AbstractTestCase
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         Cache::tags('role_user')->flush();
+        $authUser = $authUser->fresh();
 
         $this->actingAs($authUser);
 
