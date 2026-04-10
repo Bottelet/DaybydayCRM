@@ -16,7 +16,7 @@ class CanUpdateInvoiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => null,
         ]);
     }

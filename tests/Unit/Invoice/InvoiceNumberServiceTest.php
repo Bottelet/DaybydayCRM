@@ -25,9 +25,9 @@ class InvoiceNumberServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Invoice::class)->create([
+        $this->client = Invoice::factory()->create([
 
         ]);
 

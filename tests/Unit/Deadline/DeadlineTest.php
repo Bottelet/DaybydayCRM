@@ -24,17 +24,17 @@ class DeadlineTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create(
+        $this->task = Task::factory()->create(
             [
                 'deadline' => Carbon::now()->addHour(),
             ]
         );
-        $this->lead = factory(Lead::class)->create(
+        $this->lead = Lead::factory()->create(
             [
                 'deadline' => Carbon::now()->addHour(),
             ]
         );
-        $this->project = factory(Project::class)->create(
+        $this->project = Project::factory()->create(
             [
                 'deadline' => Carbon::now()->addHour(),
             ]

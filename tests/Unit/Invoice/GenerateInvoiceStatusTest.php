@@ -29,16 +29,16 @@ class GenerateInvoiceStatusTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
         ]);
-        $this->payment = factory(Payment::class)->create([
+        $this->payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 1000,
             'payment_date' => today(),
             'payment_source' => 'test',
         ]);
-        $this->invoiceLine = factory(InvoiceLine::class)->create([
+        $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
             'price' => 5000,
             'quantity' => 1,
@@ -183,7 +183,7 @@ class GenerateInvoiceStatusTest extends TestCase
 
         $this->assertEquals('unpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        factory(Payment::class)->create([
+        Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 1000,
             'payment_date' => today(),
@@ -192,7 +192,7 @@ class GenerateInvoiceStatusTest extends TestCase
         $this->invoice->refresh();
         $this->assertEquals('partial_paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        factory(Payment::class)->create([
+        Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 4000,
             'payment_date' => today(),
@@ -201,7 +201,7 @@ class GenerateInvoiceStatusTest extends TestCase
 
         $this->assertEquals('paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        factory(Payment::class)->create([
+        Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 4000,
             'payment_date' => today(),

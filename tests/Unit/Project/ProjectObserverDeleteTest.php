@@ -18,7 +18,7 @@ class ProjectObserverDeleteTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         $this->project->comments()->create([
             'description' => 'Test',
@@ -101,9 +101,9 @@ class ProjectObserverDeleteTest extends TestCase
     #[Test]
     public function invoice_is_not_deleted_by_observer()
     {
-        $invoice = factory(Invoice::class)->create([
+        $invoice = Invoice::factory()->create([
             'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
+            'client_id' => Client::factory()->create()->id,
             'integration_invoice_id' => $this->project->id,
             'integration_type' => Project::class,
         ]);

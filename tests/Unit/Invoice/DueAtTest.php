@@ -18,11 +18,11 @@ class DueAtTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
             'due_at' => today()->addDay(),
         ]);
-        $this->secondInvoice = factory(Invoice::class)->create([
+        $this->secondInvoice = Invoice::factory()->create([
             'sent_at' => today(),
             'due_at' => today()->subDay(),
         ]);
