@@ -83,6 +83,11 @@ class TasksControllerTest extends TestCase
         $status = factory(Status::class)->create(['source_type' => Task::class]);
 
         $this->assertNotEquals($task->status_id, $status->id);
+        
+        // Ensure user has permission
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-status']);
+        $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.status', $task->external_id), [
             'status_id' => $status->id,
@@ -95,6 +100,11 @@ class TasksControllerTest extends TestCase
     public function can_update_deadline_for_task()
     {
         $task = factory(Task::class)->create();
+        
+        // Ensure user has permission
+        $permission = \App\Models\Permission::firstOrCreate(['name' => 'task-update-deadline']);
+        $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [
             'deadline_date' => '2020-08-06',

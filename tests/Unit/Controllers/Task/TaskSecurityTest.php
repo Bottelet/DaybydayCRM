@@ -80,6 +80,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
@@ -108,6 +109,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
@@ -123,6 +125,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
 
@@ -140,6 +143,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Create a status that belongs to a different type (Lead instead of Task)
         $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
@@ -165,6 +169,7 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $originalStatus = $this->task->status_id;
 
