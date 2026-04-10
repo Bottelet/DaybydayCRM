@@ -94,7 +94,7 @@ paratest-log:
 	vendor/bin/paratest -p8 2>&1 | tee paratest-full.log
 
 paratest-testdox-log:
-	vendor/bin/paratest -p8 --testdox 2>&1 | tee paratest-testdox.log
+	vendor/bin/paratest -p8 --testdox 2>&1 | tee paratest-full.log
 
 paratest-fail-fast:
 	vendor/bin/paratest -p8 --stop-on-failure
