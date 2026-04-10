@@ -32,7 +32,19 @@ class InvoiceLinesControllerTest extends TestCase
     #[Test]
     public function happy_path()
     {
-        $this->user->attachRole(Role::whereName('owner')->first());
+        // Ensure the permission exists and is attached to the user's role
+        $permission = \App\Models\Permission::firstOrCreate(
+            ['name' => 'modify-invoice-lines'],
+            [
+                'display_name' => 'Modify invoice lines',
+                'description' => 'Permission to modify invoice lines',
+                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            ]
+        );
+        
+        $ownerRole = Role::whereName('owner')->first();
+        $ownerRole->attachPermission($permission);
+        $this->user->attachRole($ownerRole);
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 

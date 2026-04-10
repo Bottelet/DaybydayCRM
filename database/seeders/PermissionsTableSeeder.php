@@ -154,6 +154,12 @@ class PermissionsTableSeeder extends Seeder
                 'description' => 'Permission to change the assigned user on a lead',
                 'grouping' => 'lead',
             ],
+            [
+                'display_name' => 'Delete lead',
+                'name' => 'lead-delete',
+                'description' => 'Permission to delete a lead',
+                'grouping' => 'lead',
+            ],
             // Project
             [
                 'display_name' => 'Create project',
