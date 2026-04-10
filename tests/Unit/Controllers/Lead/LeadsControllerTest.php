@@ -21,6 +21,32 @@ class LeadsControllerTest extends AbstractTestCase
     {
         parent::setUp();
 
+        // Ensure user has all necessary lead permissions
+        $permissions = [
+            'can-assign-new-user-to-lead' => ['display_name' => 'Assign users to leads', 'description' => 'Can assign users to leads'],
+            'lead-update-status' => ['display_name' => 'Update lead status', 'description' => 'Can update lead status'],
+            'lead-update-deadline' => ['display_name' => 'Update lead deadline', 'description' => 'Can update lead deadline'],
+        ];
+
+        $ownerRole = \App\Models\Role::firstOrCreate(
+            ['name' => 'owner'],
+            ['display_name' => 'Owner', 'description' => 'Owner role', 'external_id' => \Illuminate\Support\Str::uuid()->toString()]
+        );
+
+        foreach ($permissions as $name => $details) {
+            $permission = \App\Models\Permission::firstOrCreate(['name' => $name], $details);
+            if (!$ownerRole->hasPermission($name)) {
+                $ownerRole->attachPermission($permission);
+            }
+        }
+
+        if (!$this->user->hasRole('owner')) {
+            $this->user->attachRole($ownerRole);
+        }
+
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $this->client = Client::factory()->create();
     }
 

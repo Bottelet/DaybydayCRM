@@ -35,7 +35,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     #[Test]
     public function happy_path()
     {
-        // Ensure the permission exists and is attached to the user's role
+        // Ensure the permission exists
         $permission = Permission::firstOrCreate(
             ['name' => 'modify-invoice-lines'],
             [
@@ -45,9 +45,23 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             ]
         );
 
-        $ownerRole = Role::whereName('owner')->first();
-        if ($ownerRole) {
+        // Get or create owner role and attach permission
+        $ownerRole = Role::firstOrCreate(
+            ['name' => 'owner'],
+            [
+                'display_name' => 'Owner',
+                'description' => 'Owner role',
+                'external_id' => Str::uuid()->toString(),
+            ]
+        );
+        
+        // Ensure the permission is attached to the role
+        if (!$ownerRole->hasPermission('modify-invoice-lines')) {
             $ownerRole->attachPermission($permission);
+        }
+        
+        // Ensure the user has the role
+        if (!$this->user->hasRole('owner')) {
             $this->user->attachRole($ownerRole);
         }
 
