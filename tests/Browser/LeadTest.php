@@ -16,8 +16,8 @@ class LeadTest extends DuskTestCase
      */
     public function test_user_can_see_leads_on_lead_index_and_go_to_the_lead_with_link()
     {
-        $client = factory(Client::class)->create();
-        $lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfLead()->whereTitle('Open')->first()->id,
         ]);
@@ -37,8 +37,8 @@ class LeadTest extends DuskTestCase
      */
     public function test_i_can_see_all_the_correct_information_on_lead_info_page()
     {
-        $client = factory(Client::class)->create();
-        $lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
         ]);
 
@@ -58,11 +58,11 @@ class LeadTest extends DuskTestCase
      */
     public function test_i_can_assign_a_new_user_to_lead()
     {
-        $client = factory(Client::class)->create();
-        $lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
         ]);
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($lead, $user) {
             $browser->driver->executeScript('window.scrollTo(0, 500)');
@@ -80,8 +80,8 @@ class LeadTest extends DuskTestCase
      */
     public function test_i_can_change_lead_status()
     {
-        $client = factory(Client::class)->create();
-        $lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfLead()->first()->id,
         ]);
@@ -100,8 +100,8 @@ class LeadTest extends DuskTestCase
      */
     public function test_i_can_add_a_new_comment_on_a_lead()
     {
-        $client = factory(Client::class)->create();
-        $lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
         ]);
 
@@ -121,9 +121,9 @@ class LeadTest extends DuskTestCase
      */
     public function test_i_can_create_a_new_lead()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $contact = $client->primary_contact;
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
@@ -146,7 +146,7 @@ class LeadTest extends DuskTestCase
     {
         Client::query()->forceDelete();
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())

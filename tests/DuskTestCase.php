@@ -32,15 +32,15 @@ abstract class DuskTestCase extends BaseTestCase
 
     public function createUserWithRelations($attributes = [])
     {
-        $user = factory(User::class)->create($attributes);
+        $user = User::factory()->create($attributes);
 
         $role = Role::whereName('factory')->first();
         if (! $role) {
-            $role = factory(Role::class)->create();
+            $role = Role::factory()->create();
         }
         $department = Department::whereName('factory')->first();
         if (! $department) {
-            $department = factory(Department::class)->create();
+            $department = Department::factory()->create();
         }
 
         $user->department()->attach($department->id);
@@ -54,15 +54,15 @@ abstract class DuskTestCase extends BaseTestCase
         $client = false;
 
         if (! array_has($attributes, 'user_id')) {
-            $client = factory(Client::class)->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
+            $client = Client::factory()->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
         }
 
         if (! $client) {
-            $client = factory(Client::class)->create($attributes);
+            $client = Client::factory()->create($attributes);
         }
 
         if (! array_has($attributes, 'contact_id')) {
-            $contact = factory(Contact::class)->create(['client_id' => $client->id]);
+            $contact = Contact::factory()->create(['client_id' => $client->id]);
         }
 
         return ['client' => $client, 'contact' => $contact];
@@ -78,7 +78,7 @@ abstract class DuskTestCase extends BaseTestCase
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
 
-        $task = factory(Task::class)->create($attributes);
+        $task = Task::factory()->create($attributes);
 
         return $task;
     }
@@ -94,7 +94,7 @@ abstract class DuskTestCase extends BaseTestCase
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
 
-        $lead = factory(Lead::class)->create($attributes);
+        $lead = Lead::factory()->create($attributes);
 
         return $lead;
     }
