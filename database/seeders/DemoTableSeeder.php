@@ -11,6 +11,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\Task;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +24,7 @@ class DemoTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(User::class)->create([
+        User::factory()->create([
             'id' => 2,
             'external_id' => Uuid::uuid4(),
             'name' => 'DaybydayCRM',
@@ -44,9 +45,9 @@ class DemoTableSeeder extends Seeder
             'user_id' => 2,
         ]);
 
-        factory(User::class, 4)->create()->each(function ($user) {
+        User::factory()->count(4)->create()->each(function ($user) {
             if (rand(1, 4) == 3) {
-                factory(Absence::class)->create([
+                Absence::factory()->create([
                     'user_id' => $user->id,
                 ]);
             }
@@ -54,7 +55,7 @@ class DemoTableSeeder extends Seeder
         });
 
         $u = User::query()->latest()->first();
-        factory(Absence::class)->create([
+        Absence::factory()->create([
             'user_id' => $u->id,
             'start_at' => now()->subDays(2),
             'end_at' => now()->addDays(1),
@@ -66,7 +67,7 @@ class DemoTableSeeder extends Seeder
         factory(Client::class, rand(1, 5))->create(['user_id' => $user->id])->each(function ($client) use ($user) {
             $project = null;
             if (rand(1, 3) == 2) {
-                $project = factory(Project::class)->create([
+                $project = Project::factory()->create([
                     'client_id' => $client->id,
                     'user_created_id' => $user->id,
                     'user_assigned_id' => $user->id,
@@ -84,28 +85,28 @@ class DemoTableSeeder extends Seeder
                 'project_id' => optional($project)->id,
             ])->each(function ($task) use ($user) {
                 if (rand(1, 5) == 1) {
-                    factory(Appointment::class)->create([
+                    Appointment::factory()->create([
                         'client_id' => $task->client_id,
                         'user_id' => $user->id,
                         'source_id' => $task->id,
                     ]);
-                    $invoice = factory(Invoice::class)->create([
+                    $invoice = Invoice::factory()->create([
                         'client_id' => $task->client_id,
                         'source_id' => $task->id,
                         'source_type' => Task::class,
                     ]);
-                    factory(InvoiceLine::class, 4)->create([
+                    InvoiceLine::factory()->count(4)->create([
                         'invoice_id' => $invoice->id,
                     ]);
 
-                    factory(Comment::class, 3)->create([
+                    Comment::factory()->count(3)->create([
                         'source_type' => Task::class,
                         'source_id' => $task->id,
                         'user_id' => $user->id,
                     ]);
                 }
 
-                factory(Comment::class, 3)->create([
+                Comment::factory()->count(3)->create([
                     'source_type' => Task::class,
                     'source_id' => $task->id,
                     'user_id' => $user->id,
@@ -118,13 +119,13 @@ class DemoTableSeeder extends Seeder
                 'user_assigned_id' => $user->id,
             ])->each(function ($lead) use ($user) {
                 if (rand(0, 5) == 1) {
-                    factory(Comment::class, 3)->create([
+                    Comment::factory()->count(3)->create([
                         'source_type' => Lead::class,
                         'source_id' => $lead->id,
                         'user_id' => $user->id,
                     ]);
                 }
-                $offer = factory(Offer::class)->create([
+                $offer = Offer::factory()->create([
                     'status' => OfferStatus::inProgress()->getStatus(),
                     'source_id' => $lead->id,
                     'client_id' => $lead->client_id,
@@ -132,9 +133,9 @@ class DemoTableSeeder extends Seeder
                 ]);
                 factory(InvoiceLine::class, rand(1, 5))->create([
                     'offer_id' => $offer->id,
-                    'product_id' => rand(1, 4) == 2 ? factory(Product::class)->create()->id : null,
+                    'product_id' => rand(1, 4) == 2 ? Product::factory()->create()->id : null,
                 ]);
-                factory(Comment::class, 2)->create([
+                Comment::factory()->count(2)->create([
                     'source_type' => Lead::class,
                     'source_id' => $lead->id,
                     'user_id' => $user->id,

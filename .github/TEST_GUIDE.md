@@ -105,7 +105,7 @@ public function test_can_update_payment() {
 }
 
 public function test_can_list_payments() {
-    factory(Payment::class, 3)->create();
+    Payment::factory()->count(3)->create();
     $response = $this->get('/list');
     $response->assertJsonCount(3);
 }

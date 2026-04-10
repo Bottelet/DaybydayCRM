@@ -28,16 +28,16 @@ class UsersDummyTableSeeder extends Seeder
         $createDep->external_id = Uuid::uuid4();
         $createDep->save();
 
-        factory(User::class, 5)->create()->each(function ($u) {
+        User::factory()->count(5)->create()->each(function ($u) {
             if (random_int(1, 4) == 3) {
-                factory(Absence::class)->create([
+                Absence::factory()->create([
                     'user_id' => $u->id,
                 ]);
             }
         });
 
         $u = User::query()->latest()->first();
-        factory(Absence::class)->create([
+        Absence::factory()->create([
             'user_id' => $u->id,
             'start_at' => now()->subDays(2),
             'end_at' => now()->addDays(1),
