@@ -149,6 +149,10 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'client_id' => $this->client->id, // Owner's client
         ]);
 
+        // Verify task has the correct client_id
+        $this->assertEquals($this->client->id, $task->client_id);
+        $this->assertEquals($this->owner->id, $task->client->user_id);
+
         // Create document attached to task
         $document = Document::factory()->create([
             'source_type' => Task::class,
