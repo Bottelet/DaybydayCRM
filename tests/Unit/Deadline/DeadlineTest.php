@@ -24,19 +24,21 @@ class DeadlineTest extends AbstractTestCase
     {
         parent::setUp();
 
+        $futureDeadline = Carbon::now()->addHours(2);
+
         $this->task = Task::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
             ]
         );
         $this->lead = Lead::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
             ]
         );
         $this->project = Project::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
             ]
         );
     }
