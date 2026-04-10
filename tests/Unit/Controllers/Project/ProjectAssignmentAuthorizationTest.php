@@ -75,6 +75,9 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
     {
         $originalAssignee = $this->project->user_assigned_id;
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-project'));
 
@@ -101,6 +104,9 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
     public function unauthorized_user_cannot_reassign_project()
     {
         $originalAssignee = $this->project->user_assigned_id;
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-project'));

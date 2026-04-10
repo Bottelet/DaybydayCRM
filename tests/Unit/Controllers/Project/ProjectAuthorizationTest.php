@@ -74,6 +74,9 @@ class ProjectAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
         $response->assertStatus(302); // Redirect on success
@@ -106,6 +109,9 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newUser = User::factory()->create();
 
@@ -150,6 +156,9 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newStatus = Status::factory()->create(['source_type' => 'project']);
         while ($newStatus->id == $this->project->status_id) {
