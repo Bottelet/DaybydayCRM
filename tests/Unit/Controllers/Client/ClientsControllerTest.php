@@ -66,6 +66,10 @@ class ClientsControllerTest extends TestCase
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
+        
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        
         $this->actingAs($authUser);
 
         // Create required dependencies
