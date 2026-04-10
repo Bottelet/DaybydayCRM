@@ -149,21 +149,27 @@ class ClientsControllerTest extends AbstractTestCase
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         Cache::tags('role_user')->flush();
+        $authUser = $authUser->fresh();
 
         $this->actingAs($authUser);
 
-        $client = Client::factory()->create();
-        $user = User::factory()->create();
+        // Create initial user for the client
+        $initialUser = User::factory()->create();
+        $client = Client::factory()->create(['user_id' => $initialUser->id]);
+        
+        // Create target user to assign
+        $targetUser = User::factory()->create();
 
-        $this->assertNotEquals($client->user_id, $user->id);
+        $this->assertEquals($client->user_id, $initialUser->id);
+        $this->assertNotEquals($client->user_id, $targetUser->id);
 
         $r = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
-            'user_external_id' => $user->external_id,
+            'user_external_id' => $targetUser->external_id,
         ]);
 
-        $this->assertEquals($client->refresh()->user_id, $user->id);
+        $this->assertEquals($client->refresh()->user_id, $targetUser->id);
     }
 
     #[Test]
