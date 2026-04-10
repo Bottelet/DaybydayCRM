@@ -108,6 +108,9 @@ class OfferAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithCreatePermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $newLead = Lead::factory()->create();
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
@@ -150,6 +153,9 @@ class OfferAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title' => 'Updated Item',
@@ -186,6 +192,9 @@ class OfferAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
@@ -213,6 +222,9 @@ class OfferAuthorizationTest extends AbstractTestCase
     public function user_with_offer_edit_permission_can_mark_offer_as_lost()
     {
         $this->actingAs($this->userWithEditPermission);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,

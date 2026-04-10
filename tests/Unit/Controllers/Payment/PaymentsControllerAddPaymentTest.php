@@ -21,6 +21,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         parent::setUp();
         $this->asOwner();
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
