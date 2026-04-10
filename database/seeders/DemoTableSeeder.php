@@ -9,11 +9,16 @@ use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
+use App\Models\Lead;
 use App\Models\Offer;
 use App\Models\Product;
+use App\Models\Project;
+use App\Models\RoleUser;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class DemoTableSeeder extends Seeder
 {
@@ -64,7 +69,7 @@ class DemoTableSeeder extends Seeder
 
     private function createData(User $user)
     {
-        factory(Client::class, rand(1, 5))->create(['user_id' => $user->id])->each(function ($client) use ($user) {
+        Client::factory()->count(rand(1, 5))->create(['user_id' => $user->id])->each(function ($client) use ($user) {
             $project = null;
             if (rand(1, 3) == 2) {
                 $project = Project::factory()->create([
@@ -72,13 +77,13 @@ class DemoTableSeeder extends Seeder
                     'user_created_id' => $user->id,
                     'user_assigned_id' => $user->id,
                 ]);
-                factory(Comment::class, rand(2, 6))->create([
+                Comment::factory()->count(rand(2, 6))->create([
                     'source_type' => Project::class,
                     'source_id' => $project->id,
                     'user_id' => $user->id,
                 ]);
             }
-            factory(Task::class, rand(5, 13))->create([
+            Task::factory()->count(rand(5, 13))->create([
                 'client_id' => $client->id,
                 'user_created_id' => $user->id,
                 'user_assigned_id' => $user->id,
@@ -113,7 +118,7 @@ class DemoTableSeeder extends Seeder
                 ]);
             });
 
-            factory(Lead::class, rand(3, 7))->create([
+            Lead::factory()->count(rand(3, 7))->create([
                 'client_id' => $client->id,
                 'user_created_id' => $user->id,
                 'user_assigned_id' => $user->id,
@@ -131,7 +136,7 @@ class DemoTableSeeder extends Seeder
                     'client_id' => $lead->client_id,
                     'source_type' => Lead::class,
                 ]);
-                factory(InvoiceLine::class, rand(1, 5))->create([
+                InvoiceLine::factory()->count(rand(1, 5))->create([
                     'offer_id' => $offer->id,
                     'product_id' => rand(1, 4) == 2 ? Product::factory()->create()->id : null,
                 ]);
