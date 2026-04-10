@@ -16,7 +16,7 @@ class TaskObserverDeleteTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
         $this->task->comments()->create([
             'description' => 'Test',

@@ -24,10 +24,10 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_name_and_department()
     {
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             'name' => 'Tiger',
         ]);
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
         $this->user->department()->sync([$department->id]);
@@ -39,10 +39,10 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_name_and_department_with_eager_loading()
     {
-        $department = factory(Department::class)->create([
+        $department = Department::factory()->create([
             'name' => 'Tiger',
         ]);
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
         $this->user->department()->sync([$department->id]);
@@ -55,7 +55,7 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_default_avatar_when_none_is_set()
     {
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
 
@@ -66,7 +66,7 @@ class GetAttributesTest extends TestCase
     #[Group('junie_repaired')]
     public function get_path_when_image_is_set()
     {
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
 

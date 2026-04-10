@@ -17,9 +17,9 @@ class RemoveReferenceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => null,
-            'integration_invoice_id' => factory(Lead::class)->create()->id,
+            'integration_invoice_id' => Lead::factory()->create()->id,
             'integration_type' => Lead::class,
         ]);
     }

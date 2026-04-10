@@ -17,7 +17,7 @@ class LeadObserverDeleteTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
 
         $this->lead->comments()->create([
             'description' => 'Test',
@@ -98,7 +98,7 @@ class LeadObserverDeleteTest extends TestCase
     #[Test]
     public function offer_is_not_deleted_by_observer()
     {
-        $offer = factory(Offer::class)->create([
+        $offer = Offer::factory()->create([
             'source_id' => $this->lead->id,
         ]);
 
