@@ -160,9 +160,9 @@ class TaskAuthorizationTest extends AbstractTestCase
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::factory()->create(['context' => 'task']);
+        $newStatus = Status::factory()->create(['source_type' => 'task']);
         while ($newStatus->id == $this->task->status_id) {
-            $newStatus = Status::factory()->create(['context' => 'task']);
+            $newStatus = Status::factory()->create(['source_type' => 'task']);
         }
         $originalTitle = $this->task->title;
         $originalDescription = $this->task->description;

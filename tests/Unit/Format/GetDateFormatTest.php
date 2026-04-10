@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Format;
 
-use App\Models\Setting;
 use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
@@ -17,7 +16,6 @@ class GetDateFormatTest extends AbstractTestCase
     {
         parent::setUp();
 
-        Setting::updateOrCreate(['name' => 'vat'], ['value' => '25', 'country' => 'GB']);
         $this->formatter = app(GetDateFormat::class);
     }
 

@@ -1,7 +1,19 @@
-# Makefile for DaybydayCRM Laravel/Docker workflow
-# Supports both inside and outside Docker usage
+# ============================================================================
+# Makefile for DaybydayCRM
+#
+# Professional, unified workflow for Laravel, Docker, and CI environments.
+# - Supports local and Docker-based development
+# - Provides standardized install, build, cache, and test commands
+# - Includes robust support for parallel testing (ParaTest)
+# - All targets are safe to run repeatedly
+#
+# Usage:
+#   make <target>
+#   make help   # for full list
+#
+# ============================================================================
 
-# --- Composer and yarn (inside container) ---
+# --- Install & Setup (inside container) ---
 install:
 	composer install
 
@@ -16,6 +28,7 @@ yarn-build:
 
 setup: install mfs yarn-install yarn-build
 
+# --- Laravel Cache Clear (inside container) ---
 clear:
 	php artisan config:clear
 	php artisan cache:clear
@@ -25,7 +38,7 @@ clear:
 aargh:
 	composer aargh
 
-# --- Tests (inside container) ---
+# --- PHPUnit Tests (inside container) ---
 phpunit:
 	vendor/bin/phpunit
 
@@ -55,9 +68,10 @@ testdox-log:
 test-fail-fast:
 	vendor/bin/phpunit --stop-on-failure
 
-# --- Tests (inside container, using ParaTest) ---
+# --- ParaTest: Parallel Testing (inside container) ---
+# Run tests in parallel for faster feedback. Use -p8 for 8 processes (adjust as needed).
 paratest:
-	vendor/bin/paratest
+	vendor/bin/paratest -p8
 
 paratest-group:
 	@if [ -z "$(group)" ]; then \
@@ -85,7 +99,7 @@ paratest-testdox-log:
 paratest-fail-fast:
 	vendor/bin/paratest -p8 --stop-on-failure
 
-# --- Docker Compose targets (for HOST use) ---
+# --- Docker Compose Targets (for HOST use) ---
 down:
 	docker-compose down -v
 
@@ -153,12 +167,14 @@ docker-testdox-log:
 docker-test-fail-fast:
 	docker-compose exec php vendor/bin/phpunit --stop-on-failure
 
-# Quick shell helpers
+# --- Quick Shell Helpers ---
 shell:
 	docker exec -it $$(docker ps -aqf "name=workspace") bash
 
 # --- Help ---
 help:
+	@echo ""
+	@echo "DaybydayCRM Makefile — Professional Laravel/Docker/CI workflow"
 	@echo ""
 	@echo "Inside-container targets:"
 	@echo "  setup            = install, migrate, yarn, dev"
@@ -171,8 +187,16 @@ help:
 	@echo "  testdox-log      = logs to phpunit-testdox.log"
 	@echo "  test-fail-fast   = stop on first failure"
 	@echo ""
+	@echo "  paratest         = run all tests in parallel (ParaTest)"
+	@echo "  paratest-group   = paratest --group=<group> (make paratest-group group=crud)"
+	@echo "  paratest-testdox = paratest --testdox"
+	@echo "  paratest-testdox-group = paratest --testdox --group=crud"
+	@echo "  paratest-log     = logs to paratest-full.log"
+	@echo "  paratest-testdox-log = logs to paratest-testdox.log"
+	@echo "  paratest-fail-fast = stop on first failure (parallel)"
+	@echo ""
 	@echo "Docker targets (from host):"
-	@echo "  down, up, downup, docker-rebuild, workmeup, shell"
+	@echo "  down, up, downup, docker-rebuild, shell"
 	@echo "  docker-install, docker-mfs, docker-yarn-install, docker-yarn-dev"
 	@echo "  docker-setup     = all setup steps"
 	@echo "  docker-clear     = clear all Laravel caches"

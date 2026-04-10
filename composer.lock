@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a8abdec4eceb8575483beed4e0e81efa",
+    "content-hash": "929de36fe58f26adaca26e7bd0cc9b38",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -841,12 +841,12 @@
             "version": "v7.0.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
+                "url": "https://github.com/googleapis/php-jwt.git",
                 "reference": "47ad26bab5e7c70ae8a6f08ed25ff83631121380"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/47ad26bab5e7c70ae8a6f08ed25ff83631121380",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/47ad26bab5e7c70ae8a6f08ed25ff83631121380",
                 "reference": "47ad26bab5e7c70ae8a6f08ed25ff83631121380",
                 "shasum": ""
             },
@@ -895,8 +895,8 @@
                 "php"
             ],
             "support": {
-                "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.5"
+                "issues": "https://github.com/googleapis/php-jwt/issues",
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.0.5"
             },
             "time": "2026-04-01T20:38:03+00:00"
         },
@@ -4187,16 +4187,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.50",
+            "version": "3.0.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b"
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
-                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748",
                 "shasum": ""
             },
             "require": {
@@ -4277,7 +4277,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.50"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.51"
             },
             "funding": [
                 {
@@ -4293,7 +4293,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-19T02:57:58+00:00"
+            "time": "2026-04-10T01:33:53+00:00"
         },
         {
             "name": "predis/predis",
@@ -8135,7 +8135,7 @@
             },
             "suggest": {
                 "yajra/laravel-datatables-buttons": "Plugin for server-side exporting of dataTables.",
-                "yajra/laravel-datatables-editor": "Plugin to use Yajra\DataTables\Facades\DataTables; Editor (requires a license).",
+                "yajra/laravel-datatables-editor": "Plugin to use DataTables Editor (requires a license).",
                 "yajra/laravel-datatables-export": "Plugin for server-side exporting using livewire and queue worker.",
                 "yajra/laravel-datatables-fractal": "Plugin for server-side response using Fractal.",
                 "yajra/laravel-datatables-html": "Plugin for server-side HTML builder of dataTables."
@@ -8195,16 +8195,16 @@
     "packages-dev": [
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v4.2.5",
+            "version": "v4.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruitcake/laravel-debugbar.git",
-                "reference": "4f62913c865023ccd2c34d8d2d13916d2c5720f8"
+                "reference": "68c3de788feb7047bea547b51253e71a54e7936a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/4f62913c865023ccd2c34d8d2d13916d2c5720f8",
-                "reference": "4f62913c865023ccd2c34d8d2d13916d2c5720f8",
+                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/68c3de788feb7047bea547b51253e71a54e7936a",
+                "reference": "68c3de788feb7047bea547b51253e71a54e7936a",
                 "shasum": ""
             },
             "require": {
@@ -8278,7 +8278,7 @@
             ],
             "support": {
                 "issues": "https://github.com/fruitcake/laravel-debugbar/issues",
-                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.2.5"
+                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.2.6"
             },
             "funding": [
                 {
@@ -8290,7 +8290,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-08T09:39:15+00:00"
+            "time": "2026-04-10T07:24:18+00:00"
         },
         {
             "name": "brianium/paratest",
@@ -9304,20 +9304,19 @@
         },
         {
             "name": "nunomaduro/pao",
-            "version": "v0.1.4",
+            "version": "v0.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/pao.git",
-                "reference": "32a74492ce54379ef91323c965121f6a38b6bde4"
+                "reference": "a52a182295809193cac350ee53cd158c9cac95b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/pao/zipball/32a74492ce54379ef91323c965121f6a38b6bde4",
-                "reference": "32a74492ce54379ef91323c965121f6a38b6bde4",
+                "url": "https://api.github.com/repos/nunomaduro/pao/zipball/a52a182295809193cac350ee53cd158c9cac95b3",
+                "reference": "a52a182295809193cac350ee53cd158c9cac95b3",
                 "shasum": ""
             },
             "require": {
-                "ext-simplexml": "*",
                 "php": "^8.3",
                 "shipfastlabs/agent-detector": "^1.1.2"
             },
@@ -9331,7 +9330,7 @@
                 "brianium/paratest": "^7.20.0",
                 "laravel/pint": "^1.29.0",
                 "orchestra/testbench": "^10.11.0 || ^11.1.0",
-                "pestphp/pest": "^4.4.3 || ^5.0.0",
+                "pestphp/pest": "^4.4.6 || ^5.0.0",
                 "pestphp/pest-plugin-type-coverage": "^4.0.3 || ^5.0.0",
                 "phpstan/phpstan": "^2.1.46",
                 "rector/rector": "^2.4.1",
@@ -9383,7 +9382,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nunomaduro/pao/issues",
-                "source": "https://github.com/nunomaduro/pao/tree/v0.1.4"
+                "source": "https://github.com/nunomaduro/pao/tree/v0.1.6"
             },
             "funding": [
                 {
@@ -9399,7 +9398,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-09T14:45:19+00:00"
+            "time": "2026-04-10T11:42:14+00:00"
         },
         {
             "name": "phar-io/manifest",

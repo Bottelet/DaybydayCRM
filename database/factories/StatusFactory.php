@@ -17,7 +17,6 @@ class StatusFactory extends \Illuminate\Database\Eloquent\Factories\Factory
             'external_id' => $this->faker->uuid,
             'title' => $this->faker->word,
             'color' => '#000',
-
         ];
     }
 }

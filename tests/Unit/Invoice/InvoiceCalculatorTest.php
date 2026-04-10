@@ -29,7 +29,6 @@ class InvoiceCalculatorTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        \App\Models\Setting::updateOrCreate(['name' => 'vat'], ['value' => '25']);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
         ]);
