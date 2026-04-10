@@ -3,11 +3,16 @@
 /** @var Factory $factory */
 
 use App\Models\File;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(File::class, static function (Faker $faker) {
-    return [
-        //
-    ];
-});
+class FileFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = File::class;
+
+    public function definition()
+    {
+        return [
+            //
+        ];
+    }
+}

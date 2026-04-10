@@ -3,11 +3,16 @@
 /** @var Factory $factory */
 
 use App\Models\CreditNote;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(CreditNote::class, static function (Faker $faker) {
-    return [
-        //
-    ];
-});
+class CreditNoteFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = CreditNote::class;
+
+    public function definition()
+    {
+        return [
+            //
+        ];
+    }
+}

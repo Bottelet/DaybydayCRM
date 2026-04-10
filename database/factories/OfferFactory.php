@@ -6,16 +6,21 @@ use App\Enums\OfferStatus;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Offer;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 use Ramsey\Uuid\Uuid;
 
-$factory->define(Offer::class, static function (Faker $faker) {
-    return [
-        'external_id' => Uuid::uuid4()->toString(),
-        'client_id' => factory(Client::class),
-        'status' => OfferStatus::inProgress()->getStatus(),
-        'source_id' => factory(Lead::class),
-        'source_type' => Lead::class,
-    ];
-});
+class OfferFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = Offer::class;
+
+    public function definition()
+    {
+        return [
+            'external_id' => Uuid::uuid4()->toString(),
+            'client_id' => Client::factory(),
+            'status' => OfferStatus::inProgress()->getStatus(),
+            'source_id' => Lead::factory(),
+            'source_type' => Lead::class,
+        ];
+    }
+}

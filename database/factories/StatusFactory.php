@@ -3,14 +3,19 @@
 /** @var Factory $factory */
 
 use App\Models\Status;
-use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Status::class, static function (Faker $faker) {
-    return [
-        'external_id' => $faker->uuid,
-        'title' => $faker->word,
-        'color' => '#000',
+class StatusFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = Status::class;
 
-    ];
-});
+    public function definition()
+    {
+        return [
+            'external_id' => $this->faker->uuid,
+            'title' => $this->faker->word,
+            'color' => '#000',
+
+        ];
+    }
+}
