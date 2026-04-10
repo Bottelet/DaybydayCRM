@@ -25,9 +25,9 @@ class ClientNumberServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Client::class)->create([
+        $this->client = Client::factory()->create([
 
             'company_name' => 'Just something',
         ]);

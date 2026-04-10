@@ -27,7 +27,7 @@ class EntrustUserTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
         $this->role = Role::where('name', 'owner')->first();
     }
 
@@ -52,7 +52,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function attach_role_accepts_role_object()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         $user->attachRole($adminRole);
@@ -63,7 +63,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function attach_role_accepts_role_id()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         $user->attachRole($adminRole->id);
@@ -74,7 +74,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function attach_role_accepts_role_array()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         $user->attachRole(['id' => $adminRole->id]);
@@ -85,7 +85,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function attach_role_called_multiple_times_results_in_only_one_db_entry()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         // Call attachRole 3 times for the same role
@@ -111,7 +111,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function cached_roles_returns_collection_with_correct_roles()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
         $user->attachRole($adminRole);
 
@@ -124,7 +124,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function cached_roles_returns_empty_when_no_roles_attached()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         // Factory doesn't attach roles by default, so user has no roles
 
         $cachedRoles = $user->cachedRoles();
@@ -135,7 +135,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function has_role_works_correctly_after_attach_role_fix()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         $this->assertFalse($user->hasRole('administrator'), 'User should not have role before attaching');
@@ -148,7 +148,7 @@ class EntrustUserTraitTest extends TestCase
     #[Test]
     public function attaching_same_role_twice_does_not_throw_unique_constraint_exception()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $adminRole = Role::where('name', 'administrator')->first();
 
         // This should not throw SQLSTATE[23000] Duplicate entry exception

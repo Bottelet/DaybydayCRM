@@ -16,7 +16,7 @@ class NewCommentTest extends TestCase
     #[Test]
     public function constructor_stores_comment()
     {
-        $comment = factory(Comment::class)->create();
+        $comment = Comment::factory()->create();
 
         $event = new NewComment($comment);
 
@@ -26,7 +26,7 @@ class NewCommentTest extends TestCase
     #[Test]
     public function comment_property_is_public()
     {
-        $comment = factory(Comment::class)->create();
+        $comment = Comment::factory()->create();
         $event = new NewComment($comment);
 
         $this->assertInstanceOf(Comment::class, $event->comment);
@@ -35,7 +35,7 @@ class NewCommentTest extends TestCase
     #[Test]
     public function event_preserves_comment_description()
     {
-        $comment = factory(Comment::class)->create(['description' => 'Test comment text']);
+        $comment = Comment::factory()->create(['description' => 'Test comment text']);
         $event = new NewComment($comment);
 
         $this->assertEquals('Test comment text', $event->comment->description);
@@ -45,7 +45,7 @@ class NewCommentTest extends TestCase
     public function event_can_be_dispatched()
     {
         Event::fake();
-        $comment = factory(Comment::class)->create();
+        $comment = Comment::factory()->create();
 
         NewComment::dispatch($comment);
 
@@ -70,7 +70,7 @@ class NewCommentTest extends TestCase
     public function dispatched_event_carries_correct_comment()
     {
         Event::fake();
-        $comment = factory(Comment::class)->create(['description' => 'dispatch check']);
+        $comment = Comment::factory()->create(['description' => 'dispatch check']);
 
         NewComment::dispatch($comment);
 

@@ -16,7 +16,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function constructor_stores_client_and_action()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $action = 'created';
 
         $event = new ClientAction($client, $action);
@@ -28,7 +28,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function get_client_returns_client_model()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $event = new ClientAction($client, 'updated');
 
         $this->assertInstanceOf(Client::class, $event->getClient());
@@ -37,7 +37,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function get_action_returns_action_string()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $event = new ClientAction($client, 'deleted');
 
         $this->assertEquals('deleted', $event->getAction());
@@ -46,7 +46,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function broadcast_on_returns_private_channel()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $event = new ClientAction($client, 'created');
 
         $channel = $event->broadcastOn();
@@ -56,7 +56,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function event_preserves_client_reference_after_construction()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $event = new ClientAction($client, 'test');
 
         $this->assertEquals($client->external_id, $event->getClient()->external_id);
@@ -65,7 +65,7 @@ class ClientActionTest extends TestCase
     #[Test]
     public function action_can_be_non_string_value()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $event = new ClientAction($client, 42);
 
         $this->assertEquals(42, $event->getAction());

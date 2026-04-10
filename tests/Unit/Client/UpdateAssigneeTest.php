@@ -19,9 +19,9 @@ class UpdateAssigneeTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Client::class)->create([
+        $this->client = Client::factory()->create([
 
             'company_name' => 'Just something',
         ]);
@@ -43,7 +43,7 @@ class UpdateAssigneeTest extends TestCase
     public function can_update_assignee_with_out_permissions_as_any_user()
     {
         $this->markTestIncomplete('uses deprecated method');
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->setUser($user);
 
         $this->expectsEvents(ClientAction::class);

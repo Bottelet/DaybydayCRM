@@ -22,8 +22,8 @@ class ActivityModelBootTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
-        $this->task = factory(Task::class)->create();
+        $this->user = User::factory()->create();
+        $this->task = Task::factory()->create();
     }
 
     #[Test]

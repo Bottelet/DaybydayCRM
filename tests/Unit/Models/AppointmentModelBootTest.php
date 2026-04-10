@@ -18,7 +18,7 @@ class AppointmentModelBootTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     #[Test]
@@ -96,7 +96,7 @@ class AppointmentModelBootTest extends TestCase
     #[Test]
     public function appointment_factory_creates_record_with_external_id()
     {
-        $appointment = factory(Appointment::class)->create([
+        $appointment = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'source_type' => User::class,
             'source_id' => $this->user->id,
