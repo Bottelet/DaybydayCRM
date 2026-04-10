@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,9 @@ use Illuminate\Support\Arr;
 
 class Activity extends Model
 {
-    use HasExternalId, SoftDeletes;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The database table used by the model.

@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Exception;
 
 class Integration extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type'];
 
     /**
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public static function getApi($type)
     {
@@ -42,6 +46,6 @@ class Integration extends Model
 
     public function getApiClassAttribute()
     {
-        return new $this->name;
+        return new $this->name();
     }
 }

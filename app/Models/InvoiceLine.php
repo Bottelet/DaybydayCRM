@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
 use App\Traits\HasExternalId;
@@ -10,7 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceLine extends Model
 {
-    use HasExternalId, SoftDeletes;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'external_id',

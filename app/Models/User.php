@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Api\v1\Models\Token;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
@@ -15,7 +16,13 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use Billable, EntrustUserTrait, HasExternalId, Notifiable, SearchableTrait, SoftDeletes;
+    use Billable;
+    use EntrustUserTrait;
+    use HasExternalId;
+    use HasFactory;
+    use Notifiable;
+    use SearchableTrait;
+    use SoftDeletes;
 
     protected $searchableFields = ['name', 'email'];
 

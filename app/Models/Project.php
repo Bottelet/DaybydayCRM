@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
@@ -12,9 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model implements Commentable
 {
-    use DeadlineTrait, HasExternalId, SearchableTrait, SoftDeletes;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
-    const PROJECT_STATUS_CLOSED = 'Closed';
+    public const PROJECT_STATUS_CLOSED = 'Closed';
 
     protected $searchableFields = ['title'];
 

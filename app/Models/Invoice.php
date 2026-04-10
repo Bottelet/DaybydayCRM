@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\InvoiceStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Services\Invoice\InvoiceCalculator;
@@ -19,9 +20,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use HasExternalId, SoftDeletes;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
-    const STATUS_SENT = 'sent';
+    public const STATUS_SENT = 'sent';
 
     protected $fillable = [
         'status',

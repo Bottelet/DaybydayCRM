@@ -1,5 +1,0 @@
-Class SettingsTableSeeder located in ./database/seeders/SettingsTableSeeder.php does not comply with psr-4 autoloading standard (rule: Database\Seeders\ => ./database/seeders). Skipping.
-Class DummyDatabaseSeeder located in ./database/seeders/DummyDatabaseSeeder.php does not comply with psr-4 autoloading standard (rule: Database\Seeders\ => ./database/seeders). Skipping.
-Class DepartmentsTableSeeder located in ./database/seeders/DepartmentsTableSeeder.php does not comply with psr-4 autoloading standard (rule: Database\Seeders\ => ./database/seeders). Skipping.
-Class ProductSeeder located in ./database/seeders/ProductSeeder.php does not comply with psr-4 autoloading standard (rule: Database\Seeders\ => ./database/seeders). Skipping.
-Class LeadsDummyTableSeeder located in ./database/seeders/LeadsDummyTableSeeder.php does not comply with psr-4 autoloading standard (rule: Database\Seeders\ => ./database/seeders). Skipping.
