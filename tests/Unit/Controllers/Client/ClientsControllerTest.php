@@ -20,6 +20,13 @@ class ClientsControllerTest extends AbstractTestCase
     #[Test]
     public function can_create_client()
     {
+        // Create authenticated user with client-create permission
+        $authUser = User::factory()->withRole('employee')->create();
+        $createPermission = \App\Models\Permission::firstOrCreate(['name' => 'client-create']);
+        $authUser->roles->first()->attachPermission($createPermission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->actingAs($authUser);
+
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
 
@@ -51,6 +58,13 @@ class ClientsControllerTest extends AbstractTestCase
     #[Test]
     public function can_delete_without_any_relations_client()
     {
+        // Create authenticated user with client-delete permission
+        $authUser = User::factory()->withRole('employee')->create();
+        $deletePermission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
+        $authUser->roles->first()->attachPermission($deletePermission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->actingAs($authUser);
+
         $client = Client::factory()->create();
 
         $this->assertNotNull(Client::where('external_id', $client->external_id)->first());

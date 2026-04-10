@@ -34,6 +34,9 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->user->roles->first()->attachPermission($editPermission);
         $this->user->roles->first()->attachPermission($deletePermission);
 
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $this->actingAs($this->user);
         $this->appointmentsWithInTime = Appointment::factory()->create([
             'user_id' => $this->user->id,

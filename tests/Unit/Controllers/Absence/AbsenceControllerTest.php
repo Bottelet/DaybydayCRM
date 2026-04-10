@@ -17,6 +17,11 @@ class AbsenceControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_absence_for_other_user()
     {
+        // Create authenticated user with absence-manage permission
+        $authUser = User::factory()->withRole('employee')->create();
+        $managePermission = \App\Models\Permission::firstOrCreate(['name' => 'absence-manage']);
+        $authUser->roles->first()->attachPermission($managePermission);
+        $this->actingAs($authUser);
 
         $user = User::factory()->create();
         $response = $this->json('POST', route('absence.store'), [
