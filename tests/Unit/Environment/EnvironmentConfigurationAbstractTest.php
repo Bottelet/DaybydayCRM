@@ -5,7 +5,6 @@ namespace Tests\Unit\Environment;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Tests for configuration changes introduced in this PR:

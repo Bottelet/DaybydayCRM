@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Unit\Payment;
-use IlluminateFoundationTestingRefreshDatabase;
 
 use App\Enums\PaymentSource;
 use Illuminate\Validation\Rules\In;

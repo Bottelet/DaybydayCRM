@@ -8,7 +8,6 @@ use App\Models\Task;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeadlineAbstractTest extends AbstractTestCase
 {

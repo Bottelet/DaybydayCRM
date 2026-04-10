@@ -1,7 +1,6 @@
 <?php
 
 namespace Tests\Unit\Invoice;
-use IlluminateFoundationTestingRefreshDatabase;
 
 use App\Models\Invoice;
 use PHPUnit\Framework\Attributes\Test;
