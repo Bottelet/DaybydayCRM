@@ -186,6 +186,10 @@ class TasksController extends Controller
         if (! auth()->user()->can('task-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete tasks'));
 
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to delete tasks')], 403);
+            }
+
             return redirect()->back();
         }
 
@@ -199,6 +203,10 @@ class TasksController extends Controller
         $task->delete();
 
         Session()->flash('flash_message', __('Task deleted'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Task deleted')], 200);
+        }
 
         return redirect()->back();
     }

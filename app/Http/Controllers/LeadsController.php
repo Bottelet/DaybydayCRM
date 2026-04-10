@@ -114,6 +114,10 @@ class LeadsController extends Controller
         if (! auth()->user()->can('lead-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
 
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to delete leads')], 403);
+            }
+
             return redirect()->back();
         }
 
@@ -132,6 +136,10 @@ class LeadsController extends Controller
         $lead->delete();
 
         session()->flash('flash_message', __('Lead deleted'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Lead deleted')], 200);
+        }
 
         return redirect()->back();
     }
