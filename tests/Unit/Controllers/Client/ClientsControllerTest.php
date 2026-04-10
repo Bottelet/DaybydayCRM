@@ -9,13 +9,12 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ClientsControllerTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
 
     #[Test]
     public function can_create_client()
@@ -49,7 +48,7 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function can_delete_without_any_relations_client()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
 
         $this->assertNotNull(Client::where('external_id', $client->external_id)->first());
         $r = $this->json('delete', route('clients.destroy', $client->external_id));
@@ -61,7 +60,7 @@ class ClientsControllerTest extends TestCase
     public function can_update_client()
     {
         // Create authenticated user with client-update permission
-        $authUser = factory(User::class)->create();
+        $authUser = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
@@ -73,10 +72,10 @@ class ClientsControllerTest extends TestCase
         $this->actingAs($authUser);
 
         // Create required dependencies
-        $industry = factory(Industry::class)->create();
-        $user = factory(User::class)->create();
+        $industry = Industry::factory()->create();
+        $user = User::factory()->create();
 
-        $client = factory(Client::class)->create(
+        $client = Client::factory()->create(
             [
                 'vat' => '5898989898',
                 'company_type' => 'A/S',
@@ -86,7 +85,7 @@ class ClientsControllerTest extends TestCase
             ]
         );
 
-        $contact = factory(Contact::class)->create(
+        $contact = Contact::factory()->create(
             [
                 'name' => 'Kristian',
                 'secondary_number' => '11111111',
@@ -128,7 +127,7 @@ class ClientsControllerTest extends TestCase
     public function can_update_assignee()
     {
         // Create authenticated user with client-update permission
-        $authUser = factory(User::class)->create();
+        $authUser = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
@@ -139,8 +138,8 @@ class ClientsControllerTest extends TestCase
         
         $this->actingAs($authUser);
 
-        $client = factory(Client::class)->create();
-        $user = factory(User::class)->create();
+        $client = Client::factory()->create();
+        $user = User::factory()->create();
 
         $this->assertNotEquals($client->user_id, $user->id);
 
@@ -154,8 +153,8 @@ class ClientsControllerTest extends TestCase
     #[Test]
     public function cant_update_assignee_without_permission()
     {
-        $client = factory(Client::class)->create();
-        $user = factory(User::class)->create();
+        $client = Client::factory()->create();
+        $user = User::factory()->create();
         $this->setUser($user);
         $this->assertNotEquals($client->user_id, $user->id);
 
@@ -174,7 +173,7 @@ class ClientsControllerTest extends TestCase
     public function can_update_client_without_primary_contact()
     {
         // Create authenticated user with client-update permission
-        $authUser = factory(User::class)->create();
+        $authUser = User::factory()->create();
         $role = Role::where('name', 'employee')->first();
         $authUser->attachRole($role);
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
@@ -186,10 +185,10 @@ class ClientsControllerTest extends TestCase
         $this->actingAs($authUser);
 
         // Create test data instead of relying on seeded data
-        $industry = factory(Industry::class)->create();
-        $user = factory(User::class)->create();
+        $industry = Industry::factory()->create();
+        $user = User::factory()->create();
 
-        $client = factory(Client::class)->create([
+        $client = Client::factory()->create([
             'vat' => '9999999999',
             'company_type' => 'A/S',
             'company_name' => 'NoPrimary Co',

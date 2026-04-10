@@ -8,7 +8,6 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,18 +16,18 @@ use Tests\TestCase;
 #[Group('search-controller')]
 class SearchControllerSecurityTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         // Create test data for searching
-        factory(Client::class)->create(['company_name' => 'Test Company']);
-        factory(Task::class)->create(['title' => 'Test Task']);
-        factory(Project::class)->create(['title' => 'Test Project']);
-        factory(Lead::class)->create(['title' => 'Test Lead']);
-        factory(User::class)->create(['name' => 'Test User']);
+        Client::factory()->create(['company_name' => 'Test Company']);
+        Task::factory()->create(['title' => 'Test Task']);
+        Project::factory()->create(['title' => 'Test Project']);
+        Lead::factory()->create(['title' => 'Test Lead']);
+        User::factory()->create(['name' => 'Test User']);
     }
 
     #[Test]
