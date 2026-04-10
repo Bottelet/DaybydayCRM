@@ -4,15 +4,15 @@ namespace Tests\Unit\User;
 
 use App\Models\Department;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Config;
 
 class GetAttributesTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $client;
 

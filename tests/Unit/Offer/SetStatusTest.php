@@ -3,13 +3,13 @@
 namespace Tests\Unit\Offer;
 
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SetStatusTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $offer;
 

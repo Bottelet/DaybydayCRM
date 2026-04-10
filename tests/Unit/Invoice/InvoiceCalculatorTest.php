@@ -7,13 +7,13 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InvoiceCalculatorTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 

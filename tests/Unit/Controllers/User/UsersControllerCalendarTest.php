@@ -4,14 +4,14 @@ namespace Tests\Unit\Controllers\User;
 
 use App\Models\Absence;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UsersControllerCalendarTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $absenceWithInTime;
 

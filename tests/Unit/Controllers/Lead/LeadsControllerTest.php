@@ -6,14 +6,14 @@ use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Status;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use DB;
 
 class LeadsControllerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $client;
 

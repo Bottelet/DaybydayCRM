@@ -5,13 +5,13 @@ namespace Tests\Unit\Events;
 use App\Events\LeadAction;
 use App\Models\Lead;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LeadActionTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function constructor_stores_lead_and_action()

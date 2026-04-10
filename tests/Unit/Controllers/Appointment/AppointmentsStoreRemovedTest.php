@@ -4,10 +4,10 @@ namespace Tests\Unit\Controllers\Appointment;
 
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Requests\Appointment\CreateAppointmentCalendarRequest;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -20,7 +20,7 @@ use ReflectionNamedType;
 #[Group('appointments')]
 class AppointmentsStoreRemovedTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function appointments_controller_does_not_have_store_method()

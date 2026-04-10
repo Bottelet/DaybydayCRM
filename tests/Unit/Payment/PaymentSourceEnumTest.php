@@ -1,18 +1,19 @@
 <?php
 
 namespace Tests\Unit\Payment;
+use IlluminateFoundationTestingRefreshDatabase;
 
 use App\Enums\PaymentSource;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Validation\Rules\In;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Exception;
 
 class PaymentSourceEnumTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /**
      * @var string

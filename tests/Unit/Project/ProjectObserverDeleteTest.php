@@ -5,13 +5,13 @@ namespace Tests\Unit\Project;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Project;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProjectObserverDeleteTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $project;
 

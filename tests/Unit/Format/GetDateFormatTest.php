@@ -7,6 +7,7 @@ use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class GetDateFormatTest extends TestCase
 {

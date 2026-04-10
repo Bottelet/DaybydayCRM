@@ -8,16 +8,16 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('project-controller')]
 class ProjectSecurityTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $project;
 

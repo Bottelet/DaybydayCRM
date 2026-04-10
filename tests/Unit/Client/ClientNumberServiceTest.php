@@ -6,13 +6,13 @@ use App\Models\Client;
 use App\Models\User;
 use App\Services\ClientNumber\ClientNumberService;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClientNumberServiceTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $client;
 

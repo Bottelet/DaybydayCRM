@@ -9,17 +9,17 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('document_authorization')]
 class DocumentsControllerAuthorizationTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $owner;
 

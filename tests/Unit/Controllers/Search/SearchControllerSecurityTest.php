@@ -7,16 +7,16 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('search-controller')]
 class SearchControllerSecurityTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {

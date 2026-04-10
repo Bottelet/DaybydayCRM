@@ -3,11 +3,11 @@
 namespace Tests\Unit\Api;
 
 use App\Api\v1\Controllers\ApiController;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Concrete subclass to expose protected methods for testing.
@@ -57,7 +57,7 @@ class ConcreteApiController extends ApiController
 
 class ApiControllerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private ConcreteApiController $controller;
 

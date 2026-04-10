@@ -4,14 +4,14 @@ namespace Tests\Unit\Models;
 
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InvoiceLineModelBootTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function invoice_line_stores_explicit_external_id_when_provided()

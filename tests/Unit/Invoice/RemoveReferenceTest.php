@@ -4,13 +4,13 @@ namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
 use App\Models\Lead;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RemoveReferenceTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 

@@ -3,14 +3,14 @@
 namespace Tests\Unit\Enums;
 
 use App\Enums\AbsenceReason;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Exception;
 
 class AbsenceReasonTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function getting_reason_returns_instance_of_absence_reason()

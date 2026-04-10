@@ -7,17 +7,17 @@ use App\Models\Client;
 use App\Models\Document;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use ReflectionClass;
 
 #[Group('security')]
 #[Group('document_authorization')]
 class DocumentAccessHelperTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $owner;
 

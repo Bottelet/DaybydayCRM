@@ -4,13 +4,13 @@ namespace Tests\Unit\Models;
 
 use App\Models\Client;
 use App\Models\Contact;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClientModelTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function get_primary_contact_attribute_returns_null_when_no_contacts_exist()

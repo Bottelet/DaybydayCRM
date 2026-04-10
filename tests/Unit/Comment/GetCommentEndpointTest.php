@@ -5,13 +5,13 @@ namespace Tests\Unit\Comment;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class GetCommentEndpointTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $lead;
 

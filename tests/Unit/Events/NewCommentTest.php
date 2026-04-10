@@ -4,14 +4,14 @@ namespace Tests\Unit\Events;
 
 use App\Events\NewComment;
 use App\Models\Comment;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class NewCommentTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function constructor_stores_comment()

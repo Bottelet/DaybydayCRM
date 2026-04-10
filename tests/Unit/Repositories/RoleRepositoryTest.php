@@ -4,10 +4,10 @@ namespace Tests\Unit\Repositories;
 
 use App\Models\Role;
 use App\Repositories\Role\RoleRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Tests for RoleRepository::allRoles() after the syntax fix.
@@ -18,7 +18,7 @@ use Tests\TestCase;
 #[Group('repository')]
 class RoleRepositoryTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private RoleRepository $repository;
 

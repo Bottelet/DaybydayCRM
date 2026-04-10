@@ -7,14 +7,14 @@ use App\Models\Document;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DocumentModelBootTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $user;
 
