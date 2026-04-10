@@ -6,7 +6,7 @@ use App\Api\v1\Controllers\ApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
@@ -55,7 +55,7 @@ class ConcreteApiController extends ApiController
     }
 }
 
-class ApiControllerTest extends TestCase
+class ApiControllerAbstractTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
