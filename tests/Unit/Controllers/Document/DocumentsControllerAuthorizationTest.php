@@ -4,6 +4,7 @@ namespace Tests\Unit\Controllers\Document;
 
 use App\Models\Client;
 use App\Models\Document;
+use App\Models\Integration;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
@@ -39,6 +40,12 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
 
         // Create a client owned by the owner
         $this->client = Client::factory()->create(['user_id' => $this->owner->id]);
+
+        // Create file storage integration so the filesystem middleware passes
+        Integration::create([
+            'name' => 'local',
+            'api_type' => 'file',
+        ]);
 
         $this->bindFakeStorageProvider();
     }
