@@ -59,6 +59,9 @@ class DocumentSecurityTest extends TestCase
         // Give user permission to upload files to tasks
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+        
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -90,6 +93,9 @@ class DocumentSecurityTest extends TestCase
         // Give user permission to upload files to projects
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+        
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -120,6 +126,9 @@ class DocumentSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+        
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -136,6 +145,9 @@ class DocumentSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+        
+        // Clear permission cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
