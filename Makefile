@@ -55,6 +55,36 @@ testdox-log:
 test-fail-fast:
 	vendor/bin/phpunit --stop-on-failure
 
+# --- Tests (inside container, using ParaTest) ---
+paratest:
+	vendor/bin/paratest
+
+paratest-group:
+	@if [ -z "$(group)" ]; then \
+		echo "Usage: make paratest-group group=crud"; \
+		exit 1; \
+	fi
+	vendor/bin/paratest -p8 --group $(group)
+
+paratest-testdox:
+	vendor/bin/paratest -p8 --testdox
+
+paratest-testdox-group:
+	@if [ -z "$(group)" ]; then \
+		echo "Usage: make paratest-testdox-group group=crud"; \
+		exit 1; \
+	fi
+	vendor/bin/paratest -p8 --testdox --group $(group)
+
+paratest-log:
+	vendor/bin/paratest -p8 2>&1 | tee paratest-full.log
+
+paratest-testdox-log:
+	vendor/bin/paratest -p8 --testdox 2>&1 | tee paratest-testdox.log
+
+paratest-fail-fast:
+	vendor/bin/paratest -p8 --stop-on-failure
+
 # --- Docker Compose targets (for HOST use) ---
 down:
 	docker-compose down -v

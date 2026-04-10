@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 /** @var Factory $factory */
 
+use App\Models\Client;
 use App\Models\Contact;
 use Illuminate\Database\Eloquent\Factory;
 

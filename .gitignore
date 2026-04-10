@@ -43,6 +43,7 @@ mix-manifest.json
 /.phpunit.cache
 /.phpunit.result.cache
 _ide_helper.php
+paratest*.log
 phpunit.txt
 phpu*.txt
 phpu_art_test.txt

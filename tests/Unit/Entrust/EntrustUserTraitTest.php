@@ -149,13 +149,16 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function attaching_same_role_twice_does_not_throw_unique_constraint_exception()
     {
+        /* arrange */
         $user = User::factory()->create();
-        $adminRole = Role::where('name', 'administrator')->first();
+        $role = Role::factory()->create(); // <-- ensures a real row with valid id
 
         // This should not throw SQLSTATE[23000] Duplicate entry exception
         try {
-            $user->attachRole($adminRole);
-            $user->attachRole($adminRole);
+            /* act */
+            $user->attachRole($role);
+            // Attach again (should not throw)
+            $user->attachRole($role);
             $this->assertTrue(true, 'No exception was thrown for duplicate attach');
         } catch (Exception $e) {
             $this->fail('attachRole threw an exception on duplicate: '.$e->getMessage());
