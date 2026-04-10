@@ -22,7 +22,7 @@ class LeadsControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        // Don't overwrite $this->user - use the one from parent with owner role
         $this->client = factory(Client::class)->create();
     }
 
