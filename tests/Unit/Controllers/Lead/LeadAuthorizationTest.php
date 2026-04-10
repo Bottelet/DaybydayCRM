@@ -74,6 +74,9 @@ class LeadAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertStatus(302); // Redirect on success
@@ -116,6 +119,9 @@ class LeadAuthorizationTest extends AbstractTestCase
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newUser = User::factory()->create();
         $originalTitle = $this->lead->title;
@@ -163,6 +169,9 @@ class LeadAuthorizationTest extends AbstractTestCase
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $newStatus = Status::factory()->create(['source_type' => 'lead']);
         while ($newStatus->id == $this->lead->status_id) {
