@@ -23,9 +23,9 @@ class GetCommentEndpointTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
-        $this->task = factory(Task::class)->create();
-        $this->project = factory(Project::class)->create();
+        $this->lead = Lead::factory()->create();
+        $this->task = Task::factory()->create();
+        $this->project = Project::factory()->create();
     }
 
     #[Test]

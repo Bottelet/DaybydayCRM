@@ -26,16 +26,16 @@ class TypeOfStatusTest extends TestCase
     #[Group('junie_repaired')]
     public function happy_path()
     {
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Task::class,
             'title' => 'Hello',
         ]);
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Lead::class,
             'title' => 'Hello',
         ]);
 
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Project::class,
             'title' => 'Hello',
         ]);

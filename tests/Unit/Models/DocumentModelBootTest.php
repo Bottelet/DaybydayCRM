@@ -23,8 +23,8 @@ class DocumentModelBootTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
-        $this->client = factory(Client::class)->create(['user_id' => $this->user->id]);
+        $this->user = User::factory()->create();
+        $this->client = Client::factory()->create(['user_id' => $this->user->id]);
     }
 
     #[Test]
@@ -102,7 +102,7 @@ class DocumentModelBootTest extends TestCase
     #[Test]
     public function document_has_sourceable_morph_to_relationship()
     {
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
@@ -116,8 +116,8 @@ class DocumentModelBootTest extends TestCase
     #[Test]
     public function document_factory_creates_record_with_external_id()
     {
-        $task = factory(Task::class)->create();
-        $document = factory(Document::class)->create([
+        $task = Task::factory()->create();
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);

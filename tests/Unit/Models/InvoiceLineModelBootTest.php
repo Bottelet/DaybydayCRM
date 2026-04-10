@@ -16,7 +16,7 @@ class InvoiceLineModelBootTest extends TestCase
     #[Test]
     public function invoice_line_stores_explicit_external_id_when_provided()
     {
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $externalId = Uuid::uuid4()->toString();
 
         $invoiceLine = InvoiceLine::create([
@@ -41,7 +41,7 @@ class InvoiceLineModelBootTest extends TestCase
     #[Test]
     public function invoice_line_preserves_provided_external_id()
     {
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
         $customExternalId = 'custom-invoice-line-uuid-xyz';
 
         $invoiceLine = InvoiceLine::create([
@@ -60,7 +60,7 @@ class InvoiceLineModelBootTest extends TestCase
     #[Test]
     public function invoice_line_generates_unique_external_ids_for_each_record()
     {
-        $invoice = factory(Invoice::class)->create();
+        $invoice = Invoice::factory()->create();
 
         $line1 = InvoiceLine::create([
             'external_id' => Uuid::uuid4()->toString(),
@@ -88,7 +88,7 @@ class InvoiceLineModelBootTest extends TestCase
     #[Test]
     public function invoice_line_factory_creates_record_with_external_id()
     {
-        $invoiceLine = factory(InvoiceLine::class)->create();
+        $invoiceLine = InvoiceLine::factory()->create();
 
         $this->assertNotNull($invoiceLine->external_id);
         $this->assertDatabaseHas('invoice_lines', [
