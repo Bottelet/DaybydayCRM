@@ -30,7 +30,7 @@ class TaskAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
         // Create or find task-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -60,10 +60,10 @@ class TaskAuthorizationTest extends TestCase
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
         
         // Explicitly clear the permissions cache
@@ -97,7 +97,7 @@ class TaskAuthorizationTest extends TestCase
     #[Test]
     public function user_with_update_project_permission_can_update_task_project()
     {
-        $project = factory(Project::class)->create(['client_id' => $this->task->client_id]);
+        $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $roleWithPermission = Role::create([
             'name' => 'project-updater',
@@ -108,7 +108,7 @@ class TaskAuthorizationTest extends TestCase
         $updateProjectPermission = Permission::where('name', 'task-update-linked-project')->first();
         $roleWithPermission->attachPermission($updateProjectPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
@@ -123,7 +123,7 @@ class TaskAuthorizationTest extends TestCase
     #[Test]
     public function user_without_update_project_permission_cannot_update_task_project()
     {
-        $project = factory(Project::class)->create(['client_id' => $this->task->client_id]);
+        $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $this->actingAs($this->userWithoutPermission);
 
@@ -147,7 +147,7 @@ class TaskAuthorizationTest extends TestCase
         $statusPermission = Permission::where('name', 'task-update-status')->first();
         $roleWithPermission->attachPermission($statusPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 

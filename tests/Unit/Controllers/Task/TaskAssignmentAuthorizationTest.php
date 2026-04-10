@@ -53,18 +53,18 @@ class TaskAssignmentAuthorizationTest extends TestCase
         $authorizedRole->perms()->sync([$permission->id]);
 
         // Create authorized user
-        $this->authorizedUser = factory(User::class)->create();
+        $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
 
         // Create unauthorized user (no permissions)
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
 
         // Create user to assign to
-        $this->newAssignee = factory(User::class)->create();
+        $this->newAssignee = User::factory()->create();
 
         // Create task
-        $client = factory(Client::class)->create();
-        $this->task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $this->task = Task::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);

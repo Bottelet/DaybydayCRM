@@ -27,14 +27,14 @@ class UserSecurityTest extends TestCase
         parent::setUp();
 
         // Create target user with employee role for testing
-        $this->targetUser = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
+        $this->targetUser = User::factory()->state('withRole', ['role' => 'employee'])->create();
 
         // Create and authenticate a user with employee role
-        $this->user = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
+        $this->user = User::factory()->state('withRole', ['role' => 'employee'])->create();
         $this->actingAs($this->user);
 
         // Create a user without user-update permission
-        $this->unauthorizedUser = factory(User::class)->state('withRole', ['role' => 'employee'])->create();
+        $this->unauthorizedUser = User::factory()->state('withRole', ['role' => 'employee'])->create();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -94,7 +94,7 @@ class UserSecurityTest extends TestCase
     public function user_update_prevents_password_change_without_permission()
     {
         // Test that non-owners can't change passwords of other users
-        $manager = factory(User::class)->create();
+        $manager = User::factory()->create();
 
         // Create or get manager role
         $managerRole = Role::firstOrCreate(
