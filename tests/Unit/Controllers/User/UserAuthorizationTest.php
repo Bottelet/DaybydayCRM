@@ -53,6 +53,9 @@ class UserAuthorizationTest extends TestCase
 
         $this->userWithoutPermission = factory(User::class)->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
+        
+        // Explicitly clear the permissions cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }

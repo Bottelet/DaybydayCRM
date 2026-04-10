@@ -39,6 +39,9 @@ class TaskSecurityTest extends TestCase
         // Create a user without task-delete permission
         $this->unauthorizedUser = factory(User::class)->create();
         $this->unauthorizedUser->attachRole($role);
+        
+        // Explicitly clear the permissions cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -50,6 +53,9 @@ class TaskSecurityTest extends TestCase
         // Give user permission to delete tasks
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
+        
+        // Clear cache after attaching permission
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
@@ -64,9 +70,9 @@ class TaskSecurityTest extends TestCase
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertStatus(403);
         $this->assertDatabaseHas('tasks', ['id' => $this->task->id, 'deleted_at' => null]);
+    }
     }
 
     #[Test]

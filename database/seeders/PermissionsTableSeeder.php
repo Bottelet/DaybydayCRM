@@ -104,6 +104,12 @@ class PermissionsTableSeeder extends Seeder
                 'description' => 'Allowed to upload files for a task',
                 'grouping' => 'task',
             ],
+            [
+                'display_name' => 'Delete task',
+                'name' => 'task-delete',
+                'description' => 'Permission to delete a task',
+                'grouping' => 'task',
+            ],
             // Invoice
             [
                 'display_name' => 'Modify invoice lines on a invoice / task',

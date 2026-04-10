@@ -30,6 +30,9 @@ class DeleteTaskControllerTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
+        
+        // Explicitly clear the permissions cache
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         $this->actingAs($this->user);
         $this->withoutMiddleware(VerifyCsrfToken::class);
