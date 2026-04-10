@@ -43,8 +43,9 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function delete_project()
     {
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id));
-
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        
+        $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
@@ -55,10 +56,11 @@ class DeleteProjectControllerTest extends AbstractTestCase
             'project_id' => $this->project->id,
         ]);
 
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
             'delete_tasks' => 'on',
         ]);
-
+        
+        $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
         $this->assertSoftDeleted('tasks', ['id' => $task->id]);
@@ -71,7 +73,9 @@ class DeleteProjectControllerTest extends AbstractTestCase
             'project_id' => $this->project->id,
         ]);
 
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        
+        $response->assertStatus(200);
 
         $this->assertNull($this->task->refresh()->deleted_at);
         $this->assertNull($this->task->refresh()->project_id);
@@ -84,8 +88,9 @@ class DeleteProjectControllerTest extends AbstractTestCase
     public function can_delete_project_if_there_is_no_tasks()
     {
         $project = Project::factory()->create();
-        $this->json('DELETE', route('projects.destroy', $project->external_id));
-
+        $response = $this->json('DELETE', route('projects.destroy', $project->external_id));
+        
+        $response->assertStatus(200);
         $this->assertnotNull($project->refresh()->deleted_at);
     }
 }

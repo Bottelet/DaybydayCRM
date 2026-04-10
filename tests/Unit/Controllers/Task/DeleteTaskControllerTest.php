@@ -42,8 +42,9 @@ class DeleteTaskControllerTest extends AbstractTestCase
     #[Test]
     public function delete_task()
     {
-        $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
-
+        $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
+        
+        $response->assertStatus(200);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 }
