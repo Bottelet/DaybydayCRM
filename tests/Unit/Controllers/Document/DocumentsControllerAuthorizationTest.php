@@ -88,7 +88,6 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_creator()
     {
-        $this->markTestIncomplete('File is not present so document view breaks');
         // 1. Grant
         $this->withPermissions(PermissionName::DOCUMENT_VIEW);
 
@@ -105,6 +104,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Task::class, // Use the class string, not new Task()->getMorphClass()
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // 3. Fresh State
         $this->actingAs($owner->fresh());
@@ -112,7 +112,6 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
         // 4. Request
         $response = $this->get(route('document.view', $document->external_id));
 
-        dd($response->status());
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', $document->mime);
@@ -147,6 +146,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Owner should be able to view (they are assigned to the task)
         $response = $this->actingAs($this->owner)
@@ -174,6 +174,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Owner should be able to view (they own the client)
         $response = $this->actingAs($this->owner)
@@ -199,6 +200,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Verify task and document are owned by other user
         $this->assertEquals($this->otherUser->id, $task->user_created_id);
@@ -226,6 +228,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -246,6 +249,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -268,6 +272,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -289,6 +294,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -309,6 +315,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -331,6 +338,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));

@@ -110,7 +110,7 @@ class DocumentModelBootTest extends AbstractTestCase
         $relationship = $document->source();
 
         $this->assertInstanceOf(MorphTo::class, $relationship);
-        $this->assertTrue(method_exists($document, 'sourceable'));
+        $this->assertTrue(method_exists($document, 'source'));
     }
 
     #[Test]
