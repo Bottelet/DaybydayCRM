@@ -31,21 +31,16 @@ class InvoiceCalculator
 
     public function getVatTotal()
     {
-        $price = $this->getSubTotal()->getAmount();
+        $subTotal = $this->getSubTotal()->getAmount();
 
-        return new Money($price * $this->tax->vatRate());
+        return new Money($subTotal * $this->tax->vatRate());
     }
 
     public function getTotalPrice(): Money
     {
-        $price = 0;
-        $invoiceLines = $this->invoice->invoiceLines;
-
-        foreach ($invoiceLines as $invoiceLine) {
-            $price += $invoiceLine->quantity * $invoiceLine->price;
-        }
-
-        return new Money($price);
+        $subTotal = $this->getSubTotal()->getAmount();
+        
+        return new Money($subTotal * $this->tax->multipleVatRate());
     }
 
     public function getSubTotal(): Money
@@ -57,7 +52,7 @@ class InvoiceCalculator
             $price += $invoiceLine->quantity * $invoiceLine->price;
         }
 
-        return new Money($price / $this->tax->multipleVatRate());
+        return new Money($price);
     }
 
     public function getAmountDue()
