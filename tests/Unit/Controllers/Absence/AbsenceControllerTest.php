@@ -21,6 +21,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $authUser = User::factory()->withRole('employee')->create();
         $managePermission = \App\Models\Permission::firstOrCreate(['name' => 'absence-manage']);
         $authUser->roles->first()->attachPermission($managePermission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->actingAs($authUser);
 
         $user = User::factory()->create();
@@ -33,7 +34,8 @@ class AbsenceControllerTest extends AbstractTestCase
             'comment' => 'Sick kid',
         ]);
 
-        $absences = $user->absences;
+        // Refresh the user to get updated absences relationship
+        $absences = $user->fresh()->absences;
         $this->assertNotNull(Session::all()['flash_message']);
         $this->assertCount(1, $absences);
     }
