@@ -36,6 +36,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
         // Explicitly clear both permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $this->actingAs($this->user);
 

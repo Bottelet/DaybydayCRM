@@ -77,6 +77,7 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->authorizedUser = $this->authorizedUser->fresh();
 
         // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-lead'));
@@ -107,6 +108,7 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->unauthorizedUser = $this->unauthorizedUser->fresh();
 
         // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-lead'));

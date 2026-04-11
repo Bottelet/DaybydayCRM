@@ -75,6 +75,7 @@ class ClientAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithPermission = $this->userWithPermission->fresh();
 
         $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
