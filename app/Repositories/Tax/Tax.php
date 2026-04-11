@@ -46,12 +46,13 @@ class Tax
     {
         $setting = Setting::select('vat')->first();
 
-        return $setting ? $setting->vat : 21;
+        return ($setting ? $setting->vat : 21) / 100;
     }
 
     private function integerToVatRate()
     {
-        // Convert percentage (e.g., 21) to decimal rate (e.g., 0.21)
-        return $this->percentage() / 100;
+        // percentage() already returns the decimal rate (e.g., 0.21 for 21%)
+        // so we don't need to divide by 100 again
+        return $this->percentage();
     }
 }
