@@ -11,6 +11,8 @@ class GetDateFormat
 
     private const DEFAULT_COUNTRY = 'US';
 
+    public const CACHE_KEY = 'date_format_cache';
+
     public function __construct()
     {
         // if (!cache(self::CACHE_KEY)){

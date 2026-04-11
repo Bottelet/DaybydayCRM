@@ -22,13 +22,18 @@ abstract class AbstractTestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Reset Faker's unique state to avoid collisions with seeded data
+        fake()->unique(true);
+
         if (! static::$schemaIsUpToDate) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
             static::$schemaIsUpToDate = true;
         }
 
+        // Use a guaranteed unique email for the test user
+        $uniqueEmail = 'testuser_'.uniqid('', true).'@example.org';
         $this->user = User::factory()->create([
-            'email' => fake()->unique()->safeEmail,
+            'email' => $uniqueEmail,
             'name' => 'Admin',
         ]);
 
