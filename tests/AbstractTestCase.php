@@ -107,6 +107,7 @@ abstract class AbstractTestCase extends BaseTestCase
             PermissionName::LEAD_UPDATE_DEADLINE,
             PermissionName::LEAD_ASSIGN,
             PermissionName::ABSENCE_MANAGE,
+            PermissionName::ABSENCE_VIEW,
         ]);
     }
 
