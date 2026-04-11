@@ -72,7 +72,7 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertNotNull(Client::where('external_id', $client->external_id)->first());
         $r = $this->json('delete', route('clients.destroy', $client->external_id));
 
-        $this->assertNull(Client::where('external_id', $client->external_id)->first());
+        $this->assertSoftDeleted($client);
     }
 
     #[Test]
