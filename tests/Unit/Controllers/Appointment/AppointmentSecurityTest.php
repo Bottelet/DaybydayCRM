@@ -50,8 +50,10 @@ class AppointmentSecurityTest extends AbstractTestCase
         $permission = Permission::firstOrCreate(['name' => 'appointment-edit']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
@@ -104,8 +106,10 @@ class AppointmentSecurityTest extends AbstractTestCase
         $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [

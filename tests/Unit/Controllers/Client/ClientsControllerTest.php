@@ -25,6 +25,7 @@ class ClientsControllerTest extends AbstractTestCase
         $createPermission = \App\Models\Permission::firstOrCreate(['name' => 'client-create']);
         $authUser->roles->first()->attachPermission($createPermission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $authUser = $authUser->fresh();
         $this->actingAs($authUser);
 
         $industry = Industry::factory()->create();
@@ -63,6 +64,7 @@ class ClientsControllerTest extends AbstractTestCase
         $deletePermission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
         $authUser->roles->first()->attachPermission($deletePermission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $authUser = $authUser->fresh();
         $this->actingAs($authUser);
 
         $client = Client::factory()->create();
@@ -199,8 +201,9 @@ class ClientsControllerTest extends AbstractTestCase
         $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
         $authUser->roles->first()->attachPermission($updatePermission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         Cache::tags('role_user')->flush();
+        $authUser = $authUser->fresh();
 
         $this->actingAs($authUser);
 
