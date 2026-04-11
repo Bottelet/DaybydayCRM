@@ -34,8 +34,9 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->user->roles->first()->attachPermission($editPermission);
         $this->user->roles->first()->attachPermission($deletePermission);
 
-        // Clear permission cache
+        // Clear permission cache and reload user
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $this->actingAs($this->user);
         $this->appointmentsWithInTime = Appointment::factory()->create([
@@ -94,11 +95,10 @@ class AppointmentsControllerTest extends AbstractTestCase
         $newAssignee = User::factory()->create();
 
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointmentsWithInTime->external_id), [
-            'start_date' => now()->toDateString(),
-            'start_time' => now()->format('H:i'),
-            'end_date' => now()->addHour()->toDateString(),
-            'end_time' => now()->addHour()->format('H:i'),
-            'user' => $newAssignee->external_id,
+            'id' => $this->appointmentsWithInTime->id,
+            'start' => now()->addDay()->toISOString(),
+            'end' => now()->addDay()->addHour()->toISOString(),
+            'group' => $newAssignee->external_id,
             '_token' => csrf_token(),
         ]);
 
