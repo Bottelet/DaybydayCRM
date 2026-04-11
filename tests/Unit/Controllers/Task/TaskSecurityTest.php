@@ -57,7 +57,7 @@ class TaskSecurityTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertRedirect();
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 

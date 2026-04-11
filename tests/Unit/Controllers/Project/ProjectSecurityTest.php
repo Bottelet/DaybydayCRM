@@ -41,7 +41,7 @@ class ProjectSecurityTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertRedirect();
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 

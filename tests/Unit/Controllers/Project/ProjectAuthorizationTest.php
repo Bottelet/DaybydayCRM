@@ -80,7 +80,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertStatus(302); // Redirect on success
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
