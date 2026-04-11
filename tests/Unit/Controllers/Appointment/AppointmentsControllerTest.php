@@ -87,31 +87,60 @@ class AppointmentsControllerTest extends AbstractTestCase
     #[Test]
     public function can_update_appointment_times()
     {
+        // 1. Grant
+        $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
+
+        // 2. Build
+        $appointment = Appointment::factory()->create([
+            'user_id' => $this->user->id,
+            'start_at' => now(),
+            'end_at' => now()->addHour(),
+            'source_id' => $this->user->id,
+            'source_type' => User::class,
+            'title' => 'test',
+            'color' => '#FFFFFF',
+        ]);
         $newAssignee = User::factory()->create();
 
-        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointmentsWithInTime->external_id), [
-            'id' => $this->appointmentsWithInTime->id,
+        // 3. Request
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $appointment->external_id), [
+            'id' => $appointment->id,
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $newAssignee->external_id,
             '_token' => csrf_token(),
         ]);
 
+        // 4. Assert
         $response->assertSuccessful();
-
-        $updatedAppointment = $this->appointmentsWithInTime->fresh();
+        $updatedAppointment = $appointment->fresh();
         $this->assertEquals($newAssignee->id, $updatedAppointment->user_id);
     }
 
     #[Test]
     public function can_destroy_appointment()
     {
-        $appointmentExternalId = $this->appointmentsWithInTime->external_id;
+        // 1. Grant
+        $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
+        // 2. Build
+        $appointment = Appointment::factory()->create([
+            'user_id' => $this->user->id,
+            'start_at' => now(),
+            'end_at' => now()->addHour(),
+            'source_id' => $this->user->id,
+            'source_type' => User::class,
+            'title' => 'test',
+            'color' => '#FFFFFF',
+        ]);
+        $appointmentExternalId = $appointment->external_id;
+
+        // 3. Request
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $appointmentExternalId), [
             '_token' => csrf_token(),
         ]);
 
+        // 4. Assert
         $response->assertSuccessful();
         $this->assertNull(Appointment::whereExternalId($appointmentExternalId)->first());
     }
