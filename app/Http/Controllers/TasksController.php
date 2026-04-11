@@ -138,7 +138,7 @@ class TasksController extends Controller
     {
         $client = null;
         $project = null;
-        
+
         if ($request->client_external_id) {
             $client = Client::whereExternalId($request->client_external_id)->first();
         }
@@ -146,7 +146,7 @@ class TasksController extends Controller
         if ($request->project_external_id) {
             $project = Project::whereExternalId($request->project_external_id)->first();
         }
-        
+
         $input = array_merge(
             $request->all(),
             []

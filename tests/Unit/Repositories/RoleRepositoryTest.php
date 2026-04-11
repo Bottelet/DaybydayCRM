@@ -25,12 +25,12 @@ class RoleRepositoryTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ensure roles exist for testing
         Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
         Role::factory()->create(['name' => 'manager', 'display_name' => 'Manager']);
         Role::factory()->create(['name' => 'employee', 'display_name' => 'Employee']);
-        
+
         $this->repository = new RoleRepository();
     }
 

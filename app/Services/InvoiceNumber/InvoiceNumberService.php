@@ -31,10 +31,10 @@ class InvoiceNumberService
 
     public function setInvoiceNumber(int $invoiceNumber)
     {
-        if (!$this->lockedSetting) {
+        if (! $this->lockedSetting) {
             return false;
         }
-        
+
         $this->lockedSetting->invoice_number = $invoiceNumber;
 
         return $this->lockedSetting->save();
@@ -43,9 +43,10 @@ class InvoiceNumberService
     public function nextInvoiceNumber()
     {
         $setting = $this->setting->first();
-        if (!$setting) {
+        if (! $setting) {
             return 1;
         }
+
         return $setting->invoice_number;
     }
 

@@ -42,6 +42,7 @@ class ProjectsController extends Controller
         $this->middleware(function ($request, $next) {
             if (! auth()->check() || ! auth()->user()->can('can-assign-new-user-to-project')) {
                 session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
+
                 return redirect()->back();
             }
 
