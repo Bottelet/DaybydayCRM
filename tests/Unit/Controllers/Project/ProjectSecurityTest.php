@@ -52,16 +52,17 @@ class ProjectSecurityTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertStatus(403);
         $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
     }
 
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $newStatus = Status::factory()->create(['source_type' => Project::class]);
         $originalAssignee = $this->project->user_assigned_id;
@@ -104,6 +105,8 @@ class ProjectSecurityTest extends AbstractTestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $newStatus = Status::factory()->create(['source_type' => Project::class]);
 

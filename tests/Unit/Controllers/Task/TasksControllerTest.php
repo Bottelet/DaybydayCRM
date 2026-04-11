@@ -35,6 +35,12 @@ class TasksControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_task()
     {
+        // Ensure user has permission to create tasks
+        $permission = Permission::firstOrCreate(['name' => 'task-create']);
+        $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
+        Cache::tags('role_user')->flush();
 
         $response = $this->json('POST', route('tasks.store'), [
             'title' => 'Task test',
@@ -55,6 +61,13 @@ class TasksControllerTest extends AbstractTestCase
     #[Test]
     public function can_add_project_on_task()
     {
+        // Ensure user has permission to update task project
+        $permission = Permission::firstOrCreate(['name' => 'task-update-linked-project']);
+        $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
+        Cache::tags('role_user')->flush();
+
         $project = Project::factory()->create();
         $task = Task::factory()->create();
 
@@ -69,6 +82,13 @@ class TasksControllerTest extends AbstractTestCase
     #[Test]
     public function can_update_assignee()
     {
+        // Ensure user has permission to assign tasks
+        $permission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-task']);
+        $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
+        Cache::tags('role_user')->flush();
+
         $task = Task::factory()->create();
         $this->assertNotEquals($task->user_assigned_id, $this->user->id);
 
@@ -76,7 +96,7 @@ class TasksControllerTest extends AbstractTestCase
             'user_assigned_id' => $this->user->id,
         ]);
 
-        $this->assertEquals($task->refresh()->user_assigned_id, $this->user->id);
+        $this->assertEquals($this->user->id, $task->refresh()->user_assigned_id);
     }
 
     #[Test]
@@ -90,6 +110,8 @@ class TasksControllerTest extends AbstractTestCase
         // Ensure user has permission
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
         Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.status', $task->external_id), [
@@ -107,6 +129,8 @@ class TasksControllerTest extends AbstractTestCase
         // Ensure user has permission
         $permission = Permission::firstOrCreate(['name' => 'task-update-deadline']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
         Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('task.update.deadline', $task->external_id), [
