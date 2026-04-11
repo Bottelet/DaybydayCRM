@@ -18,7 +18,7 @@ class SettingFactory extends \Illuminate\Database\Eloquent\Factories\Factory
             'invoice_number' => 10000,
             'company' => 'test company',
             'max_users' => 10,
-            'vat' => 21,
+            'vat' => 2100, // Stored as percentage * 100 (21% = 2100)
             'currency' => 'USD',
             'language' => 'en',
             'country' => 'GB',
