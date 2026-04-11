@@ -21,9 +21,9 @@ class Document extends Model
         // HasExternalId trait handles external_id generation
     }
 
-    public function clients()
+    public function client()
     {
-        $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
     /**

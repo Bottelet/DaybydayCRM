@@ -17,6 +17,9 @@ class GetDateFormatTest extends AbstractTestCase
     {
         parent::setUp();
 
+        // Ensure a Setting record exists for date format resolution
+        \App\Models\Setting::factory()->create(['country' => 'DK']);
+
         // Create and authenticate a user with a language for context-dependent formatting
         $user = \App\Models\User::factory()->create(['language' => 'DK']);
         $this->actingAs($user);

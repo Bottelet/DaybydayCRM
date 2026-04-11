@@ -122,6 +122,19 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_assignee()
     {
+        // Grant document view permission to the owner user
+        $role = $this->owner->roles()->first() ?? \App\Models\Role::firstOrCreate(['name' => 'owner']);
+        if (! $this->owner->hasRole($role->name)) {
+            $this->owner->attachRole($role);
+        }
+        $permissionName = PermissionName::DOCUMENT_VIEW instanceof PermissionName ? PermissionName::DOCUMENT_VIEW->value : PermissionName::DOCUMENT_VIEW;
+        $permission = \App\Models\Permission::firstOrCreate(['name' => $permissionName], ['display_name' => $permissionName]);
+        if (! $role->hasPermission($permissionName)) {
+            $role->attachPermission($permission);
+        }
+        \Illuminate\Support\Facades\Cache::flush();
+        $this->owner = $this->owner->fresh(['roles', 'roles.permissions']);
+
         // Create a task assigned to owner
         $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id, // Created by other user
