@@ -32,6 +32,7 @@ class Project extends Model implements Commentable
         'user_created_id',
         'client_id',
         'deadline',
+        'invoice_id',
     ];
 
     protected $casts = [
