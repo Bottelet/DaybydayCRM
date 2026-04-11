@@ -26,14 +26,19 @@ class DeadlineTest extends AbstractTestCase
 
         $futureDeadline = Carbon::now()->addHours(2);
 
+        // Create an "open" status for tasks and leads
+        $openStatus = \App\Models\Status::factory()->create(['title' => 'open']);
+
         $this->task = Task::factory()->create(
             [
                 'deadline' => $futureDeadline,
+                'status_id' => $openStatus->id,
             ]
         );
         $this->lead = Lead::factory()->create(
             [
                 'deadline' => $futureDeadline,
+                'status_id' => $openStatus->id,
             ]
         );
         $this->project = Project::factory()->create(
