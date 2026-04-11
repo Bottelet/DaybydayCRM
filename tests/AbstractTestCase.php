@@ -136,6 +136,7 @@ abstract class AbstractTestCase extends BaseTestCase
      * @param  array|string  $permissions
      * @return $this
      */
+    /*
     public function withPermissions($permissions)
     {
         $permissions = is_array($permissions) ? $permissions : [$permissions];
@@ -162,7 +163,48 @@ abstract class AbstractTestCase extends BaseTestCase
 
         return $this;
     }
+    */
 
+    /**
+     * Grant specific permissions to the current test user.
+     *
+     * @param  array|string  $permissions
+     * @return $this
+     */
+public function withPermissions(array|PermissionName $permissions)
+{
+    $permissions = is_array($permissions) ? $permissions : [$permissions];
+
+    foreach ($permissions as $permission) {
+        // Use ->value to satisfy Entrust's string requirement
+        $name = $permission instanceof PermissionName ? $permission->value : $permission;
+        
+        Permission::firstOrCreate(['name' => $name]);
+        // ... rest of your attachment logic
+        /*
+            $permission = Permission::firstOrCreate(
+                ['name' => $permissionName],
+                [
+                    'display_name' => ucfirst(str_replace('-', ' ', $permissionName)),
+                    'description' => ucfirst(str_replace('-', ' ', $permissionName)).' permission',
+                ]
+            );
+
+            // Attach permission to user's first role
+            if ($this->user->roles->isNotEmpty()) {
+                $role = $this->user->roles->first();
+                if (! $role->hasPermission($permissionName)) {
+                    $role->attachPermission($permission);
+                }
+            }
+        */
+    }
+    
+    Cache::tags('role_user')->flush();
+    $this->actingAs($this->user->fresh()); 
+    return $this;
+}
+    
     /**
      * Custom assertion to compare dates accurately regardless of format.
      *
