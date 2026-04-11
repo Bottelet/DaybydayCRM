@@ -41,9 +41,22 @@ enum PermissionName: string
     // Offer/Project Management (Found in 403 logs)
     case OFFER_DELETE = 'offer-delete';
     case PROJECT_UPDATE = 'project-update';
+    case PROJECT_DELETE = 'project-delete';
+    case PROJECT_UPDATE_STATUS = 'project-update-status';
+    case PROJECT_ASSIGN = 'can-assign-new-user-to-project';
+
+    // Task Management
+    case TASK_CREATE = 'task-create';
+    case TASK_DELETE = 'task-delete';
+    case TASK_UPDATE_STATUS = 'task-update-status';
+    case TASK_ASSIGN = 'can-assign-new-user-to-task';
 
     // Document Management
     case DOCUMENT_VIEW = 'document-view';
+    case DOCUMENT_DELETE = 'document-delete';
+
+    // Invoice Management
+    case MODIFY_INVOICE_LINES = 'modify-invoice-lines';
 
     /**
      * Helper to get labels for Entrust's display_name
@@ -67,6 +80,15 @@ enum PermissionName: string
             self::LEAD_ASSIGN => 'Assign Lead',
             self::ABSENCE_MANAGE => 'Manage Absence',
             self::DOCUMENT_VIEW => 'View Document',
+            self::DOCUMENT_DELETE => 'Delete Document',
+            self::PROJECT_DELETE => 'Delete Project',
+            self::PROJECT_UPDATE_STATUS => 'Update Project Status',
+            self::PROJECT_ASSIGN => 'Assign Project',
+            self::TASK_CREATE => 'Create Task',
+            self::TASK_DELETE => 'Delete Task',
+            self::TASK_UPDATE_STATUS => 'Update Task Status',
+            self::TASK_ASSIGN => 'Assign Task',
+            self::MODIFY_INVOICE_LINES => 'Modify Invoice Lines',
             default => ucfirst(str_replace('-', ' ', $this->value)),
         };
     }

@@ -113,6 +113,17 @@ abstract class AbstractTestCase extends BaseTestCase
             PermissionName::LEAD_ASSIGN,
             PermissionName::ABSENCE_MANAGE,
             PermissionName::ABSENCE_VIEW,
+            PermissionName::PROJECT_DELETE,
+            PermissionName::PROJECT_UPDATE,
+            PermissionName::PROJECT_UPDATE_STATUS,
+            PermissionName::PROJECT_ASSIGN,
+            PermissionName::TASK_CREATE,
+            PermissionName::TASK_DELETE,
+            PermissionName::TASK_UPDATE_STATUS,
+            PermissionName::TASK_ASSIGN,
+            PermissionName::DOCUMENT_VIEW,
+            PermissionName::DOCUMENT_DELETE,
+            PermissionName::MODIFY_INVOICE_LINES,
         ]);
     }
 
@@ -149,6 +160,17 @@ abstract class AbstractTestCase extends BaseTestCase
             \App\Enums\PermissionName::APPOINTMENT_DELETE,
             \App\Enums\PermissionName::CALENDAR_VIEW,
             \App\Enums\PermissionName::ABSENCE_MANAGE,
+            \App\Enums\PermissionName::PROJECT_DELETE,
+            \App\Enums\PermissionName::PROJECT_UPDATE,
+            \App\Enums\PermissionName::PROJECT_UPDATE_STATUS,
+            \App\Enums\PermissionName::PROJECT_ASSIGN,
+            \App\Enums\PermissionName::TASK_CREATE,
+            \App\Enums\PermissionName::TASK_DELETE,
+            \App\Enums\PermissionName::TASK_UPDATE_STATUS,
+            \App\Enums\PermissionName::TASK_ASSIGN,
+            \App\Enums\PermissionName::DOCUMENT_VIEW,
+            \App\Enums\PermissionName::DOCUMENT_DELETE,
+            \App\Enums\PermissionName::MODIFY_INVOICE_LINES,
         ]);
     }
 
