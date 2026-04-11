@@ -45,9 +45,10 @@ class DeleteLeadControllerTest extends AbstractTestCase
         $role->attachPermission($permission);
         $this->user->attachRole($role);
 
-        // Explicitly clear both permission caches
+        // Explicitly clear both permission caches and reload user
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $this->actingAs($this->user);
 

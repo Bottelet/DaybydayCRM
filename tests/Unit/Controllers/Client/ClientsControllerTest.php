@@ -130,6 +130,9 @@ class ClientsControllerTest extends AbstractTestCase
             'user_id' => $user->id,
         ]);
 
+        // Verify the update succeeded
+        $response->assertStatus(302);
+
         $client = Client::where('vat', '12312335')->first();
         $this->assertNotNull($client, 'Client should exist with updated VAT number 12312335');
         $this->assertEquals($client->vat, '12312335');
@@ -170,6 +173,10 @@ class ClientsControllerTest extends AbstractTestCase
         $r = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
             'user_external_id' => $targetUser->external_id,
         ]);
+
+        // Verify the update succeeded
+        $r->assertStatus(302);
+        $r->assertSessionHas('flash_message');
 
         $this->assertEquals($client->refresh()->user_id, $targetUser->id);
     }

@@ -49,8 +49,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -64,8 +64,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -79,8 +79,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -94,6 +94,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description' => 'A random description',
         ]);
 
+        $response->assertStatus(302);
         $this->assertEquals('paid', $this->invoice->refresh()->status);
     }
 
@@ -150,7 +151,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description' => 'A random description',
         ]);
 
-        $response->assertRedirect();
+        $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
     }
