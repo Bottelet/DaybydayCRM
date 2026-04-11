@@ -204,9 +204,12 @@ class SettingsController extends Controller
 
     public function businessHours()
     {
+        $openHour = BusinessHour::orderBy('open_time', 'asc')->limit(1)->first();
+        $closeHour = BusinessHour::orderBy('close_time', 'desc')->limit(1)->first();
+
         return [
-            'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
-            'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time,
+            'open' => $openHour ? $openHour->open_time : '09:00',
+            'close' => $closeHour ? $closeHour->close_time : '17:00',
         ];
     }
 

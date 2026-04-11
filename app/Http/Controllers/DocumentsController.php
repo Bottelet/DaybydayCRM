@@ -27,8 +27,13 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        // Eager load the source and nested client relationships t/var/www/projects/day/tests/Unit/Controllers/Document/DocumentsControllerAuthorizationTest.php:114o avoid N+1 queries
-        $document = Document::with(['source', 'source.client'])->whereExternalId($external_id)->first();
+        // Eager load the source and conditionally load client for assignable types
+        $document = Document::with(['source' => function ($query) {
+            // Only eager load client for types that have a client relationship
+            if (in_array(get_class($query->getModel()), self::ASSIGNABLE_TYPES)) {
+                $query->with('client');
+            }
+        }])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
@@ -58,8 +63,13 @@ class DocumentsController extends Controller
 
     public function download($external_id)
     {
-        // Eager load the source and nested client relationships to avoid N+1 queries
-        $document = Document::with(['source', 'source.client'])->whereExternalId($external_id)->first();
+        // Eager load the source and conditionally load client for assignable types
+        $document = Document::with(['source' => function ($query) {
+            // Only eager load client for types that have a client relationship
+            if (in_array(get_class($query->getModel()), self::ASSIGNABLE_TYPES)) {
+                $query->with('client');
+            }
+        }])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
