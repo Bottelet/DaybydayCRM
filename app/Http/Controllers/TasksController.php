@@ -137,8 +137,9 @@ class TasksController extends Controller
     public function store(StoreTaskRequest $request) // uses __contrust request
     {
         $project = null;
+        $client = null;
         if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id);
+            $client = Client::whereExternalId($request->client_external_id)->first();
         }
 
         if ($request->project_external_id) {
@@ -158,7 +159,7 @@ class TasksController extends Controller
                 'status_id' => $request->status_id,
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client->id,
+                'client_id' => optional($client)->id,
                 'project_id' => optional($project)->id,
             ]
         );
