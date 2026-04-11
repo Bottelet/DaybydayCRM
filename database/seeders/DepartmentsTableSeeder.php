@@ -26,7 +26,7 @@ class DepartmentsTableSeeder extends Seeder
         );
 
         // Only insert department_user relationship if both exist and not already associated
-        if ($department && DB::table('users')->where('id', 1)->exists()) {
+        if (DB::table('users')->where('id', 1)->exists()) {
             $exists = DB::table('department_user')
                 ->where('department_id', $department->id)
                 ->where('user_id', 1)
