@@ -48,7 +48,7 @@ class Lead extends Model implements Commentable
     ];
 
     protected $casts = [
-        'deadline' => 'date',
+        'deadline' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
