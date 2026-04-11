@@ -137,6 +137,16 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Offer::class, 'source');
     }
 
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'lead_id');
+    }
+
     public function convertToOrder()
     {
         if (! $this->canConvertToOrder()) {

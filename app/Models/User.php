@@ -101,6 +101,16 @@ class User extends Authenticatable
         return $this->hasMany(Absence::class);
     }
 
+    public function integrations()
+    {
+        return $this->hasMany(Integration::class);
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
+
     /*public function tokens()
     {
         return $this->hasMany(Token::class, 'user_id', 'id');
