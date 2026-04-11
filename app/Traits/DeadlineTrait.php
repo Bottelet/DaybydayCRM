@@ -12,6 +12,11 @@ trait DeadlineTrait
             return false;
         }
 
+        // If there's no deadline, it's not overdue
+        if (!$this->deadline) {
+            return false;
+        }
+
         return $this->deadline < Carbon::now();
     }
 
