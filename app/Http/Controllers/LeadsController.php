@@ -33,7 +33,11 @@ class LeadsController extends Controller
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
         $this->middleware(function ($request, $next) {
             if (! auth()->check() || ! auth()->user()->can('lead-delete')) {
-                abort(403);
+                if ($request->expectsJson()) {
+                    abort(403);
+                }
+                session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
+                return redirect()->back();
             }
 
             return $next($request);
