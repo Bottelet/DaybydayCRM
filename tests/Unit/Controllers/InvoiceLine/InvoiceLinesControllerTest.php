@@ -65,9 +65,10 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             $this->user->attachRole($ownerRole);
         }
 
-        // Explicitly clear the permissions cache
+        // Explicitly clear the permissions cache and re-authenticate
         Cache::tags('role_user')->flush();
         $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
@@ -86,8 +87,8 @@ class InvoiceLinesControllerTest extends AbstractTestCase
 
         $response = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
-        $response->assertStatus(302);
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertStatus(403);
+        $response->assertJson(['message' => __('You do not have permission to modify invoice lines')]);
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
     }
 }

@@ -204,9 +204,8 @@ class TasksController extends Controller
         $task->delete();
         session()->flash('flash_message', __('Task deleted'));
 
-        // Always redirect for web and JSON for API, but tests expect 302 for JSON as well
         if ($request->expectsJson()) {
-            return response('', 302)->header('X-Redirect', url()->previous() ?: '/');
+            return response()->json(['message' => __('Task deleted')], 200);
         }
 
         return redirect()->back();
