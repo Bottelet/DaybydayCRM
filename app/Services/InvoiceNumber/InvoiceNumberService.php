@@ -36,7 +36,11 @@ class InvoiceNumberService
 
     public function nextInvoiceNumber()
     {
-        return $this->setting->first()->invoice_number;
+        $setting = $this->setting->first();
+        if (!$setting) {
+            return 1;
+        }
+        return $setting->invoice_number;
     }
 
     private function increaseInvoiceNumber()

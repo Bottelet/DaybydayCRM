@@ -43,6 +43,7 @@ class SettingsController extends Controller
                 'vat' => 0,
                 'client_number' => 1,
                 'invoice_number' => 1,
+                'max_users' => 10,
             ]);
         }
 
@@ -70,6 +71,7 @@ class SettingsController extends Controller
                 'vat' => 0,
                 'client_number' => 1,
                 'invoice_number' => 1,
+                'max_users' => 10,
             ]);
         }
 
@@ -140,6 +142,7 @@ class SettingsController extends Controller
                 'vat' => 0,
                 'client_number' => 1,
                 'invoice_number' => 1,
+                'max_users' => 10,
             ]);
         }
 
