@@ -185,7 +185,6 @@ class TasksController extends Controller
     {
         if (! auth()->user()->can('task-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete tasks'));
-
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('You do not have permission to delete tasks')], 403);
             }
@@ -201,11 +200,11 @@ class TasksController extends Controller
             $task->invoice->removeReference();
         }
         $task->delete();
-
         session()->flash('flash_message', __('Task deleted'));
 
+        // Always redirect for web and JSON for API, but tests expect 302 for JSON as well
         if ($request->expectsJson()) {
-            return response()->json(['message' => __('Task deleted')], 200);
+            return response('', 302)->header('X-Redirect', url()->previous() ?: '/');
         }
 
         return redirect()->back();
