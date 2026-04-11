@@ -24,6 +24,14 @@
    - **Prevention:** Always use `$this->relationship && $this->relationship->property`
    - **Example:** `isClosed()` methods now check `$this->status` exists first
 
+4. **Cached Roles/Permissions in Tests**
+   - **Symptom:** Permission checks fail in tests after attaching permissions
+   - **Cause:** Accessing `$user->roles` loads relationship into memory before permission is attached
+   - **Pattern:** `$user->roles->first()->attachPermission($perm)` then `actingAs($user)` fails permission check
+   - **Fix:** Call `$user = $user->fresh()` after attaching permission to reload from database
+   - **Prevention:** Always reload user after modifying roles/permissions before authentication
+   - **Affected:** Tests using EntrustUserTrait's `can()` method
+
 ## Project Overview
 - **DaybydayCRM** is a Laravel-based CRM for managing clients, tasks, projects, invoices, and more. The architecture is modular, with clear separation between domains (Clients, Projects, Tasks, Invoices, Integrations).
 - **Key Directories:**

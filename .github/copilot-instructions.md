@@ -462,6 +462,28 @@ return $this->status && $this->status->title == 'Closed';
 ```
 **Preventive:** Always null-check relationships before accessing properties
 
+### Bug Pattern 4: Cached Roles/Permissions in Tests
+**Symptom:** Permission checks fail in tests even after attaching permissions
+**Root Cause:** Accessing `$user->roles` loads relationship into memory before permission is attached. Cache flushes don't affect in-memory objects.
+```php
+// ❌ WRONG - Roles loaded before permission attached
+$user = User::factory()->withRole('employee')->create();
+$permission = Permission::firstOrCreate(['name' => 'absence-manage']);
+$user->roles->first()->attachPermission($permission); // roles already in memory
+Cache::tags('role_user')->flush();
+$this->actingAs($user); // Still has old roles without new permission
+
+// ✅ CORRECT - Reload user after attaching permission
+$user = User::factory()->withRole('employee')->create();
+$permission = Permission::firstOrCreate(['name' => 'absence-manage']);
+$user->roles->first()->attachPermission($permission);
+Cache::tags('role_user')->flush();
+$user = $user->fresh(); // Reload from database
+$this->actingAs($user); // Now has updated roles with new permission
+```
+**Affected:** Tests using EntrustUserTrait's `can()` method
+**Impact:** Authorization tests may fail even when permissions are correctly set up
+
 ## Documentation Updates
 
 When implementing new patterns or fixes:
