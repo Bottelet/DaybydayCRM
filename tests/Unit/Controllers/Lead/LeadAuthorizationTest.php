@@ -4,11 +4,9 @@ namespace Tests\Unit\Controllers\Lead;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
-use App\Models\Permission;
-use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
-use Illuminate\Support\Str;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -31,40 +29,9 @@ class LeadAuthorizationTest extends AbstractTestCase
 
         $this->lead = Lead::factory()->create();
 
-        // Create or get the lead-delete permission
-        $deletePermission = Permission::firstOrCreate(
-            ['name' => 'lead-delete'],
-            [
-                'display_name' => 'Delete lead',
-                'description' => 'Permission to delete lead',
-                'grouping' => 'lead',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-
-        // Create role with lead-delete permission
-        $roleWithPermission = Role::create([
-            'name' => 'lead-deleter',
-            'display_name' => 'Lead Deleter',
-            'description' => 'Can delete leads',
-            'external_id' => Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($deletePermission);
-
-        // Create role without lead-delete permission
-        $roleWithoutPermission = Role::create([
-            'name' => 'lead-viewer',
-            'display_name' => 'Lead Viewer',
-            'description' => 'Cannot delete leads',
-            'external_id' => Str::uuid()->toString(),
-        ]);
-
         // Create users
         $this->userWithPermission = User::factory()->create();
-        $this->userWithPermission->attachRole($roleWithPermission);
-
         $this->userWithoutPermission = User::factory()->create();
-        $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -72,11 +39,8 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function user_with_lead_delete_permission_can_delete_lead()
     {
-        $this->actingAs($this->userWithPermission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->userWithPermission = $this->userWithPermission->fresh();
+        $this->user = $this->userWithPermission;
+        $this->withPermissions(PermissionName::LEAD_DELETE);
 
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
@@ -98,32 +62,9 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function lead_update_assign_only_accepts_user_assigned_id_field()
     {
-        // Create or get the permission
-        $assignPermission = Permission::firstOrCreate(
-            ['name' => 'can-assign-new-user-to-lead'],
-            [
-                'display_name' => 'Assign users to leads',
-                'description' => 'Can assign users to leads',
-                'grouping' => 'lead',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-
-        $roleWithPermission = Role::create([
-            'name' => 'lead-assigner',
-            'display_name' => 'Lead Assigner',
-            'description' => 'Can assign leads',
-            'external_id' => Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($assignPermission);
-
         $user = User::factory()->create();
-        $user->attachRole($roleWithPermission);
-        $this->actingAs($user);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $user = $user->fresh();
+        $this->user = $user;
+        $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
         $newUser = User::factory()->create();
         $originalTitle = $this->lead->title;
@@ -149,32 +90,9 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function lead_update_status_only_accepts_status_id_field()
     {
-        // Create or get the permission
-        $statusPermission = Permission::firstOrCreate(
-            ['name' => 'lead-update-status'],
-            [
-                'display_name' => 'Update lead status',
-                'description' => 'Permission to update lead status',
-                'grouping' => 'lead',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-
-        $roleWithPermission = Role::create([
-            'name' => 'lead-status-updater',
-            'display_name' => 'Lead Status Updater',
-            'description' => 'Can update lead status',
-            'external_id' => Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($statusPermission);
-
         $user = User::factory()->create();
-        $user->attachRole($roleWithPermission);
-        $this->actingAs($user);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $user = $user->fresh();
+        $this->user = $user;
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $newStatus = Status::factory()->create(['source_type' => 'lead']);
         while ($newStatus->id == $this->lead->status_id) {

@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -47,16 +48,11 @@ class AppointmentSecurityTest extends AbstractTestCase
     public function authorized_user_can_update_appointment()
     {
         // Give user permission to update appointments
-        $permission = Permission::firstOrCreate(['name' => 'appointment-edit']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache and reload user
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
-        $this->actingAs($this->user);
+        $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
+            'id' => $this->appointment->id,
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
@@ -90,6 +86,7 @@ class AppointmentSecurityTest extends AbstractTestCase
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
+            'id' => $this->appointment->id,
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
@@ -103,13 +100,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     public function authorized_user_can_delete_appointment()
     {
         // Give user permission to delete appointments
-        $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache and reload user
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
-        $this->actingAs($this->user);
+        $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
         // Use withSession to provide CSRF token
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [

@@ -28,9 +28,11 @@ enum PermissionName: string
 
     // Lead Management
     case LEAD_CREATE = 'lead-create';
-    case LEAD_UPDATE = 'lead-update';
+    case LEAD_UPDATE_STATUS = 'lead-update-status';
     case LEAD_DELETE = 'lead-delete';
     case LEAD_VIEW = 'lead-view';
+    case LEAD_UPDATE_DEADLINE = 'lead-update-deadline';
+    case LEAD_ASSIGN = 'can-assign-new-user-to-lead';
 
     // Absence Management
     case ABSENCE_MANAGE = 'absence-manage';
@@ -57,6 +59,9 @@ enum PermissionName: string
             self::CLIENT_UPDATE => 'Update Client',
             self::CLIENT_DELETE => 'Delete Client',
             self::LEAD_DELETE => 'Delete Lead',
+            self::LEAD_UPDATE_STATUS => 'Update Lead Status',
+            self::LEAD_UPDATE_DEADLINE => 'Update Lead Deadline',
+            self::LEAD_ASSIGN => 'Assign Lead',
             self::ABSENCE_MANAGE => 'Manage Absence',
             default => ucfirst(str_replace('-', ' ', $this->value)),
         };

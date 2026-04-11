@@ -5,6 +5,7 @@ namespace Tests\Unit\Controllers\Lead;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Status;
+use App\Enums\PermissionName;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -22,31 +23,12 @@ class LeadsControllerTest extends AbstractTestCase
         parent::setUp();
 
         // Ensure user has all necessary lead permissions
-        $permissions = [
-            'can-assign-new-user-to-lead' => ['display_name' => 'Assign users to leads', 'description' => 'Can assign users to leads'],
-            'lead-update-status' => ['display_name' => 'Update lead status', 'description' => 'Can update lead status'],
-            'lead-update-deadline' => ['display_name' => 'Update lead deadline', 'description' => 'Can update lead deadline'],
-        ];
-
-        $ownerRole = \App\Models\Role::firstOrCreate(
-            ['name' => 'owner'],
-            ['display_name' => 'Owner', 'description' => 'Owner role', 'external_id' => \Illuminate\Support\Str::uuid()->toString()]
-        );
-
-        foreach ($permissions as $name => $details) {
-            $permission = \App\Models\Permission::firstOrCreate(['name' => $name], $details);
-            if (! $ownerRole->hasPermission($name)) {
-                $ownerRole->attachPermission($permission);
-            }
-        }
-
-        if (! $this->user->hasRole('owner')) {
-            $this->user->attachRole($ownerRole);
-        }
-
-        // Clear permission cache
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions([
+            PermissionName::LEAD_CREATE,
+            PermissionName::LEAD_ASSIGN,
+            PermissionName::LEAD_UPDATE_STATUS,
+            PermissionName::LEAD_UPDATE_DEADLINE,
+        ]);
 
         $this->client = Client::factory()->create();
     }

@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -45,12 +46,7 @@ class LeadSecurityTest extends AbstractTestCase
     public function authorized_user_can_delete_lead()
     {
         // Give user permission to delete leads
-        $permission = Permission::firstOrCreate(['name' => 'lead-delete']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions(PermissionName::LEAD_DELETE);
 
         $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
@@ -84,12 +80,7 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function update_assign_only_accepts_user_assigned_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-assigned']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
         $newUser = User::factory()->create();
         $originalStatus = $this->lead->status_id;
@@ -117,12 +108,7 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
@@ -149,12 +135,7 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_rejects_invalid_status_type()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         // Create a status that belongs to a different type (Task instead of Lead)
         $taskStatus = Status::factory()->create(['source_type' => Task::class]);
@@ -178,12 +159,7 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_rejects_nonexistent_status_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
-
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $originalStatus = $this->lead->status_id;
 

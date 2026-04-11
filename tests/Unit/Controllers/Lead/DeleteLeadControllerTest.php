@@ -6,10 +6,9 @@ use App\Enums\OfferStatus;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
+use App\Enums\PermissionName;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -34,23 +33,8 @@ class DeleteLeadControllerTest extends AbstractTestCase
                 'external_id' => Str::uuid()->toString(),
             ]
         );
-        $permission = Permission::firstOrCreate(
-            ['name' => 'lead-delete'],
-            [
-                'display_name' => 'Delete leads',
-                'description' => 'Permission to delete leads',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-        $role->attachPermission($permission);
         $this->user->attachRole($role);
-
-        // Explicitly clear both permission caches and reload user
-        Cache::tags('role_user')->flush();
-        Cache::tags('permission_role')->flush();
-        $this->user = $this->user->fresh();
-
-        $this->actingAs($this->user);
+        $this->withPermissions(PermissionName::LEAD_DELETE);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }

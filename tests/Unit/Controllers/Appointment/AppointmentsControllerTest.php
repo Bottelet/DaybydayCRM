@@ -3,9 +3,9 @@
 namespace Tests\Unit\Controllers\Appointment;
 
 use App\Models\Appointment;
-use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -29,16 +29,11 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->user->attachRole($role);
 
         // Give user permissions for appointment operations
-        $editPermission = Permission::firstOrCreate(['name' => 'appointment-edit']);
-        $deletePermission = Permission::firstOrCreate(['name' => 'appointment-delete']);
-        $this->user->roles->first()->attachPermission($editPermission);
-        $this->user->roles->first()->attachPermission($deletePermission);
+        $this->withPermissions([
+            PermissionName::APPOINTMENT_EDIT,
+            PermissionName::APPOINTMENT_DELETE,
+        ]);
 
-        // Clear permission cache and reload user
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->user = $this->user->fresh();
-
-        $this->actingAs($this->user);
         $this->appointmentsWithInTime = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now(),

@@ -8,7 +8,7 @@ use App\Models\Industry;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Cache;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,12 +21,8 @@ class ClientsControllerTest extends AbstractTestCase
     public function can_create_client()
     {
         // Create authenticated user with client-create permission
-        $authUser = User::factory()->withRole('employee')->create();
-        $createPermission = \App\Models\Permission::firstOrCreate(['name' => 'client-create']);
-        $authUser->roles->first()->attachPermission($createPermission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $authUser = $authUser->fresh();
-        $this->actingAs($authUser);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_CREATE);
 
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
@@ -60,12 +56,8 @@ class ClientsControllerTest extends AbstractTestCase
     public function can_delete_without_any_relations_client()
     {
         // Create authenticated user with client-delete permission
-        $authUser = User::factory()->withRole('employee')->create();
-        $deletePermission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
-        $authUser->roles->first()->attachPermission($deletePermission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $authUser = $authUser->fresh();
-        $this->actingAs($authUser);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_DELETE);
 
         $client = Client::factory()->create();
 
@@ -79,17 +71,10 @@ class ClientsControllerTest extends AbstractTestCase
     public function can_update_client()
     {
         // Create authenticated user with client-update permission
-        $authUser = User::factory()->create();
+        $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
-        $authUser->attachRole($role);
-        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
-        $authUser->roles->first()->attachPermission($updatePermission);
-
-        // Clear permission cache and reload user
-        Cache::tags('role_user')->flush();
-        $authUser = $authUser->fresh();
-
-        $this->actingAs($authUser);
+        $this->user->attachRole($role);
+        $this->withPermissions(PermissionName::CLIENT_UPDATE);
 
         // Create required dependencies
         $industry = Industry::factory()->create();
@@ -150,15 +135,8 @@ class ClientsControllerTest extends AbstractTestCase
     public function can_update_assignee()
     {
         // Create authenticated user with client-update permission
-        $authUser = User::factory()->withRole('employee')->create();
-        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
-        $authUser->roles->first()->attachPermission($updatePermission);
-
-        // Clear permission cache and reload user
-        Cache::tags('role_user')->flush();
-        $authUser = $authUser->fresh();
-
-        $this->actingAs($authUser);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_UPDATE);
 
         // Create initial user for the client
         $initialUser = User::factory()->create();
@@ -185,34 +163,27 @@ class ClientsControllerTest extends AbstractTestCase
     public function cant_update_assignee_without_permission()
     {
         $client = Client::factory()->create();
-        $user = User::factory()->create();
-        $this->setUser($user);
-        $this->assertNotEquals($client->user_id, $user->id);
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+        $this->assertNotEquals($client->user_id, $this->user->id);
 
         $response = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
-            'user_external_id' => $user->external_id,
+            'user_external_id' => $this->user->external_id,
         ]);
 
         $response->assertStatus(302);
 
         $response->assertSessionHas('flash_message_warning');
 
-        $this->assertNotEquals($client->refresh()->user_id, $user->id);
+        $this->assertNotEquals($client->refresh()->user_id, $this->user->id);
     }
 
     #[Test]
     public function can_update_client_without_primary_contact()
     {
         // Create authenticated user with client-update permission
-        $authUser = User::factory()->withRole('employee')->create();
-        $updatePermission = Permission::firstOrCreate(['name' => 'client-update']);
-        $authUser->roles->first()->attachPermission($updatePermission);
-
-        // Clear permission cache and reload user
-        Cache::tags('role_user')->flush();
-        $authUser = $authUser->fresh();
-
-        $this->actingAs($authUser);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_UPDATE);
 
         // Create test data instead of relying on seeded data
         $industry = Industry::factory()->create();

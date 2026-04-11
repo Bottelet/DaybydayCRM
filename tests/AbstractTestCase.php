@@ -105,7 +105,11 @@ abstract class AbstractTestCase extends BaseTestCase
             PermissionName::CLIENT_CREATE,
             PermissionName::CLIENT_UPDATE,
             PermissionName::CLIENT_DELETE,
+            PermissionName::LEAD_CREATE,
             PermissionName::LEAD_DELETE,
+            PermissionName::LEAD_UPDATE_STATUS,
+            PermissionName::LEAD_UPDATE_DEADLINE,
+            PermissionName::LEAD_ASSIGN,
             PermissionName::ABSENCE_MANAGE,
         ]);
     }
