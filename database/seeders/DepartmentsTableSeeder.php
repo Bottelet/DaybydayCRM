@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Department;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 class DepartmentsTableSeeder extends Seeder
 {
