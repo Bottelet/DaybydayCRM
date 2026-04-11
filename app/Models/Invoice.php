@@ -31,6 +31,7 @@ class Invoice extends Model
         'sent_at',
         'due_at',
         'client_id',
+        'user_created_id',
         'integration_invoice_id',
         'integration_type',
         'source_id',
@@ -69,6 +70,11 @@ class Invoice extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
     }
 
     public function canUpdateInvoice()

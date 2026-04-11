@@ -259,16 +259,18 @@ class DocumentsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $fileSystem = GetStorageProvider::getStorage();
 
         $document = Document::whereExternalId($external_id)->first();
-        $deleted = $fileSystem->delete($document);
-        if (! $deleted) {
-            Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
-        } else {
-            Session()->flash('flash_message', __('File has been deleted'));
+        
+        if (! $document) {
+            session()->flash('flash_message_warning', __('Document not found'));
+            return redirect()->back();
         }
+        
+        // Observer will handle file deletion
         $document->delete();
+        
+        Session()->flash('flash_message', __('File has been deleted'));
 
         return redirect()->back();
     }
