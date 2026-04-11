@@ -111,9 +111,8 @@ class ProjectsController extends Controller
         $project->delete();
         session()->flash('flash_message', __('Project deleted'));
 
-        // Always redirect for web and JSON for API, but tests expect 302 for JSON as well
         if ($request->expectsJson()) {
-            return response('', 302)->header('X-Redirect', url()->previous() ?: '/');
+            return response()->json(['message' => __('Project deleted')], 200);
         }
 
         return redirect()->back();
