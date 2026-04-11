@@ -9,13 +9,13 @@ class GetDateFormat
 {
     private $format;
 
-    public const CACHE_KEY = 'country_date_format';
+    private const DEFAULT_COUNTRY = 'US';
 
     public function __construct()
     {
         // if (!cache(self::CACHE_KEY)){
         $setting = Setting::first();
-        $country = $setting ? $setting->country : 'US';
+        $country = $setting ? $setting->country : self::DEFAULT_COUNTRY;
         $this->format = Country::fromCode($country)->getFormat();
         cache()->set('country_date_format', $this->format);
         // }
