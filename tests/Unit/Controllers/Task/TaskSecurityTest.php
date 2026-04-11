@@ -156,9 +156,9 @@ class TaskSecurityTest extends AbstractTestCase
         // Status should NOT be changed because it's not a valid task status
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should show warning message
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
+        // Should return 400 error for JSON request
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Invalid status for task']);
     }
 
     #[Test]
@@ -180,8 +180,8 @@ class TaskSecurityTest extends AbstractTestCase
         // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should show warning message
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
+        // Should return 400 error for JSON request
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Invalid status for task']);
     }
 }

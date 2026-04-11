@@ -307,10 +307,10 @@ class TasksController extends Controller
         // Validate that the status_id belongs to task statuses
         $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
         if (! $validStatus) {
+            session()->flash('flash_message_warning', __('Invalid status for task'));
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Invalid status for task'], 400);
             }
-            session()->flash('flash_message_warning', __('Invalid status for task'));
             return redirect()->back();
         }
         $task = $this->findByExternalId($external_id);
@@ -318,6 +318,10 @@ class TasksController extends Controller
         $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Task status is updated'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Task status is updated')], 200);
+        }
 
         return redirect()->back();
     }
