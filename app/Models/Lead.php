@@ -137,6 +137,11 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Offer::class, 'source');
     }
 
+    public function notes()
+    {
+        return $this->comments();
+    }
+
     public function convertToOrder()
     {
         if (! $this->canConvertToOrder()) {

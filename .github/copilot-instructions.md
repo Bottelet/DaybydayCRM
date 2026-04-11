@@ -9,6 +9,30 @@
   - `.github/fundamental_analysis.md`: Deep architectural issues and technical debt.
   - `.github/test_isolation_refactor.md`: **CRITICAL** - Comprehensive plan to eliminate test interdependencies and the cascade problem.
 
+## Modern Laravel Patterns (Applied 2026-04)
+
+### 1. Action Classes for Business Logic
+- **Pattern:** Extract business logic from controllers into dedicated Action classes
+- **Location:** `app/Actions/{Domain}/{ActionName}Action.php`
+- **Example:** `StoreAbsenceAction` - handles absence creation with all business rules
+- **Benefits:** Testable, reusable, single responsibility
+
+### 2. Currency Handling in FormRequests
+- **Pattern:** Use `prepareForValidation()` to normalize currency input
+- **Implementation:** Convert comma separators to dots before validation
+- **Example:** `PaymentRequest::prepareForValidation()` normalizes "5000,234" to "5000.234"
+- **Rule:** Always use `numeric` validation after normalization, not regex
+
+### 3. Exception Types in Custom Enums
+- **Pattern:** Legacy custom enum classes should throw `\InvalidArgumentException` not `Exception`
+- **Affected:** `AbsenceReason`, `InvoiceStatus`, `PaymentSource`, etc.
+- **Reason:** More specific exception types for better error handling
+
+### 4. Soft Delete Assertions
+- **Pattern:** Use `$this->assertSoftDeleted($model)` instead of `assertNull()`
+- **Context:** When testing models that use `SoftDeletes` trait
+- **Example:** Client model deletion tests
+
 ## Testing & Database Guidelines
 
 ### Test Isolation Requirements (CRITICAL - MUST FOLLOW)
