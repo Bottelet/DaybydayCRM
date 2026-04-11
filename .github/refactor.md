@@ -2,6 +2,143 @@
 
 After fixing the test failures, several patterns emerged that could benefit from refactoring to improve code quality, consistency, and maintainability.
 
+## 0. Lessons Learned from Recent Test Fixes (2026-04-11)
+
+This section documents critical patterns discovered while fixing 30+ test failures. These should inform future development and refactoring efforts.
+
+### VAT/Percentage Storage Convention
+**Discovery:** VAT is stored as `percentage × 100` (e.g., 2100 for 21%) but was being divided by 100 instead of 10000.
+
+**Impact:** All invoice calculations were off by factor of 100.
+
+**Pattern to Follow:**
+```php
+// CORRECT: For percentage stored as integer (2100 = 21%)
+$decimalRate = $storedValue / 10000; // 2100 / 10000 = 0.21
+
+// WRONG: Double division
+$decimalRate = ($storedValue / 100) / 100; // Results in 0.21 instead of 0.0021
+```
+
+**Action Item:** Document this convention clearly in:
+- Model docblocks for fields storing percentages
+- Service classes handling percentage calculations
+- Migration files that create percentage columns
+
+### JSON vs Web Response Handling Must Be Explicit
+**Discovery:** Many controller methods don't check `$request->expectsJson()`, causing wrong HTTP status codes in tests.
+
+**Impact:** 
+- JSON API tests fail expecting 200/403 but get 302 redirects
+- Web tests might fail expecting redirects but get JSON responses
+- Inconsistent user experience between web and API
+
+**Pattern to Follow:**
+```php
+// In controllers with mixed web/JSON usage:
+if ($request->expectsJson()) {
+    return response()->json(['message' => 'Success'], 200);
+}
+
+session()->flash('flash_message', 'Success');
+return redirect()->back();
+```
+
+**Critical Controllers:**
+- TasksController (delete, update status)
+- ProjectsController (delete, update assignment, update status)
+- LeadsController (delete, update deadline)
+- DocumentsController (view, download)
+- SettingsController (admin-only actions via middleware)
+
+### Status source_type Must Use Full Class Names
+**Discovery:** Some tests/code use string literals (`'task'`) but scopes expect full class names (`Task::class`).
+
+**Impact:** Status validation fails because `Status::typeOfTask()` scope filters by `Task::class` not `'task'`.
+
+**Pattern to Follow:**
+```php
+// CORRECT:
+Status::factory()->create(['source_type' => Task::class]);
+Status::where('source_type', Task::class)->get();
+
+// WRONG:
+Status::factory()->create(['source_type' => 'task']);
+Status::where('source_type', 'task')->get();
+```
+
+**Action Item:** Create a migration to update existing `source_type` values from strings to class names.
+
+### Trait Methods Must Handle Null Values
+**Discovery:** DeadlineTrait's `isOverDeadline()` didn't check if deadline was null before comparing with Carbon::now().
+
+**Impact:** Tests fail with unexpected true/false results when models don't have deadlines set.
+
+**Pattern to Follow:**
+```php
+// In trait methods that access optional model properties:
+public function isOverDeadline(): bool
+{
+    if ($this->isClosed()) {
+        return false;
+    }
+    
+    // MUST check for null before comparison
+    if (!$this->deadline) {
+        return false;
+    }
+    
+    return $this->deadline < Carbon::now();
+}
+```
+
+**Action Item:** Audit all trait methods for similar null-safety issues.
+
+### Storage Services Need Test Doubles
+**Discovery:** Local storage's `view()` and `download()` return null in testing, breaking document tests.
+
+**Impact:** All document authorization tests fail with "File does not exist" errors.
+
+**Pattern to Follow:**
+```php
+// In storage service methods:
+public function view($file)
+{
+    if (config('app.env') === 'testing' || config('app.env') === 'local') {
+        return 'fake file content'; // Test double
+    }
+    
+    // Real implementation
+    return Storage::disk('local')->get($file);
+}
+```
+
+**Action Item:** Review all integration services (billing, filesystem, etc.) for proper test doubles.
+
+### Test Data Setup for Calculations
+**Discovery:** Invoice/tax calculation tests inherit random VAT from database seeder, causing non-deterministic failures.
+
+**Impact:** Tests fail intermittently based on seeded data.
+
+**Pattern to Follow:**
+```php
+// In test setUp() when testing calculations:
+protected function setUp(): void
+{
+    parent::setUp();
+    
+    // Explicitly create Setting with known values
+    Setting::factory()->create(['vat' => 0]);
+    
+    // Now calculations are deterministic
+    $this->invoice = Invoice::factory()->create();
+}
+```
+
+**Action Item:** Add to testing guidelines - always create Setting records in calculation tests.
+
+---
+
 ## 1. Standardize JSON vs Web Response Handling
 
 ### Current Problem

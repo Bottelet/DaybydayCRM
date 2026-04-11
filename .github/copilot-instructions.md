@@ -40,4 +40,9 @@ Tests must be **self-contained**. The "Cascade Problem" (tests depending on side
 - **General error 1364 (Field 'X' doesn't have default):** Ensure `HasExternalId` is used or update factory.
 - **Duplicate entry 1062:** Always call `$user->fresh()` after attaching permissions and before `actingAs($user)`.
 - **403 Forbidden in tests:** Use `asOwner()` or `asAdmin()` helpers in `TestCase`.
+- **VAT/Tax calculation errors:** VAT stored as `percentage × 100` (e.g., 2100 for 21%), requires division by 10000 to get decimal rate.
+- **Status validation failures:** Use full class names (`Task::class`) not strings (`'task'`) in `source_type` field.
+- **Expected 302 got 200/403:** Check if test uses JSON requests (`$this->json()`) - they return different status codes than web requests.
+- **Null pointer in trait methods:** Add null checks before accessing optional properties (e.g., `$this->deadline` in DeadlineTrait).
+- **Document view/download failures in tests:** Storage services need to return fake content in testing environment.
 

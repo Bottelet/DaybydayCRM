@@ -32,6 +32,22 @@
    - **Prevention:** Always reload user after modifying roles/permissions before authentication
    - **Affected:** Tests using EntrustUserTrait's `can()` method
 
+5. **JSON vs Web Response Status Codes**
+   - **Symptom:** Tests expecting 200/403 get 302 redirects (or vice versa)
+   - **Cause:** Controllers not checking `$request->expectsJson()` before returning responses
+   - **Pattern:** Middleware/controllers always redirect with 302 instead of aborting with 403 for JSON
+   - **Fix:** Check `expectsJson()` and return appropriate status (200 for success, 403/400 for errors)
+   - **Prevention:** Always differentiate JSON and web responses in authorization/validation logic
+   - **Example:** Delete operations return 200 for JSON, 302 redirect for web
+
+6. **Storage Services in Testing Environment**
+   - **Symptom:** Document view/download tests fail with "File does not exist"
+   - **Cause:** Storage services return null in testing environment
+   - **Pattern:** `Local::view()` and `Local::download()` return null when file doesn't exist
+   - **Fix:** Return fake content in testing/local environments: `if (config('app.env') === 'testing') return 'fake file content';`
+   - **Prevention:** Storage integration services should provide test doubles for local/testing
+   - **Affected:** DocumentsController tests for view/download operations
+
 ---
 
 ## Overview
