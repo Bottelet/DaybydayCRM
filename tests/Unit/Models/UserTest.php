@@ -16,7 +16,7 @@ class UserTest extends AbstractTestCase
     public function user_has_many_appointments()
     {
         $user = User::factory()->create();
-        
+
         // Create an appointment for this user
         $appointment = Appointment::factory()->create([
             'source_type' => User::class,

@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use InvalidArgumentException;
+
 class AbsenceReason
 {
     private const VACATION = 'vacation';
@@ -42,7 +44,7 @@ class AbsenceReason
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function fromStatus(string $reason): AbsenceReason
     {
@@ -51,14 +53,14 @@ class AbsenceReason
                 return $absenceReason;
             }
         }
-        throw new \InvalidArgumentException('Unknown absence reason: '.$reason);
+        throw new InvalidArgumentException('Unknown absence reason: '.$reason);
     }
 
     /**
      * @param  string  $displayValue
      * @return AbsenceReason
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function fromDisplayValue($displayValue)
     {
@@ -67,7 +69,7 @@ class AbsenceReason
                 return $absenceReason;
             }
         }
-        throw new \InvalidArgumentException('Unknown absence reason display value: '.$displayValue);
+        throw new InvalidArgumentException('Unknown absence reason display value: '.$displayValue);
     }
 
     /**

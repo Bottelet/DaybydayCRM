@@ -261,15 +261,16 @@ class DocumentsController extends Controller
         }
 
         $document = Document::whereExternalId($external_id)->first();
-        
+
         if (! $document) {
             session()->flash('flash_message_warning', __('Document not found'));
+
             return redirect()->back();
         }
-        
+
         // Observer will handle file deletion
         $document->delete();
-        
+
         Session()->flash('flash_message', __('File has been deleted'));
 
         return redirect()->back();

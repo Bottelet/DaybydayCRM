@@ -39,7 +39,7 @@ class InvoiceCalculator
     public function getTotalPrice(): Money
     {
         $subTotal = $this->getSubTotal()->getAmount();
-        
+
         return new Money($subTotal * $this->tax->multipleVatRate());
     }
 

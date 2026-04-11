@@ -23,7 +23,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $authUser->roles->first()->attachPermission($managePermission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         \Illuminate\Support\Facades\Cache::tags('permission_role')->flush();
-        
+
         // Reload user to refresh roles and permissions in memory
         $authUser = $authUser->fresh();
         $this->actingAs($authUser);

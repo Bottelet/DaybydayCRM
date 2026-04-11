@@ -2,14 +2,10 @@
 
 namespace Tests;
 
-use App\Models\Setting;
-use App\Models\BusinessHour;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Enums\PermissionName;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
 use Artisan;
@@ -37,8 +33,8 @@ abstract class AbstractTestCase extends BaseTestCase
         ]);
 
         // Standardize: Every user starts as an owner to minimize boilerplate 403s
-        $this->asOwner(); 
-        
+        $this->asOwner();
+
         $this->actingAs($this->user);
     }
 
@@ -64,7 +60,7 @@ abstract class AbstractTestCase extends BaseTestCase
             if ($this->user->roles->isNotEmpty()) {
                 $role = $this->user->roles->first();
                 // Check database directly or refresh relationship to avoid stale 403s
-                if (!$role->hasPermission($name)) {
+                if (! $role->hasPermission($name)) {
                     $role->attachPermission($p);
                 }
             }
@@ -88,12 +84,12 @@ abstract class AbstractTestCase extends BaseTestCase
     public function asOwner()
     {
         $role = Role::firstOrCreate(
-            ['name' => 'owner'], 
+            ['name' => 'owner'],
             ['display_name' => 'Owner', 'description' => 'Owner role', 'external_id' => 'owner-role-id']
         );
 
         // Attach role if not already attached
-        if (!$this->user->hasRole('owner')) {
+        if (! $this->user->hasRole('owner')) {
             $this->user->attachRole($role);
         }
 

@@ -29,7 +29,7 @@ class PaymentRequest extends FormRequest
             // Normalize currency: replace comma with dot for decimal separator
             // Remove any spaces that might be present
             $normalizedAmount = str_replace([',', ' '], ['.', ''], $this->amount);
-            
+
             $this->merge([
                 'amount' => $normalizedAmount,
             ]);

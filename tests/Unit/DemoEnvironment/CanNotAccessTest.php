@@ -90,14 +90,14 @@ class CanNotAccessTest extends AbstractTestCase
     public function delete_client()
     {
         $user = User::factory()->create();
-        
+
         // Give user client-delete permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $user->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+
         $this->actingAs($user);
 
         $client = Client::factory()->create();
@@ -111,14 +111,14 @@ class CanNotAccessTest extends AbstractTestCase
     public function delete_user()
     {
         $authUser = User::factory()->create();
-        
+
         // Give user user-delete permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+
         $this->actingAs($authUser);
 
         $user = User::factory()->create();
@@ -132,14 +132,14 @@ class CanNotAccessTest extends AbstractTestCase
     public function update_user()
     {
         $authUser = User::factory()->create();
-        
+
         // Give user user-update permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-update']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+
         $this->actingAs($authUser);
 
         $user = User::factory()->create();

@@ -26,8 +26,8 @@ class DepartmentsTableSeeder extends Seeder
                 ->where('department_id', $department->id)
                 ->where('user_id', 1)
                 ->exists();
-            
-            if (!$exists) {
+
+            if (! $exists) {
                 DB::table('department_user')->insert([
                     'department_id' => $department->id,
                     'user_id' => 1,

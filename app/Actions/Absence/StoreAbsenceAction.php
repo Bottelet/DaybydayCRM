@@ -12,13 +12,12 @@ class StoreAbsenceAction
     /**
      * Create a new absence record
      *
-     * @param User $user The user for whom the absence is being created
-     * @param string $reason The reason for absence
-     * @param string $startDate The start date of absence
-     * @param string $endDate The end date of absence
-     * @param bool|null $medicalCertificate Whether a medical certificate is provided
-     * @param string|null $comment Additional comments
-     * @return Absence
+     * @param  User  $user  The user for whom the absence is being created
+     * @param  string  $reason  The reason for absence
+     * @param  string  $startDate  The start date of absence
+     * @param  string  $endDate  The end date of absence
+     * @param  bool|null  $medicalCertificate  Whether a medical certificate is provided
+     * @param  string|null  $comment  Additional comments
      */
     public function execute(
         User $user,

@@ -6,15 +6,15 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * Blameable Trait
- * 
+ *
  * Automatically populates user_created_id and user_updated_id fields
  * for models that track who created and updated records.
- * 
+ *
  * Usage:
  * 1. Add the trait to your model: use Blameable;
  * 2. Ensure your model has 'user_created_id' and 'user_updated_id' columns
  * 3. Add these fields to $fillable if needed
- * 
+ *
  * Example migration:
  * $table->integer('user_created_id')->unsigned()->nullable();
  * $table->foreign('user_created_id')->references('id')->on('users');
@@ -35,7 +35,7 @@ trait Blameable
             if (Auth::check() && ! $model->user_created_id) {
                 $model->user_created_id = Auth::id();
             }
-            
+
             // Also set user_updated_id on creation
             if (Auth::check() && ! $model->user_updated_id) {
                 $model->user_updated_id = Auth::id();
