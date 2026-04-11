@@ -111,12 +111,183 @@ Every test MUST:
     $this->assertDateEquals($model->created_at, $response->json('created_at'));
     ```
 
+- **Notification Testing:**
+  - **ALWAYS** use `Notification::fake()` at the start of the test
+  - **ALWAYS** use `Notification::assertSentTo()` to verify notifications
+  - **NEVER** query the notifications table directly in tests
+    ```php
+    // ✅ CORRECT
+    Notification::fake();
+    // ... trigger notification
+    Notification::assertSentTo($user, TaskAssignedNotification::class);
+    ```
+
+- **Storage/File Testing:**
+  - **ALWAYS** use `Storage::fake()` for file upload/download tests
+  - **NEVER** rely on actual file system operations in tests
+    ```php
+    // ✅ CORRECT
+    Storage::fake('local');
+    // ... perform file operations
+    Storage::disk('local')->assertExists($path);
+    ```
+
 ### Model Boot Methods
 
 - Many models in this project use UUIDs for `external_id`. Ensure any new models follow this pattern using a `boot()` method or a reusable trait to generate UUIDs on creation.
+
+## Model Observer Pattern
+
+**Use Model Observers for side effects that should happen automatically when models are created, updated, or deleted.**
+
+### When to Use Observers
+- File deletion when a model is deleted (e.g., `DocumentObserver`)
+- Cascade soft deletes to related models (e.g., `TaskObserver`)
+- Automatic logging/auditing
+- Search index updates
+- Cache invalidation
+
+### Observer Implementation
+```php
+// app/Observers/DocumentObserver.php
+class DocumentObserver
+{
+    public function deleting(Document $document)
+    {
+        // Delete physical file when DB record is deleted
+        $fileSystem = GetStorageProvider::getStorage();
+        $fileSystem->delete($document);
+    }
+}
+
+// Register in AppServiceProvider::boot()
+Document::observe(DocumentObserver::class);
+```
+
+### Benefits
+- Decouples business logic from controllers
+- Ensures data consistency
+- Automatic side effect handling
+- Single responsibility principle
+
+## Blameable Trait Pattern
+
+**Use the Blameable trait to automatically track who created a model.**
+
+### Implementation
+```php
+// In Model
+use App\Traits\Blameable;
+
+class Invoice extends Model
+{
+    use Blameable;
+    
+    protected $fillable = [..., 'user_created_id'];
+    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
+    }
+}
+```
+
+### Benefits
+- Automatic audit trail
+- No manual setting in controllers
+- Consistent across all models
+- Works with authentication system
+
+## Repository Pattern
+
+**When creating repositories, follow this pattern:**
+
+### Repository Structure
+```php
+interface RepositoryInterface
+{
+    public function getAll();
+    public function find($id);
+    public function findOrFail($id);
+    public function create(array $data);
+    public function update($id, array $data);
+    public function delete($id);
+}
+
+class BaseRepository implements RepositoryInterface
+{
+    public function findOrFail($id)
+    {
+        $model = $this->model->find($id);
+        
+        if (!$model) {
+            throw new ModelNotFoundException();
+        }
+        
+        return $model;
+    }
+}
+```
+
+### Benefits
+- Consistent error handling (404 responses)
+- Testable business logic
+- Decouples data access from controllers
+- Easier to swap implementations
+
+## Service Layer Conventions
+
+**Business logic should live in Service classes, not Controllers.**
+
+### Service Structure
+```php
+// app/Services/Invoice/InvoiceService.php
+class InvoiceService
+{
+    public function calculateTotal(Invoice $invoice): Money
+    {
+        $calculator = new InvoiceCalculator($invoice);
+        return $calculator->getTotalPrice(); // Includes VAT
+    }
+    
+    public function generateInvoiceNumber(): string
+    {
+        $service = app(InvoiceNumberService::class);
+        return $service->nextInvoiceNumber();
+    }
+}
+```
+
+### Tax Calculation
+- Use `InvoiceCalculator` for all tax calculations
+- `getSubTotal()`: Price without VAT
+- `getTotalPrice()`: Price with VAT included
+- `getVatTotal()`: Just the VAT amount
+
+### Controller Usage
+```php
+// Controllers should be thin - delegate to Services
+class InvoicesController
+{
+    public function store(Request $request, InvoiceService $service)
+    {
+        $invoice = $service->create($request->validated());
+        return redirect()->route('invoices.show', $invoice);
+    }
+}
+```
 
 ## Role & Permission Management
 
 - The project uses a custom implementation of Entrust (`app/Zizaco/Entrust/`).
 - Use `owner` or `administrator` roles in tests when high-level permissions are required.
 - Always check if a user has a role before attaching it if not using the modified `attachRole()` method.
+
+## Documentation Updates
+
+When implementing new patterns or fixes:
+1. Update `.github/todo.md` with pattern status
+2. Update this file (copilot-instructions.md) with conventions
+3. Update `AGENTS.md` with architectural guidance
+4. Reference `.github/error_repair_plan.md` for common fixes
+
