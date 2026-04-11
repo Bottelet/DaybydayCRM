@@ -3,6 +3,7 @@
 namespace Tests\Unit\Client;
 
 use App\Models\Client;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\ClientNumber\ClientNumberService;
 use Illuminate\Contracts\Foundation\Application;
@@ -24,6 +25,8 @@ class ClientNumberServiceTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        Setting::factory()->create(); // Ensure Setting exists
 
         $this->user = User::factory()->create();
         $this->client = Client::factory()->create([
