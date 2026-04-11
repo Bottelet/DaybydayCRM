@@ -22,6 +22,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $managePermission = \App\Models\Permission::firstOrCreate(['name' => 'absence-manage']);
         $authUser->roles->first()->attachPermission($managePermission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        \Illuminate\Support\Facades\Cache::tags('permission_role')->flush();
         $this->actingAs($authUser);
 
         $user = User::factory()->create();
