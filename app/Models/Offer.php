@@ -17,6 +17,7 @@ class Offer extends Model
     protected $fillable = [
         'sent_at',
         'status',
+        'status_id',
         'due_at',
         'client_id',
         'source_id',
@@ -26,9 +27,29 @@ class Offer extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
+    public function source()
+    {
+        return $this->morphTo();
+    }
+
+    public function lead()
+    {
+        return $this->source();
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
     public function invoiceLines()
     {
         return $this->hasMany(InvoiceLine::class);
+    }
+
+    public function lines()
+    {
+        return $this->invoiceLines();
     }
 
     public function invoice()

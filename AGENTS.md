@@ -45,6 +45,12 @@
 - **Permissions:**
   - Role/permission checks via Entrust (`app/Zizaco/Entrust/`).
   - Middleware like `user.is.admin`, `is.demo` restrict access to sensitive routes.
+- **Traits:**
+  - **Blameable** (`app/Traits/Blameable.php`): Automatically tracks `user_created_id` and `user_updated_id`. Use on models that need creator/updater tracking.
+  - **Statusable** (`app/Traits/Statusable.php`): Provides consistent status relationship and helper methods (`hasStatus()`, `setStatus()`, query scopes). Use on models with `status_id` field.
+  - **HasExternalId** (`app/Traits/HasExternalId.php`): Automatically generates UUID for `external_id` and sets it as route key. Used by most models.
+  - **SearchableTrait**: Provides search functionality for models.
+  - **DeadlineTrait**: Provides deadline-related functionality.
 - **Model Observers:**
   - Use Observers for automatic side effects (file deletion, cascade deletes, search indexing)
   - Registered in `AppServiceProvider::boot()`

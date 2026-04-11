@@ -87,6 +87,11 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
+    public function notes()
+    {
+        return $this->comments();
+    }
+  
     public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'lead', 'external_id' => $this->external_id]);
@@ -137,9 +142,14 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Offer::class, 'source');
     }
 
-    public function notes()
+    public function documents()
     {
-        return $this->comments();
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'lead_id');
     }
 
     public function convertToOrder()

@@ -307,6 +307,109 @@ class InvoicesController
 - Use `owner` or `administrator` roles in tests when high-level permissions are required.
 - Always check if a user has a role before attaching it if not using the modified `attachRole()` method.
 
+## Model Traits & Conventions
+
+### Blameable Trait (`app/Traits/Blameable.php`)
+
+**Purpose:** Automatically track who created and last updated records.
+
+**When to use:** Add to any model that has `user_created_id` and/or `user_updated_id` fields.
+
+**Usage:**
+```php
+use App\Traits\Blameable;
+
+class Task extends Model
+{
+    use Blameable;
+    
+    protected $fillable = [..., 'user_created_id', 'user_updated_id'];
+}
+```
+
+**Features:**
+- Automatically sets `user_created_id` when creating (if user is authenticated)
+- Automatically updates `user_updated_id` when updating
+- Provides `creator()` and `updater()` relationships
+- No controller/service changes needed
+
+**Database Requirements:**
+```php
+$table->integer('user_created_id')->unsigned()->nullable();
+$table->foreign('user_created_id')->references('id')->on('users');
+$table->integer('user_updated_id')->unsigned()->nullable();
+$table->foreign('user_updated_id')->references('id')->on('users');
+```
+
+**Models that should use Blameable:** Task, Lead, Project, Invoice, Offer, Client
+
+---
+
+### Statusable Trait (`app/Traits/Statusable.php`)
+
+**Purpose:** Provide consistent status handling across models with status relationships.
+
+**When to use:** Add to any model that has a `status_id` foreign key to the `statuses` table.
+
+**Usage:**
+```php
+use App\Traits\Statusable;
+
+class Lead extends Model
+{
+    use Statusable;  // Provides status() relationship and helper methods
+    
+    protected $fillable = [..., 'status_id'];
+}
+
+// In code:
+if ($lead->hasStatus('Closed')) { ... }
+$lead->setStatus('Open');
+$openLeads = Lead::withStatus('Open')->get();
+$notClosedLeads = Lead::withoutStatus('Closed')->get();
+```
+
+**Features:**
+- Provides `status()` belongsTo relationship
+- `hasStatus(string $statusTitle)` - check if model has specific status
+- `setStatus(string $statusTitle)` - set status by title
+- `withStatus(string $statusTitle)` - query scope for filtering
+- `withoutStatus(string $statusTitle)` - query scope for exclusion
+
+**Database Requirements:**
+```php
+$table->integer('status_id')->unsigned();
+$table->foreign('status_id')->references('id')->on('statuses');
+```
+
+**Models that should use Statusable:** Task, Lead, Project (Offer after migration)
+
+**Note:** If a model already defines `status()` relationship, replace it with this trait for consistency.
+
+---
+
+### HasExternalId Trait (`app/Traits/HasExternalId.php`)
+
+**Purpose:** Automatically generate UUIDs for `external_id` and use it as route key.
+
+**When to use:** Add to any model that uses UUID routing instead of auto-increment IDs.
+
+**Usage:**
+```php
+use App\Traits\HasExternalId;
+
+class MyModel extends Model
+{
+    use HasExternalId;  // Auto-generates external_id on creation
+    
+    protected $fillable = ['external_id', ...];
+}
+
+// Routes automatically use external_id:
+Route::get('/my-model/{myModel}', ...);  // Binds by external_id, not id
+```
+
+**Models using HasExternalId:** Most models (Client, Lead, Task, Project, Invoice, Offer, User, etc.)
 ## Documentation Updates
 
 When implementing new patterns or fixes:

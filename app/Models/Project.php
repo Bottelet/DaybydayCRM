@@ -31,6 +31,7 @@ class Project extends Model implements Commentable
         'user_assigned_id',
         'user_created_id',
         'client_id',
+        'lead_id',
         'deadline',
         'invoice_id',
     ];
@@ -81,6 +82,11 @@ class Project extends Model implements Commentable
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class);
     }
 
     public function tasks()
