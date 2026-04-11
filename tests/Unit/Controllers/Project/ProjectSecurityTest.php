@@ -89,8 +89,10 @@ class ProjectSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_with_invalid_status_external_id_returns_error()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',

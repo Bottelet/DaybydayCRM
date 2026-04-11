@@ -290,17 +290,29 @@ class TasksController extends Controller
         if (isset($input['statusExternalId'])) {
             $status = Status::whereExternalId($input['statusExternalId'])->first();
             if (! $status) {
-                return response()->json(['error' => 'Invalid status external id'], 400);
+                if ($request->expectsJson()) {
+                    return response()->json(['error' => 'Invalid status external id'], 400);
+                }
+                session()->flash('flash_message_warning', __('Invalid status external id'));
+                return redirect()->back();
             }
             $input['status_id'] = $status->id;
         }
         if (! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
-            return response()->json(['error' => 'Invalid status id'], 400);
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Invalid status id'], 400);
+            }
+            session()->flash('flash_message_warning', __('Invalid status id'));
+            return redirect()->back();
         }
         // Validate that the status_id belongs to task statuses
         $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
         if (! $validStatus) {
-            return response()->json(['error' => 'Invalid status for task'], 400);
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Invalid status for task'], 400);
+            }
+            session()->flash('flash_message_warning', __('Invalid status for task'));
+            return redirect()->back();
         }
         $task = $this->findByExternalId($external_id);
         $task->status_id = $input['status_id'];
