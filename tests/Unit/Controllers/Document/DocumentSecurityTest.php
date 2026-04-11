@@ -60,6 +60,7 @@ class DocumentSecurityTest extends AbstractTestCase
         // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -95,6 +96,7 @@ class DocumentSecurityTest extends AbstractTestCase
         // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -129,6 +131,7 @@ class DocumentSecurityTest extends AbstractTestCase
         // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -149,6 +152,7 @@ class DocumentSecurityTest extends AbstractTestCase
         // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 

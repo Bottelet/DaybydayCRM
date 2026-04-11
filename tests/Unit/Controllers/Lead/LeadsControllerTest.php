@@ -46,6 +46,7 @@ class LeadsControllerTest extends AbstractTestCase
 
         // Clear permission cache
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $this->client = Client::factory()->create();
     }

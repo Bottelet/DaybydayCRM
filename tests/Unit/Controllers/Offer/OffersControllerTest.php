@@ -36,6 +36,7 @@ class OffersControllerTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->lead = Lead::factory()->create();

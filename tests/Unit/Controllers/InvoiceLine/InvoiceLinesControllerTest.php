@@ -67,6 +67,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
 
         // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 

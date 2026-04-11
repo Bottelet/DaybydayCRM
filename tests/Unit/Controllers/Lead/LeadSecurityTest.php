@@ -50,6 +50,7 @@ class LeadSecurityTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
@@ -88,6 +89,7 @@ class LeadSecurityTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $newUser = User::factory()->create();
         $originalStatus = $this->lead->status_id;
@@ -120,6 +122,7 @@ class LeadSecurityTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
@@ -151,6 +154,7 @@ class LeadSecurityTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         // Create a status that belongs to a different type (Task instead of Lead)
         $taskStatus = Status::factory()->create(['source_type' => Task::class]);
@@ -179,6 +183,7 @@ class LeadSecurityTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->user = $this->user->fresh();
 
         $originalStatus = $this->lead->status_id;
 

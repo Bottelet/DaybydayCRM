@@ -110,6 +110,7 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithCreatePermission = $this->userWithCreatePermission->fresh();
 
         $newLead = Lead::factory()->create();
 
@@ -155,6 +156,7 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
@@ -194,6 +196,7 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
@@ -225,6 +228,7 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
