@@ -41,6 +41,10 @@ class ProjectsController extends Controller
 
         $this->middleware(function ($request, $next) {
             if (! auth()->check() || ! auth()->user()->can('can-assign-new-user-to-project')) {
+                if ($request->expectsJson()) {
+                    abort(403, __('You do not have permission to assign users to this project'));
+                }
+                
                 session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
 
                 return redirect()->back();
@@ -287,7 +291,7 @@ class ProjectsController extends Controller
         }
 
         $project = $this->findByExternalId($external_id);
-        $project->fill($request->only(['status_id']))->save();
+        $project->fill($input)->save();
 
         event(new ProjectAction($project, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Project status updated'));

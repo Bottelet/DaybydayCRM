@@ -111,7 +111,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time' => '17:00',
         ]);
 
-        $response->assertStatus(302); // Redirect back with error
+        $response->assertStatus(403); // JSON request returns 403 for unauthorized
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 
@@ -145,7 +145,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time' => '18:00',
         ]);
 
-        $response->assertStatus(302); // Redirect back with error
+        $response->assertStatus(403); // JSON request returns 403 for unauthorized
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 }
