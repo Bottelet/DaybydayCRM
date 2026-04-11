@@ -10,7 +10,7 @@ class Integration extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type'];
+    protected $fillable = ['name', 'client_id', 'client_secret', 'api_key', 'org_id', 'api_type', 'user_id'];
 
     /**
      * @return mixed

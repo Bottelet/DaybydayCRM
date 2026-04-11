@@ -36,6 +36,7 @@ class Task extends Model implements Commentable
         'client_id',
         'deadline',
         'project_id',
+        'invoice_id',
     ];
 
     protected $casts = [
