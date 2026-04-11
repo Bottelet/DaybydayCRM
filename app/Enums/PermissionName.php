@@ -42,6 +42,9 @@ enum PermissionName: string
     case OFFER_DELETE = 'offer-delete';
     case PROJECT_UPDATE = 'project-update';
 
+    // Document Management
+    case DOCUMENT_VIEW = 'document-view';
+
     /**
      * Helper to get labels for Entrust's display_name
      */
@@ -63,6 +66,7 @@ enum PermissionName: string
             self::LEAD_UPDATE_DEADLINE => 'Update Lead Deadline',
             self::LEAD_ASSIGN => 'Assign Lead',
             self::ABSENCE_MANAGE => 'Manage Absence',
+            self::DOCUMENT_VIEW => 'View Document',
             default => ucfirst(str_replace('-', ' ', $this->value)),
         };
     }

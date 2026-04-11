@@ -109,4 +109,14 @@ abstract class AbstractTestCase extends BaseTestCase
             PermissionName::ABSENCE_MANAGE,
         ]);
     }
+
+    protected function followRedirectsAndFail($response)
+    {
+        if ($response->isRedirect()) {
+            // If we got a redirect, it means canAccessDocument returned false.
+            // Let's find out WHY by looking at the session.
+            $message = session('flash_message_warning') ?? 'Redirected without message';
+            $this->fail('Test failed with a 302 Redirect. Session Message: '.$message);
+        }
+    }
 }

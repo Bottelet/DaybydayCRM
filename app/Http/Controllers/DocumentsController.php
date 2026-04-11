@@ -27,8 +27,8 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        // Eager load the source and nested client relationships to avoid N+1 queries
-        $document = Document::with(['sourceable', 'sourceable.client'])->whereExternalId($external_id)->first();
+        // Eager load the source and nested client relationships t/var/www/projects/day/tests/Unit/Controllers/Document/DocumentsControllerAuthorizationTest.php:114o avoid N+1 queries
+        $document = Document::with(['source', 'source.client'])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
@@ -43,6 +43,7 @@ class DocumentsController extends Controller
 
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
+
         if (! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
 
@@ -58,7 +59,7 @@ class DocumentsController extends Controller
     public function download($external_id)
     {
         // Eager load the source and nested client relationships to avoid N+1 queries
-        $document = Document::with(['sourceable', 'sourceable.client'])->whereExternalId($external_id)->first();
+        $document = Document::with(['source', 'source.client'])->whereExternalId($external_id)->first();
 
         if (! $document) {
             abort(404);
@@ -314,7 +315,7 @@ class DocumentsController extends Controller
         $user = auth()->user();
 
         // Use the morphTo relationship to get the source model
-        $source = $document->sourceable;
+        $source = $document->source;
 
         if (! $source) {
             return false;
