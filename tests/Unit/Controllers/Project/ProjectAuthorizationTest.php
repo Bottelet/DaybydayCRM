@@ -163,9 +163,9 @@ class ProjectAuthorizationTest extends AbstractTestCase
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $user = $user->fresh();
 
-        $newStatus = Status::factory()->create(['source_type' => 'project']);
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
         while ($newStatus->id == $this->project->status_id) {
-            $newStatus = Status::factory()->create(['source_type' => 'project']);
+            $newStatus = Status::factory()->create(['source_type' => Project::class]);
         }
         $originalTitle = $this->project->title;
         $originalDescription = $this->project->description;
