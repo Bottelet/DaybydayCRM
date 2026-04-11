@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Controllers\Absence;
 
+use App\Enums\PermissionName;
 use App\Models\Permission;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -9,7 +10,6 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
-use Cache;
 
 class AbsenceControllerTest extends AbstractTestCase
 {
@@ -19,25 +19,16 @@ class AbsenceControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_absence_for_other_user()
     {
-        // Create authenticated user with absence-manage permission
-        $authUser = User::factory()->withRole('employee')->create();
-        $managePermission = Permission::firstOrCreate(['name' => 'absence-manage']);
+        // Step A: Define the User.
+        $this->user = User::factory()->withRole('employee')->create();
 
-        // Reload user and role to ensure fresh state before attaching permission
-        $authUser = $authUser->fresh();
-        $role = $authUser->roles()->first();
-        $role->attachPermissions([$managePermission]);
-
-        // Flush all cache to ensure Entrust picks up changes across all models
-        Cache::flush();
-
-        // Reload user again to refresh roles and permissions in memory
-        $authUser = $authUser->fresh();
-        $this->actingAs($authUser);
+        // Step B: Call withPermissions.
+        $this->withPermissions(PermissionName::ABSENCE_MANAGE);
 
         // Assert permission is active for this user
-        $this->assertTrue($authUser->can('absence-manage'), 'User should have absence-manage permission');
+        $this->assertTrue($this->user->can(PermissionName::ABSENCE_MANAGE->value), 'User should have absence-manage permission');
 
+        // Step C: Create the Resource (or perform action)
         $user = User::factory()->create();
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',
@@ -59,10 +50,13 @@ class AbsenceControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
     {
+        // Step A: Define the User.
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
 
-        $actingUser = User::factory()->create();
-        $this->actingAs($actingUser);
+        // Step B: Call withPermissions (none needed here but follow order)
 
+        // Step C: Create the Resource (or perform action)
         $absentUser = User::factory()->create();
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',
@@ -74,14 +68,14 @@ class AbsenceControllerTest extends AbstractTestCase
         ]);
 
         $this->assertCount(0, $absentUser->absences);
-        $this->assertCount(1, $actingUser->absences);
+        $this->assertCount(1, $this->user->absences);
     }
 
     #[Test]
     #[Group('junie_repaired')]
     public function not_providing_user_external_id_creates_absence_for_authenticated_user()
     {
-
+        // $this->user is already defined and acting as in setUp
         $response = $this->json('POST', route('absence.store'), [
             'reason' => 'Sick',
             'start_date' => '2020-01-01',
@@ -91,6 +85,6 @@ class AbsenceControllerTest extends AbstractTestCase
         ]);
 
         $this->assertNotNull(Session::all()['flash_message']);
-        $this->assertCount(1, auth()->user()->absences);
+        $this->assertCount(1, $this->user->absences);
     }
 }

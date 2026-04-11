@@ -45,34 +45,30 @@ abstract class AbstractTestCase extends BaseTestCase
     {
         $permissions = is_array($permissions) ? $permissions : [$permissions];
 
-        // Ensure roles are loaded so the check below works
-        $this->user->load('roles');
+        // 1. Ensure the user has a role to attach permissions to
+        $role = $this->user->roles()->first() ?? Role::firstOrCreate(['name' => 'owner']);
+        if (! $this->user->hasRole($role->name)) {
+            $this->user->attachRole($role);
+        }
 
         foreach ($permissions as $permission) {
             $name = $permission instanceof PermissionName ? $permission->value : $permission;
-            $label = $permission instanceof PermissionName ? $permission->label() : $name;
 
-            $p = Permission::firstOrCreate(
-                ['name' => $name],
-                ['display_name' => $label, 'description' => "$label permission"]
-            );
+            $p = Permission::firstOrCreate(['name' => $name], ['display_name' => $name]);
 
-            if ($this->user->roles->isNotEmpty()) {
-                $role = $this->user->roles->first();
-                // Check database directly or refresh relationship to avoid stale 403s
-                if (! $role->hasPermission($name)) {
-                    $role->attachPermission($p);
-                }
+            // 2. Attach to the role
+            if (! $role->hasPermission($name)) {
+                $role->attachPermission($p);
             }
         }
 
-        // Entrust Legacy: Clear the specific cache tags used by the library
-        if (config('entrust.cache_enabled', true)) {
-            Cache::tags('role_user')->flush();
-        }
+        // 3. CRITICAL: Entrust Caching and Auth Guard refresh
+        Cache::flush();
 
-        // Re-authenticate a fresh instance to clear internal model state
+        // Refresh the user AND its loaded relationships so Entrust sees the new permissions
         $this->user = $this->user->fresh(['roles', 'roles.permissions']);
+
+        // Re-bind to the Auth guard so the FormRequest's auth()->user() is updated
         $this->actingAs($this->user);
 
         return $this;

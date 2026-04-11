@@ -30,6 +30,8 @@ class AppointmentsController extends Controller
 
     public function update(UpdateAppointmentCalendarRequest $request, Appointment $appointment)
     {
+        dd('here?');
+
         $appointment->start_at = Carbon::parse($request->start)->setTimezone('Europe/Copenhagen');
         $appointment->end_at = Carbon::parse($request->end)->setTimezone('Europe/Copenhagen');
         $appointment->user()->associate(User::where('external_id', $request->group)->first());
