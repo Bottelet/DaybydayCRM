@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Cache;
+use DB;
 
 class ProjectsControllerTest extends AbstractTestCase
 {
@@ -22,6 +23,7 @@ class ProjectsControllerTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutExceptionHandling();
 
         $this->user = User::factory()->create();
         $this->client = Client::factory()->create();
@@ -31,6 +33,26 @@ class ProjectsControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_project()
     {
+
+        // Grant permission to create a project
+        $permission = \App\Models\Permission::firstOrCreate([
+            'name' => 'project-create',
+        ], [
+            'display_name' => 'Create project',
+            'description' => 'Permission to create a project',
+            'grouping' => 'project',
+        ]);
+        $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
+        if (! $this->user->hasRole($role->name)) {
+            $this->user->attachRole($role);
+        }
+        if (! $role->hasPermission('project-create')) {
+            $role->attachPermission($permission);
+        }
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $response = $this->json('POST', route('projects.store'), [
             'title' => 'Project test',
@@ -92,24 +114,71 @@ class ProjectsControllerTest extends AbstractTestCase
         $project = Project::factory()->create();
         $status = Status::factory()->create(['source_type' => Project::class]);
 
+        // Grant permission to update project status
+        $permission = \App\Models\Permission::firstOrCreate([
+            'name' => 'project-update-status',
+        ], [
+            'display_name' => 'Update project status',
+            'description' => 'Permission to update project status',
+            'grouping' => 'project',
+        ]);
+        $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
+        if (! $this->user->hasRole($role->name)) {
+            $this->user->attachRole($role);
+        }
+        if (! $role->hasPermission('project-update-status')) {
+            $role->attachPermission($permission);
+        }
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
+
         $this->assertNotEquals($project->status_id, $status->id);
 
         $response = $this->json('PATCH', route('project.update.status', $project->external_id), [
             'status_id' => $status->id,
         ]);
 
-        $this->assertEquals($project->refresh()->status_id, $status->id);
+        $this->assertEquals($status->id, $project->refresh()->status_id);
     }
 
     #[Test]
     public function can_update_deadline_for_project()
     {
+        $this->withoutExceptionHandling();
+
         $project = Project::factory()->create();
+
+        // Always create a new role and attach the permission
+        $role = \App\Models\Role::factory()->create();
+        $permission = \App\Models\Permission::firstOrCreate([
+            'name' => 'project-update-deadline',
+        ], [
+            'display_name' => 'Change project deadline',
+            'description' => 'Permission to update a projects deadline',
+            'grouping' => 'project',
+        ]);
+        $role->attachPermission($permission);
+        $this->user->attachRole($role);
+
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $response = $this->json('PATCH', route('project.update.deadline', $project->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);
+
+        // Debug: Check for redirect or flash message
+        $this->assertTrue($response->isRedirect(), 'Expected a redirect response');
+        $this->assertFalse(session()->has('flash_message_warning'), 'Unexpected flash warning: '.session('flash_message_warning'));
+
+        // Debug: Check the raw value in the database
+        $rawDeadline = DB::table('projects')->where('id', $project->id)->value('deadline');
+        $this->assertStringContainsString('2020-08-06', $rawDeadline, 'Raw DB deadline mismatch');
 
         $this->assertEquals('2020-08-06', $project->refresh()->deadline->format('Y-m-d'));
     }

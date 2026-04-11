@@ -36,6 +36,7 @@ class UsersController extends Controller
 
             return $next($request);
         }, ['only' => ['destroy']]);
+        $this->middleware('permission:user-update', ['only' => ['edit']]);
     }
 
     /**

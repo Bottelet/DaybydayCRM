@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Format;
 
+use App\Models\User;
 use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
@@ -15,6 +16,10 @@ class GetDateFormatTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Create and authenticate a user with a language for context-dependent formatting
+        $user = \App\Models\User::factory()->create(['language' => 'DK']);
+        $this->actingAs($user);
 
         $this->formatter = app(GetDateFormat::class);
     }

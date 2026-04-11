@@ -3,6 +3,7 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Contracts\Foundation\Application;
@@ -27,9 +28,10 @@ class InvoiceNumberServiceTest extends AbstractTestCase
 
         $this->user = User::factory()->create();
 
-        $this->client = Invoice::factory()->create([
+        // Ensure a Setting record exists for the service
+        Setting::factory()->create();
 
-        ]);
+        $this->client = Invoice::factory()->create([]);
 
         $this->invoiceNumberService = app(InvoiceNumberService::class);
     }

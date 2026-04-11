@@ -322,11 +322,13 @@ class ProjectsController extends Controller
      */
     public function updateDeadline(Request $request, $external_id)
     {
-        if (! auth()->user()->can('task-update-deadline')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
 
-            return redirect()->route('tasks.show', $external_id);
+        if (! auth()->user()->can('project-update-deadline')) {
+            session()->flash('flash_message_warning', __('You do not have permission to change project deadline'));
+
+            return redirect()->route('projects.show', $external_id);
         }
+
         $project = $this->findByExternalId($external_id);
         $input = $request->all();
         if (isset($request->deadline_date)) {

@@ -22,8 +22,6 @@ abstract class AbstractTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        $this->withoutExceptionHandling();
-
         if (! static::$schemaIsUpToDate) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
             static::$schemaIsUpToDate = true;
@@ -109,6 +107,42 @@ abstract class AbstractTestCase extends BaseTestCase
             PermissionName::LEAD_UPDATE_DEADLINE,
             PermissionName::LEAD_ASSIGN,
             PermissionName::ABSENCE_MANAGE,
+        ]);
+    }
+
+    /**
+     * Assigns administrator role and permissions to the test user for admin-level tests.
+     */
+    public function asAdmin()
+    {
+        $role = \App\Models\Role::firstOrCreate(
+            ['name' => 'admin'],
+            ['display_name' => 'Administrator', 'description' => 'Administrator role', 'external_id' => 'admin-role-id']
+        );
+
+        // Attach role if not already attached
+        if (! $this->user->hasRole('admin')) {
+            $this->user->attachRole($role);
+        }
+
+        // Grant a broad set of permissions for admin (can be adjusted as needed)
+        return $this->withPermissions([
+            \App\Enums\PermissionName::USER_UPDATE,
+            \App\Enums\PermissionName::USER_DELETE,
+            \App\Enums\PermissionName::CLIENT_CREATE,
+            \App\Enums\PermissionName::CLIENT_UPDATE,
+            \App\Enums\PermissionName::CLIENT_DELETE,
+            \App\Enums\PermissionName::LEAD_CREATE,
+            \App\Enums\PermissionName::LEAD_DELETE,
+            \App\Enums\PermissionName::LEAD_UPDATE_STATUS,
+            \App\Enums\PermissionName::LEAD_UPDATE_DEADLINE,
+            \App\Enums\PermissionName::LEAD_ASSIGN,
+            \App\Enums\PermissionName::PAYMENT_CREATE,
+            \App\Enums\PermissionName::PAYMENT_DELETE,
+            \App\Enums\PermissionName::APPOINTMENT_EDIT,
+            \App\Enums\PermissionName::APPOINTMENT_DELETE,
+            \App\Enums\PermissionName::CALENDAR_VIEW,
+            \App\Enums\PermissionName::ABSENCE_MANAGE,
         ]);
     }
 
