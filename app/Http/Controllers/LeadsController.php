@@ -194,11 +194,13 @@ class LeadsController extends Controller
         $lead = $this->findByExternalId($external_id);
         $contactTime = $request->contact_time ?: '00:00';
         $deadline = $request->deadline;
-        // Check if deadline is already a full datetime string or just a date
+        // If deadline is only a date, append the contact time
         if (strlen($deadline) <= 10) {
             $deadline = $deadline.' '.$contactTime.':00';
         }
-        $lead->fill(['deadline' => Carbon::parse($deadline)->toDateTimeString()])->save();
+        // Always store as Y-m-d H:i:s string
+        $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
+        $lead->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
         session()->flash('flash_message', __('New follow up date is set'));
 
@@ -240,13 +242,19 @@ class LeadsController extends Controller
             return redirect()->route('leads.show', $external_id);
         }
         $lead = $this->findByExternalId($external_id);
-        if (isset($request->closeLead) && $request->closeLead === true) {
-            $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
-            $lead->save();
-        } elseif (isset($request->openLead) && $request->openLead === true) {
-            $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
-            $lead->save();
-        } else {
+        if ($request->has('closeLead') && $request->closeLead === true) {
+            $closedStatus = Status::typeOfLead()->where('title', 'Closed')->first();
+            if ($closedStatus) {
+                $lead->status_id = $closedStatus->id;
+                $lead->save();
+            }
+        } elseif ($request->has('openLead') && $request->openLead === true) {
+            $openStatus = Status::typeOfLead()->where('title', 'Open')->first();
+            if ($openStatus) {
+                $lead->status_id = $openStatus->id;
+                $lead->save();
+            }
+        } elseif ($request->has('status_id')) {
             $statusId = $request->input('status_id');
             // Validate that the status_id belongs to lead statuses
             $validStatus = Status::typeOfLead()->where('id', $statusId)->exists();
@@ -255,7 +263,9 @@ class LeadsController extends Controller
 
                 return redirect()->back();
             }
-            $lead->fill($request->only(['status_id']))->save();
+            // Only update status_id, not other fields
+            $lead->status_id = $statusId;
+            $lead->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Lead status updated'));

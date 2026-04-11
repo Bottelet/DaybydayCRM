@@ -236,6 +236,14 @@ class ClientsController extends Controller
         session()->flash('flash_message', __('Client successfully added'));
         event(new ClientAction($client, self::CREATED));
 
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'client' => $client,
+                'contact' => $contact,
+                'message' => __('Client successfully added'),
+            ], 201);
+        }
+
         return redirect()->route('clients.index');
     }
 

@@ -79,28 +79,27 @@ class TasksController extends Controller
         );
 
         return DataTables::of($tasks)
-            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
-            ->editColumn('client', function ($projects) {
-                return $projects->client->company_name;
+            ->addColumn('titlelink', function ($task) {
+                return '<a href="'.route('tasks.show', [$task->external_id]).'">'.$task->title.'</a>';
             })
-            ->editColumn('created_at', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                    ->format(carbonDate()) : '';
+            ->editColumn('client', function ($task) {
+                return $task->client ? $task->client->company_name : '';
             })
-            ->editColumn('deadline', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->deadline))
-                    ->format(carbonDate()) : '';
+            ->editColumn('created_at', function ($task) {
+                return $task->created_at ? with(new Carbon($task->created_at))->format(carbonDate()) : '';
             })
-            ->editColumn('user_assigned_id', function ($tasks) {
-                return $tasks->user->name;
+            ->editColumn('deadline', function ($task) {
+                return $task->deadline ? with(new Carbon($task->deadline))->format(carbonDate()) : '';
             })
-            ->editColumn('status_id', function ($tasks) {
-                return '<span class="label label-success" style="background-color:'.$tasks->status->color.'"> '.
-                    $tasks->status->title.'</span>';
+            ->editColumn('user_assigned_id', function ($task) {
+                return $task->user ? $task->user->name : '';
             })
-            ->addColumn('view', function ($tasks) {
-                return '<a href="'.route('tasks.show', $tasks->external_id).'" class="btn btn-link">'.__('View').'</a>'
-                .'<a data-toggle="modal" data-id="'.route('tasks.destroy', $tasks->external_id).'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
+            ->editColumn('status_id', function ($task) {
+                return $task->status ? '<span class="label label-success" style="background-color:'.$task->status->color.'"> '.$task->status->title.'</span>' : '';
+            })
+            ->addColumn('view', function ($task) {
+                return '<a href="'.route('tasks.show', $task->external_id).'" class="btn btn-link">'.__('View').'</a>'
+                .'<a data-toggle="modal" data-id="'.route('tasks.destroy', $task->external_id).'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
             })
             ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
@@ -283,47 +282,26 @@ class TasksController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->only(['status_id']);
-
-        if ($request->ajax() && isset($input['statusExternalId'])) {
+        $input = $request->only(['status_id', 'statusExternalId']);
+        // Accept status_id or statusExternalId (AJAX)
+        if (isset($input['statusExternalId'])) {
             $status = Status::whereExternalId($input['statusExternalId'])->first();
             if (! $status) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status'));
-
-                return redirect()->back();
+                return response()->json(['error' => 'Invalid status external id'], 400);
             }
             $input['status_id'] = $status->id;
         }
-
-        // Validate that the status_id belongs to task statuses
-        if (isset($input['status_id'])) {
-            $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
-            if (! $validStatus) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status for task')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status for task'));
-
-                return redirect()->back();
-            }
+        if (! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
+            return response()->json(['error' => 'Invalid status id'], 400);
         }
-
-        if (! isset($input['status_id']) || ! $input['status_id']) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'message' => __('Unable to update task status: invalid status provided.'),
-                ], 422);
-            }
-
-            session()->flash('flash_message_warning', __('Unable to update task status: invalid status provided.'));
-
-            return redirect()->back();
+        // Validate that the status_id belongs to task statuses
+        $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
+        if (! $validStatus) {
+            return response()->json(['error' => 'Invalid status for task'], 400);
         }
         $task = $this->findByExternalId($external_id);
-        $task->fill($input)->save();
+        $task->status_id = $input['status_id'];
+        $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Task status is updated'));
 
@@ -334,16 +312,15 @@ class TasksController extends Controller
     {
         $task = $this->findByExternalId($external_id);
         $project_id = null;
-
         if ($request->project_external_id) {
-            $project_id = Project::whereExternalId($request->project_external_id)->first()->id;
+            $project = Project::whereExternalId($request->project_external_id)->first();
+            if (! $project) {
+                return response()->json(['error' => 'Invalid project_external_id'], 400);
+            }
+            $project_id = $project->id;
         }
-
-        $task->fill([
-            'project_id' => $project_id,
-        ])->save();
-
-        // event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
+        $task->project_id = $project_id;
+        $task->save();
         session()->flash('flash_message', __('Task project is updated'));
 
         return redirect()->back();
@@ -355,13 +332,13 @@ class TasksController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         $task = Task::with('user')->whereExternalId($external_id)->first();
-
-        $user_assigned_id = $request->user_assigned_id;
-
+        $user_assigned_id = $request->input('user_assigned_id');
+        if (! $user_assigned_id || ! is_numeric($user_assigned_id)) {
+            return response()->json(['error' => 'Invalid user_assigned_id'], 400);
+        }
         $task->user_assigned_id = $user_assigned_id;
         $task->save();
         $task->refresh();
-
         event(new TaskAction($task, self::UPDATED_ASSIGN));
         session()->flash('flash_message', __('New user is assigned'));
 
@@ -381,8 +358,14 @@ class TasksController extends Controller
             return redirect()->route('tasks.show', $external_id);
         }
         $task = $this->findByExternalId($external_id);
-        $task->fill(['deadline' => Carbon::parse($request->deadline_date)])->save();
-
+        $date = $request->input('deadline_date');
+        $time = $request->input('deadline_time', '00:00');
+        if (! $date) {
+            return response()->json(['error' => 'Invalid deadline_date'], 400);
+        }
+        $deadline = Carbon::parse($date.' '.$time.':00');
+        $task->deadline = $deadline->toDateString();
+        $task->save();
         event(new TaskAction($task, self::UPDATED_DEADLINE));
         session()->flash('flash_message', 'New deadline is set');
 
