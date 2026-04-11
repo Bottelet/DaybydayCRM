@@ -3,6 +3,7 @@
 namespace Tests\Unit\Controllers\Project;
 
 use App\Models\Client;
+use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\User;
@@ -10,6 +11,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Cache;
 
 class ProjectsControllerTest extends AbstractTestCase
 {
@@ -52,6 +54,31 @@ class ProjectsControllerTest extends AbstractTestCase
         $project = Project::factory()->create();
         $this->assertNotEquals($project->user_assigned_id, $this->user->id);
 
+        // Grant permission to assign new user to project
+        $permission = Permission::firstOrCreate([
+            'name' => 'can-assign-new-user-to-project',
+        ], [
+            'display_name' => 'Change assigned user',
+            'description' => 'Permission to change the assigned user on a project',
+            'grouping' => 'project',
+        ]);
+
+        $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
+        if (! $this->user->hasRole($role->name)) {
+            $this->user->attachRole($role);
+        }
+        if (! $role->hasPermission('can-assign-new-user-to-project')) {
+            $role->attachPermission($permission);
+        }
+
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
+
+        // Confirm permission is present for debugging (can be removed if not needed)
+        // $this->assertTrue($this->user->can('can-assign-new-user-to-project'));
+
         $response = $this->json('PATCH', route('project.update.assignee', $project->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
@@ -84,6 +111,6 @@ class ProjectsControllerTest extends AbstractTestCase
             'deadline_time' => '00:00',
         ]);
 
-        $this->assertDatesEqual('2020-08-06', $project->refresh()->deadline);
+        $this->assertEquals('2020-08-06', $project->refresh()->deadline->format('Y-m-d'));
     }
 }

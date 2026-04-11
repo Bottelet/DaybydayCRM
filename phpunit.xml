@@ -2,14 +2,18 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     backupGlobals="false"
+    beStrictAboutTestsThatDoNotTestAnything="false"
     bootstrap="tests/phpunit-parallel-bootstrap.php"
     colors="true"
-    processIsolation="false"
-    stopOnFailure="false"
-    stopOnError="false"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
+    displayDetailsOnTestsThatTriggerErrors="true"
+    displayDetailsOnTestsThatTriggerNotices="true"
+    displayDetailsOnTestsThatTriggerWarnings="true"
     failOnRisky="false"
     failOnWarning="false"
-    beStrictAboutTestsThatDoNotTestAnything="false"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -29,5 +33,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
     </php>
 </phpunit>

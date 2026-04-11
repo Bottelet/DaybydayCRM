@@ -21,7 +21,7 @@ class RedirectIfDemo
             return $next($request);
         }
 
-        Session()->flash('flash_message_warning', __(self::MEESAGE));
+        session()->flash('flash_message_warning', __(self::MEESAGE));
 
         return redirect()->back();
     }

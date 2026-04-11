@@ -179,7 +179,7 @@ class LeadsController extends Controller
         $lead->fill($input)->save();
 
         event(new LeadAction($lead, self::UPDATED_ASSIGN));
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
     }
@@ -200,7 +200,7 @@ class LeadsController extends Controller
         }
         $lead->fill(['deadline' => Carbon::parse($deadline)->toDateTimeString()])->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', __('New follow up date is set'));
+        session()->flash('flash_message', __('New follow up date is set'));
 
         return redirect()->back();
     }
@@ -258,7 +258,7 @@ class LeadsController extends Controller
             $lead->fill($request->only(['status_id']))->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Lead status updated'));
+        session()->flash('flash_message', __('Lead status updated'));
 
         return redirect()->back();
     }

@@ -22,6 +22,8 @@ abstract class AbstractTestCase extends BaseTestCase
     {
         parent::setUp();
 
+        $this->withoutExceptionHandling();
+
         if (! static::$schemaIsUpToDate) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
             static::$schemaIsUpToDate = true;

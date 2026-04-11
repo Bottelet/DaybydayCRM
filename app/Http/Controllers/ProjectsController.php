@@ -109,7 +109,7 @@ class ProjectsController extends Controller
 
         $project->delete();
 
-        Session()->flash('flash_message', __('Project deleted'));
+        session()->flash('flash_message', __('Project deleted'));
 
         if ($request->expectsJson()) {
             return response()->json(['message' => __('Project deleted')], 200);
@@ -129,7 +129,7 @@ class ProjectsController extends Controller
         }
 
         if (! $client) {
-            Session()->flash('flash_message', __('Could not find client'));
+            session()->flash('flash_message', __('Could not find client'));
 
             return redirect()->back();
         }
@@ -149,7 +149,7 @@ class ProjectsController extends Controller
 
         $insertedExternalId = $project->external_id;
 
-        Session()->flash('flash_message', __('Project successfully added'));
+        session()->flash('flash_message', __('Project successfully added'));
         event(new ProjectAction($project, self::CREATED));
 
         if (! is_null($request->images)) {
@@ -287,18 +287,21 @@ class ProjectsController extends Controller
         $project->fill($request->only(['status_id']))->save();
 
         event(new ProjectAction($project, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Project status updated'));
+        session()->flash('flash_message', __('Project status updated'));
 
         return redirect()->back();
     }
 
     public function updateAssign($external_id, Request $request)
     {
+        dd(auth()->user()->can('can-assign-new-user-to-project'));
+
         if (! auth()->user()->can('can-assign-new-user-to-project')) {
             session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
 
             return redirect()->route('projects.show', $external_id);
         }
+        dd('here1');
 
         $project = Project::with('assignee')->whereExternalId($external_id)->first();
 
@@ -307,9 +310,12 @@ class ProjectsController extends Controller
         $project->user_assigned_id = $user_assigned_id;
         $project->save();
 
+        dd('here2');
+
         event(new ProjectAction($project, self::UPDATED_ASSIGN));
 
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
+        dd('here3');
 
         return redirect()->back();
     }
@@ -335,7 +341,7 @@ class ProjectsController extends Controller
         }
         $project->fill($input)->save();
         event(new ProjectAction($project, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', __('New deadline is set'));
+        session()->flash('flash_message', __('New deadline is set'));
 
         return redirect()->back();
     }

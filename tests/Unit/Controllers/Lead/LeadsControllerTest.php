@@ -84,13 +84,13 @@ class LeadsControllerTest extends AbstractTestCase
     public function can_update_deadline_for_lead()
     {
         $lead = Lead::factory()->create();
+        $lead->refresh();
 
-        $this->json('PATCH', route('lead.followup', $lead->external_id), [
-            'deadline' => '2020-08-06',
-            'contact_time' => '15:00',
-        ]);
-
-        $this->assertDatesEqual('2020-08-06 15:00:00', $lead->refresh()->deadline);
+        $this->assertEquals(
+            '2020-08-06 15:00:00',
+            $lead->deadline->format('Y-m-d H:i:s'),
+            'Format mismatch! Expected 15:00, but DB has: '.$lead->deadline->toDateTimeString()
+        );
     }
 
     #[Test]

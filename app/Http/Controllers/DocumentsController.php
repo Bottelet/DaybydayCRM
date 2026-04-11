@@ -272,7 +272,7 @@ class DocumentsController extends Controller
         // Observer will handle file deletion
         $document->delete();
 
-        Session()->flash('flash_message', __('File has been deleted'));
+        session()->flash('flash_message', __('File has been deleted'));
 
         return redirect()->back();
     }

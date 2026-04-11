@@ -81,7 +81,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     public function cant_delete_without_permission()
     {
         $user = User::factory()->create();
-        $this->setUser($user);
+        $this->actingAs($user); // Use Laravel's authentication helper
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
         $response = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));

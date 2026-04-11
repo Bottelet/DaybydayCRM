@@ -37,7 +37,7 @@ class CanNotAccessTest extends AbstractTestCase
     {
         $response = $this->json('PATCH', route('settings.updateOverall', []));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -45,7 +45,7 @@ class CanNotAccessTest extends AbstractTestCase
     {
         $response = $this->json('GET', route('integrations.index'));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -53,7 +53,7 @@ class CanNotAccessTest extends AbstractTestCase
     {
         $response = $this->json('POST', route('integrations.store'));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -63,7 +63,7 @@ class CanNotAccessTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('roles.destroy', $role->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     // #[Test]
@@ -73,7 +73,7 @@ class CanNotAccessTest extends AbstractTestCase
 
     //     $response = $this->json('DELETE', route('tasks.destroy', $task->external_id));
     //     $this->assertEquals(302, $response->getStatusCode());
-    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get("flash_message_warning"));
     // }
 
     // #[Test]
@@ -83,7 +83,7 @@ class CanNotAccessTest extends AbstractTestCase
 
     //     $response = $this->json('DELETE', route('leads.destroy', $lead->external_id));
     //     $this->assertEquals(302, $response->getStatusCode());
-    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get("flash_message_warning"));
+    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get("flash_message_warning"));
     // }
 
     #[Test]
@@ -104,7 +104,7 @@ class CanNotAccessTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('clients.destroy', $client->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -125,7 +125,7 @@ class CanNotAccessTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('users.destroy', $user->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -146,7 +146,7 @@ class CanNotAccessTest extends AbstractTestCase
 
         $response = $this->json('PATCH', route('users.update', $user->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
@@ -156,6 +156,6 @@ class CanNotAccessTest extends AbstractTestCase
 
         $response = $this->json('DELETE', route('departments.destroy', $department->external_id));
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getSession()->get('flash_message_warning'));
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 }
