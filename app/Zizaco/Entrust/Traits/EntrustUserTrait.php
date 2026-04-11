@@ -173,7 +173,7 @@ trait EntrustUserTrait
 
             foreach ($role->cachedPermissions() as $perm) {
                 if (! is_object($perm)
-                    || ! property_exists($perm, 'name')
+                    || empty($perm->name)
                 ) {
                     continue;
                 }
@@ -303,19 +303,6 @@ trait EntrustUserTrait
 
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->roles()->syncWithoutDetaching($roleIds);
-
-        // Clear cache
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-
-        if (empty($ids)) {
-            return;
-        }
-
-        $this->roles()->syncWithoutDetaching(
-            $ids
-        );
 
         $this->flushRoleCache();
     }

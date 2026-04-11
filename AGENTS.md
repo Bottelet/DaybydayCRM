@@ -100,14 +100,23 @@
   - When creating repositories, implement `findOrFail()`, `getAll()`, `create()`, `update()`, `delete()`
   - Repositories handle data access, not business logic
   - Use for complex queries and multi-tenancy scopes
-- **Testing Conventions:**
-  - All tests must follow the isolation and normalization rules in `.github/copilot-instructions.md`:
-    - Each test creates its own data (no reliance on seeders or other tests)
-    - Only one HTTP request per test (unless testing a workflow)
-    - Normalize data types before assertions (e.g., dates)
-    - Use `owner` or `administrator` roles in tests as needed
-    - Never compare Carbon objects to strings directly—normalize first
-  - See `.github/error_repair_plan.md` for common test failures and fixes.
+  - **Testing Conventions:**
+    - All tests must follow the isolation and normalization rules in `.github/copilot-instructions.md`:
+      - Each test creates its own data (no reliance on seeders or other tests)
+      - Only one HTTP request per test (unless testing a workflow)
+      - Normalize data types before assertions (e.g., dates)
+      - Use `owner` or `administrator` roles in tests as needed
+      - Never compare Carbon objects to strings directly—normalize first
+      - When testing permissions, always:
+        - Attach permissions using `attachPermission()` on the role (see EntrustUserTrait)
+        - Flush both `role_user` and `permission_role` cache tags after attaching
+        - Reload the user with `$user = $user->fresh()` before acting as the user
+      - See `tests/Unit/Controllers/Absence/AbsenceControllerTest.php` for a canonical example of permission/role setup and test isolation for controller actions that depend on permissions.
+    - See `.github/error_repair_plan.md` for common test failures and fixes.
+  - **Absence Management Permission Pattern:**
+    - The `absence-manage` permission is required to create absences for other users. Tests and controller logic must check for this permission using Entrust's `can()` method.
+    - If the authenticated user does not have `absence-manage`, absences are always created for the authenticated user, regardless of the `user_external_id` provided in the request.
+    - See `AbsenceControllerTest.php` for test cases covering both permission and non-permission scenarios.
 - **Integrations:**
   - Billing and file storage integrations are managed via `integrations` table and repository interfaces.
   - Example: Dropbox and Google Drive for file storage, Dinero for billing.

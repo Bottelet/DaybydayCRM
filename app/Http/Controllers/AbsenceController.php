@@ -71,6 +71,7 @@ class AbsenceController extends Controller
     {
         $medical_certificate = null;
         $user = auth()->user();
+
         if ($request->user_external_id && auth()->user()->can('absence-manage')) {
             $user = User::whereExternalId($request->user_external_id)->first();
             if (! $user) {

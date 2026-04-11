@@ -42,7 +42,7 @@ class AuthServiceProvider extends ServiceProvider
                 }
 
                 foreach ($role->cachedPermissions() as $perm) {
-                    if (! is_object($perm) || ! property_exists($perm, 'name')) {
+                    if (! is_object($perm) || empty($perm->name)) {
                         continue;
                     }
 

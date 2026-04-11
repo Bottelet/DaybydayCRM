@@ -2,12 +2,14 @@
 
 namespace Tests\Unit\Controllers\Absence;
 
+use App\Models\Permission;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
+use Cache;
 
 class AbsenceControllerTest extends AbstractTestCase
 {
@@ -19,14 +21,22 @@ class AbsenceControllerTest extends AbstractTestCase
     {
         // Create authenticated user with absence-manage permission
         $authUser = User::factory()->withRole('employee')->create();
-        $managePermission = \App\Models\Permission::firstOrCreate(['name' => 'absence-manage']);
-        $authUser->roles->first()->attachPermission($managePermission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        \Illuminate\Support\Facades\Cache::tags('permission_role')->flush();
+        $managePermission = Permission::firstOrCreate(['name' => 'absence-manage']);
 
-        // Reload user to refresh roles and permissions in memory
+        // Reload user and role to ensure fresh state before attaching permission
+        $authUser = $authUser->fresh();
+        $role = $authUser->roles()->first();
+        $role->attachPermissions([$managePermission]);
+
+        // Flush all cache to ensure Entrust picks up changes across all models
+        Cache::flush();
+
+        // Reload user again to refresh roles and permissions in memory
         $authUser = $authUser->fresh();
         $this->actingAs($authUser);
+
+        // Assert permission is active for this user
+        $this->assertTrue($authUser->can('absence-manage'), 'User should have absence-manage permission');
 
         $user = User::factory()->create();
         $response = $this->json('POST', route('absence.store'), [
@@ -37,10 +47,11 @@ class AbsenceControllerTest extends AbstractTestCase
             'medical_certificate' => null,
             'comment' => 'Sick kid',
         ]);
+        $response->assertStatus(302); // or 200, depending on redirect/response
 
         // Refresh the user to get updated absences relationship
         $absences = $user->fresh()->absences;
-        $this->assertNotNull(Session::all()['flash_message']);
+        $this->assertNotNull(\Session::all()['flash_message']);
         $this->assertCount(1, $absences);
     }
 
