@@ -54,14 +54,14 @@ class InvoiceLinesControllerTest extends AbstractTestCase
                 'external_id' => Str::uuid()->toString(),
             ]
         );
-        
+
         // Ensure the permission is attached to the role
-        if (!$ownerRole->hasPermission('modify-invoice-lines')) {
+        if (! $ownerRole->hasPermission('modify-invoice-lines')) {
             $ownerRole->attachPermission($permission);
         }
-        
+
         // Ensure the user has the role
-        if (!$this->user->hasRole('owner')) {
+        if (! $this->user->hasRole('owner')) {
             $this->user->attachRole($ownerRole);
         }
 

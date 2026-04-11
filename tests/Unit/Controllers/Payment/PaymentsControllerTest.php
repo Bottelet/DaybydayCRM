@@ -27,18 +27,18 @@ class PaymentsControllerTest extends AbstractTestCase
     {
         parent::setUp();
         $role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
-        
+
         // Ensure owner role has payment-delete permission
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'payment-delete']);
-        if (!$role->hasPermission('payment-delete')) {
+        if (! $role->hasPermission('payment-delete')) {
             $role->attachPermission($permission);
         }
-        
+
         $this->user->attachRole($role);
-        
+
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        
+
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),

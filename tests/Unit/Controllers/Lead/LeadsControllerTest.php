@@ -35,12 +35,12 @@ class LeadsControllerTest extends AbstractTestCase
 
         foreach ($permissions as $name => $details) {
             $permission = \App\Models\Permission::firstOrCreate(['name' => $name], $details);
-            if (!$ownerRole->hasPermission($name)) {
+            if (! $ownerRole->hasPermission($name)) {
                 $ownerRole->attachPermission($permission);
             }
         }
 
-        if (!$this->user->hasRole('owner')) {
+        if (! $this->user->hasRole('owner')) {
             $this->user->attachRole($ownerRole);
         }
 
