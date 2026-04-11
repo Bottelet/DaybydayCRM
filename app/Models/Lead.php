@@ -124,7 +124,8 @@ class Lead extends Model implements Commentable
 
     public function isClosed()
     {
-        return $this->status == self::LEAD_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && $this->status->title == self::LEAD_STATUS_CLOSED;
     }
 
     public function invoice()
