@@ -19,7 +19,7 @@ class Absence extends Model
         'end_at',
         'user_id',
         'comment',
-
+        'medical_certificate',
     ];
 
     protected $casts = [
