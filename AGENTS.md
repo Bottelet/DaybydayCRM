@@ -51,6 +51,23 @@
   - **HasExternalId** (`app/Traits/HasExternalId.php`): Automatically generates UUID for `external_id` and sets it as route key. Used by most models.
   - **SearchableTrait**: Provides search functionality for models.
   - **DeadlineTrait**: Provides deadline-related functionality.
+- **Model Observers:**
+  - Use Observers for automatic side effects (file deletion, cascade deletes, search indexing)
+  - Registered in `AppServiceProvider::boot()`
+  - Examples: `DocumentObserver`, `TaskObserver`, `ClientObserver`
+- **Blameable Trait:**
+  - Use `Blameable` trait to auto-set `user_created_id` on model creation
+  - Add `creator()` relationship: `belongsTo(User::class, 'user_created_id')`
+  - Provides automatic audit trail
+- **Service Layer:**
+  - Business logic belongs in Services, not Controllers
+  - Controllers should be thin - validate input, call Service, return response
+  - Examples: `InvoiceCalculator`, `InvoiceNumberService`, `ClientNumberService`
+  - Tax calculation: Use `InvoiceCalculator` - `getSubTotal()` (no VAT), `getTotalPrice()` (with VAT)
+- **Repository Pattern:**
+  - When creating repositories, implement `findOrFail()`, `getAll()`, `create()`, `update()`, `delete()`
+  - Repositories handle data access, not business logic
+  - Use for complex queries and multi-tenancy scopes
 - **Testing Conventions:**
   - All tests must follow the isolation and normalization rules in `.github/copilot-instructions.md`:
     - Each test creates its own data (no reliance on seeders or other tests)

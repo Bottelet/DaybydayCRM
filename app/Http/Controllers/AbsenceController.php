@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Absence\StoreAbsenceAction;
 use App\Enums\AbsenceReason;
 use App\Models\Absence;
 use App\Models\User;
@@ -68,7 +69,7 @@ class AbsenceController extends Controller
             ->withUsers($users);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, StoreAbsenceAction $storeAbsenceAction)
     {
         $medical_certificate = null;
         $user = auth()->user();
@@ -86,15 +87,14 @@ class AbsenceController extends Controller
             $medical_certificate = false;
         }
 
-        Absence::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'reason' => $request->reason,
-            'user_id' => $user->id,
-            'start_at' => Carbon::parse($request->start_date)->startOfDay(),
-            'end_at' => Carbon::parse($request->end_date)->endOfDay(),
-            'medical_certificate' => $medical_certificate,
-            'comment' => clean($request->comment),
-        ]);
+        $storeAbsenceAction->execute(
+            user: $user,
+            reason: $request->reason,
+            startDate: $request->start_date,
+            endDate: $request->end_date,
+            medicalCertificate: $medical_certificate,
+            comment: $request->comment
+        );
 
         Session::flash('flash_message', __('Absence registered'));
 

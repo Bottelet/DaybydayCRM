@@ -87,6 +87,11 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
+    public function notes()
+    {
+        return $this->comments();
+    }
+  
     public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'lead', 'external_id' => $this->external_id]);
