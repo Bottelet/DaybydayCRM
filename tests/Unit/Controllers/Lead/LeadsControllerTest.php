@@ -4,9 +4,11 @@ namespace Tests\Unit\Controllers\Lead;
 
 use App\Models\Client;
 use App\Models\Lead;
+use App\Models\Permission;
 use App\Models\Status;
 use App\Enums\PermissionName;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -84,13 +86,18 @@ class LeadsControllerTest extends AbstractTestCase
     public function can_update_deadline_for_lead()
     {
         $lead = Lead::factory()->create();
-        $lead->refresh();
 
-        $this->assertEquals(
-            '2020-08-06 15:00:00',
-            $lead->deadline->format('Y-m-d H:i:s'),
-            'Format mismatch! Expected 15:00, but DB has: '.$lead->deadline->toDateTimeString()
-        );
+        // Ensure user has permission
+        $permission = Permission::firstOrCreate(['name' => 'lead-update-deadline']);
+        $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
+
+        $response = $this->json('PATCH', route('lead.update.deadline', $lead->external_id), [
+            'deadline_date' => '2020-08-06',
+            'deadline_time' => '00:00',
+        ]);
+
+        $this->assertEquals(Carbon::parse('2020-08-06')->toDateString(), Carbon::parse($lead->refresh()->deadline)->toDateString());
     }
 
     #[Test]
