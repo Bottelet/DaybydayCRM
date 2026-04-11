@@ -61,8 +61,8 @@ class LeadSecurityTest extends AbstractTestCase
 
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        // Route middleware 'permission:lead-delete' returns 403 for unauthorized users
+        $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
     }
 
