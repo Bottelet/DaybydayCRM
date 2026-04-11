@@ -102,7 +102,7 @@ class ProjectSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_via_ajax_with_valid_external_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $newStatus = Status::factory()->create(['source_type' => Project::class]);
@@ -118,7 +118,7 @@ class ProjectSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_rejects_invalid_status_type()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         // Create a status that belongs to a different type (Lead instead of Project)
@@ -143,7 +143,7 @@ class ProjectSecurityTest extends AbstractTestCase
     #[Test]
     public function update_status_rejects_nonexistent_status_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $originalStatus = $this->project->status_id;

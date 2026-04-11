@@ -94,9 +94,9 @@ class LeadAuthorizationTest extends AbstractTestCase
         $this->user = $user;
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
-        $newStatus = Status::factory()->create(['source_type' => 'lead']);
+        $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         while ($newStatus->id == $this->lead->status_id) {
-            $newStatus = Status::factory()->create(['source_type' => 'lead']);
+            $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         }
 
         $originalTitle = $this->lead->title;
