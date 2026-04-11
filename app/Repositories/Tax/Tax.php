@@ -51,6 +51,8 @@ class Tax
 
     private function integerToVatRate()
     {
-        return $this->percentage() / 100;
+        // percentage() already returns the decimal rate (e.g., 0.21 for 21%)
+        // so we don't need to divide by 100 again
+        return $this->percentage();
     }
 }
