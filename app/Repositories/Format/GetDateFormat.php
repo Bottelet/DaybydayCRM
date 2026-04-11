@@ -14,7 +14,9 @@ class GetDateFormat
     public function __construct()
     {
         // if (!cache(self::CACHE_KEY)){
-        $this->format = Country::fromCode(Setting::first()->country)->getFormat();
+        $setting = Setting::first();
+        $country = $setting ? $setting->country : 'US';
+        $this->format = Country::fromCode($country)->getFormat();
         cache()->set('country_date_format', $this->format);
         // }
 
