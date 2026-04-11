@@ -40,9 +40,9 @@ class OffersController extends Controller
                 'title' => $line['title'],
                 'type' => $line['type'],
                 'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'],
+                'comment' => $line['comment'] ?? null,
                 'price' => $line['price'] * 100,
-                'product_id' => $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
         }
@@ -67,9 +67,9 @@ class OffersController extends Controller
                 'title' => $line['title'],
                 'type' => $line['type'],
                 'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'],
+                'comment' => $line['comment'] ?? null,
                 'price' => $line['price'] * 100,
-                'product_id' => $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
         }
