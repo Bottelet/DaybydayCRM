@@ -20,7 +20,7 @@ class SettingsTableSeeder extends Seeder
                 'id' => 1,
                 'client_number' => 10000,
                 'invoice_number' => 10000,
-                'country' => 'en',
+                'country' => 'US',
                 'company' => 'Media',
                 'max_users' => 10,
                 'vat' => 0,

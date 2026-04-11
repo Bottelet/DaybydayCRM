@@ -114,7 +114,7 @@ class TaskSecurityTest extends AbstractTestCase
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(400)
-            ->assertJson(['error' => __('Invalid status')]);
+            ->assertJson(['error' => 'Invalid status external id']);
     }
 
     #[Test]
