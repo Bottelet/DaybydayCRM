@@ -90,6 +90,8 @@ class LeadsControllerTest extends AbstractTestCase
         // Ensure user has permission
         $permission = Permission::firstOrCreate(['name' => 'lead-update-deadline']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
         Cache::tags('role_user')->flush();
 
         $response = $this->json('PATCH', route('lead.update.deadline', $lead->external_id), [
