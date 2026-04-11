@@ -1,3 +1,139 @@
+# AGENTS.md — DaybydayCRM AI Agent Guide
+
+## Recent Updates (2026-04-11)
+
+### Critical Bug Patterns to Watch For
+
+1. **Relationship Object vs String Comparison**
+   - **Symptom:** Methods like `isClosed()` return unexpected results
+   - **Cause:** Comparing Eloquent relationship objects directly to strings
+   - **Example:** `$this->status == 'closed'` when `status` is a BelongsTo relationship
+   - **Fix:** Access relationship property: `$this->status->title == 'closed'`
+   - **Always check:** Lead, Task, Project, or any model with status_id foreign key
+
+2. **Double Division in Percentage Calculations**
+   - **Symptom:** Calculations off by factor of 100 (e.g., VAT totals)
+   - **Cause:** Converting percentage to decimal twice
+   - **Pattern:** `(value / 100) / 100` when should be just `(value / 100)`
+   - **Check:** Tax calculations, discount calculations, commission calculations
+   - **Example Found:** `Tax::integerToVatRate()` was dividing by 100 twice
+
+3. **Null Relationship Access**
+   - **Symptom:** "Call to member function on null" errors
+   - **Cause:** Accessing relationship properties without null checks
+   - **Prevention:** Always use `$this->relationship && $this->relationship->property`
+   - **Example:** `isClosed()` methods now check `$this->status` exists first
+
+4. **Cached Roles/Permissions in Tests**
+   - **Symptom:** Permission checks fail in tests after attaching permissions
+   - **Cause:** Accessing `$user->roles` loads relationship into memory before permission is attached
+   - **Pattern:** `$user->roles->first()->attachPermission($perm)` then `actingAs($user)` fails permission check
+   - **Fix:** Call `$user = $user->fresh()` after attaching permission to reload from database
+   - **Prevention:** Always reload user after modifying roles/permissions before authentication
+   - **Affected:** Tests using EntrustUserTrait's `can()` method
+
+## Project Overview
+- **DaybydayCRM** is a Laravel-based CRM for managing clients, tasks, projects, invoices, and more. The architecture is modular, with clear separation between domains (Clients, Projects, Tasks, Invoices, Integrations).
+- **Key Directories:**
+  - `app/Models/`: Eloquent models for all major entities.
+  - `app/Http/Controllers/`: RESTful controllers, grouped by domain.
+  - `app/Http/Middleware/`: Custom and standard middleware for permissions, demo mode, etc.
+  - `app/Repositories/`: Abstractions for integrations (Billing, Filesystem).
+  - `resources/views/`: Blade templates, organized by feature.
+  - `routes/`: Route definitions (`web.php`, `api.php`).
+  - `database/factories/`, `migrations/`, `seeders/`: Standard Laravel data setup.
+
+## Architecture & Data Flow
+- **Service Boundaries:**
+  - Core business logic is in controllers and services, with repositories abstracting external integrations.
+  - Integrations (billing, file storage) are pluggable via repository interfaces (`app/Repositories/BillingIntegration/`, `FilesystemIntegration/`).
+  - Notifications use Laravel's notification system, often via database channel.
+- **Data Flow:**
+  - HTTP requests enter via `routes/`, pass through middleware, and are handled by controllers.
+  - Controllers interact with Eloquent models and repositories, returning views or JSON.
+  - Views use Blade and often include partials for headers, boards, etc.
+
+## Developer Workflows
+- **Build:**
+  - Frontend: Use `npm run dev`, `npm run watch`, or `npm run prod` (see `package.json`).
+  - Asset compilation: `webpack.mix.js` and legacy `gulpfile.js` (Elixir) for SASS/JS.
+- **Test:**
+  - PHP: `vendor/bin/phpunit` (config in `phpunit.xml`).
+  - ParaTest: Use `vendor/bin/paratest` or `make paratest` for parallel test execution.
+  - Browser: `php artisan dusk` for browser tests.
+  - CI: See `.github/workflows/phpunit.yml` for GitHub Actions setup.
+- **Makefile & Docker:**
+  - Use the `Makefile` for standardized build, test, and Docker workflows. Key targets: `setup`, `phpunit`, `paratest`, `docker-setup`, `docker-phpunit`, etc. (see Makefile for full list).
+- **Database:**
+  - Migrations: `php artisan migrate`.
+  - Factories: `database/factories/` for test/dummy data.
+- **Debug:**
+  - Use `barryvdh/laravel-debugbar` (dev only).
+  - Logging: Configured in `config/logging.php`.
+
+## Project-Specific Conventions
+- **External IDs:**
+  - Most entities use `external_id` (UUID) for routing and API, not auto-increment IDs.
+- **Permissions:**
+  - Role/permission checks via Entrust (`app/Zizaco/Entrust/`).
+  - Middleware like `user.is.admin`, `is.demo` restrict access to sensitive routes.
+- **Traits:**
+  - **Blameable** (`app/Traits/Blameable.php`): Automatically tracks `user_created_id` and `user_updated_id`. Use on models that need creator/updater tracking.
+  - **Statusable** (`app/Traits/Statusable.php`): Provides consistent status relationship and helper methods (`hasStatus()`, `setStatus()`, query scopes). Use on models with `status_id` field.
+  - **HasExternalId** (`app/Traits/HasExternalId.php`): Automatically generates UUID for `external_id` and sets it as route key. Used by most models.
+  - **SearchableTrait**: Provides search functionality for models.
+  - **DeadlineTrait**: Provides deadline-related functionality.
+- **Model Observers:**
+  - Use Observers for automatic side effects (file deletion, cascade deletes, search indexing)
+  - Registered in `AppServiceProvider::boot()`
+  - Examples: `DocumentObserver`, `TaskObserver`, `ClientObserver`
+- **Blameable Trait:**
+  - Use `Blameable` trait to auto-set `user_created_id` on model creation
+  - Add `creator()` relationship: `belongsTo(User::class, 'user_created_id')`
+  - Provides automatic audit trail
+- **Service Layer:**
+  - Business logic belongs in Services, not Controllers
+  - Controllers should be thin - validate input, call Service, return response
+  - Examples: `InvoiceCalculator`, `InvoiceNumberService`, `ClientNumberService`
+  - Tax calculation: Use `InvoiceCalculator` - `getSubTotal()` (no VAT), `getTotalPrice()` (with VAT)
+- **Repository Pattern:**
+  - When creating repositories, implement `findOrFail()`, `getAll()`, `create()`, `update()`, `delete()`
+  - Repositories handle data access, not business logic
+  - Use for complex queries and multi-tenancy scopes
+- **Testing Conventions:**
+  - All tests must follow the isolation and normalization rules in `.github/copilot-instructions.md`:
+    - Each test creates its own data (no reliance on seeders or other tests)
+    - Only one HTTP request per test (unless testing a workflow)
+    - Normalize data types before assertions (e.g., dates)
+    - Use `owner` or `administrator` roles in tests as needed
+    - Never compare Carbon objects to strings directly—normalize first
+  - See `.github/error_repair_plan.md` for common test failures and fixes.
+- **Integrations:**
+  - Billing and file storage integrations are managed via `integrations` table and repository interfaces.
+  - Example: Dropbox and Google Drive for file storage, Dinero for billing.
+- **UI Patterns:**
+  - Project/task boards use custom Blade partials and SASS (`resources/assets/sass/components/project-board.scss`).
+  - DataTables for tabular data (see `yajra/laravel-datatables-oracle`).
+
+## Integration Points
+- **APIs:**
+  - RESTful API routes in `routes/api.php` (auth:api middleware).
+- **External Services:**
+  - AWS S3, Dropbox, Google Drive, Dinero, etc. (see `composer.json` dependencies).
+- **Notifications:**
+  - Use Laravel's notification system, often with custom notification classes.
+
+## Examples
+- **Adding a new integration:**
+  - Implement the relevant repository interface, register in the service provider, and add config/migration as needed.
+- **Custom middleware:**
+  - Add to `app/Http/Middleware/`, register in `app/Http/Kernel.php`.
+- **New UI component:**
+  - Add Blade partial in `resources/views/partials/`, SASS in `resources/assets/sass/components/`.
+
+---
+For more, see the [README.md](./readme.md) and code comments in each module.
+
 Below is the **professionalized version of `AGENTS.md`** rewritten into structured, consistent engineering documentation.
 Content is preserved but normalized, deduplicated, and clarified. Derived from the original uploaded file. 
 
