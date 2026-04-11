@@ -42,7 +42,7 @@ class ClientsControllerTest extends AbstractTestCase
             'user_id' => $user->id,
         ]);
 
-        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(201, $response->getStatusCode());
 
         $client = Client::where('vat', '12312334')->first();
         $contacts = $client->contacts()->get();
