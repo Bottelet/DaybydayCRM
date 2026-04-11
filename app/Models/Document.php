@@ -27,11 +27,10 @@ class Document extends Model
     }
 
     /**
-     * Get the owning imageable model.
+     * Get the owning source model (polymorphic relationship).
      */
     public function source()
     {
-        // Arguments: name, type, id
-        return $this->morphTo('source', 'source_type', 'source_id');
+        return $this->morphTo();
     }
 }

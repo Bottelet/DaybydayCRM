@@ -48,7 +48,7 @@ class LeadSecurityTest extends AbstractTestCase
         // Give user permission to delete leads
         $this->withPermissions(PermissionName::LEAD_DELETE);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertRedirect();
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
@@ -59,7 +59,7 @@ class LeadSecurityTest extends AbstractTestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning');
