@@ -1,6 +1,34 @@
 # TODO and Implemented Patterns
 
-## ✅ Completed Refactoring Patterns
+## ✅ Completed Refactoring Patterns (Updated 2026-04-11)
+
+### 0. Critical Bug Fixes (2026-04-11)
+**Status:** ✅ COMPLETE
+
+#### Bug Fix 1: isClosed() Methods in Lead and Task Models
+**Problem:** Methods were comparing status relationship object to string constant
+**Root Cause:** `$this->status` returns a Status model, not a string
+**Fix:** Updated to check `$this->status->title` like Project model does
+**Files Modified:**
+- `app/Models/Lead.php` - Fixed `isClosed()` method
+- `app/Models/Task.php` - Fixed `isClosed()` method
+**Impact:** DeadlineTrait::isOverDeadline() now works correctly
+**Pattern:** Always access relationship properties, don't compare object to string
+
+#### Bug Fix 2: VAT Calculation Double Division
+**Problem:** Invoice totals calculated incorrectly (e.g., 100.21 instead of 121.00 for 21% VAT)
+**Root Cause:** `integerToVatRate()` divided percentage by 100 twice
+**Calculation Flow:**
+- Setting stores VAT as integer (e.g., 21)
+- `percentage()` converts to decimal: 21 / 100 = 0.21
+- `integerToVatRate()` was dividing again: 0.21 / 100 = 0.0021 ❌
+- Should be: 0.21 (already correct) ✅
+**Fix:** Removed double division in `integerToVatRate()`
+**Files Modified:**
+- `app/Repositories/Tax/Tax.php` - Fixed `integerToVatRate()` method
+**Impact:** All invoice calculations now include correct VAT amount
+**Example:** 100 subtotal + 21% VAT = 121.00 (was 100.21)
+**Pattern:** Be careful with percentage/decimal conversions - only convert once
 
 ### 1. Blameable Trait (Creator/Updater Tracking)
 **Location:** `app/Traits/Blameable.php`

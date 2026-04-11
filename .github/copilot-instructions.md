@@ -410,11 +410,63 @@ Route::get('/my-model/{myModel}', ...);  // Binds by external_id, not id
 ```
 
 **Models using HasExternalId:** Most models (Client, Lead, Task, Project, Invoice, Offer, User, etc.)
+## Common Bug Patterns Found & Fixed (2026-04-11)
+
+### Bug Pattern 1: Status Comparison in isClosed() Methods
+**Symptom:** DeadlineTrait::isOverDeadline() returns incorrect results
+**Root Cause:** Models with `status_id` relationship were comparing object to string
+```php
+// ❌ WRONG - Comparing object to string
+public function isClosed() {
+    return $this->status == self::CLOSED_STATUS; // $this->status is a Status object
+}
+
+// ✅ CORRECT - Compare status title property
+public function isClosed() {
+    return $this->status && $this->status->title == self::CLOSED_STATUS;
+}
+```
+**Affected Models:** Lead, Task (Project was already correct)
+**Related:** Any model using DeadlineTrait with status relationship
+
+### Bug Pattern 2: Double Division in Percentage Calculations
+**Symptom:** VAT calculations return incorrect totals (e.g., 100.21 instead of 121.00)
+**Root Cause:** Converting percentage to decimal rate twice
+```php
+// ❌ WRONG - Double division
+public function percentage() {
+    return ($vat / 100); // Returns 0.21 for 21% VAT
+}
+
+private function integerToVatRate() {
+    return $this->percentage() / 100; // Divides 0.21 by 100 again → 0.0021
+}
+
+// ✅ CORRECT - Single division
+private function integerToVatRate() {
+    return $this->percentage(); // Already decimal (0.21)
+}
+```
+**Affected:** Tax repository, InvoiceCalculator
+**Impact:** All invoice total calculations with VAT
+
+### Bug Pattern 3: Missing Null Checks in Relationship Methods
+**Symptom:** "Call to a member function on null" errors
+**Root Cause:** Accessing relationship properties without checking existence
+```php
+// ❌ WRONG - Can throw error if status not loaded
+return $this->status->title == 'Closed';
+
+// ✅ CORRECT - Check existence first
+return $this->status && $this->status->title == 'Closed';
+```
+**Preventive:** Always null-check relationships before accessing properties
+
 ## Documentation Updates
 
 When implementing new patterns or fixes:
 1. Update `.github/todo.md` with pattern status
-2. Update this file (copilot-instructions.md) with conventions
+2. Update this file (copilot-instructions.md) with conventions and bug patterns
 3. Update `AGENTS.md` with architectural guidance
 4. Reference `.github/error_repair_plan.md` for common fixes
 

@@ -1,5 +1,29 @@
 # AGENTS.md — DaybydayCRM AI Agent Guide
 
+## Recent Updates (2026-04-11)
+
+### Critical Bug Patterns to Watch For
+
+1. **Relationship Object vs String Comparison**
+   - **Symptom:** Methods like `isClosed()` return unexpected results
+   - **Cause:** Comparing Eloquent relationship objects directly to strings
+   - **Example:** `$this->status == 'closed'` when `status` is a BelongsTo relationship
+   - **Fix:** Access relationship property: `$this->status->title == 'closed'`
+   - **Always check:** Lead, Task, Project, or any model with status_id foreign key
+
+2. **Double Division in Percentage Calculations**
+   - **Symptom:** Calculations off by factor of 100 (e.g., VAT totals)
+   - **Cause:** Converting percentage to decimal twice
+   - **Pattern:** `(value / 100) / 100` when should be just `(value / 100)`
+   - **Check:** Tax calculations, discount calculations, commission calculations
+   - **Example Found:** `Tax::integerToVatRate()` was dividing by 100 twice
+
+3. **Null Relationship Access**
+   - **Symptom:** "Call to member function on null" errors
+   - **Cause:** Accessing relationship properties without null checks
+   - **Prevention:** Always use `$this->relationship && $this->relationship->property`
+   - **Example:** `isClosed()` methods now check `$this->status` exists first
+
 ## Project Overview
 - **DaybydayCRM** is a Laravel-based CRM for managing clients, tasks, projects, invoices, and more. The architecture is modular, with clear separation between domains (Clients, Projects, Tasks, Invoices, Integrations).
 - **Key Directories:**
