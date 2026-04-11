@@ -29,6 +29,10 @@ class InvoiceCalculatorTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Ensure Setting exists with VAT = 0 for consistent test behavior
+        \App\Models\Setting::factory()->create(['vat' => 0]);
+        
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
         ]);

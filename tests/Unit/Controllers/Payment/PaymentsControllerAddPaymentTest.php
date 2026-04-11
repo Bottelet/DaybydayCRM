@@ -88,7 +88,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 50,
+            'amount' => 5000,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
