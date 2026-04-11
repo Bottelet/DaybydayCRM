@@ -171,35 +171,27 @@ abstract class AbstractTestCase extends BaseTestCase
      * @param  array|string  $permissions
      * @return $this
      */
-public function withPermissions(array|PermissionName $permissions)
+public function withPermissions(array|PermissionName $permissions): self
 {
     $permissions = is_array($permissions) ? $permissions : [$permissions];
 
     foreach ($permissions as $permission) {
-        // Use ->value to satisfy Entrust's string requirement
         $name = $permission instanceof PermissionName ? $permission->value : $permission;
-        
-        Permission::firstOrCreate(['name' => $name]);
-        // ... rest of your attachment logic
-        /*
-            $permission = Permission::firstOrCreate(
-                ['name' => $permissionName],
-                [
-                    'display_name' => ucfirst(str_replace('-', ' ', $permissionName)),
-                    'description' => ucfirst(str_replace('-', ' ', $permissionName)).' permission',
-                ]
-            );
+        $label = $permission instanceof PermissionName ? $permission->label() : $name;
 
-            // Attach permission to user's first role
-            if ($this->user->roles->isNotEmpty()) {
-                $role = $this->user->roles->first();
-                if (! $role->hasPermission($permissionName)) {
-                    $role->attachPermission($permission);
-                }
+        $p = Permission::firstOrCreate(
+            ['name' => $name],
+            ['display_name' => $label, 'description' => "$label permission"]
+        );
+
+        if ($this->user->roles->isNotEmpty()) {
+            $role = $this->user->roles->first();
+            if (!$role->hasPermission($name)) {
+                $role->attachPermission($p);
             }
-        */
+        }
     }
-    
+
     Cache::tags('role_user')->flush();
     $this->actingAs($this->user->fresh()); 
     return $this;
