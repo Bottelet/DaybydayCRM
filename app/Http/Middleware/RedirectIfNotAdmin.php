@@ -19,6 +19,12 @@ class RedirectIfNotAdmin
         if ($user && ($user->hasRole('administrator') || $user->hasRole('owner'))) {
             return $next($request);
         }
+        
+        // For JSON/API requests, return 403 instead of redirecting
+        if ($request->expectsJson()) {
+            abort(403, __('Only Allowed for admins'));
+        }
+        
         session()->flash('flash_message_warning', __('Only Allowed for admins'));
 
         return redirect()->back();

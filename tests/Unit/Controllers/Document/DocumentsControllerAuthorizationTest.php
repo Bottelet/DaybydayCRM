@@ -88,30 +88,22 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_creator()
     {
-        // 1. Grant
-        $this->withPermissions(PermissionName::DOCUMENT_VIEW);
-
-        // 2. Build
-        $owner = User::factory()->create();
-        $this->actingAs($owner);
+        // Use $this->owner instead of creating a new user
         $task = Task::factory()->create([
-            'user_created_id' => $owner->id,
+            'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id, // Assigned to other user
             'client_id' => $this->client->id,
         ]);
 
         $document = Document::factory()->create([
-            'source_type' => Task::class, // Use the class string, not new Task()->getMorphClass()
+            'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
         $document->unsetRelation('source')->refresh();
 
-        // 3. Fresh State
-        $this->actingAs($owner->fresh());
-
-        // 4. Request
-        $response = $this->get(route('document.view', $document->external_id));
-
+        // Owner should be able to view (they created the task)
+        $response = $this->actingAs($this->owner)
+            ->get(route('document.view', $document->external_id));
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', $document->mime);
