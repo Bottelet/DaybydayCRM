@@ -158,7 +158,7 @@ class ClientsControllerTest extends AbstractTestCase
         // Create initial user for the client
         $initialUser = User::factory()->create();
         $client = Client::factory()->create(['user_id' => $initialUser->id]);
-        
+
         // Create target user to assign
         $targetUser = User::factory()->create();
 

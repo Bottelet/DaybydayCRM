@@ -32,11 +32,11 @@ class DeleteProjectControllerTest extends AbstractTestCase
         $permission = Permission::firstOrCreate(['name' => 'project-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
-        
+
         // Explicitly clear both permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
-        
+
         $this->actingAs($this->user);
 
         $this->project = Project::factory()->create();
@@ -50,7 +50,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     public function delete_project()
     {
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
-        
+
         $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
@@ -65,7 +65,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
             'delete_tasks' => 'on',
         ]);
-        
+
         $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
@@ -80,7 +80,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
         ]);
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
-        
+
         $response->assertStatus(200);
 
         $this->assertNull($this->task->refresh()->deleted_at);
@@ -95,7 +95,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     {
         $project = Project::factory()->create();
         $response = $this->json('DELETE', route('projects.destroy', $project->external_id));
-        
+
         $response->assertStatus(200);
         $this->assertnotNull($project->refresh()->deleted_at);
     }

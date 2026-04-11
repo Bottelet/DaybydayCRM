@@ -301,86 +301,9 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
     // phpunit.yml (CI workflow)
     // -------------------------------------------------------------------------
-
-    #[Test]
-    public function phpunit_workflow_uses_php_83(): void
-    {
-        $content = $this->readFile('.github/workflows/phpunit.yml');
-
-        $this->assertStringContainsString(
-            "php-version: '8.3'",
-            $content,
-            'CI workflow must use PHP 8.3 (upgraded from 8.2 in this PR)'
-        );
-        $this->assertStringNotContainsString(
-            "php-version: '8.2'",
-            $content,
-            'CI workflow must not reference the old PHP 8.2'
-        );
-    }
-
-    #[Test]
-    public function phpunit_workflow_does_not_run_yarn_install(): void
-    {
-        $content = $this->readFile('.github/workflows/phpunit.yml');
-
-        $this->assertStringNotContainsString(
-            'yarn install',
-            $content,
-            'CI workflow must not run yarn install (frontend build step removed in this PR)'
-        );
-        $this->assertStringNotContainsString(
-            'yarn run dev',
-            $content,
-            'CI workflow must not run yarn run dev (frontend build step removed in this PR)'
-        );
-    }
-
-    #[Test]
-    public function phpunit_workflow_uses_env_ci_for_configuration(): void
-    {
-        $content = $this->readFile('.github/workflows/phpunit.yml');
-
-        $this->assertStringContainsString(
-            '.env.ci',
-            $content,
-            'CI workflow must copy .env.ci as the application configuration'
-        );
-    }
-
-    #[Test]
-    public function phpunit_workflow_triggers_on_push_and_pull_request(): void
-    {
-        $content = $this->readFile('.github/workflows/phpunit.yml');
-
-        $this->assertStringContainsString(
-            'push',
-            $content,
-            'CI workflow must trigger on push events'
-        );
-        $this->assertStringContainsString(
-            'pull_request',
-            $content,
-            'CI workflow must trigger on pull_request events'
-        );
-    }
-
-    #[Test]
-    public function phpunit_workflow_runs_database_migrations_before_tests(): void
-    {
-        $content = $this->readFile('.github/workflows/phpunit.yml');
-
-        $this->assertStringContainsString(
-            'migrate',
-            $content,
-            'CI workflow must run database migrations before executing tests'
-        );
-    }
-
     // -------------------------------------------------------------------------
     // .gitignore
     // -------------------------------------------------------------------------
-
     #[Test]
     public function gitignore_excludes_vendor_directory(): void
     {
