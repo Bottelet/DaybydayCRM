@@ -14,7 +14,11 @@ class UpdateProjectAssignRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::PROJECT_UPDATE_ASSIGNMENT->value);
+        $user = auth()->user();
+        if ($user === null) {
+            return false;
+        }
+        return $user->can('can-assign-new-user-to-project');
     }
 
     /**

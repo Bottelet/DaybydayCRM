@@ -92,20 +92,31 @@ class LeadsController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
+        $client = null;
         if ($request->validated()['client_external_id']) {
             $client = Client::whereExternalId($request->validated()['client_external_id'])->first();
         }
 
+        $validated = $request->validated();
+        $deadline = $validated['deadline'];
+
+        // Only append contact_time if it exists in validated data
+        if (isset($validated['contact_time'])) {
+            $deadline .= ' ' . $validated['contact_time'] . ':00';
+        } else {
+            $deadline .= ' 00:00:00';
+        }
+
         $lead = Lead::create(
             [
-                'title' => $request->validated()['title'],
-                'description' => clean($request->validated()['description']),
-                'user_assigned_id' => $request->validated()['user_assigned_id'],
-                'deadline' => \Illuminate\Support\Carbon::parse($request->validated()['deadline'].' '.$request->validated()['contact_time'].':00'),
-                'status_id' => $request->validated()['status_id'],
+                'title' => $validated['title'],
+                'description' => clean($validated['description']),
+                'user_assigned_id' => $validated['user_assigned_id'],
+                'deadline' => \Illuminate\Support\Carbon::parse($deadline),
+                'status_id' => $validated['status_id'],
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client->id,
+                'client_id' => $client ? $client->id : null,
             ]
         );
 

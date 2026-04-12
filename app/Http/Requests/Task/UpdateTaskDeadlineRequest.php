@@ -14,7 +14,11 @@ class UpdateTaskDeadlineRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::TASK_UPDATE_DEADLINE->value);
+        $user = auth()->user();
+        if ($user === null) {
+            return false;
+        }
+        return $user->can(PermissionName::TASK_UPDATE_DEADLINE->value);
     }
 
     /**
@@ -25,7 +29,8 @@ class UpdateTaskDeadlineRequest extends FormRequest
     public function rules()
     {
         return [
-            'deadline' => 'required|date',
+            'deadline_date' => 'required|date',
+            'deadline_time' => 'nullable|string',
         ];
     }
 }

@@ -27,8 +27,8 @@ class UpdateTaskStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'status_id' => 'sometimes|required|integer|exists:statuses,id',
-            'statusExternalId' => 'sometimes|required|string|exists:statuses,external_id',
+            'status_id' => 'required_without:statusExternalId|integer|exists:statuses,id',
+            'statusExternalId' => 'required_without:status_id|string|exists:statuses,external_id',
         ];
     }
 
@@ -42,15 +42,17 @@ class UpdateTaskStatusRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $statusId = $this->status_id;
-            
+
             // Convert external ID to ID if provided
             if ($this->statusExternalId && !$statusId) {
                 $status = Status::whereExternalId($this->statusExternalId)->first();
                 if ($status) {
                     $statusId = $status->id;
+                    // Merge resolved status_id back into request
+                    $this->merge(['status_id' => $statusId]);
                 }
             }
-            
+
             // Validate status belongs to Task
             if ($statusId) {
                 $validStatus = Status::typeOfTask()->where('id', $statusId)->exists();

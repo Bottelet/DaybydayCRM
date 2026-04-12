@@ -228,7 +228,7 @@ See **[.github/refactor.md](.github/refactor.md)** for complete details.
 
 ### High Priority (Security & Stability)
 1. **Missing FormRequests** (15 controllers, 8 hours)
-   - Prevent SQL injection and data integrity issues
+   - FormRequest validates and sanitizes input but does not by itself prevent SQL injection; use parameterized queries/prepared statements (or ORM/query builder bindings), proper escaping, and model mass-assignment protection alongside FormRequest validation to mitigate injection risks
    - Controllers: Leads, Tasks, Projects, Roles, Comments
 
 2. **Response Handling Standardization** (10 controllers, 8 hours)

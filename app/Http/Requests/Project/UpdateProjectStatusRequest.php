@@ -16,7 +16,11 @@ class UpdateProjectStatusRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::PROJECT_UPDATE_STATUS->value);
+        $user = auth()->user();
+        if ($user === null) {
+            return false;
+        }
+        return $user->can(PermissionName::PROJECT_UPDATE_STATUS->value);
     }
 
     /**
@@ -27,8 +31,8 @@ class UpdateProjectStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'status_id' => 'sometimes|required|integer|exists:statuses,id',
-            'statusExternalId' => 'sometimes|required|string|exists:statuses,external_id',
+            'status_id' => 'sometimes|integer|exists:statuses,id|required_without:statusExternalId',
+            'statusExternalId' => 'sometimes|string|exists:statuses,external_id|required_without:status_id',
         ];
     }
 
@@ -42,15 +46,17 @@ class UpdateProjectStatusRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $statusId = $this->status_id;
-            
+
             // Convert external ID to ID if provided
             if ($this->statusExternalId && !$statusId) {
                 $status = Status::whereExternalId($this->statusExternalId)->first();
                 if ($status) {
                     $statusId = $status->id;
+                    // Merge resolved status_id back into request
+                    $this->merge(['status_id' => $statusId]);
                 }
             }
-            
+
             // Validate status belongs to Project
             if ($statusId) {
                 $validStatus = Status::typeOfProject()->where('id', $statusId)->exists();
