@@ -23,7 +23,9 @@ class InvoiceNumberService
     {
         $currentNumber = $this->nextInvoiceNumber();
         if ($this->lockedSetting) {
-            $this->increaseInvoiceNumber();
+            // Set the setting to current + 1 so next call gets the right number
+            $this->lockedSetting->invoice_number = $currentNumber + 1;
+            $this->lockedSetting->save();
         }
 
         return $currentNumber;
@@ -43,11 +45,14 @@ class InvoiceNumberService
     public function nextInvoiceNumber()
     {
         $setting = $this->setting->first();
-        if (! $setting) {
-            return 1;
-        }
-
-        return $setting->invoice_number;
+        $settingNumber = $setting ? $setting->invoice_number : 1;
+        
+        // Also check the maximum invoice number from existing invoices
+        // Add 1 to get the next available number
+        $maxInvoiceNumber = (\App\Models\Invoice::max('invoice_number') ?? 0) + 1;
+        
+        // Return the higher of the two to ensure we don't reuse numbers
+        return max($settingNumber, $maxInvoiceNumber);
     }
 
     private function increaseInvoiceNumber()
