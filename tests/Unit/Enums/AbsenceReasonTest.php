@@ -27,7 +27,7 @@ class AbsenceReasonTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function getting_reason_returns_instance_of_absence_reason()
@@ -269,9 +269,9 @@ class AbsenceReasonTest extends AbstractTestCase
         $this->assertNotEquals($timeOff->getDisplayValue(), $timeOffInLieu->getDisplayValue());
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function constructor_accepts_null_display_value()
@@ -287,9 +287,9 @@ class AbsenceReasonTest extends AbstractTestCase
         $this->assertEquals('custom_reason', $reason->getReason());
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function throws_exception_if_reason_is_not_known()
@@ -346,5 +346,5 @@ class AbsenceReasonTest extends AbstractTestCase
         AbsenceReason::fromDisplayValue($partialMatch);
     }
 
-    // endregion
+    # endregion
 }

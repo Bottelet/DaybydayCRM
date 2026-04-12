@@ -36,7 +36,7 @@ class RemoveReferenceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function remove_reference_clears_integration_fields()
@@ -54,9 +54,9 @@ class RemoveReferenceTest extends AbstractTestCase
         $this->assertNull($this->invoice->integration_type);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function remove_reference_on_invoice_with_project_reference()
@@ -110,5 +110,5 @@ class RemoveReferenceTest extends AbstractTestCase
         $this->assertNull($freshInvoice->integration_type);
     }
 
-    // endregion
+    # endregion
 }

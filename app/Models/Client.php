@@ -59,7 +59,7 @@ class Client extends Model
         return $this->company_name;
     }
 
-    // region Relationships
+    # region Relationships
 
     public function appointments()
     {
@@ -108,7 +108,7 @@ class Client extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    // endregion
+    # endregion
 
     public function getPrimaryContactAttribute()
     {

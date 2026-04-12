@@ -25,7 +25,7 @@ class DepartmentsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region crud
+    # region crud
 
     #[Test]
     public function can_create_department()
@@ -58,9 +58,9 @@ class DepartmentsControllerTest extends AbstractTestCase
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function cant_delete_department_if_user_is_associated()
@@ -78,5 +78,5 @@ class DepartmentsControllerTest extends AbstractTestCase
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
     }
 
-    // endregion
+    # endregion
 }

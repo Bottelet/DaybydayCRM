@@ -42,7 +42,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function user_with_client_delete_permission_can_delete_client()
@@ -59,9 +59,9 @@ class ClientAuthorizationTest extends AbstractTestCase
         $this->assertSoftDeleted('clients', ['id' => $this->client->id]);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function user_without_client_delete_permission_cannot_delete_client()
@@ -77,5 +77,5 @@ class ClientAuthorizationTest extends AbstractTestCase
         $this->assertDatabaseHas('clients', ['id' => $this->client->id, 'deleted_at' => null]);
     }
 
-    // endregion
+    # endregion
 }

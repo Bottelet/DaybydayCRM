@@ -63,7 +63,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('flaky')]
@@ -210,9 +210,9 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->assertEquals('partial_paid', $this->invoice->refresh()->status);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     #[Group('flaky')]
@@ -345,5 +345,5 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->assertEquals('draft', $status);
     }
 
-    // endregion
+    # endregion
 }

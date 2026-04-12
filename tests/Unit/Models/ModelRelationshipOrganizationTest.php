@@ -57,7 +57,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region Client relationships
+    # region Client relationships
 
     #[Test]
     public function client_all_relationship_methods_exist_after_reorganization()
@@ -109,9 +109,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($this->user->id, $relatedUser->id);
     }
 
-    // endregion
+    # endregion
 
-    // region InvoiceLine relationships
+    # region InvoiceLine relationships
 
     #[Test]
     public function invoice_line_all_relationship_methods_exist_after_reorganization()
@@ -141,9 +141,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($invoice->id, $relatedInvoice->id);
     }
 
-    // endregion
+    # endregion
 
-    // region Lead relationships
+    # region Lead relationships
 
     #[Test]
     public function lead_all_relationship_methods_exist_after_reorganization()
@@ -213,9 +213,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(MorphMany::class, $commentsRelationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Offer relationships
+    # region Offer relationships
 
     #[Test]
     public function offer_all_relationship_methods_exist_after_reorganization()
@@ -283,9 +283,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(HasMany::class, $invoiceLinesRelationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Project relationships
+    # region Project relationships
 
     #[Test]
     public function project_all_relationship_methods_exist_after_reorganization()
@@ -347,9 +347,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($task->id, $tasks->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region Role relationships
+    # region Role relationships
 
     #[Test]
     public function role_all_relationship_methods_exist_after_reorganization()
@@ -375,9 +375,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Setting relationships
+    # region Setting relationships
 
     #[Test]
     public function setting_all_relationship_methods_exist_after_reorganization()
@@ -403,9 +403,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Status relationships
+    # region Status relationships
 
     #[Test]
     public function status_all_relationship_methods_exist_after_reorganization()
@@ -464,9 +464,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(HasMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Task relationships
+    # region Task relationships
 
     #[Test]
     public function task_all_relationship_methods_exist_after_reorganization()
@@ -519,9 +519,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($this->user->id, $creator->id);
     }
 
-    // endregion
+    # endregion
 
-    // region User relationships
+    # region User relationships
 
     #[Test]
     public function user_all_relationship_methods_exist_after_reorganization()
@@ -579,9 +579,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($lead->id, $leads->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region PermissionRole relationships
+    # region PermissionRole relationships
 
     #[Test]
     public function permission_role_all_relationship_methods_exist_after_reorganization()
@@ -618,5 +618,5 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 }

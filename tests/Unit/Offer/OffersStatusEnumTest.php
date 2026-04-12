@@ -22,7 +22,7 @@ class OffersStatusEnumTest extends AbstractTestCase
         $this->offerStatus = OfferStatus::won()->getStatus();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function getting_source_returns_instance_of_offer_status()
@@ -91,9 +91,9 @@ class OffersStatusEnumTest extends AbstractTestCase
         $this->assertEquals(OfferStatus::won()->getStatus(), $status);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function throws_exception_if_source_is_not_known()
@@ -117,5 +117,5 @@ class OffersStatusEnumTest extends AbstractTestCase
         OfferStatus::fromDisplayValue('None existing display value');
     }
 
-    // endregion
+    # endregion
 }

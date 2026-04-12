@@ -41,7 +41,7 @@ class InvoiceLine extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    // region Relationships
+    # region Relationships
 
     public function invoice()
     {
@@ -53,7 +53,7 @@ class InvoiceLine extends Model
         return $this->belongsTo(Task::class);
     }
 
-    // endregion
+    # endregion
 
     public function task()
     {

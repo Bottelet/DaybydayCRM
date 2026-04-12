@@ -32,7 +32,7 @@ class AppointmentModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function appointment_stores_explicit_external_id_when_provided()
@@ -115,9 +115,9 @@ class AppointmentModelBootTest extends AbstractTestCase
         ]);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function appointment_preserves_provided_external_id()
@@ -141,5 +141,5 @@ class AppointmentModelBootTest extends AbstractTestCase
         $this->assertEquals($customExternalId, $appointment->external_id);
     }
 
-    // endregion
+    # endregion
 }

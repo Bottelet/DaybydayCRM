@@ -26,7 +26,7 @@ class CountryTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function from_code_returns_correct_country_instance()
@@ -260,9 +260,9 @@ class CountryTest extends AbstractTestCase
         $this->assertEquals('Other', $country->getDisplayValue());
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function from_code_returns_fallback_to_other_for_unknown_code()
@@ -307,5 +307,5 @@ class CountryTest extends AbstractTestCase
         $this->assertEquals('+44', $country->getPhoneCode());
     }
 
-    // endregion
+    # endregion
 }

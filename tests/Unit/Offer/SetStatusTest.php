@@ -20,7 +20,7 @@ class SetStatusTest extends AbstractTestCase
         $this->offer = Offer::factory()->create();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function set_offer_as_won()
@@ -48,5 +48,5 @@ class SetStatusTest extends AbstractTestCase
         $this->assertEquals('lost', $this->offer->status);
     }
 
-    // endregion
+    # endregion
 }

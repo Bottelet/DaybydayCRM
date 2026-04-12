@@ -30,7 +30,7 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function appointments_controller_does_not_have_store_method()
@@ -148,5 +148,5 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         }
     }
 
-    // endregion
+    # endregion
 }

@@ -63,7 +63,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('flaky')]
@@ -79,9 +79,9 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $this->assertEquals(4000, $amountDue);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function get_amount_due_with_no_payments()
@@ -147,5 +147,5 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $this->assertEquals(0, $amountDue);
     }
 
-    // endregion
+    # endregion
 }

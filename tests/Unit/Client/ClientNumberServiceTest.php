@@ -49,7 +49,7 @@ class ClientNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function set_next_client_number_takes_biggest_client_number_and_add_one()
@@ -95,9 +95,9 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertEquals(20000, $result);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function set_client_number_to_zero_starts_incrementing_sequence()
@@ -146,9 +146,9 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertEquals(1, $secondNumber);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function set_negative_client_number_allows_negative_sequence()
@@ -172,5 +172,5 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertLessThan(0, $firstNumber, 'Negative client numbers should not be allowed');
     }
 
-    // endregion
+    # endregion
 }

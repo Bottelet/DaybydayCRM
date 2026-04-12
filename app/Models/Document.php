@@ -21,7 +21,7 @@ class Document extends Model
         // HasExternalId trait handles external_id generation
     }
 
-    // region Relationships
+    # region Relationships
 
     public function client()
     {
@@ -33,5 +33,5 @@ class Document extends Model
         return $this->morphTo();
     }
 
-    // endregion
+    # endregion
 }

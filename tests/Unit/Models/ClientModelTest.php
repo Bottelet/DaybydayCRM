@@ -27,7 +27,7 @@ class ClientModelTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function get_primary_contact_attribute_returns_primary_contact_when_one_exists()
@@ -98,9 +98,9 @@ class ClientModelTest extends AbstractTestCase
         $this->assertEquals($primaryContact->id, $freshResult->id);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function get_primary_contact_attribute_returns_null_when_no_contacts_exist()
@@ -149,5 +149,5 @@ class ClientModelTest extends AbstractTestCase
         $this->assertNull($result);
     }
 
-    // endregion
+    # endregion
 }

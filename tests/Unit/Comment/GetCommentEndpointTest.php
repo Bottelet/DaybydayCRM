@@ -31,7 +31,7 @@ class GetCommentEndpointTest extends AbstractTestCase
         $this->project = Project::factory()->create();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function get_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
@@ -50,5 +50,5 @@ class GetCommentEndpointTest extends AbstractTestCase
         $this->assertEquals(url('comments/project/'.$this->project->external_id), $projectEndpoint);
     }
 
-    // endregion
+    # endregion
 }

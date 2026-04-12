@@ -39,7 +39,7 @@ class DueAtTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function get_invoice_past_due_at()
@@ -55,9 +55,9 @@ class DueAtTest extends AbstractTestCase
         $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function dont_get_invoice_if_due_at_is_null()
@@ -152,5 +152,5 @@ class DueAtTest extends AbstractTestCase
         $this->assertCount(0, $invoices);
     }
 
-    // endregion
+    # endregion
 }

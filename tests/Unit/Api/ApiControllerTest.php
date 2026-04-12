@@ -21,7 +21,7 @@ class ApiControllerTest extends AbstractTestCase
         $this->controller = new ConcreteApiController();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function respond_returns_json_response_with_data()
@@ -239,9 +239,9 @@ class ApiControllerTest extends AbstractTestCase
         $this->assertInstanceOf(Controller::class, $this->controller);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function respond_error_includes_status_code_in_error_body()
@@ -316,5 +316,5 @@ class ApiControllerTest extends AbstractTestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    // endregion
+    # endregion
 }

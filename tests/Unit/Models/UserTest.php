@@ -27,7 +27,7 @@ class UserTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function user_has_many_appointments()
@@ -48,5 +48,5 @@ class UserTest extends AbstractTestCase
         $this->assertEquals($appointment->id, $user->appointments->first()->id);
     }
 
-    // endregion
+    # endregion
 }
