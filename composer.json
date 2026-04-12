@@ -18,6 +18,7 @@
     "type": "project",
     "require": {
         "php": "^8.3",
+<<<<<<< HEAD
         "aws/aws-sdk-php": ">=3.378.2",
         "elasticsearch/elasticsearch": ">=9.3",
         "google/apiclient": ">=2.19.2",
@@ -32,6 +33,24 @@
         "ramsey/uuid": ">=4.9.2",
         "spatie/dropbox-api": ">=1.24",
         "yajra/laravel-datatables-oracle": ">=12.7"
+=======
+        "aws/aws-sdk-php": "^3.112",
+        "elasticsearch/elasticsearch": "^8.15.0",
+        "google/apiclient": "^2.2",
+        "laravel/cashier": "*",
+        "laravel/framework": "^11.0",
+        "laravel/helpers": "^1.1",
+        "laravel/legacy-factories": "^1.4",
+        "laravel/ui": "^v4.5.2",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "mews/purifier": "^3.1",
+        "predis/predis": "^v2.2.2",
+        "ramsey/uuid": "^4.7.6",
+        "spatie/dropbox-api": "^1.19",
+        "symfony/http-client": "^7.4",
+        "symfony/mailgun-mailer": "^7.4",
+        "yajra/laravel-datatables-oracle": "^v11.1.5"
+>>>>>>> d4e61e3 (Update dependencies in composer.json)
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": ">=4.2.6",
