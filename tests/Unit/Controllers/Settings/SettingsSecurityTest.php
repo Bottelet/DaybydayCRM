@@ -33,7 +33,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function admin_can_access_settings_index()
+    public function it_admin_can_access_settings_index()
     {
         $response = $this->json('GET', route('settings.index'));
 
@@ -41,7 +41,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function non_admin_cannot_access_settings_index()
+    public function it_non_admin_cannot_access_settings_index()
     {
         $this->actingAs($this->nonAdminUser);
 
@@ -51,7 +51,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function admin_can_update_overall_settings()
+    public function it_admin_can_update_overall_settings()
     {
         $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Test Company',
@@ -68,7 +68,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function non_admin_cannot_update_overall_settings()
+    public function it_non_admin_cannot_update_overall_settings()
     {
         $this->actingAs($this->nonAdminUser);
 
@@ -87,7 +87,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function admin_can_update_first_step_settings()
+    public function it_admin_can_update_first_step_settings()
     {
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Test Company',
@@ -100,7 +100,7 @@ class SettingsSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function non_admin_cannot_update_first_step_settings()
+    public function it_non_admin_cannot_update_first_step_settings()
     {
         $this->actingAs($this->nonAdminUser);
 

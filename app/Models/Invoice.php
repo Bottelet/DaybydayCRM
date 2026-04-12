@@ -47,9 +47,16 @@ class Invoice extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
+    // region Relationships
+
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
     }
 
     public function invoiceLines()
@@ -62,20 +69,17 @@ class Invoice extends Model
         return $this->belongsTo(Offer::class);
     }
 
-    public function source()
-    {
-        return $this->morphTo('source');
-    }
-
     public function payments()
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
     }
 
-    public function creator()
+    public function source()
     {
-        return $this->belongsTo(User::class, 'user_created_id');
+        return $this->morphTo('source');
     }
+
+    // endregion
 
     public function canUpdateInvoice()
     {

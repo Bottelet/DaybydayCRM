@@ -35,13 +35,17 @@ class Payment extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    public function getPriceAttribute()
-    {
-        return app(Money::class, ['amount' => $this->amount]);
-    }
+    // region Relationships
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    // endregion
+
+    public function getPriceAttribute()
+    {
+        return app(Money::class, ['amount' => $this->amount]);
     }
 }

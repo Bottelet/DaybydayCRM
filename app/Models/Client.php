@@ -59,15 +59,26 @@ class Client extends Model
         return $this->company_name;
     }
 
-    public function user()
+    // region Relationships
+
+    public function appointments()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->hasMany(Appointment::class);
     }
 
-    public function tasks()
+    public function contacts()
     {
-        return $this->hasMany(Task::class, 'client_id', 'id')
-            ->orderBy('created_at', 'desc');
+        return $this->hasMany(Contact::class);
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function leads()
@@ -76,9 +87,9 @@ class Client extends Model
             ->orderBy('created_at', 'desc');
     }
 
-    public function documents()
+    public function primaryContact()
     {
-        return $this->morphMany(Document::class, 'source');
+        return $this->hasOne(Contact::class)->whereIsPrimary(true);
     }
 
     public function projects()
@@ -86,25 +97,18 @@ class Client extends Model
         return $this->hasMany(Project::class);
     }
 
-    public function invoices()
+    public function tasks()
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasMany(Task::class, 'client_id', 'id')
+            ->orderBy('created_at', 'desc');
     }
 
-    public function contacts()
+    public function user()
     {
-        return $this->hasMany(Contact::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class);
-    }
-
-    public function primaryContact()
-    {
-        return $this->hasOne(Contact::class)->whereIsPrimary(true);
-    }
+    // endregion
 
     public function getPrimaryContactAttribute()
     {

@@ -54,14 +54,11 @@ class Project extends Model implements Commentable
         return $this->title;
     }
 
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
+    // region Relationships
 
-    public function creator()
+    public function activity()
     {
-        return $this->belongsTo(User::class, 'user_created_id');
+        return $this->morphMany(Activity::class, 'source');
     }
 
     public function assignee()
@@ -69,9 +66,19 @@ class Project extends Model implements Commentable
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
-    public function user()
+    public function client()
     {
-        return $this->belongsTo(User::class, 'user_assigned_id');
+        return $this->belongsTo(Client::class);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'source');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
     }
 
     public function documents()
@@ -79,14 +86,14 @@ class Project extends Model implements Commentable
         return $this->morphMany(Document::class, 'source');
     }
 
-    public function client()
-    {
-        return $this->belongsTo(Client::class);
-    }
-
     public function lead()
     {
         return $this->belongsTo(Lead::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
     }
 
     public function tasks()
@@ -94,20 +101,17 @@ class Project extends Model implements Commentable
         return $this->hasMany(Task::class);
     }
 
-    public function activity()
+    public function user()
     {
-        return $this->morphMany(Activity::class, 'source');
+        return $this->belongsTo(User::class, 'user_assigned_id');
     }
+
+    // endregion
 
     public function isClosed()
     {
         // Check if status relationship exists and compare title
         return $this->status && $this->status->title == self::PROJECT_STATUS_CLOSED;
-    }
-
-    public function comments(): MorphMany
-    {
-        return $this->morphMany(Comment::class, 'source');
     }
 
     public function getCreateCommentEndpoint(): string

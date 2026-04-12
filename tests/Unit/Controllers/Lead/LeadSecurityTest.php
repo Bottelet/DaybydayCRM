@@ -43,7 +43,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_delete_lead()
+    public function it_authorized_user_can_delete_lead()
     {
         // Give user permission to delete leads
         $this->withPermissions(PermissionName::LEAD_DELETE);
@@ -55,7 +55,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_delete_lead()
+    public function it_unauthorized_user_cannot_delete_lead()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -67,7 +67,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_delete_lead_via_json()
+    public function it_unauthorized_user_cannot_delete_lead_via_json()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -78,7 +78,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_assign_only_accepts_user_assigned_id_field()
+    public function it_updates_assign_only_accepts_user_assigned_id_field()
     {
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
@@ -106,7 +106,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_only_accepts_status_id_field()
+    public function it_updates_status_only_accepts_status_id_field()
     {
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
@@ -133,7 +133,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_rejects_invalid_status_type()
+    public function it_updates_status_rejects_invalid_status_type()
     {
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
@@ -157,7 +157,7 @@ class LeadSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_rejects_nonexistent_status_id()
+    public function it_updates_status_rejects_nonexistent_status_id()
     {
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 

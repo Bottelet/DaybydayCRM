@@ -66,14 +66,16 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id';
 
-    public function tasks()
+    // region Relationships
+
+    public function absences()
     {
-        return $this->hasMany(Task::class, 'user_assigned_id', 'id');
+        return $this->hasMany(Absence::class);
     }
 
-    public function leads()
+    public function appointments()
     {
-        return $this->hasMany(Lead::class, 'user_assigned_id', 'id');
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function clients()
@@ -86,30 +88,32 @@ class User extends Authenticatable
         return $this->belongsToMany(Department::class);
     }
 
-    public function userRole()
-    {
-        return $this->hasOne(RoleUser::class, 'user_id', 'id');
-    }
-
-    public function appointments()
-    {
-        return $this->morphMany(Appointment::class, 'source');
-    }
-
-    public function absences()
-    {
-        return $this->hasMany(Absence::class);
-    }
-
     public function integrations()
     {
         return $this->hasMany(Integration::class);
     }
 
+    public function leads()
+    {
+        return $this->hasMany(Lead::class, 'user_assigned_id', 'id');
+    }
+
     public function settings()
     {
-        return $this->hasMany(Setting::class);
+        return Setting::query();
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_assigned_id', 'id');
+    }
+
+    public function userRole()
+    {
+        return $this->hasOne(RoleUser::class, 'user_id', 'id');
+    }
+
+    // endregion
 
     /*public function tokens()
     {

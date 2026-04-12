@@ -55,7 +55,7 @@ class PaymentsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_delete_payment()
+    public function it_can_delete_payment()
     {
         $this->json('delete', route('payment.destroy', $this->payment->external_id));
 

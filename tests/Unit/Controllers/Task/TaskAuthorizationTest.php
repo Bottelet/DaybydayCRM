@@ -74,7 +74,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_task_delete_permission_can_delete_task()
+    public function it_user_with_task_delete_permission_can_delete_task()
     {
         $this->actingAs($this->userWithPermission);
 
@@ -85,7 +85,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_task_delete_permission_cannot_delete_task()
+    public function it_user_without_task_delete_permission_cannot_delete_task()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -96,7 +96,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_update_project_permission_can_update_task_project()
+    public function it_user_with_update_project_permission_can_update_task_project()
     {
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
@@ -126,7 +126,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_update_project_permission_cannot_update_task_project()
+    public function it_user_without_update_project_permission_cannot_update_task_project()
     {
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
@@ -141,7 +141,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function task_update_status_only_accepts_status_id_field()
+    public function it_task_update_status_only_accepts_status_id_field()
     {
         $roleWithPermission = Role::create([
             'name' => 'status-updater',

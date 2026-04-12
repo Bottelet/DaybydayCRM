@@ -48,11 +48,18 @@ class Activity extends Model
         });
     }
 
-    /**
-     * Get the user that the activity belongs to.
-     *
-     * @return object
-     */
+    // region Relationships
+
+    public function causer(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function source()
+    {
+        return $this->morphTo();
+    }
+
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id', 'id');
@@ -63,15 +70,7 @@ class Activity extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function source()
-    {
-        return $this->morphTo();
-    }
-
-    public function causer(): MorphTo
-    {
-        return $this->morphTo();
-    }
+    // endregion
 
     public function getExtraProperty(string $propertyName)
     {

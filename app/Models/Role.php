@@ -22,15 +22,19 @@ class Role extends EntrustRole
         'external_id',
     ];
 
-    public function userRole()
-    {
-        return $this->hasMany(Role::class, 'user_id', 'id');
-    }
+    // region Relationships
 
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
     }
+
+    public function userRole()
+    {
+        return $this->hasMany(Role::class, 'user_id', 'id');
+    }
+
+    // endregion
 
     public function canBeDeleted()
     {

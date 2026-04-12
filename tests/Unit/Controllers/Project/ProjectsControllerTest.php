@@ -71,7 +71,7 @@ class ProjectsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_assignee()
+    public function it_can_update_assignee()
     {
         $project = Project::factory()->create();
         $this->assertNotEquals($project->user_assigned_id, $this->user->id);
@@ -109,7 +109,7 @@ class ProjectsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_status()
+    public function it_can_update_status()
     {
         $project = Project::factory()->create();
         $status = Status::factory()->create(['source_type' => Project::class]);
@@ -144,7 +144,7 @@ class ProjectsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_deadline_for_project()
+    public function it_can_update_deadline_for_project()
     {
         $this->withoutExceptionHandling();
 

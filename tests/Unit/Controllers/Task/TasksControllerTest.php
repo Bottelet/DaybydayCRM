@@ -59,7 +59,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_project_on_task()
+    public function it_can_add_project_on_task()
     {
         // Ensure user has permission to update task project
         $permission = Permission::firstOrCreate(['name' => 'task-update-linked-project']);
@@ -80,7 +80,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_assignee()
+    public function it_can_update_assignee()
     {
         // Ensure user has permission to assign tasks
         $permission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-task']);
@@ -100,7 +100,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_status()
+    public function it_can_update_status()
     {
         $task = Task::factory()->create();
         $status = Status::factory()->create(['source_type' => Task::class]);
@@ -122,7 +122,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_deadline_for_task()
+    public function it_can_update_deadline_for_task()
     {
         $task = Task::factory()->create();
 
@@ -142,7 +142,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_list_tasks()
+    public function it_can_list_tasks()
     {
         Task::factory()->create();
 

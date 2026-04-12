@@ -15,7 +15,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test user can access customer thorugh index page.
      */
-    public function test_user_can_see_clients_on_client_index_and_go_to_the_customer_with_link()
+    public function it_user_can_see_clients_on_client_index_and_go_to_the_customer_with_link()
     {
         $client = Client::factory()->create();
 
@@ -40,7 +40,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct information on customer page
      */
-    public function test_i_can_see_all_customer_values_on_show_page()
+    public function it_i_can_see_all_customer_values_on_show_page()
     {
         $client = Client::factory()->create();
         $this->browse(function (Browser $browser) use ($client) {
@@ -60,7 +60,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct relations for customer, and not the wrong ones
      */
-    public function test_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
+    public function it_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -91,7 +91,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can assign a new user to client, and see the correct user info after new user is assigned
      */
-    public function test_i_can_assign_a_new_user_to_customer()
+    public function it_i_can_assign_a_new_user_to_customer()
     {
         $client = Client::factory()->create();
         $user = User::factory()->create();
@@ -111,7 +111,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can create a new customer
      */
-    public function test_i_can_create_a_new_customer()
+    public function it_i_can_create_a_new_customer()
     {
         $faker = Faker::create();
         $this->browse(function (Browser $browser) use ($faker) {
@@ -136,7 +136,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test creating a new customer will fail if all values are not given
      */
-    public function test_i_cant_create_a_new_customer_without_name_company_and_email()
+    public function it_i_cant_create_a_new_customer_without_name_company_and_email()
     {
         $faker = Faker::create();
         $this->browse(function (Browser $browser) use ($faker) {
@@ -157,7 +157,7 @@ class ClientTest extends DuskTestCase
     /**
      * Test i can see all the correct information on customer page
      */
-    public function test_i_can_update_an_existing_client()
+    public function it_i_can_update_an_existing_client()
     {
         $faker = Faker::create();
         $client = Client::factory()->create();

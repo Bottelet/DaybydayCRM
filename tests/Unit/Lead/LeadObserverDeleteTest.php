@@ -34,7 +34,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_leads_soft_deletes()
+    public function it_deletes_leads_soft_deletes()
     {
         $this->lead->delete();
 
@@ -42,7 +42,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_leadsoft_deletes_relations()
+    public function it_deletes_leadsoft_deletes_relations()
     {
         $this->assertNotEmpty($this->lead->comments);
         $this->assertNotEmpty($this->lead->activity);
@@ -62,7 +62,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_lead_from_database()
+    public function it_force_delete_removes_lead_from_database()
     {
         $leadId = $this->lead->id;
 
@@ -75,7 +75,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_relations_from_database()
+    public function it_force_delete_removes_relations_from_database()
     {
         $commentId = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
@@ -96,7 +96,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function offer_is_not_deleted_by_observer()
+    public function it_offer_is_not_deleted_by_observer()
     {
         $offer = Offer::factory()->create([
             'source_id' => $this->lead->id,

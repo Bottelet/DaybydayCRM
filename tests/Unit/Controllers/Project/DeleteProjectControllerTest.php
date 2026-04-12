@@ -48,7 +48,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_project()
+    public function it_deletes_project()
     {
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
@@ -57,7 +57,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_tasks_if_flag_given()
+    public function it_deletes_tasks_if_flag_given()
     {
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
@@ -74,7 +74,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function remove_project_id_from_task_if_flag_not_given()
+    public function it_removes_project_id_from_task_if_flag_not_given()
     {
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
@@ -92,7 +92,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_delete_project_if_there_is_no_tasks()
+    public function it_can_delete_project_if_there_is_no_tasks()
     {
         $project = Project::factory()->create();
         $response = $this->json('DELETE', route('projects.destroy', $project->external_id));

@@ -19,9 +19,8 @@ class Comment extends Model
 
     protected $hidden = ['remember_token'];
 
-    /**
-     * Get all of the owning commentable models.
-     */
+    // region Relationships
+
     public function commentable()
     {
         return $this->morphTo('source');
@@ -36,6 +35,8 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    // endregion
 
     public function mentionedUsers()
     {

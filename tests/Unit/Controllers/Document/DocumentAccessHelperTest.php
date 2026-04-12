@@ -35,7 +35,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
     }
 
     #[Test]
-    public function helper_method_correctly_identifies_ownership_via_creator()
+    public function it_helper_method_correctly_identifies_ownership_via_creator()
     {
         $task = Task::factory()->create([
             'user_created_id' => $this->owner->id,
@@ -64,7 +64,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
     }
 
     #[Test]
-    public function helper_method_correctly_identifies_ownership_via_assignee()
+    public function it_helper_method_correctly_identifies_ownership_via_assignee()
     {
         $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
@@ -84,7 +84,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
     }
 
     #[Test]
-    public function helper_method_correctly_identifies_ownership_via_client()
+    public function it_helper_method_correctly_identifies_ownership_via_client()
     {
         $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
@@ -107,7 +107,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
     }
 
     #[Test]
-    public function helper_method_correctly_denies_access_to_non_owner()
+    public function it_helper_method_correctly_denies_access_to_non_owner()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
         $task = Task::factory()->create([

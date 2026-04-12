@@ -8,7 +8,7 @@ use Tests\DuskTestCase;
 
 class AppointmentTest extends DuskTestCase
 {
-    public function test_icancreatean_appointment_in_calendar()
+    public function it_icancreatean_appointment_in_calendar()
     {
         $title = 'new appointment test '.uniqid();
         $this->browse(function (Browser $browser) use ($title) {

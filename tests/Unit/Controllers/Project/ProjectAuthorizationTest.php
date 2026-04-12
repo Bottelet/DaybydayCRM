@@ -70,7 +70,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_project_delete_permission_can_delete_project()
+    public function it_user_with_project_delete_permission_can_delete_project()
     {
         $this->actingAs($this->userWithPermission);
 
@@ -85,7 +85,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_project_delete_permission_cannot_delete_project()
+    public function it_user_without_project_delete_permission_cannot_delete_project()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -96,7 +96,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_assign_permission_can_update_project_assignment()
+    public function it_user_with_assign_permission_can_update_project_assignment()
     {
         $roleWithPermission = Role::create([
             'name' => 'project-assigner',
@@ -127,7 +127,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_assign_permission_cannot_update_project_assignment()
+    public function it_user_without_assign_permission_cannot_update_project_assignment()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -144,7 +144,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function project_update_status_only_accepts_status_id_field()
+    public function it_project_update_status_only_accepts_status_id_field()
     {
         $roleWithPermission = Role::create([
             'name' => 'status-updater',

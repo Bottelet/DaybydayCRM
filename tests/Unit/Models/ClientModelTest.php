@@ -4,42 +4,35 @@ namespace Tests\Unit\Models;
 
 use App\Models\Client;
 use App\Models\Contact;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ClientModelTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    #[Test]
-    public function get_primary_contact_attribute_returns_null_when_no_contacts_exist()
+    protected function setUp(): void
     {
-        $client = Client::factory()->create();
-        // Remove any contacts created by the factory afterCreating hook
-        $client->contacts()->forceDelete();
+        parent::setUp();
 
-        $this->assertNull($client->primaryContact);
+        // Freeze time for deterministic tests
+        Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
-    #[Test]
-    public function get_primary_contact_attribute_returns_null_when_no_primary_contact()
+    protected function tearDown(): void
     {
-        $client = Client::factory()->create();
-        // Remove contacts created by factory, then add one that is NOT primary
-        $client->contacts()->forceDelete();
-
-        Contact::factory()->create([
-            'client_id' => $client->id,
-            'is_primary' => false,
-        ]);
-
-        $this->assertNull($client->primaryContact);
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 
+    // region happy_path
+
     #[Test]
-    public function get_primary_contact_attribute_returns_primary_contact_when_one_exists()
+    public function it_gets_primary_contact_attribute_returns_primary_contact_when_one_exists()
     {
+        /** Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -48,16 +41,19 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => true,
         ]);
 
+        /** Act */
         $result = $client->primaryContact;
 
+        /** Assert */
         $this->assertNotNull($result);
         $this->assertInstanceOf(Contact::class, $result);
         $this->assertEquals($primaryContact->id, $result->id);
     }
 
     #[Test]
-    public function get_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
+    public function it_gets_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
     {
+        /** Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -71,16 +67,19 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => false,
         ]);
 
+        /** Act */
         $result = $client->primaryContact;
 
+        /** Assert */
         $this->assertNotNull($result);
         $this->assertEquals($primaryContact->id, $result->id);
         $this->assertTrue((bool) $result->is_primary);
     }
 
     #[Test]
-    public function primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
+    public function it_primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
     {
+        /** Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -89,25 +88,66 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => true,
         ]);
 
-        // Verify the attribute is accessible via `$client->primaryContact`
-        // (tests the getPrimaryContactAttribute method name capitalization fix)
-        $this->assertEquals($primaryContact->id, $client->primaryContact->id);
-
-        // Also verify via fresh load from DB to ensure it works consistently
+        /** Act */
+        $result = $client->primaryContact;
         $freshClient = Client::find($client->id);
-        $this->assertEquals($primaryContact->id, $freshClient->primaryContact->id);
+        $freshResult = $freshClient->primaryContact;
+
+        /** Assert */
+        $this->assertEquals($primaryContact->id, $result->id);
+        $this->assertEquals($primaryContact->id, $freshResult->id);
     }
 
+    // endregion
+
+    // region edge_cases
+
     #[Test]
-    public function get_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
+    public function it_gets_primary_contact_attribute_returns_null_when_no_contacts_exist()
     {
-        // Regression: before the fix, calling ->primaryContact on a client without
-        // contacts would throw "Attempt to read property on null"
+        /** Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
-        // Should return null, not throw an exception
-        $result = $client->fresh()->primaryContact;
+        /** Act */
+        $result = $client->primaryContact;
+
+        /** Assert */
         $this->assertNull($result);
     }
+
+    #[Test]
+    public function it_gets_primary_contact_attribute_returns_null_when_no_primary_contact()
+    {
+        /** Arrange */
+        $client = Client::factory()->create();
+        $client->contacts()->forceDelete();
+
+        Contact::factory()->create([
+            'client_id' => $client->id,
+            'is_primary' => false,
+        ]);
+
+        /** Act */
+        $result = $client->primaryContact;
+
+        /** Assert */
+        $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_gets_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
+    {
+        /** Arrange */
+        $client = Client::factory()->create();
+        $client->contacts()->forceDelete();
+
+        /** Act */
+        $result = $client->fresh()->primaryContact;
+
+        /** Assert */
+        $this->assertNull($result);
+    }
+
+    // endregion
 }
