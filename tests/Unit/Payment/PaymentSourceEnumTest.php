@@ -23,7 +23,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         $this->paymentSource = PaymentSource::bank()->getSource();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -111,9 +111,9 @@ class PaymentSourceEnumTest extends AbstractTestCase
         $this->assertTrue(property_exists($rule, 'values'));
     }
 
-    //endregion
+    // endregion
 
-    //region failure_path
+    // region failure_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -139,5 +139,5 @@ class PaymentSourceEnumTest extends AbstractTestCase
         PaymentSource::fromDisplayValue('None existing display value');
     }
 
-    //endregion
+    // endregion
 }

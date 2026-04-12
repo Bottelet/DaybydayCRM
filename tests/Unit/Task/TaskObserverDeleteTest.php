@@ -50,7 +50,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function delete_tasks_soft_deletes()
@@ -132,9 +132,9 @@ class TaskObserverDeleteTest extends AbstractTestCase
         ]);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function delete_task_with_no_relations()
@@ -188,5 +188,5 @@ class TaskObserverDeleteTest extends AbstractTestCase
         ]);
     }
 
-    //endregion
+    // endregion
 }

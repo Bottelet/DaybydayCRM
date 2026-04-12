@@ -28,7 +28,7 @@ class NewCommentTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function constructor_stores_comment()
@@ -125,9 +125,9 @@ class NewCommentTest extends AbstractTestCase
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function event_preserves_null_description()
@@ -171,5 +171,5 @@ class NewCommentTest extends AbstractTestCase
         });
     }
 
-    //endregion
+    // endregion
 }

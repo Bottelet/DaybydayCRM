@@ -26,7 +26,7 @@ class CanNotAccessTest extends AbstractTestCase
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function update_settings()
@@ -161,5 +161,5 @@ class CanNotAccessTest extends AbstractTestCase
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
-    //endregion
+    // endregion
 }

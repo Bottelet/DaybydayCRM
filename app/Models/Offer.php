@@ -27,7 +27,7 @@ class Offer extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    //region Relationships
+    // region Relationships
 
     public function invoice()
     {
@@ -59,7 +59,7 @@ class Offer extends Model
         return $this->belongsTo(Status::class, 'status_id');
     }
 
-    //endregion
+    // endregion
 
     public function setAsWon()
     {

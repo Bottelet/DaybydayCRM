@@ -34,7 +34,7 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->repository = new RoleRepository();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function all_roles_excludes_owner_role()
@@ -135,9 +135,9 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->assertNotContains('Owner', $displayNames);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function all_roles_is_not_broken_by_column_selection_fix()
@@ -154,5 +154,5 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->assertEquals($roles->count(), $filtered->count(), 'allRoles() already filters owner so re-filtering changes nothing');
     }
 
-    //endregion
+    // endregion
 }

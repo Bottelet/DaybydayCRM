@@ -48,7 +48,7 @@ class Activity extends Model
         });
     }
 
-    //region Relationships
+    // region Relationships
 
     public function causer(): MorphTo
     {
@@ -70,7 +70,7 @@ class Activity extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    //endregion
+    // endregion
 
     public function getExtraProperty(string $propertyName)
     {

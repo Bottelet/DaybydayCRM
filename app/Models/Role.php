@@ -22,7 +22,7 @@ class Role extends EntrustRole
         'external_id',
     ];
 
-    //region Relationships
+    // region Relationships
 
     public function permissions()
     {
@@ -34,7 +34,7 @@ class Role extends EntrustRole
         return $this->hasMany(Role::class, 'user_id', 'id');
     }
 
-    //endregion
+    // endregion
 
     public function canBeDeleted()
     {

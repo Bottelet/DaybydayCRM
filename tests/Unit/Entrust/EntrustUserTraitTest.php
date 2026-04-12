@@ -33,7 +33,7 @@ class EntrustUserTraitTest extends AbstractTestCase
         $this->role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function attach_role_accepts_role_object()
@@ -124,9 +124,9 @@ class EntrustUserTraitTest extends AbstractTestCase
         $this->assertTrue($user->hasRole('administrator'), 'User should have role after attaching');
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function attach_role_does_not_create_duplicate_role_assignment()
@@ -191,5 +191,5 @@ class EntrustUserTraitTest extends AbstractTestCase
         }
     }
 
-    //endregion
+    // endregion
 }

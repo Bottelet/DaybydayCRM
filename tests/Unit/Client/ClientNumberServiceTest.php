@@ -49,7 +49,7 @@ class ClientNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function set_next_client_number_takes_biggest_client_number_and_add_one()
@@ -95,20 +95,20 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertEquals(20000, $result);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function set_client_number_to_zero_leads_to_duplicate_numbers()
     {
         /** Arrange */
         $this->clientNumberService->setClientNumber(0);
-        
+
         /** Act */
         $firstClient = $this->clientNumberService->setNextClientNumber();
         $secondClient = $this->clientNumberService->setNextClientNumber();
-        
+
         /** Assert */
         // Setting to 0 will cause duplicate numbers (both get 0)
         // This is a known edge case that should be prevented by validation
@@ -146,9 +146,9 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertEquals(1, $secondNumber);
     }
 
-    //endregion
+    // endregion
 
-    //region failure_path
+    // region failure_path
 
     #[Test]
     public function set_negative_client_number_should_be_prevented()
@@ -158,7 +158,7 @@ class ClientNumberServiceTest extends AbstractTestCase
 
         /** Act */
         $this->clientNumberService->setClientNumber($negativeNumber);
-        
+
         // Get the next number
         $firstNumber = $this->clientNumberService->setNextClientNumber();
         $secondNumber = $this->clientNumberService->setNextClientNumber();
@@ -172,5 +172,5 @@ class ClientNumberServiceTest extends AbstractTestCase
         $this->assertLessThan(0, $firstNumber, 'Negative client numbers should not be allowed');
     }
 
-    //endregion
+    // endregion
 }

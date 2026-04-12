@@ -19,7 +19,7 @@ class HandlerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function handler_class_extends_laravel_exception_handler()
@@ -96,5 +96,5 @@ class HandlerTest extends AbstractTestCase
         $this->assertTrue(true);
     }
 
-    //endregion
+    // endregion
 }

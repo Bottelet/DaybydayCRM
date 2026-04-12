@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\User;
 
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
@@ -19,7 +18,7 @@ class UserRoleTest extends AbstractTestCase
         parent::setUp();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function factory_state_with_role_attaches_specified_role()
@@ -72,9 +71,9 @@ class UserRoleTest extends AbstractTestCase
         $this->assertNotNull($user->roles->first()->display_name);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function users_created_without_role_state_have_no_roles_by_default()
@@ -117,5 +116,5 @@ class UserRoleTest extends AbstractTestCase
         );
     }
 
-    //endregion
+    // endregion
 }

@@ -28,7 +28,7 @@ class ProjectActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function constructor_stores_project_and_action()
@@ -124,9 +124,9 @@ class ProjectActionTest extends AbstractTestCase
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function action_can_be_non_string_value()
@@ -167,5 +167,5 @@ class ProjectActionTest extends AbstractTestCase
         $this->assertEquals('', $event->getAction());
     }
 
-    //endregion
+    // endregion
 }

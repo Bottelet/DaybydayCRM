@@ -30,7 +30,7 @@ class ProjectFilesConfigurationTest extends TestCase
         $this->rootPath = realpath(__DIR__.'/../../..');
     }
 
-    //region happy_path
+    // region happy_path
 
     // -------------------------------------------------------------------------
     // .env.ci
@@ -521,9 +521,9 @@ class ProjectFilesConfigurationTest extends TestCase
         $this->assertTrue($hasThumbsDb, '.gitignore must exclude Thumbs.db (Windows thumbnails)');
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     // -------------------------------------------------------------------------
     // .gitattributes
@@ -646,7 +646,7 @@ class ProjectFilesConfigurationTest extends TestCase
         );
     }
 
-    //endregion
+    // endregion
 
     // -------------------------------------------------------------------------
     // Helpers

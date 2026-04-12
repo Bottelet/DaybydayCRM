@@ -60,7 +60,7 @@ class DeadlineTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function not_over_deadline()
@@ -120,9 +120,9 @@ class DeadlineTest extends AbstractTestCase
         $this->assertEquals(3, $projectDays);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function over_deadline()
@@ -220,5 +220,5 @@ class DeadlineTest extends AbstractTestCase
         $this->assertFalse($projectResult);
     }
 
-    //endregion
+    // endregion
 }

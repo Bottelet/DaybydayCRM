@@ -28,7 +28,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function invoice_line_stores_explicit_external_id_when_provided()
@@ -106,9 +106,9 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         ]);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function invoice_line_preserves_provided_external_id()
@@ -132,5 +132,5 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         $this->assertEquals($customExternalId, $invoiceLine->external_id);
     }
 
-    //endregion
+    // endregion
 }

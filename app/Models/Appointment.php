@@ -48,7 +48,7 @@ class Appointment extends Model
         return $date->format('Y-m-d\TH:i:s.000000\Z');
     }
 
-    //region Relationships
+    // region Relationships
 
     public function client()
     {
@@ -60,5 +60,5 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
-    //endregion
+    // endregion
 }

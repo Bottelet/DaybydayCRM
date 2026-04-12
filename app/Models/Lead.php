@@ -67,7 +67,7 @@ class Lead extends Model implements Commentable
         return $this->title;
     }
 
-    //region Relationships
+    // region Relationships
 
     public function activity()
     {
@@ -129,7 +129,7 @@ class Lead extends Model implements Commentable
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
-    //endregion
+    // endregion
 
     public function getCreateCommentEndpoint(): string
     {

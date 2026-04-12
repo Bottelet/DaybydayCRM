@@ -28,7 +28,7 @@ class LeadActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function constructor_stores_lead_and_action()
@@ -124,9 +124,9 @@ class LeadActionTest extends AbstractTestCase
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function action_can_be_non_string_value()
@@ -167,5 +167,5 @@ class LeadActionTest extends AbstractTestCase
         $this->assertEquals('', $event->getAction());
     }
 
-    //endregion
+    // endregion
 }

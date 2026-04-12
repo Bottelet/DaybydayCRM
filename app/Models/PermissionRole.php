@@ -18,7 +18,7 @@ class PermissionRole extends Model
 
     public $timestamps = false;
 
-    //region Relationships
+    // region Relationships
 
     public function employee()
     {
@@ -35,5 +35,5 @@ class PermissionRole extends Model
         return $this->belongsTo(Setting::class);
     }
 
-    //endregion
+    // endregion
 }

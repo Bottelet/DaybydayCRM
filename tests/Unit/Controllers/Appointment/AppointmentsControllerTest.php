@@ -75,7 +75,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function can_get_appointments_within_time_slot()
@@ -100,9 +100,9 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->assertCount(3, User::whereExternalId($this->user->external_id)->first()->appointments);
     }
 
-    //endregion
+    // endregion
 
-    //region crud
+    // region crud
 
     #[Test]
     public function can_update_appointment_times()
@@ -161,9 +161,9 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->assertNull(Appointment::whereExternalId($appointmentExternalId)->first());
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     #[Group('regression')]
@@ -207,5 +207,5 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->assertContains($otherAppointment->external_id, $otherUserAppointments->pluck('external_id')->toArray());
     }
 
-    //endregion
+    // endregion
 }

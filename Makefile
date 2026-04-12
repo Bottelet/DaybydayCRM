@@ -57,6 +57,9 @@ test-filter:
 # --- Parallel Testing (Inside Container) ---
 
 paratest:
+	vendor/bin/paratest --exclude-group flaky -p8
+
+parafail:
 	vendor/bin/paratest --exclude-group flaky -p8 --stop-on-failure
 
 # --- Docker Compose (Host Level) ---

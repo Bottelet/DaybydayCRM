@@ -36,7 +36,7 @@ class ActivityModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function activity_auto_generates_external_id_and_ip_address_when_not_provided()
@@ -98,9 +98,9 @@ class ActivityModelBootTest extends AbstractTestCase
         $this->assertNotEquals($activity1->external_id, $activity2->external_id);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function activity_preserves_explicitly_provided_external_id_when_saved()
@@ -129,5 +129,5 @@ class ActivityModelBootTest extends AbstractTestCase
         $this->assertEquals($customIpAddress, $activity->ip_address);
     }
 
-    //endregion
+    // endregion
 }

@@ -30,7 +30,7 @@ class AbsenceControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -83,9 +83,9 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->assertCount(1, $this->user->absences);
     }
 
-    //endregion
+    // endregion
 
-    //region failure_path
+    // region failure_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -111,5 +111,5 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->assertCount(1, $this->user->absences);
     }
 
-    //endregion
+    // endregion
 }

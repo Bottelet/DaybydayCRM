@@ -47,7 +47,7 @@ class Invoice extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    //region Relationships
+    // region Relationships
 
     public function client()
     {
@@ -79,7 +79,7 @@ class Invoice extends Model
         return $this->morphTo('source');
     }
 
-    //endregion
+    // endregion
 
     public function canUpdateInvoice()
     {

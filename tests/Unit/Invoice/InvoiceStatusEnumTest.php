@@ -35,7 +35,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function getting_status_returns_instance_of_invoice_status()
@@ -104,9 +104,9 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         $this->assertEquals(InvoiceStatus::partialPaid()->getStatus(), $status);
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function all_status_types_have_display_values()
@@ -146,9 +146,9 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         $this->assertEquals($expectedStatuses, $actualStatuses);
     }
 
-    //endregion
+    // endregion
 
-    //region failure_path
+    // region failure_path
 
     #[Test]
     public function throws_exception_if_status_is_not_known()
@@ -202,5 +202,5 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         InvoiceStatus::fromDisplayValue($nullDisplayValue);
     }
 
-    //endregion
+    // endregion
 }

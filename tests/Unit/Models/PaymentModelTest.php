@@ -34,7 +34,7 @@ class PaymentModelTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function payment_invoice_relationship_returns_belongs_to_instance()
@@ -118,9 +118,9 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertTrue(method_exists($payment, 'invoice'));
     }
 
-    //endregion
+    // endregion
 
-    //region edge_cases
+    // region edge_cases
 
     #[Test]
     public function payment_without_invoice_id_returns_null_for_invoice()
@@ -200,9 +200,9 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertNotEmpty($payment->external_id);
     }
 
-    //endregion
+    // endregion
 
-    //region failure_path
+    // region failure_path
 
     #[Test]
     public function payment_does_not_depend_on_dingo_api()
@@ -217,5 +217,5 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertNotContains('Dingo\Api\Routing\Helpers', $uses);
     }
 
-    //endregion
+    // endregion
 }

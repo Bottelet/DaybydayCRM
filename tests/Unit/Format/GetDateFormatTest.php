@@ -39,7 +39,7 @@ class GetDateFormatTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    //region happy_path
+    // region happy_path
 
     #[Test]
     public function get_date_format_methods_return_correct_formats()
@@ -101,5 +101,5 @@ class GetDateFormatTest extends AbstractTestCase
         $this->assertEquals('22, February 2020 13:00', $formattedFullDate);
     }
 
-    //endregion
+    // endregion
 }
