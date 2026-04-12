@@ -24,11 +24,6 @@ class Setting extends Model
 
     // region Relationships
 
-    public function tasks()
-    {
-        return $this->belongsTo(Task::class);
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
