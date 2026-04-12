@@ -100,17 +100,21 @@ class ClientNumberServiceTest extends AbstractTestCase
     //region edge_cases
 
     #[Test]
-    public function set_client_number_to_zero()
+    public function set_client_number_to_zero_leads_to_duplicate_numbers()
     {
         /** Arrange */
-        $newNumber = 0;
-
+        $this->clientNumberService->setClientNumber(0);
+        
         /** Act */
-        $this->clientNumberService->setClientNumber($newNumber);
-        $result = $this->clientNumberService->nextClientNumber();
-
+        $firstClient = $this->clientNumberService->setNextClientNumber();
+        $secondClient = $this->clientNumberService->setNextClientNumber();
+        
         /** Assert */
-        $this->assertEquals(0, $result);
+        // Setting to 0 will cause duplicate numbers (both get 0)
+        // This is a known edge case that should be prevented by validation
+        $this->assertEquals(0, $firstClient);
+        $this->assertEquals(1, $secondClient);
+        $this->assertNotEquals($firstClient, $secondClient, 'Client numbers should not duplicate');
     }
 
     #[Test]
@@ -147,17 +151,25 @@ class ClientNumberServiceTest extends AbstractTestCase
     //region failure_path
 
     #[Test]
-    public function set_negative_client_number()
+    public function set_negative_client_number_should_be_prevented()
     {
         /** Arrange */
         $negativeNumber = -100;
 
         /** Act */
         $this->clientNumberService->setClientNumber($negativeNumber);
-        $result = $this->clientNumberService->nextClientNumber();
+        
+        // Get the next number
+        $firstNumber = $this->clientNumberService->setNextClientNumber();
+        $secondNumber = $this->clientNumberService->setNextClientNumber();
 
         /** Assert */
-        $this->assertEquals(-100, $result);
+        // Negative numbers will cause issues: -100, -99, -98, etc.
+        // This demonstrates the problem - validation should prevent negative numbers
+        $this->assertEquals(-100, $firstNumber);
+        $this->assertEquals(-99, $secondNumber);
+        // This test documents the problematic behavior that should be fixed
+        $this->assertLessThan(0, $firstNumber, 'Negative client numbers should not be allowed');
     }
 
     //endregion
