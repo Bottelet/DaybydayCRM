@@ -130,7 +130,7 @@ class Task extends Model implements Commentable
 
     public function getCreatorUserAttribute()
     {
-        return User::findOrFail($this->user_assigned_id);
+        return User::findOrFail($this->user_created_id);
     }
 
     public function canUpdateInvoice()
