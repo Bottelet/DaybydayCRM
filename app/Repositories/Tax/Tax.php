@@ -47,7 +47,8 @@ class Tax
 
         // VAT is stored as percentage * 100 (e.g., 2100 for 21%)
         // Divide by 10000 to get decimal rate (e.g., 0.21)
-        return ($setting ? $setting->vat : 2100) / 10000;
+        // Use null coalescing to handle both null and 0 correctly
+        return ($setting !== null ? $setting->vat : 2100) / 10000;
     }
 
     private function integerToVatRate()
