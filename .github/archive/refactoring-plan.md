@@ -1,4 +1,3 @@
-```markdown
 # Implement the Plan
 
 ## Comprehensive Refactoring Opportunities Analysis
@@ -1129,4 +1128,3 @@ To reference:
 
 - Keep high-level summaries only.
 - Point to `.github/` documentation for details.
-```
