@@ -30,7 +30,7 @@ on:
       output:
         description: 'Output format'
         required: true
-        default: 'pao'
+        default: 'testdox'
         type: choice
         options:
           - pao
