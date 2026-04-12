@@ -45,9 +45,9 @@ class GetCommentEndpointTest extends AbstractTestCase
         $projectEndpoint = $this->project->getCreateCommentEndpoint();
 
         /** Assert */
-        $this->assertEquals(url('comments/lead').DIRECTORY_SEPARATOR.$this->lead->external_id, $leadEndpoint);
-        $this->assertEquals(url('comments/task').DIRECTORY_SEPARATOR.$this->task->external_id, $taskEndpoint);
-        $this->assertEquals(url('comments/project').DIRECTORY_SEPARATOR.$this->project->external_id, $projectEndpoint);
+        $this->assertEquals(url('comments/lead/'.$this->lead->external_id), $leadEndpoint);
+        $this->assertEquals(url('comments/task/'.$this->task->external_id), $taskEndpoint);
+        $this->assertEquals(url('comments/project/'.$this->project->external_id), $projectEndpoint);
     }
 
     // endregion
