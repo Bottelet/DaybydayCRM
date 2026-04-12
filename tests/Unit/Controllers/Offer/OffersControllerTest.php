@@ -47,7 +47,6 @@ class OffersControllerTest extends AbstractTestCase
     #[Group('keeps_failing')]
     public function can_create_offer()
     {
-        $this->markTestIncomplete('keeps failing');
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             [
                 'title' => 'test line',
