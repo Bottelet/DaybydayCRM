@@ -36,12 +36,16 @@ class OffersControllerTest extends AbstractTestCase
         
         $role->attachPermission($createPermission);
         $role->attachPermission($editPermission);
+        
         $this->user->attachRole($role);
         
-        // Clear permission cache to ensure fresh permission check
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        // Clear permission cache AFTER attaching permissions
+        \Illuminate\Support\Facades\Cache::flush();
+        
+        // Refresh user to reload roles and permissions
         $this->user = $this->user->fresh();
         
+        // MUST call actingAs AFTER refresh to ensure permission check works
         $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
