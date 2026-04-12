@@ -5,18 +5,21 @@ namespace Tests\Unit\Comment;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class GetCommentEndpointTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
+    /** @var Lead */
     private $lead;
 
+    /** @var Task */
     private $task;
 
+    /** @var Project */
     private $project;
 
     protected function setUp(): void
@@ -28,11 +31,24 @@ class GetCommentEndpointTest extends AbstractTestCase
         $this->project = Project::factory()->create();
     }
 
+    //region happy_path
+
     #[Test]
-    public function happy_path()
+    public function get_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
     {
-        $this->assertEquals(url('comments/lead').DIRECTORY_SEPARATOR.$this->lead->external_id, $this->lead->getCreateCommentEndpoint());
-        $this->assertEquals(url('comments/task').DIRECTORY_SEPARATOR.$this->task->external_id, $this->task->getCreateCommentEndpoint());
-        $this->assertEquals(url('comments/project').DIRECTORY_SEPARATOR.$this->project->external_id, $this->project->getCreateCommentEndpoint());
+        /** Arrange */
+        // Already arranged in setUp()
+
+        /** Act */
+        $leadEndpoint = $this->lead->getCreateCommentEndpoint();
+        $taskEndpoint = $this->task->getCreateCommentEndpoint();
+        $projectEndpoint = $this->project->getCreateCommentEndpoint();
+
+        /** Assert */
+        $this->assertEquals(url('comments/lead').DIRECTORY_SEPARATOR.$this->lead->external_id, $leadEndpoint);
+        $this->assertEquals(url('comments/task').DIRECTORY_SEPARATOR.$this->task->external_id, $taskEndpoint);
+        $this->assertEquals(url('comments/project').DIRECTORY_SEPARATOR.$this->project->external_id, $projectEndpoint);
     }
+
+    //endregion
 }
