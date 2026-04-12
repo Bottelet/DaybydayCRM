@@ -46,7 +46,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000,
+            'amount' => 50,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
@@ -61,7 +61,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000.234,
+            'amount' => 50.234,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
@@ -76,7 +76,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => '5000,234',
+            'amount' => '50,234',
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
@@ -91,7 +91,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000,
+            'amount' => 50,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',

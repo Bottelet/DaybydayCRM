@@ -8,6 +8,7 @@ use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 
 class UpdateAssigneeTest extends AbstractTestCase
 {
@@ -30,22 +31,28 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function can_update_assignee()
     {
+        Event::fake([ClientAction::class]);
+
         $this->assertNotEquals($this->client->user_id, $this->user->id);
 
-        $this->expectsEvents(ClientAction::class);
         $this->client->updateAssignee($this->user);
 
         $this->assertEquals($this->client->user_id, $this->user->id);
+
+        Event::assertDispatched(ClientAction::class);
     }
 
     #[Test]
     public function can_update_assignee_with_out_permissions_as_any_user()
     {
+        Event::fake([ClientAction::class]);
+
         $user = User::factory()->create();
         $this->setUser($user);
 
-        $this->expectsEvents(ClientAction::class);
         $this->client->updateAssignee($this->user);
         $this->assertEquals($this->client->user_id, $this->user->id);
+
+        Event::assertDispatched(ClientAction::class);
     }
 }

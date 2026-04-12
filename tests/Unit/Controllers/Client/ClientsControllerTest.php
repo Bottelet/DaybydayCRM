@@ -24,6 +24,21 @@ class ClientsControllerTest extends AbstractTestCase
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_CREATE);
 
+        // Ensure Setting exists for client number generation
+        \App\Models\Setting::firstOrCreate(
+            ['id' => 1],
+            [
+                'client_number' => 10000,
+                'invoice_number' => 10000,
+                'country' => 'US',
+                'company' => 'Test Company',
+                'max_users' => 10,
+                'vat' => 0,
+                'currency' => 'USD',
+                'language' => 'en',
+            ]
+        );
+
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
 
