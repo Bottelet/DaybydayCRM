@@ -21,7 +21,7 @@ class Money
     {
         $setting = Setting::select('currency')->first();
         $currency = $setting ? $setting->currency : 'USD';
-        $this->amount = $amount;
+        $this->amount = (int) $amount;
         $this->currency = new Currency($currency);
     }
 
