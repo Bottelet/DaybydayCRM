@@ -1,25 +1,25 @@
 {
   "private": true,
   "scripts": {
-    "dev": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch-poll": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --watch-poll --progress --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "hot": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "prod": "npm run production",
-    "production": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "dev": "mix",
+    "watch": "mix watch",
+    "hot": "mix watch --hot",
+    "prod": "mix --production"
   },
   "devDependencies": {
-    "cross-env": "^5.1",
+    "cross-env": "^5.2",
     "laravel-mix": "^6.0.49",
     "resolve-url-loader": "^5.0.0",
-    "sass": "^1.80.6",
-    "sass-loader": "^16.0.3",
+    "sass": "^1.99.0",
+    "sass-loader": "^16.0.7",
     "style-loader": "^4.0.0",
     "vue-loader": "^15.11.1",
-    "vue-template-compiler": "2.6.10"
+    "vue-template-compiler": "^2.7.16",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "axios": "1.7.4",
+    "axios": "*",
     "bootstrap-sass": "^3.4.3",
     "bootstrap-select": "^1.13.18",
     "chart.js": "2.9.4",
@@ -29,13 +29,13 @@
     "jquery": "^3.7.1",
     "jquery-ui": "^1.14.2",
     "jquery.caret": "^0.3.1",
-    "lodash": "4.17.21",
+    "lodash": "*",
     "natives": "^1.1.6",
-    "pickadate": "^5.0.0-alpha.3",
+    "pickaxe": "*",
     "summernote": "^0.9.1",
     "timepicker.js": "^4.1.0",
-    "vis-timeline": "^7.7.3",
-    "vue": "^2.6.10",
+    "vis-timeline": "^7.7.4",
+    "vue": "^2.7.16",
     "vue-currency-filter": "^5.2.0",
     "vue-resource": "^1.5.3",
     "vue-select": "^3.20.3"
