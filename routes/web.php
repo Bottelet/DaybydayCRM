@@ -31,7 +31,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::resource('users', 'UsersController');
+    Route::middleware(['permission:user-update'])->group(function () {
+        Route::resource('users', 'UsersController')->only(['update']);
+    });
+    Route::middleware(['permission:user-delete'])->group(function () {
+        Route::resource('users', 'UsersController')->only(['destroy']);
+    });
+    Route::resource('users', 'UsersController')->except(['update', 'destroy']);
 
     /**
      * Roles
@@ -53,11 +59,15 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/leaddata/{external_id}', 'ClientsController@leadDataTable')->name('clients.leadDataTable');
         Route::get('/invoicedata/{external_id}', 'ClientsController@invoiceDataTable')->name('clients.invoiceDataTable');
         Route::post('/create/cvrapi', 'ClientsController@cvrapiStart');
+        Route::patch('/updateassignee/{external_id}', 'ClientsController@updateAssignee')->name('clients.updateAssignee');
         Route::post('/upload/{external_id}', 'DocumentsController@upload')->name('document.upload');
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::resource('clients', 'ClientsController');
+    Route::middleware(['permission:client-delete'])->group(function () {
+        Route::resource('clients', 'ClientsController')->only(['destroy']);
+    });
+    Route::resource('clients', 'ClientsController')->except(['destroy']);
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
@@ -68,7 +78,6 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'tasks'], static function () {
         Route::get('/data', 'TasksController@anyData')->name('tasks.data');
         Route::patch('/updatestatus/{external_id}', 'TasksController@updateStatus')->name('task.update.status');
-        Route::patch('/updatestatus/{external_id}', 'TasksController@updateStatus')->name('tasks.updateStatus'); // Alias
         Route::patch('/updateassign/{external_id}', 'TasksController@updateAssign')->name('task.update.assignee');
         Route::post('/updatestatus/{external_id}', 'TasksController@updateStatus');
         Route::post('/updateassign/{external_id}', 'TasksController@updateAssign');
@@ -79,7 +88,10 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::resource('tasks', 'TasksController');
+    Route::middleware(['permission:task-delete'])->group(function () {
+        Route::resource('tasks', 'TasksController')->only(['destroy']);
+    });
+    Route::resource('tasks', 'TasksController')->except(['destroy']);
 
     /**
      * Leads
@@ -88,16 +100,19 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
         Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('leads.updateAssign');
-        Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('lead.update.assignee'); // Alias
-        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
-        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('leads.updateStatus'); // Alias
-        Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup');
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');
+        Route::patch('/updatestatus/{external_id}', 'LeadsController@updateStatus')->name('lead.update.status');
         Route::post('/updatestatus/{external_id}', 'LeadsController@updateStatus');
+        Route::patch('/update-deadline/{external_id}', 'LeadsController@updateDeadline')->name('lead.update.deadline');
+        Route::patch('/updatefollowup/{external_id}', 'LeadsController@updateFollowup')->name('lead.followup')
+            ->middleware('permission:lead-update-deadline');
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::resource('leads', 'LeadsController');
+    Route::middleware(['permission:lead-delete'])->group(function () {
+        Route::resource('leads', 'LeadsController')->only(['destroy']);
+    });
+    Route::resource('leads', 'LeadsController')->except(['destroy']);
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /**
@@ -117,22 +132,23 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'projects'], static function () {
         Route::get('/data', 'ProjectsController@indexData')->name('projects.index.data');
         Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('project.update.status');
-        Route::patch('/updatestatus/{external_id}', 'ProjectsController@updateStatus')->name('projects.updateStatus'); // Alias
         Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('project.update.assignee');
-        Route::patch('/updateassign/{external_id}', 'ProjectsController@updateAssign')->name('projects.updateAssign'); // Alias
         Route::post('/updatestatus/{external_id}', 'ProjectsController@updateStatus');
         Route::post('/updateassign/{external_id}', 'ProjectsController@updateAssign');
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::resource('projects', 'ProjectsController');
+    Route::middleware(['permission:project-delete'])->group(function () {
+        Route::resource('projects', 'ProjectsController')->only(['destroy']);
+    });
+    Route::resource('projects', 'ProjectsController')->except(['destroy']);
     /**
      * Settings
      */
     Route::group(['prefix' => 'settings'], static function () {
         Route::get('/', 'SettingsController@index')->name('settings.index');
         Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.updateOverall');
-        Route::patch('/overall', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backward compatibility
+        Route::patch('/', 'SettingsController@updateOverall')->name('settings.update'); // Alias for backwards compatibility
         Route::post('/first-steps', 'SettingsController@updateFirstStep')->name('settings.updateFirstStep');
         Route::get('/business-hours', 'SettingsController@businessHours')->name('settings.business_hours');
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
@@ -202,7 +218,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/{offer}/update', 'OffersController@update')->name('offer.update');
         Route::get('/{offer}/invoice-lines/json', 'OffersController@getOfferInvoiceLinesJson');
     });
-    
+
     // Additional route aliases for backward compatibility
     Route::post('/offers/won', 'OffersController@won')->name('offers.won');
     Route::post('/offers/lost', 'OffersController@lost')->name('offers.lost');

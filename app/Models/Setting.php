@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'client_number',
         'invoice_number',
@@ -14,6 +17,9 @@ class Setting extends Model
         'currency',
         'vat',
         'language',
+        'max_users',
+        'start_time',
+        'end_time',
     ];
 
     public function user()

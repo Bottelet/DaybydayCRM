@@ -22,13 +22,19 @@ class InvoiceNumberService
     public function setNextInvoiceNumber()
     {
         $currentNumber = $this->nextInvoiceNumber();
-        $this->increaseInvoiceNumber();
+        if ($this->lockedSetting) {
+            $this->increaseInvoiceNumber();
+        }
 
         return $currentNumber;
     }
 
     public function setInvoiceNumber(int $invoiceNumber)
     {
+        if (! $this->lockedSetting) {
+            return false;
+        }
+
         $this->lockedSetting->invoice_number = $invoiceNumber;
 
         return $this->lockedSetting->save();
@@ -36,7 +42,12 @@ class InvoiceNumberService
 
     public function nextInvoiceNumber()
     {
-        return $this->setting->first()->invoice_number;
+        $setting = $this->setting->first();
+        if (! $setting) {
+            return 1;
+        }
+
+        return $setting->invoice_number;
     }
 
     private function increaseInvoiceNumber()

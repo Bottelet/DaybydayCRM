@@ -7,9 +7,9 @@ use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
-class DeadlineTest extends TestCase
+class DeadlineTest extends AbstractTestCase
 {
     /** @var Task */
     private $task;
@@ -24,19 +24,26 @@ class DeadlineTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create(
+        $futureDeadline = Carbon::now()->addHours(2);
+
+        // Create an "open" status for tasks and leads
+        $openStatus = \App\Models\Status::factory()->create(['title' => 'open']);
+
+        $this->task = Task::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
+                'status_id' => $openStatus->id,
             ]
         );
-        $this->lead = factory(Lead::class)->create(
+        $this->lead = Lead::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
+                'status_id' => $openStatus->id,
             ]
         );
-        $this->project = factory(Project::class)->create(
+        $this->project = Project::factory()->create(
             [
-                'deadline' => Carbon::now()->addHour(),
+                'deadline' => $futureDeadline,
             ]
         );
     }
@@ -53,8 +60,13 @@ class DeadlineTest extends TestCase
     public function over_deadline()
     {
         $this->task->deadline = Carbon::now()->subDay();
+        $this->task->save();
+
         $this->lead->deadline = Carbon::now()->subDay();
+        $this->lead->save();
+
         $this->project->deadline = Carbon::now()->subDay();
+        $this->project->save();
 
         $this->assertTrue($this->lead->isOverDeadline());
         $this->assertTrue($this->task->isOverDeadline());

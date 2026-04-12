@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,9 @@ use Illuminate\Support\Arr;
 
 class Activity extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     /**
      * The database table used by the model.
@@ -38,7 +41,7 @@ class Activity extends Model
         parent::boot();
         static::creating(function ($activity) {
             // HasExternalId trait handles external_id generation
-            
+
             if (empty($activity->ip_address)) {
                 $activity->ip_address = request()->ip() ?: '127.0.0.1';
             }

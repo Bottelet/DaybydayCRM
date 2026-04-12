@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 /**
  * Trait HasExternalId
- * 
+ *
  * Automatically generates a UUID for the external_id field when creating models.
  * This trait ensures consistent UUID generation across all models that use external_id.
  */

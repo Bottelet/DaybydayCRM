@@ -4,10 +4,13 @@ namespace Tests\Unit\Controllers\Appointment;
 
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Requests\Appointment\CreateAppointmentCalendarRequest;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionNamedType;
 
 /**
  * Tests verifying that the AppointmentsController::store() method was
@@ -15,9 +18,9 @@ use Tests\TestCase;
  * and has been replaced or removed as part of a refactor.
  */
 #[Group('appointments')]
-class AppointmentsStoreRemovedTest extends TestCase
+class AppointmentsStoreRemovedTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function appointments_controller_does_not_have_store_method()
@@ -33,8 +36,8 @@ class AppointmentsStoreRemovedTest extends TestCase
     public function appointments_controller_does_not_have_create_request_dependency()
     {
         // CreateAppointmentCalendarRequest was removed as an import since store() is gone
-        $reflector = new \ReflectionClass(AppointmentsController::class);
-        $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $reflector = new ReflectionClass(AppointmentsController::class);
+        $methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodNames = array_map(fn ($m) => $m->getName(), $methods);
 
         $this->assertNotContains('store', $methodNames);
@@ -91,15 +94,15 @@ class AppointmentsStoreRemovedTest extends TestCase
     {
         // The CreateAppointmentCalendarRequest import was removed along with store()
         // Verify it's not referenced in the controller's method signatures
-        $reflector = new \ReflectionClass(AppointmentsController::class);
-        $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $reflector = new ReflectionClass(AppointmentsController::class);
+        $methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
 
         foreach ($methods as $method) {
             $params = $method->getParameters();
             foreach ($params as $param) {
                 $type = $param->getType();
                 if ($type && ! $type->isBuiltin()) {
-                    $typeName = $type instanceof \ReflectionNamedType ? $type->getName() : (string) $type;
+                    $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
                     $this->assertNotEquals(
                         CreateAppointmentCalendarRequest::class,
                         $typeName,

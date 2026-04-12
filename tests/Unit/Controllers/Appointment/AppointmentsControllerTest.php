@@ -3,16 +3,17 @@
 namespace Tests\Unit\Controllers\Appointment;
 
 use App\Models\Appointment;
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AppointmentsControllerTest extends TestCase
+class AppointmentsControllerTest extends AbstractTestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use RefreshDatabase;
 
     protected $appointmentsWithInTime;
 
@@ -23,8 +24,17 @@ class AppointmentsControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
-        $this->appointmentsWithInTime = factory(Appointment::class)->create([
+        $this->user = User::factory()->create();
+        $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $this->user->attachRole($role);
+
+        // Give user permissions for appointment operations
+        $this->withPermissions([
+            PermissionName::APPOINTMENT_EDIT,
+            PermissionName::APPOINTMENT_DELETE,
+        ]);
+
+        $this->appointmentsWithInTime = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now(),
             'end_at' => now()->addHour(),
@@ -34,7 +44,7 @@ class AppointmentsControllerTest extends TestCase
             'color' => '#FFFFFF',
         ]);
 
-        $this->appointmentsWithToLate = factory(Appointment::class)->create([
+        $this->appointmentsWithToLate = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now()->addWeeks(6),
             'end_at' => now()->addWeeks(6)->addHour(),
@@ -43,7 +53,7 @@ class AppointmentsControllerTest extends TestCase
             'title' => 'test',
             'color' => '#FFFFFF',
         ]);
-        $this->appointmentsWithToEarly = factory(Appointment::class)->create([
+        $this->appointmentsWithToEarly = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now()->subWeeks(4),
             'end_at' => now()->subWeeks(4)->addHour(),
@@ -77,29 +87,60 @@ class AppointmentsControllerTest extends TestCase
     #[Test]
     public function can_update_appointment_times()
     {
-        $newAssignee = factory(User::class)->create();
+        // 1. Grant
+        $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
 
-        $response = $this->json('POST', route('appointments.update', $this->appointmentsWithInTime->external_id), [
-            'start_date' => now()->toDateString(),
-            'start_time' => now()->format('H:i'),
-            'end_date' => now()->addHour()->toDateString(),
-            'end_time' => now()->addHour()->format('H:i'),
-            'user' => $newAssignee->external_id,
+        // 2. Build
+        $appointment = Appointment::factory()->create([
+            'user_id' => $this->user->id,
+            'start_at' => now(),
+            'end_at' => now()->addHour(),
+            'source_id' => $this->user->id,
+            'source_type' => User::class,
+            'title' => 'test',
+            'color' => '#FFFFFF',
+        ]);
+        $newAssignee = User::factory()->create();
+
+        // 3. Request
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $appointment->external_id), [
+            'id' => $appointment->id,
+            'start' => now()->addDay()->toISOString(),
+            'end' => now()->addDay()->addHour()->toISOString(),
+            'group' => $newAssignee->external_id,
+            '_token' => csrf_token(),
         ]);
 
+        // 4. Assert
         $response->assertSuccessful();
-
-        $updatedAppointment = $this->appointmentsWithInTime->fresh();
+        $updatedAppointment = $appointment->fresh();
         $this->assertEquals($newAssignee->id, $updatedAppointment->user_id);
     }
 
     #[Test]
     public function can_destroy_appointment()
     {
-        $appointmentExternalId = $this->appointmentsWithInTime->external_id;
+        // 1. Grant
+        $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
-        $response = $this->json('DELETE', route('appointments.destroy', $appointmentExternalId));
+        // 2. Build
+        $appointment = Appointment::factory()->create([
+            'user_id' => $this->user->id,
+            'start_at' => now(),
+            'end_at' => now()->addHour(),
+            'source_id' => $this->user->id,
+            'source_type' => User::class,
+            'title' => 'test',
+            'color' => '#FFFFFF',
+        ]);
+        $appointmentExternalId = $appointment->external_id;
 
+        // 3. Request
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $appointmentExternalId), [
+            '_token' => csrf_token(),
+        ]);
+
+        // 4. Assert
         $response->assertSuccessful();
         $this->assertNull(Appointment::whereExternalId($appointmentExternalId)->first());
     }
@@ -126,8 +167,8 @@ class AppointmentsControllerTest extends TestCase
     public function user_appointments_morph_does_not_return_appointments_for_other_source_types()
     {
         // When source_type is NOT User::class, the appointment should not appear in user->appointments
-        $otherUser = factory(User::class)->create();
-        $otherAppointment = factory(Appointment::class)->create([
+        $otherUser = User::factory()->create();
+        $otherAppointment = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'source_id' => $otherUser->id,
             'source_type' => User::class,  // Still User but different source_id

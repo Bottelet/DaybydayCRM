@@ -2,7 +2,7 @@
 
 namespace App\Services\Search;
 
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
 
 class SearchService
 {

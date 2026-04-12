@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\InvoiceStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Services\Invoice\InvoiceCalculator;
@@ -19,15 +20,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
-    const STATUS_SENT = 'sent';
+    public const STATUS_SENT = 'sent';
 
     protected $fillable = [
         'status',
         'sent_at',
         'due_at',
         'client_id',
+        'user_created_id',
         'integration_invoice_id',
         'integration_type',
         'source_id',
@@ -66,6 +70,11 @@ class Invoice extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
     }
 
     public function canUpdateInvoice()

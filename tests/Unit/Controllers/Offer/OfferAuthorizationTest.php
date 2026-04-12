@@ -9,15 +9,16 @@ use App\Models\Offer;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class OfferAuthorizationTest extends TestCase
+class OfferAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private Lead $lead;
 
@@ -33,7 +34,7 @@ class OfferAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
         $this->offer = Offer::create([
             'source_id' => $this->lead->id,
             'source_type' => Lead::class,
@@ -48,7 +49,7 @@ class OfferAuthorizationTest extends TestCase
                 'display_name' => 'Create offer',
                 'description' => 'Permission to create offer',
                 'grouping' => 'offer',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -59,7 +60,7 @@ class OfferAuthorizationTest extends TestCase
                 'display_name' => 'Edit offer',
                 'description' => 'Permission to edit offer',
                 'grouping' => 'offer',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+                'external_id' => Str::uuid()->toString(),
             ]
         );
 
@@ -68,7 +69,7 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-creator',
             'display_name' => 'Offer Creator',
             'description' => 'Can create offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithCreatePermission->attachPermission($createPermission);
 
@@ -77,7 +78,7 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-editor',
             'display_name' => 'Offer Editor',
             'description' => 'Can edit offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithEditPermission->attachPermission($editPermission);
 
@@ -86,17 +87,17 @@ class OfferAuthorizationTest extends TestCase
             'name' => 'offer-viewer',
             'display_name' => 'Offer Viewer',
             'description' => 'Cannot manage offers',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
-        $this->userWithCreatePermission = factory(User::class)->create();
+        $this->userWithCreatePermission = User::factory()->create();
         $this->userWithCreatePermission->attachRole($roleWithCreatePermission);
 
-        $this->userWithEditPermission = factory(User::class)->create();
+        $this->userWithEditPermission = User::factory()->create();
         $this->userWithEditPermission->attachRole($roleWithEditPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -107,7 +108,11 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithCreatePermission);
 
-        $newLead = factory(Lead::class)->create();
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithCreatePermission = $this->userWithCreatePermission->fresh();
+
+        $newLead = Lead::factory()->create();
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
@@ -128,7 +133,7 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $newLead = factory(Lead::class)->create();
+        $newLead = Lead::factory()->create();
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
@@ -148,6 +153,10 @@ class OfferAuthorizationTest extends TestCase
     public function user_with_offer_edit_permission_can_update_offer()
     {
         $this->actingAs($this->userWithEditPermission);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
@@ -185,6 +194,10 @@ class OfferAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithEditPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
+
         $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
@@ -212,6 +225,10 @@ class OfferAuthorizationTest extends TestCase
     public function user_with_offer_edit_permission_can_mark_offer_as_lost()
     {
         $this->actingAs($this->userWithEditPermission);
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,

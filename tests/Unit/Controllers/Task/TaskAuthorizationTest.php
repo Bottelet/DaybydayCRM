@@ -9,15 +9,17 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class TaskAuthorizationTest extends TestCase
+class TaskAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private Task $task;
 
@@ -29,7 +31,7 @@ class TaskAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
         // Create or find task-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -46,7 +48,7 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'task-deleter',
             'display_name' => 'Task Deleter',
             'description' => 'Can delete tasks',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -55,15 +57,18 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'task-viewer',
             'display_name' => 'Task Viewer',
             'description' => 'Cannot delete tasks',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
+
+        // Explicitly clear the permissions cache
+        Cache::tags('role_user')->flush();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -75,7 +80,7 @@ class TaskAuthorizationTest extends TestCase
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertStatus(302); // Redirect on success
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 
@@ -93,18 +98,22 @@ class TaskAuthorizationTest extends TestCase
     #[Test]
     public function user_with_update_project_permission_can_update_task_project()
     {
-        $project = factory(Project::class)->create(['client_id' => $this->task->client_id]);
+        $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $roleWithPermission = Role::create([
             'name' => 'project-updater',
             'display_name' => 'Project Updater',
             'description' => 'Can update task project',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
-        $updateProjectPermission = Permission::where('name', 'task-update-linked-project')->first();
+        $updateProjectPermission = Permission::firstOrCreate(['name' => 'task-update-linked-project'], [
+            'display_name' => 'Update task linked project',
+            'description' => 'Can update task project',
+            'grouping' => 'task',
+        ]);
         $roleWithPermission->attachPermission($updateProjectPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
@@ -119,7 +128,7 @@ class TaskAuthorizationTest extends TestCase
     #[Test]
     public function user_without_update_project_permission_cannot_update_task_project()
     {
-        $project = factory(Project::class)->create(['client_id' => $this->task->client_id]);
+        $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $this->actingAs($this->userWithoutPermission);
 
@@ -138,20 +147,27 @@ class TaskAuthorizationTest extends TestCase
             'name' => 'status-updater',
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
-        $statusPermission = Permission::where('name', 'task-update-status')->first();
+        $statusPermission = Permission::firstOrCreate(['name' => 'task-update-status'], [
+            'display_name' => 'Update task status',
+            'description' => 'Can update task status',
+            'grouping' => 'task',
+        ]);
         $roleWithPermission->attachPermission($statusPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::typeOfTask()->where('id', '!=', $this->task->status_id)->first();
+        $newStatus = Status::factory()->create(['source_type' => \App\Models\Task::class]);
+        while ($newStatus->id == $this->task->status_id) {
+            $newStatus = Status::factory()->create(['source_type' => \App\Models\Task::class]);
+        }
         $originalTitle = $this->task->title;
         $originalDescription = $this->task->description;
 
-        $response = $this->json('PATCH', route('tasks.updateStatus', $this->task->external_id), [
+        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',
@@ -160,7 +176,7 @@ class TaskAuthorizationTest extends TestCase
 
         $this->task->refresh();
 
-        $response->assertStatus(302);
+        $response->assertStatus(200);
         $this->assertEquals($newStatus->id, $this->task->status_id);
         // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->task->title);

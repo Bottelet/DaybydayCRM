@@ -3,13 +3,13 @@
 namespace Tests\Unit\Enums;
 
 use App\Enums\Country;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CountryTest extends TestCase
+class CountryTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function from_code_returns_correct_country_instance()

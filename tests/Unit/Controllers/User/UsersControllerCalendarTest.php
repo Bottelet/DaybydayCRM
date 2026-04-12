@@ -4,15 +4,14 @@ namespace Tests\Unit\Controllers\User;
 
 use App\Models\Absence;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class UsersControllerCalendarTest extends TestCase
+class UsersControllerCalendarTest extends AbstractTestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use RefreshDatabase;
 
     protected $absenceWithInTime;
 
@@ -23,21 +22,21 @@ class UsersControllerCalendarTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
-        $this->absenceWithInTime = factory(Absence::class)->create([
+        $this->user = User::factory()->create();
+        $this->absenceWithInTime = Absence::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now(),
             'end_at' => now()->addDay(),
             'reason' => 'test',
         ]);
 
-        $this->absenceWithToLate = factory(Absence::class)->create([
+        $this->absenceWithToLate = Absence::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now()->addWeeks(5),
             'end_at' => now()->addWeeks(6),
             'reason' => 'test',
         ]);
-        $this->absenceWithToEarly = factory(Absence::class)->create([
+        $this->absenceWithToEarly = Absence::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now()->subWeeks(4),
             'end_at' => now()->subWeeks(3),
@@ -49,7 +48,7 @@ class UsersControllerCalendarTest extends TestCase
     #[Group('junie_repaired')]
     public function can_get_absences_within_time_slot()
     {
-        $this->markTestIncomplete('failure repaired by junie');
+
         $correctUser = null;
         $r = $this->json('GET', '/users/calendar-users/');
         foreach ($r->json() as $user) {

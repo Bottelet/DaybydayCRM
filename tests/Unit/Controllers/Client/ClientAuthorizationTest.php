@@ -4,18 +4,17 @@ namespace Tests\Unit\Controllers\Client;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;
-use App\Models\Permission;
-use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class ClientAuthorizationTest extends TestCase
+class ClientAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private Client $client;
 
@@ -27,42 +26,11 @@ class ClientAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = factory(Client::class)->create();
-
-        // Create or get the client-delete permission
-        $deletePermission = Permission::firstOrCreate(
-            ['name' => 'client-delete'],
-            [
-                'display_name' => 'Delete client',
-                'description' => 'Permission to delete client',
-                'grouping' => 'client',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-            ]
-        );
-
-        // Create role with client-delete permission
-        $roleWithPermission = Role::create([
-            'name' => 'client-deleter',
-            'display_name' => 'Client Deleter',
-            'description' => 'Can delete clients',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($deletePermission);
-
-        // Create role without client-delete permission
-        $roleWithoutPermission = Role::create([
-            'name' => 'client-viewer',
-            'display_name' => 'Client Viewer',
-            'description' => 'Cannot delete clients',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
+        $this->client = Client::factory()->create();
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
-        $this->userWithPermission->attachRole($roleWithPermission);
-
-        $this->userWithoutPermission = factory(User::class)->create();
-        $this->userWithoutPermission->attachRole($roleWithoutPermission);
+        $this->userWithPermission = User::factory()->create();
+        $this->userWithoutPermission = User::factory()->create();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -70,9 +38,10 @@ class ClientAuthorizationTest extends TestCase
     #[Test]
     public function user_with_client_delete_permission_can_delete_client()
     {
-        $this->actingAs($this->userWithPermission);
+        $this->user = $this->userWithPermission;
+        $this->withPermissions(PermissionName::CLIENT_DELETE);
 
-        $response = $this->json('DELETE', route('clients.destroy', $this->client->external_id));
+        $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         $response->assertStatus(302); // Redirect on success
         $this->assertSoftDeleted('clients', ['id' => $this->client->id]);
@@ -83,7 +52,7 @@ class ClientAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $response = $this->json('DELETE', route('clients.destroy', $this->client->external_id));
+        $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('clients', ['id' => $this->client->id, 'deleted_at' => null]);

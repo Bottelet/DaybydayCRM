@@ -7,13 +7,13 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class InvoiceCalculatorTest extends TestCase
+class InvoiceCalculatorTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 
@@ -29,16 +29,21 @@ class InvoiceCalculatorTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+
+        // Ensure Setting exists with VAT = 0 for consistent test behavior
+        // Update existing setting from seeder instead of creating a new one
+        \App\Models\Setting::query()->update(['vat' => 0]);
+
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
         ]);
-        $this->payment = factory(Payment::class)->create([
+        $this->payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount' => 1000,
             'payment_date' => today(),
             'payment_source' => 'test',
         ]);
-        $this->invoiceLine = factory(InvoiceLine::class)->create([
+        $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
             'price' => 5000,
             'quantity' => 1,

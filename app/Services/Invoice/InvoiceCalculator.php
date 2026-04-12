@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Offer;
 use App\Repositories\Money\Money;
 use App\Repositories\Tax\Tax;
+use Exception;
 
 class InvoiceCalculator
 {
@@ -22,29 +23,25 @@ class InvoiceCalculator
     public function __construct($invoice)
     {
         if (! $invoice instanceof Invoice && ! $invoice instanceof Offer) {
-            throw new \Exception('Not correct type for Invoice Calculator');
+            throw new Exception('Not correct type for Invoice Calculator');
         }
-        $this->tax = new Tax;
+        $this->tax = new Tax();
         $this->invoice = $invoice;
     }
 
     public function getVatTotal()
     {
-        $price = $this->getSubTotal()->getAmount();
+        $subTotal = $this->getSubTotal()->getAmount();
 
-        return new Money($price * $this->tax->vatRate());
+        return new Money((int) ($subTotal * $this->tax->vatRate()));
     }
 
     public function getTotalPrice(): Money
     {
-        $price = 0;
-        $invoiceLines = $this->invoice->invoiceLines;
+        $subTotal = $this->getSubTotal()->getAmount();
+        $vatTotal = $this->getVatTotal()->getAmount();
 
-        foreach ($invoiceLines as $invoiceLine) {
-            $price += $invoiceLine->quantity * $invoiceLine->price;
-        }
-
-        return new Money($price);
+        return new Money((int) ($subTotal + $vatTotal));
     }
 
     public function getSubTotal(): Money
@@ -56,12 +53,12 @@ class InvoiceCalculator
             $price += $invoiceLine->quantity * $invoiceLine->price;
         }
 
-        return new Money($price / $this->tax->multipleVatRate());
+        return new Money($price);
     }
 
     public function getAmountDue()
     {
-        return new Money($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
+        return new Money((int) ($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount')));
     }
 
     public function getInvoice()

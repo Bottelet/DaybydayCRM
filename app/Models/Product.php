@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasExternalId;
+    use HasFactory;
 
     protected $appends = ['divided_price'];
 

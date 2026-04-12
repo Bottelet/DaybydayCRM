@@ -6,35 +6,54 @@ use App\Enums\OfferStatus;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use PHPUnit\Framework\Attributes\Group;
+use App\Models\Role;
+use App\Models\User;
+use App\Enums\PermissionName;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class DeleteLeadControllerTest extends TestCase
+class DeleteLeadControllerTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->user = User::factory()->create();
+        $role = Role::firstOrCreate(
+            ['name' => 'employee'],
+            [
+                'display_name' => 'Employee',
+                'description' => 'Employee role',
+                'external_id' => Str::uuid()->toString(),
+            ]
+        );
+        $this->user->attachRole($role);
+        $this->withPermissions(PermissionName::LEAD_DELETE);
+
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function delete_lead()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
 
-        $this->json('DELETE', route('leads.destroy', $lead->external_id));
+        $response = $this->json('DELETE', route('leads.destroy', $lead->external_id));
 
+        $response->assertStatus(200);
         $this->assertSoftDeleted('leads', ['id' => $lead->id]);
     }
 
     #[Test]
     public function delete_offers_if_flag_given()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $offer = Offer::create([
             'source_id' => $lead->id,
             'source_type' => Lead::class,
@@ -42,10 +61,11 @@ class DeleteLeadControllerTest extends TestCase
             'status' => OfferStatus::inProgress()->getStatus(),
         ]);
 
-        $this->json('DELETE', route('leads.destroy', $lead->external_id), [
+        $response = $this->json('DELETE', route('leads.destroy', $lead->external_id), [
             'delete_offers' => 'on',
         ]);
 
+        $response->assertStatus(200);
         $this->assertSoftDeleted('leads', ['id' => $lead->id]);
         $this->assertSoftDeleted('offers', ['id' => $offer->id]);
     }
@@ -53,7 +73,7 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $offer = Offer::create([
             'source_id' => $lead->id,
             'source_type' => Lead::class,
@@ -61,7 +81,9 @@ class DeleteLeadControllerTest extends TestCase
             'status' => OfferStatus::inProgress()->getStatus(),
         ]);
 
-        $this->json('DELETE', route('leads.destroy', $lead->external_id));
+        $response = $this->json('DELETE', route('leads.destroy', $lead->external_id));
+
+        $response->assertStatus(200);
 
         $offer->refresh();
 
@@ -73,13 +95,14 @@ class DeleteLeadControllerTest extends TestCase
     #[Test]
     public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $lead->offers()->forceDelete();
 
-        $this->json('DELETE', route('leads.destroy', $lead->external_id), [
+        $response = $this->json('DELETE', route('leads.destroy', $lead->external_id), [
             'delete_offers' => 'on',
         ]);
 
+        $response->assertStatus(200);
         $this->assertNotNull($lead->refresh()->deleted_at);
     }
 }

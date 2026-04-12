@@ -5,19 +5,18 @@ namespace Tests\Unit\Controllers\Project;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Project;
-use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('project-controller')]
-class ProjectSecurityTest extends TestCase
+class ProjectSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $project;
 
@@ -27,12 +26,10 @@ class ProjectSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         // Create a user without project-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
     }
 
     #[Test]
@@ -44,7 +41,7 @@ class ProjectSecurityTest extends TestCase
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertRedirect();
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
@@ -55,18 +52,19 @@ class ProjectSecurityTest extends TestCase
 
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertStatus(403);
         $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
     }
 
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
         $originalAssignee = $this->project->user_assigned_id;
 
         // Attempt to change both status_id and user_assigned_id (mass assignment attack)
@@ -91,8 +89,10 @@ class ProjectSecurityTest extends TestCase
     #[Test]
     public function update_status_with_invalid_status_external_id_returns_error()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
@@ -105,10 +105,12 @@ class ProjectSecurityTest extends TestCase
     #[Test]
     public function update_status_via_ajax_with_valid_external_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
+        $this->actingAs($this->user);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Project::class]);
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
 
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'statusExternalId' => $newStatus->external_id,
@@ -121,11 +123,11 @@ class ProjectSecurityTest extends TestCase
     #[Test]
     public function update_status_rejects_invalid_status_type()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         // Create a status that belongs to a different type (Lead instead of Project)
-        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->project->status_id;
 
         // Attempt to assign a Lead status to a Project
@@ -146,7 +148,7 @@ class ProjectSecurityTest extends TestCase
     #[Test]
     public function update_status_rejects_nonexistent_status_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
+        $permission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $this->user->roles->first()->attachPermission($permission);
 
         $originalStatus = $this->project->status_id;

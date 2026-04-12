@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     protected static function boot()
     {
@@ -42,7 +45,7 @@ class Appointment extends Model
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d H:i:s');
+        return $date->format('Y-m-d\TH:i:s.000000\Z');
     }
 
     public function user()

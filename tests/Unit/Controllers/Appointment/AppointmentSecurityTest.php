@@ -2,20 +2,22 @@
 
 namespace Tests\Unit\Controllers\Appointment;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Appointment;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('appointment-controller')]
-class AppointmentSecurityTest extends TestCase
+class AppointmentSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $appointment;
 
@@ -25,29 +27,36 @@ class AppointmentSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->appointment = factory(Appointment::class)->create([
+        // Create and authenticate a user with default role
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
+
+        $this->appointment = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'start_at' => now(),
             'end_at' => now()->addHour(),
         ]);
 
         // Create a user without appointment-update permission
-        $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function authorized_user_can_update_appointment()
     {
         // Give user permission to update appointments
-        $permission = Permission::firstOrCreate(['name' => 'appointment-update']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
 
-        $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
+            'id' => $this->appointment->id,
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertStatus(200);
@@ -72,13 +81,16 @@ class AppointmentSecurityTest extends TestCase
     {
         // Remove all permissions from user
         $this->user->roles()->detach();
-        $basicRole = Role::where('name', 'employee')->first();
-        $this->user->attachRole($basicRole);
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
 
-        $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
+            'id' => $this->appointment->id,
             'start' => now()->addDay()->toISOString(),
             'end' => now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertStatus(403);
@@ -88,10 +100,12 @@ class AppointmentSecurityTest extends TestCase
     public function authorized_user_can_delete_appointment()
     {
         // Give user permission to delete appointments
-        $permission = Permission::firstOrCreate(['name' => 'appointment-delete']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
-        $response = $this->json('DELETE', route('appointments.destroy', $this->appointment->external_id));
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
+            '_token' => csrf_token(),
+        ]);
 
         $response->assertStatus(200);
         $this->assertSoftDeleted('appointments', ['id' => $this->appointment->id]);
@@ -102,7 +116,10 @@ class AppointmentSecurityTest extends TestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', route('appointments.destroy', $this->appointment->external_id));
+        // Use withSession to provide CSRF token
+        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
+            '_token' => csrf_token(),
+        ]);
 
         $response->assertStatus(403);
     }

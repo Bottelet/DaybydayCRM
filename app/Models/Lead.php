@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
@@ -9,6 +10,7 @@ use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @property string title
@@ -22,11 +24,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Lead extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
     protected $searchableFields = ['title'];
 
-    const LEAD_STATUS_CLOSED = 'closed';
+    public const LEAD_STATUS_CLOSED = 'closed';
 
     protected $fillable = [
         'external_id',
@@ -81,6 +87,11 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
+    public function notes()
+    {
+        return $this->comments();
+    }
+
     public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'lead', 'external_id' => $this->external_id]);
@@ -113,7 +124,8 @@ class Lead extends Model implements Commentable
 
     public function isClosed()
     {
-        return $this->status == self::LEAD_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && $this->status->title == self::LEAD_STATUS_CLOSED;
     }
 
     public function invoice()
@@ -129,6 +141,16 @@ class Lead extends Model implements Commentable
     public function offers()
     {
         return $this->morphMany(Offer::class, 'source');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'lead_id');
     }
 
     public function convertToOrder()

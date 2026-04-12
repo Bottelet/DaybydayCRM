@@ -21,7 +21,7 @@ class DropboxAuthenticator implements StorageAuthenticatorContract
         $this->client_id = config('services.dropbox.client_id');
         $this->client_secret = config('services.dropbox.client_secret');
         $this->redirect_uri = route('dropbox.callback');
-        $this->client = new Client;
+        $this->client = new Client();
     }
 
     public function authUrl()

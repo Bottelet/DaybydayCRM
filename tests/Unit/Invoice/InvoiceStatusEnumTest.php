@@ -3,14 +3,15 @@
 namespace Tests\Unit\Invoice;
 
 use App\Enums\InvoiceStatus;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Exception;
 
-class InvoiceStatusEnumTest extends TestCase
+class InvoiceStatusEnumTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /**
      * @var string
@@ -58,14 +59,14 @@ class InvoiceStatusEnumTest extends TestCase
     #[Test]
     public function throws_exception_if_status_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         InvoiceStatus::fromStatus('None existing status');
     }
 
     #[Test]
     public function throws_exception_if_display_value_is_not_known()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         InvoiceStatus::fromDisplayValue('None existing display value');
     }
 }

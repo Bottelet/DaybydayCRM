@@ -5,14 +5,14 @@ namespace Tests\Unit\Models;
 use App\Models\Activity;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ActivityModelBootTest extends TestCase
+class ActivityModelBootTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $user;
 
@@ -22,8 +22,8 @@ class ActivityModelBootTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
-        $this->task = factory(Task::class)->create();
+        $this->user = User::factory()->create();
+        $this->task = Task::factory()->create();
     }
 
     #[Test]
@@ -53,7 +53,7 @@ class ActivityModelBootTest extends TestCase
         $customExternalId = 'custom-external-id-12345';
         $customIpAddress = '127.0.0.1';
 
-        $activity = new Activity;
+        $activity = new Activity();
         $activity->forceFill([
             'external_id' => $customExternalId,
             'ip_address' => $customIpAddress,
@@ -74,7 +74,7 @@ class ActivityModelBootTest extends TestCase
     #[Test]
     public function activity_generates_unique_external_ids_for_each_record()
     {
-        $activity1 = new Activity;
+        $activity1 = new Activity();
         $activity1->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
             'ip_address' => '127.0.0.1',
@@ -86,7 +86,7 @@ class ActivityModelBootTest extends TestCase
         ]);
         $activity1->save();
 
-        $activity2 = new Activity;
+        $activity2 = new Activity();
         $activity2->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
             'ip_address' => '127.0.0.1',

@@ -15,10 +15,17 @@ class RedirectIfNotAdmin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth()->user()->hasRole('administrator') || Auth()->user()->hasRole('owner')) {
+        $user = Auth()->user();
+        if ($user && ($user->hasRole('administrator') || $user->hasRole('owner'))) {
             return $next($request);
         }
-        Session()->flash('flash_message_warning', __('Only Allowed for admins'));
+
+        // For JSON/API requests, return 403 instead of redirecting
+        if ($request->expectsJson()) {
+            abort(403, __('Only Allowed for admins'));
+        }
+
+        session()->flash('flash_message_warning', __('Only Allowed for admins'));
 
         return redirect()->back();
     }

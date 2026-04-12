@@ -103,8 +103,8 @@ class Kernel extends HttpKernel
         'can' => Authorize::class,
         'guest' => RedirectIfAuthenticated::class,
         'throttle' => ThrottleRequests::class,
-        'permission' => EntrustPermission::class,
         'role' => EntrustRole::class,
+        'permission' => EntrustPermission::class,
         'ability' => EntrustAbility::class,
     ];
 }

@@ -6,15 +6,15 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_roles_for_user_' . $this->$userPrimaryKey;
+        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
         $roleModel = Config::get('entrust.role');
 
         if (Cache::getStore() instanceof TaggableStore) {
@@ -30,7 +30,7 @@ trait EntrustUserTrait
 
             $roles = collect($rolesArray)->map(
                 function ($roleArr) use ($roleModel) {
-                    return (new $roleModel)
+                    return (new $roleModel())
                         ->newFromBuilder($roleArr);
                 }
             );
@@ -39,9 +39,9 @@ trait EntrustUserTrait
         }
 
         return $roles->filter(function ($role) {
-            if (!is_object($role)) {
-                \Log::warning(
-                    'EntrustUserTrait: Non-object found in cachedRoles for user ID ' .
+            if (! is_object($role)) {
+                Log::warning(
+                    'EntrustUserTrait: Non-object found in cachedRoles for user ID '.
                     $this->getKey()
                 );
 
@@ -104,7 +104,7 @@ trait EntrustUserTrait
         parent::boot();
 
         static::deleting(function ($user) {
-            if (!method_exists(
+            if (! method_exists(
                 Config::get('auth.providers.users.model'),
                 'bootSoftDeletes'
             )) {
@@ -121,11 +121,11 @@ trait EntrustUserTrait
             foreach ($name as $roleName) {
                 $hasRole = $this->hasRole($roleName);
 
-                if ($hasRole && !$requireAll) {
+                if ($hasRole && ! $requireAll) {
                     return true;
                 }
 
-                if (!$hasRole && $requireAll) {
+                if (! $hasRole && $requireAll) {
                     return false;
                 }
             }
@@ -134,7 +134,7 @@ trait EntrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if (!is_object($role)) {
+            if (! is_object($role)) {
                 continue;
             }
 
@@ -152,11 +152,11 @@ trait EntrustUserTrait
             foreach ($permission as $permName) {
                 $hasPerm = $this->can($permName);
 
-                if ($hasPerm && !$requireAll) {
+                if ($hasPerm && ! $requireAll) {
                     return true;
                 }
 
-                if (!$hasPerm && $requireAll) {
+                if (! $hasPerm && $requireAll) {
                     return false;
                 }
             }
@@ -165,15 +165,15 @@ trait EntrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if (!is_object($role)
-                || !method_exists($role, 'cachedPermissions')
+            if (! is_object($role)
+                || ! method_exists($role, 'cachedPermissions')
             ) {
                 continue;
             }
 
             foreach ($role->cachedPermissions() as $perm) {
-                if (!is_object($perm)
-                    || !property_exists($perm, 'name')
+                if (! is_object($perm)
+                    || empty($perm->name)
                 ) {
                     continue;
                 }
@@ -189,19 +189,19 @@ trait EntrustUserTrait
 
     public function ability($roles, $permissions, $options = [])
     {
-        if (!is_array($roles)) {
+        if (! is_array($roles)) {
             $roles = explode(',', $roles);
         }
 
-        if (!is_array($permissions)) {
+        if (! is_array($permissions)) {
             $permissions = explode(',', $permissions);
         }
 
-        if (!isset($options['validate_all'])) {
+        if (! isset($options['validate_all'])) {
             $options['validate_all'] = false;
         }
 
-        if (!isset($options['return_type'])) {
+        if (! isset($options['return_type'])) {
             $options['return_type'] = 'boolean';
         }
 
@@ -220,10 +220,10 @@ trait EntrustUserTrait
 
         if (
             ($options['validate_all']
-                && !in_array(false, $checkedRoles)
-                && !in_array(false, $checkedPermissions))
+                && ! in_array(false, $checkedRoles)
+                && ! in_array(false, $checkedPermissions))
             ||
-            (!$options['validate_all']
+            (! $options['validate_all']
                 && (in_array(true, $checkedRoles)
                 || in_array(true, $checkedPermissions)))
         ) {
@@ -265,7 +265,7 @@ trait EntrustUserTrait
         $this->roles()->syncWithoutDetaching([
             $roleId,
         ]);
-        
+
         // Clear the cache after attaching a role
         if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('entrust.role_user_table'))->flush();
@@ -297,31 +297,19 @@ trait EntrustUserTrait
             if (is_array($role)) {
                 return $role['id'] ?? $role;
             }
+
             return $role;
         })->toArray();
 
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->roles()->syncWithoutDetaching($roleIds);
-        
-        // Clear cache
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
-        }
-
-        if (empty($ids)) {
-            return;
-        }
-
-        $this->roles()->syncWithoutDetaching(
-            $ids
-        );
 
         $this->flushRoleCache();
     }
 
     public function detachRoles($roles = null)
     {
-        if (!$roles) {
+        if (! $roles) {
             $roles = $this->roles()->get();
         }
 

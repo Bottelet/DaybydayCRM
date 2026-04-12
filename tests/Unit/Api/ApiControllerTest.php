@@ -3,68 +3,22 @@
 namespace Tests\Unit\Api;
 
 use App\Api\v1\Controllers\ApiController;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-/**
- * Concrete subclass to expose protected methods for testing.
- */
-class ConcreteApiController extends ApiController
+class ApiControllerTest extends AbstractTestCase
 {
-    public function callRespond($data, $statusCode = 200, $headers = [])
-    {
-        return $this->respond($data, $statusCode, $headers);
-    }
-
-    public function callRespondSuccess()
-    {
-        return $this->respondSuccess();
-    }
-
-    public function callRespondCreated($data)
-    {
-        return $this->respondCreated($data);
-    }
-
-    public function callRespondNoContent()
-    {
-        return $this->respondNoContent();
-    }
-
-    public function callRespondError($message, $statusCode)
-    {
-        return $this->respondError($message, $statusCode);
-    }
-
-    public function callRespondUnauthorized($message = 'Unauthorized')
-    {
-        return $this->respondUnauthorized($message);
-    }
-
-    public function callRespondForbidden($message = 'Forbidden')
-    {
-        return $this->respondForbidden($message);
-    }
-
-    public function callRespondNotFound($message = 'Not Found')
-    {
-        return $this->respondNotFound($message);
-    }
-}
-
-class ApiControllerTest extends TestCase
-{
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private ConcreteApiController $controller;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->controller = new ConcreteApiController;
+        $this->controller = new ConcreteApiController();
     }
 
     #[Test]
@@ -99,12 +53,11 @@ class ApiControllerTest extends TestCase
     #[Test]
     public function respond_success_returns_status200_with_null_data()
     {
-        $this->markTestIncomplete('This test has not been implemented yet.');
         $response = $this->controller->callRespondSuccess();
 
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertNull($response->getData());
+        $this->assertEquals('{}', $response->getContent());
     }
 
     #[Test]

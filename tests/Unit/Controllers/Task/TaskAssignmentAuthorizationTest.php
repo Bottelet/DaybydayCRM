@@ -7,17 +7,18 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
-class TaskAssignmentAuthorizationTest extends TestCase
+class TaskAssignmentAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $authorizedUser;
 
@@ -53,21 +54,24 @@ class TaskAssignmentAuthorizationTest extends TestCase
         $authorizedRole->perms()->sync([$permission->id]);
 
         // Create authorized user
-        $this->authorizedUser = factory(User::class)->create();
+        $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
 
         // Create unauthorized user (no permissions)
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
 
         // Create user to assign to
-        $this->newAssignee = factory(User::class)->create();
+        $this->newAssignee = User::factory()->create();
 
         // Create task
-        $client = factory(Client::class)->create();
-        $this->task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $this->task = Task::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);
+
+        // Explicitly clear the permissions cache
+        Cache::tags('role_user')->flush();
     }
 
     #[Test]

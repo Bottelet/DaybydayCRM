@@ -10,11 +10,12 @@ use Illuminate\Queue\SerializesModels;
 
 class ClientAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $client;
 
     private $action;
-
-    use InteractsWithSockets, SerializesModels;
 
     public function getClient()
     {

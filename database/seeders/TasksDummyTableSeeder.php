@@ -19,27 +19,27 @@ class TasksDummyTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Task::class, 50)->create([
+        Task::factory()->count(50)->create([
             'client_id' => Client::all()->random()->id,
             'user_created_id' => User::all()->random()->id,
             'user_assigned_id' => User::all()->random()->id,
         ])->each(function ($t) {
             if (random_int(1, 5) == 1) {
-                $invoice = factory(Invoice::class)->create([
+                $invoice = Invoice::factory()->create([
                     'client_id' => $t->client_id,
                 ]);
-                factory(InvoiceLine::class, 4)->create([
+                InvoiceLine::factory()->count(4)->create([
                     'invoice_id' => $invoice->id,
                 ]);
 
-                factory(Comment::class, 3)->create([
+                Comment::factory()->count(3)->create([
                     'source_type' => Task::class,
                     'source_id' => $t->id,
                     'user_id' => User::all()->random()->id,
                 ]);
             }
 
-            factory(Comment::class, 3)->create([
+            Comment::factory()->count(3)->create([
                 'source_type' => Task::class,
                 'source_id' => $t->id,
                 'user_id' => User::all()->random()->id,

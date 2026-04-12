@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Controllers\Settings;
 
-use App\Models\Role;
+use App\Models\BusinessHour;
 use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class SettingsAuthorizationTest extends TestCase
+class SettingsAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $adminUser;
 
@@ -25,25 +25,30 @@ class SettingsAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->setting = Setting::first();
+        $this->setting = Setting::first() ?: Setting::create([
+            'company' => 'Default Company',
+            'vat' => 25,
+            'currency' => 'USD',
+            'language' => 'en',
+            'country' => 'US',
+            'client_number' => 1,
+            'invoice_number' => 1,
+            'max_users' => 10,
+        ]);
+
+        // Create business hours for the setting
+        foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day) {
+            BusinessHour::firstOrCreate(
+                ['day' => $day],
+                ['open_time' => '09:00:00', 'close_time' => '17:00:00']
+            );
+        }
 
         // Create admin user
-        $adminRole = Role::where('name', 'administrator')->orWhere('name', 'owner')->first();
-        $this->adminUser = factory(User::class)->create();
-        $this->adminUser->attachRole($adminRole);
+        $this->adminUser = User::factory()->withRole('administrator')->create();
 
         // Create non-admin user
-        $employeeRole = Role::where('name', 'employee')->first();
-        if (! $employeeRole) {
-            $employeeRole = Role::create([
-                'name' => 'employee',
-                'display_name' => 'Employee',
-                'description' => 'Regular employee',
-                'external_id' => uniqid('employee-role-', true),
-            ]);
-        }
-        $this->nonAdminUser = factory(User::class)->create();
-        $this->nonAdminUser->attachRole($employeeRole);
+        $this->nonAdminUser = User::factory()->withRole('employee')->create();
     }
 
     #[Test]
@@ -71,7 +76,7 @@ class SettingsAuthorizationTest extends TestCase
     {
         $this->actingAs($this->adminUser);
 
-        $response = $this->json('PATCH', route('settings.update'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Test Company',
             'vat' => 25,
             'currency' => 'USD',
@@ -94,7 +99,7 @@ class SettingsAuthorizationTest extends TestCase
 
         $originalCompany = $this->setting->company;
 
-        $response = $this->json('PATCH', route('settings.update'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Malicious Company',
             'vat' => 25,
             'currency' => 'USD',
@@ -106,7 +111,7 @@ class SettingsAuthorizationTest extends TestCase
             'end_time' => '17:00',
         ]);
 
-        $response->assertStatus(302); // Redirect back with error
+        $response->assertStatus(403); // JSON request returns 403 for unauthorized
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 
@@ -140,7 +145,7 @@ class SettingsAuthorizationTest extends TestCase
             'end_time' => '18:00',
         ]);
 
-        $response->assertStatus(302); // Redirect back with error
+        $response->assertStatus(403); // JSON request returns 403 for unauthorized
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 }

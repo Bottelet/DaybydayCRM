@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\OfferStatus;
 use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
@@ -9,24 +10,46 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
-    use SoftDeletes, HasExternalId;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'sent_at',
         'status',
+        'status_id',
         'due_at',
         'client_id',
         'source_id',
         'source_type',
-        'status',
         'external_id',
     ];
 
     // getRouteKeyName() is provided by HasExternalId trait
 
+    public function source()
+    {
+        return $this->morphTo();
+    }
+
+    public function lead()
+    {
+        return $this->source();
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
     public function invoiceLines()
     {
         return $this->hasMany(InvoiceLine::class);
+    }
+
+    public function lines()
+    {
+        return $this->invoiceLines();
     }
 
     public function invoice()

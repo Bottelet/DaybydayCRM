@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class RedirectIfDemo
 {
-    const MEESAGE = 'This action is not allowed in the demo.';
+    public const MEESAGE = 'This action is not allowed in the demo.';
 
     /**
      * Handle an incoming request.
@@ -21,7 +21,7 @@ class RedirectIfDemo
             return $next($request);
         }
 
-        Session()->flash('flash_message_warning', __(self::MEESAGE));
+        session()->flash('flash_message_warning', __(self::MEESAGE));
 
         return redirect()->back();
     }

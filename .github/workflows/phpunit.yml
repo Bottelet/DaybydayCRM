@@ -1,55 +1,145 @@
-name: Run tests
+name: phpunit
+
 on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
   workflow_dispatch:
+    inputs:
+      test_group:
+        description: 'Which tests to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - smoke
+          - api
+          - crud
+          - custom
+          - junie_repaired
+      custom_group_name:
+        description: 'Custom PHPUnit group name (only used if "custom" selected above)'
+        required: false
+        type: string
+      output:
+        description: 'Output format'
+        required: true
+        default: 'testdox'
+        type: choice
+        options:
+          - pao
+          - testdox
+      fail_fast:
+        description: 'Fail fast (stop on first error)?'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 jobs:
-  run-tests:
-    name: Run tests
+  tests:
+    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} (output:${{ inputs.output }}, fail_fast:${{ inputs.fail_fast }})
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.3', '8.4']
 
     services:
       mysql:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_PASSWORD: password
-          MYSQL_DATABASE: daybyday_test
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          coverage: none
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
 
-      - name: Create daybyday testing database
-        env:
-          PORT: ${{ job.services.mysql.ports[3306] }}
-        run: mysql -h 127.0.0.1 --port "$PORT" -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS daybyday_test;'
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -ppassword --silent; then
+              echo "MySQL ready!"
+              break
+            fi
+            sleep 2
+          done
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+      - name: Prepare .env
+        run: |
+          cp .env.ci .env.testing
+          cp .env.ci .env
 
-      - name: Run Composer install
+      - name: Install Composer dependencies
         run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
 
-      - name: Prepare Laravel application
-        run: |
-          cp .env.ci .env
-          php artisan key:generate
+      - name: Generate app key
+        run: php artisan key:generate
 
-      - name: Database setup
+      - name: Create test DBs for parallel
+        run: |
+          for i in {1..8}; do
+            mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test_$i CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          done
+
+      - name: Run migrations
         run: php artisan migrate --seed
 
-      - name: Run tests
-        run: ./vendor/bin/phpunit
+      - name: Set test run options
+        id: opts
+        run: |
+          # Output style flag (for paratest only)
+          if [ "${{ github.event.inputs.output }}" = "pao" ]; then
+            OUT_OPT="--pao"
+          else
+            OUT_OPT="--testdox"
+          fi
+
+          # Fail fast: for paratest --stop-on-failure, for phpunit --fail-on-incomplete --stop-on-risky --stop-on-failure
+          if [ "${{ github.event.inputs.fail_fast }}" = "true" ]; then
+            PARATEST_FAILFAST="--stop-on-failure"
+            PHPUNIT_FAILFAST="--fail-on-incomplete --stop-on-risky --stop-on-failure"
+          else
+            PARATEST_FAILFAST=""
+            PHPUNIT_FAILFAST=""
+          fi
+
+          GROUP="${{ github.event.inputs.test_group }}"
+          CUSTOM_GROUP="${{ github.event.inputs.custom_group_name }}"
+          echo "OUT_OPT=${OUT_OPT}" >> $GITHUB_ENV
+          echo "PARATEST_FAILFAST=${PARATEST_FAILFAST}" >> $GITHUB_ENV
+          echo "PHPUNIT_FAILFAST=${PHPUNIT_FAILFAST}" >> $GITHUB_ENV
+          echo "GROUP=${GROUP}" >> $GITHUB_ENV
+          echo "CUSTOM_GROUP=${CUSTOM_GROUP}" >> $GITHUB_ENV
+
+      - name: Run tests (selected group, style, fail fast)
+        run: |
+          if [ "$GROUP" = "full" ]; then
+            ./vendor/bin/phpunit $PHPUNIT_FAILFAST $OUT_OPT
+          elif [ "$GROUP" = "custom" ]; then
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="$CUSTOM_GROUP" $OUT_OPT $PARATEST_FAILFAST
+          else
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="$GROUP" $OUT_OPT $PARATEST_FAILFAST
+          fi

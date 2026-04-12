@@ -2,14 +2,18 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     backupGlobals="false"
-    bootstrap="vendor/autoload.php"
+    beStrictAboutTestsThatDoNotTestAnything="false"
+    bootstrap="tests/phpunit-parallel-bootstrap.php"
     colors="true"
-    processIsolation="false"
-    stopOnFailure="false"
-    stopOnError="false"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
+    displayDetailsOnTestsThatTriggerErrors="true"
+    displayDetailsOnTestsThatTriggerNotices="true"
+    displayDetailsOnTestsThatTriggerWarnings="true"
     failOnRisky="false"
     failOnWarning="false"
-    beStrictAboutTestsThatDoNotTestAnything="false"
+    processIsolation="false"
+    stopOnError="false"
+    stopOnFailure="false"
 >
     <testsuites>
         <testsuite name="Unit">
@@ -18,16 +22,18 @@
     </testsuites>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_KEY" value="base64:HlxW5wzUCf5xPY/YTueJnUKzq4OZ6qByEjQhwYCDU/U="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <!-- DB environment variables removed to allow .env.testing to be used -->
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
     </php>
 </phpunit>

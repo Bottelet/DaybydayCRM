@@ -1,23 +1,13 @@
-# Structural Analysis - DaybydayCRM Test Suite
+# Structural Code Analysis
 
-This analysis identifies recurring patterns and structural weaknesses in the DaybydayCRM test suite based on 43+ repaired test failures and errors.
+Refer to **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** for a detailed structural analysis.
 
-## 1. Database & Schema Issues
-- **Missing Defaults:** Fields like `external_id`, `ip_address`, `color`, and `status` lack database defaults but are mandatory in models.
-- **Inconsistent UUID Handling:** Models like `Activity`, `User`, and `Lead` each handle `external_id` differently (some in `boot`, some in observers, some in controllers).
-- **Outdated Factories:** Many factories in `database/factories/` are incomplete, missing fields required for successful model creation (e.g., `Appointment::color`, `Lead::status`).
-
-## 2. Infrastructure & Environment Issues
-- **Brittle Seeding:** `TestCase::setUp()` calls `db:seed` for every test. This ensures state but causes performance issues and leads to `UniqueConstraintViolationException` (Duplicate Entry) when roles are re-attached manually in tests.
-- **Permission Setup:** Role/Permission logic via Entrust is not fully integrated into the base `TestCase`, leading to manual, repetitive role attachment in almost every controller test.
-- **PHP Version Dependency:** The code uses outdated PHPUnit patterns (e.g., `assertObjectHasAttribute`) that fail in modern PHP/PHPUnit environments.
-
-## 3. Brittle Logic & Assertions
-- **Date/Time Sensitivity:** Tests frequently fail due to string vs object comparison in dates. Using `toDate()` on a string (instead of a Carbon object) is a common failure point.
-- **Relationship Assumptions:** Many tests fail because they expect a relationship (like `primaryContact`) to exist without explicitly creating the related models in the test setup.
-- **Authorization Logic:** Tests often hit a 403 response because they perform actions as a default user without the specific role required by the controller's `authorize()` method or middleware.
-
-## 4. Technical Debt
-- **Legacy Routing:** The string-based route syntax (`'Controller@method'`) makes it difficult to trace failures back to code.
-- **Legacy Factories:** The closure-based `factory()` helper is deprecated in newer Laravel versions, leading to maintenance challenges.
-- **Entrust Limitations:** The `EntrustUserTrait`'s `attachRole` method doesn't natively check for existing records, causing "Duplicate Entry" SQL errors.
+## Core Weaknesses
+1. **Database Schema:** Mandatory fields (UUIDs, IP addresses) often lack DB-level defaults, relying on application-level boot methods.
+2. **Infrastructure:** Heavy reliance on `db:seed` in tests leads to slow execution and duplicate entry errors.
+3. **Brittle Logic:** Date/Time comparisons and relationship assumptions frequently cause test failures.
+4. **Technical Debt:** Outdated routing syntax and closure-based factories.
+5. **Percentage Storage:** Inconsistent handling of percentage values (stored as int × 100, requires division by 10000).
+6. **Response Handling:** Controllers lack consistent JSON vs web response differentiation.
+7. **Type Safety:** Status `source_type` mixes string literals and class names, causing validation failures.
+8. **Null Safety:** Trait methods don't consistently check for null before accessing optional properties.

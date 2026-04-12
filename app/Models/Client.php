@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
 use App\Traits\HasExternalId;
@@ -17,7 +18,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use SearchableTrait, SoftDeletes, HasExternalId;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 

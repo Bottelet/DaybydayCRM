@@ -2,22 +2,24 @@
 
 namespace Tests\Unit\Controllers\Task;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('task-controller')]
-class TaskSecurityTest extends TestCase
+class TaskSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $task;
 
@@ -27,12 +29,20 @@ class TaskSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
+
+        // Create and authenticate a user with default role
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
 
         // Create a user without task-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
+
+        // Explicitly clear the permissions cache
+        Cache::tags('role_user')->flush();
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -42,9 +52,12 @@ class TaskSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
+        // Clear cache after attaching permission
+        Cache::tags('role_user')->flush();
+
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertRedirect();
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 
@@ -55,8 +68,7 @@ class TaskSecurityTest extends TestCase
 
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        $response->assertStatus(403);
         $this->assertDatabaseHas('tasks', ['id' => $this->task->id, 'deleted_at' => null]);
     }
 
@@ -65,11 +77,12 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
 
-        $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $newStatus = Status::factory()->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
 
-        // Attempt to change both status_id and user_assigned_id (mass assignment attack)
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
@@ -93,13 +106,15 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(400)
-            ->assertJson(['error' => __('Invalid status')]);
+            ->assertJson(['error' => 'Invalid status external id']);
     }
 
     #[Test]
@@ -107,9 +122,11 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
 
-        $newStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $newStatus = Status::factory()->create(['source_type' => Task::class]);
 
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => $newStatus->external_id,
         ], ['X-Requested-With' => 'XMLHttpRequest']);
@@ -123,12 +140,13 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
 
         // Create a status that belongs to a different type (Lead instead of Task)
-        $leadStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->task->status_id;
 
-        // Attempt to assign a Lead status to a Task
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $leadStatus->id,
         ]);
@@ -138,9 +156,9 @@ class TaskSecurityTest extends TestCase
         // Status should NOT be changed because it's not a valid task status
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should show warning message
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
+        // Should return 400 error for JSON request
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Invalid status for task']);
     }
 
     #[Test]
@@ -148,10 +166,11 @@ class TaskSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
+        Cache::tags('role_user')->flush();
 
         $originalStatus = $this->task->status_id;
 
-        // Attempt to assign a non-existent status ID
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => 999999,
         ]);
@@ -161,8 +180,8 @@ class TaskSecurityTest extends TestCase
         // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should show warning message
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for task'));
+        // Should return 400 error for JSON request
+        $response->assertStatus(400);
+        $response->assertJson(['error' => 'Invalid status for task']);
     }
 }

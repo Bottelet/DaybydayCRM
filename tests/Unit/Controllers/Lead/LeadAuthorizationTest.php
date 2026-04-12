@@ -4,19 +4,18 @@ namespace Tests\Unit\Controllers\Lead;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
-use App\Models\Permission;
-use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class LeadAuthorizationTest extends TestCase
+class LeadAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private Lead $lead;
 
@@ -28,42 +27,11 @@ class LeadAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
-
-        // Create or get the lead-delete permission
-        $deletePermission = Permission::firstOrCreate(
-            ['name' => 'lead-delete'],
-            [
-                'display_name' => 'Delete lead',
-                'description' => 'Permission to delete lead',
-                'grouping' => 'lead',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-            ]
-        );
-
-        // Create role with lead-delete permission
-        $roleWithPermission = Role::create([
-            'name' => 'lead-deleter',
-            'display_name' => 'Lead Deleter',
-            'description' => 'Can delete leads',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($deletePermission);
-
-        // Create role without lead-delete permission
-        $roleWithoutPermission = Role::create([
-            'name' => 'lead-viewer',
-            'display_name' => 'Lead Viewer',
-            'description' => 'Cannot delete leads',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
+        $this->lead = Lead::factory()->create();
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
-        $this->userWithPermission->attachRole($roleWithPermission);
-
-        $this->userWithoutPermission = factory(User::class)->create();
-        $this->userWithoutPermission->attachRole($roleWithoutPermission);
+        $this->userWithPermission = User::factory()->create();
+        $this->userWithoutPermission = User::factory()->create();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -71,9 +39,10 @@ class LeadAuthorizationTest extends TestCase
     #[Test]
     public function user_with_lead_delete_permission_can_delete_lead()
     {
-        $this->actingAs($this->userWithPermission);
+        $this->user = $this->userWithPermission;
+        $this->withPermissions(PermissionName::LEAD_DELETE);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertStatus(302); // Redirect on success
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
@@ -93,30 +62,11 @@ class LeadAuthorizationTest extends TestCase
     #[Test]
     public function lead_update_assign_only_accepts_user_assigned_id_field()
     {
-        // Create or get the permission
-        $assignPermission = Permission::firstOrCreate(
-            ['name' => 'can-assign-new-user-to-lead'],
-            [
-                'display_name' => 'Assign users to leads',
-                'description' => 'Can assign users to leads',
-                'grouping' => 'lead',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-            ]
-        );
+        $user = User::factory()->create();
+        $this->user = $user;
+        $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
-        $roleWithPermission = Role::create([
-            'name' => 'lead-assigner',
-            'display_name' => 'Lead Assigner',
-            'description' => 'Can assign leads',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($assignPermission);
-
-        $user = factory(User::class)->create();
-        $user->attachRole($roleWithPermission);
-        $this->actingAs($user);
-
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalTitle = $this->lead->title;
         $originalDescription = $this->lead->description;
 
@@ -140,34 +90,19 @@ class LeadAuthorizationTest extends TestCase
     #[Test]
     public function lead_update_status_only_accepts_status_id_field()
     {
-        // Create or get the permission
-        $statusPermission = Permission::firstOrCreate(
-            ['name' => 'lead-update-status'],
-            [
-                'display_name' => 'Update lead status',
-                'description' => 'Permission to update lead status',
-                'grouping' => 'lead',
-                'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-            ]
-        );
+        $user = User::factory()->create();
+        $this->user = $user;
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
-        $roleWithPermission = Role::create([
-            'name' => 'lead-status-updater',
-            'display_name' => 'Lead Status Updater',
-            'description' => 'Can update lead status',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
-        ]);
-        $roleWithPermission->attachPermission($statusPermission);
+        $newStatus = Status::factory()->create(['source_type' => Lead::class]);
+        while ($newStatus->id == $this->lead->status_id) {
+            $newStatus = Status::factory()->create(['source_type' => Lead::class]);
+        }
 
-        $user = factory(User::class)->create();
-        $user->attachRole($roleWithPermission);
-        $this->actingAs($user);
-
-        $newStatus = Status::typeOfLead()->where('id', '!=', $this->lead->status_id)->first();
         $originalTitle = $this->lead->title;
         $originalDescription = $this->lead->description;
 
-        $response = $this->json('PATCH', route('leads.updateStatus', $this->lead->external_id), [
+        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',

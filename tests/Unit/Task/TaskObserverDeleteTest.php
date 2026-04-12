@@ -3,21 +3,20 @@
 namespace Tests\Unit\Task;
 
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class TaskObserverDeleteTest extends TestCase
+class TaskObserverDeleteTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $task;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->task = factory(Task::class)->create();
+        $this->task = Task::factory()->create();
 
         $this->task->comments()->create([
             'description' => 'Test',

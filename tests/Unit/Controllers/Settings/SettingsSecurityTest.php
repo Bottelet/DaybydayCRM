@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Controllers\Settings;
 
-use App\Models\Role;
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('settings-controller')]
-class SettingsSecurityTest extends TestCase
+class SettingsSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $nonAdminUser;
 
@@ -22,9 +22,14 @@ class SettingsSecurityTest extends TestCase
         parent::setUp();
 
         // Create a non-admin user
-        $this->nonAdminUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->nonAdminUser->attachRole($role);
+        $this->nonAdminUser = User::factory()->withRole('employee')->create();
+
+        // Create and authenticate an admin user
+        $this->user = User::factory()->withRole('administrator')->create();
+        $this->actingAs($this->user);
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -48,7 +53,7 @@ class SettingsSecurityTest extends TestCase
     #[Test]
     public function admin_can_update_overall_settings()
     {
-        $response = $this->json('POST', route('settings.updateOverall'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Test Company',
             'country' => 'GB',
             'language' => 'en',
@@ -67,7 +72,7 @@ class SettingsSecurityTest extends TestCase
     {
         $this->actingAs($this->nonAdminUser);
 
-        $response = $this->json('POST', route('settings.updateOverall'), [
+        $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company' => 'Hacked Company',
             'country' => 'GB',
             'language' => 'en',

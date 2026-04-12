@@ -7,14 +7,14 @@ use App\Models\Document;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class DocumentModelBootTest extends TestCase
+class DocumentModelBootTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $user;
 
@@ -23,8 +23,8 @@ class DocumentModelBootTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
-        $this->client = factory(Client::class)->create(['user_id' => $this->user->id]);
+        $this->user = User::factory()->create();
+        $this->client = Client::factory()->create(['user_id' => $this->user->id]);
     }
 
     #[Test]
@@ -102,22 +102,22 @@ class DocumentModelBootTest extends TestCase
     #[Test]
     public function document_has_sourceable_morph_to_relationship()
     {
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
 
-        $relationship = $document->sourceable();
+        $relationship = $document->source();
 
         $this->assertInstanceOf(MorphTo::class, $relationship);
-        $this->assertTrue(method_exists($document, 'sourceable'));
+        $this->assertTrue(method_exists($document, 'source'));
     }
 
     #[Test]
     public function document_factory_creates_record_with_external_id()
     {
-        $task = factory(Task::class)->create();
-        $document = factory(Document::class)->create([
+        $task = Task::factory()->create();
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);

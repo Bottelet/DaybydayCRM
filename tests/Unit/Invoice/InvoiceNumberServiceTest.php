@@ -3,16 +3,17 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class InvoiceNumberServiceTest extends TestCase
+class InvoiceNumberServiceTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $client;
 
@@ -25,11 +26,12 @@ class InvoiceNumberServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Invoice::class)->create([
+        // Ensure a Setting record exists for the service
+        Setting::factory()->create();
 
-        ]);
+        $this->client = Invoice::factory()->create([]);
 
         $this->invoiceNumberService = app(InvoiceNumberService::class);
     }

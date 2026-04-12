@@ -4,10 +4,10 @@ namespace Tests\Unit\Repositories;
 
 use App\Models\Role;
 use App\Repositories\Role\RoleRepository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Tests for RoleRepository::allRoles() after the syntax fix.
@@ -16,16 +16,22 @@ use Tests\TestCase;
  * which is the correct Eloquent syntax for selecting specific columns.
  */
 #[Group('repository')]
-class RoleRepositoryTest extends TestCase
+class RoleRepositoryTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private RoleRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new RoleRepository;
+
+        // Ensure roles exist for testing
+        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
+        Role::factory()->create(['name' => 'manager', 'display_name' => 'Manager']);
+        Role::factory()->create(['name' => 'employee', 'display_name' => 'Employee']);
+
+        $this->repository = new RoleRepository();
     }
 
     #[Test]

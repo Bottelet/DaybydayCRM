@@ -18,9 +18,10 @@ class GetStorageProvider
         if ($integration) {
             $providerName = strtolower($integration->name);
             $className = self::$storageProviders[$providerName] ?? Local::class;
-            return new $className;
+
+            return new $className();
         } else {
-            return new Local;
+            return new Local();
         }
     }
 }

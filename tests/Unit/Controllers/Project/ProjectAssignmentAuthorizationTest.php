@@ -7,17 +7,17 @@ use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
-class ProjectAssignmentAuthorizationTest extends TestCase
+class ProjectAssignmentAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $authorizedUser;
 
@@ -53,18 +53,18 @@ class ProjectAssignmentAuthorizationTest extends TestCase
         $authorizedRole->perms()->sync([$permission->id]);
 
         // Create authorized user
-        $this->authorizedUser = factory(User::class)->create();
+        $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
 
         // Create unauthorized user
-        $this->unauthorizedUser = factory(User::class)->create();
+        $this->unauthorizedUser = User::factory()->create();
 
         // Create user to assign to
-        $this->newAssignee = factory(User::class)->create();
+        $this->newAssignee = User::factory()->create();
 
         // Create project
-        $client = factory(Client::class)->create();
-        $this->project = factory(Project::class)->create([
+        $client = Client::factory()->create();
+        $this->project = Project::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);
@@ -74,6 +74,10 @@ class ProjectAssignmentAuthorizationTest extends TestCase
     public function authorized_user_can_reassign_project()
     {
         $originalAssignee = $this->project->user_assigned_id;
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->authorizedUser = $this->authorizedUser->fresh();
 
         // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-project'));
@@ -101,6 +105,10 @@ class ProjectAssignmentAuthorizationTest extends TestCase
     public function unauthorized_user_cannot_reassign_project()
     {
         $originalAssignee = $this->project->user_assigned_id;
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->unauthorizedUser = $this->unauthorizedUser->fresh();
 
         // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-project'));

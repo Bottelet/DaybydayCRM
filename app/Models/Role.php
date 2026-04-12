@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
     use HasExternalId;
-    const OWNER_ROLE = 'owner';
+    use HasFactory;
 
-    const ADMIN_ROLE = 'administrator';
+    public const OWNER_ROLE = 'owner';
+
+    public const ADMIN_ROLE = 'administrator';
 
     protected $fillable = [
         'name',

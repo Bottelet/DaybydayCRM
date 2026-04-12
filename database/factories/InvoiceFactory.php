@@ -1,16 +1,21 @@
 <?php
 
-/** @var Factory $factory */
+namespace Database\Factories;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Client;
 use App\Models\Invoice;
-use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Invoice::class, static function (Faker $faker) {
-    return [
-        'external_id' => $faker->uuid,
-        'status' => 'draft',
-        'client_id' => factory(Client::class),
-    ];
-});
+class InvoiceFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = Invoice::class;
+
+    public function definition()
+    {
+        return [
+            'external_id' => $this->faker->uuid,
+            'status' => InvoiceStatus::draft(),
+            'client_id' => Client::factory(),
+        ];
+    }
+}

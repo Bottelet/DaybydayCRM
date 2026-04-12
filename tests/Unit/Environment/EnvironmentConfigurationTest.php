@@ -4,7 +4,7 @@ namespace Tests\Unit\Environment;
 
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
 /**
  * Tests for configuration changes introduced in this PR:
@@ -15,7 +15,7 @@ use Tests\TestCase;
  * - phpunit.xml updated to use CACHE_STORE
  */
 #[Group('environment-configuration')]
-class EnvironmentConfigurationTest extends TestCase
+class EnvironmentConfigurationTest extends AbstractTestCase
 {
     /**
      * Verify the test environment is configured correctly.
@@ -64,8 +64,11 @@ class EnvironmentConfigurationTest extends TestCase
     {
         $sessionDriver = config('session.driver');
         $this->assertNotEmpty($sessionDriver, 'Session driver must be configured');
-        $this->assertContains($sessionDriver, ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'],
-            'Session driver must be a valid Laravel session driver');
+        $this->assertContains(
+            $sessionDriver,
+            ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'],
+            'Session driver must be a valid Laravel session driver'
+        );
     }
 
     /**
@@ -84,8 +87,11 @@ class EnvironmentConfigurationTest extends TestCase
     public function mail_mailer_does_not_send_real_emails_in_test_environment(): void
     {
         $mailer = config('mail.default');
-        $this->assertContains($mailer, ['array', 'log'],
-            'Mail mailer must be array or log in tests to prevent real email delivery');
+        $this->assertContains(
+            $mailer,
+            ['array', 'log'],
+            'Mail mailer must be array or log in tests to prevent real email delivery'
+        );
     }
 
     /**

@@ -5,6 +5,8 @@ namespace App\Services\Activity;
 use App\Models\Activity;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
+use Exception;
+use League\Config\Exception\InvalidConfigurationException;
 
 class ActivityLogger
 {
@@ -78,7 +80,7 @@ class ActivityLogger
         $activityModel = Activity::class;
         if (! is_a($activityModel, Activity::class, true)
             || ! is_a($activityModel, Model::class, true)) {
-            throw InvalidConfiguration::modelIsNotValid($activityModel);
+            throw InvalidConfigurationException::modelIsNotValid($activityModel);
         }
 
         return $activityModel;
@@ -88,7 +90,7 @@ class ActivityLogger
     {
         $activityModelClassName = self::determineActivityModel();
 
-        return new $activityModelClassName;
+        return new $activityModelClassName();
     }
 
     protected function normalizeCauser($modelOrId): Model
@@ -102,7 +104,7 @@ class ActivityLogger
         if ($model instanceof Model) {
             return $model;
         }
-        throw new \Exception('Normalizer failed');
+        throw new Exception('Normalizer failed');
     }
 
     protected function getActivity()

@@ -4,6 +4,12 @@
 
 ### Security Fixes
 
+#### SearchController: Arbitrary Class Instantiation Prevention
+- **Issue**: URL parameter used directly as class name allowing arbitrary class instantiation.
+- **Fix**: Added allowlist validation for search types.
+- **Allowed types**: Client, Task, Project, Lead, User.
+- **Impact**: CRITICAL - Prevents potential remote code execution.
+
 #### Authorization Enforcement Added
 
 All delete operations across resource types now properly enforce permission checks via middleware:

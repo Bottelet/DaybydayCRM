@@ -2,22 +2,24 @@
 
 namespace Tests\Unit\Controllers\Lead;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('lead-controller')]
-class LeadSecurityTest extends TestCase
+class LeadSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $lead;
 
@@ -27,22 +29,26 @@ class LeadSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
+
+        // Create and authenticate a user with default role
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
 
         // Create a user without lead-delete permission
-        $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
+
+        // Disable CSRF middleware for all tests
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function authorized_user_can_delete_lead()
     {
         // Give user permission to delete leads
-        $permission = Permission::firstOrCreate(['name' => 'lead-delete']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::LEAD_DELETE);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
         $response->assertRedirect();
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
@@ -53,10 +59,10 @@ class LeadSecurityTest extends TestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        // Route middleware 'permission:lead-delete' returns 403 for unauthorized users
+        $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
     }
 
@@ -65,7 +71,7 @@ class LeadSecurityTest extends TestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', '/leads/' . $this->lead->external_id . '/json');
+        $response = $this->json('DELETE', '/leads/'.$this->lead->external_id.'/json');
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
@@ -74,15 +80,14 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_assign_only_accepts_user_assigned_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-assigned']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalStatus = $this->lead->status_id;
         $originalTitle = $this->lead->title;
 
-        // Attempt to change multiple fields (mass assignment attack)
-        $response = $this->json('PATCH', route('lead.update.assignee', $this->lead->external_id), [
+        // Use PATCH (route is PATCH)
+        $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
             'status_id' => 999, // This should be ignored
             'title' => 'Hacked Title', // This should be ignored
@@ -103,13 +108,12 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_status_only_accepts_status_id_field()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
-        $newStatus = factory(Status::class)->create(['source_type' => Lead::class]);
+        $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
 
-        // Attempt to change both status_id and user_assigned_id (mass assignment attack)
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
@@ -131,14 +135,13 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_status_rejects_invalid_status_type()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         // Create a status that belongs to a different type (Task instead of Lead)
-        $taskStatus = factory(Status::class)->create(['source_type' => Task::class]);
+        $taskStatus = Status::factory()->create(['source_type' => Task::class]);
         $originalStatus = $this->lead->status_id;
 
-        // Attempt to assign a Task status to a Lead
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $taskStatus->id,
         ]);
@@ -156,12 +159,11 @@ class LeadSecurityTest extends TestCase
     #[Test]
     public function update_status_rejects_nonexistent_status_id()
     {
-        $permission = Permission::firstOrCreate(['name' => 'lead-update-status']);
-        $this->user->roles->first()->attachPermission($permission);
+        $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $originalStatus = $this->lead->status_id;
 
-        // Attempt to assign a non-existent status ID
+        // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => 999999,
         ]);

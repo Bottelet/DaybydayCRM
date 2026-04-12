@@ -13,13 +13,13 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class UsersController extends Controller
 {
@@ -30,16 +30,13 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('user.create', ['only' => ['create']]);
+        $this->middleware('is.demo', ['only' => ['update', 'destroy']]);
         $this->middleware(function ($request, $next) {
-            if (! auth()->check() || ! auth()->user()->can('user-delete')) {
-                session()->flash('flash_message_warning', __('You do not have permission to view this page'));
-
-                return redirect()->back();
-            }
+            abort_unless(auth()->check() && auth()->user()->can('user-delete'), 403);
 
             return $next($request);
         }, ['only' => ['destroy']]);
-        $this->middleware('is.demo', ['only' => ['update', 'destroy']]);
+        $this->middleware('permission:user-update', ['only' => ['edit']]);
     }
 
     /**
@@ -205,7 +202,7 @@ class UsersController extends Controller
             $path = Storage::put($settings->external_id, $file);
         }
 
-        $user = new User;
+        $user = new User();
         $user->name = $request->name;
         $user->external_id = Uuid::uuid4()->toString();
         $user->email = $request->email;
@@ -294,7 +291,7 @@ class UsersController extends Controller
         $user->fill($input)->save();
         $role = $user->roles->first();
         if ($role && $role->name == Role::OWNER_ROLE && $owners->count() <= 1) {
-            Session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
+            session()->flash('flash_message_warning', __('Not able to change owner role, please choose a new owner first'));
         } else {
             if (auth()->user()->canChangeRole()) {
                 $user->roles()->sync([$request->roles]);
@@ -302,7 +299,7 @@ class UsersController extends Controller
         }
         $user->department()->sync([$department]);
 
-        Session()->flash('flash_message', __('User successfully updated'));
+        session()->flash('flash_message', __('User successfully updated'));
 
         return redirect()->back();
     }
@@ -315,7 +312,9 @@ class UsersController extends Controller
         $user = $this->findByExternalId($external_id);
 
         if ($user->hasRole('owner')) {
-            return Session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
+            session()->flash('flash_message_warning', __('Not allowed to delete super admin'));
+
+            return redirect()->back();
         }
 
         if ($request->tasks == 'move_all_tasks' && $request->task_user != '') {
@@ -330,9 +329,9 @@ class UsersController extends Controller
 
         try {
             $user->delete();
-            Session()->flash('flash_message', __('User successfully deleted'));
+            session()->flash('flash_message', __('User successfully deleted'));
         } catch (QueryException $e) {
-            Session()->flash('flash_message_warning', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
+            session()->flash('flash_message_warning', __('User can NOT have, leads, clients, or tasks assigned when deleted'));
         }
 
         return redirect()->route('users.index');
@@ -351,7 +350,8 @@ class UsersController extends Controller
      */
     private function allRoles()
     {
-        if (auth()->user()->roles->first()->name == Role::OWNER_ROLE) {
+        $role = auth()->user()->roles->first();
+        if ($role && $role->name == Role::OWNER_ROLE) {
             return Role::all('display_name', 'id', 'name', 'external_id')->sortBy('display_name');
         }
 

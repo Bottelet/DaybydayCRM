@@ -5,19 +5,18 @@ namespace Tests\Unit\Controllers\Lead;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Permission;
-use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Str;
+use App\Enums\PermissionName;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
-class LeadAssignmentAuthorizationTest extends TestCase
+class LeadAssignmentAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $authorizedUser;
 
@@ -31,40 +30,14 @@ class LeadAssignmentAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        // Create permission
-        $permission = Permission::firstOrCreate(
-            ['name' => 'can-assign-new-user-to-lead'],
-            [
-                'display_name' => 'Assign users to leads',
-                'description' => 'Can assign users to leads',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-
-        // Create role with permission
-        $authorizedRole = Role::firstOrCreate(
-            ['name' => 'lead-assigner'],
-            [
-                'display_name' => 'Lead Assigner',
-                'description' => 'Can assign leads',
-                'external_id' => Str::uuid()->toString(),
-            ]
-        );
-        $authorizedRole->perms()->sync([$permission->id]);
-
-        // Create authorized user
-        $this->authorizedUser = factory(User::class)->create();
-        $this->authorizedUser->attachRole($authorizedRole);
-
-        // Create unauthorized user
-        $this->unauthorizedUser = factory(User::class)->create();
-
-        // Create user to assign to
-        $this->newAssignee = factory(User::class)->create();
+        // Create users
+        $this->authorizedUser = User::factory()->create();
+        $this->unauthorizedUser = User::factory()->create();
+        $this->newAssignee = User::factory()->create();
 
         // Create lead
-        $client = factory(Client::class)->create();
-        $this->lead = factory(Lead::class)->create([
+        $client = Client::factory()->create();
+        $this->lead = Lead::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id' => $client->id,
         ]);
@@ -75,14 +48,17 @@ class LeadAssignmentAuthorizationTest extends TestCase
     {
         $originalAssignee = $this->lead->user_assigned_id;
 
+        $this->user = $this->authorizedUser;
+        $this->withPermissions(PermissionName::LEAD_ASSIGN);
+
         // Verify the authorized user has the permission
-        $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-lead'));
+        $this->assertTrue($this->user->can('can-assign-new-user-to-lead'));
 
         // Verify initial state
-        $this->assertEquals($this->authorizedUser->id, $originalAssignee);
+        $this->assertEquals($this->user->id, $originalAssignee);
 
-        $response = $this->actingAs($this->authorizedUser)
-            ->patch(route('lead.update.assignee', $this->lead->external_id), [
+        $response = $this->actingAs($this->user)
+            ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
@@ -102,11 +78,15 @@ class LeadAssignmentAuthorizationTest extends TestCase
     {
         $originalAssignee = $this->lead->user_assigned_id;
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->unauthorizedUser = $this->unauthorizedUser->fresh();
+
         // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-lead'));
 
         $response = $this->actingAs($this->unauthorizedUser)
-            ->patch(route('lead.update.assignee', $this->lead->external_id), [
+            ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 

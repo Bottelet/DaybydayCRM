@@ -6,15 +6,17 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class UserAuthorizationTest extends TestCase
+class UserAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $targetUser;
 
@@ -26,16 +28,16 @@ class UserAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->targetUser = factory(User::class)->create();
+        $this->targetUser = User::factory()->create();
 
         // Create role with user-delete permission
         $roleWithPermission = Role::create([
             'name' => 'user-deleter',
             'display_name' => 'User Deleter',
             'description' => 'Can delete users',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
-        $deletePermission = Permission::where('name', 'user-delete')->first();
+        $deletePermission = Permission::firstOrCreate(['name' => 'user-delete'], ['display_name' => 'Delete User', 'description' => 'Delete user permission']);
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without user-delete permission
@@ -43,15 +45,18 @@ class UserAuthorizationTest extends TestCase
             'name' => 'user-viewer',
             'display_name' => 'User Viewer',
             'description' => 'Cannot delete users',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
+
+        // Explicitly clear the permissions cache
+        Cache::tags('role_user')->flush();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
@@ -83,14 +88,12 @@ class UserAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithPermission);
 
-        $ownerRole = Role::where('name', 'owner')->first();
-        $ownerUser = factory(User::class)->create();
-        $ownerUser->attachRole($ownerRole);
+        $ownerUser = User::factory()->withRole('owner')->create();
 
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));
 
-        // Owner deletion is blocked by application logic and does not redirect
-        $response->assertStatus(200);
+        // Owner deletion is blocked by application logic and redirects back
+        $response->assertStatus(302);
         $this->assertDatabaseHas('users', ['id' => $ownerUser->id, 'deleted_at' => null]);
     }
 }

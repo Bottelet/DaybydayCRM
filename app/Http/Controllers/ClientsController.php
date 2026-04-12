@@ -20,15 +20,16 @@ use App\Services\ClientNumber\ClientNumberService;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
+use Exception;
 
 class ClientsController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
     protected $users;
 
@@ -232,8 +233,16 @@ class ClientsController extends Controller
             'is_primary' => true,
         ]);
 
-        Session()->flash('flash_message', __('Client successfully added'));
+        session()->flash('flash_message', __('Client successfully added'));
         event(new ClientAction($client, self::CREATED));
+
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'client' => $client,
+                'contact' => $contact,
+                'message' => __('Client successfully added'),
+            ], 201);
+        }
 
         return redirect()->route('clients.index');
     }
@@ -353,7 +362,7 @@ class ClientsController extends Controller
             ])->save();
         }
 
-        Session()->flash('flash_message', __('Client successfully updated'));
+        session()->flash('flash_message', __('Client successfully updated'));
 
         return redirect()->route('clients.index');
     }
@@ -366,9 +375,9 @@ class ClientsController extends Controller
         try {
             $client = $this->findByExternalId($external_id);
             $client->delete();
-            Session()->flash('flash_message', __('Client successfully deleted'));
-        } catch (\Exception $e) {
-            Session()->flash('flash_message_warning', __('Client could not be deleted, contact Daybyday support'));
+            session()->flash('flash_message', __('Client successfully deleted'));
+        } catch (Exception $e) {
+            session()->flash('flash_message_warning', __('Client could not be deleted, contact Daybyday support'));
         }
 
         return redirect()->route('clients.index');
@@ -380,16 +389,20 @@ class ClientsController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         if (! auth()->user()->can('client-update')) {
-            Session()->flash('flash_message_warning', __('Not authorized'));
+            session()->flash('flash_message_warning', __('Not authorized'));
 
             return back();
         }
 
-        $user = User::where('external_id', $request->user_external_id)->first();
+        $userExternalId = $request->user_external_id ?: $request->user_assigned_id;
+        $user = User::where('external_id', $userExternalId)->first();
+        if (! $user && is_numeric($userExternalId)) {
+            $user = User::find($userExternalId);
+        }
         $client = Client::with('user')->where('external_id', $external_id)->first();
         $client->updateAssignee($user);
 
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
     }

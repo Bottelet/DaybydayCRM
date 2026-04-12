@@ -8,7 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 use Yajra\Datatables\Datatables;
 
 class RolesController extends Controller
@@ -109,7 +109,7 @@ class RolesController extends Controller
             'display_name' => ucfirst($roleName),
             'description' => $roleDescription,
         ]);
-        Session()->flash('flash_message', __('Role created'));
+        session()->flash('flash_message', __('Role created'));
 
         return view('roles.index');
     }
@@ -128,11 +128,11 @@ class RolesController extends Controller
         if ($role->name !== Role::ADMIN_ROLE && $role->name !== Role::OWNER_ROLE) {
             $role->delete();
         } else {
-            Session()->flash('flash_message_warning', __('Can not delete role'));
+            session()->flash('flash_message_warning', __('Can not delete role'));
 
             return redirect()->route('roles.index');
         }
-        Session()->flash('flash_message', __('Role deleted'));
+        session()->flash('flash_message', __('Role deleted'));
 
         return redirect()->route('roles.index');
     }

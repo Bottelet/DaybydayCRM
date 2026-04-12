@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
@@ -15,9 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Task extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes, HasExternalId;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
-    const TASK_STATUS_CLOSED = 'closed';
+    public const TASK_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
 
@@ -31,10 +36,11 @@ class Task extends Model implements Commentable
         'client_id',
         'deadline',
         'project_id',
+        'invoice_id',
     ];
 
     protected $casts = [
-        'deadline' => 'date',
+        'deadline' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
@@ -135,7 +141,8 @@ class Task extends Model implements Commentable
 
     public function isClosed()
     {
-        return $this->status == self::TASK_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && $this->status->title == self::TASK_STATUS_CLOSED;
     }
 
     public function getSearchableFields(): array

@@ -10,11 +10,12 @@ use Illuminate\Queue\SerializesModels;
 
 class ProjectAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $project;
 
     private $action;
-
-    use InteractsWithSockets, SerializesModels;
 
     public function getProject()
     {

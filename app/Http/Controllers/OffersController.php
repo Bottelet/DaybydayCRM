@@ -40,9 +40,9 @@ class OffersController extends Controller
                 'title' => $line['title'],
                 'type' => $line['type'],
                 'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'],
+                'comment' => $line['comment'] ?? null,
                 'price' => $line['price'] * 100,
-                'product_id' => $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
         }
@@ -56,7 +56,6 @@ class OffersController extends Controller
             'external_id' => Uuid::uuid4()->toString(),
             'source_id' => $lead->id,
             'source_type' => Lead::class,
-            'status' => OfferStatus::inProgress()->getStatus(),
         ]);
 
         foreach ($request->all() as $line) {
@@ -68,11 +67,15 @@ class OffersController extends Controller
                 'title' => $line['title'],
                 'type' => $line['type'],
                 'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'],
+                'comment' => $line['comment'] ?? null,
                 'price' => $line['price'] * 100,
-                'product_id' => $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'OK'], 200);
         }
 
         return response('OK');

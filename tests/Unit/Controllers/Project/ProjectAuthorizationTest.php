@@ -8,15 +8,16 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
-class ProjectAuthorizationTest extends TestCase
+class ProjectAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private Project $project;
 
@@ -28,7 +29,7 @@ class ProjectAuthorizationTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         // Create or find project-delete permission
         $deletePermission = Permission::firstOrCreate(
@@ -45,7 +46,7 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-deleter',
             'display_name' => 'Project Deleter',
             'description' => 'Can delete projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
@@ -54,16 +55,17 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-viewer',
             'display_name' => 'Project Viewer',
             'description' => 'Cannot delete projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
 
         // Create users
-        $this->userWithPermission = factory(User::class)->create();
+        $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
-        $this->userWithoutPermission = factory(User::class)->create();
+        $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
+        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
@@ -72,9 +74,13 @@ class ProjectAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithPermission);
 
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->userWithPermission = $this->userWithPermission->fresh();
+
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertStatus(302); // Redirect on success
+        $response->assertStatus(200); // JSON request returns 200
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
@@ -96,18 +102,23 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'project-assigner',
             'display_name' => 'Project Assigner',
             'description' => 'Can assign projects',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
-        $assignPermission = Permission::where('name', 'can-assign-new-user-to-project')->first();
+        $assignPermission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-project']);
         $roleWithPermission->attachPermission($assignPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newUser = factory(User::class)->create();
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $user = $user->fresh();
 
-        $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
+        $newUser = User::factory()->create();
+
+        // Use PATCH (route is PATCH)
+        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -120,10 +131,11 @@ class ProjectAuthorizationTest extends TestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $newUser = factory(User::class)->create();
+        $newUser = User::factory()->create();
         $originalAssignee = $this->project->user_assigned_id;
 
-        $response = $this->json('PATCH', route('projects.updateAssign', $this->project->external_id), [
+        // Use PATCH (route is PATCH)
+        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -138,20 +150,28 @@ class ProjectAuthorizationTest extends TestCase
             'name' => 'status-updater',
             'display_name' => 'Status Updater',
             'description' => 'Can update status',
-            'external_id' => \Illuminate\Support\Str::uuid()->toString(),
+            'external_id' => Str::uuid()->toString(),
         ]);
-        $statusPermission = Permission::where('name', 'project-update-status')->first();
+        $statusPermission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $roleWithPermission->attachPermission($statusPermission);
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
-        $newStatus = Status::typeOfProject()->where('id', '!=', $this->project->status_id)->first();
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $user = $user->fresh();
+
+        $newStatus = Status::factory()->create(['source_type' => Project::class]);
+        while ($newStatus->id == $this->project->status_id) {
+            $newStatus = Status::factory()->create(['source_type' => Project::class]);
+        }
         $originalTitle = $this->project->title;
         $originalDescription = $this->project->description;
 
-        $response = $this->json('PATCH', route('projects.updateStatus', $this->project->external_id), [
+        // Use PATCH (route is PATCH)
+        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'status_id' => $newStatus->id,
             'title' => 'Malicious Title Change',
             'description' => 'Malicious Description Change',

@@ -7,28 +7,27 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('search-controller')]
-class SearchControllerSecurityTest extends TestCase
+class SearchControllerSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         // Create test data for searching
-        factory(Client::class)->create(['company_name' => 'Test Company']);
-        factory(Task::class)->create(['title' => 'Test Task']);
-        factory(Project::class)->create(['title' => 'Test Project']);
-        factory(Lead::class)->create(['title' => 'Test Lead']);
-        factory(User::class)->create(['name' => 'Test User']);
+        Client::factory()->create(['company_name' => 'Test Company']);
+        Task::factory()->create(['title' => 'Test Task']);
+        Project::factory()->create(['title' => 'Test Project']);
+        Lead::factory()->create(['title' => 'Test Lead']);
+        User::factory()->create(['name' => 'Test User']);
     }
 
     #[Test]
@@ -119,8 +118,9 @@ class SearchControllerSecurityTest extends TestCase
         // Try to inject namespace path
         $response = $this->json('GET', '/search/Test/..%2F..%2FUser');
 
-        $response->assertStatus(400)
-            ->assertJson(['error' => 'Invalid search type']);
+        // Laravel routing prevents path traversal by returning 404
+        // (route doesn't match when path contains encoded slashes)
+        $response->assertStatus(404);
     }
 
     #[Test]

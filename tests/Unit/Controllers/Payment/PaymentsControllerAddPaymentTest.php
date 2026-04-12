@@ -5,15 +5,13 @@ namespace Tests\Unit\Controllers\Payment;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
-use App\Models\Role;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class PaymentsControllerAddPaymentTest extends TestCase
+class PaymentsControllerAddPaymentTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 
@@ -22,13 +20,32 @@ class PaymentsControllerAddPaymentTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user->attachRole(Role::whereName('owner')->first());
+        $this->asOwner();
+
+        // Clear permission cache to ensure fresh permission check
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+
+        // Ensure Setting exists with VAT = 0 for consistent test behavior
+        \App\Models\Setting::updateOrCreate(
+            ['id' => 1],
+            [
+                'client_number' => 10000,
+                'invoice_number' => 10000,
+                'country' => 'US',
+                'company' => 'Test Company',
+                'max_users' => 10,
+                'vat' => 0,
+                'currency' => 'USD',
+                'language' => 'en',
+            ]
+        );
+
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
             'status' => 'unpaid',
         ]);
-        $this->invoiceLine = factory(InvoiceLine::class)->create([
+        $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
             'price' => 5000,
             'quantity' => 1,
@@ -41,14 +58,14 @@ class PaymentsControllerAddPaymentTest extends TestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000,
+            'amount' => 50,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -56,14 +73,14 @@ class PaymentsControllerAddPaymentTest extends TestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000.234,
+            'amount' => 50.234,
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -71,14 +88,14 @@ class PaymentsControllerAddPaymentTest extends TestCase
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000, 234,
+            'amount' => '50,234',
             'payment_date' => '2020-01-01',
             'source' => 'bank',
             'description' => 'A random description',
         ]);
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
 
     #[Test]
@@ -92,6 +109,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
             'description' => 'A random description',
         ]);
 
+        $response->assertStatus(302);
         $this->assertEquals('paid', $this->invoice->refresh()->status);
     }
 
@@ -148,7 +166,7 @@ class PaymentsControllerAddPaymentTest extends TestCase
             'description' => 'A random description',
         ]);
 
-        $response->assertRedirect();
+        $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
     }

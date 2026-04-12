@@ -4,21 +4,21 @@ namespace Tests\Unit\Models;
 
 use App\Models\Appointment;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
 use Ramsey\Uuid\Uuid;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AppointmentModelBootTest extends TestCase
+class AppointmentModelBootTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
     }
 
     #[Test]
@@ -96,7 +96,7 @@ class AppointmentModelBootTest extends TestCase
     #[Test]
     public function appointment_factory_creates_record_with_external_id()
     {
-        $appointment = factory(Appointment::class)->create([
+        $appointment = Appointment::factory()->create([
             'user_id' => $this->user->id,
             'source_type' => User::class,
             'source_id' => $this->user->id,

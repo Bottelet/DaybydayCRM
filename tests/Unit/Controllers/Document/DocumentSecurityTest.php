@@ -2,23 +2,24 @@
 
 namespace Tests\Unit\Controllers\Document;
 
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Project;
-use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('document-controller')]
-class DocumentSecurityTest extends TestCase
+class DocumentSecurityTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $task;
 
@@ -30,19 +31,23 @@ class DocumentSecurityTest extends TestCase
     {
         parent::setUp();
 
-        $this->task = factory(Task::class)->create();
-        $this->project = factory(Project::class)->create();
+        // Create and authenticate a user
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->actingAs($this->user);
+
+        $this->task = Task::factory()->create();
+        $this->project = Project::factory()->create();
 
         // Create a user without upload permissions
-        $this->unauthorizedUser = factory(User::class)->create();
-        $role = Role::where('name', 'employee')->first();
-        $this->unauthorizedUser->attachRole($role);
+        $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
         // Mock file storage integration
         Integration::create([
             'name' => 'local',
             'api_type' => 'file',
         ]);
+
+        $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
@@ -51,6 +56,11 @@ class DocumentSecurityTest extends TestCase
         // Give user permission to upload files to tasks
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+
+        // Clear permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
@@ -83,6 +93,11 @@ class DocumentSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
+        // Clear permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
@@ -113,6 +128,11 @@ class DocumentSecurityTest extends TestCase
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
+        // Clear permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         $response = $this->json('POST', route('document.task.upload', 'nonexistent-uuid'), [
@@ -128,6 +148,11 @@ class DocumentSecurityTest extends TestCase
     {
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
+
+        // Clear permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 

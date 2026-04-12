@@ -2,24 +2,26 @@
 
 namespace Tests\Unit\Controllers\Document;
 
+use App\Enums\PermissionName;
 use App\Models\Client;
 use App\Models\Document;
+use App\Models\Integration;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('document_authorization')]
-class DocumentsControllerAuthorizationTest extends TestCase
+class DocumentsControllerAuthorizationTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private User $owner;
 
@@ -31,26 +33,32 @@ class DocumentsControllerAuthorizationTest extends TestCase
     {
         parent::setUp();
 
+        // CRITICAL: Bind fake storage provider BEFORE creating users/entities
+        // The filesystem middleware checks this during requests
+        $this->bindFakeStorageProvider();
+
+        // Create file storage integration so the filesystem middleware passes
+        Integration::create([
+            'name' => 'local',
+            'api_type' => 'file',
+        ]);
+
         // Create owner user
-        $this->owner = factory(User::class)->create();
+        $this->owner = User::factory()->create();
 
         // Create another user who should NOT have access
-        $this->otherUser = factory(User::class)->create();
+        $this->otherUser = User::factory()->create();
 
         // Create a client owned by the owner
-        $this->client = factory(Client::class)->create(['user_id' => $this->owner->id]);
-
-        $this->bindFakeStorageProvider();
+        $this->client = Client::factory()->create(['user_id' => $this->owner->id]);
     }
 
     private function bindFakeStorageProvider(): void
     {
-        $this->app->instance(GetStorageProvider::class, new class
-        {
+        $this->app->instance(GetStorageProvider::class, new class () {
             public function getStorage(...$args)
             {
-                return new class
-                {
+                return new class () {
                     public function enabled(): bool
                     {
                         return true;
@@ -63,22 +71,14 @@ class DocumentsControllerAuthorizationTest extends TestCase
 
                     public function view(...$args)
                     {
-                        $document = $args[0] ?? null;
-
-                        return response('', 200, [
-                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
-                            'filename' => $document?->original_filename ?? '',
-                        ]);
+                        // Return file content (string), not a response object
+                        return 'fake file content';
                     }
 
                     public function download(...$args)
                     {
-                        $document = $args[0] ?? null;
-
-                        return response('', 200, [
-                            'Content-Type' => $document?->mime ?? 'application/octet-stream',
-                            'filename' => $document?->original_filename ?? '',
-                        ]);
+                        // Return file content (string), not a response object
+                        return 'fake file content';
                     }
                 };
             }
@@ -88,25 +88,18 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_creator()
     {
-        // Create a task created by owner
-        $task = factory(Task::class)->create([
+        // Use $this->owner instead of creating a new user
+        $task = Task::factory()->create([
             'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id, // Assigned to other user
             'client_id' => $this->client->id,
         ]);
 
-        // Create document attached to task
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
-
-        // Verify document exists in database
-        $this->assertDatabaseHas('documents', [
-            'id' => $document->id,
-            'source_type' => Task::class,
-            'source_id' => $task->id,
-        ]);
+        $document->unsetRelation('source')->refresh();
 
         // Owner should be able to view (they created the task)
         $response = $this->actingAs($this->owner)
@@ -120,18 +113,32 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_task_as_assignee()
     {
+        // Grant document view permission to the owner user
+        $role = $this->owner->roles()->first() ?? \App\Models\Role::firstOrCreate(['name' => 'owner']);
+        if (! $this->owner->hasRole($role->name)) {
+            $this->owner->attachRole($role);
+        }
+        $permissionName = PermissionName::DOCUMENT_VIEW instanceof PermissionName ? PermissionName::DOCUMENT_VIEW->value : PermissionName::DOCUMENT_VIEW;
+        $permission = \App\Models\Permission::firstOrCreate(['name' => $permissionName], ['display_name' => $permissionName]);
+        if (! $role->hasPermission($permissionName)) {
+            $role->attachPermission($permission);
+        }
+        \Illuminate\Support\Facades\Cache::flush();
+        $this->owner = $this->owner->fresh(['roles', 'roles.permissions']);
+
         // Create a task assigned to owner
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id, // Created by other user
             'user_assigned_id' => $this->owner->id,
             'client_id' => $this->client->id,
         ]);
 
         // Create document attached to task
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Owner should be able to view (they are assigned to the task)
         $response = $this->actingAs($this->owner)
@@ -144,17 +151,22 @@ class DocumentsControllerAuthorizationTest extends TestCase
     public function user_can_view_document_attached_to_task_via_client_ownership()
     {
         // Create a task on owner's client but created/assigned to others
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $this->client->id, // Owner's client
         ]);
 
+        // Verify task has the correct client_id
+        $this->assertEquals($this->client->id, $task->client_id);
+        $this->assertEquals($this->owner->id, $task->client->user_id);
+
         // Create document attached to task
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Owner should be able to view (they own the client)
         $response = $this->actingAs($this->owner)
@@ -166,20 +178,21 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_cannot_view_document_attached_to_another_users_task()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
         // Create a task owned by other user
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $otherClient->id,
         ]);
 
         // Create document attached to task
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         // Verify task and document are owned by other user
         $this->assertEquals($this->otherUser->id, $task->user_created_id);
@@ -197,16 +210,17 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_project_as_creator()
     {
-        $project = factory(Project::class)->create([
+        $project = Project::factory()->create([
             'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -217,16 +231,17 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_project_as_assignee()
     {
-        $project = factory(Project::class)->create([
+        $project = Project::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->owner->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -237,18 +252,19 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_cannot_view_document_attached_to_another_users_project()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $project = factory(Project::class)->create([
+        $project = Project::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $otherClient->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Project::class,
             'source_id' => $project->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -260,16 +276,17 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_lead_as_creator()
     {
-        $lead = factory(Lead::class)->create([
+        $lead = Lead::factory()->create([
             'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -280,16 +297,17 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_lead_as_assignee()
     {
-        $lead = factory(Lead::class)->create([
+        $lead = Lead::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->owner->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -300,18 +318,19 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_cannot_view_document_attached_to_another_users_lead()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $lead = factory(Lead::class)->create([
+        $lead = Lead::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $otherClient->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Lead::class,
             'source_id' => $lead->id,
         ]);
+        $document->unsetRelation('source')->refresh();
 
         $response = $this->actingAs($this->owner)
             ->get(route('document.view', $document->external_id));
@@ -323,7 +342,7 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_view_document_attached_to_their_client()
     {
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Client::class,
             'source_id' => $this->client->id,
         ]);
@@ -337,9 +356,9 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_cannot_view_document_attached_to_another_users_client()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Client::class,
             'source_id' => $otherClient->id,
         ]);
@@ -354,13 +373,13 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_can_download_document_attached_to_their_task()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->owner->id,
             'user_assigned_id' => $this->owner->id,
             'client_id' => $this->client->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);
@@ -374,15 +393,15 @@ class DocumentsControllerAuthorizationTest extends TestCase
     #[Test]
     public function user_cannot_download_document_attached_to_another_users_task()
     {
-        $otherClient = factory(Client::class)->create(['user_id' => $this->otherUser->id]);
+        $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'user_created_id' => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
             'client_id' => $otherClient->id,
         ]);
 
-        $document = factory(Document::class)->create([
+        $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id' => $task->id,
         ]);

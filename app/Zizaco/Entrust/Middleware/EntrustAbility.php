@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class EntrustAbility
 {
-    const DELIMITER = '|';
+    public const DELIMITER = '|';
 
     protected $auth;
 
