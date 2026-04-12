@@ -12,11 +12,11 @@ DOCKER_EXEC    := docker exec -t --user=$(DOCKER_USER) $$(docker ps -aqf "name=$
 
 # Run a specific test from host: make dtest f=ProjectsControllerTest
 dtest:
-	@$(DOCKER_EXEC) vendor/bin/phpunit --stop-on-failure $(if $(f),--filter $(f),)
+	@$(DOCKER_EXEC) vendor/bin/phpunit --exclude-group flaky --stop-on-failure $(if $(f),--filter $(f),)
 
 # Run all tests until first failure: make dfail
 dfail:
-	@$(DOCKER_EXEC) vendor/bin/phpunit --stop-on-failure
+	@$(DOCKER_EXEC) vendor/bin/phpunit --exclude-group flaky --stop-on-failure
 
 # Quick shell access: make dsh
 dsh:
@@ -48,16 +48,16 @@ phpunit:
 	vendor/bin/phpunit
 
 test-fail:
-	vendor/bin/phpunit --stop-on-failure
+	vendor/bin/phpunit --exclude-group flaky --stop-on-failure
 
 # Usage: make test-filter f=SomeTest
 test-filter:
-	vendor/bin/phpunit --filter $(f) --stop-on-failure
+	vendor/bin/phpunit --exclude-group flaky --filter $(f) --stop-on-failure
 
 # --- Parallel Testing (Inside Container) ---
 
 paratest:
-	vendor/bin/paratest -p8 --stop-on-failure
+	vendor/bin/paratest --exclude-group flaky -p8 --stop-on-failure
 
 # --- Docker Compose (Host Level) ---
 

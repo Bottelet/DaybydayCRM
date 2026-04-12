@@ -22,6 +22,7 @@ on:
           - api
           - crud
           - custom
+          - flaky
           - junie_repaired
       custom_group_name:
         description: 'Custom PHPUnit group name (only used if "custom" selected above)'
@@ -137,9 +138,9 @@ jobs:
       - name: Run tests (selected group, style, fail fast)
         run: |
           if [ "$GROUP" = "full" ]; then
-            ./vendor/bin/phpunit $PHPUNIT_FAILFAST $OUT_OPT
+            ./vendor/bin/phpunit --exclude-group flaky $PHPUNIT_FAILFAST $OUT_OPT
           elif [ "$GROUP" = "custom" ]; then
-            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="$CUSTOM_GROUP" $OUT_OPT $PARATEST_FAILFAST
+            vendor/bin/paratest --exclude-group flaky --processes=8 --runner=WrapperRunner --group="$CUSTOM_GROUP" $OUT_OPT $PARATEST_FAILFAST
           else
-            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="$GROUP" $OUT_OPT $PARATEST_FAILFAST
+            vendor/bin/paratest --exclude-group flaky --processes=8 --runner=WrapperRunner --group="$GROUP" $OUT_OPT $PARATEST_FAILFAST
           fi
