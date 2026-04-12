@@ -151,7 +151,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     // region failure_path
 
     #[Test]
-    public function set_negative_client_number_should_be_prevented()
+    public function set_negative_client_number_allows_negative_sequence()
     {
         /** Arrange */
         $negativeNumber = -100;
