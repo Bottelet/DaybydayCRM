@@ -30,10 +30,9 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function can_update_assignee()
     {
-        $this->markTestIncomplete('uses deprecated method');
         $this->assertNotEquals($this->client->user_id, $this->user->id);
 
-        // $this->expectsEvents(ClientAction::class);
+        $this->expectsEvents(ClientAction::class);
         $this->client->updateAssignee($this->user);
 
         $this->assertEquals($this->client->user_id, $this->user->id);
@@ -42,7 +41,6 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function can_update_assignee_with_out_permissions_as_any_user()
     {
-        $this->markTestIncomplete('uses deprecated method');
         $user = User::factory()->create();
         $this->setUser($user);
 
