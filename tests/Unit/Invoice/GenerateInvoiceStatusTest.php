@@ -7,6 +7,7 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Services\Invoice\GenerateInvoiceStatus;
 use Illuminate\Contracts\Foundation\Application;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -53,6 +54,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('flaky')]
     public function is_status_paid()
     {
         $this->assertFalse($this->generateInvoiceStatus->isPaid());
@@ -71,6 +73,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('flaky')]
     public function is_status_over_paid()
     {
         $this->assertFalse($this->generateInvoiceStatus->isOverPaid());
@@ -107,6 +110,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('flaky')]
     public function is_only_partial_paid_if_values_is_between_invoice_amount()
     {
         $this->assertTrue($this->generateInvoiceStatus->isPartialPaid());
@@ -174,6 +178,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('flaky')]
     public function get_status_of_invoice()
     {
         /** Clean up for complete flow */

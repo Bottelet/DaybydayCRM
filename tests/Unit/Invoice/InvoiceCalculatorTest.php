@@ -7,6 +7,7 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Services\Invoice\InvoiceCalculator;
 use Illuminate\Contracts\Foundation\Application;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -53,6 +54,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('flaky')]
     public function get_amount_due()
     {
         $this->assertEquals(4000, $this->invoiceCalculator->getAmountDue()->getAmount());
