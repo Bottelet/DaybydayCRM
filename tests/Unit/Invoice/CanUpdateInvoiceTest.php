@@ -3,9 +3,10 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CanUpdateInvoiceTest extends AbstractTestCase
 {
@@ -16,23 +17,81 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // Freeze time for deterministic tests
+        Carbon::setTestNow('2024-01-15 12:00:00');
+
         $this->invoice = Invoice::factory()->create([
             'sent_at' => null,
         ]);
     }
 
-    #[Test]
-    public function happy_path()
+    protected function tearDown(): void
     {
-        $this->assertTrue($this->invoice->canUpdateInvoice());
+        Carbon::setTestNow();
+        parent::tearDown();
     }
+
+    //region happy_path
+
+    #[Test]
+    public function can_update_draft_invoice()
+    {
+        /** Arrange */
+        // Invoice created with sent_at = null in setUp()
+
+        /** Act */
+        $result = $this->invoice->canUpdateInvoice();
+
+        /** Assert */
+        $this->assertTrue($result);
+    }
+
+    //endregion
+
+    //region edge_cases
 
     #[Test]
     public function cant_update_invoice_if_its_sent()
     {
-        $this->invoice->sent_at = today();
+        /** Arrange */
+        $this->invoice->sent_at = Carbon::now();
         $this->invoice->save();
 
-        $this->assertFalse($this->invoice->canUpdateInvoice());
+        /** Act */
+        $result = $this->invoice->canUpdateInvoice();
+
+        /** Assert */
+        $this->assertFalse($result);
     }
+
+    #[Test]
+    public function cant_update_invoice_sent_in_the_past()
+    {
+        /** Arrange */
+        $this->invoice->sent_at = Carbon::now()->subDays(5);
+        $this->invoice->save();
+
+        /** Act */
+        $result = $this->invoice->canUpdateInvoice();
+
+        /** Assert */
+        $this->assertFalse($result);
+    }
+
+    #[Test]
+    public function can_update_invoice_with_null_sent_at()
+    {
+        /** Arrange */
+        $this->invoice->sent_at = null;
+        $this->invoice->save();
+
+        /** Act */
+        $result = $this->invoice->canUpdateInvoice();
+
+        /** Assert */
+        $this->assertTrue($result);
+    }
+
+    //endregion
 }
