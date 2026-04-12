@@ -30,8 +30,10 @@ class AppointmentsController extends Controller
 
     public function update(UpdateAppointmentCalendarRequest $request, Appointment $appointment)
     {
-        $appointment->start_at = Carbon::parse($request->start)->setTimezone('Europe/Copenhagen');
-        $appointment->end_at = Carbon::parse($request->end)->setTimezone('Europe/Copenhagen');
+        // Parse the timestamps directly - they're already in the correct format
+        // Don't convert timezone as that would shift the time
+        $appointment->start_at = Carbon::parse($request->start);
+        $appointment->end_at = Carbon::parse($request->end);
         $appointment->user()->associate(User::where('external_id', $request->group)->first());
         $appointment->save();
 
