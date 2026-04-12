@@ -58,7 +58,7 @@ class InvoiceCalculator
 
     public function getAmountDue()
     {
-        return new Money($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount'));
+        return new Money((int) ($this->getTotalPrice()->getAmount() - $this->invoice->payments()->sum('amount')));
     }
 
     public function getInvoice()
