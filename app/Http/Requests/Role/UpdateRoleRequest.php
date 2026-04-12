@@ -13,7 +13,8 @@ class UpdateRoleRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator') || auth()->user()->hasRole('owner');
+        // Authorization handled by 'user.is.admin' middleware on RolesController
+        return true;
     }
 
     /**

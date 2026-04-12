@@ -25,7 +25,8 @@ class UpdateProjectDeadlineRequest extends FormRequest
     public function rules()
     {
         return [
-            'deadline' => 'required|date',
+            'deadline_date' => 'required|date',
+            'deadline_time' => 'nullable|string',
         ];
     }
 }

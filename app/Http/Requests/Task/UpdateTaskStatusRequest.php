@@ -4,7 +4,6 @@ namespace App\Http\Requests\Task;
 
 use App\Enums\PermissionName;
 use App\Models\Status;
-use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskStatusRequest extends FormRequest
@@ -57,7 +56,7 @@ class UpdateTaskStatusRequest extends FormRequest
             if ($statusId) {
                 $validStatus = Status::typeOfTask()->where('id', $statusId)->exists();
                 if (!$validStatus) {
-                    $validator->errors()->add('status_id', 'Invalid status for task');
+                    $validator->errors()->add('status_id', __('Invalid status for task'));
                 }
             }
         });
