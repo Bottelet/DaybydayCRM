@@ -9,6 +9,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use App\Enums\PermissionName;
+use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,14 +18,27 @@ class ClientsControllerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Carbon::setTestNow('2024-01-15 12:00:00');
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
+    }
+
+    //region crud
+
     #[Test]
     public function can_create_client()
     {
-        // Create authenticated user with client-create permission
+        /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_CREATE);
 
-        // Ensure Setting exists for client number generation
         \App\Models\Setting::firstOrCreate(
             ['id' => 1],
             [
@@ -42,6 +56,7 @@ class ClientsControllerTest extends AbstractTestCase
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
 
+        /** Act */
         $response = $this->json('POST', route('clients.store'), [
             'name' => 'James Test',
             'email' => 'james@test.com',
@@ -57,11 +72,10 @@ class ClientsControllerTest extends AbstractTestCase
             'user_id' => $user->id,
         ]);
 
+        /** Assert */
         $this->assertEquals(201, $response->getStatusCode());
-
         $client = Client::where('vat', '12312334')->first();
         $contacts = $client->contacts()->get();
-
         $this->assertCount(1, $contacts);
         $this->assertNotNull($client);
         $this->assertNotNull($client->contacts);
@@ -70,51 +84,48 @@ class ClientsControllerTest extends AbstractTestCase
     #[Test]
     public function can_delete_without_any_relations_client()
     {
-        // Create authenticated user with client-delete permission
+        /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_DELETE);
-
         $client = Client::factory()->create();
 
+        /** Act */
         $this->assertNotNull(Client::where('external_id', $client->external_id)->first());
         $r = $this->json('delete', route('clients.destroy', $client->external_id));
 
+        /** Assert */
         $this->assertSoftDeleted($client);
     }
 
     #[Test]
     public function can_update_client()
     {
-        // Create authenticated user with client-update permission
+        /** Arrange */
         $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $this->user->attachRole($role);
         $this->withPermissions(PermissionName::CLIENT_UPDATE);
 
-        // Create required dependencies
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
 
-        $client = Client::factory()->create(
-            [
-                'vat' => '5898989898',
-                'company_type' => 'A/S',
-                'company_name' => 'Hello',
-                'industry_id' => $industry->id,
-                'user_id' => $user->id,
-            ]
-        );
+        $client = Client::factory()->create([
+            'vat' => '5898989898',
+            'company_type' => 'A/S',
+            'company_name' => 'Hello',
+            'industry_id' => $industry->id,
+            'user_id' => $user->id,
+        ]);
 
-        $contact = Contact::factory()->create(
-            [
-                'name' => 'Kristian',
-                'secondary_number' => '11111111',
-                'primary_number' => '2342342342',
-                'client_id' => $client->id,
-                'is_primary' => true,
-            ]
-        );
+        $contact = Contact::factory()->create([
+            'name' => 'Kristian',
+            'secondary_number' => '11111111',
+            'primary_number' => '2342342342',
+            'client_id' => $client->id,
+            'is_primary' => true,
+        ]);
 
+        /** Act */
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
             'name' => 'Mads',
             'email' => 'james@test.com',
@@ -130,77 +141,54 @@ class ClientsControllerTest extends AbstractTestCase
             'user_id' => $user->id,
         ]);
 
-        // Verify the update succeeded
+        /** Assert */
         $response->assertStatus(302);
-
         $client = Client::where('vat', '12312335')->first();
         $this->assertNotNull($client, 'Client should exist with updated VAT number 12312335');
         $this->assertEquals($client->vat, '12312335');
         $this->assertEquals($client->company_type, 'Aps');
         $this->assertEquals($client->company_name, 'Hello');
-
         $this->assertEquals($client->primaryContact->primary_number, '2342342342');
         $this->assertEquals($client->primaryContact->secondary_number, '423423432');
         $this->assertEquals($client->primaryContact->name, 'Mads');
-
         $this->assertNull(Client::where('vat', '5898989898')->first());
     }
 
     #[Test]
     public function can_update_assignee()
     {
-        // Create authenticated user with client-update permission
+        /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_UPDATE);
-
-        // Create initial user for the client
         $initialUser = User::factory()->create();
         $client = Client::factory()->create(['user_id' => $initialUser->id]);
-
-        // Create target user to assign
         $targetUser = User::factory()->create();
 
         $this->assertEquals($client->user_id, $initialUser->id);
         $this->assertNotEquals($client->user_id, $targetUser->id);
 
+        /** Act */
         $r = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
             'user_external_id' => $targetUser->external_id,
         ]);
 
-        // Verify the update succeeded
+        /** Assert */
         $r->assertStatus(302);
         $r->assertSessionHas('flash_message');
-
         $this->assertEquals($client->refresh()->user_id, $targetUser->id);
     }
 
-    #[Test]
-    public function cant_update_assignee_without_permission()
-    {
-        $client = Client::factory()->create();
-        $this->user = User::factory()->create();
-        $this->actingAs($this->user);
-        $this->assertNotEquals($client->user_id, $this->user->id);
+    //endregion
 
-        $response = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
-            'user_external_id' => $this->user->external_id,
-        ]);
-
-        $response->assertStatus(302);
-
-        $response->assertSessionHas('flash_message_warning');
-
-        $this->assertNotEquals($client->refresh()->user_id, $this->user->id);
-    }
+    //region edge_cases
 
     #[Test]
     public function can_update_client_without_primary_contact()
     {
-        // Create authenticated user with client-update permission
+        /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_UPDATE);
 
-        // Create test data instead of relying on seeded data
         $industry = Industry::factory()->create();
         $user = User::factory()->create();
 
@@ -210,10 +198,9 @@ class ClientsControllerTest extends AbstractTestCase
             'company_name' => 'NoPrimary Co',
         ]);
 
-        // The ClientFactory afterCreating hook creates a primary contact.
-        // Delete all contacts so the client has no primary contact for this test.
         $client->contacts()->forceDelete();
 
+        /** Act */
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
             'name' => 'No Contact Name',
             'email' => 'noprimary@test.com',
@@ -229,13 +216,38 @@ class ClientsControllerTest extends AbstractTestCase
             'user_id' => $user->id,
         ]);
 
-        // Should succeed and redirect, not crash with null property access
+        /** Assert */
         $response->assertStatus(302);
         $response->assertSessionHas('flash_message');
-
         $updatedClient = Client::where('vat', '8888888888')->first();
         $this->assertNotNull($updatedClient);
         $this->assertEquals('NoPrimary Co Updated', $updatedClient->company_name);
         $this->assertNull($updatedClient->primaryContact);
     }
+
+    //endregion
+
+    //region failure_path
+
+    #[Test]
+    public function cant_update_assignee_without_permission()
+    {
+        /** Arrange */
+        $client = Client::factory()->create();
+        $this->user = User::factory()->create();
+        $this->actingAs($this->user);
+        $this->assertNotEquals($client->user_id, $this->user->id);
+
+        /** Act */
+        $response = $this->json('POST', '/clients/updateassign/'.$client->external_id, [
+            'user_external_id' => $this->user->external_id,
+        ]);
+
+        /** Assert */
+        $response->assertStatus(302);
+        $response->assertSessionHas('flash_message_warning');
+        $this->assertNotEquals($client->refresh()->user_id, $this->user->id);
+    }
+
+    //endregion
 }
