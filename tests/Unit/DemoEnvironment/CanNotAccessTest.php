@@ -6,9 +6,7 @@ use App\Http\Middleware\RedirectIfDemo;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;
 use App\Models\Department;
-use App\Models\Lead;
 use App\Models\Role;
-use App\Models\Task;
 use App\Models\User;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
@@ -17,10 +15,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class CanNotAccessTest extends AbstractTestCase
 {
     use RefreshDatabase;
-
-    private $task;
-
-    private $invoice;
 
     protected function setUp(): void
     {
@@ -32,130 +26,140 @@ class CanNotAccessTest extends AbstractTestCase
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
+    // region happy_path
+
     #[Test]
-    public function update_settings()
+    public function it_updates_settings()
     {
+        /** Arrange */
+        // Demo environment configured in setUp()
+
+        /** Act */
         $response = $this->json('PATCH', route('settings.updateOverall', []));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function access_integrations_page()
+    public function it_access_integrations_page()
     {
+        /** Arrange */
+        // Demo environment configured in setUp()
+
+        /** Act */
         $response = $this->json('GET', route('integrations.index'));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function connect_integrations_integration()
+    public function it_connect_integrations_integration()
     {
+        /** Arrange */
+        // Demo environment configured in setUp()
+
+        /** Act */
         $response = $this->json('POST', route('integrations.store'));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function delete_role()
+    public function it_deletes_role()
     {
+        /** Arrange */
         $role = Role::factory()->create();
 
+        /** Act */
         $response = $this->json('DELETE', route('roles.destroy', $role->external_id));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
-    // #[Test]
-    // public function deleteTask()
-    // {
-    //     $task = Task::factory()->create();
-
-    //     $response = $this->json('DELETE', route('tasks.destroy', $task->external_id));
-    //     $this->assertEquals(302, $response->getStatusCode());
-    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get("flash_message_warning"));
-    // }
-
-    // #[Test]
-    // public function deleteLead()
-    // {
-    //     $lead = Lead::factory()->create();
-
-    //     $response = $this->json('DELETE', route('leads.destroy', $lead->external_id));
-    //     $this->assertEquals(302, $response->getStatusCode());
-    //     $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get("flash_message_warning"));
-    // }
-
     #[Test]
-    public function delete_client()
+    public function it_deletes_client()
     {
+        /** Arrange */
         $user = User::factory()->create();
-
-        // Give user client-delete permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $user->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-
         $this->actingAs($user);
-
         $client = Client::factory()->create();
 
+        /** Act */
         $response = $this->json('DELETE', route('clients.destroy', $client->external_id));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function delete_user()
+    public function it_deletes_user()
     {
+        /** Arrange */
         $authUser = User::factory()->create();
-
-        // Give user user-delete permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-
         $this->actingAs($authUser);
-
         $user = User::factory()->create();
 
+        /** Act */
         $response = $this->json('DELETE', route('users.destroy', $user->external_id));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function update_user()
+    public function it_updates_user()
     {
+        /** Arrange */
         $authUser = User::factory()->create();
-
-        // Give user user-update permission to pass the permission check
         $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-update']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-
         $this->actingAs($authUser);
-
         $user = User::factory()->create();
 
+        /** Act */
         $response = $this->json('PATCH', route('users.update', $user->external_id));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
 
     #[Test]
-    public function delete_department()
+    public function it_deletes_department()
     {
+        /** Arrange */
         $department = Department::factory()->create();
 
+        /** Act */
         $response = $this->json('DELETE', route('departments.destroy', $department->external_id));
+
+        /** Assert */
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
     }
+
+    // endregion
 }

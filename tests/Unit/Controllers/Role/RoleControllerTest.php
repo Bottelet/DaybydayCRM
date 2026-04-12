@@ -13,7 +13,7 @@ class RoleControllerTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function unprivileged_user_cannot_change_roles()
+    public function it_unprivileged_user_cannot_change_roles()
     {
         $this->withoutMiddleware();
         /** @var User $user */
@@ -30,7 +30,7 @@ class RoleControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unprivileged_user_cannot_access_roles()
+    public function it_unprivileged_user_cannot_access_roles()
     {
         /** @var User $user */
         $user = User::factory()->create();

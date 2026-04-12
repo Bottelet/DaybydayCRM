@@ -7,6 +7,7 @@ use App\Models\Lead;
 use App\Models\Status;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\DuskTestCase;
 
 class LeadTest extends DuskTestCase
@@ -14,7 +15,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test user can access lead thorugh index page.
      */
-    public function test_user_can_see_leads_on_lead_index_and_go_to_the_lead_with_link()
+    #[Test]
+    public function it_user_can_see_leads_on_lead_index_and_go_to_the_lead_with_link()
     {
         $client = Client::factory()->create();
         $lead = Lead::factory()->create([
@@ -35,7 +37,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test user can access lead thorugh index page.
      */
-    public function test_i_can_see_all_the_correct_information_on_lead_info_page()
+    #[Test]
+    public function it_i_can_see_all_the_correct_information_on_lead_info_page()
     {
         $client = Client::factory()->create();
         $lead = Lead::factory()->create([
@@ -56,7 +59,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can assign a new user to the lead, and see the correct user info after new user is assigned
      */
-    public function test_i_can_assign_a_new_user_to_lead()
+    #[Test]
+    public function it_i_can_assign_a_new_user_to_lead()
     {
         $client = Client::factory()->create();
         $lead = Lead::factory()->create([
@@ -78,7 +82,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can close a open lead
      */
-    public function test_i_can_change_lead_status()
+    #[Test]
+    public function it_i_can_change_lead_status()
     {
         $client = Client::factory()->create();
         $lead = Lead::factory()->create([
@@ -98,7 +103,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can comment on a lead
      */
-    public function test_i_can_add_a_new_comment_on_a_lead()
+    #[Test]
+    public function it_i_can_add_a_new_comment_on_a_lead()
     {
         $client = Client::factory()->create();
         $lead = Lead::factory()->create([
@@ -119,7 +125,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function test_i_can_create_a_new_lead()
+    #[Test]
+    public function it_i_can_create_a_new_lead()
     {
         $client = Client::factory()->create();
         $contact = $client->primary_contact;
@@ -142,7 +149,8 @@ class LeadTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function test_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_lead()
+    #[Test]
+    public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_lead()
     {
         Client::query()->forceDelete();
 

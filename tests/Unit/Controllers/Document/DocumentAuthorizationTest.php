@@ -89,7 +89,7 @@ class DocumentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_task_upload_permission_can_upload_files_to_task()
+    public function it_user_with_task_upload_permission_can_upload_files_to_task()
     {
         $this->actingAs($this->userWithTaskUploadPermission);
 
@@ -106,7 +106,7 @@ class DocumentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_task_upload_permission_cannot_upload_files_to_task()
+    public function it_user_without_task_upload_permission_cannot_upload_files_to_task()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -120,7 +120,7 @@ class DocumentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_project_upload_permission_can_upload_files_to_project()
+    public function it_user_with_project_upload_permission_can_upload_files_to_project()
     {
         $this->actingAs($this->userWithProjectUploadPermission);
 
@@ -136,7 +136,7 @@ class DocumentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_project_upload_permission_cannot_upload_files_to_project()
+    public function it_user_without_project_upload_permission_cannot_upload_files_to_project()
     {
         $this->actingAs($this->userWithoutPermission);
 

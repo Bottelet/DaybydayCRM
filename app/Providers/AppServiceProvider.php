@@ -16,7 +16,6 @@ use App\Observers\ProjectObserver;
 use App\Observers\TaskObserver;
 use App\Repositories\Format\GetDateFormat;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Dusk\DuskServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,7 +42,12 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         if ($this->app->environment('local', 'testing')) {
-            $this->app->register(DuskServiceProvider::class);
+            if (class_exists(\Laravel\Dusk\DuskServiceProvider::class)) {
+                $this->app->register(\Laravel\Dusk\DuskServiceProvider::class);
+            }
+        }
+        if ($this->app->environment('local') && class_exists(\Laravel\Tinker\TinkerServiceProvider::class)) {
+            $this->app->register(\Laravel\Tinker\TinkerServiceProvider::class);
         }
         $this->app->singleton(GetDateFormat::class);
     }

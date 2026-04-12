@@ -23,8 +23,12 @@ class Contact extends Model
         'is_primary',
     ];
 
+    // region Relationships
+
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
+
+    // endregion
 }

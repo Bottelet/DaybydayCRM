@@ -57,7 +57,10 @@ test-filter:
 # --- Parallel Testing (Inside Container) ---
 
 paratest:
-	vendor/bin/paratest --exclude-group flaky -p8 --stop-on-failure
+	vendor/bin/paratest --exclude-group flaky -p8 > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
+
+parafail:
+	vendor/bin/paratest --exclude-group flaky -p8 --stop-on-failure > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
 
 # --- Docker Compose (Host Level) ---
 

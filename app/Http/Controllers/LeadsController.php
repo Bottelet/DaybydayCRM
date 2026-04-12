@@ -97,11 +97,11 @@ class LeadsController extends Controller
 
         $lead = Lead::create(
             [
-                'title' => $request->title,
-                'description' => clean($request->description),
-                'user_assigned_id' => $request->user_assigned_id,
-                'deadline' => \Illuminate\Support\Carbon::parse($request->deadline.' '.$request->contact_time.':00'),
-                'status_id' => $request->status_id,
+                'title' => $request->input('title'),
+                'description' => clean($request->input('description')),
+                'user_assigned_id' => $request->input('user_assigned_id'),
+                'deadline' => \Illuminate\Support\Carbon::parse($request->input('deadline').' '.$request->input('contact_time').':00'),
+                'status_id' => $request->input('status_id'),
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
                 'client_id' => $client->id,
@@ -197,8 +197,10 @@ class LeadsController extends Controller
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
         $lead = $this->findByExternalId($external_id);
-        $contactTime = $request->contact_time ?: '00:00';
-        $deadline = $request->deadline;
+        
+        $validated = $request->validated();
+        $contactTime = $validated['contact_time'];
+        $deadline = $validated['deadline'];
         // If deadline is only a date, append the contact time
         if (strlen($deadline) <= 10) {
             $deadline = $deadline.' '.$contactTime.':00';
@@ -221,8 +223,8 @@ class LeadsController extends Controller
     {
         $lead = $this->findByExternalId($external_id);
 
-        $deadlineTime = $request->deadline_time ?: '00:00';
-        $deadlineDate = $request->deadline_date;
+        $deadlineTime = $request->input('deadline_time', '00:00');
+        $deadlineDate = $request->input('deadline_date');
 
         // Combine date and time
         $deadline = $deadlineDate.' '.$deadlineTime.':00';

@@ -51,7 +51,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_upload_file_to_task()
+    public function it_authorized_user_can_upload_file_to_task()
     {
         // Give user permission to upload files to tasks
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
@@ -72,7 +72,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_upload_file_to_task()
+    public function it_unauthorized_user_cannot_upload_file_to_task()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -87,7 +87,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_upload_file_to_project()
+    public function it_authorized_user_can_upload_file_to_project()
     {
         // Give user permission to upload files to projects
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
@@ -108,7 +108,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_upload_file_to_project()
+    public function it_unauthorized_user_cannot_upload_file_to_project()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -123,7 +123,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function upload_to_nonexistent_task_returns_error()
+    public function it_upload_to_nonexistent_task_returns_error()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
@@ -144,7 +144,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function upload_to_nonexistent_project_returns_error()
+    public function it_upload_to_nonexistent_project_returns_error()
     {
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);

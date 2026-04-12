@@ -27,19 +27,11 @@ class Offer extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    public function source()
-    {
-        return $this->morphTo();
-    }
+    // region Relationships
 
-    public function lead()
+    public function invoice()
     {
-        return $this->source();
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class, 'status_id');
+        return $this->hasOne(Invoice::class);
     }
 
     public function invoiceLines()
@@ -47,15 +39,27 @@ class Offer extends Model
         return $this->hasMany(InvoiceLine::class);
     }
 
+    public function lead()
+    {
+        return $this->source();
+    }
+
     public function lines()
     {
         return $this->invoiceLines();
     }
 
-    public function invoice()
+    public function source()
     {
-        return $this->hasOne(Invoice::class);
+        return $this->morphTo();
     }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    // endregion
 
     public function setAsWon()
     {

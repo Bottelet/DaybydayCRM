@@ -19,22 +19,34 @@ class HandlerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
+    // region happy_path
+
     #[Test]
-    public function handler_class_extends_laravel_exception_handler()
+    public function it_handler_class_extends_laravel_exception_handler()
     {
+        /** Arrange */
+        // No specific arrangement needed
+
+        /** Act */
         $handler = app(Handler::class);
+
+        /** Assert */
         $this->assertInstanceOf(ExceptionHandler::class, $handler);
     }
 
     #[Test]
-    public function handler_dont_report_list_contains_expected_exceptions()
+    public function it_handler_dont_report_list_contains_expected_exceptions()
     {
+        /** Arrange */
         $handler = new Handler(app());
         $reflection = new ReflectionClass($handler);
         $property = $reflection->getProperty('dontReport');
         $property->setAccessible(true);
+
+        /** Act */
         $dontReport = $property->getValue($handler);
 
+        /** Assert */
         $this->assertContains(AuthenticationException::class, $dontReport);
         $this->assertContains(AuthorizationException::class, $dontReport);
         $this->assertContains(ValidationException::class, $dontReport);
@@ -43,29 +55,32 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthenticated_returns_json_for_json_request()
+    public function it_unauthenticated_returns_json_for_json_request()
     {
-        // Access an API route that requires authentication without credentials
+        /** Arrange */
+        // No authentication credentials
+
+        /** Act */
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');
 
+        /** Assert */
         $response->assertStatus(401);
         $response->assertJson(['error' => 'Unauthenticated.']);
     }
 
     #[Test]
-    public function unauthenticated_redirects_to_login_for_web_request()
+    public function it_unauthenticated_redirects_to_login_for_web_request()
     {
-        // Log out the user that TestCase sets up
+        /** Arrange */
         auth()->logout();
 
+        /** Act */
         $response = $this->get('/dashboard');
 
-        // Should redirect (to login page)
+        /** Assert */
         $response->assertRedirect();
     }
 
-    #[Test]
-    #[Group('repaired')]
-    public function unauthenticated_json_response_has_correct_structure() {}
+    // endregion
 }

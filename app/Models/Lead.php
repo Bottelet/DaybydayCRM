@@ -67,14 +67,16 @@ class Lead extends Model implements Commentable
         return $this->title;
     }
 
-    public function user()
+    // region Relationships
+
+    public function activity()
     {
-        return $this->belongsTo(User::class, 'user_assigned_id');
+        return $this->morphMany(Activity::class, 'source');
     }
 
-    public function creator()
+    public function appointments()
     {
-        return $this->belongsTo(User::class, 'user_created_id');
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function client()
@@ -87,10 +89,47 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function invoice()
+    {
+        return $this->morphMany(Invoice::class, 'source');
+    }
+
     public function notes()
     {
         return $this->comments();
     }
+
+    public function offers()
+    {
+        return $this->morphMany(Offer::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'lead_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_assigned_id');
+    }
+
+    // endregion
 
     public function getCreateCommentEndpoint(): string
     {
@@ -100,21 +139,6 @@ class Lead extends Model implements Commentable
     public function getShowRoute()
     {
         return route('leads.show', [$this->external_id]);
-    }
-
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'source');
-    }
-
-    public function appointments()
-    {
-        return $this->morphMany(Appointment::class, 'source');
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
     }
 
     public function getAssignedUserAttribute()
@@ -128,29 +152,9 @@ class Lead extends Model implements Commentable
         return $this->status && $this->status->title == self::LEAD_STATUS_CLOSED;
     }
 
-    public function invoice()
-    {
-        return $this->morphMany(Invoice::class, 'source');
-    }
-
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
-    }
-
-    public function offers()
-    {
-        return $this->morphMany(Offer::class, 'source');
-    }
-
-    public function documents()
-    {
-        return $this->morphMany(Document::class, 'source');
-    }
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class, 'lead_id');
     }
 
     public function convertToOrder()

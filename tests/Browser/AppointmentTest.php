@@ -4,11 +4,13 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\DuskTestCase;
 
 class AppointmentTest extends DuskTestCase
 {
-    public function test_icancreatean_appointment_in_calendar()
+    #[Test]
+    public function it_icancreatean_appointment_in_calendar()
     {
         $title = 'new appointment test '.uniqid();
         $this->browse(function (Browser $browser) use ($title) {

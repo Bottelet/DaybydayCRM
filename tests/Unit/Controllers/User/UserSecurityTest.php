@@ -42,7 +42,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_edit_user()
+    public function it_authorized_user_can_edit_user()
     {
         $adminRole = Role::firstOrCreate(['name' => 'admin'], [
             'display_name' => 'Administrator',
@@ -63,7 +63,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_edit_user()
+    public function it_unauthorized_user_cannot_edit_user()
     {
         // Use a user that truly has no update permission
         $plainUser = User::factory()->withRole('employee')->create();
@@ -75,7 +75,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_update_user()
+    public function it_authorized_user_can_update_user()
     {
         $adminRole = Role::firstOrCreate(['name' => 'admin'], [
             'display_name' => 'Administrator',
@@ -100,7 +100,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_update_user()
+    public function it_unauthorized_user_cannot_update_user()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -118,7 +118,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_update_prevents_password_change_without_permission()
+    public function it_user_update_prevents_password_change_without_permission()
     {
         // Test that non-owners can't change passwords of other users
         $manager = User::factory()->create();

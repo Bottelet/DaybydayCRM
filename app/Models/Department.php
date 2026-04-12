@@ -20,8 +20,12 @@ class Department extends Model
 
     protected $hidden = ['pivot'];
 
+    // region Relationships
+
     public function users()
     {
         return $this->belongsToMany(User::class);
     }
+
+    // endregion
 }

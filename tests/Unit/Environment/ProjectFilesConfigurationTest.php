@@ -30,45 +30,61 @@ class ProjectFilesConfigurationTest extends TestCase
         $this->rootPath = realpath(__DIR__.'/../../..');
     }
 
+    // region happy_path
+
     // -------------------------------------------------------------------------
     // .env.ci
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_ci_uses_cache_store_not_cache_driver(): void
+    public function it_env_ci_uses_cache_store_not_cache_driver(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.ci');
 
-        $this->assertStringContainsString(
-            'CACHE_STORE=',
-            $content,
+        /** Act */
+        $hasCacheStore = str_contains($content, 'CACHE_STORE=');
+        $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasCacheStore,
             '.env.ci must define CACHE_STORE (not the deprecated CACHE_DRIVER)'
         );
-        $this->assertStringNotContainsString(
-            'CACHE_DRIVER=',
-            $content,
+        $this->assertFalse(
+            $hasCacheDriver,
             '.env.ci must not use the deprecated CACHE_DRIVER key'
         );
     }
 
     #[Test]
-    public function env_ci_cache_store_is_set_to_array(): void
+    public function it_env_ci_cache_store_is_set_to_array(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
+        /** Act */
+        $cacheStore = $vars['CACHE_STORE'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('CACHE_STORE', $vars);
         $this->assertEquals(
             'array',
-            $vars['CACHE_STORE'],
+            $cacheStore,
             'CACHE_STORE in .env.ci must be "array" for CI test isolation'
         );
     }
 
     #[Test]
-    public function env_ci_contains_session_domain(): void
+    public function it_env_ci_contains_session_domain(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
+        /** Act */
+        // Check for key existence
+
+        /** Assert */
         $this->assertArrayHasKey(
             'SESSION_DOMAIN',
             $vars,
@@ -77,17 +93,23 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_ci_app_env_is_testing(): void
+    public function it_env_ci_app_env_is_testing(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
+        /** Act */
+        $appEnv = $vars['APP_ENV'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('APP_ENV', $vars);
-        $this->assertEquals('testing', $vars['APP_ENV']);
+        $this->assertEquals('testing', $appEnv);
     }
 
     #[Test]
-    public function env_ci_contains_required_keys(): void
+    public function it_env_ci_contains_required_keys(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
         $required = [
             'APP_ENV',
@@ -98,6 +120,10 @@ class ProjectFilesConfigurationTest extends TestCase
             'QUEUE_DRIVER',
         ];
 
+        /** Act */
+        // Check each required key
+
+        /** Assert */
         foreach ($required as $key) {
             $this->assertArrayHasKey($key, $vars, ".env.ci is missing required key: {$key}");
         }
@@ -108,29 +134,38 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_dusk_local_uses_cache_store_not_cache_driver(): void
+    public function it_env_dusk_local_uses_cache_store_not_cache_driver(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.dusk.local');
 
-        $this->assertStringContainsString(
-            'CACHE_STORE=',
-            $content,
+        /** Act */
+        $hasCacheStore = str_contains($content, 'CACHE_STORE=');
+        $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasCacheStore,
             '.env.dusk.local must define CACHE_STORE (not the deprecated CACHE_DRIVER)'
         );
-        $this->assertStringNotContainsString(
-            'CACHE_DRIVER=',
-            $content,
+        $this->assertFalse(
+            $hasCacheDriver,
             '.env.dusk.local must not use the deprecated CACHE_DRIVER key'
         );
     }
 
     #[Test]
-    public function env_dusk_local_cache_store_is_set_to_array(): void
+    public function it_env_dusk_local_cache_store_is_set_to_array(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.dusk.local');
 
+        /** Act */
+        $cacheStore = $vars['CACHE_STORE'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('CACHE_STORE', $vars);
-        $this->assertEquals('array', $vars['CACHE_STORE']);
+        $this->assertEquals('array', $cacheStore);
     }
 
     // -------------------------------------------------------------------------
@@ -138,76 +173,108 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_testing_file_exists(): void
+    public function it_env_testing_file_exists(): void
     {
-        $this->assertFileExists(
-            $this->rootPath.'/.env.testing',
+        /** Arrange */
+        $filePath = $this->rootPath.'/.env.testing';
+
+        /** Act */
+        $fileExists = file_exists($filePath);
+
+        /** Assert */
+        $this->assertTrue(
+            $fileExists,
             '.env.testing must exist so PHPUnit can load test-specific environment values'
         );
     }
 
     #[Test]
-    public function env_testing_app_env_is_testing(): void
+    public function it_env_testing_app_env_is_testing(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
+        /** Act */
+        $appEnv = $vars['APP_ENV'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('APP_ENV', $vars);
-        $this->assertEquals('testing', $vars['APP_ENV']);
+        $this->assertEquals('testing', $appEnv);
     }
 
     #[Test]
-    public function env_testing_uses_cache_store_not_cache_driver(): void
+    public function it_env_testing_uses_cache_store_not_cache_driver(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.testing');
 
-        $this->assertStringContainsString(
-            'CACHE_STORE=',
-            $content,
+        /** Act */
+        $hasCacheStore = str_contains($content, 'CACHE_STORE=');
+        $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasCacheStore,
             '.env.testing must use the CACHE_STORE key'
         );
-        $this->assertStringNotContainsString(
-            'CACHE_DRIVER=',
-            $content,
+        $this->assertFalse(
+            $hasCacheDriver,
             '.env.testing must not use the deprecated CACHE_DRIVER key'
         );
     }
 
     #[Test]
-    public function env_testing_cache_store_is_array(): void
+    public function it_env_testing_cache_store_is_array(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
+        /** Act */
+        $cacheStore = $vars['CACHE_STORE'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('CACHE_STORE', $vars);
-        $this->assertEquals('array', $vars['CACHE_STORE']);
+        $this->assertEquals('array', $cacheStore);
     }
 
     #[Test]
-    public function env_testing_contains_required_database_keys(): void
+    public function it_env_testing_contains_required_database_keys(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
         $required = ['DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME'];
 
+        /** Act */
+        // Check each required key
+
+        /** Assert */
         foreach ($required as $key) {
             $this->assertArrayHasKey($key, $vars, ".env.testing is missing required DB key: {$key}");
         }
     }
 
     #[Test]
-    public function env_testing_database_name_is_test_database(): void
+    public function it_env_testing_database_name_is_test_database(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
+        /** Act */
+        $dbDatabase = $vars['DB_DATABASE'] ?? '';
+
+        /** Assert */
         $this->assertArrayHasKey('DB_DATABASE', $vars);
         $this->assertStringContainsString(
             'test',
-            strtolower($vars['DB_DATABASE']),
+            strtolower($dbDatabase),
             'The test DB_DATABASE name should indicate it is a test database to avoid accidental data loss'
         );
     }
 
     #[Test]
-    public function env_testing_contains_required_keys(): void
+    public function it_env_testing_contains_required_keys(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
         $required = [
             'APP_ENV',
@@ -218,20 +285,29 @@ class ProjectFilesConfigurationTest extends TestCase
             'QUEUE_DRIVER',
         ];
 
+        /** Act */
+        // Check each required key
+
+        /** Assert */
         foreach ($required as $key) {
             $this->assertArrayHasKey($key, $vars, ".env.testing is missing required key: {$key}");
         }
     }
 
     #[Test]
-    public function env_testing_queue_driver_is_sync(): void
+    public function it_env_testing_queue_driver_is_sync(): void
     {
+        /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
+        /** Act */
+        $queueDriver = $vars['QUEUE_DRIVER'] ?? null;
+
+        /** Assert */
         $this->assertArrayHasKey('QUEUE_DRIVER', $vars);
         $this->assertEquals(
             'sync',
-            $vars['QUEUE_DRIVER'],
+            $queueDriver,
             'QUEUE_DRIVER must be sync in testing to execute jobs inline'
         );
     }
@@ -241,277 +317,336 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_example_contains_mail_scheme_key(): void
+    public function it_env_example_contains_mail_scheme_key(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.example');
 
-        $this->assertStringContainsString(
-            'MAIL_SCHEME=',
-            $content,
+        /** Act */
+        $hasMailScheme = str_contains($content, 'MAIL_SCHEME=');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasMailScheme,
             '.env.example must include MAIL_SCHEME (added in this PR for Laravel 11+ compatibility)'
         );
     }
 
     #[Test]
-    public function env_example_uses_cache_store_not_cache_driver(): void
+    public function it_env_example_uses_cache_store_not_cache_driver(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.example');
 
-        $this->assertStringContainsString(
-            'CACHE_STORE=',
-            $content,
+        /** Act */
+        $hasCacheStore = str_contains($content, 'CACHE_STORE=');
+        $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasCacheStore,
             '.env.example must use CACHE_STORE (not the deprecated CACHE_DRIVER)'
         );
-        $this->assertStringNotContainsString(
-            'CACHE_DRIVER=',
-            $content,
+        $this->assertFalse(
+            $hasCacheDriver,
             '.env.example must not use the deprecated CACHE_DRIVER key'
         );
     }
 
     #[Test]
-    public function env_example_php_cli_server_workers_is_commented_out(): void
+    public function it_env_example_php_cli_server_workers_is_commented_out(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.example');
 
-        $this->assertMatchesRegularExpression(
-            '/^#\s*PHP_CLI_SERVER_WORKERS=/m',
-            $content,
+        /** Act */
+        $isCommented = preg_match('/^#\s*PHP_CLI_SERVER_WORKERS=/m', $content);
+        $isUncommented = preg_match('/^PHP_CLI_SERVER_WORKERS=/m', $content);
+
+        /** Assert */
+        $this->assertEquals(
+            1,
+            $isCommented,
             'PHP_CLI_SERVER_WORKERS should be commented out in .env.example'
         );
-        $this->assertDoesNotMatchRegularExpression(
-            '/^PHP_CLI_SERVER_WORKERS=/m',
-            $content,
+        $this->assertEquals(
+            0,
+            $isUncommented,
             'PHP_CLI_SERVER_WORKERS must not appear as an uncommented key in .env.example'
         );
     }
 
     #[Test]
-    public function env_example_ends_with_newline(): void
+    public function it_env_example_ends_with_newline(): void
     {
+        /** Arrange */
         $content = $this->readFile('.env.example');
 
-        $this->assertStringEndsWith(
-            "\n",
-            $content,
+        /** Act */
+        $endsWithNewline = str_ends_with($content, "\n");
+
+        /** Assert */
+        $this->assertTrue(
+            $endsWithNewline,
             '.env.example must end with a trailing newline (fixed in this PR)'
         );
     }
 
     // -------------------------------------------------------------------------
-    // phpunit.yml (CI workflow)
-    // -------------------------------------------------------------------------
-    // -------------------------------------------------------------------------
     // .gitignore
     // -------------------------------------------------------------------------
+
     #[Test]
-    public function gitignore_excludes_vendor_directory(): void
+    public function it_gitignore_excludes_vendor_directory(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '/vendor/',
-            $content,
+        /** Act */
+        $hasVendor = str_contains($content, '/vendor/');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasVendor,
             '.gitignore must exclude the /vendor/ directory'
         );
     }
 
     #[Test]
-    public function gitignore_excludes_env_files(): void
+    public function it_gitignore_excludes_env_files(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '.env',
-            $content,
-            '.gitignore must exclude .env files'
-        );
-        $this->assertStringContainsString(
-            '.env.production',
-            $content,
-            '.gitignore must exclude .env.production'
-        );
+        /** Act */
+        $hasEnv = str_contains($content, '.env');
+        $hasEnvProduction = str_contains($content, '.env.production');
+
+        /** Assert */
+        $this->assertTrue($hasEnv, '.gitignore must exclude .env files');
+        $this->assertTrue($hasEnvProduction, '.gitignore must exclude .env.production');
     }
 
     #[Test]
-    public function gitignore_excludes_node_modules(): void
+    public function it_gitignore_excludes_node_modules(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '/node_modules/',
-            $content,
+        /** Act */
+        $hasNodeModules = str_contains($content, '/node_modules/');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasNodeModules,
             '.gitignore must exclude /node_modules/'
         );
     }
 
     #[Test]
-    public function gitignore_excludes_phpunit_result_cache(): void
+    public function it_gitignore_excludes_phpunit_result_cache(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '.phpunit.result.cache',
-            $content,
+        /** Act */
+        $hasPhpunitCache = str_contains($content, '.phpunit.result.cache');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasPhpunitCache,
             '.gitignore must exclude the PHPUnit result cache file'
         );
     }
 
     #[Test]
-    public function gitignore_excludes_ide_directories(): void
+    public function it_gitignore_excludes_ide_directories(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '.idea/',
-            $content,
-            '.gitignore must exclude .idea/ (JetBrains IDE)'
-        );
-        $this->assertStringContainsString(
-            '.vscode/',
-            $content,
-            '.gitignore must exclude .vscode/ (VS Code)'
-        );
+        /** Act */
+        $hasIdea = str_contains($content, '.idea/');
+        $hasVscode = str_contains($content, '.vscode/');
+
+        /** Assert */
+        $this->assertTrue($hasIdea, '.gitignore must exclude .idea/ (JetBrains IDE)');
+        $this->assertTrue($hasVscode, '.gitignore must exclude .vscode/ (VS Code)');
     }
 
     #[Test]
-    public function gitignore_excludes_log_files(): void
+    public function it_gitignore_excludes_log_files(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '*.log',
-            $content,
+        /** Act */
+        $hasLogFiles = str_contains($content, '*.log');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasLogFiles,
             '.gitignore must exclude log files'
         );
     }
 
     #[Test]
-    public function gitignore_excludes_build_artifacts(): void
+    public function it_gitignore_excludes_build_artifacts(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            'public/build/',
-            $content,
+        /** Act */
+        $hasBuildArtifacts = str_contains($content, 'public/build/');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasBuildArtifacts,
             '.gitignore must exclude public/build/ (compiled assets)'
         );
     }
 
     #[Test]
-    public function gitignore_excludes_ds_store_and_thumbs_db(): void
+    public function it_gitignore_excludes_ds_store_and_thumbs_db(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitignore');
 
-        $this->assertStringContainsString(
-            '.DS_Store',
-            $content,
-            '.gitignore must exclude .DS_Store (macOS metadata)'
-        );
-        $this->assertStringContainsString(
-            'Thumbs.db',
-            $content,
-            '.gitignore must exclude Thumbs.db (Windows thumbnails)'
-        );
+        /** Act */
+        $hasDsStore = str_contains($content, '.DS_Store');
+        $hasThumbsDb = str_contains($content, 'Thumbs.db');
+
+        /** Assert */
+        $this->assertTrue($hasDsStore, '.gitignore must exclude .DS_Store (macOS metadata)');
+        $this->assertTrue($hasThumbsDb, '.gitignore must exclude Thumbs.db (Windows thumbnails)');
     }
+
+    // endregion
+
+    // region edge_cases
 
     // -------------------------------------------------------------------------
     // .gitattributes
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function gitattributes_enforces_lf_line_endings(): void
+    public function it_gitattributes_enforces_lf_line_endings(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertMatchesRegularExpression(
-            '/\*\s+text=auto\s+eol=lf/',
-            $content,
+        /** Act */
+        $hasLfEnforcement = preg_match('/\*\s+text=auto\s+eol=lf/', $content);
+
+        /** Assert */
+        $this->assertEquals(
+            1,
+            $hasLfEnforcement,
             '.gitattributes must enforce LF line endings for all files'
         );
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_php_files(): void
+    public function it_gitattributes_sets_diff_driver_for_php_files(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringContainsString(
-            '*.php diff=php',
-            $content,
+        /** Act */
+        $hasPhpDiff = str_contains($content, '*.php diff=php');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasPhpDiff,
             '.gitattributes must configure PHP diff driver for .php files'
         );
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_blade_files(): void
+    public function it_gitattributes_sets_diff_driver_for_blade_files(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringContainsString(
-            '*.blade.php diff=html',
-            $content,
+        /** Act */
+        $hasBladeDiff = str_contains($content, '*.blade.php diff=html');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasBladeDiff,
             '.gitattributes must configure HTML diff driver for Blade template files'
         );
     }
 
     #[Test]
-    public function gitattributes_excludes_github_directory_from_exports(): void
+    public function it_gitattributes_excludes_github_directory_from_exports(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringContainsString(
-            '/.github export-ignore',
-            $content,
+        /** Act */
+        $hasGithubExportIgnore = str_contains($content, '/.github export-ignore');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasGithubExportIgnore,
             '.gitattributes must mark /.github as export-ignore to omit it from git archives'
         );
     }
 
     #[Test]
-    public function gitattributes_excludes_changelog_from_exports(): void
+    public function it_gitattributes_excludes_changelog_from_exports(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringContainsString(
-            'CHANGELOG.md export-ignore',
-            $content,
+        /** Act */
+        $hasChangelogExportIgnore = str_contains($content, 'CHANGELOG.md export-ignore');
+
+        /** Assert */
+        $this->assertTrue(
+            $hasChangelogExportIgnore,
             '.gitattributes must mark CHANGELOG.md as export-ignore'
         );
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_css_and_html(): void
+    public function it_gitattributes_sets_diff_driver_for_css_and_html(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringContainsString(
-            '*.css diff=css',
-            $content,
-            '.gitattributes must configure CSS diff driver for .css files'
-        );
-        $this->assertStringContainsString(
-            '*.html diff=html',
-            $content,
-            '.gitattributes must configure HTML diff driver for .html files'
-        );
+        /** Act */
+        $hasCssDiff = str_contains($content, '*.css diff=css');
+        $hasHtmlDiff = str_contains($content, '*.html diff=html');
+
+        /** Assert */
+        $this->assertTrue($hasCssDiff, '.gitattributes must configure CSS diff driver for .css files');
+        $this->assertTrue($hasHtmlDiff, '.gitattributes must configure HTML diff driver for .html files');
     }
 
     #[Test]
-    public function gitattributes_does_not_contain_old_linguist_settings(): void
+    public function it_gitattributes_does_not_contain_old_linguist_settings(): void
     {
+        /** Arrange */
         $content = $this->readFile('.gitattributes');
 
-        $this->assertStringNotContainsString(
-            'linguist-vendored',
-            $content,
+        /** Act */
+        $hasLinguistVendored = str_contains($content, 'linguist-vendored');
+        $hasLinguistLanguage = str_contains($content, 'linguist-language=Php');
+
+        /** Assert */
+        $this->assertFalse(
+            $hasLinguistVendored,
             '.gitattributes must not contain old linguist-vendored entries'
         );
-        $this->assertStringNotContainsString(
-            'linguist-language=Php',
-            $content,
+        $this->assertFalse(
+            $hasLinguistLanguage,
             '.gitattributes must not contain old linguist-language overrides'
         );
     }
+
+    // endregion
 
     // -------------------------------------------------------------------------
     // Helpers

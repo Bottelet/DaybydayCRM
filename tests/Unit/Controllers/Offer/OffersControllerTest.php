@@ -116,7 +116,7 @@ class OffersControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_set_offer_as_won()
+    public function it_can_set_offer_as_won()
     {
         $offer = Offer::factory()->create();
 
@@ -131,7 +131,7 @@ class OffersControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_set_offer_as_lost()
+    public function it_can_set_offer_as_lost()
     {
         $offer = Offer::factory()->create();
 

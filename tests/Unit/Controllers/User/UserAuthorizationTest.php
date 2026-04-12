@@ -62,7 +62,7 @@ class UserAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_user_delete_permission_can_delete_user()
+    public function it_user_with_user_delete_permission_can_delete_user()
     {
         $this->actingAs($this->userWithPermission);
 
@@ -73,7 +73,7 @@ class UserAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_user_delete_permission_cannot_delete_user()
+    public function it_user_without_user_delete_permission_cannot_delete_user()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -84,7 +84,7 @@ class UserAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function owner_user_cannot_be_deleted_even_with_permission()
+    public function it_owner_user_cannot_be_deleted_even_with_permission()
     {
         $this->actingAs($this->userWithPermission);
 

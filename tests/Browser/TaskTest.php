@@ -7,6 +7,7 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\DuskTestCase;
 
 class TaskTest extends DuskTestCase
@@ -14,7 +15,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test user can access task thorugh index page.
      */
-    public function test_user_can_see_tasks_on_task_index_and_go_to_the_task_with_link()
+    #[Test]
+    public function it_user_can_see_tasks_on_task_index_and_go_to_the_task_with_link()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -36,7 +38,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test user can access task thorugh index page.
      */
-    public function test_i_can_see_all_the_correct_information_on_task_info_page()
+    #[Test]
+    public function it_i_can_see_all_the_correct_information_on_task_info_page()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -58,7 +61,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can assign a new user to the task, and see the correct user info after new user is assigned
      */
-    public function test_i_can_assign_a_new_user_to_task()
+    #[Test]
+    public function it_i_can_assign_a_new_user_to_task()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -80,7 +84,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can close a open task
      */
-    public function test_i_can_close_a_open_task()
+    #[Test]
+    public function it_i_can_close_a_open_task()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -101,7 +106,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can comment on a task
      */
-    public function test_i_can_add_a_new_comment_on_a_task()
+    #[Test]
+    public function it_i_can_add_a_new_comment_on_a_task()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -123,7 +129,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can add time to a task
      */
-    public function test_i_can_add_a_new_time_to_task()
+    #[Test]
+    public function it_i_can_add_a_new_time_to_task()
     {
         $client = Client::factory()->create();
         $task = Task::factory()->create([
@@ -150,7 +157,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function test_i_can_create_a_new_task()
+    #[Test]
+    public function it_i_can_create_a_new_task()
     {
         $client = Client::factory()->create();
         $user = User::factory()->create();
@@ -174,7 +182,8 @@ class TaskTest extends DuskTestCase
     /**
      * Test i can create a new task
      */
-    public function test_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_task()
+    #[Test]
+    public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_task()
     {
         Client::query()->forceDelete();
 

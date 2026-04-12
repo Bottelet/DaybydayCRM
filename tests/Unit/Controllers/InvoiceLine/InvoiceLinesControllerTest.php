@@ -33,7 +33,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function happy_path()
+    public function it_happy_path()
     {
         // Ensure the permission exists
         $permission = Permission::firstOrCreate(
@@ -79,7 +79,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cant_delete_without_permission()
+    public function it_cant_delete_without_permission()
     {
         $user = User::factory()->create();
         $this->actingAs($user); // Use Laravel's authentication helper
