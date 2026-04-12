@@ -197,7 +197,7 @@ return [
         NotificationServiceProvider::class,
         //        Collective\Html\HtmlServiceProvider::class,
         DatatablesServiceProvider::class,
-        TinkerServiceProvider::class,
+        // TinkerServiceProvider::class, // Temporarily disabled for testing
         EntrustServiceProvider::class,
         CashierServiceProvider::class,
         /*
