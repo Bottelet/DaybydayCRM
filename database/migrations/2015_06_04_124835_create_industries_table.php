@@ -12,10 +12,11 @@ class CreateIndustriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('industries', function (Blueprint $table) {
+        Schema::create('industries', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('name');
+            $table->timestamps();
         });
     }
 

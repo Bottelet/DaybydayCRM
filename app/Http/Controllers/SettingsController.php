@@ -15,7 +15,7 @@ use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Services\InvoiceNumber\InvoiceNumberValidator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class SettingsController extends Controller
 {
@@ -24,7 +24,7 @@ class SettingsController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('user.is.admin', ['only' => ['index']]);
+        $this->middleware('user.is.admin', ['only' => ['index', 'updateOverall', 'updateFirstStep']]);
         $this->middleware('is.demo', ['except' => ['index']]);
     }
 
@@ -33,13 +33,27 @@ class SettingsController extends Controller
      */
     public function index()
     {
+        $setting = Setting::first();
+        if (! $setting) {
+            $setting = Setting::create([
+                'company' => 'Default Company',
+                'currency' => 'USD',
+                'country' => 'US',
+                'language' => 'en',
+                'vat' => 0,
+                'client_number' => 1,
+                'invoice_number' => 1,
+                'max_users' => 10,
+            ]);
+        }
+
         return view('settings.index')
             ->withVatPercentage(app(Tax::class)->percentage())
             ->withClientNumber(app(ClientNumberService::class)->nextClientNumber())
             ->withInvoiceNumber(app(InvoiceNumberService::class)->nextInvoiceNumber())
             ->withCurrencies(Currency::getAllCurrencies())
-            ->withCurrentCurrency(Setting::select('currency')->first()->currency)
-            ->withSettings(Setting::first())
+            ->withCurrentCurrency($setting->currency)
+            ->withSettings($setting)
             ->withBusinessHours($this->businessHours());
     }
 
@@ -48,6 +62,18 @@ class SettingsController extends Controller
         $start_time = Carbon::parse('2020-01-01 '.$request->start_time.':00');
         $end_time = Carbon::parse('2020-01-01 '.$request->end_time.':00');
         $settings = Setting::first();
+        if (! $settings) {
+            $settings = Setting::create([
+                'company' => 'Default Company',
+                'currency' => 'USD',
+                'country' => 'US',
+                'language' => 'en',
+                'vat' => 0,
+                'client_number' => 1,
+                'invoice_number' => 1,
+                'max_users' => 10,
+            ]);
+        }
 
         if ($start_time->gt($end_time)) {
             $end_tmp = clone $end_time;
@@ -107,6 +133,18 @@ class SettingsController extends Controller
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
         $setting = Setting::first();
+        if (! $setting) {
+            $setting = Setting::create([
+                'company' => 'Default Company',
+                'currency' => 'USD',
+                'country' => 'US',
+                'language' => 'en',
+                'vat' => 0,
+                'client_number' => 1,
+                'invoice_number' => 1,
+                'max_users' => 10,
+            ]);
+        }
 
         if (! app(ClientNumberValidator::class)->validateClientNumber((int) $request->client_number)) {
             Session::flash('flash_message_warning', __('Client number invalid'));
@@ -166,9 +204,12 @@ class SettingsController extends Controller
 
     public function businessHours()
     {
+        $openHour = BusinessHour::orderBy('open_time', 'asc')->limit(1)->first();
+        $closeHour = BusinessHour::orderBy('close_time', 'desc')->limit(1)->first();
+
         return [
-            'open' => BusinessHour::orderBy('open_time', 'asc')->limit(1)->first()->open_time,
-            'close' => BusinessHour::orderBy('close_time', 'desc')->limit(1)->first()->close_time,
+            'open' => $openHour ? $openHour->open_time : '09:00',
+            'close' => $closeHour ? $closeHour->close_time : '17:00',
         ];
     }
 

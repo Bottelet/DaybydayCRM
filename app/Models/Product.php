@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use HasExternalId;
+    use HasFactory;
+
     protected $appends = ['divided_price'];
 
     protected $hidden = ['id'];
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function getMoneyPriceAttribute()
     {

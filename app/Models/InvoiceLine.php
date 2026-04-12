@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceLine extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -24,14 +28,18 @@ class InvoiceLine extends Model
     ];
 
     /**
-     * Get the route key for the model.
+     * Bootstrap the model and its traits.
+     * HasExternalId trait automatically generates a UUID for external_id if not provided.
      *
-     * @return string
+     * @return void
      */
-    public function getRouteKeyName()
+    public static function boot()
     {
-        return 'external_id';
+        parent::boot();
+        // HasExternalId trait handles external_id generation
     }
+
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function tasks()
     {

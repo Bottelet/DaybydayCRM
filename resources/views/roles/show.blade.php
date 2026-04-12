@@ -4,10 +4,9 @@
    <h1>{{ $role->display_name }} <small>{{ __('Permission management') }}</small></h1>
 	<div class="row">
 	<div class="col-xs-12">
-    {!! Form::model($permissions_grouping, [
-	    'method' => 'PATCH',
-	    'url'    => ['roles/update', $role->external_id],
-    ]) !!}
+    <form action="{{ url('roles/update', $role->external_id) }}" method="POST">
+        @csrf
+        @method('PATCH')
    @foreach($permissions_grouping as $permissions)
    <div class="row">
    @if($permissions->first)
@@ -41,18 +40,16 @@
     <hr>
 	@endforeach
 	<div class="col-xs-12">
-		{!! Form::submit( __('Update Role') , ['class' => 'btn btn-primary']) !!}
-	{!! Form::close(); !!}
+		<input type="submit" value="{{ __('Update Role') }}" class="btn btn-primary">
+    </form>
 	
 	@if($role->name == "owner" || $role->name == "administrator")
 	@else
-		{!! Form::open([
-            'method' => 'DELETE',
-            'route' => ['roles.destroy', $role->id]
-        ]); !!}
-                        
-                            {!! Form::submit(__('Delete'), ['class' => 'btn btn-danger', 'onclick' => 'return confirm("Are you sure?")']); !!}
-        {!! Form::close(); !!}
+		<form action="{{ route('roles.destroy', $role->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <input type="submit" value="{{ __('Delete') }}" class="btn btn-danger" onclick="return confirm('Are you sure?')">
+        </form>
     @endif
 	</div>
 		<div class="col-sm-12">

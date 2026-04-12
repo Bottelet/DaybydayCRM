@@ -13,7 +13,7 @@ class CreateBusinessHoursTable extends Migration
      */
     public function up()
     {
-        Schema::create('business_hours', function (Blueprint $table) {
+        Schema::create('business_hours', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('day');
             $table->time('open_time')->nullable();

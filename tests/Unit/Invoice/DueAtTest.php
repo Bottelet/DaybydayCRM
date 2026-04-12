@@ -3,12 +3,13 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class DueAtTest extends TestCase
+class DueAtTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $invoice;
 
@@ -17,17 +18,17 @@ class DueAtTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
             'due_at' => today()->addDay(),
         ]);
-        $this->secondInvoice = factory(Invoice::class)->create([
+        $this->secondInvoice = Invoice::factory()->create([
             'sent_at' => today(),
             'due_at' => today()->subDay(),
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function ensure_we_get_invoice_past_due_at()
     {
         $invoices = Invoice::pastDueAt()->get();
@@ -36,7 +37,7 @@ class DueAtTest extends TestCase
         $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
 
-    /** @test */
+    #[Test]
     public function ensure_we_dont_get_invoice_if_due_at_is_null()
     {
         $this->secondInvoice->due_at = null;
@@ -46,7 +47,7 @@ class DueAtTest extends TestCase
         $this->assertCount(0, $invoices);
     }
 
-    /** @test */
+    #[Test]
     public function ensure_we_dont_get_invoice_if_status_is_paid()
     {
         $invoices = Invoice::pastDueAt()->get();

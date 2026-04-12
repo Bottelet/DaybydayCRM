@@ -4,19 +4,20 @@ namespace Tests\Unit\Lead;
 
 use App\Models\Lead;
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class LeadObserverDeleteTest extends TestCase
+class LeadObserverDeleteTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $lead;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->lead = factory(Lead::class)->create();
+        $this->lead = Lead::factory()->create();
 
         $this->lead->comments()->create([
             'description' => 'Test',
@@ -32,7 +33,7 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function delete_leads_soft_deletes()
     {
         $this->lead->delete();
@@ -40,7 +41,7 @@ class LeadObserverDeleteTest extends TestCase
         $this->assertSoftDeleted($this->lead);
     }
 
-    /** @test */
+    #[Test]
     public function delete_leadsoft_deletes_relations()
     {
         $this->assertNotEmpty($this->lead->comments);
@@ -60,7 +61,7 @@ class LeadObserverDeleteTest extends TestCase
 
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_lead_from_database()
     {
         $leadId = $this->lead->id;
@@ -73,7 +74,7 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function force_delete_removes_relations_from_database()
     {
         $commentId = $this->lead->comments->first()->id;
@@ -94,10 +95,10 @@ class LeadObserverDeleteTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function offer_is_not_deleted_by_observer()
     {
-        $offer = factory(Offer::class)->create([
+        $offer = Offer::factory()->create([
             'source_id' => $this->lead->id,
         ]);
 

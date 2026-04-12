@@ -11,8 +11,8 @@
 |
 */
 
-Route::group(['namespace' => 'App\Api\v1\Controllers'], function () {
-    Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['namespace' => 'App\Api\v1\Controllers'], static function () {
+    Route::group(['middleware' => 'auth:api'], static function () {
         Route::get('users', ['uses' => 'UserController@index']);
     });
 });

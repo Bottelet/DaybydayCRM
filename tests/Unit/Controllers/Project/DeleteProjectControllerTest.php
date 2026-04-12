@@ -3,62 +3,86 @@
 namespace Tests\Unit\Controllers\Project;
 
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Permission;
 use App\Models\Project;
+use App\Models\Role;
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class DeleteProjectControllerTest extends TestCase
+class DeleteProjectControllerTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $project;
 
     private $task;
 
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->project = factory(Project::class)->create();
-        $this->task = factory(Task::class)->create([
+        $this->user = User::factory()->create();
+        $role = Role::firstOrCreate(['name' => 'employee']);
+        $permission = Permission::firstOrCreate(['name' => 'project-delete']);
+        $role->attachPermission($permission);
+        $this->user->attachRole($role);
+
+        // Explicitly clear both permission caches
+        Cache::tags('role_user')->flush();
+        Cache::tags('permission_role')->flush();
+        $this->user = $this->user->fresh();
+
+        $this->actingAs($this->user);
+
+        $this->project = Project::factory()->create();
+        $this->task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
-    /** @test */
+    #[Test]
     public function delete_project()
     {
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
+        $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
-    /** @test */
+    #[Test]
     public function delete_tasks_if_flag_given()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
             'delete_tasks' => 'on',
         ]);
 
+        $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
         $this->assertSoftDeleted('tasks', ['id' => $task->id]);
     }
 
-    /** @test */
+    #[Test]
     public function remove_project_id_from_task_if_flag_not_given()
     {
-        $task = factory(Task::class)->create([
+        $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
-        $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+
+        $response->assertStatus(200);
 
         $this->assertNull($this->task->refresh()->deleted_at);
         $this->assertNull($this->task->refresh()->project_id);
@@ -67,12 +91,13 @@ class DeleteProjectControllerTest extends TestCase
         $this->assertNull($task->refresh()->project_id);
     }
 
-    /** @test */
+    #[Test]
     public function can_delete_project_if_there_is_no_tasks()
     {
-        $project = factory(Project::class)->create();
-        $this->json('DELETE', route('projects.destroy', $project->external_id));
+        $project = Project::factory()->create();
+        $response = $this->json('DELETE', route('projects.destroy', $project->external_id));
 
+        $response->assertStatus(200);
         $this->assertnotNull($project->refresh()->deleted_at);
     }
 }

@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class NewComment
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     public $comment;
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +14,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Permission extends Model
 {
+    use HasExternalId;
+    use HasFactory;
+
     protected $fillable = [
+        'external_id',
         'display_name',
         'name',
         'description',

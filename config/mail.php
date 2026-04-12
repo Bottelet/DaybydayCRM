@@ -54,8 +54,7 @@ return [
     |
     */
 
-    'from' => ['address' => 'hello@example.com', 'name' => 'Daybyday Crm'],
-    'no_reply_mail' => 'noreply@exmaple.com',
+    'no_reply_mail' => 'noreply@example.com',
 
     /*
     |--------------------------------------------------------------------------
@@ -98,25 +97,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sendmail System Path
+    | Global "From" Address
     |--------------------------------------------------------------------------
     |
-    | When using the "sendmail" driver to send e-mails, we will need to know
-    | the path to where Sendmail lives on this server. A default path has
-    | been provided here, which will work well on most of your systems.
+    | You may wish for all emails sent by your application to be sent from
+    | the same address. Here you may specify a name and address that is
+    | used globally for all emails that are sent by your application.
     |
     */
 
-    'sendmail' => '/usr/sbin/sendmail -bs',
-
-    /**
-     * Markdown config
-     */
-    'markdown' => [
-        'theme' => 'default',
-
-        'paths' => [
-            resource_path('views/vendor/mail'),
-        ],
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
+
 ];

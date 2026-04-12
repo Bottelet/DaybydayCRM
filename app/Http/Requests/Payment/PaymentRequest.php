@@ -18,6 +18,25 @@ class PaymentRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     * Normalize currency input by converting comma separators to dots.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('amount')) {
+            // Normalize currency: replace comma with dot for decimal separator
+            // Remove any spaces that might be present
+            $normalizedAmount = str_replace([',', ' '], ['.', ''], $this->amount);
+
+            $this->merge([
+                'amount' => $normalizedAmount,
+            ]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -25,7 +44,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'regex:/^-?[0-9]+[.,]?[0-9]*+$/|required|not_in:0',
+            'amount' => 'numeric|required|not_in:0',
             'payment_date' => 'date|required',
             'source' => ['required', PaymentSource::validationRules()],
         ];

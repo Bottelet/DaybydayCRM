@@ -3,30 +3,31 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CanUpdateInvoiceTest extends TestCase
+class CanUpdateInvoiceTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => null,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertTrue($this->invoice->canUpdateInvoice());
     }
 
-    /** @test */
+    #[Test]
     public function cant_update_invoice_if_its_sent()
     {
         $this->invoice->sent_at = today();

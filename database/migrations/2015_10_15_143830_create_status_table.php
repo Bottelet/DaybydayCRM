@@ -13,11 +13,11 @@ class CreateStatusTable extends Migration
      */
     public function up()
     {
-        Schema::create('statuses', function (Blueprint $table) {
+        Schema::create('statuses', static function (Blueprint $table) {
             $table->increments('id');
-            $table->string('external_id');
+            $table->string('external_id')->default('');
             $table->string('title');
-            $table->string('source_type');
+            $table->string('source_type')->default('');
             $table->string('color')->default('#000000');
             $table->timestamps();
         });

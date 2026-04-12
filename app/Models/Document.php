@@ -2,24 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Document extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = ['name', 'size', 'path', 'original_filename', 'client_id', 'external_id', 'mime', 'integration_id', 'integration_type', 'source_type', 'source_id'];
 
-    public function clients()
+    protected static function boot()
     {
-        $this->belongsTo(Client::class, 'client_id');
+        parent::boot();
+        // HasExternalId trait handles external_id generation
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
     }
 
     /**
-     * Get the owning imageable model.
+     * Get the owning source model (polymorphic relationship).
      */
-    public function sourceable()
+    public function source()
     {
         return $this->morphTo();
     }

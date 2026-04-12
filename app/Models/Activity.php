@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -10,6 +12,8 @@ use Illuminate\Support\Arr;
 
 class Activity extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     /**
@@ -31,6 +35,18 @@ class Activity extends Model
     protected $casts = [
         'properties' => 'collection',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($activity) {
+            // HasExternalId trait handles external_id generation
+
+            if (empty($activity->ip_address)) {
+                $activity->ip_address = request()->ip() ?: '127.0.0.1';
+            }
+        });
+    }
 
     /**
      * Get the user that the activity belongs to.

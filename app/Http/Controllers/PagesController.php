@@ -45,7 +45,24 @@ class PagesController extends Controller
         if (! auth()->user()->can('absence-view')) {
             $absences = [];
         } else {
-            $absences = Absence::with('user')->groupBy('user_id')->where('start_at', '>=', today())->orWhere('end_at', '>', today())->get();
+            // Get the latest qualifying absence per user at the database level
+            $absences = Absence::with('user')
+                ->where(function ($query) {
+                    $query->where('start_at', '>=', today())
+                        ->orWhere('end_at', '>', today());
+                })
+                ->whereRaw(
+                    'start_at = (
+                        select max(a2.start_at)
+                        from absences as a2
+                        where a2.user_id = absences.user_id
+                          and (a2.start_at >= ? or a2.end_at > ?)
+                    )',
+                    [today(), today()]
+                )
+                ->orderBy('user_id')
+                ->orderByDesc('start_at')
+                ->get();
         }
 
         return view('pages.dashboard')

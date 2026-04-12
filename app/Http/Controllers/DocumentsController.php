@@ -4,15 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Document;
+use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 class DocumentsController extends Controller
 {
+    /**
+     * Source types that support assignable ownership checks
+     */
+    private const ASSIGNABLE_TYPES = [Task::class, Project::class, Lead::class];
+
     public function __construct()
     {
         $this->middleware('filesystem.is.enabled');
@@ -20,9 +27,32 @@ class DocumentsController extends Controller
 
     public function view($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
+        // Eager load the source and conditionally load client for assignable types
+        $document = Document::with(['source' => function ($query) {
+            // Only eager load client for types that have a client relationship
+            if (in_array(get_class($query->getModel()), self::ASSIGNABLE_TYPES)) {
+                $query->with('client');
+            }
+        }])->whereExternalId($external_id)->first();
+
+        if (! $document) {
+            abort(404);
+        }
+
+        // Check if user has permission to view document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            if (request()->expectsJson()) {
+                abort(403, __('You do not have permission to view this document'));
+            }
+
+            session()->flash('flash_message_warning', __('You do not have permission to view this document'));
+
+            return redirect()->back();
+        }
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->view($document);
+
         if (! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
 
@@ -37,7 +67,29 @@ class DocumentsController extends Controller
 
     public function download($external_id)
     {
-        $document = Document::whereExternalId($external_id)->first();
+        // Eager load the source and conditionally load client for assignable types
+        $document = Document::with(['source' => function ($query) {
+            // Only eager load client for types that have a client relationship
+            if (in_array(get_class($query->getModel()), self::ASSIGNABLE_TYPES)) {
+                $query->with('client');
+            }
+        }])->whereExternalId($external_id)->first();
+
+        if (! $document) {
+            abort(404);
+        }
+
+        // Check if user has permission to download document via source ownership
+        if (! $this->canAccessDocument($document)) {
+            if (request()->expectsJson()) {
+                abort(403, __('You do not have permission to download this document'));
+            }
+
+            session()->flash('flash_message_warning', __('You do not have permission to download this document'));
+
+            return redirect()->back();
+        }
+
         $fileSystem = GetStorageProvider::getStorage();
         $file = $fileSystem->download($document);
 
@@ -107,11 +159,19 @@ class DocumentsController extends Controller
      */
     public function uploadToTask(Request $request, $external_id)
     {
-        /**   if (!auth()->user()->can('image-upload')) {
-        session()->flash('flash_message_warning', __('You do not have permission to upload images'));
-        return redirect()->route('tasks.show', $task->external_id);
-        }**/
+        if (! auth()->user()->can('task-upload-files')) {
+            session()->flash('flash_message_warning', __('You do not have permission to upload files'));
+
+            return redirect()->back();
+        }
+
         $task = Task::whereExternalId($external_id)->first();
+
+        if (! $task) {
+            session()->flash('flash_message_warning', __('Task not found'));
+
+            return redirect()->back();
+        }
 
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
@@ -148,7 +208,7 @@ class DocumentsController extends Controller
         }
         Session::flash('flash_message', __('File successfully uploaded'));
 
-        return $task->external_id;
+        return response()->json(['external_id' => $task->external_id], 200);
     }
 
     /**
@@ -157,11 +217,19 @@ class DocumentsController extends Controller
      */
     public function uploadToProject(Request $request, $external_id)
     {
-        /**   if (!auth()->user()->can('image-upload')) {
-        session()->flash('flash_message_warning', __('You do not have permission to upload images'));
-        return redirect()->route('tasks.show', $task->external_id);
-        }**/
+        if (! auth()->user()->can('project-upload-files')) {
+            session()->flash('flash_message_warning', __('You do not have permission to upload files'));
+
+            return redirect()->back();
+        }
+
         $project = Project::whereExternalId($external_id)->first();
+
+        if (! $project) {
+            session()->flash('flash_message_warning', __('Project not found'));
+
+            return redirect()->back();
+        }
 
         if (! is_null($request->files)) {
             foreach ($request->file('files') as $image) {
@@ -200,7 +268,7 @@ class DocumentsController extends Controller
         }
         Session::flash('flash_message', __('File successfully uploaded'));
 
-        return $project->external_id;
+        return response()->json(['external_id' => $project->external_id], 200);
     }
 
     public function destroy($external_id)
@@ -210,16 +278,19 @@ class DocumentsController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $fileSystem = GetStorageProvider::getStorage();
 
         $document = Document::whereExternalId($external_id)->first();
-        $deleted = $fileSystem->delete($document);
-        if (! $deleted) {
-            Session()->flash('flash_message_warning', __("Something wen't wrong, we can't find the file on the cloud. But worry not, we delete what we know about the image"));
-        } else {
-            Session()->flash('flash_message', __('File has been deleted'));
+
+        if (! $document) {
+            session()->flash('flash_message_warning', __('Document not found'));
+
+            return redirect()->back();
         }
+
+        // Observer will handle file deletion
         $document->delete();
+
+        session()->flash('flash_message', __('File has been deleted'));
 
         return redirect()->back();
     }
@@ -247,5 +318,65 @@ class DocumentsController extends Controller
             ->with('external_id', $external_id)
             ->withType($type)
             ->withRoute(route('document.'.$type.'.upload', $external_id));
+    }
+
+    /**
+     * Check if the authenticated user can access the document
+     * User can access document if they are assigned to or created the source resource
+     * or if they have ownership of the associated client
+     *
+     * @param  Document  $document
+     * @return bool
+     */
+    private function canAccessDocument($document)
+    {
+        $user = auth()->user();
+
+        // Use the morphTo relationship to get the source model
+        $source = $document->source;
+
+        if (! $source) {
+            return false;
+        }
+
+        // For Client source type, check user_id
+        if ($document->source_type === Client::class) {
+            return $source->user_id === $user->id;
+        }
+
+        // For Task, Project, and Lead - check creator, assignee, or client ownership
+        if (in_array($document->source_type, self::ASSIGNABLE_TYPES)) {
+            return $this->userOwnsAssignableSource($source, $user);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user owns an assignable source (Task, Project, Lead)
+     * via creation, assignment, or client ownership
+     *
+     * @param  mixed  $source
+     * @param  User  $user
+     * @return bool
+     */
+    private function userOwnsAssignableSource($source, $user)
+    {
+        // Check if user created the source
+        if (! is_null($source->user_created_id) && $source->user_created_id === $user->id) {
+            return true;
+        }
+
+        // Check if user is assigned to the source
+        if (! is_null($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
+            return true;
+        }
+
+        // Check if user owns the client associated with the source
+        if ($source->client && ! is_null($source->client->user_id) && $source->client->user_id === $user->id) {
+            return true;
+        }
+
+        return false;
     }
 }

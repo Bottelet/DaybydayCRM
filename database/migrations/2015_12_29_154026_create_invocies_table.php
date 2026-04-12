@@ -12,7 +12,7 @@ class CreateInvociesTable extends Migration
      */
     public function up()
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('invoices', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('status');

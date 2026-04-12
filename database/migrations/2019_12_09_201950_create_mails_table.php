@@ -13,7 +13,7 @@ class CreateMailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mails', function (Blueprint $table) {
+        Schema::create('mails', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('subject');
             $table->string('body')->nullable();

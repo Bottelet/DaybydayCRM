@@ -13,6 +13,7 @@ use Illuminate\Cache\TaggableStore;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use InvalidArgumentException;
 
 trait EntrustRoleTrait
 {
@@ -171,14 +172,24 @@ trait EntrustRoleTrait
     public function attachPermission($permission)
     {
         if (is_object($permission)) {
-            $permission = $permission->getKey();
+            $permissionId = $permission->getKey();
+            if (! is_numeric($permissionId) || $permissionId < 1) {
+                throw new InvalidArgumentException('Permission object does not have a valid ID. Ensure the permission is saved before attaching.');
+            }
+            $permission = $permissionId;
         }
 
         if (is_array($permission)) {
             return $this->attachPermissions($permission);
         }
 
-        $this->perms()->attach($permission);
+        // Validate that we have a valid permission ID (must be numeric and > 0)
+        if (! is_numeric($permission) || $permission < 1) {
+            throw new InvalidArgumentException('Invalid permission ID provided to attachPermission. Received: '.var_export($permission, true));
+        }
+
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->perms()->syncWithoutDetaching([$permission]);
     }
 
     /**
@@ -208,8 +219,37 @@ trait EntrustRoleTrait
      */
     public function attachPermissions($permissions)
     {
-        foreach ($permissions as $permission) {
-            $this->attachPermission($permission);
+        // Collect permission IDs
+        $permissionIds = collect($permissions)->map(function ($permission) {
+            if (is_object($permission)) {
+                $id = $permission->getKey();
+                if (! is_numeric($id) || $id < 1) {
+                    throw new InvalidArgumentException('Permission object does not have a valid ID. Ensure all permissions are saved before attaching.');
+                }
+
+                return $id;
+            }
+            if (is_array($permission)) {
+                $id = $permission['id'] ?? $permission;
+                if (! is_numeric($id) || $id < 1) {
+                    throw new InvalidArgumentException('Invalid permission ID in array. Received: '.var_export($permission, true));
+                }
+
+                return $id;
+            }
+            if (! is_numeric($permission) || $permission < 1) {
+                throw new InvalidArgumentException('Invalid permission ID. Received: '.var_export($permission, true));
+            }
+
+            return $permission;
+        })->toArray();
+
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $this->perms()->syncWithoutDetaching($permissionIds);
+
+        // Clear cache
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
     }
 

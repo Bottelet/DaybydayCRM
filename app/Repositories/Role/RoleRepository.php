@@ -33,7 +33,7 @@ class RoleRepository implements RoleRepositoryContract
     public function allRoles()
     {
         // Get rid of owner as the should only be one.
-        return Role::all('display_name', 'id', 'name', 'external_id')->filter(function ($value, $key) {
+        return Role::all(['display_name', 'id', 'name', 'external_id'])->filter(function ($value, $key) {
             return $value->name != 'owner';
         });
     }
@@ -75,7 +75,7 @@ class RoleRepository implements RoleRepositoryContract
         if ($role->name !== 'administrator' || $role->name !== 'owner') {
             $role->delete();
         } else {
-            Session()->flash('flash_message_warning', 'Can not delete Administrator role');
+            session()->flash('flash_message_warning', 'Can not delete Administrator role');
         }
     }
 }

@@ -10,11 +10,12 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $task;
 
     private $action;
-
-    use InteractsWithSockets, SerializesModels;
 
     public function getTask()
     {

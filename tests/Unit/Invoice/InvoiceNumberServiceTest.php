@@ -3,15 +3,17 @@
 namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class InvoiceNumberServiceTest extends TestCase
+class InvoiceNumberServiceTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $client;
 
@@ -24,30 +26,31 @@ class InvoiceNumberServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Invoice::class)->create([
+        // Ensure a Setting record exists for the service
+        Setting::factory()->create();
 
-        ]);
+        $this->client = Invoice::factory()->create([]);
 
         $this->invoiceNumberService = app(InvoiceNumberService::class);
     }
 
-    /** @test */
+    #[Test]
     public function set_next_invoice_number_takes_biggest_invoice_number_and_add_one()
     {
         $this->assertEquals(10000, $this->invoiceNumberService->setNextInvoiceNumber());
         $this->assertEquals(10001, $this->invoiceNumberService->setNextInvoiceNumber());
     }
 
-    /** @test */
+    #[Test]
     public function next_invoice_number_takes_biggest_invoice_number_and_does_not_add_one()
     {
         $this->assertEquals(10000, $this->invoiceNumberService->nextInvoiceNumber());
         $this->assertEquals(10000, $this->invoiceNumberService->nextInvoiceNumber());
     }
 
-    /** @test */
+    #[Test]
     public function manually_set_next_invoice_number()
     {
         $this->invoiceNumberService->setInvoiceNumber(20000);

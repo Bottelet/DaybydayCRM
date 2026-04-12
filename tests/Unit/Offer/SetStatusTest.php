@@ -1,24 +1,25 @@
 <?php
 
-namespace Tests\Unit\Invoice;
+namespace Tests\Unit\Offer;
 
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SetStatusTest extends TestCase
+class SetStatusTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $offer;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->offer = factory(Offer::class)->create();
+        $this->offer = Offer::factory()->create();
     }
 
-    /** @test */
+    #[Test]
     public function set_offer_as_won()
     {
         $this->assertNotEquals('won', $this->offer->status);
@@ -27,7 +28,7 @@ class SetStatusTest extends TestCase
         $this->assertEquals('won', $this->offer->status);
     }
 
-    /** @test */
+    #[Test]
     public function set_offer_as_list()
     {
         $this->assertNotEquals('lost', $this->offer->status);

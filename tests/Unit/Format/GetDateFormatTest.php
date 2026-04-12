@@ -2,12 +2,13 @@
 
 namespace Tests\Unit\Format;
 
-use App\Models\Setting;
+use App\Models\User;
 use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
 
-class GetDateFormatTest extends TestCase
+class GetDateFormatTest extends AbstractTestCase
 {
     /** @var GetDateFormat */
     protected $formatter;
@@ -16,11 +17,17 @@ class GetDateFormatTest extends TestCase
     {
         parent::setUp();
 
-        Setting::first()->update(['country' => 'GB']);
+        // Ensure a Setting record exists for date format resolution
+        \App\Models\Setting::factory()->create(['country' => 'DK']);
+
+        // Create and authenticate a user with a language for context-dependent formatting
+        $user = \App\Models\User::factory()->create(['language' => 'DK']);
+        $this->actingAs($user);
+
         $this->formatter = app(GetDateFormat::class);
     }
 
-    /** @test */
+    #[Test]
     public function happy_path()
     {
         $this->assertEquals('H:i', $this->formatter->getCarbonTime());
@@ -30,7 +37,7 @@ class GetDateFormatTest extends TestCase
         $this->assertEquals('d/m/Y', $this->formatter->getCarbonDate());
     }
 
-    /** @test */
+    #[Test]
     public function happy_path_with_helpers()
     {
         $this->assertEquals('H:i', carbonTime());
@@ -40,7 +47,7 @@ class GetDateFormatTest extends TestCase
         $this->assertEquals('d/m/Y', carbonDate());
     }
 
-    /** @test */
+    #[Test]
     public function date_expected()
     {
         $this->assertEquals('15:00', Carbon::parse('22-02-2020 15:00:00')->format($this->formatter->getCarbonTime()));

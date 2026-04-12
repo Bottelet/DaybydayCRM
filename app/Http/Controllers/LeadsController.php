@@ -11,26 +11,38 @@ use App\Models\Setting;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\Invoice\InvoiceCalculator;
-use Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_STATUS = 'updated_status';
+    public const UPDATED_STATUS = 'updated_status';
 
-    const UPDATED_DEADLINE = 'updated_deadline';
+    public const UPDATED_DEADLINE = 'updated_deadline';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
     public function __construct()
     {
         $this->middleware('lead.create', ['only' => ['create']]);
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
+        $this->middleware(function ($request, $next) {
+            if (! auth()->check() || ! auth()->user()->can('lead-delete')) {
+                if ($request->expectsJson()) {
+                    abort(403);
+                }
+                session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
+
+                return redirect()->back();
+            }
+
+            return $next($request);
+        }, ['only' => ['destroy', 'destroyJson']]);
     }
 
     public function index()
@@ -80,7 +92,7 @@ class LeadsController extends Controller
     public function store(StoreLeadRequest $request)
     {
         if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id);
+            $client = Client::whereExternalId($request->client_external_id)->first();
         }
 
         $lead = Lead::create(
@@ -88,7 +100,7 @@ class LeadsController extends Controller
                 'title' => $request->title,
                 'description' => clean($request->description),
                 'user_assigned_id' => $request->user_assigned_id,
-                'deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00'),
+                'deadline' => \Illuminate\Support\Carbon::parse($request->deadline.' '.$request->contact_time.':00'),
                 'status_id' => $request->status_id,
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
@@ -104,6 +116,16 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead, Request $request)
     {
+        if (! auth()->user()->can('lead-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to delete leads')], 403);
+            }
+
+            return redirect()->back();
+        }
+
         $deleteOffers = $request->delete_offers ? true : false;
         if ($lead->offers && $deleteOffers) {
             $lead->offers()->delete();
@@ -120,11 +142,19 @@ class LeadsController extends Controller
 
         session()->flash('flash_message', __('Lead deleted'));
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Lead deleted')], 200);
+        }
+
         return redirect()->back();
     }
 
     public function destroyJson(Lead $lead, Request $request)
     {
+        if (! auth()->user()->can('lead-delete')) {
+            return response('Access denied', 403);
+        }
+
         $deleteOffers = $request->delete_offers ? true : false;
         if ($lead->offers && $deleteOffers) {
             $lead->offers()->delete();
@@ -144,13 +174,17 @@ class LeadsController extends Controller
 
     public function updateAssign($external_id, Request $request)
     {
+        if (! auth()->user()->can('can-assign-new-user-to-lead')) {
+            session()->flash('flash_message_warning', __('You do not have permission to assign leads'));
+
+            return redirect()->back();
+        }
         $lead = $this->findByExternalId($external_id);
-        $input = $request->get('user_assigned_id');
-        $input = array_replace($request->all());
+        $input = $request->only(['user_assigned_id']);
         $lead->fill($input)->save();
 
         event(new LeadAction($lead, self::UPDATED_ASSIGN));
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
     }
@@ -162,15 +196,51 @@ class LeadsController extends Controller
      */
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
-        if (! auth()->user()->can('lead-update-deadline')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
-
-            return redirect()->route('tasks.show', $external_id);
-        }
         $lead = $this->findByExternalId($external_id);
-        $lead->fill(['deadline' => Carbon::parse($request->deadline.' '.$request->contact_time.':00')])->save();
+        $contactTime = $request->contact_time ?: '00:00';
+        $deadline = $request->deadline;
+        // If deadline is only a date, append the contact time
+        if (strlen($deadline) <= 10) {
+            $deadline = $deadline.' '.$contactTime.':00';
+        }
+        // Always store as Y-m-d H:i:s string
+        $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
+        $lead->save();
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', __('New follow up date is set'));
+        session()->flash('flash_message', __('New follow up date is set'));
+
+        return redirect()->back();
+    }
+
+    /**
+     * Update the deadline for a lead
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
+     */
+    public function updateDeadline(Request $request, $external_id)
+    {
+        $lead = $this->findByExternalId($external_id);
+
+        $deadlineTime = $request->deadline_time ?: '00:00';
+        $deadlineDate = $request->deadline_date;
+
+        // Combine date and time
+        $deadline = $deadlineDate.' '.$deadlineTime.':00';
+
+        // Always store as Y-m-d H:i:s string
+        $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
+        $lead->save();
+
+        event(new LeadAction($lead, self::UPDATED_DEADLINE));
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => __('Deadline successfully updated'),
+            ]);
+        }
+
+        session()->flash('flash_message', __('Deadline successfully updated'));
 
         return redirect()->back();
     }
@@ -207,20 +277,36 @@ class LeadsController extends Controller
         if (! auth()->user()->can('lead-update-status')) {
             session()->flash('flash_message_warning', __('You do not have permission to change lead status'));
 
-            return redirect()->route('tasks.show', $external_id);
+            return redirect()->route('leads.show', $external_id);
         }
         $lead = $this->findByExternalId($external_id);
-        if (isset($request->closeLead) && $request->closeLead === true) {
-            $lead->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        if ($request->has('closeLead') && $request->closeLead === true) {
+            $closedStatus = Status::typeOfLead()->where('title', 'Closed')->first();
+            if ($closedStatus) {
+                $lead->status_id = $closedStatus->id;
+                $lead->save();
+            }
+        } elseif ($request->has('openLead') && $request->openLead === true) {
+            $openStatus = Status::typeOfLead()->where('title', 'Open')->first();
+            if ($openStatus) {
+                $lead->status_id = $openStatus->id;
+                $lead->save();
+            }
+        } elseif ($request->has('status_id')) {
+            $statusId = $request->input('status_id');
+            // Validate that the status_id belongs to lead statuses
+            $validStatus = Status::typeOfLead()->where('id', $statusId)->exists();
+            if (! $validStatus) {
+                session()->flash('flash_message_warning', __('Invalid status for lead'));
+
+                return redirect()->back();
+            }
+            // Only update status_id, not other fields
+            $lead->status_id = $statusId;
             $lead->save();
-        } elseif (isset($request->openLead) && $request->openLead === true) {
-            $lead->status_id = Status::typeOfLead()->where('title', 'Open')->first()->id;
-            $lead->save();
-        } else {
-            $lead->fill($request->all())->save();
         }
         event(new LeadAction($lead, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Lead status updated'));
+        session()->flash('flash_message', __('Lead status updated'));
 
         return redirect()->back();
     }

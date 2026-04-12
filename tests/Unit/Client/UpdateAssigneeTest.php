@@ -5,12 +5,14 @@ namespace Tests\Unit\Client;
 use App\Events\ClientAction;
 use App\Models\Client;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 
-class UpdateAssigneeTest extends TestCase
+class UpdateAssigneeTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $client;
 
@@ -18,33 +20,39 @@ class UpdateAssigneeTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user = User::factory()->create();
 
-        $this->client = factory(Client::class)->create([
+        $this->client = Client::factory()->create([
 
             'company_name' => 'Just something',
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_update_assignee()
     {
+        Event::fake([ClientAction::class]);
+
         $this->assertNotEquals($this->client->user_id, $this->user->id);
 
-        $this->expectsEvents(ClientAction::class);
         $this->client->updateAssignee($this->user);
 
         $this->assertEquals($this->client->user_id, $this->user->id);
+
+        Event::assertDispatched(ClientAction::class);
     }
 
-    /** @test */
+    #[Test]
     public function can_update_assignee_with_out_permissions_as_any_user()
     {
-        $user = factory(User::class)->create();
-        $this->setUser($user);
+        Event::fake([ClientAction::class]);
 
-        $this->expectsEvents(ClientAction::class);
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
         $this->client->updateAssignee($this->user);
         $this->assertEquals($this->client->user_id, $this->user->id);
+
+        Event::assertDispatched(ClientAction::class);
     }
 }

@@ -19,8 +19,9 @@ class Money
 
     public function __construct($amount = 0)
     {
-        $currency = Setting::select('currency')->first()->currency;
-        $this->amount = $amount;
+        $setting = Setting::select('currency')->first();
+        $currency = $setting ? $setting->currency : 'USD';
+        $this->amount = (int) $amount;
         $this->currency = new Currency($currency);
     }
 

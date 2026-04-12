@@ -12,7 +12,7 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('clients', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('address')->nullable();

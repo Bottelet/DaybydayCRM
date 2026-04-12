@@ -12,7 +12,7 @@ class Settings extends Migration
      */
     public function up()
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('settings', static function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_number');
             $table->integer('invoice_number');

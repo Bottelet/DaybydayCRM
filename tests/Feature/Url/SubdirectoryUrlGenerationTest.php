@@ -19,7 +19,8 @@ use Tests\TestCase;
  */
 class SubdirectoryUrlGenerationTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
+    use WithoutMiddleware;
 
     private $task;
 

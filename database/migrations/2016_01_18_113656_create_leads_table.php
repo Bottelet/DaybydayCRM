@@ -12,7 +12,7 @@ class CreateLeadsTable extends Migration
      */
     public function up()
     {
-        Schema::create('leads', function (Blueprint $table) {
+        Schema::create('leads', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('title');

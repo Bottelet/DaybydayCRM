@@ -13,22 +13,25 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Carbon;
-use Datatables;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Support\Facades\Auth;
+use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class TasksController extends Controller
 {
-    const CREATED = 'created';
+    public const CREATED = 'created';
 
-    const UPDATED_STATUS = 'updated_status';
+    public const UPDATED_STATUS = 'updated_status';
 
-    const UPDATED_TIME = 'updated_time';
+    public const UPDATED_TIME = 'updated_time';
 
-    const UPDATED_ASSIGN = 'updated_assign';
+    public const UPDATED_ASSIGN = 'updated_assign';
 
-    const UPDATED_DEADLINE = 'updated_deadline';
+    public const UPDATED_DEADLINE = 'updated_deadline';
 
     protected $invoices;
 
@@ -38,6 +41,20 @@ class TasksController extends Controller
         $this->middleware('task.create', ['only' => ['create']]);
         $this->middleware('task.update.status', ['only' => ['updateStatus']]);
         $this->middleware('task.assigned', ['only' => ['updateAssign', 'updateTime']]);
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            abort_unless($user && $user->can('task-delete'), 403);
+
+            return $next($request);
+        }, ['only' => ['destroy']]);
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            abort_unless($user && $user->can('task-update-linked-project'), 403);
+
+            return $next($request);
+        }, ['only' => ['updateProject']]);
     }
 
     /**
@@ -56,34 +73,33 @@ class TasksController extends Controller
         $tasks = Task::with(['user', 'status', 'client'])->select(
             collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
                 ->map(function ($field) {
-                    return (new Task)->qualifyColumn($field);
+                    return (new Task())->qualifyColumn($field);
                 })
                 ->all()
         );
 
-        return Datatables::of($tasks)
-            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
-            ->editColumn('client', function ($projects) {
-                return $projects->client->company_name;
+        return DataTables::of($tasks)
+            ->addColumn('titlelink', function ($task) {
+                return '<a href="'.route('tasks.show', [$task->external_id]).'">'.$task->title.'</a>';
             })
-            ->editColumn('created_at', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                    ->format(carbonDate()) : '';
+            ->editColumn('client', function ($task) {
+                return $task->client ? $task->client->company_name : '';
             })
-            ->editColumn('deadline', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->deadline))
-                    ->format(carbonDate()) : '';
+            ->editColumn('created_at', function ($task) {
+                return $task->created_at ? with(new Carbon($task->created_at))->format(carbonDate()) : '';
             })
-            ->editColumn('user_assigned_id', function ($tasks) {
-                return $tasks->user->name;
+            ->editColumn('deadline', function ($task) {
+                return $task->deadline ? with(new Carbon($task->deadline))->format(carbonDate()) : '';
             })
-            ->editColumn('status_id', function ($tasks) {
-                return '<span class="label label-success" style="background-color:'.$tasks->status->color.'"> '.
-                    $tasks->status->title.'</span>';
+            ->editColumn('user_assigned_id', function ($task) {
+                return $task->user ? $task->user->name : '';
             })
-            ->addColumn('view', function ($tasks) {
-                return '<a href="'.route('tasks.show', $tasks->external_id).'" class="btn btn-link">'.__('View').'</a>'
-                .'<a data-toggle="modal" data-id="'.route('tasks.destroy', $tasks->external_id).'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
+            ->editColumn('status_id', function ($task) {
+                return $task->status ? '<span class="label label-success" style="background-color:'.$task->status->color.'"> '.$task->status->title.'</span>' : '';
+            })
+            ->addColumn('view', function ($task) {
+                return '<a href="'.route('tasks.show', $task->external_id).'" class="btn btn-link">'.__('View').'</a>'
+                .'<a data-toggle="modal" data-id="'.route('tasks.destroy', $task->external_id).'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
             })
             ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
@@ -120,14 +136,17 @@ class TasksController extends Controller
      */
     public function store(StoreTaskRequest $request) // uses __contrust request
     {
+        $client = null;
         $project = null;
+
         if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id);
+            $client = Client::whereExternalId($request->client_external_id)->first();
         }
 
         if ($request->project_external_id) {
             $project = Project::whereExternalId($request->project_external_id)->first();
         }
+
         $input = array_merge(
             $request->all(),
             []
@@ -142,14 +161,14 @@ class TasksController extends Controller
                 'status_id' => $request->status_id,
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client->id,
+                'client_id' => optional($client)->id,
                 'project_id' => optional($project)->id,
             ]
         );
 
         $insertedExternalId = $task->external_id;
 
-        Session()->flash('flash_message', __('Task successfully added'));
+        session()->flash('flash_message', __('Task successfully added'));
         event(new TaskAction($task, self::CREATED));
 
         if (! is_null($request->images)) {
@@ -166,6 +185,15 @@ class TasksController extends Controller
 
     public function destroy(Task $task, Request $request)
     {
+        if (! auth()->user()->can('task-delete')) {
+            session()->flash('flash_message_warning', __('You do not have permission to delete tasks'));
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to delete tasks')], 403);
+            }
+
+            return redirect()->back();
+        }
+
         $deleteInvoice = $request->delete_invoice ? true : false;
 
         if ($task->invoice && $deleteInvoice) {
@@ -174,8 +202,11 @@ class TasksController extends Controller
             $task->invoice->removeReference();
         }
         $task->delete();
+        session()->flash('flash_message', __('Task deleted'));
 
-        Session()->flash('flash_message', __('Task deleted'));
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Task deleted')], 200);
+        }
 
         return redirect()->back();
     }
@@ -221,7 +252,7 @@ class TasksController extends Controller
     /**
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function show(Request $request, $external_id)
     {
@@ -253,16 +284,47 @@ class TasksController extends Controller
 
             return redirect()->route('tasks.show', $external_id);
         }
-        $input = $request->all();
+        $input = $request->only(['status_id', 'statusExternalId']);
+        // Accept status_id or statusExternalId (AJAX)
+        if (isset($input['statusExternalId'])) {
+            $status = Status::whereExternalId($input['statusExternalId'])->first();
+            if (! $status) {
+                if ($request->expectsJson()) {
+                    return response()->json(['error' => 'Invalid status external id'], 400);
+                }
+                session()->flash('flash_message_warning', __('Invalid status external id'));
 
-        if ($request->ajax() && isset($input['statusExternalId'])) {
-            $input['status_id'] = Status::whereExternalId($input['statusExternalId'])->first()->id;
+                return redirect()->back();
+            }
+            $input['status_id'] = $status->id;
         }
+        if (! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Invalid status id'], 400);
+            }
+            session()->flash('flash_message_warning', __('Invalid status id'));
 
+            return redirect()->back();
+        }
+        // Validate that the status_id belongs to task statuses
+        $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
+        if (! $validStatus) {
+            session()->flash('flash_message_warning', __('Invalid status for task'));
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Invalid status for task'], 400);
+            }
+
+            return redirect()->back();
+        }
         $task = $this->findByExternalId($external_id);
-        $task->fill($input)->save();
+        $task->status_id = $input['status_id'];
+        $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task status is updated'));
+        session()->flash('flash_message', __('Task status is updated'));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Task status is updated')], 200);
+        }
 
         return redirect()->back();
     }
@@ -271,17 +333,16 @@ class TasksController extends Controller
     {
         $task = $this->findByExternalId($external_id);
         $project_id = null;
-
         if ($request->project_external_id) {
-            $project_id = Project::whereExternalId($request->project_external_id)->first()->id;
+            $project = Project::whereExternalId($request->project_external_id)->first();
+            if (! $project) {
+                return response()->json(['error' => 'Invalid project_external_id'], 400);
+            }
+            $project_id = $project->id;
         }
-
-        $task->fill([
-            'project_id' => $project_id,
-        ])->save();
-
-        // event(new \App\Events\TaskAction($task, self::UPDATED_STATUS));
-        Session()->flash('flash_message', __('Task project is updated'));
+        $task->project_id = $project_id;
+        $task->save();
+        session()->flash('flash_message', __('Task project is updated'));
 
         return redirect()->back();
     }
@@ -292,15 +353,15 @@ class TasksController extends Controller
     public function updateAssign($external_id, Request $request)
     {
         $task = Task::with('user')->whereExternalId($external_id)->first();
-
-        $user_assigned_id = $request->user_assigned_id;
-
+        $user_assigned_id = $request->input('user_assigned_id');
+        if (! $user_assigned_id || ! is_numeric($user_assigned_id)) {
+            return response()->json(['error' => 'Invalid user_assigned_id'], 400);
+        }
         $task->user_assigned_id = $user_assigned_id;
         $task->save();
         $task->refresh();
-
         event(new TaskAction($task, self::UPDATED_ASSIGN));
-        Session()->flash('flash_message', __('New user is assigned'));
+        session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
     }
@@ -318,10 +379,16 @@ class TasksController extends Controller
             return redirect()->route('tasks.show', $external_id);
         }
         $task = $this->findByExternalId($external_id);
-        $task->fill(['deadline' => Carbon::parse($request->deadline_date)])->save();
-
+        $date = $request->input('deadline_date');
+        $time = $request->input('deadline_time', '00:00');
+        if (! $date) {
+            return response()->json(['error' => 'Invalid deadline_date'], 400);
+        }
+        $deadline = Carbon::parse($date.' '.$time.':00');
+        $task->deadline = $deadline->toDateString();
+        $task->save();
         event(new TaskAction($task, self::UPDATED_DEADLINE));
-        Session()->flash('flash_message', 'New deadline is set');
+        session()->flash('flash_message', 'New deadline is set');
 
         return redirect()->back();
     }
@@ -344,7 +411,7 @@ class TasksController extends Controller
      */
     public function marked()
     {
-        Notifynder::readAll(\Auth::id());
+        Notifynder::readAll(Auth::id());
 
         return redirect()->back();
     }

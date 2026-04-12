@@ -23,8 +23,7 @@ class Tax
      */
     public function __construct()
     {
-        $this->vatRate = $this->integerToVatRate();
-        $this->multipleVatRate = 1 + $this->vatRate;
+        // Do not cache vatRate or multipleVatRate in constructor; always fetch fresh in methods
     }
 
     /**
@@ -34,21 +33,26 @@ class Tax
      */
     public function vatRate(): float
     {
-        return $this->vatRate;
+        return $this->integerToVatRate();
     }
 
     public function multipleVatRate(): float
     {
-        return $this->multipleVatRate;
+        return 1 + $this->vatRate();
     }
 
     public function percentage()
     {
-        return Setting::select('vat')->first()->vat / 100;
+        $setting = Setting::select('vat')->first();
+
+        // VAT is stored as percentage * 100 (e.g., 2100 for 21%)
+        // Divide by 10000 to get decimal rate (e.g., 0.21)
+        return ($setting ? $setting->vat : 2100) / 10000;
     }
 
     private function integerToVatRate()
     {
-        return $this->percentage() / 100;
+        // Always fetch the latest VAT value from the database
+        return $this->percentage();
     }
 }

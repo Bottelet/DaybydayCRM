@@ -6,7 +6,9 @@ use App\Models\Integration;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\Authentication\GoogleDriveAuthenticator;
 use Google_Client;
-use Google_Service_Drive;
+use Exception;
+use Google_Exception;
+use Google_Service_Drive_DriveFile;
 
 class GoogleDrive implements FilesystemIntegration
 {
@@ -20,7 +22,7 @@ class GoogleDrive implements FilesystemIntegration
             'client_id' => config('services.google-drive.client_id'),
             'client_secret' => config('services.google-drive.client_secret'),
         ];
-        $this->client = new Google_Client;
+        $this->client = new Google_Client();
         $this->client->setAuthConfig($auth);
         $this->client->setRedirectUri(route('googleDrive.callback'));
         $this->client->setAccessType('offline');
@@ -43,7 +45,7 @@ class GoogleDrive implements FilesystemIntegration
         }
 
         if (! $rootFolderId) {
-            $rootFolderBluePrint = new \Google_Service_Drive_DriveFile(
+            $rootFolderBluePrint = new Google_Service_Drive_DriveFile(
                 [
                     'name' => 'Daybyday',
                     'mimeType' => 'application/vnd.google-apps.folder',
@@ -55,7 +57,7 @@ class GoogleDrive implements FilesystemIntegration
                 'uploadType' => 'multipart',
                 'fields' => 'id']);
 
-            $clientFolderBluePrint = new \Google_Service_Drive_DriveFile(
+            $clientFolderBluePrint = new Google_Service_Drive_DriveFile(
                 [
                     'name' => $folder,
                     'mimeType' => 'application/vnd.google-apps.folder',
@@ -80,7 +82,7 @@ class GoogleDrive implements FilesystemIntegration
                 }
             }
             if (! $clientFolder) {
-                $clientFolderBluePrint = new \Google_Service_Drive_DriveFile(
+                $clientFolderBluePrint = new Google_Service_Drive_DriveFile(
                     [
                         'name' => $folder,
                         'mimeType' => 'application/vnd.google-apps.folder',
@@ -95,7 +97,7 @@ class GoogleDrive implements FilesystemIntegration
             }
         }
 
-        $fileMetadata = new \Google_Service_Drive_DriveFile(
+        $fileMetadata = new Google_Service_Drive_DriveFile(
             [
                 'name' => $filename,
                 'parents' => [$clientFolder['id']],
@@ -119,7 +121,7 @@ class GoogleDrive implements FilesystemIntegration
             $this->driveService->files->delete($file->integration_id);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -140,7 +142,7 @@ class GoogleDrive implements FilesystemIntegration
     /**
      * @return bool
      *
-     * @throws \Google_Exception
+     * @throws Google_Exception
      */
     public function revokeAccess()
     {

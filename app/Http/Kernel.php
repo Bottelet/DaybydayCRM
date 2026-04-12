@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Client\CanClientCreate;
+use App\Http\Middleware\Client\CanClientDelete;
 use App\Http\Middleware\Client\CanClientUpdate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\Lead\CanLeadCreate;
@@ -21,6 +22,9 @@ use App\Http\Middleware\Translation;
 use App\Http\Middleware\User\CanUserCreate;
 use App\Http\Middleware\User\CanUserUpdate;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Zizaco\Entrust\Middleware\EntrustAbility;
+use App\Zizaco\Entrust\Middleware\EntrustPermission;
+use App\Zizaco\Entrust\Middleware\EntrustRole;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -63,6 +67,7 @@ class Kernel extends HttpKernel
         ],
         'client.create' => [CanClientCreate::class],
         'client.update' => [CanClientUpdate::class],
+        'client.delete' => [CanClientDelete::class],
         'user.create' => [CanUserCreate::class],
         'user.update' => [CanUserUpdate::class],
         'task.create' => [CanTaskCreate::class],
@@ -98,5 +103,8 @@ class Kernel extends HttpKernel
         'can' => Authorize::class,
         'guest' => RedirectIfAuthenticated::class,
         'throttle' => ThrottleRequests::class,
+        'role' => EntrustRole::class,
+        'permission' => EntrustPermission::class,
+        'ability' => EntrustAbility::class,
     ];
 }

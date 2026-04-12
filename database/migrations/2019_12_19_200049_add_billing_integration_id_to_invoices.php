@@ -13,7 +13,7 @@ class AddBillingIntegrationIdToInvoices extends Migration
      */
     public function up()
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', static function (Blueprint $table) {
             $table->string('integration_invoice_id')->nullable()->after('due_at');
             $table->string('integration_type')->nullable()->after('integration_invoice_id');
         });
@@ -26,7 +26,7 @@ class AddBillingIntegrationIdToInvoices extends Migration
      */
     public function down()
     {
-        Schema::table('invoices', function (Blueprint $table) {
+        Schema::table('invoices', static function (Blueprint $table) {
             $table->dropColumn(['integration_invoice_id', 'integration_type']);
         });
     }
