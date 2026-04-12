@@ -100,7 +100,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     // region edge_cases
 
     #[Test]
-    public function set_client_number_to_zero_leads_to_duplicate_numbers()
+    public function set_client_number_to_zero_starts_incrementing_sequence()
     {
         /** Arrange */
         $this->clientNumberService->setClientNumber(0);
@@ -110,8 +110,8 @@ class ClientNumberServiceTest extends AbstractTestCase
         $secondClient = $this->clientNumberService->setNextClientNumber();
 
         /** Assert */
-        // Setting to 0 will cause duplicate numbers (both get 0)
-        // This is a known edge case that should be prevented by validation
+        // Setting the client number to 0 starts the sequence at 0
+        // and subsequent calls continue incrementing without duplicates.
         $this->assertEquals(0, $firstClient);
         $this->assertEquals(1, $secondClient);
         $this->assertNotEquals($firstClient, $secondClient, 'Client numbers should not duplicate');
