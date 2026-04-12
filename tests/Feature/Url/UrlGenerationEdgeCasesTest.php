@@ -17,7 +17,8 @@ use Tests\TestCase;
  */
 class UrlGenerationEdgeCasesTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
+    use WithoutMiddleware;
 
     /** @test */
     public function url_helper_handles_multiple_subdirectory_levels()

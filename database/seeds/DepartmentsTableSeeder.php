@@ -13,7 +13,7 @@ class DepartmentsTableSeeder extends Seeder
      */
     public function run()
     {
-        $department = new Department;
+        $department = new Department();
         $department->id = '1';
         $department->external_id = Uuid::uuid4();
         $department->name = 'Management';
@@ -21,7 +21,7 @@ class DepartmentsTableSeeder extends Seeder
 
         \DB::table('department_user')->insert([
             'department_id' => 1,
-            'user_id' => 1
+            'user_id' => 1,
         ]);
     }
 }

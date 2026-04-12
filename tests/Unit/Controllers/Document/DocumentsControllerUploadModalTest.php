@@ -18,7 +18,8 @@ use Tests\TestCase;
  */
 class DocumentsControllerUploadModalTest extends TestCase
 {
-    use DatabaseTransactions, WithoutMiddleware;
+    use DatabaseTransactions;
+    use WithoutMiddleware;
 
     private $task;
 

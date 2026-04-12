@@ -25,7 +25,7 @@ class InvoiceCalculator
         if (! $invoice instanceof Invoice && ! $invoice instanceof Offer) {
             throw new Exception('Not correct type for Invoice Calculator');
         }
-        $this->tax = new Tax;
+        $this->tax = new Tax();
         $this->invoice = $invoice;
     }
 
