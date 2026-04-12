@@ -197,8 +197,8 @@ class LeadsController extends Controller
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
         $lead = $this->findByExternalId($external_id);
-        $contactTime = $request->contact_time ?: '00:00';
-        $deadline = $request->deadline;
+        $contactTime = $request->input('contact_time', '00:00');
+        $deadline = $request->input('deadline');
         // If deadline is only a date, append the contact time
         if (strlen($deadline) <= 10) {
             $deadline = $deadline.' '.$contactTime.':00';
