@@ -61,18 +61,26 @@ class AppointmentSecurityTest extends AbstractTestCase
     {
         /** Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
+        $expectedStart = Carbon::now()->addDay();
+        $expectedEnd = Carbon::now()->addDay()->addHour();
 
         /** Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'id' => $this->appointment->id,
-            'start' => Carbon::now()->addDay()->toISOString(),
-            'end' => Carbon::now()->addDay()->addHour()->toISOString(),
-            'group' => $this->user->external_id,
+            'start' => $expectedStart->toISOString(),
+            'end' => $expectedEnd->toISOString(),
+            'group' => $this->unauthorizedUser->external_id,
             '_token' => csrf_token(),
         ]);
 
         /** Assert */
         $response->assertStatus(200);
+
+        $this->appointment->refresh();
+
+        $this->assertSame($expectedStart->toISOString(), $this->appointment->start_at->toISOString());
+        $this->assertSame($expectedEnd->toISOString(), $this->appointment->end_at->toISOString());
+        $this->assertSame($this->unauthorizedUser->id, $this->appointment->user_id);
     }
 
     #[Test]
