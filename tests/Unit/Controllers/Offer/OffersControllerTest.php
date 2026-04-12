@@ -29,14 +29,20 @@ class OffersControllerTest extends AbstractTestCase
 
         $this->user = User::factory()->create();
         $role = Role::firstOrCreate(['name' => 'employee']);
-        $permission = Permission::firstOrCreate(['name' => 'offer-edit']);
-        $role->attachPermission($permission);
+        
+        // Attach both create and edit permissions
+        $createPermission = Permission::firstOrCreate(['name' => 'offer-create']);
+        $editPermission = Permission::firstOrCreate(['name' => 'offer-edit']);
+        
+        $role->attachPermission($createPermission);
+        $role->attachPermission($editPermission);
         $this->user->attachRole($role);
-        $this->actingAs($this->user);
-
+        
         // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->user = $this->user->fresh();
+        
+        $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->lead = Lead::factory()->create();
