@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ProjectAction;
 use App\Http\Requests\Project\StoreProjectRequest;
+use App\Http\Requests\Project\UpdateProjectAssignRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -304,21 +305,11 @@ class ProjectsController extends Controller
         return redirect()->back();
     }
 
-    public function updateAssign($external_id, Request $request)
+    public function updateAssign($external_id, UpdateProjectAssignRequest $request)
     {
-        if (! auth()->user()->can('can-assign-new-user-to-project')) {
-            if ($request->expectsJson()) {
-                abort(403, __('You do not have permission to assign users to this project'));
-            }
-
-            session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
-
-            return redirect()->route('projects.show', $external_id);
-        }
-
         $project = Project::with('assignee')->whereExternalId($external_id)->first();
 
-        $user_assigned_id = $request->user_assigned_id;
+        $user_assigned_id = $request->validated('user_assigned_id');
 
         $project->user_assigned_id = $user_assigned_id;
         $project->save();

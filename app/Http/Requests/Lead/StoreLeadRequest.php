@@ -30,8 +30,9 @@ class StoreLeadRequest extends FormRequest
             'status_id' => 'required',
             'user_assigned_id' => 'required',
             'user_created_id' => '',
-            'client_external_id' => 'required',
+            'client_external_id' => 'required|exists:clients,external_id',
             'deadline' => 'required',
+            'contact_time' => 'required',
         ];
     }
 }
