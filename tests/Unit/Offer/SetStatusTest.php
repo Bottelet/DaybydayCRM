@@ -3,20 +3,20 @@
 namespace Tests\Unit\Offer;
 
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SetStatusTest extends TestCase
+class SetStatusTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $offer;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->offer = factory(Offer::class)->create();
+        $this->offer = Offer::factory()->create();
     }
 
     #[Test]

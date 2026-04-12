@@ -6,14 +6,14 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\Task;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class TypeOfStatusTest extends TestCase
+class TypeOfStatusTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $task;
 
@@ -26,16 +26,16 @@ class TypeOfStatusTest extends TestCase
     #[Group('junie_repaired')]
     public function happy_path()
     {
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Task::class,
             'title' => 'Hello',
         ]);
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Lead::class,
             'title' => 'Hello',
         ]);
 
-        factory(Status::class)->create([
+        Status::factory()->create([
             'source_type' => Project::class,
             'title' => 'Hello',
         ]);

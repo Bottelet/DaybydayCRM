@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
-use App\Models\PermissionRole;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 
@@ -11,25 +10,21 @@ class RolePermissionTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Uses syncWithoutDetaching to prevent duplicate key errors.
      *
      * @return void
      */
     public function run()
     {
-        $role = Role::where('name', Role::OWNER_ROLE)->first();
-        foreach (Permission::all() as $permission) {
-            PermissionRole::create([
-                'role_id' => $role->id,
-                'permission_id' => $permission->id,
-            ]);
-        }
+        $ownerRole = Role::where('name', Role::OWNER_ROLE)->first();
+        $allPermissions = Permission::all()->pluck('id')->toArray();
 
-        $role = Role::where('name', Role::ADMIN_ROLE)->first();
-        foreach (Permission::all() as $permission) {
-            PermissionRole::create([
-                'role_id' => $role->id,
-                'permission_id' => $permission->id,
-            ]);
-        }
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $ownerRole->perms()->syncWithoutDetaching($allPermissions);
+
+        $adminRole = Role::where('name', Role::ADMIN_ROLE)->first();
+
+        // Use syncWithoutDetaching to prevent duplicate key errors
+        $adminRole->perms()->syncWithoutDetaching($allPermissions);
     }
 }

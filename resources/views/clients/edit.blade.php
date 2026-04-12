@@ -4,12 +4,10 @@
 @stop
 
 @section('content')
-    {!! Form::model($client, [
-            'method' => 'PATCH',
-            'route' => ['clients.update', $client->external_id],
-            ]) !!}
-    @include('clients.form', ['submitButtonText' => __('Update client')])
-
-    {!! Form::close() !!}
+    <form action="{{ route('clients.update', $client->external_id) }}" method="POST">
+        @csrf
+        @method('PATCH')
+        @include('clients.form', ['submitButtonText' => __('Update client')])
+    </form>
 
 @stop

@@ -5,18 +5,18 @@ namespace Tests\Unit\Events;
 use App\Events\LeadAction;
 use App\Models\Lead;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class LeadActionTest extends TestCase
+class LeadActionTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function constructor_stores_lead_and_action()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $action = 'created';
 
         $event = new LeadAction($lead, $action);
@@ -28,7 +28,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function get_lead_returns_lead_model()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 'updated');
 
         $this->assertInstanceOf(Lead::class, $event->getLead());
@@ -37,7 +37,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function get_action_returns_action_string()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 'deleted');
 
         $this->assertEquals('deleted', $event->getAction());
@@ -46,7 +46,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function broadcast_on_returns_private_channel()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 'created');
 
         $channel = $event->broadcastOn();
@@ -56,7 +56,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function event_preserves_lead_reference_after_construction()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 'test');
 
         $this->assertEquals($lead->external_id, $event->getLead()->external_id);
@@ -65,7 +65,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function action_can_be_non_string_value()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 99);
 
         $this->assertEquals(99, $event->getAction());
@@ -88,7 +88,7 @@ class LeadActionTest extends TestCase
     #[Test]
     public function broadcast_on_returns_channel_named_channel_name()
     {
-        $lead = factory(Lead::class)->create();
+        $lead = Lead::factory()->create();
         $event = new LeadAction($lead, 'created');
 
         $channel = $event->broadcastOn();

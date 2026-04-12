@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Ramsey\Uuid\Uuid;
 
 class InvoiceLine extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -26,29 +29,17 @@ class InvoiceLine extends Model
 
     /**
      * Bootstrap the model and its traits.
-     * Automatically generates a UUID for external_id if not provided.
+     * HasExternalId trait automatically generates a UUID for external_id if not provided.
      *
      * @return void
      */
     public static function boot()
     {
         parent::boot();
-        static::creating(function ($invoiceLine) {
-            if (empty($invoiceLine->external_id)) {
-                $invoiceLine->external_id = Uuid::uuid4()->toString();
-            }
-        });
+        // HasExternalId trait handles external_id generation
     }
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function tasks()
     {

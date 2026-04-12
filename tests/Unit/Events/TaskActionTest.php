@@ -5,18 +5,18 @@ namespace Tests\Unit\Events;
 use App\Events\TaskAction;
 use App\Models\Task;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class TaskActionTest extends TestCase
+class TaskActionTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     #[Test]
     public function constructor_stores_task_and_action()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $action = 'created';
 
         $event = new TaskAction($task, $action);
@@ -28,7 +28,7 @@ class TaskActionTest extends TestCase
     #[Test]
     public function get_task_returns_task_model()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $event = new TaskAction($task, 'updated');
 
         $this->assertInstanceOf(Task::class, $event->getTask());
@@ -37,7 +37,7 @@ class TaskActionTest extends TestCase
     #[Test]
     public function get_action_returns_action_string()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $event = new TaskAction($task, 'deleted');
 
         $this->assertEquals('deleted', $event->getAction());
@@ -46,7 +46,7 @@ class TaskActionTest extends TestCase
     #[Test]
     public function broadcast_on_returns_private_channel()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $event = new TaskAction($task, 'created');
 
         $channel = $event->broadcastOn();
@@ -56,7 +56,7 @@ class TaskActionTest extends TestCase
     #[Test]
     public function event_preserves_task_reference_after_construction()
     {
-        $task = factory(Task::class)->create();
+        $task = Task::factory()->create();
         $event = new TaskAction($task, 'test');
 
         $this->assertEquals($task->external_id, $event->getTask()->external_id);

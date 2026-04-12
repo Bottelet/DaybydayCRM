@@ -4,22 +4,22 @@ namespace Tests\Unit\Invoice;
 
 use App\Models\Invoice;
 use App\Models\Lead;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class RemoveReferenceTest extends TestCase
+class RemoveReferenceTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     private $invoice;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->invoice = factory(Invoice::class)->create([
+        $this->invoice = Invoice::factory()->create([
             'sent_at' => null,
-            'integration_invoice_id' => factory(Lead::class)->create()->id,
+            'integration_invoice_id' => Lead::factory()->create()->id,
             'integration_type' => Lead::class,
         ]);
     }

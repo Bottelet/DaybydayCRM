@@ -15,7 +15,7 @@ class UserTest extends DuskTestCase
      */
     public function test_user_can_see_users_on_user_index_and_go_to_the_user_with_link()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users')
@@ -32,7 +32,7 @@ class UserTest extends DuskTestCase
      */
     public function test_i_can_see_all_the_correct_information_on_user_info_page()
     {
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/'.$user->external_id)

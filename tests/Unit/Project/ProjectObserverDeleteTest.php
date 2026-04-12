@@ -5,21 +5,20 @@ namespace Tests\Unit\Project;
 use App\Models\Client;
 use App\Models\Invoice;
 use App\Models\Project;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ProjectObserverDeleteTest extends TestCase
+class ProjectObserverDeleteTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $project;
 
-    protected function setup(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->project = factory(Project::class)->create();
+        $this->project = Project::factory()->create();
 
         $this->project->comments()->create([
             'description' => 'Test',
@@ -37,10 +36,8 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function delete_projects_soft_deletes()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertNull($this->project->documents()->first()->deleted_at);
         $this->project->delete();
 
@@ -48,10 +45,8 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function delete_project_soft_deletes_relations()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $this->assertNotEmpty($this->project->comments);
         $this->assertNotEmpty($this->project->activity);
         $this->assertNotEmpty($this->project->documents);
@@ -70,10 +65,8 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function force_delete_removes_project_from_database()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $projectId = $this->project->id;
 
         $this->project->forceDelete();
@@ -85,10 +78,8 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function force_delete_removes_relations_from_database()
     {
-        $this->markTestIncomplete('error repaired by junie');
         $commentId = $this->project->comments->first()->id;
         $documentId = $this->project->documents->first()->id;
         $activityId = $this->project->activity->first()->id;
@@ -108,13 +99,11 @@ class ProjectObserverDeleteTest extends TestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
     public function invoice_is_not_deleted_by_observer()
     {
-        $this->markTestIncomplete('error repaired by junie');
-        $invoice = factory(Invoice::class)->create([
+        $invoice = Invoice::factory()->create([
             'status' => 'Test',
-            'client_id' => factory(Client::class)->create()->id,
+            'client_id' => Client::factory()->create()->id,
             'integration_invoice_id' => $this->project->id,
             'integration_type' => Project::class,
         ]);

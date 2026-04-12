@@ -7,6 +7,7 @@ use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\Authentication\DropboxAuthenticator;
 use Illuminate\Support\Facades\File;
 use Spatie\Dropbox\Client as DropboxClient;
+use Exception;
 
 class Dropbox implements FilesystemIntegration
 {
@@ -17,7 +18,7 @@ class Dropbox implements FilesystemIntegration
         $dropbox_integration = Integration::where('name', Dropbox::class)->first();
 
         if (! $dropbox_integration) {
-            throw new \Exception('Dropbox integration is not configured');
+            throw new Exception('Dropbox integration is not configured');
         }
 
         /** @var DropboxClient $client */

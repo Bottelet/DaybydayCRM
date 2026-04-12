@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\InvoiceStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
+use App\Traits\HasExternalId;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,15 +20,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Invoice extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
-    const STATUS_SENT = 'sent';
+    public const STATUS_SENT = 'sent';
 
     protected $fillable = [
         'status',
         'sent_at',
         'due_at',
         'client_id',
+        'user_created_id',
         'integration_invoice_id',
         'integration_type',
         'source_id',
@@ -35,19 +40,12 @@ class Invoice extends Model
         'offer_id',
     ];
 
-    protected $dates = [
-        'due_at',
+    protected $casts = [
+        'due_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function client()
     {
@@ -72,6 +70,11 @@ class Invoice extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class, 'invoice_id', 'id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
     }
 
     public function canUpdateInvoice()

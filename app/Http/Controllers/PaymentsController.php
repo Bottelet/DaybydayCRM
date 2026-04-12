@@ -10,6 +10,7 @@ use App\Services\Invoice\GenerateInvoiceStatus;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
+use Exception;
 
 class PaymentsController extends Controller
 {
@@ -28,7 +29,7 @@ class PaymentsController extends Controller
      *
      * @return Response
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function destroy(Payment $payment)
     {

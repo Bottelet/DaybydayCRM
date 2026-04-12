@@ -5,33 +5,58 @@ namespace Tests\Unit\Controllers\Offer;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class OffersControllerTest extends TestCase
+class OffersControllerTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $lead;
 
     protected $offer;
 
+    protected $user;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->user = User::factory()->create();
+        $role = Role::firstOrCreate(['name' => 'employee']);
+
+        // Attach both create and edit permissions
+        $createPermission = Permission::firstOrCreate(['name' => 'offer-create']);
+        $editPermission = Permission::firstOrCreate(['name' => 'offer-edit']);
+
+        $role->attachPermission($createPermission);
+        $role->attachPermission($editPermission);
+
+        $this->user->attachRole($role);
+
+        // Clear permission cache AFTER attaching permissions
+        \Illuminate\Support\Facades\Cache::flush();
+
+        // Refresh user to reload roles and permissions
+        $this->user = $this->user->fresh();
+
+        // MUST call actingAs AFTER refresh to ensure permission check works
+        $this->actingAs($this->user);
+
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->lead = factory(Lead::class)->create();
-        $this->offer = factory(Offer::class)->create();
+        $this->lead = Lead::factory()->create();
+        $this->offer = Offer::factory()->create();
     }
 
     #[Test]
     #[Group('keeps_failing')]
     public function can_create_offer()
     {
-        $this->markTestIncomplete('keeps failing');
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             [
                 'title' => 'test line',
@@ -57,7 +82,6 @@ class OffersControllerTest extends TestCase
     #[Group('keeps_failing')]
     public function can_update_offer()
     {
-        $this->markTestIncomplete('Failed asserting that actual size 0 matches expected size 3.');
         $this->assertCount(0, $this->offer->invoiceLines);
         $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
@@ -94,30 +118,30 @@ class OffersControllerTest extends TestCase
     #[Test]
     public function can_set_offer_as_won()
     {
-        $this->assertEquals('in-progress', $this->offer->status);
+        $offer = Offer::factory()->create();
+
         $this->json('POST', route('offer.won'), [
-            'offer_external_id' => $this->offer->external_id,
+            'offer_external_id' => $offer->external_id,
         ]);
 
-        $this->offer->refresh();
+        $offer->refresh();
 
-        $this->assertEquals('won', $this->offer->status);
-        $this->assertNotNull($this->offer->invoice);
-
+        $this->assertEquals('won', $offer->status);
+        $this->assertNotNull($offer->invoice);
     }
 
     #[Test]
     public function can_set_offer_as_lost()
     {
-        $this->assertEquals('in-progress', $this->offer->status);
+        $offer = Offer::factory()->create();
+
         $this->json('POST', route('offer.lost'), [
-            'offer_external_id' => $this->offer->external_id,
+            'offer_external_id' => $offer->external_id,
         ]);
 
-        $this->offer->refresh();
+        $offer->refresh();
 
-        $this->assertEquals('lost', $this->offer->status);
-        $this->assertNull($this->offer->invoice);
-
+        $this->assertEquals('lost', $offer->status);
+        $this->assertNull($offer->invoice);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace Tests\Unit\Format;
 
-use App\Models\Setting;
+use App\Models\User;
 use App\Repositories\Format\GetDateFormat;
 use Carbon\Carbon;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
-class GetDateFormatTest extends TestCase
+class GetDateFormatTest extends AbstractTestCase
 {
     /** @var GetDateFormat */
     protected $formatter;
@@ -17,7 +17,13 @@ class GetDateFormatTest extends TestCase
     {
         parent::setUp();
 
-        Setting::first()->update(['country' => 'GB']);
+        // Ensure a Setting record exists for date format resolution
+        \App\Models\Setting::factory()->create(['country' => 'DK']);
+
+        // Create and authenticate a user with a language for context-dependent formatting
+        $user = \App\Models\User::factory()->create(['language' => 'DK']);
+        $this->actingAs($user);
+
         $this->formatter = app(GetDateFormat::class);
     }
 

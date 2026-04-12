@@ -1,64 +1,90 @@
-# Makefile for DaybydayCRM Docker/Laravel workflow
-# Bring containers down (with volumes) and up again
-down:
-	docker-compose down -v
+# ============================================================================
+# Makefile for DaybydayCRM (Docker & Host Unified)
+# ============================================================================
+
+# --- Configuration ---
+CONTAINER_NAME := workspace
+DOCKER_USER    := ivpldock
+# Dynamic container lookup for Laradock-style naming
+DOCKER_EXEC    := docker exec -t --user=$(DOCKER_USER) $$(docker ps -aqf "name=$(CONTAINER_NAME)")
+
+# --- Primary Entry Points (Host) ---
+
+# Run a specific test from host: make dtest f=ProjectsControllerTest
+dtest:
+	@$(DOCKER_EXEC) vendor/bin/phpunit --stop-on-failure $(if $(f),--filter $(f),)
+
+# Run all tests until first failure: make dfail
+dfail:
+	@$(DOCKER_EXEC) vendor/bin/phpunit --stop-on-failure
+
+# Quick shell access: make dsh
+dsh:
+	docker exec -it --user=$(DOCKER_USER) $$(docker ps -aqf "name=$(CONTAINER_NAME)") bash
+
+# Fresh migration and seed from host: make dmfs
+dmfs:
+	@$(DOCKER_EXEC) php artisan migrate:fresh --seed
+
+# --- Inside-Container Targets (Local PHP) ---
+
+install:
+	composer install
+
+mfs:
+	php artisan migrate:fresh --seed
+
+yarn-setup:
+	yarn install && yarn run build
+
+setup: install mfs yarn-setup
+
+clear:
+	php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear
+
+# --- Standard Testing ---
+
+phpunit:
+	vendor/bin/phpunit
+
+test-fail:
+	vendor/bin/phpunit --stop-on-failure
+
+# Usage: make test-filter f=SomeTest
+test-filter:
+	vendor/bin/phpunit --filter $(f) --stop-on-failure
+
+# --- Parallel Testing (Inside Container) ---
+
+paratest:
+	vendor/bin/paratest -p8 --stop-on-failure
+
+# --- Docker Compose (Host Level) ---
 
 up:
 	docker-compose up -d
 
-install:
-	docker-compose exec php composer install
-
-migrate-seed:
-	docker-compose exec php php artisan migrate:fresh --seed
-
-npm-install:
-	docker-compose exec php npm install
-
-npm-dev:
-	docker-compose exec php npm run dev
-
-setup: install migrate-seed npm-install npm-dev
-
-# Bring containers down (with volumes) and up again
-downup:
+down:
 	docker-compose down -v
-	docker-compose up -d
 
-workmeup:
-	docker exec -it $(docker ps -aqf "name=php") bash
+rebuild:
+	docker-compose down -v && docker-compose build --no-cache && docker-compose up -d
 
-shell:
-	docker exec $(docker ps -aqf "name=workspace") bash
+# --- Help ---
 
-clear:
-	docker-compose exec php php artisan config:clear
-	docker-compose exec php php artisan cache:clear
+help:
+	@echo "======================================================================"
+	@echo "HOST COMMANDS (Run these from your terminal):"
+	@echo "  make dtest f=<name>  : Run specific test (e.g., make dtest f=ProjectsControllerTest)"
+	@echo "  make dfail           : Run all tests, stop on first error"
+	@echo "  make dsh             : Enter the workspace container as $(DOCKER_USER)"
+	@echo "  make dmfs            : Fresh migrate/seed inside container"
+	@echo "  make up / make down  : Manage docker-compose"
+	@echo ""
+	@echo "CONTAINER COMMANDS (Run these inside 'make dsh'):"
+	@echo "  make setup           : Install composer/yarn and migrate"
+	@echo "  make test-fail       : Run phpunit until failure"
+	@echo "  make paratest        : Run tests in parallel"
+	@echo "======================================================================"
 
-docker-rebuild:
-	docker-compose down -v
-	docker system prune -af
-	docker-compose build --no-cache
-	docker-compose up -d
-
-test-phpunit:
-	docker-compose exec php vendor/bin/phpunit
-
-test-artisan:
-	docker-compose exec php php artisan test
-
-# Run tests locally (not via docker-compose)
-phpunit-local:
-	vendor/bin/phpunit
-
-artisan-test-local:
-	php artisan test
-
-test-local: phpunit-local artisan-test-local
-# Run all Laravel clear commands (config, cache, route, view) via composer script
-aargh:
-	composer aargh
-
-# Run all Laravel clear commands inside Docker
-daargh:
-	docker-compose exec php composer aargh
+.DEFAULT_GOAL := help

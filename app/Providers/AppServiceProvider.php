@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Client;
+use App\Models\Document;
 use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Observers\ClientObserver;
+use App\Observers\DocumentObserver;
 use App\Observers\InvoiceObserver;
 use App\Observers\LeadObserver;
 use App\Observers\ProjectObserver;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         Lead::observe(LeadObserver::class);
         Project::observe(ProjectObserver::class);
         Invoice::observe(InvoiceObserver::class);
+        Document::observe(DocumentObserver::class);
     }
 
     /**

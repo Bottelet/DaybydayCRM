@@ -16,10 +16,12 @@ use App\Repositories\Tax\Tax;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
-use Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
+use Exception;
 
 class InvoicesController extends Controller
 {
@@ -128,7 +130,7 @@ class InvoicesController extends Controller
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function newItem($external_id, AddInvoiceLine $request)
     {

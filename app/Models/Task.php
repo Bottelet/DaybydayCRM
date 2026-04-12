@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -14,9 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Task extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
-    const TASK_STATUS_CLOSED = 'closed';
+    public const TASK_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
 
@@ -30,21 +36,23 @@ class Task extends Model implements Commentable
         'client_id',
         'deadline',
         'project_id',
+        'invoice_id',
     ];
 
-    protected $dates = ['deadline'];
+    protected $casts = [
+        'deadline' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
 
     public static function boot()
     {
         parent::boot();
+        // HasExternalId trait handles external_id generation
     }
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
     {
@@ -133,7 +141,8 @@ class Task extends Model implements Commentable
 
     public function isClosed()
     {
-        return $this->status == self::TASK_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && $this->status->title == self::TASK_STATUS_CLOSED;
     }
 
     public function getSearchableFields(): array

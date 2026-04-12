@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use App\Api\v1\Models\Token;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasExternalId;
+use App\Traits\SearchableTrait;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +15,15 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable
 {
-    use Billable, EntrustUserTrait,  Notifiable, SoftDeletes;
+    use Billable;
+    use EntrustUserTrait;
+    use HasExternalId;
+    use HasFactory;
+    use Notifiable;
+    use SearchableTrait;
+    use SoftDeletes;
+
+    protected $searchableFields = ['name', 'email'];
 
     public function restore()
     {
@@ -91,10 +101,20 @@ class User extends Authenticatable
         return $this->hasMany(Absence::class);
     }
 
-    public function tokens()
+    public function integrations()
+    {
+        return $this->hasMany(Integration::class);
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
+
+    /*public function tokens()
     {
         return $this->hasMany(Token::class, 'user_id', 'id');
-    }
+    }*/
 
     public function canChangePasswordOn(User $user)
     {
@@ -189,5 +209,15 @@ class User extends Authenticatable
         }
 
         return collect(['keys' => $keys, 'counts' => $counts]);
+    }
+
+    public function displayValue()
+    {
+        return $this->name;
+    }
+
+    public function getSearchableFields(): array
+    {
+        return $this->searchableFields;
     }
 }

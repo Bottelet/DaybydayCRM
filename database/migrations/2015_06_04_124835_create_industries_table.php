@@ -16,6 +16,7 @@ class CreateIndustriesTable extends Migration
             $table->increments('id');
             $table->string('external_id');
             $table->string('name');
+            $table->timestamps();
         });
     }
 

@@ -60,6 +60,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
 use Illuminate\View\ViewServiceProvider;
@@ -250,11 +251,12 @@ return [
         'Schema' => Schema::class,
         'Session' => Session::class,
         'Storage' => Storage::class,
+        'Str' => Str::class,
         'URL' => URL::class,
         'Validator' => Validator::class,
         'View' => View::class,
-//        'Form' => FormFacade::class,
-//        'Html' => HtmlFacade::class,
+        //        'Form' => FormFacade::class,
+        //        'Html' => HtmlFacade::class,
         'Datatables' => Datatables::class,
         'Carbon' => Carbon\Carbon::class,
         'Notifty' => Notification::class,

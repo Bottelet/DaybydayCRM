@@ -26,7 +26,6 @@ Thumbs.db
 .env
 .env.backup
 .env.production
-.env.testing
 Homestead.yaml
 Homestead.json
 /auth.json
@@ -43,8 +42,14 @@ mix-manifest.json
 /.phpunit.cache
 /.phpunit.result.cache
 _ide_helper.php
+paratest*.log
 phpunit.txt
-/phpu*.txt
+phpu*.txt
+phpu_art_test.txt
+phpu_failures_bckp1.txt
+phpu_failures_bckp2.txt
+phpunit_bckp1.txt
+phpunit_bckp2.txt
 stan.txt
 todo.txt
 

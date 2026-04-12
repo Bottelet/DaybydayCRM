@@ -1,37 +1,48 @@
-# DaybydayCRM AI Agent Instructions
+# DaybydayCRM — AI Agent Instructions
 
-## Core Principles & Documentation
-- **Refer to .junie/*.md:** For detailed structural analysis, fundamental architectural problems, error repair plans, and refactoring strategies, always consult the files in the `.junie/` directory.
-- **Detailed Instructions:**
-  - `.junie/error_repair_plan.md`: Common test failures and their specific fixes.
-  - `.junie/refactor_plan.md`: Roadmap for modernizing the codebase.
-  - `.junie/structural_analysis.md`: Analysis of current code/test suite weaknesses.
-  - `.junie/fundamental_analysis.md`: Deep architectural issues and technical debt.
+## Documentation Overview
+Refer to the following core documentation for detailed guidance:
+- **[AGENTS.md](../AGENTS.md):** High-level system architecture, modular design, and domain organization.
+- **[.github/ARCHITECTURE.md](ARCHITECTURE.md):** Deep dive into technical debt, model behavior (Traits/Observers), and service layer.
+- **[.github/TESTING.md](TESTING.md):** Critical test isolation rules, normalization, and common fix patterns.
+- **[.github/ROADMAP.md](ROADMAP.md):** Project modernization status and refactoring goals.
 
-## Testing & Database Guidelines
+---
 
-### Common Test Issues & Solutions
+## Critical Development Guidelines
 
-- **Missing Default Values (SQLSTATE[HY000]: 1364 Field 'X' doesn't have a default value):**
-  - **Activity Model:** Always ensure `ip_address` and `external_id` (UUID) are set. The `Activity` model has a `boot()` method that handles this automatically if these fields are missing.
-  - **Factories:** When creating models in tests, ensure all NOT NULL fields without defaults are provided or handled in the factory/boot method.
+### 1. Test Isolation (MANDATORY)
+Tests must be **self-contained**. The "Cascade Problem" (tests depending on side effects of other tests) is prohibited.
+- Create own data via factories.
+- Use `RefreshDatabase` or `DatabaseTransactions`.
+- Exactly one HTTP request per test (unless testing a workflow sequence).
+- Normalize Carbon objects to ISO strings (`toISOString()`) before comparison.
 
-- **Unique Constraint Violations (SQLSTATE[23000]: 1062 Duplicate entry):**
-  - **Roles/Permissions:** Use `attachRole()` or `attachPermission()` from `EntrustUserTrait`. This trait has been modified to check for existing associations before attaching to prevent duplicate entry errors in the `role_user` table.
+### 2. Business Logic Location
+- **Actions:** Encapsulate single-purpose logic in `app/Actions/{Domain}/{ActionName}Action.php`.
+- **Services:** Complex workflows belong in `app/Services/`.
+- **Controllers:** Must remain thin, delegating to Services/Actions.
 
-- **PHPUnit 10+ Compatibility:**
-  - Avoid `assertObjectHasAttribute`. Use `assertTrue(property_exists($object, 'attribute'))` instead.
-  - Use `#[Test]` and `#[Group('...')]` attributes instead of `@test` and `@group` annotations.
+### 3. Model Consistency
+- Use **HasExternalId** trait for UUID routing.
+- Use **Blameable** trait for automatic tracking of `user_created_id`.
+- Use **Statusable** trait for standardized status handling.
+- Use **Observers** for side effects (e.g., file deletion on record delete).
 
-- **Date Comparisons:**
-  - Prefer `toDateString()` over `toDate()` or other methods that might return objects when strings are expected, especially when comparing with database values.
+### 4. Code Standards
+- **Routing:** Prefer tuple-based syntax `[Controller::class, 'method']`.
+- **Currency:** Normalize inputs in `prepareForValidation()` of FormRequests.
+- **Exceptions:** Throw specific types like `InvalidArgumentException` instead of generic `Exception`.
 
-### Model Boot Methods
+---
 
-- Many models in this project use UUIDs for `external_id`. Ensure any new models follow this pattern using a `boot()` method or a reusable trait to generate UUIDs on creation.
+## Quick Reference: Common Fixes
+- **General error 1364 (Field 'X' doesn't have default):** Ensure `HasExternalId` is used or update factory.
+- **Duplicate entry 1062:** Always call `$user->fresh()` after attaching permissions and before `actingAs($user)`.
+- **403 Forbidden in tests:** Use `asOwner()` or `asAdmin()` helpers in `TestCase`.
+- **VAT/Tax calculation errors:** VAT stored as `percentage × 100` (e.g., 2100 for 21%), requires division by 10000 to get decimal rate.
+- **Status validation failures:** Use full class names (`Task::class`) not strings (`'task'`) in `source_type` field.
+- **Expected 302 got 200/403:** Check if test uses JSON requests (`$this->json()`) - they return different status codes than web requests.
+- **Null pointer in trait methods:** Add null checks before accessing optional properties (e.g., `$this->deadline` in DeadlineTrait).
+- **Document view/download failures in tests:** Storage services need to return fake content in testing environment.
 
-## Role & Permission Management
-
-- The project uses a custom implementation of Entrust (`app/Zizaco/Entrust/`).
-- Use `owner` or `administrator` roles in tests when high-level permissions are required.
-- Always check if a user has a role before attaching it if not using the modified `attachRole()` method.

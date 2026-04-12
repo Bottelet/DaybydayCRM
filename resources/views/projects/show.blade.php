@@ -192,25 +192,21 @@
 
                 <div class="modal-body">
 
-                    {!! Form::model($project, [
-                      'method' => 'PATCH',
-                      'route' => ['project.update.deadline', $project->external_id],
-                      ]) !!}
-                    {!! Form::label('deadline_date', __('Change deadline'), ['class' => 'control-label']) !!}
-                    {!! Form::date('deadline_date', \Carbon\Carbon::now()->addDays(7), ['class' => 'form-control']) !!}
-                    {!! Form::text('deadline_time', '15:00', ['class' => 'form-control', 'onkeydown' => 'return isNumberKey(this)', 'onchange' => 'validateHhMm(this)', 'id' => 'deadline_time']) !!}
+                    <form action="{{ route('project.update.deadline', $project->external_id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <label for="deadline_date" class="control-label">{{ __('Change deadline') }}</label>
+                        <input type="date" name="deadline_date" class="form-control" value="{{ old('deadline_date', \Carbon\Carbon::now()->addDays(7)->format('Y-m-d')) }}">
+                        <input type="text" name="deadline_time" class="form-control" value="{{ old('deadline_time', '15:00') }}" onkeydown="return isNumberKey(this)" onchange="validateHhMm(this)" id="deadline_time">
 
-
-
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default col-lg-6"
-                                data-dismiss="modal">{{ __('Close') }}</button>
-                        <div class="col-lg-6">
-                            {!! Form::submit( __('Update deadline'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default col-lg-6"
+                                    data-dismiss="modal">{{ __('Close') }}</button>
+                            <div class="col-lg-6">
+                                <input type="submit" value="{{ __('Update deadline') }}" class="btn btn-success form-control closebtn">
+                            </div>
                         </div>
-                        {!! Form::close() !!}
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

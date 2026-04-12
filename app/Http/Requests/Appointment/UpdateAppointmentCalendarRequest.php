@@ -13,6 +13,7 @@ class UpdateAppointmentCalendarRequest extends FormRequest
      */
     public function authorize()
     {
+        // debug: dd(auth()->user()->can('appointment-edit'));
         return auth()->user()->can('appointment-edit');
     }
 

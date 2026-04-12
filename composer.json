@@ -18,7 +18,7 @@
     "type": "project",
     "require": {
         "php": "^8.3",
-        "aws/aws-sdk-php": ">=3.376.4",
+        "aws/aws-sdk-php": ">=3.378.1",
         "elasticsearch/elasticsearch": ">=9.3",
         "google/apiclient": ">=2.19.2",
         "laravel/cashier": ">=16.5.1",
@@ -34,16 +34,18 @@
         "yajra/laravel-datatables-oracle": ">=12.7"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": ">=4.2.4",
-        "driftingly/rector-laravel": ">=2.2",
+        "barryvdh/laravel-debugbar": ">=4.2.6",
+        "brianium/paratest": "^7.20",
+        "driftingly/rector-laravel": ">=2.3",
         "fakerphp/faker": "^1.24.1",
         "laravel/dusk": ">=8.5",
         "laravel/pint": ">=1.29",
         "laravel/tinker": ">=3",
         "mockery/mockery": ">=1.6.12",
         "nunomaduro/collision": ">=8.9.3",
+        "nunomaduro/pao": "^0.1.6",
         "phpunit/phpunit": ">=12.5.16",
-        "rector/rector": ">=2.4",
+        "rector/rector": ">=2.4.1",
         "symfony/css-selector": ">=7.4.8",
         "symfony/dom-crawler": ">=7.4.8"
     },

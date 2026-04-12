@@ -15,8 +15,8 @@ class ClientsDummyTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Client::class, 50)->create()->each(function ($c) {
-            factory(Contact::class)->create([
+        Client::factory()->count(50)->create()->each(function ($c) {
+            Contact::factory()->create([
                 'client_id' => $c->id,
             ]);
         });

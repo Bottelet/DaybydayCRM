@@ -17,7 +17,7 @@ class ClientTest extends DuskTestCase
      */
     public function test_user_can_see_clients_on_client_index_and_go_to_the_customer_with_link()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
 
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
@@ -42,7 +42,7 @@ class ClientTest extends DuskTestCase
      */
     public function test_i_can_see_all_customer_values_on_show_page()
     {
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/'.$client->external_id)
@@ -62,19 +62,19 @@ class ClientTest extends DuskTestCase
      */
     public function test_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
         ]);
-        $lead = factory(Lead::class)->create([
+        $lead = Lead::factory()->create([
             'client_id' => $client->id,
         ]);
 
-        $client_2 = factory(Client::class)->create();
-        $task_2 = factory(Task::class)->create([
+        $client_2 = Client::factory()->create();
+        $task_2 = Task::factory()->create([
             'client_id' => $client_2->id,
         ]);
-        $lead_2 = factory(Lead::class)->create([
+        $lead_2 = Lead::factory()->create([
             'client_id' => $client_2->id,
         ]);
         $this->browse(function (Browser $browser) use ($client) {
@@ -93,8 +93,8 @@ class ClientTest extends DuskTestCase
      */
     public function test_i_can_assign_a_new_user_to_customer()
     {
-        $client = factory(Client::class)->create();
-        $user = factory(User::class)->create();
+        $client = Client::factory()->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($client, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first());
@@ -160,7 +160,7 @@ class ClientTest extends DuskTestCase
     public function test_i_can_update_an_existing_client()
     {
         $faker = Faker::create();
-        $client = factory(Client::class)->create();
+        $client = Client::factory()->create();
         $email = $faker->email;
         $address = $faker->secondaryAddress;
         $zip_code = $faker->randomNumber(4);

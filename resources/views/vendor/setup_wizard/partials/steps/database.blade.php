@@ -1,17 +1,17 @@
 <div class="form-group">
-    {!! Form::label('name', 'Name:', ['class' => 'control-label']) !!}
-    {!! Form::text('name', null, ['class' => 'form-control']) !!}
+    <label for="name" class="control-label">Name:</label>
+    <input type="text" name="name" class="form-control" value="{{ old('name') }}">
 </div>
 <div class="form-group">
-    {!! Form::label('email', 'Email:', ['class' => 'control-label']) !!}
-    {!! Form::email('email', null, ['class' => 'form-control']) !!}
+    <label for="email" class="control-label">Email:</label>
+    <input type="email" name="email" class="form-control" value="{{ old('email') }}">
 </div>
 <div class="form-group">
-    {!! Form::label('password', 'Password:', ['class' => 'control-label']) !!}
-    {!! Form::password('password', ['class' => 'form-control']) !!}    
+    <label for="password" class="control-label">Password:</label>
+    <input type="password" name="password" class="form-control">
 </div>
 
 <div class="form-group">
-    {!! Form::label('password_confirmation', 'Password Confirmation:', ['class' => 'control-label']) !!}
-    {!! Form::password('password_confirmation', ['class' => 'form-control']) !!}    
+    <label for="password_confirmation" class="control-label">Password Confirmation:</label>
+    <input type="password" name="password_confirmation" class="form-control">
 </div>

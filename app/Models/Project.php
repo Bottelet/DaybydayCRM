@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -11,9 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends Model implements Commentable
 {
-    use DeadlineTrait, SearchableTrait, SoftDeletes;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
-    const PROJECT_STATUS_CLOSED = 'Closed';
+    public const PROJECT_STATUS_CLOSED = 'Closed';
 
     protected $searchableFields = ['title'];
 
@@ -25,20 +31,23 @@ class Project extends Model implements Commentable
         'user_assigned_id',
         'user_created_id',
         'client_id',
+        'lead_id',
         'deadline',
+        'invoice_id',
     ];
 
-    protected $dates = ['deadline'];
+    protected $casts = [
+        'deadline' => 'date',
+        'deleted_at' => 'datetime',
+    ];
 
     public static function boot()
     {
         parent::boot();
+        // HasExternalId trait handles external_id generation
     }
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
     {
@@ -75,6 +84,11 @@ class Project extends Model implements Commentable
         return $this->belongsTo(Client::class);
     }
 
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class);
+    }
+
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -87,7 +101,8 @@ class Project extends Model implements Commentable
 
     public function isClosed()
     {
-        return $this->status->title == self::PROJECT_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && $this->status->title == self::PROJECT_STATUS_CLOSED;
     }
 
     public function comments(): MorphMany

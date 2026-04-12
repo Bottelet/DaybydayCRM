@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Ramsey\Uuid\Uuid;
 
 class Activity extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     /**
@@ -37,9 +40,7 @@ class Activity extends Model
     {
         parent::boot();
         static::creating(function ($activity) {
-            if (empty($activity->external_id)) {
-                $activity->external_id = Uuid::uuid4()->toString();
-            }
+            // HasExternalId trait handles external_id generation
 
             if (empty($activity->ip_address)) {
                 $activity->ip_address = request()->ip() ?: '127.0.0.1';

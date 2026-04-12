@@ -16,8 +16,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_user_can_see_tasks_on_task_index_and_go_to_the_task_with_link()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
             'title' => 'Lets',
@@ -38,8 +38,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_see_all_the_correct_information_on_task_info_page()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
@@ -60,12 +60,12 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_assign_a_new_user_to_task()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($task, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
@@ -82,8 +82,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_close_a_open_task()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
@@ -103,8 +103,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_add_a_new_comment_on_a_task()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
@@ -125,8 +125,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_add_a_new_time_to_task()
     {
-        $client = factory(Client::class)->create();
-        $task = factory(Task::class)->create([
+        $client = Client::factory()->create();
+        $task = Task::factory()->create([
             'client_id' => $client->id,
             'status_id' => Status::typeOfTask()->whereTitle('Open')->first()->id,
         ]);
@@ -152,8 +152,8 @@ class TaskTest extends DuskTestCase
      */
     public function test_i_can_create_a_new_task()
     {
-        $client = factory(Client::class)->create();
-        $user = factory(User::class)->create();
+        $client = Client::factory()->create();
+        $user = User::factory()->create();
         $contact = $client->primary_contact;
 
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
@@ -178,7 +178,7 @@ class TaskTest extends DuskTestCase
     {
         Client::query()->forceDelete();
 
-        $user = factory(User::class)->create();
+        $user = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())

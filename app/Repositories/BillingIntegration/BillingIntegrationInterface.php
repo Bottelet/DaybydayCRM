@@ -8,7 +8,7 @@ use App\Models\Payment;
 
 interface BillingIntegrationInterface
 {
-    const INTEGRATION_TYPE = 'billing';
+    public const INTEGRATION_TYPE = 'billing';
 
     public function getClient();
 

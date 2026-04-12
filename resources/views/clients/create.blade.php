@@ -64,44 +64,34 @@
     ?>
 <h1>Create Client</h1>
 <hr>
-    {!! Form::open([
-            'url' => '/clients/create/cvrapi'
-
-            ]) !!}
-            @if($country->getCode() == "DK")
-            <div class="col-sm-3">
-                <p style="font-size:1.2em; font-weight:300;">VAT</p>
-            </div>
-            <div class="col-sm-9">
-             <div class="form-group">
-                <div class="input-group">
-
-                    {!! Form::text('vat', null, ['class' => 'form-control', 'placeholder' => 'Insert company VAT']) !!}
-                    <div class="popoverOption input-group-addon"
-                        rel="popover"
-                        data-placement="left"
-                        data-html="true"
-                        data-original-title="<span>Only for danish VAT, atm.</span>">?
-                    </div>
-
+    <form action="{{ url('/clients/create/cvrapi') }}" method="POST">
+        @csrf
+        @if($country->getCode() == "DK")
+        <div class="col-sm-3">
+            <p style="font-size:1.2em; font-weight:300;">VAT</p>
+        </div>
+        <div class="col-sm-9">
+         <div class="form-group">
+            <div class="input-group">
+                <input type="text" name="vat" class="form-control" placeholder="Insert company VAT">
+                <div class="popoverOption input-group-addon"
+                    rel="popover"
+                    data-placement="left"
+                    data-html="true"
+                    data-original-title="<span>Only for danish VAT, atm.</span>">?
                 </div>
-                {!! Form::submit(__('Find Company'), ['class' => 'btn btn-sm btn-brand  clientvat']) !!}
-
             </div>
-        </div>  
+            <input type="submit" value="{{ __('Find Company') }}" class="btn btn-sm btn-brand clientvat">
+        </div>
+    </div>  
     <hr>
     @endif
+    </form>
 
-    {!!Form::close()!!}
-
-    {!! Form::open([
-            'route' => 'clients.store',
-            'class' => 'ui-form',
-            'id' => 'clientCreateForm'
-            ]) !!}
-    @include('clients.form', ['submitButtonText' => __('Create New Client')])
-
-    {!! Form::close() !!}
+    <form action="{{ route('clients.store') }}" method="POST" class="ui-form" id="clientCreateForm">
+        @csrf
+        @include('clients.form', ['submitButtonText' => __('Create New Client')])
+    </form>
 
 
 @stop

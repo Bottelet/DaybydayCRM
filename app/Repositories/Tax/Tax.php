@@ -44,11 +44,17 @@ class Tax
 
     public function percentage()
     {
-        return Setting::select('vat')->first()->vat / 100;
+        $setting = Setting::select('vat')->first();
+
+        // VAT is stored as percentage * 100 (e.g., 2100 for 21%)
+        // Divide by 10000 to get decimal rate (e.g., 0.21)
+        return ($setting ? $setting->vat : 2100) / 10000;
     }
 
     private function integerToVatRate()
     {
-        return $this->percentage() / 100;
+        // percentage() already returns the decimal rate (e.g., 0.21 for 21%)
+        // so we don't need to divide by 100 again
+        return $this->percentage();
     }
 }
