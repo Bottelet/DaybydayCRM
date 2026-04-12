@@ -91,12 +91,12 @@
 <script>
     $('.edit-product-btn').on('click', function () {
         var productExternalId = $(this).data('product_offer_external_id');
-        $('#product-creator-modal .modal-content').load('/products/creator/' + productExternalId);
+        $('#product-creator-modal .modal-content').load('{{url('/products/creator')}}' + '/' + productExternalId);
         $('#product-creator-modal').modal('show');
     });
     $('#create-product-btn').on('click', function () {
         var productExternalId = $(this).data('product_offer_external_id');
-        $('#product-creator-modal .modal-content').load('/products/creator');
+        $('#product-creator-modal .modal-content').load('{{url('/products/creator')}}');
         $('#product-creator-modal').modal('show');
     });
     $( '#deletion' ).on( 'show.bs.modal', function (e) {

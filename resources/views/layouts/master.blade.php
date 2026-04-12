@@ -21,7 +21,8 @@
     <script>
         var DayByDay =  {
             csrfToken: "{{csrf_token()}}",
-            stripeKey: "{{config('services.stripe.key')}}"
+            stripeKey: "{{config('services.stripe.key')}}",
+            baseUrl: "{{url('/')}}"
         }
     </script>
     <?php if(isDemo()) { ?>
