@@ -4,7 +4,6 @@ namespace App\Http\Requests\Project;
 
 use App\Enums\PermissionName;
 use App\Models\Status;
-use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectStatusRequest extends FormRequest
@@ -61,7 +60,7 @@ class UpdateProjectStatusRequest extends FormRequest
             if ($statusId) {
                 $validStatus = Status::typeOfProject()->where('id', $statusId)->exists();
                 if (!$validStatus) {
-                    $validator->errors()->add('status_id', 'Invalid status for project');
+                    $validator->errors()->add('status_id', __('Invalid status for project'));
                 }
             }
         });
