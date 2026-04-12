@@ -22,17 +22,77 @@ Tests must be **self-contained**. The "Cascade Problem" (tests depending on side
 - **Actions:** Encapsulate single-purpose logic in `app/Actions/{Domain}/{ActionName}Action.php`.
 - **Services:** Complex workflows belong in `app/Services/`.
 - **Controllers:** Must remain thin, delegating to Services/Actions.
+- **Threshold:** Controllers exceeding 200 lines are candidates for service extraction.
 
-### 3. Model Consistency
+### 3. Request Validation
+- **ALWAYS use FormRequests** for controller input validation.
+- **NEVER use** `$request->input()` directly without a FormRequest.
+- **NEVER use** inline validation with `$this->validate()`.
+- If a FormRequest exists but code uses `$request->input()`, use `$request->validated()` instead.
+
+**Controllers needing FormRequests:**
+- `LeadsController`: `store()` method
+- `TasksController`: `updateAssign()`, `updateDeadline()`, `updateStatus()`
+- `ProjectsController`: `updateAssign()`, `updateDeadline()`, `updateStatus()`
+- `RolesController`: `update()` method
+- `CommentController`: `store()` method
+
+### 4. Model Consistency
 - Use **HasExternalId** trait for UUID routing.
 - Use **Blameable** trait for automatic tracking of `user_created_id`.
 - Use **Statusable** trait for standardized status handling.
 - Use **Observers** for side effects (e.g., file deletion on record delete).
 
-### 4. Code Standards
+### 5. Enum Usage
+- **ALWAYS use enums** for fixed value sets (statuses, roles, permissions).
+- **NEVER use string constants** in models for values that should be type-safe.
+
+**Enum Migration Targets:**
+- `Task::TASK_STATUS_CLOSED` → `TaskStatus` enum
+- `Lead::LEAD_STATUS_CLOSED` → `LeadStatus` enum  
+- `Project::PROJECT_STATUS_CLOSED` → `ProjectStatus` enum
+- `Role::OWNER_ROLE`, `Role::ADMIN_ROLE` → `RoleType` enum
+- `Invoice::STATUS_SENT` → Complete migration to existing `InvoiceStatus` enum
+
+### 6. Service Layer
+- **Controllers > 200 lines** → Extract to service.
+- **Controllers must remain thin** — business logic belongs in services.
+
+**Controllers Needing Services:**
+- `ClientsController` (448 lines) → `ClientService`
+- `TasksController` (418 lines) → `TaskService`
+- `DocumentsController` (382 lines) → `DocumentStorageService`
+- `ProjectsController` (369 lines) → `ProjectService`
+- `UsersController` (362 lines) → `UserService`
+- `LeadsController` (330 lines) → `LeadService`
+
+### 7. Code Standards
 - **Routing:** Prefer tuple-based syntax `[Controller::class, 'method']`.
 - **Currency:** Normalize inputs in `prepareForValidation()` of FormRequests.
 - **Exceptions:** Throw specific types like `InvalidArgumentException` instead of generic `Exception`.
+
+### 8. Response Handling
+- **ALWAYS check** `$request->expectsJson()` for mixed web/API endpoints.
+- **JSON requests:** Return JSON with proper status codes (200, 201, 400, 403, 404).
+- **Web requests:** Use redirects (302) with flash messages.
+- **Never** set flash messages for JSON requests.
+
+**Pattern:**
+```php
+if ($request->expectsJson()) {
+    return response()->json(['message' => 'Success'], 200);
+}
+session()->flash('flash_message', 'Success');
+return redirect()->back();
+```
+
+### 9. Test Organization
+- **HTTP tests** (using `$this->get()`, `$this->post()`) → `tests/Feature/`
+- **Unit tests** (testing single classes) → `tests/Unit/`
+- **CRITICAL:** All controller tests MUST be in `tests/Feature/Controllers/`
+
+**Currently Misplaced:**
+- 39 test files in `tests/Unit/Controllers/` should be in `tests/Feature/Controllers/`
 
 ---
 
@@ -45,4 +105,7 @@ Tests must be **self-contained**. The "Cascade Problem" (tests depending on side
 - **Expected 302 got 200/403:** Check if test uses JSON requests (`$this->json()`) - they return different status codes than web requests.
 - **Null pointer in trait methods:** Add null checks before accessing optional properties (e.g., `$this->deadline` in DeadlineTrait).
 - **Document view/download failures in tests:** Storage services need to return fake content in testing environment.
+- **Missing FormRequest validation:** Create FormRequest for any controller method using `$request->input()` directly.
+- **Controller too large (>200 LOC):** Extract business logic to a dedicated service class.
+- **Model constants for fixed values:** Convert to type-safe enums instead of string constants.
 
