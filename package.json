@@ -19,7 +19,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "axios": "*",
+    "axios": "1.14.0",
     "bootstrap-sass": "^3.4.3",
     "bootstrap-select": "^1.13.18",
     "chart.js": "2.9.4",
