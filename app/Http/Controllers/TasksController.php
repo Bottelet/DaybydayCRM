@@ -73,7 +73,7 @@ class TasksController extends Controller
         $tasks = Task::with(['user', 'status', 'client'])->select(
             collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
                 ->map(function ($field) {
-                    return (new Task())->qualifyColumn($field);
+                    return (new Task)->qualifyColumn($field);
                 })
                 ->all()
         );

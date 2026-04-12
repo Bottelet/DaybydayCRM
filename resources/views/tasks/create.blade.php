@@ -128,7 +128,7 @@
             $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 var value = $("#client_external_id").val();
                 if(value == "new_client") {
-                  window.location.href = "/clients/create"
+                  window.location.href = '{{url('/clients/create')}}'
                 }
             });
 
@@ -170,7 +170,7 @@
             });
 
             myDropzone.on("success", function(file, response) {
-                window.location.href = ("/tasks/"+response.task_external_id)
+                window.location.href = '{{url('/tasks')}}' + "/" + response.task_external_id
             });
 
             myDropzone.on("processing", function(file, response) {
@@ -194,9 +194,9 @@
                         data: $("#createTaskForm").serialize(),
                         success: function(response){
                             if (response.project_external_id) {
-                                window.location.href = ("/projects/"+response.project_external_id)
+                                window.location.href = '{{url('/projects')}}' + "/" + response.project_external_id
                             }else {
-                                window.location.href = ("/tasks/"+response.task_external_id)
+                                window.location.href = '{{url('/tasks')}}' + "/" + response.task_external_id
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {

@@ -1,0 +1,1008 @@
+Running phpunit:
+PHPUnit 12.5.16 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.30
+Configuration: /var/www/projects/day/phpunit.xml
+
+...I..................II.I..ES.EI....F.EEEEI.FESI..FFFFFFFEFFF.  63 / 243 ( 25%)
+.....I.FE...I..FE.II........................................... 126 / 243 ( 51%)
+................................................F.I............ 189 / 243 ( 77%)
+.............E....EEEEE.E........E.....EEEEEE.EEEE....          243 / 243 (100%)
+
+Time: 45:03.133, Memory: 130.50 MB
+
+There were 28 errors:
+
+1) Tests\Unit\Controllers\Appointment\AppointmentsControllerTest::can_get_appointments_within_time_slot
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'color' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `appointments` (`external_id`, `title`, `description`, `start_at`, `end_at`, `user_id`, `source_type`, `source_id`, `updated_at`, `created_at`) values (ceb330f7-1f89-3ebb-943b-d54d3c86293a, test, Dolor neque eos corrupti magni nesciunt facilis provident. Nobis velit sint cupiditate iste aliquam asperiores quibusdam quam. Nemo quia tempora velit recusandae ducimus suscipit mollitia., 2026-04-07 09:05:30, 2026-04-07 10:05:30, 2, App\Models\User, 2, 2026-04-07 09:05:30, 2026-04-07 09:05:30))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:210
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Collections/Traits/EnumeratesValues.php:275
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:205
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:172
+/var/www/projects/day/tests/Unit/Controllers/Appointment/AppointmentsControllerTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'color' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:210
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Collections/Traits/EnumeratesValues.php:275
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:205
+/var/www/projects/day/vendor/laravel/legacy-factories/src/FactoryBuilder.php:172
+/var/www/projects/day/tests/Unit/Controllers/Appointment/AppointmentsControllerTest.php:26
+
+2) Tests\Unit\Controllers\Client\ClientsControllerTest::can_update_client
+ErrorException: Attempt to read property "vat" on null
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:258
+/var/www/projects/day/tests/Unit/Controllers/Client/ClientsControllerTest.php:94
+
+3) Tests\Unit\Controllers\Lead\DeleteLeadControllerTest::delete_lead
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `offers` (`source_id`, `source_type`, `client_id`, `updated_at`, `created_at`) values (1, App\Models\Lead, 1, 2026-04-07 09:08:30, 2026-04-07 09:08:30))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+4) Tests\Unit\Controllers\Lead\DeleteLeadControllerTest::delete_offers_if_flag_given
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `offers` (`source_id`, `source_type`, `client_id`, `updated_at`, `created_at`) values (1, App\Models\Lead, 1, 2026-04-07 09:08:47, 2026-04-07 09:08:47))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+5) Tests\Unit\Controllers\Lead\DeleteLeadControllerTest::do_not_delete_offers_if_flag_is_not_given_but_remove_reference
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `offers` (`source_id`, `source_type`, `client_id`, `updated_at`, `created_at`) values (1, App\Models\Lead, 1, 2026-04-07 09:08:55, 2026-04-07 09:08:55))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+6) Tests\Unit\Controllers\Lead\DeleteLeadControllerTest::can_delete_lead_if_flag_is_given_and_offers_does_not_exists
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `offers` (`source_id`, `source_type`, `client_id`, `updated_at`, `created_at`) values (1, App\Models\Lead, 1, 2026-04-07 09:09:00, 2026-04-07 09:09:00))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'status' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1219
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:1218
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/Traits/ForwardsCalls.php:23
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2540
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:2556
+/var/www/projects/day/tests/Unit/Controllers/Lead/DeleteLeadControllerTest.php:26
+
+7) Tests\Unit\Controllers\Lead\LeadsControllerTest::can_update_deadline_for_lead
+Error: Call to a member function toDate() on string
+
+/var/www/projects/day/tests/Unit/Controllers/Lead/LeadsControllerTest.php:88
+
+8) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_minus_amount
+ErrorException: Attempt to read property "amount" on null
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php:258
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:151
+
+9) Tests\Unit\Controllers\Project\ProjectsControllerTest::can_update_deadline_for_project
+Error: Call to a member function toDate() on string
+
+/var/www/projects/day/tests/Unit/Controllers/Project/ProjectsControllerTest.php:88
+
+10) Tests\Unit\Controllers\Task\TasksControllerTest::can_update_deadline_for_task
+Error: Call to a member function toDate() on string
+
+/var/www/projects/day/tests/Unit/Controllers/Task/TasksControllerTest.php:103
+
+11) Tests\Unit\Invoice\InvoiceStatusEnumTest::invoice_status_contains_both_display_and_status_value
+Error: Call to undefined method Tests\Unit\Invoice\InvoiceStatusEnumTest::assertObjectHasAttribute()
+
+/var/www/projects/day/tests/Unit/Invoice/InvoiceStatusEnumTest.php:34
+
+12) Tests\Unit\Lead\LeadObserverDeleteTest::delete_leads_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 2026-04-07 09:40:59, 2026-04-07 09:40:59))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+13) Tests\Unit\Lead\LeadObserverDeleteTest::delete_leadsoft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 2026-04-07 09:41:02, 2026-04-07 09:41:02))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+14) Tests\Unit\Lead\LeadObserverDeleteTest::force_delete_removes_lead_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 2026-04-07 09:41:05, 2026-04-07 09:41:05))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+15) Tests\Unit\Lead\LeadObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 2026-04-07 09:41:08, 2026-04-07 09:41:08))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+16) Tests\Unit\Lead\LeadObserverDeleteTest::offer_is_not_deleted_by_observer
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Lead, 2026-04-07 09:41:11, 2026-04-07 09:41:11))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Lead/LeadObserverDeleteTest.php:26
+
+17) Tests\Unit\Offer\OffersStatusEnumTest::offer_status_contains_both_display_and_source_value
+Error: Call to undefined method Tests\Unit\Offer\OffersStatusEnumTest::assertObjectHasAttribute()
+
+/var/www/projects/day/tests/Unit/Offer/OffersStatusEnumTest.php:34
+
+18) Tests\Unit\Payment\PaymentSourceEnumTest::payment_source_contains_both_display_and_source_value
+Error: Call to undefined method Tests\Unit\Payment\PaymentSourceEnumTest::assertObjectHasAttribute()
+
+/var/www/projects/day/tests/Unit/Payment/PaymentSourceEnumTest.php:35
+
+19) Tests\Unit\Payment\PaymentSourceEnumTest::get_validation_rules_for_payment_source
+Error: Call to undefined method Tests\Unit\Payment\PaymentSourceEnumTest::assertObjectHasAttribute()
+
+/var/www/projects/day/tests/Unit/Payment/PaymentSourceEnumTest.php:76
+
+20) Tests\Unit\Project\ProjectObserverDeleteTest::delete_projects_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 2026-04-07 09:43:27, 2026-04-07 09:43:27))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+21) Tests\Unit\Project\ProjectObserverDeleteTest::delete_project_soft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 2026-04-07 09:43:37, 2026-04-07 09:43:37))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+22) Tests\Unit\Project\ProjectObserverDeleteTest::force_delete_removes_project_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 2026-04-07 09:43:47, 2026-04-07 09:43:47))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+23) Tests\Unit\Project\ProjectObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 2026-04-07 09:43:57, 2026-04-07 09:43:57))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+24) Tests\Unit\Project\ProjectObserverDeleteTest::invoice_is_not_deleted_by_observer
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Project, 2026-04-07 09:44:07, 2026-04-07 09:44:07))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Project/ProjectObserverDeleteTest.php:27
+
+25) Tests\Unit\Task\TaskObserverDeleteTest::delete_tasks_soft_deletes
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 2026-04-07 09:44:26, 2026-04-07 09:44:26))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+26) Tests\Unit\Task\TaskObserverDeleteTest::delete_task_soft_deletes_relations
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 2026-04-07 09:44:36, 2026-04-07 09:44:36))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+27) Tests\Unit\Task\TaskObserverDeleteTest::force_delete_removes_task_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 2026-04-07 09:44:46, 2026-04-07 09:44:46))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+28) Tests\Unit\Task\TaskObserverDeleteTest::force_delete_removes_relations_from_database
+Illuminate\Database\QueryException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value (Connection: mariadb, Host: mariadb, Port: 3306, Database: daybyday_db, SQL: insert into `activities` (`text`, `source_id`, `source_type`, `updated_at`, `created_at`) values (something happend!, 1, App\Models\Task, 2026-04-07 09:44:56, 2026-04-07 09:44:56))
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:838
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+Caused by
+PDOException: SQLSTATE[HY000]: General error: 1364 Field 'external_id' doesn't have a default value
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:53
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:827
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Connection.php:794
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/MySqlConnection.php:42
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Processors/MySqlProcessor.php:35
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php:4170
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php:2237
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1436
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1401
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Model.php:1240
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:391
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Support/helpers.php:393
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Relations/HasOneOrMany.php:388
+/var/www/projects/day/tests/Unit/Task/TaskObserverDeleteTest.php:25
+
+--
+
+There were 15 failures:
+
+1) Tests\Unit\Controllers\InvoiceLine\InvoiceLinesControllerTest::happy_path
+Failed asserting that App\Models\InvoiceLine Object #4884 (
+    'connection' => 'mariadb',
+    'table' => 'invoice_lines',
+    'primaryKey' => 'id',
+    'keyType' => 'int',
+    'incrementing' => true,
+    'with' => Array &0 [],
+    'withCount' => Array &1 [],
+    'preventsLazyLoading' => false,
+    'perPage' => 15,
+    'exists' => true,
+    'wasRecentlyCreated' => false,
+    'escapeWhenCastingToString' => false,
+    'attributes' => Array &2 [
+        'id' => 1,
+        'external_id' => 'ca929776-079b-3715-885d-dbb233a31eca',
+        'title' => 'aut',
+        'comment' => null,
+        'price' => 5242,
+        'invoice_id' => 1,
+        'offer_id' => null,
+        'type' => 'hours',
+        'quantity' => 1,
+        'product_id' => null,
+        'created_at' => '2026-04-07 09:07:57',
+        'updated_at' => '2026-04-07 09:07:57',
+        'deleted_at' => null,
+    ],
+    'original' => Array &3 [
+        'id' => 1,
+        'external_id' => 'ca929776-079b-3715-885d-dbb233a31eca',
+        'title' => 'aut',
+        'comment' => null,
+        'price' => 5242,
+        'invoice_id' => 1,
+        'offer_id' => null,
+        'type' => 'hours',
+        'quantity' => 1,
+        'product_id' => null,
+        'created_at' => '2026-04-07 09:07:57',
+        'updated_at' => '2026-04-07 09:07:57',
+        'deleted_at' => null,
+    ],
+    'changes' => Array &4 [],
+    'previous' => Array &5 [],
+    'casts' => Array &6 [
+        'deleted_at' => 'datetime',
+    ],
+    'classCastCache' => Array &7 [],
+    'attributeCastCache' => Array &8 [],
+    'dateFormat' => null,
+    'appends' => Array &9 [],
+    'dispatchesEvents' => Array &10 [],
+    'observables' => Array &11 [],
+    'relations' => Array &12 [],
+    'touches' => Array &13 [],
+    'relationAutoloadCallback' => null,
+    'relationAutoloadContext' => null,
+    'timestamps' => true,
+    'usesUniqueIds' => false,
+    'hidden' => Array &14 [],
+    'visible' => Array &15 [],
+    'fillable' => Array &16 [
+        0 => 'external_id',
+        1 => 'type',
+        2 => 'quantity',
+        3 => 'title',
+        4 => 'comment',
+        5 => 'price',
+        6 => 'invoice_id',
+        7 => 'product_id',
+        8 => 'offer_id',
+    ],
+    'guarded' => Array &17 [
+        0 => '*',
+    ],
+    'forceDeleting' => false,
+) is null.
+
+/var/www/projects/day/tests/Unit/Controllers/InvoiceLine/InvoiceLinesControllerTest.php:39
+
+2) Tests\Unit\Controllers\Lead\LeadsControllerTest::can_update_status
+Failed asserting that 16 matches expected 7.
+
+/var/www/projects/day/tests/Unit/Controllers/Lead/LeadsControllerTest.php:75
+
+3) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment
+Failed asserting that true is false.
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:47
+
+4) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_dot_separator
+Failed asserting that true is false.
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:62
+
+5) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_comma_separator
+Failed asserting that true is false.
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:77
+
+6) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_payment_updates_invoice_status
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'paid'
++'unpaid'
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:92
+
+7) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_amount_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:175
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:107
+
+8) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_source_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:175
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:122
+
+9) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_invalid_payment_date_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:175
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:137
+
+10) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_negative_payment_with_separator
+Failed asserting that true is false.
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:172
+
+11) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::cant_add_payment_where_amount_is_0
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:175
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:188
+
+12) Tests\Unit\Controllers\Payment\PaymentsControllerTest::can_delete_payment
+Failed asserting that App\Models\Payment Object #8198 (
+    'connection' => 'mariadb',
+    'table' => 'payments',
+    'primaryKey' => 'id',
+    'keyType' => 'int',
+    'incrementing' => true,
+    'with' => Array &0 [],
+    'withCount' => Array &1 [],
+    'preventsLazyLoading' => false,
+    'perPage' => 15,
+    'exists' => true,
+    'wasRecentlyCreated' => false,
+    'escapeWhenCastingToString' => false,
+    'attributes' => Array &2 [
+        'id' => 1,
+        'external_id' => '524dee7e-950e-3298-8f65-7ad1b8f49a8b',
+        'amount' => 1000,
+        'description' => null,
+        'payment_source' => 'bank',
+        'payment_date' => '2026-04-07',
+        'integration_payment_id' => null,
+        'integration_type' => null,
+        'invoice_id' => 2,
+        'deleted_at' => null,
+        'created_at' => '2026-04-07 09:12:59',
+        'updated_at' => '2026-04-07 09:12:59',
+    ],
+    'original' => Array &3 [
+        'id' => 1,
+        'external_id' => '524dee7e-950e-3298-8f65-7ad1b8f49a8b',
+        'amount' => 1000,
+        'description' => null,
+        'payment_source' => 'bank',
+        'payment_date' => '2026-04-07',
+        'integration_payment_id' => null,
+        'integration_type' => null,
+        'invoice_id' => 2,
+        'deleted_at' => null,
+        'created_at' => '2026-04-07 09:12:59',
+        'updated_at' => '2026-04-07 09:12:59',
+    ],
+    'changes' => Array &4 [],
+    'previous' => Array &5 [],
+    'casts' => Array &6 [
+        'deleted_at' => 'datetime',
+    ],
+    'classCastCache' => Array &7 [],
+    'attributeCastCache' => Array &8 [],
+    'dateFormat' => null,
+    'appends' => Array &9 [],
+    'dispatchesEvents' => Array &10 [],
+    'observables' => Array &11 [],
+    'relations' => Array &12 [],
+    'touches' => Array &13 [],
+    'relationAutoloadCallback' => null,
+    'relationAutoloadContext' => null,
+    'timestamps' => true,
+    'usesUniqueIds' => false,
+    'hidden' => Array &14 [],
+    'visible' => Array &15 [],
+    'fillable' => Array &16 [
+        0 => 'external_id',
+        1 => 'description',
+        2 => 'amount',
+        3 => 'payment_source',
+        4 => 'payment_date',
+        5 => 'integration_payment_id',
+        6 => 'integration_type',
+        7 => 'invoice_id',
+    ],
+    'guarded' => Array &17 [
+        0 => '*',
+    ],
+    'dates' => Array &18 [
+        0 => 'payment_date',
+    ],
+    'forceDeleting' => false,
+) is null.
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerTest.php:47
+
+13) Tests\Unit\Controllers\Project\ProjectsControllerTest::can_update_status
+Failed asserting that 16 matches expected 2.
+
+/var/www/projects/day/tests/Unit/Controllers/Project/ProjectsControllerTest.php:75
+
+14) Tests\Unit\Controllers\Task\TasksControllerTest::can_update_status
+Failed asserting that 16 matches expected 1.
+
+/var/www/projects/day/tests/Unit/Controllers/Task/TasksControllerTest.php:90
+
+15) Tests\Unit\Exceptions\HandlerTest::unauthenticated_returns_json_for_json_request
+Expected response status code [401] but received 500.
+Failed asserting that 500 is identical to 401.
+
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponseAssert.php:45
+/var/www/projects/day/vendor/laravel/framework/src/Illuminate/Testing/TestResponse.php:175
+/var/www/projects/day/tests/Unit/Exceptions/HandlerTest.php:50
+
+ERRORS!
+Tests: 243, Assertions: 382, Errors: 28, Failures: 15, Skipped: 2, Incomplete: 12.

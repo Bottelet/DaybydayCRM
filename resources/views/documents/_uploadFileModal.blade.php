@@ -1,3 +1,10 @@
+{{--
+    Upload File Modal
+    Variables:
+    - $type: Validated by DocumentsController (task, client, or project)
+    - $route: The upload route
+    - $external_id: The entity's external ID
+--}}
 @if(Entrust::can('document-upload'))
     <form method="POST" id="uploadFiles" action="{{ $route }}">
         <div class="dropzone dz-default dz-message" id="dropzone-images">
@@ -36,7 +43,20 @@
         });
 
         myDropzone.on("success", function(file, response) {
-            window.location.href = ("/{{$type}}" + "s/" + response)
+            // Map entity types to their plural route names (Laravel resource routes)
+            // $type is validated by DocumentsController to be: task, client, or project
+            var typeRouteMap = {
+                'task': 'tasks',
+                'project': 'projects',
+                'client': 'clients'
+            };
+            var routeName = typeRouteMap['{{$type}}'];
+            if (!routeName) {
+                console.error('Invalid type: {{$type}}');
+                return;
+            }
+            var baseUrl = '{{url('/')}}' + '/' + routeName;
+            window.location.href = baseUrl + "/" + response;
         });
 
         myDropzone.on("processing", function(file, response) {

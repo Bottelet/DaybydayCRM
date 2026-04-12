@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Ramsey\Uuid\Uuid;
+use View;
 
 class ProductsController extends Controller
 {

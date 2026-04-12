@@ -17,7 +17,7 @@ class GoogleDriveAuthenticator implements StorageAuthenticatorContract
             'client_id' => config('services.google-drive.client_id'),
             'client_secret' => config('services.google-drive.client_secret'),
         ];
-        $this->client = new Google_Client();
+        $this->client = new Google_Client;
         $this->client->setAuthConfig($auth);
         $this->client->setAccessType('offline');        // offline access
         $this->client->setIncludeGrantedScopes(true);   // incremental auth

@@ -61,7 +61,7 @@
 <body id="app-layout">
 </nav>
 
-<div style="text-align: center; margin-bottom:20px;"><a href="/login">
+<div style="text-align: center; margin-bottom:20px;"><a href="{{url('/login')}}">
     <img src="{{ asset('images/daybyday-logo-white-with-bg.png') }}" width="458px"
                                                           alt="" style="margin-top:5em; margin-bottom:2em; margin-left: 6%" class="logo-placment"></a></div>
 

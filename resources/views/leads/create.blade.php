@@ -105,7 +105,7 @@
         $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
             var value = $("#client_external_id").val();
             if(value == "new_client") {
-              window.location.href = "/clients/create"
+              window.location.href = '{{url('/clients/create')}}'
             }
           });
         $('#description').summernote({

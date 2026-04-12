@@ -244,7 +244,7 @@ $( ".sortable" ).sortable({
 });
     @if(Entrust::can('project-upload-files') && $filesystem_integration)
     $('#add-files').on('click', function () {
-        $('#add-files-modal .modal-content').load('/add-documents/{{$project->external_id}}' + '/project');
+        $('#add-files-modal .modal-content').load('{{url('/add-documents/'.$project->external_id.'/project')}}');
         $('#add-files-modal').modal('show');
     });
     @endif

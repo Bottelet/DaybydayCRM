@@ -21,7 +21,7 @@ class GetStorageProvider
 
             return new $className();
         } else {
-            return new Local();
+            return new Local;
         }
     }
 }

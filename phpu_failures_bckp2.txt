@@ -1,0 +1,234 @@
+--
+
+There were 15 failures:
+
+1) Tests\Unit\Controllers\InvoiceLine\InvoiceLinesControllerTest::happy_path
+Failed asserting that App\Models\InvoiceLine Object #8107 (
+    'connection' => 'mariadb',
+    'table' => 'invoice_lines',
+    'primaryKey' => 'id',
+    'keyType' => 'int',
+    'incrementing' => true,
+    'with' => Array &0 [],
+    'withCount' => Array &1 [],
+    'preventsLazyLoading' => false,
+    'perPage' => 15,
+    'exists' => true,
+    'wasRecentlyCreated' => false,
+    'escapeWhenCastingToString' => false,
+    'attributes' => Array &2 [
+        'id' => 1,
+        'external_id' => '34f706e1-d7a3-3d76-b754-48f8d185e908',
+        'title' => 'esse',
+        'comment' => null,
+        'price' => 1085,
+        'invoice_id' => 1,
+        'offer_id' => null,
+        'type' => 'pieces',
+        'quantity' => 9,
+        'product_id' => null,
+        'created_at' => '2026-04-07 09:04:41',
+        'updated_at' => '2026-04-07 09:04:41',
+        'deleted_at' => null,
+    ],
+    'original' => Array &3 [
+        'id' => 1,
+        'external_id' => '34f706e1-d7a3-3d76-b754-48f8d185e908',
+        'title' => 'esse',
+        'comment' => null,
+        'price' => 1085,
+        'invoice_id' => 1,
+        'offer_id' => null,
+        'type' => 'pieces',
+        'quantity' => 9,
+        'product_id' => null,
+        'created_at' => '2026-04-07 09:04:41',
+        'updated_at' => '2026-04-07 09:04:41',
+        'deleted_at' => null,
+    ],
+    'changes' => Array &4 [],
+    'previous' => Array &5 [],
+    'casts' => Array &6 [
+        'deleted_at' => 'datetime',
+    ],
+    'classCastCache' => Array &7 [],
+    'attributeCastCache' => Array &8 [],
+    'dateFormat' => null,
+    'appends' => Array &9 [],
+    'dispatchesEvents' => Array &10 [],
+    'observables' => Array &11 [],
+    'relations' => Array &12 [],
+    'touches' => Array &13 [],
+    'relationAutoloadCallback' => null,
+    'relationAutoloadContext' => null,
+    'timestamps' => true,
+    'usesUniqueIds' => false,
+    'hidden' => Array &14 [],
+    'visible' => Array &15 [],
+    'fillable' => Array &16 [
+        0 => 'external_id',
+        1 => 'type',
+        2 => 'quantity',
+        3 => 'title',
+        4 => 'comment',
+        5 => 'price',
+        6 => 'invoice_id',
+        7 => 'product_id',
+        8 => 'offer_id',
+    ],
+    'guarded' => Array &17 [
+        0 => '*',
+    ],
+    'forceDeleting' => false,
+) is null.
+/var/www/projects/day/tests/Unit/Controllers/InvoiceLine/InvoiceLinesControllerTest.php:39
+
+2) Tests\Unit\Controllers\Lead\LeadsControllerTest::can_update_status
+Failed asserting that 16 matches expected 8.
+/var/www/projects/day/tests/Unit/Controllers/Lead/LeadsControllerTest.php:75
+
+3) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment
+Failed asserting that true is false.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:47
+
+4) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_dot_separator
+Failed asserting that true is false.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:62
+
+5) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_payment_with_decimals_comma_separator
+Failed asserting that true is false.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:77
+
+6) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_payment_updates_invoice_status
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-'paid'
++'unpaid'
+
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:92
+
+7) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_amount_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:107
+
+8) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_wrong_source_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:122
+
+9) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::adding_invalid_payment_date_parameter_return_error
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:137
+
+10) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::can_add_negative_payment_with_separator
+Failed asserting that true is false.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:172
+
+11) Tests\Unit\Controllers\Payment\PaymentsControllerAddPaymentTest::cant_add_payment_where_amount_is_0
+Expected response status code [422] but received 403.
+Failed asserting that 403 is identical to 422.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerAddPaymentTest.php:188
+
+12) Tests\Unit\Controllers\Payment\PaymentsControllerTest::can_delete_payment
+Failed asserting that App\Models\Payment Object #9712 (
+    'connection' => 'mariadb',
+    'table' => 'payments',
+    'primaryKey' => 'id',
+    'keyType' => 'int',
+    'incrementing' => true,
+    'with' => Array &0 [],
+    'withCount' => Array &1 [],
+    'preventsLazyLoading' => false,
+    'perPage' => 15,
+    'exists' => true,
+    'wasRecentlyCreated' => false,
+    'escapeWhenCastingToString' => false,
+    'attributes' => Array &2 [
+        'id' => 1,
+        'external_id' => '00430a14-93b0-3b6f-b919-f4c5b20415cf',
+        'amount' => 1000,
+        'description' => null,
+        'payment_source' => 'bank',
+        'payment_date' => '2026-04-07',
+        'integration_payment_id' => null,
+        'integration_type' => null,
+        'invoice_id' => 2,
+        'deleted_at' => null,
+        'created_at' => '2026-04-07 09:09:02',
+        'updated_at' => '2026-04-07 09:09:02',
+    ],
+    'original' => Array &3 [
+        'id' => 1,
+        'external_id' => '00430a14-93b0-3b6f-b919-f4c5b20415cf',
+        'amount' => 1000,
+        'description' => null,
+        'payment_source' => 'bank',
+        'payment_date' => '2026-04-07',
+        'integration_payment_id' => null,
+        'integration_type' => null,
+        'invoice_id' => 2,
+        'deleted_at' => null,
+        'created_at' => '2026-04-07 09:09:02',
+        'updated_at' => '2026-04-07 09:09:02',
+    ],
+    'changes' => Array &4 [],
+    'previous' => Array &5 [],
+    'casts' => Array &6 [
+        'deleted_at' => 'datetime',
+    ],
+    'classCastCache' => Array &7 [],
+    'attributeCastCache' => Array &8 [],
+    'dateFormat' => null,
+    'appends' => Array &9 [],
+    'dispatchesEvents' => Array &10 [],
+    'observables' => Array &11 [],
+    'relations' => Array &12 [],
+    'touches' => Array &13 [],
+    'relationAutoloadCallback' => null,
+    'relationAutoloadContext' => null,
+    'timestamps' => true,
+    'usesUniqueIds' => false,
+    'hidden' => Array &14 [],
+    'visible' => Array &15 [],
+    'fillable' => Array &16 [
+        0 => 'external_id',
+        1 => 'description',
+        2 => 'amount',
+        3 => 'payment_source',
+        4 => 'payment_date',
+        5 => 'integration_payment_id',
+        6 => 'integration_type',
+        7 => 'invoice_id',
+    ],
+    'guarded' => Array &17 [
+        0 => '*',
+    ],
+    'dates' => Array &18 [
+        0 => 'payment_date',
+    ],
+    'forceDeleting' => false,
+) is null.
+/var/www/projects/day/tests/Unit/Controllers/Payment/PaymentsControllerTest.php:47
+
+13) Tests\Unit\Controllers\Project\ProjectsControllerTest::can_update_status
+Failed asserting that 16 matches expected 1.
+/var/www/projects/day/tests/Unit/Controllers/Project/ProjectsControllerTest.php:75
+
+14) Tests\Unit\Controllers\Task\TasksControllerTest::can_update_status
+Failed asserting that 16 matches expected 4.
+/var/www/projects/day/tests/Unit/Controllers/Task/TasksControllerTest.php:90
+
+15) Tests\Unit\Exceptions\HandlerTest::unauthenticated_returns_json_for_json_request
+Expected response status code [401] but received 500.
+Failed asserting that 500 is identical to 401.
+The following exception occurred during the last request:
+InvalidArgumentException: Auth driver [passport] for guard [api] is not defined. in /var/www/projects/day/vendor/laravel/framework/src/Illuminate/Auth/AuthManager.php:98
+----------------------------------------------------------------------------------
+
+Auth driver [passport] for guard [api] is not defined.
+
+/var/www/projects/day/tests/Unit/Exceptions/HandlerTest.php:50

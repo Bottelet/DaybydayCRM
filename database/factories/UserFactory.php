@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Department;
 use App\Models\Role;
