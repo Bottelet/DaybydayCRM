@@ -91,17 +91,17 @@ class LeadsController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
-        if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id)->first();
+        if ($request->validated()['client_external_id']) {
+            $client = Client::whereExternalId($request->validated()['client_external_id'])->first();
         }
 
         $lead = Lead::create(
             [
-                'title' => $request->input('title'),
-                'description' => clean($request->input('description')),
-                'user_assigned_id' => $request->input('user_assigned_id'),
-                'deadline' => \Illuminate\Support\Carbon::parse($request->input('deadline').' '.$request->input('contact_time').':00'),
-                'status_id' => $request->input('status_id'),
+                'title' => $request->validated()['title'],
+                'description' => clean($request->validated()['description']),
+                'user_assigned_id' => $request->validated()['user_assigned_id'],
+                'deadline' => \Illuminate\Support\Carbon::parse($request->validated()['deadline'].' '.$request->validated()['contact_time'].':00'),
+                'status_id' => $request->validated()['status_id'],
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
                 'client_id' => $client->id,
