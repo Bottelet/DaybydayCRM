@@ -46,6 +46,9 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->register(\Laravel\Dusk\DuskServiceProvider::class);
             }
         }
+        if ($this->app->environment('local') && class_exists(\Laravel\Tinker\TinkerServiceProvider::class)) {
+            $this->app->register(\Laravel\Tinker\TinkerServiceProvider::class);
+        }
         $this->app->singleton(GetDateFormat::class);
     }
 }

@@ -82,19 +82,5 @@ class HandlerTest extends AbstractTestCase
         $response->assertRedirect();
     }
 
-    #[Test]
-    #[Group('repaired')]
-    public function unauthenticated_json_response_has_correct_structure()
-    {
-        /** Arrange */
-        // Placeholder test
-
-        /** Act */
-        // No action
-
-        /** Assert */
-        $this->assertTrue(true);
-    }
-
     // endregion
 }

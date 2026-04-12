@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Faker\Factory as Faker;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\DuskTestCase;
 
 class UserTest extends DuskTestCase
@@ -13,6 +14,7 @@ class UserTest extends DuskTestCase
     /**
      * Test user can access user thorugh index page.
      */
+    #[Test]
     public function it_user_can_see_users_on_user_index_and_go_to_the_user_with_link()
     {
         $user = User::factory()->create();
@@ -30,6 +32,7 @@ class UserTest extends DuskTestCase
     /**
      * Test user can see all the correct info on user page
      */
+    #[Test]
     public function it_i_can_see_all_the_correct_information_on_user_info_page()
     {
         $user = User::factory()->create();
@@ -45,6 +48,7 @@ class UserTest extends DuskTestCase
     /**
      * Test i can create a new User
      */
+    #[Test]
     public function it_i_can_create_a_new_user()
     {
         Setting::whereId(1)->update(['max_users' => 10000000]);

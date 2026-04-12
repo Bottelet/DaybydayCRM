@@ -65,7 +65,6 @@ use Illuminate\Translation\TranslationServiceProvider;
 use Illuminate\Validation\ValidationServiceProvider;
 use Illuminate\View\ViewServiceProvider;
 use Laravel\Cashier\CashierServiceProvider;
-use Laravel\Tinker\TinkerServiceProvider;
 use Yajra\Datatables\Datatables;
 use Yajra\Datatables\DatatablesServiceProvider;
 
@@ -197,7 +196,6 @@ return [
         NotificationServiceProvider::class,
         //        Collective\Html\HtmlServiceProvider::class,
         DatatablesServiceProvider::class,
-        // TinkerServiceProvider::class, // Temporarily disabled for testing
         EntrustServiceProvider::class,
         CashierServiceProvider::class,
         /*

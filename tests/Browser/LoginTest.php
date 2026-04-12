@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
@@ -13,6 +14,7 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
+    #[Test]
     public function it_example()
     {
         $user = User::factory()->create([
@@ -33,6 +35,7 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
+    #[Test]
     public function it_user_can_login_successfully()
     {
         $user = User::factory()->create([

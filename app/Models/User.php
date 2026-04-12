@@ -100,7 +100,7 @@ class User extends Authenticatable
 
     public function settings()
     {
-        return Setting::query();
+        return $this->hasMany(Setting::class);
     }
 
     public function tasks()

@@ -31,7 +31,7 @@ class Role extends EntrustRole
 
     public function userRole()
     {
-        return $this->hasMany(Role::class, 'user_id', 'id');
+        return $this->hasMany(RoleUser::class, 'role_id', 'id');
     }
 
     // endregion

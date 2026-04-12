@@ -46,9 +46,12 @@ class TypeOfStatusTest extends AbstractTestCase
         $projectStatuses = Status::typeOfProject()->get()->where('title', 'Hello');
 
         /** Assert */
-        $this->assertNotNull($taskStatuses);
-        $this->assertNotNull($leadStatuses);
-        $this->assertNotNull($projectStatuses);
+        $this->assertCount(1, $taskStatuses);
+        $this->assertCount(1, $leadStatuses);
+        $this->assertCount(1, $projectStatuses);
+        $this->assertEquals(Task::class, $taskStatuses->first()->source_type);
+        $this->assertEquals(Lead::class, $leadStatuses->first()->source_type);
+        $this->assertEquals(Project::class, $projectStatuses->first()->source_type);
     }
 
     // endregion

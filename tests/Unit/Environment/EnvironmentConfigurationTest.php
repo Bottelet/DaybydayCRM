@@ -113,7 +113,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * Mail mailer should be set to 'array' in tests to prevent real email delivery.
      */
     #[Test]
-    public function it_mails_mailer_does_not_send_real_emails_in_test_environment(): void
+    public function it_mail_mailer_does_not_send_real_emails_in_test_environment(): void
     {
         /** Arrange */
         $validMailers = ['array', 'log'];

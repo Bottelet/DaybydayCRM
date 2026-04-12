@@ -151,25 +151,17 @@ class ClientNumberServiceTest extends AbstractTestCase
     // region failure_path
 
     #[Test]
-    public function it_allows_negative_client_numbers_creating_invalid_sequence()
+    public function it_rejects_negative_client_numbers()
     {
         /** Arrange */
         $negativeNumber = -100;
 
+        /** Assert */
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Client number cannot be negative.');
+
         /** Act */
         $this->clientNumberService->setClientNumber($negativeNumber);
-
-        // Get the next number
-        $firstNumber = $this->clientNumberService->setNextClientNumber();
-        $secondNumber = $this->clientNumberService->setNextClientNumber();
-
-        /** Assert */
-        // Negative numbers will cause issues: -100, -99, -98, etc.
-        // This demonstrates the problem - validation should prevent negative numbers
-        $this->assertEquals(-100, $firstNumber);
-        $this->assertEquals(-99, $secondNumber);
-        // This test documents the problematic behavior that should be fixed
-        $this->assertLessThan(0, $firstNumber, 'Negative client numbers should not be allowed');
     }
 
     // endregion

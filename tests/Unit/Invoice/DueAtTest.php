@@ -91,23 +91,6 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_dont_get_invoice_if_not_sent()
-    {
-        $this->markTestSkipped('revisit');
-        /** Arrange */
-        $this->secondInvoice->sent_at = null;
-        $this->secondInvoice->save();
-
-        /* return $query->where('due_at', '<', now())->NotFullyPaid(); */
-        /* return $query->where('status', '!=', InvoiceStatus::paid()->getStatus()); */
-        /** Act */
-        $invoices = Invoice::pastDueAt()->get();
-
-        /** Assert */
-        $this->assertCount(0, $invoices);
-    }
-
-    #[Test]
     public function it_gets_multiple_invoices_past_due_at()
     {
         /** Arrange */

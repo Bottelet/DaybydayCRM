@@ -18,7 +18,7 @@ class MakeDeadlineColumnsNullable extends Migration
         });
 
         Schema::table('leads', function (Blueprint $table) {
-            $table->date('deadline')->nullable()->change();
+            $table->dateTime('deadline')->nullable()->change();
         });
 
         Schema::table('projects', function (Blueprint $table) {
@@ -38,7 +38,7 @@ class MakeDeadlineColumnsNullable extends Migration
         });
 
         Schema::table('leads', function (Blueprint $table) {
-            $table->date('deadline')->nullable(false)->change();
+            $table->dateTime('deadline')->nullable(false)->change();
         });
 
         Schema::table('projects', function (Blueprint $table) {
