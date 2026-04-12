@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectDeadlineRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateProjectDeadlineRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('project-update-deadline');
+        return auth()->user()->can(PermissionName::PROJECT_UPDATE_DEADLINE->value);
     }
 
     /**
