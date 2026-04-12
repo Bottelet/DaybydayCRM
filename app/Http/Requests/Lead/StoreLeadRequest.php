@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Lead;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLeadRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreLeadRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('lead-create');
+        return auth()->user()->can(PermissionName::LEAD_CREATE->value);
     }
 
     /**

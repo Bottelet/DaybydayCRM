@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Enums\PermissionName;
 use App\Models\Status;
 use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +16,7 @@ class UpdateProjectStatusRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('project-update-status');
+        return auth()->user()->can(PermissionName::PROJECT_UPDATE_STATUS->value);
     }
 
     /**

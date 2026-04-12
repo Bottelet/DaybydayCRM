@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectAssignRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateProjectAssignRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('project-update-assignment');
+        return auth()->user()->can(PermissionName::PROJECT_UPDATE_ASSIGNMENT->value);
     }
 
     /**

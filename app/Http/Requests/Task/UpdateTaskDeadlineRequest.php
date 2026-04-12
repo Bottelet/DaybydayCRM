@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskDeadlineRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateTaskDeadlineRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('task-update-deadline');
+        return auth()->user()->can(PermissionName::TASK_UPDATE_DEADLINE->value);
     }
 
     /**

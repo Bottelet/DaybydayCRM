@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Client;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClientRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('client-create');
+        return auth()->user()->can(PermissionName::CLIENT_CREATE->value);
     }
 
     /**

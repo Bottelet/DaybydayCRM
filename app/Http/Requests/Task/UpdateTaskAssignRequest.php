@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskAssignRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateTaskAssignRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('task-update-assignment');
+        return auth()->user()->can(PermissionName::TASK_UPDATE_ASSIGNMENT->value);
     }
 
     /**

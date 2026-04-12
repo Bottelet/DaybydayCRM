@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Enums\PermissionName;
 use App\Models\Status;
 use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +16,7 @@ class UpdateTaskStatusRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('task-update-status');
+        return auth()->user()->can(PermissionName::TASK_UPDATE_STATUS->value);
     }
 
     /**
