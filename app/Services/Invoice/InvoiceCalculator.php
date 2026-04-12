@@ -33,7 +33,7 @@ class InvoiceCalculator
     {
         $subTotal = $this->getSubTotal()->getAmount();
 
-        return new Money($subTotal * $this->tax->vatRate());
+        return new Money((int) ($subTotal * $this->tax->vatRate()));
     }
 
     public function getTotalPrice(): Money
@@ -41,7 +41,7 @@ class InvoiceCalculator
         $subTotal = $this->getSubTotal()->getAmount();
         $vatTotal = $this->getVatTotal()->getAmount();
 
-        return new Money($subTotal + $vatTotal);
+        return new Money((int) ($subTotal + $vatTotal));
     }
 
     public function getSubTotal(): Money
