@@ -17,7 +17,8 @@ trait DeadlineTrait
             return false;
         }
 
-        return $this->deadline < Carbon::now();
+        // Compare at start of day to handle both 'date' and 'datetime' casts
+        return $this->deadline->startOfDay() < Carbon::now()->startOfDay();
     }
 
     public function isCloseToDeadline(int $days = 2): bool
