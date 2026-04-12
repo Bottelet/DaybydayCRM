@@ -37,7 +37,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_ci_uses_cache_store_not_cache_driver(): void
+    public function it_env_ci_uses_cache_store_not_cache_driver(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.ci');
@@ -58,7 +58,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_ci_cache_store_is_set_to_array(): void
+    public function it_env_ci_cache_store_is_set_to_array(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
@@ -76,7 +76,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_ci_contains_session_domain(): void
+    public function it_env_ci_contains_session_domain(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
@@ -93,7 +93,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_ci_app_env_is_testing(): void
+    public function it_env_ci_app_env_is_testing(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
@@ -107,7 +107,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_ci_contains_required_keys(): void
+    public function it_env_ci_contains_required_keys(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.ci');
@@ -134,7 +134,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_dusk_local_uses_cache_store_not_cache_driver(): void
+    public function it_env_dusk_local_uses_cache_store_not_cache_driver(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.dusk.local');
@@ -155,7 +155,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_dusk_local_cache_store_is_set_to_array(): void
+    public function it_env_dusk_local_cache_store_is_set_to_array(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.dusk.local');
@@ -173,7 +173,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_testing_file_exists(): void
+    public function it_env_testing_file_exists(): void
     {
         /** Arrange */
         $filePath = $this->rootPath.'/.env.testing';
@@ -189,7 +189,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_app_env_is_testing(): void
+    public function it_env_testing_app_env_is_testing(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -203,7 +203,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_uses_cache_store_not_cache_driver(): void
+    public function it_env_testing_uses_cache_store_not_cache_driver(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.testing');
@@ -224,7 +224,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_cache_store_is_array(): void
+    public function it_env_testing_cache_store_is_array(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -238,7 +238,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_contains_required_database_keys(): void
+    public function it_env_testing_contains_required_database_keys(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -254,7 +254,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_database_name_is_test_database(): void
+    public function it_env_testing_database_name_is_test_database(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -272,7 +272,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_contains_required_keys(): void
+    public function it_env_testing_contains_required_keys(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -295,7 +295,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_testing_queue_driver_is_sync(): void
+    public function it_env_testing_queue_driver_is_sync(): void
     {
         /** Arrange */
         $vars = $this->parseEnvFile('.env.testing');
@@ -317,7 +317,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function env_example_contains_mail_scheme_key(): void
+    public function it_env_example_contains_mail_scheme_key(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.example');
@@ -333,7 +333,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_example_uses_cache_store_not_cache_driver(): void
+    public function it_env_example_uses_cache_store_not_cache_driver(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.example');
@@ -354,7 +354,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_example_php_cli_server_workers_is_commented_out(): void
+    public function it_env_example_php_cli_server_workers_is_commented_out(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.example');
@@ -377,7 +377,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function env_example_ends_with_newline(): void
+    public function it_env_example_ends_with_newline(): void
     {
         /** Arrange */
         $content = $this->readFile('.env.example');
@@ -397,7 +397,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function gitignore_excludes_vendor_directory(): void
+    public function it_gitignore_excludes_vendor_directory(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -413,7 +413,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_env_files(): void
+    public function it_gitignore_excludes_env_files(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -428,7 +428,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_node_modules(): void
+    public function it_gitignore_excludes_node_modules(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -444,7 +444,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_phpunit_result_cache(): void
+    public function it_gitignore_excludes_phpunit_result_cache(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -460,7 +460,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_ide_directories(): void
+    public function it_gitignore_excludes_ide_directories(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -475,7 +475,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_log_files(): void
+    public function it_gitignore_excludes_log_files(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -491,7 +491,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_build_artifacts(): void
+    public function it_gitignore_excludes_build_artifacts(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -507,7 +507,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitignore_excludes_ds_store_and_thumbs_db(): void
+    public function it_gitignore_excludes_ds_store_and_thumbs_db(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitignore');
@@ -530,7 +530,7 @@ class ProjectFilesConfigurationTest extends TestCase
     // -------------------------------------------------------------------------
 
     #[Test]
-    public function gitattributes_enforces_lf_line_endings(): void
+    public function it_gitattributes_enforces_lf_line_endings(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -547,7 +547,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_php_files(): void
+    public function it_gitattributes_sets_diff_driver_for_php_files(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -563,7 +563,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_blade_files(): void
+    public function it_gitattributes_sets_diff_driver_for_blade_files(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -579,7 +579,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_excludes_github_directory_from_exports(): void
+    public function it_gitattributes_excludes_github_directory_from_exports(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -595,7 +595,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_excludes_changelog_from_exports(): void
+    public function it_gitattributes_excludes_changelog_from_exports(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -611,7 +611,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_sets_diff_driver_for_css_and_html(): void
+    public function it_gitattributes_sets_diff_driver_for_css_and_html(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');
@@ -626,7 +626,7 @@ class ProjectFilesConfigurationTest extends TestCase
     }
 
     #[Test]
-    public function gitattributes_does_not_contain_old_linguist_settings(): void
+    public function it_gitattributes_does_not_contain_old_linguist_settings(): void
     {
         /** Arrange */
         $content = $this->readFile('.gitattributes');

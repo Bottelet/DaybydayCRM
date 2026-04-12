@@ -27,7 +27,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * APP_ENV must be 'testing' so framework test helpers work properly.
      */
     #[Test]
-    public function app_environment_is_testing(): void
+    public function it_app_environment_is_testing(): void
     {
         /** Arrange */
         // Environment configured by Laravel TestCase
@@ -44,7 +44,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * This PR changed CACHE_DRIVER→CACHE_STORE to align with Laravel 11+.
      */
     #[Test]
-    public function cache_store_is_configured_as_array_in_test_environment(): void
+    public function it_cache_store_is_configured_as_array_in_test_environment(): void
     {
         /** Arrange */
         // Configuration loaded from phpunit.xml and .env.testing
@@ -60,7 +60,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * CACHE_STORE env var must be set to 'array' for the test suite.
      */
     #[Test]
-    public function cache_store_env_var_is_set_to_array(): void
+    public function it_cache_store_env_var_is_set_to_array(): void
     {
         /** Arrange */
         // Environment variables loaded
@@ -76,7 +76,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * Session driver must be configured for testing.
      */
     #[Test]
-    public function session_driver_is_configured_in_test_environment(): void
+    public function it_session_driver_is_configured_in_test_environment(): void
     {
         /** Arrange */
         $validDrivers = ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'];
@@ -97,7 +97,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * Queue connection must be 'sync' in test environment so queued jobs execute immediately.
      */
     #[Test]
-    public function queue_connection_is_sync_in_test_environment(): void
+    public function it_queue_connection_is_sync_in_test_environment(): void
     {
         /** Arrange */
         // Queue configuration loaded
@@ -113,7 +113,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * Mail mailer should be set to 'array' in tests to prevent real email delivery.
      */
     #[Test]
-    public function mail_mailer_does_not_send_real_emails_in_test_environment(): void
+    public function it_mails_mailer_does_not_send_real_emails_in_test_environment(): void
     {
         /** Arrange */
         $validMailers = ['array', 'log'];
@@ -133,7 +133,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * Debug mode should be enabled in the test environment.
      */
     #[Test]
-    public function debug_mode_is_enabled_in_test_environment(): void
+    public function it_debug_mode_is_enabled_in_test_environment(): void
     {
         /** Arrange */
         // Debug configuration loaded
@@ -154,7 +154,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
      * If it were set, config('cache.default') would still use CACHE_STORE.
      */
     #[Test]
-    public function cache_driver_env_var_is_not_set_in_test_environment(): void
+    public function it_cache_driver_env_var_is_not_set_in_test_environment(): void
     {
         /** Arrange */
         // Environment variables loaded

@@ -53,7 +53,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function delete_tasks_soft_deletes()
+    public function it_deletes_tasks_soft_deletes()
     {
         /** Arrange */
         $document = $this->task->documents()->first();
@@ -66,7 +66,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_task_soft_deletes_relations()
+    public function it_deletes_task_soft_deletes_relations()
     {
         /** Arrange */
         $this->assertNotEmpty($this->task->comments);
@@ -91,7 +91,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_task_from_database()
+    public function it_force_delete_removes_task_from_database()
     {
         /** Arrange */
         $taskId = $this->task->id;
@@ -106,7 +106,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_relations_from_database()
+    public function it_force_delete_removes_relations_from_database()
     {
         /** Arrange */
         $commentId = $this->task->comments->first()->id;
@@ -137,7 +137,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function delete_task_with_no_relations()
+    public function it_deletes_task_with_no_relations()
     {
         /** Arrange */
         $taskWithoutRelations = Task::factory()->create();
@@ -150,7 +150,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function restore_task_restores_relations()
+    public function it_restore_task_restores_relations()
     {
         /** Arrange */
         $this->task->delete();
@@ -173,7 +173,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_task_with_no_relations()
+    public function it_force_delete_task_with_no_relations()
     {
         /** Arrange */
         $taskWithoutRelations = Task::factory()->create();

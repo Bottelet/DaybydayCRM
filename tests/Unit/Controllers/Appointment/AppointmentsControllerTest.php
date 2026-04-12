@@ -78,7 +78,7 @@ class AppointmentsControllerTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function can_get_appointments_within_time_slot()
+    public function it_can_get_appointments_within_time_slot()
     {
         /** Arrange */
         $correctAppointment = null;
@@ -105,7 +105,7 @@ class AppointmentsControllerTest extends AbstractTestCase
     # region crud
 
     #[Test]
-    public function can_update_appointment_times()
+    public function it_can_update_appointment_times()
     {
         /** Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
@@ -136,7 +136,7 @@ class AppointmentsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_destroy_appointment()
+    public function it_can_destroy_appointment()
     {
         /** Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_DELETE);

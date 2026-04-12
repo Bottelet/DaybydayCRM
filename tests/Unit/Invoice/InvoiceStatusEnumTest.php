@@ -38,7 +38,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function getting_status_returns_instance_of_invoice_status()
+    public function it_getting_status_returns_instance_of_invoice_status()
     {
         /** Arrange */
         // Paid status already set in setUp()
@@ -66,7 +66,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_display_value_from_status()
+    public function it_gets_display_value_from_status()
     {
         /** Arrange */
         // Paid status already set in setUp()
@@ -79,7 +79,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function status_returns_correct_status_in_instance()
+    public function it_status_returns_correct_status_in_instance()
     {
         /** Arrange */
         // Using draft status
@@ -92,7 +92,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_status_from_display_value()
+    public function it_gets_status_from_display_value()
     {
         /** Arrange */
         $displayValue = 'Partially paid';
@@ -109,7 +109,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function all_status_types_have_display_values()
+    public function it_all_status_types_have_display_values()
     {
         /** Arrange */
         $statuses = [
@@ -128,7 +128,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_all_valid_statuses()
+    public function it_gets_all_valid_statuses()
     {
         /** Arrange */
         $expectedStatuses = ['draft', 'unpaid', 'paid', 'partial_paid', 'overpaid'];
@@ -151,7 +151,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function throws_exception_if_status_is_not_known()
+    public function it_throws_exception_if_status_is_not_known()
     {
         /** Arrange */
         $invalidStatus = 'None existing status';
@@ -164,7 +164,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function throws_exception_if_display_value_is_not_known()
+    public function it_throws_exception_if_display_value_is_not_known()
     {
         /** Arrange */
         $invalidDisplayValue = 'None existing display value';
@@ -177,7 +177,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function throws_exception_for_empty_status()
+    public function it_throws_exception_for_empty_status()
     {
         /** Arrange */
         $emptyStatus = '';
@@ -190,7 +190,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function throws_exception_for_null_display_value()
+    public function it_throws_exception_for_null_display_value()
     {
         /** Arrange */
         $nullDisplayValue = null;

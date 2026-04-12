@@ -31,7 +31,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function invoice_line_stores_explicit_external_id_when_provided()
+    public function it_invoice_line_stores_explicit_external_id_when_provided()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create();
@@ -59,7 +59,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function invoice_line_generates_unique_external_ids_for_each_record()
+    public function it_invoice_line_generates_unique_external_ids_for_each_record()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create();
@@ -90,7 +90,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function invoice_line_factory_creates_record_with_external_id()
+    public function it_invoice_line_factory_creates_record_with_external_id()
     {
         /** Arrange */
         // Factory will create invoice automatically
@@ -111,7 +111,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function invoice_line_preserves_provided_external_id()
+    public function it_invoice_line_preserves_provided_external_id()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create();

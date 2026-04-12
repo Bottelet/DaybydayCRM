@@ -25,7 +25,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function getting_source_returns_instance_of_offer_status()
+    public function it_getting_source_returns_instance_of_offer_status()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -53,7 +53,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_display_value_from_status()
+    public function it_gets_display_value_from_status()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -66,7 +66,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function source_returns_correct_source_in_instance()
+    public function it_source_returns_correct_source_in_instance()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -79,7 +79,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_status_from_display_value()
+    public function it_gets_status_from_display_value()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -96,7 +96,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function throws_exception_if_source_is_not_known()
+    public function it_throws_exception_if_source_is_not_known()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -107,7 +107,7 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function throws_exception_if_display_value_is_not_known()
+    public function it_throws_exception_if_display_value_is_not_known()
     {
         /** Arrange */
         // No additional arrangement needed

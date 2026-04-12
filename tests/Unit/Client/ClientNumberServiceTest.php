@@ -52,7 +52,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function set_next_client_number_takes_biggest_client_number_and_add_one()
+    public function it_sets_next_client_number_and_increments_it()
     {
         /** Arrange */
         // Service initialized with 980200 in setUp()
@@ -67,7 +67,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function next_client_number_takes_biggest_client_number_and_does_not_set_it()
+    public function it_returns_current_client_number_without_incrementing()
     {
         /** Arrange */
         // Service initialized with 980200 in setUp()
@@ -82,7 +82,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function manually_set_next_client_number()
+    public function it_allows_manually_setting_client_number()
     {
         /** Arrange */
         $newNumber = 20000;
@@ -100,7 +100,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function set_client_number_to_zero_starts_incrementing_sequence()
+    public function it_starts_incrementing_sequence_from_zero_when_set_to_zero()
     {
         /** Arrange */
         $this->clientNumberService->setClientNumber(0);
@@ -118,7 +118,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function set_very_large_client_number()
+    public function it_sets_very_large_client_number()
     {
         /** Arrange */
         $largeNumber = 99999999;
@@ -132,7 +132,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function increment_from_zero()
+    public function it_increments_from_zero()
     {
         /** Arrange */
         $this->clientNumberService->setClientNumber(0);
@@ -151,7 +151,7 @@ class ClientNumberServiceTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function set_negative_client_number_allows_negative_sequence()
+    public function it_allows_negative_client_numbers_creating_invalid_sequence()
     {
         /** Arrange */
         $negativeNumber = -100;

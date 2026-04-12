@@ -31,7 +31,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_client_returns_results()
+    public function it_search_with_valid_type_client_returns_results()
     {
         $response = $this->json('GET', '/search/Test/client');
 
@@ -40,7 +40,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_clients_plural_returns_results()
+    public function it_search_with_valid_type_clients_plural_returns_results()
     {
         $response = $this->json('GET', '/search/Test/clients');
 
@@ -49,7 +49,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_task_returns_results()
+    public function it_search_with_valid_type_task_returns_results()
     {
         $response = $this->json('GET', '/search/Test/task');
 
@@ -58,7 +58,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_project_returns_results()
+    public function it_search_with_valid_type_project_returns_results()
     {
         $response = $this->json('GET', '/search/Test/project');
 
@@ -67,7 +67,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_lead_returns_results()
+    public function it_search_with_valid_type_lead_returns_results()
     {
         $response = $this->json('GET', '/search/Test/lead');
 
@@ -76,7 +76,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_valid_type_user_returns_results()
+    public function it_search_with_valid_type_user_returns_results()
     {
         $response = $this->json('GET', '/search/Test/user');
 
@@ -85,7 +85,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_with_invalid_type_returns_400_error()
+    public function it_search_with_invalid_type_returns_400_error()
     {
         $response = $this->json('GET', '/search/Test/InvalidType');
 
@@ -94,7 +94,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_prevents_arbitrary_class_instantiation()
+    public function it_search_prevents_arbitrary_class_instantiation()
     {
         // Attempt to instantiate arbitrary classes like Setting, Role, etc.
         $response = $this->json('GET', '/search/Test/Setting');
@@ -104,7 +104,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_type_is_case_insensitive()
+    public function it_search_type_is_case_insensitive()
     {
         $response = $this->json('GET', '/search/Test/CLIENT');
 
@@ -113,7 +113,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_rejects_namespace_injection_attempts()
+    public function it_search_rejects_namespace_injection_attempts()
     {
         // Try to inject namespace path
         $response = $this->json('GET', '/search/Test/..%2F..%2FUser');
@@ -124,7 +124,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function search_rejects_class_path_injection()
+    public function it_search_rejects_class_path_injection()
     {
         // Try to use full class path (URL encoded backslashes)
         $response = $this->json('GET', '/search/Test/App%5CModels%5CUser');

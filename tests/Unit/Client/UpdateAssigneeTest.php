@@ -44,7 +44,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function can_update_assignee()
+    public function it_can_update_assignee()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);
@@ -60,7 +60,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_assignee_with_out_permissions_as_any_user()
+    public function it_can_update_assignee_with_out_permissions_as_any_user()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);
@@ -76,7 +76,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_assignee_to_different_user()
+    public function it_updates_assignee_to_different_user()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);
@@ -97,7 +97,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function update_assignee_to_same_user_triggers_event()
+    public function it_updates_assignee_to_same_user_triggers_event()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);
@@ -113,7 +113,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     }
 
     #[Test]
-    public function client_without_assignee_can_be_assigned()
+    public function it_client_without_assignee_can_be_assigned()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);
@@ -130,7 +130,7 @@ class UpdateAssigneeTest extends AbstractTestCase
     }
 
     #[Test]
-    public function multiple_clients_can_have_same_assignee()
+    public function it_multiple_clients_can_have_same_assignee()
     {
         /** Arrange */
         Event::fake([ClientAction::class]);

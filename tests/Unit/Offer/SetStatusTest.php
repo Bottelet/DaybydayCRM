@@ -23,7 +23,7 @@ class SetStatusTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function set_offer_as_won()
+    public function it_sets_offer_as_won()
     {
         /** Arrange */
         // Offer already created in setUp()
@@ -36,7 +36,7 @@ class SetStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function set_offer_as_lost()
+    public function it_sets_offer_as_lost()
     {
         /** Arrange */
         // Offer already created in setUp()

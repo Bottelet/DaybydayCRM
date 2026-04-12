@@ -34,7 +34,7 @@ class GetCommentEndpointTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function get_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
+    public function it_gets_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
     {
         /** Arrange */
         // Already arranged in setUp()

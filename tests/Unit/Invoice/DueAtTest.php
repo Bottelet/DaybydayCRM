@@ -42,7 +42,7 @@ class DueAtTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function get_invoice_past_due_at()
+    public function it_gets_invoice_past_due_at()
     {
         /** Arrange */
         // Second invoice is past due (due_at is yesterday)
@@ -60,7 +60,7 @@ class DueAtTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function dont_get_invoice_if_due_at_is_null()
+    public function it_dont_get_invoice_if_due_at_is_null()
     {
         /** Arrange */
         $this->secondInvoice->due_at = null;
@@ -74,7 +74,7 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dont_get_invoice_if_status_is_paid()
+    public function it_dont_get_invoice_if_status_is_paid()
     {
         /** Arrange */
         $invoices = Invoice::pastDueAt()->get();
@@ -91,7 +91,7 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dont_get_invoice_if_not_sent()
+    public function it_dont_get_invoice_if_not_sent()
     {
         $this->markTestSkipped('revisit');
         /** Arrange */
@@ -108,7 +108,7 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_multiple_invoices_past_due_at()
+    public function it_gets_multiple_invoices_past_due_at()
     {
         /** Arrange */
         $thirdInvoice = Invoice::factory()->create([
@@ -124,7 +124,7 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dont_get_invoice_due_today()
+    public function it_dont_get_invoice_due_today()
     {
         /** Arrange */
         $this->invoice->due_at = Carbon::now();
@@ -139,7 +139,7 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dont_get_invoice_due_in_future()
+    public function it_dont_get_invoice_due_in_future()
     {
         /** Arrange */
         $this->secondInvoice->due_at = Carbon::now()->addDays(3);

@@ -36,7 +36,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function attach_role_accepts_role_object()
+    public function it_attach_role_accepts_role_object()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -50,7 +50,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function attach_role_accepts_role_id()
+    public function it_attach_role_accepts_role_id()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -64,7 +64,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function attach_role_accepts_role_array()
+    public function it_attach_role_accepts_role_array()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -78,7 +78,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cached_roles_returns_eloquent_model_instances()
+    public function it_cached_roles_returns_eloquent_model_instances()
     {
         /** Arrange */
         // User already created in setUp()
@@ -94,7 +94,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cached_roles_returns_collection_with_correct_roles()
+    public function it_cached_roles_returns_collection_with_correct_roles()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -110,7 +110,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function has_role_works_correctly_after_attach_role_fix()
+    public function it_has_role_works_correctly_after_attach_role_fix()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -129,7 +129,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function attach_role_does_not_create_duplicate_role_assignment()
+    public function it_attach_role_does_not_create_duplicate_role_assignment()
     {
         /** Arrange */
         $this->user->attachRole($this->role);
@@ -145,7 +145,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function attach_role_called_multiple_times_results_in_only_one_db_entry()
+    public function it_attach_role_called_multiple_times_results_in_only_one_db_entry()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -162,7 +162,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cached_roles_returns_empty_when_no_roles_attached()
+    public function it_cached_roles_returns_empty_when_no_roles_attached()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -175,7 +175,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
-    public function attaching_same_role_twice_does_not_throw_unique_constraint_exception()
+    public function it_attaching_same_role_twice_does_not_throw_unique_constraint_exception()
     {
         /** Arrange */
         $user = User::factory()->create();

@@ -50,7 +50,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function activity_causer_relationship_returns_morph_to_instance()
+    public function it_activity_causer_relationship_returns_morph_to_instance()
     {
         /** Arrange */
         $activity = Activity::create([
@@ -69,7 +69,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_causer_resolves_to_user_model()
+    public function it_activity_causer_resolves_to_user_model()
     {
         /** Arrange */
         $activity = Activity::create([
@@ -90,7 +90,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_source_relationship_returns_morph_to_instance()
+    public function it_activity_source_relationship_returns_morph_to_instance()
     {
         /** Arrange */
         $activity = Activity::create([
@@ -109,7 +109,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_source_resolves_to_task_model()
+    public function it_activity_source_resolves_to_task_model()
     {
         /** Arrange */
         $activity = Activity::create([
@@ -130,7 +130,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_task_relationship_method_returns_belongs_to_instance()
+    public function it_activity_task_relationship_method_returns_belongs_to_instance()
     {
         /** Arrange */
         // task() uses 'task_id' foreign key. The column doesn't exist in the DB table,
@@ -151,7 +151,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_user_relationship_method_returns_belongs_to_instance()
+    public function it_activity_user_relationship_method_returns_belongs_to_instance()
     {
         /** Arrange */
         // user() uses 'user_id' foreign key. The column doesn't exist in the DB table,
@@ -176,7 +176,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function activity_all_relationship_methods_exist()
+    public function it_activity_all_relationship_methods_exist()
     {
         /** Arrange */
         $activity = new Activity();
@@ -189,7 +189,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_causer_and_source_are_different_relationships()
+    public function it_activity_causer_and_source_are_different_relationships()
     {
         /** Arrange */
         $activity = Activity::create([
@@ -211,7 +211,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_with_different_causer_resolves_correctly()
+    public function it_activity_with_different_causer_resolves_correctly()
     {
         /** Arrange */
         $anotherUser = User::factory()->create();
@@ -233,7 +233,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_with_null_causer_returns_null()
+    public function it_activity_with_null_causer_returns_null()
     {
         /** Arrange */
         $activity = Activity::create([

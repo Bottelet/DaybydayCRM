@@ -60,7 +60,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Client relationships
 
     #[Test]
-    public function client_all_relationship_methods_exist_after_reorganization()
+    public function it_client_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $client = new Client();
@@ -78,7 +78,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function client_invoices_returns_has_many_relationship()
+    public function it_client_invoices_returns_has_many_relationship()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create(['client_id' => $this->client->id]);
@@ -94,7 +94,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function client_user_returns_belongs_to_relationship()
+    public function it_client_user_returns_belongs_to_relationship()
     {
         /** Arrange */
         $client = $this->client->fresh();
@@ -114,7 +114,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region InvoiceLine relationships
 
     #[Test]
-    public function invoice_line_all_relationship_methods_exist_after_reorganization()
+    public function it_invoice_line_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $invoiceLine = new InvoiceLine();
@@ -125,7 +125,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function invoice_line_invoice_returns_belongs_to_relationship()
+    public function it_invoice_line_invoice_returns_belongs_to_relationship()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create(['client_id' => $this->client->id]);
@@ -146,7 +146,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Lead relationships
 
     #[Test]
-    public function lead_all_relationship_methods_exist_after_reorganization()
+    public function it_lead_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $lead = new Lead();
@@ -167,7 +167,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function lead_creator_returns_belongs_to_user()
+    public function it_lead_creator_returns_belongs_to_user()
     {
         /** Arrange */
         $lead = Lead::factory()->create([
@@ -186,7 +186,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function lead_comments_returns_morph_many_relationship()
+    public function it_lead_comments_returns_morph_many_relationship()
     {
         /** Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
@@ -199,7 +199,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function lead_notes_is_alias_for_comments()
+    public function it_lead_notes_is_alias_for_comments()
     {
         /** Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
@@ -218,7 +218,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Offer relationships
 
     #[Test]
-    public function offer_all_relationship_methods_exist_after_reorganization()
+    public function it_offer_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $offer = new Offer();
@@ -233,7 +233,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function offer_source_returns_morph_to_relationship()
+    public function it_offer_source_returns_morph_to_relationship()
     {
         /** Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
@@ -250,7 +250,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function offer_lead_delegates_to_source()
+    public function it_offer_lead_delegates_to_source()
     {
         /** Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
@@ -269,7 +269,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function offer_lines_is_alias_for_invoice_lines()
+    public function it_offer_lines_is_alias_for_invoice_lines()
     {
         /** Arrange */
         $offer = new Offer();
@@ -288,7 +288,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Project relationships
 
     #[Test]
-    public function project_all_relationship_methods_exist_after_reorganization()
+    public function it_project_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $project = new Project();
@@ -307,7 +307,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function project_assignee_and_user_both_return_belongs_to_same_user()
+    public function it_project_assignee_and_user_both_return_belongs_to_same_user()
     {
         /** Arrange */
         $project = Project::factory()->create([
@@ -328,7 +328,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function project_tasks_returns_has_many_relationship()
+    public function it_project_tasks_returns_has_many_relationship()
     {
         /** Arrange */
         $project = Project::factory()->create(['client_id' => $this->client->id]);
@@ -352,7 +352,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Role relationships
 
     #[Test]
-    public function role_all_relationship_methods_exist_after_reorganization()
+    public function it_role_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $role = new Role();
@@ -363,7 +363,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function role_permissions_returns_belongs_to_many_relationship()
+    public function it_role_permissions_returns_belongs_to_many_relationship()
     {
         /** Arrange */
         $role = Role::factory()->create();
@@ -380,7 +380,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Setting relationships
 
     #[Test]
-    public function setting_all_relationship_methods_exist_after_reorganization()
+    public function it_setting_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $setting = new Setting();
@@ -391,7 +391,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function setting_user_returns_belongs_to_relationship()
+    public function it_setting_user_returns_belongs_to_relationship()
     {
         /** Arrange */
         $setting = new Setting();
@@ -408,7 +408,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Status relationships
 
     #[Test]
-    public function status_all_relationship_methods_exist_after_reorganization()
+    public function it_status_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $status = new Status();
@@ -420,7 +420,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function status_tasks_returns_has_many_relationship()
+    public function it_status_tasks_returns_has_many_relationship()
     {
         /** Arrange */
         $status = Status::factory()->create(['source_type' => Task::class]);
@@ -439,7 +439,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function status_leads_returns_has_many_relationship()
+    public function it_status_leads_returns_has_many_relationship()
     {
         /** Arrange */
         $status = Status::factory()->create();
@@ -452,7 +452,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function status_projects_returns_has_many_relationship()
+    public function it_status_projects_returns_has_many_relationship()
     {
         /** Arrange */
         $status = Status::factory()->create();
@@ -469,7 +469,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region Task relationships
 
     #[Test]
-    public function task_all_relationship_methods_exist_after_reorganization()
+    public function it_task_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $task = new Task();
@@ -488,7 +488,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function task_comments_returns_morph_many_relationship()
+    public function it_task_comments_returns_morph_many_relationship()
     {
         /** Arrange */
         $task = Task::factory()->create(['client_id' => $this->client->id]);
@@ -501,7 +501,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function task_creator_returns_belongs_to_user()
+    public function it_task_creator_returns_belongs_to_user()
     {
         /** Arrange */
         $task = Task::factory()->create([
@@ -524,7 +524,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region User relationships
 
     #[Test]
-    public function user_all_relationship_methods_exist_after_reorganization()
+    public function it_user_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $user = new User();
@@ -542,7 +542,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_tasks_returns_has_many_relationship()
+    public function it_user_tasks_returns_has_many_relationship()
     {
         /** Arrange */
         $task = Task::factory()->create([
@@ -561,7 +561,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_leads_returns_has_many_relationship()
+    public function it_user_leads_returns_has_many_relationship()
     {
         /** Arrange */
         $lead = Lead::factory()->create([
@@ -584,7 +584,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     # region PermissionRole relationships
 
     #[Test]
-    public function permission_role_all_relationship_methods_exist_after_reorganization()
+    public function it_permission_role_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $permissionRole = new PermissionRole();
@@ -596,7 +596,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function permission_all_relationship_methods_exist_after_reorganization()
+    public function it_permission_all_relationship_methods_exist_after_reorganization()
     {
         /** Arrange */
         $permission = new Permission();
@@ -606,7 +606,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function permission_roles_returns_belongs_to_many_relationship()
+    public function it_permission_roles_returns_belongs_to_many_relationship()
     {
         /** Arrange */
         $permission = Permission::factory()->create();

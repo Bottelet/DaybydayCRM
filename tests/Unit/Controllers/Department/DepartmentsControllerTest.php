@@ -28,7 +28,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     # region crud
 
     #[Test]
-    public function can_create_department()
+    public function it_can_create_department()
     {
         /** Arrange */
         // Already arranged in setUp
@@ -45,7 +45,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_delete_department()
+    public function it_can_delete_department()
     {
         /** Arrange */
         $department = Department::factory()->create();
@@ -63,7 +63,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function cant_delete_department_if_user_is_associated()
+    public function it_cant_delete_department_if_user_is_associated()
     {
         /** Arrange */
         $department = Department::factory()->create();

@@ -30,7 +30,7 @@ class AbsenceReasonTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function getting_reason_returns_instance_of_absence_reason()
+    public function it_getting_reason_returns_instance_of_absence_reason()
     {
         /** Arrange */
         $statusValue = 'vacation';
@@ -43,7 +43,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function absence_reason_contains_both_reason_and_display_value()
+    public function it_absence_reason_contains_both_reason_and_display_value()
     {
         /** Arrange */
         $statusValue = 'vacation';
@@ -57,7 +57,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_display_value_from_reason()
+    public function it_gets_display_value_from_reason()
     {
         /** Arrange */
         $statusValue = 'vacation';
@@ -70,7 +70,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function reason_returns_correct_reason_in_instance()
+    public function it_reason_returns_correct_reason_in_instance()
     {
         /** Arrange */
         // No arrangement needed
@@ -83,7 +83,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_reason_from_display_value()
+    public function it_gets_reason_from_display_value()
     {
         /** Arrange */
         $displayValue = 'Vacation';
@@ -96,7 +96,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function values_returns_all_eight_absence_reasons()
+    public function it_values_returns_all_eight_absence_reasons()
     {
         /** Arrange */
         // No arrangement needed
@@ -109,7 +109,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function vacation_factory_method_returns_correct_reason()
+    public function it_vacation_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -124,7 +124,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function vacation_day_factory_method_returns_correct_reason()
+    public function it_vacation_day_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -138,7 +138,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function sick_leave_factory_method_returns_correct_reason()
+    public function it_sick_leave_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -153,7 +153,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function time_off_factory_method_returns_correct_reason()
+    public function it_time_off_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -167,7 +167,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function time_off_in_lieu_factory_method_returns_correct_reason()
+    public function it_time_off_in_lieu_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -183,7 +183,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function personal_leave_factory_method_returns_correct_reason()
+    public function it_personal_leave_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -198,7 +198,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function flextime_factory_method_returns_correct_reason()
+    public function it_flextime_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -213,7 +213,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function other_factory_method_returns_correct_reason()
+    public function it_other_factory_method_returns_correct_reason()
     {
         /** Arrange */
         // No arrangement needed
@@ -228,7 +228,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function to_string_returns_reason_value()
+    public function it_to_string_returns_reason_value()
     {
         /** Arrange */
         $reason = AbsenceReason::vacation();
@@ -241,7 +241,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function values_are_cached_and_returns_same_instances()
+    public function it_values_are_cached_and_returns_same_instances()
     {
         /** Arrange */
         // No arrangement needed
@@ -255,7 +255,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function time_off_in_lieu_shares_reason_string_with_time_off()
+    public function it_time_off_in_lieu_shares_reason_string_with_time_off()
     {
         /** Arrange */
         // No arrangement needed
@@ -274,7 +274,7 @@ class AbsenceReasonTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function constructor_accepts_null_display_value()
+    public function it_constructor_accepts_null_display_value()
     {
         /** Arrange */
         $reasonValue = 'custom_reason';
@@ -292,7 +292,7 @@ class AbsenceReasonTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function throws_exception_if_reason_is_not_known()
+    public function it_throws_exception_if_reason_is_not_known()
     {
         /** Arrange */
         $invalidReason = 'non_existing_reason';
@@ -303,7 +303,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function throws_exception_if_display_value_is_not_known()
+    public function it_throws_exception_if_display_value_is_not_known()
     {
         /** Arrange */
         $invalidDisplayValue = 'None existing display value';
@@ -314,7 +314,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_status_is_case_sensitive()
+    public function it_from_status_is_case_sensitive()
     {
         /** Arrange */
         $wrongCase = 'Vacation';
@@ -325,7 +325,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_display_value_is_case_sensitive()
+    public function it_from_display_value_is_case_sensitive()
     {
         /** Arrange */
         $wrongCase = 'vacation';
@@ -336,7 +336,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_display_value_throws_for_partial_match()
+    public function it_from_display_value_throws_for_partial_match()
     {
         /** Arrange */
         $partialMatch = 'Vacatio';

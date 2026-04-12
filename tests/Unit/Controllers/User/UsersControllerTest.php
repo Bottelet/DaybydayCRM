@@ -45,7 +45,7 @@ class UsersControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function only_owner_role_can_update_user()
+    public function it_only_owner_role_can_update_user()
     {
         /** @var User $manager */
         $manager = User::factory()->withRole('manager')->create();

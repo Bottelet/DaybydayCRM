@@ -83,7 +83,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_status_partial_paid()
+    public function it_is_status_partial_paid()
     {
         /** Arrange */
         // Invoice with 5000 total and 1000 payment from setUp()
@@ -113,7 +113,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_status_un_paid()
+    public function it_is_status_un_paid()
     {
         /** Arrange */
         $this->assertFalse($this->generateInvoiceStatus->isUnPaid());
@@ -128,7 +128,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_status_draft()
+    public function it_is_status_draft()
     {
         /** Arrange */
         $this->assertFalse($this->generateInvoiceStatus->isDraft());
@@ -198,7 +198,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function create_status_saves_to_the_invoice_model()
+    public function it_creates_status_saves_to_the_invoice_model()
     {
         /** Arrange */
         $this->assertNotEquals('partial_paid', $this->invoice->status);
@@ -244,7 +244,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_not_unpaid_if_invoice_amount_is_zero()
+    public function it_is_not_unpaid_if_invoice_amount_is_zero()
     {
         /** Arrange */
         $this->payment->forceDelete();
@@ -262,7 +262,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_paid_if_invoice_amount_is_zero_and_invoice_is_sent()
+    public function it_is_paid_if_invoice_amount_is_zero_and_invoice_is_sent()
     {
         /** Arrange */
         $this->payment->forceDelete();
@@ -277,7 +277,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_draft_if_invoice_amount_is_zero_and_invoice_is_not_sent()
+    public function it_is_draft_if_invoice_amount_is_zero_and_invoice_is_not_sent()
     {
         /** Arrange */
         $this->payment->forceDelete();
@@ -294,7 +294,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_unpaid_if_invoice_amount_is_less_then_zero()
+    public function it_is_unpaid_if_invoice_amount_is_less_then_zero()
     {
         /** Arrange */
         $this->assertFalse($this->generateInvoiceStatus->isUnPaid());
@@ -310,7 +310,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_paid_with_multiple_payments_totaling_exact_amount()
+    public function it_is_paid_with_multiple_payments_totaling_exact_amount()
     {
         /** Arrange */
         $this->payment->amount = 2000;
@@ -331,7 +331,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
-    public function draft_status_takes_precedence_when_not_sent()
+    public function it_draft_status_takes_precedence_when_not_sent()
     {
         /** Arrange */
         $this->invoice->sent_at = null;

@@ -36,7 +36,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_create_lead()
+    public function it_can_create_lead()
     {
         $response = $this->json('POST', route('leads.store'), [
             'title' => 'Lead test',
@@ -55,7 +55,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_assignee()
+    public function it_can_update_assignee()
     {
         $lead = Lead::factory()->create();
         $this->assertNotEquals($lead->user_assigned_id, $this->user->id);
@@ -68,7 +68,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_status()
+    public function it_can_update_status()
     {
         $lead = Lead::factory()->create();
         $status = Status::factory()->create(['source_type' => Lead::class]);
@@ -83,7 +83,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_deadline_for_lead()
+    public function it_can_update_deadline_for_lead()
     {
         $lead = Lead::factory()->create();
 
@@ -103,7 +103,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_followup_stores_deadline_as_datetime_string()
+    public function it_updates_followup_stores_deadline_as_datetime_string()
     {
         // Regression for the deadline fix: Carbon::parse(...)->toDateTimeString()
         // ensures the deadline is stored as a string, not a Carbon object.
@@ -131,7 +131,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_followup_stores_deadline_with_correct_time_component()
+    public function it_updates_followup_stores_deadline_with_correct_time_component()
     {
         // Boundary: verify the time part of the deadline is stored correctly
         $lead = Lead::factory()->create();
@@ -149,7 +149,7 @@ class LeadsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_followup_deadline_is_stored_as_parseable_date_in_database()
+    public function it_updates_followup_deadline_is_stored_as_parseable_date_in_database()
     {
         // Ensures the fix (using ->toDateTimeString()) causes the deadline column
         // to contain a plain string representation, not an object.

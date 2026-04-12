@@ -31,7 +31,7 @@ class LeadActionTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function constructor_stores_lead_and_action()
+    public function it_constructor_stores_lead_and_action()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -46,7 +46,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_lead_returns_lead_model()
+    public function it_gets_lead_returns_lead_model()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -59,7 +59,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_action_returns_action_string()
+    public function it_gets_action_returns_action_string()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -72,7 +72,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function broadcast_on_returns_private_channel()
+    public function it_broadcasts_on_returns_private_channel()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -86,7 +86,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_preserves_lead_reference_after_construction()
+    public function it_event_preserves_lead_reference_after_construction()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -99,7 +99,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_uses_interacts_with_sockets_trait()
+    public function it_event_uses_interacts_with_sockets_trait()
     {
         /** Arrange */
         // No arrangement needed
@@ -112,7 +112,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_uses_serializes_models_trait()
+    public function it_event_uses_serializes_models_trait()
     {
         /** Arrange */
         // No arrangement needed
@@ -129,7 +129,7 @@ class LeadActionTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function action_can_be_non_string_value()
+    public function it_action_can_be_non_string_value()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -142,7 +142,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function action_can_be_null()
+    public function it_action_can_be_null()
     {
         /** Arrange */
         $lead = Lead::factory()->create();
@@ -155,7 +155,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function action_can_be_empty_string()
+    public function it_action_can_be_empty_string()
     {
         /** Arrange */
         $lead = Lead::factory()->create();

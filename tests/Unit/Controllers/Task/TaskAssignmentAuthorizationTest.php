@@ -75,7 +75,7 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_reassign_task()
+    public function it_authorized_user_can_reassign_task()
     {
         $originalAssignee = $this->task->user_assigned_id;
 
@@ -104,7 +104,7 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_reassign_task()
+    public function it_unauthorized_user_cannot_reassign_task()
     {
         $originalAssignee = $this->task->user_assigned_id;
 

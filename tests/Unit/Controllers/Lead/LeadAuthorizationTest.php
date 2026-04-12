@@ -37,7 +37,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_with_lead_delete_permission_can_delete_lead()
+    public function it_user_with_lead_delete_permission_can_delete_lead()
     {
         $this->user = $this->userWithPermission;
         $this->withPermissions(PermissionName::LEAD_DELETE);
@@ -49,7 +49,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_without_lead_delete_permission_cannot_delete_lead()
+    public function it_user_without_lead_delete_permission_cannot_delete_lead()
     {
         $this->actingAs($this->userWithoutPermission);
 
@@ -60,7 +60,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function lead_update_assign_only_accepts_user_assigned_id_field()
+    public function it_lead_update_assign_only_accepts_user_assigned_id_field()
     {
         $user = User::factory()->create();
         $this->user = $user;
@@ -88,7 +88,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function lead_update_status_only_accepts_status_id_field()
+    public function it_lead_update_status_only_accepts_status_id_field()
     {
         $user = User::factory()->create();
         $this->user = $user;

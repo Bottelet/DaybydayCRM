@@ -50,7 +50,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function delete_projects_soft_deletes()
+    public function it_deletes_projects_soft_deletes()
     {
         /** Arrange */
         $document = $this->project->documents()->first();
@@ -63,7 +63,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_project_soft_deletes_relations()
+    public function it_deletes_project_soft_deletes_relations()
     {
         /** Arrange */
         $this->assertNotEmpty($this->project->comments);
@@ -85,7 +85,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_project_from_database()
+    public function it_force_delete_removes_project_from_database()
     {
         /** Arrange */
         $projectId = $this->project->id;
@@ -100,7 +100,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_removes_relations_from_database()
+    public function it_force_delete_removes_relations_from_database()
     {
         /** Arrange */
         $commentId = $this->project->comments->first()->id;
@@ -123,7 +123,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function invoice_is_not_deleted_by_observer()
+    public function it_invoice_is_not_deleted_by_observer()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create([
@@ -148,7 +148,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function delete_project_with_no_relations()
+    public function it_deletes_project_with_no_relations()
     {
         /** Arrange */
         $projectWithoutRelations = Project::factory()->create();
@@ -161,7 +161,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function restore_project_restores_relations()
+    public function it_restore_project_restores_relations()
     {
         /** Arrange */
         $this->project->delete();
@@ -182,7 +182,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function force_delete_project_with_no_relations()
+    public function it_force_delete_project_with_no_relations()
     {
         /** Arrange */
         $projectWithoutRelations = Project::factory()->create();
@@ -198,7 +198,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_project_with_null_invoice_id()
+    public function it_deletes_project_with_null_invoice_id()
     {
         /** Arrange */
         $this->project->invoice_id = null;

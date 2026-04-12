@@ -57,7 +57,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function authorized_user_can_update_appointment()
+    public function it_authorized_user_can_update_appointment()
     {
         /** Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
@@ -84,7 +84,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_delete_appointment()
+    public function it_authorized_user_can_delete_appointment()
     {
         /** Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
@@ -104,7 +104,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function unauthorized_user_cannot_update_appointment()
+    public function it_unauthorized_user_cannot_update_appointment()
     {
         /** Arrange */
         $this->actingAs($this->unauthorizedUser);
@@ -121,7 +121,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function appointment_update_requires_permission_check()
+    public function it_appointment_update_requires_permission_check()
     {
         /** Arrange */
         $this->user->roles()->detach();
@@ -142,7 +142,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_delete_appointment()
+    public function it_unauthorized_user_cannot_delete_appointment()
     {
         /** Arrange */
         $this->actingAs($this->unauthorizedUser);

@@ -39,7 +39,7 @@ class ActivityModelBootTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function activity_auto_generates_external_id_and_ip_address_when_not_provided()
+    public function it_activity_auto_generates_external_id_and_ip_address_when_not_provided()
     {
         /** Arrange */
         // User and task already created in setUp()
@@ -65,7 +65,7 @@ class ActivityModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function activity_generates_unique_external_ids_for_each_record()
+    public function it_activity_generates_unique_external_ids_for_each_record()
     {
         /** Arrange */
         $activity1 = new Activity();
@@ -103,7 +103,7 @@ class ActivityModelBootTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function activity_preserves_explicitly_provided_external_id_when_saved()
+    public function it_activity_preserves_explicitly_provided_external_id_when_saved()
     {
         /** Arrange */
         $customExternalId = 'custom-external-id-12345';

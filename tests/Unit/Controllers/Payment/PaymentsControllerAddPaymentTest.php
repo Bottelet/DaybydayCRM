@@ -54,7 +54,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_payment()
+    public function it_can_add_payment()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -69,7 +69,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_payment_with_decimals_dot_separator()
+    public function it_can_add_payment_with_decimals_dot_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -84,7 +84,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_payment_with_decimals_comma_separator()
+    public function it_can_add_payment_with_decimals_comma_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -99,7 +99,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function adding_payment_updates_invoice_status()
+    public function it_adding_payment_updates_invoice_status()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -114,7 +114,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function adding_wrong_amount_parameter_return_error()
+    public function it_adding_wrong_amount_parameter_return_error()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -128,7 +128,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function adding_wrong_source_parameter_return_error()
+    public function it_adding_wrong_source_parameter_return_error()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -142,7 +142,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function adding_invalid_payment_date_parameter_return_error()
+    public function it_adding_invalid_payment_date_parameter_return_error()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -156,7 +156,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_payment_with_minus_amount()
+    public function it_can_add_payment_with_minus_amount()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -172,7 +172,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_negative_payment_with_comma_separator()
+    public function it_can_add_negative_payment_with_comma_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -187,7 +187,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_add_negative_payment_with_dot_separator()
+    public function it_can_add_negative_payment_with_dot_separator()
     {
         $this->assertTrue($this->invoice->payments->isEmpty());
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
@@ -202,7 +202,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cant_add_payment_where_amount_is_0()
+    public function it_cant_add_payment_where_amount_is_0()
     {
         $this->assertEquals('unpaid', $this->invoice->status);
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [

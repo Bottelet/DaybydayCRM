@@ -21,7 +21,7 @@ class UserRoleTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function factory_state_with_role_attaches_specified_role()
+    public function it_factory_state_with_role_attaches_specified_role()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -36,7 +36,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function factory_state_with_role_supports_different_roles()
+    public function it_factory_state_with_role_supports_different_roles()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -55,7 +55,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_role_relationship_is_accessible_when_using_factory_state()
+    public function it_user_role_relationship_is_accessible_when_using_factory_state()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -76,7 +76,7 @@ class UserRoleTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function users_created_without_role_state_have_no_roles_by_default()
+    public function it_users_created_without_role_state_have_no_roles_by_default()
     {
         /** Arrange */
         // No additional arrangement needed
@@ -89,7 +89,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function multiple_users_can_share_the_same_role_via_factory_state()
+    public function it_multiple_users_can_share_the_same_role_via_factory_state()
     {
         /** Arrange */
         // No additional arrangement needed

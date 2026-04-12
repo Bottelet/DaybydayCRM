@@ -30,7 +30,7 @@ class ClientModelTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function get_primary_contact_attribute_returns_primary_contact_when_one_exists()
+    public function it_gets_primary_contact_attribute_returns_primary_contact_when_one_exists()
     {
         /** Arrange */
         $client = Client::factory()->create();
@@ -51,7 +51,7 @@ class ClientModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
+    public function it_gets_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
     {
         /** Arrange */
         $client = Client::factory()->create();
@@ -77,7 +77,7 @@ class ClientModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
+    public function it_primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
     {
         /** Arrange */
         $client = Client::factory()->create();
@@ -103,7 +103,7 @@ class ClientModelTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function get_primary_contact_attribute_returns_null_when_no_contacts_exist()
+    public function it_gets_primary_contact_attribute_returns_null_when_no_contacts_exist()
     {
         /** Arrange */
         $client = Client::factory()->create();
@@ -117,7 +117,7 @@ class ClientModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_primary_contact_attribute_returns_null_when_no_primary_contact()
+    public function it_gets_primary_contact_attribute_returns_null_when_no_primary_contact()
     {
         /** Arrange */
         $client = Client::factory()->create();
@@ -136,7 +136,7 @@ class ClientModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
+    public function it_gets_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
     {
         /** Arrange */
         $client = Client::factory()->create();

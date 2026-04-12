@@ -35,7 +35,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function can_update_draft_invoice()
+    public function it_can_update_draft_invoice()
     {
         /** Arrange */
         // Invoice created with sent_at = null in setUp()
@@ -52,7 +52,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function cant_update_invoice_if_its_sent()
+    public function it_cant_update_invoice_if_its_sent()
     {
         /** Arrange */
         $this->invoice->sent_at = Carbon::now();
@@ -66,7 +66,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function cant_update_invoice_sent_in_the_past()
+    public function it_cant_update_invoice_sent_in_the_past()
     {
         /** Arrange */
         $this->invoice->sent_at = Carbon::now()->subDays(5);
@@ -80,7 +80,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_invoice_with_null_sent_at()
+    public function it_can_update_invoice_with_null_sent_at()
     {
         /** Arrange */
         $this->invoice->sent_at = null;

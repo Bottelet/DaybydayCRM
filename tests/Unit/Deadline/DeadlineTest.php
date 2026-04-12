@@ -63,7 +63,7 @@ class DeadlineTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function not_over_deadline()
+    public function it_is_not_over_deadline()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -80,7 +80,7 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_close_to_deadline()
+    public function it_is_close_to_deadline()
     {
         /** Arrange */
         // Task, Lead, and Project have deadlines in 2 hours (from setUp)
@@ -97,7 +97,7 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_days_until_deadline()
+    public function it_gets_days_until_deadline()
     {
         /** Arrange */
         $this->task->deadline = Carbon::now()->addDays(3);
@@ -125,7 +125,7 @@ class DeadlineTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function over_deadline()
+    public function it_is_over_deadline()
     {
         /** Arrange */
         $this->task->deadline = Carbon::now()->subDay();
@@ -149,7 +149,7 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
-    public function is_not_close_to_deadline()
+    public function it_is_not_close_to_deadline()
     {
         /** Arrange */
         $this->task->deadline = Carbon::now()->addDays(3);
@@ -173,7 +173,7 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
-    public function null_deadline_is_not_over()
+    public function it_returns_false_when_deadline_is_null()
     {
         /** Arrange */
         $this->task->deadline = null;
@@ -197,7 +197,7 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
-    public function null_deadline_is_not_close()
+    public function it_returns_false_when_checking_if_null_deadline_is_close()
     {
         /** Arrange */
         $this->task->deadline = null;

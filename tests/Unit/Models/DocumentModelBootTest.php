@@ -41,7 +41,7 @@ class DocumentModelBootTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function document_stores_explicit_external_id_when_provided()
+    public function it_document_stores_explicit_external_id_when_provided()
     {
         /** Arrange */
         $externalId = Uuid::uuid4()->toString();
@@ -69,7 +69,7 @@ class DocumentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function document_generates_unique_external_ids_for_each_record()
+    public function it_document_generates_unique_external_ids_for_each_record()
     {
         /** Arrange */
         $document1 = Document::create([
@@ -100,7 +100,7 @@ class DocumentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function document_has_sourceable_morph_to_relationship()
+    public function it_document_has_sourceable_morph_to_relationship()
     {
         /** Arrange */
         $document = Document::factory()->create([
@@ -117,7 +117,7 @@ class DocumentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function document_factory_creates_record_with_external_id()
+    public function it_document_factory_creates_record_with_external_id()
     {
         /** Arrange */
         $task = Task::factory()->create();
@@ -141,7 +141,7 @@ class DocumentModelBootTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function document_preserves_provided_external_id()
+    public function it_document_preserves_provided_external_id()
     {
         /** Arrange */
         $customExternalId = 'custom-document-uuid-abcd';

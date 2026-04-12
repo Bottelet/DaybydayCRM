@@ -42,7 +42,7 @@ class GetDateFormatTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function get_date_format_methods_return_correct_formats()
+    public function it_gets_date_format_methods_return_correct_formats()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -63,7 +63,7 @@ class GetDateFormatTest extends AbstractTestCase
     }
 
     #[Test]
-    public function helper_functions_return_correct_formats()
+    public function it_helper_functions_return_correct_formats()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -84,7 +84,7 @@ class GetDateFormatTest extends AbstractTestCase
     }
 
     #[Test]
-    public function formats_carbon_dates_correctly()
+    public function it_formats_carbon_dates_correctly()
     {
         /** Arrange */
         $testDate = Carbon::parse('22-02-2020 15:00:00');

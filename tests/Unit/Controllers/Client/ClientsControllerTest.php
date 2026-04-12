@@ -32,7 +32,7 @@ class ClientsControllerTest extends AbstractTestCase
     # region crud
 
     #[Test]
-    public function can_create_client()
+    public function it_can_create_client()
     {
         /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -81,7 +81,7 @@ class ClientsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_delete_without_any_relations_client()
+    public function it_can_delete_without_any_relations_client()
     {
         /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -97,7 +97,7 @@ class ClientsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_client()
+    public function it_can_update_client()
     {
         /** Arrange */
         $this->user = User::factory()->create();
@@ -154,7 +154,7 @@ class ClientsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_update_assignee()
+    public function it_can_update_assignee()
     {
         /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -182,7 +182,7 @@ class ClientsControllerTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function can_update_client_without_primary_contact()
+    public function it_can_update_client_without_primary_contact()
     {
         /** Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -229,7 +229,7 @@ class ClientsControllerTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function cant_update_assignee_without_permission()
+    public function it_cant_update_assignee_without_permission()
     {
         /** Arrange */
         $client = Client::factory()->create();

@@ -31,7 +31,7 @@ class NewCommentTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function constructor_stores_comment()
+    public function it_constructor_stores_comment()
     {
         /** Arrange */
         $comment = Comment::factory()->create();
@@ -44,7 +44,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function comment_property_is_public()
+    public function it_comment_property_is_public()
     {
         /** Arrange */
         $comment = Comment::factory()->create();
@@ -57,7 +57,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_preserves_comment_description()
+    public function it_event_preserves_comment_description()
     {
         /** Arrange */
         $comment = Comment::factory()->create(['description' => 'Test comment text']);
@@ -70,7 +70,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_can_be_dispatched()
+    public function it_event_can_be_dispatched()
     {
         /** Arrange */
         Event::fake();
@@ -84,7 +84,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dispatched_event_carries_correct_comment()
+    public function it_dispatched_event_carries_correct_comment()
     {
         /** Arrange */
         Event::fake();
@@ -100,7 +100,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_uses_dispatchable_trait()
+    public function it_event_uses_dispatchable_trait()
     {
         /** Arrange */
         // No arrangement needed
@@ -113,7 +113,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_uses_serializes_models_trait()
+    public function it_event_uses_serializes_models_trait()
     {
         /** Arrange */
         // No arrangement needed
@@ -130,7 +130,7 @@ class NewCommentTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function event_preserves_null_description()
+    public function it_event_preserves_null_description()
     {
         /** Arrange */
         $comment = Comment::factory()->create(['description' => null]);
@@ -143,7 +143,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function event_preserves_empty_description()
+    public function it_event_preserves_empty_description()
     {
         /** Arrange */
         $comment = Comment::factory()->create(['description' => '']);
@@ -156,7 +156,7 @@ class NewCommentTest extends AbstractTestCase
     }
 
     #[Test]
-    public function dispatched_event_preserves_comment_relationships()
+    public function it_dispatched_event_preserves_comment_relationships()
     {
         /** Arrange */
         Event::fake();

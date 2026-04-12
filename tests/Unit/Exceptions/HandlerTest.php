@@ -22,7 +22,7 @@ class HandlerTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function handler_class_extends_laravel_exception_handler()
+    public function it_handler_class_extends_laravel_exception_handler()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -35,7 +35,7 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function handler_dont_report_list_contains_expected_exceptions()
+    public function it_handler_dont_report_list_contains_expected_exceptions()
     {
         /** Arrange */
         $handler = new Handler(app());
@@ -55,7 +55,7 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthenticated_returns_json_for_json_request()
+    public function it_unauthenticated_returns_json_for_json_request()
     {
         /** Arrange */
         // No authentication credentials
@@ -70,7 +70,7 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthenticated_redirects_to_login_for_web_request()
+    public function it_unauthenticated_redirects_to_login_for_web_request()
     {
         /** Arrange */
         auth()->logout();

@@ -45,7 +45,7 @@ class ClientAuthorizationTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function user_with_client_delete_permission_can_delete_client()
+    public function it_user_with_client_delete_permission_can_delete_client()
     {
         /** Arrange */
         $this->user = $this->userWithPermission;
@@ -64,7 +64,7 @@ class ClientAuthorizationTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function user_without_client_delete_permission_cannot_delete_client()
+    public function it_user_without_client_delete_permission_cannot_delete_client()
     {
         /** Arrange */
         $this->actingAs($this->userWithoutPermission);

@@ -37,7 +37,7 @@ class RoleRepositoryTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function all_roles_excludes_owner_role()
+    public function it_all_roles_excludes_owner_role()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -51,7 +51,7 @@ class RoleRepositoryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function all_roles_returns_roles_with_required_columns()
+    public function it_all_roles_returns_roles_with_required_columns()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -70,7 +70,7 @@ class RoleRepositoryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function all_roles_returns_collection_of_role_models()
+    public function it_all_roles_returns_collection_of_role_models()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -85,7 +85,7 @@ class RoleRepositoryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function all_roles_includes_administrator_role()
+    public function it_all_roles_includes_administrator_role()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -99,7 +99,7 @@ class RoleRepositoryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function list_all_roles_returns_display_names_keyed_by_id()
+    public function it_list_all_roles_returns_display_names_keyed_by_id()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -117,7 +117,7 @@ class RoleRepositoryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function list_all_roles_does_not_include_owner()
+    public function it_list_all_roles_does_not_include_owner()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -140,7 +140,7 @@ class RoleRepositoryTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function all_roles_is_not_broken_by_column_selection_fix()
+    public function it_all_roles_is_not_broken_by_column_selection_fix()
     {
         /** Arrange */
         // Already arranged in setUp()

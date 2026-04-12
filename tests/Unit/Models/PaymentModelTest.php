@@ -37,7 +37,7 @@ class PaymentModelTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function payment_invoice_relationship_returns_belongs_to_instance()
+    public function it_payment_invoice_relationship_returns_belongs_to_instance()
     {
         /** Arrange */
         $payment = Payment::factory()->create([
@@ -52,7 +52,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function payment_belongs_to_invoice()
+    public function it_payment_belongs_to_invoice()
     {
         /** Arrange */
         $payment = Payment::factory()->create([
@@ -69,7 +69,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function payment_factory_creates_payment_with_invoice()
+    public function it_payment_factory_creates_payment_with_invoice()
     {
         /** Arrange */
         // Payment factory automatically creates an invoice via Invoice::factory()
@@ -84,7 +84,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function multiple_payments_can_belong_to_same_invoice()
+    public function it_multiple_payments_can_belong_to_same_invoice()
     {
         /** Arrange */
         $payment1 = Payment::factory()->create([
@@ -107,7 +107,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function payment_invoice_method_exists_on_model()
+    public function it_payment_invoice_method_exists_on_model()
     {
         /** Arrange */
         $payment = Payment::factory()->create([
@@ -123,7 +123,7 @@ class PaymentModelTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function payment_without_invoice_id_returns_null_for_invoice()
+    public function it_payment_without_invoice_id_returns_null_for_invoice()
     {
         /** Arrange */
         $payment = new Payment([
@@ -142,7 +142,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function soft_deleted_payment_still_has_invoice_relationship()
+    public function it_soft_deleted_payment_still_has_invoice_relationship()
     {
         /** Arrange */
         $payment = Payment::factory()->create([
@@ -161,7 +161,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function payment_invoice_relationship_returns_correct_invoice_when_multiple_invoices_exist()
+    public function it_payment_invoice_relationship_returns_correct_invoice_when_multiple_invoices_exist()
     {
         /** Arrange */
         $otherInvoice = Invoice::factory()->create([
@@ -185,7 +185,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function payment_has_external_id_after_creation()
+    public function it_payment_has_external_id_after_creation()
     {
         /** Arrange */
         // Payment factory provides external_id via faker
@@ -205,7 +205,7 @@ class PaymentModelTest extends AbstractTestCase
     # region failure_path
 
     #[Test]
-    public function payment_does_not_depend_on_dingo_api()
+    public function it_payment_does_not_depend_on_dingo_api()
     {
         /** Arrange */
         // No specific arrangement needed

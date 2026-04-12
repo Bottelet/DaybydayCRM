@@ -49,7 +49,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function set_next_invoice_number_takes_biggest_invoice_number_and_add_one()
+    public function it_sets_next_invoice_number_takes_biggest_invoice_number_and_add_one()
     {
         /** Arrange */
         // Service initialized with one invoice in database
@@ -64,7 +64,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function next_invoice_number_takes_biggest_invoice_number_and_does_not_add_one()
+    public function it_next_invoice_number_takes_biggest_invoice_number_and_does_not_add_one()
     {
         /** Arrange */
         // Service initialized with one invoice in database
@@ -79,7 +79,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function manually_set_next_invoice_number()
+    public function it_manually_set_next_invoice_number()
     {
         /** Arrange */
         $customNumber = 20000;
@@ -97,7 +97,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function set_next_invoice_number_with_multiple_existing_invoices()
+    public function it_sets_next_invoice_number_with_multiple_existing_invoices()
     {
         /** Arrange */
         Invoice::factory()->create(['invoice_number' => 10005]);
@@ -112,7 +112,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function set_invoice_number_to_zero()
+    public function it_sets_invoice_number_to_zero()
     {
         /** Arrange */
         $zeroNumber = 0;
@@ -126,7 +126,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function set_next_invoice_number_increments_from_manually_set_number()
+    public function it_sets_next_invoice_number_increments_from_manually_set_number()
     {
         /** Arrange */
         $this->invoiceNumberService->setInvoiceNumber(15000);

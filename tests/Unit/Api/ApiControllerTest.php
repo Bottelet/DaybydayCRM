@@ -24,7 +24,7 @@ class ApiControllerTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function respond_returns_json_response_with_data()
+    public function it_respond_returns_json_response_with_data()
     {
         /** Arrange */
         $data = ['key' => 'value'];
@@ -39,7 +39,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_returns_json_response_with_custom_status_code()
+    public function it_respond_returns_json_response_with_custom_status_code()
     {
         /** Arrange */
         $data = ['test' => true];
@@ -54,7 +54,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_returns_json_response_with_custom_headers()
+    public function it_respond_returns_json_response_with_custom_headers()
     {
         /** Arrange */
         $headers = ['X-Custom-Header' => 'custom-value'];
@@ -67,7 +67,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_success_returns_status200_with_null_data()
+    public function it_respond_success_returns_status200_with_null_data()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -82,7 +82,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_created_returns_status201_with_data()
+    public function it_respond_created_returns_status201_with_data()
     {
         /** Arrange */
         $data = ['id' => 42, 'name' => 'Test'];
@@ -97,7 +97,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_no_content_returns_status204()
+    public function it_respond_no_content_returns_status204()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -111,7 +111,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_error_returns_correct_structure()
+    public function it_respond_error_returns_correct_structure()
     {
         /** Arrange */
         $message = 'Something went wrong';
@@ -131,7 +131,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_unauthorized_returns_status401()
+    public function it_respond_unauthorized_returns_status401()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -148,7 +148,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_unauthorized_accepts_custom_message()
+    public function it_respond_unauthorized_accepts_custom_message()
     {
         /** Arrange */
         $customMessage = 'Custom unauthorized message';
@@ -163,7 +163,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_forbidden_returns_status403()
+    public function it_respond_forbidden_returns_status403()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -180,7 +180,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_forbidden_accepts_custom_message()
+    public function it_respond_forbidden_accepts_custom_message()
     {
         /** Arrange */
         $customMessage = 'Access denied to this resource';
@@ -195,7 +195,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_not_found_returns_status404()
+    public function it_respond_not_found_returns_status404()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -212,7 +212,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_not_found_accepts_custom_message()
+    public function it_respond_not_found_accepts_custom_message()
     {
         /** Arrange */
         $customMessage = 'Resource not found';
@@ -227,7 +227,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function controller_extends_illuminate_routing_controller()
+    public function it_controller_extends_illuminate_routing_controller()
     {
         /** Arrange */
         // Already arranged in setUp()
@@ -244,7 +244,7 @@ class ApiControllerTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function respond_error_includes_status_code_in_error_body()
+    public function it_respond_error_includes_status_code_in_error_body()
     {
         /** Arrange */
         $message = 'Not found';
@@ -259,7 +259,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function controller_does_not_depend_on_dingo_api()
+    public function it_controller_does_not_depend_on_dingo_api()
     {
         /** Arrange */
         // No specific arrangement needed
@@ -272,7 +272,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_with_empty_array_returns_empty_json_object()
+    public function it_respond_with_empty_array_returns_empty_json_object()
     {
         /** Arrange */
         $emptyData = [];
@@ -287,7 +287,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_with_nested_data_preserves_structure()
+    public function it_respond_with_nested_data_preserves_structure()
     {
         /** Arrange */
         $data = ['user' => ['id' => 1, 'name' => 'Alice'], 'roles' => ['admin', 'editor']];
@@ -300,7 +300,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function respond_error_message_and_status_code_are_both_in_body()
+    public function it_respond_error_message_and_status_code_are_both_in_body()
     {
         /** Arrange */
         $message = 'Bad Request';

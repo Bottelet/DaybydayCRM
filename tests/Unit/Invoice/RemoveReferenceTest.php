@@ -39,7 +39,7 @@ class RemoveReferenceTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function remove_reference_clears_integration_fields()
+    public function it_removes_reference_clears_integration_fields()
     {
         /** Arrange */
         // Invoice created with integration reference in setUp()
@@ -59,7 +59,7 @@ class RemoveReferenceTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function remove_reference_on_invoice_with_project_reference()
+    public function it_removes_reference_on_invoice_with_project_reference()
     {
         /** Arrange */
         $project = Project::factory()->create();
@@ -78,7 +78,7 @@ class RemoveReferenceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function remove_reference_on_invoice_without_reference()
+    public function it_removes_reference_on_invoice_without_reference()
     {
         /** Arrange */
         $invoice = Invoice::factory()->create([
@@ -96,7 +96,7 @@ class RemoveReferenceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function remove_reference_persists_to_database()
+    public function it_removes_reference_persists_to_database()
     {
         /** Arrange */
         $invoiceId = $this->invoice->id;

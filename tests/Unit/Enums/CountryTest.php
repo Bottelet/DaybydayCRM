@@ -29,7 +29,7 @@ class CountryTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function from_code_returns_correct_country_instance()
+    public function it_from_code_returns_correct_country_instance()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -43,7 +43,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_correct_display_value()
+    public function it_from_code_returns_correct_display_value()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -56,7 +56,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_correct_currency_code()
+    public function it_from_code_returns_correct_currency_code()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -69,7 +69,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_correct_language()
+    public function it_from_code_returns_correct_language()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -82,7 +82,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_correct_phone_code()
+    public function it_from_code_returns_correct_phone_code()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -95,7 +95,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_format_array()
+    public function it_from_code_returns_format_array()
     {
         /** Arrange */
         $countryCode = 'DK';
@@ -112,7 +112,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_germany_correctly()
+    public function it_from_code_returns_germany_correctly()
     {
         /** Arrange */
         $countryCode = 'DE';
@@ -127,7 +127,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_united_kingdom_correctly()
+    public function it_from_code_returns_united_kingdom_correctly()
     {
         /** Arrange */
         $countryCode = 'GB';
@@ -141,7 +141,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_sweden_correctly()
+    public function it_from_code_returns_sweden_correctly()
     {
         /** Arrange */
         $countryCode = 'SE';
@@ -156,7 +156,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function us_country_has_different_date_format()
+    public function it_us_country_has_different_date_format()
     {
         /** Arrange */
         $countryCode = 'US';
@@ -171,7 +171,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_us_with_different_carbon_date_format()
+    public function it_from_code_returns_us_with_different_carbon_date_format()
     {
         /** Arrange */
         $countryCode = 'US';
@@ -186,7 +186,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function values_returns_all_ten_countries()
+    public function it_values_returns_all_ten_countries()
     {
         /** Arrange */
         // No arrangement needed
@@ -199,7 +199,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function values_contains_expected_country_codes()
+    public function it_values_contains_expected_country_codes()
     {
         /** Arrange */
         // No arrangement needed
@@ -221,7 +221,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function country_constructor_sets_all_properties()
+    public function it_country_constructor_sets_all_properties()
     {
         /** Arrange */
         $code = 'TEST';
@@ -246,7 +246,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_returns_ot_directly_when_ot_is_requested()
+    public function it_from_code_returns_ot_directly_when_ot_is_requested()
     {
         /** Arrange */
         $countryCode = 'OT';
@@ -265,7 +265,7 @@ class CountryTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function from_code_returns_fallback_to_other_for_unknown_code()
+    public function it_from_code_returns_fallback_to_other_for_unknown_code()
     {
         /** Arrange */
         $unknownCode = 'XX';
@@ -280,7 +280,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function other_country_fallback_is_returned_for_empty_string()
+    public function it_other_country_fallback_is_returned_for_empty_string()
     {
         /** Arrange */
         $emptyCode = '';
@@ -293,7 +293,7 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function from_code_fallback_ot_has_expected_properties()
+    public function it_from_code_fallback_ot_has_expected_properties()
     {
         /** Arrange */
         $unknownCode = 'ZZ';

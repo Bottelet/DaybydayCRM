@@ -86,7 +86,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_task_as_creator()
+    public function it_user_can_view_document_attached_to_their_task_as_creator()
     {
         // Use $this->owner instead of creating a new user
         $task = Task::factory()->create([
@@ -111,7 +111,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_task_as_assignee()
+    public function it_user_can_view_document_attached_to_their_task_as_assignee()
     {
         // Grant document view permission to the owner user
         $role = $this->owner->roles()->first() ?? \App\Models\Role::firstOrCreate(['name' => 'owner']);
@@ -148,7 +148,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_task_via_client_ownership()
+    public function it_user_can_view_document_attached_to_task_via_client_ownership()
     {
         // Create a task on owner's client but created/assigned to others
         $task = Task::factory()->create([
@@ -176,7 +176,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_cannot_view_document_attached_to_another_users_task()
+    public function it_user_cannot_view_document_attached_to_another_users_task()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
@@ -208,7 +208,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_project_as_creator()
+    public function it_user_can_view_document_attached_to_their_project_as_creator()
     {
         $project = Project::factory()->create([
             'user_created_id' => $this->owner->id,
@@ -229,7 +229,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_project_as_assignee()
+    public function it_user_can_view_document_attached_to_their_project_as_assignee()
     {
         $project = Project::factory()->create([
             'user_created_id' => $this->otherUser->id,
@@ -250,7 +250,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_cannot_view_document_attached_to_another_users_project()
+    public function it_user_cannot_view_document_attached_to_another_users_project()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
@@ -274,7 +274,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_lead_as_creator()
+    public function it_user_can_view_document_attached_to_their_lead_as_creator()
     {
         $lead = Lead::factory()->create([
             'user_created_id' => $this->owner->id,
@@ -295,7 +295,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_lead_as_assignee()
+    public function it_user_can_view_document_attached_to_their_lead_as_assignee()
     {
         $lead = Lead::factory()->create([
             'user_created_id' => $this->otherUser->id,
@@ -316,7 +316,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_cannot_view_document_attached_to_another_users_lead()
+    public function it_user_cannot_view_document_attached_to_another_users_lead()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
@@ -340,7 +340,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_view_document_attached_to_their_client()
+    public function it_user_can_view_document_attached_to_their_client()
     {
         $document = Document::factory()->create([
             'source_type' => Client::class,
@@ -354,7 +354,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_cannot_view_document_attached_to_another_users_client()
+    public function it_user_cannot_view_document_attached_to_another_users_client()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
@@ -371,7 +371,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_can_download_document_attached_to_their_task()
+    public function it_user_can_download_document_attached_to_their_task()
     {
         $task = Task::factory()->create([
             'user_created_id' => $this->owner->id,
@@ -391,7 +391,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function user_cannot_download_document_attached_to_another_users_task()
+    public function it_user_cannot_download_document_attached_to_another_users_task()
     {
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
 
@@ -414,7 +414,7 @@ class DocumentsControllerAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function returns_404_when_document_not_found()
+    public function it_returns_404_when_document_not_found()
     {
         $fakeUuid = Str::uuid();
 

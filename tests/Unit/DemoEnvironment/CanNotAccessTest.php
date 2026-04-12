@@ -29,7 +29,7 @@ class CanNotAccessTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function update_settings()
+    public function it_updates_settings()
     {
         /** Arrange */
         // Demo environment configured in setUp()
@@ -43,7 +43,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function access_integrations_page()
+    public function it_access_integrations_page()
     {
         /** Arrange */
         // Demo environment configured in setUp()
@@ -57,7 +57,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function connect_integrations_integration()
+    public function it_connect_integrations_integration()
     {
         /** Arrange */
         // Demo environment configured in setUp()
@@ -71,7 +71,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_role()
+    public function it_deletes_role()
     {
         /** Arrange */
         $role = Role::factory()->create();
@@ -85,7 +85,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_client()
+    public function it_deletes_client()
     {
         /** Arrange */
         $user = User::factory()->create();
@@ -106,7 +106,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_user()
+    public function it_deletes_user()
     {
         /** Arrange */
         $authUser = User::factory()->create();
@@ -127,7 +127,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_user()
+    public function it_updates_user()
     {
         /** Arrange */
         $authUser = User::factory()->create();
@@ -148,7 +148,7 @@ class CanNotAccessTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_department()
+    public function it_deletes_department()
     {
         /** Arrange */
         $department = Department::factory()->create();

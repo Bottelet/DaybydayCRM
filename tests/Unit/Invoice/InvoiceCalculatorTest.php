@@ -84,7 +84,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function get_amount_due_with_no_payments()
+    public function it_gets_amount_due_with_no_payments()
     {
         /** Arrange */
         $this->payment->forceDelete();
@@ -98,7 +98,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_amount_due_with_multiple_payments()
+    public function it_gets_amount_due_with_multiple_payments()
     {
         /** Arrange */
         Payment::factory()->create([
@@ -117,7 +117,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_amount_due_when_fully_paid()
+    public function it_gets_amount_due_when_fully_paid()
     {
         /** Arrange */
         $this->payment->amount = 5000;
@@ -132,7 +132,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
     }
 
     #[Test]
-    public function get_amount_due_with_zero_price_invoice()
+    public function it_gets_amount_due_with_zero_price_invoice()
     {
         /** Arrange */
         $this->payment->forceDelete();

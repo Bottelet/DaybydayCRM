@@ -46,7 +46,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function authorized_user_can_delete_task()
+    public function it_authorized_user_can_delete_task()
     {
         // Give user permission to delete tasks
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
@@ -62,7 +62,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function unauthorized_user_cannot_delete_task()
+    public function it_unauthorized_user_cannot_delete_task()
     {
         $this->actingAs($this->unauthorizedUser);
 
@@ -73,7 +73,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_only_accepts_status_id_field()
+    public function it_updates_status_only_accepts_status_id_field()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
@@ -102,7 +102,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_with_invalid_status_external_id_returns_error()
+    public function it_updates_status_with_invalid_status_external_id_returns_error()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
@@ -118,7 +118,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_via_ajax_with_valid_external_id()
+    public function it_updates_status_via_ajax_with_valid_external_id()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
@@ -136,7 +136,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_rejects_invalid_status_type()
+    public function it_updates_status_rejects_invalid_status_type()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
@@ -162,7 +162,7 @@ class TaskSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function update_status_rejects_nonexistent_status_id()
+    public function it_updates_status_rejects_nonexistent_status_id()
     {
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);

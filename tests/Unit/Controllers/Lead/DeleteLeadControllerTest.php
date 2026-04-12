@@ -40,7 +40,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_lead()
+    public function it_deletes_lead()
     {
         $lead = Lead::factory()->create();
 
@@ -51,7 +51,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function delete_offers_if_flag_given()
+    public function it_deletes_offers_if_flag_given()
     {
         $lead = Lead::factory()->create();
         $offer = Offer::create([
@@ -71,7 +71,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function do_not_delete_offers_if_flag_is_not_given_but_remove_reference()
+    public function it_does_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
         $lead = Lead::factory()->create();
         $offer = Offer::create([
@@ -93,7 +93,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
+    public function it_can_delete_lead_if_flag_is_given_and_offers_does_not_exists()
     {
         $lead = Lead::factory()->create();
         $lead->offers()->forceDelete();

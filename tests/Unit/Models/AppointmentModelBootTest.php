@@ -35,7 +35,7 @@ class AppointmentModelBootTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function appointment_stores_explicit_external_id_when_provided()
+    public function it_appointment_stores_explicit_external_id_when_provided()
     {
         /** Arrange */
         $externalId = Uuid::uuid4()->toString();
@@ -63,7 +63,7 @@ class AppointmentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function appointment_generates_unique_external_ids_for_each_record()
+    public function it_appointment_generates_unique_external_ids_for_each_record()
     {
         /** Arrange */
         $appointment1 = Appointment::create([
@@ -94,7 +94,7 @@ class AppointmentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
-    public function appointment_factory_creates_record_with_external_id()
+    public function it_appointment_factory_creates_record_with_external_id()
     {
         /** Arrange */
         // User already created in setUp()
@@ -120,7 +120,7 @@ class AppointmentModelBootTest extends AbstractTestCase
     # region edge_cases
 
     #[Test]
-    public function appointment_preserves_provided_external_id()
+    public function it_appointment_preserves_provided_external_id()
     {
         /** Arrange */
         $customExternalId = 'custom-appointment-uuid-6789';

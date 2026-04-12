@@ -30,7 +30,7 @@ class UserTest extends AbstractTestCase
     # region happy_path
 
     #[Test]
-    public function user_has_many_appointments()
+    public function it_user_has_many_appointments()
     {
         /** Arrange */
         $user = User::factory()->create();
