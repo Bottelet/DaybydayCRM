@@ -26,7 +26,19 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
 
         // Ensure Setting exists with VAT = 0 for consistent test behavior
-        \App\Models\Setting::query()->update(['vat' => 0]);
+        \App\Models\Setting::updateOrCreate(
+            ['id' => 1],
+            [
+                'client_number' => 10000,
+                'invoice_number' => 10000,
+                'country' => 'US',
+                'company' => 'Test Company',
+                'max_users' => 10,
+                'vat' => 0,
+                'currency' => 'USD',
+                'language' => 'en',
+            ]
+        );
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([

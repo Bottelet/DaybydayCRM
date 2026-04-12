@@ -74,6 +74,10 @@ class OffersController extends Controller
             $offer->invoiceLines()->save($invoiceLine);
         }
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'OK'], 200);
+        }
+
         return response('OK');
 
     }
