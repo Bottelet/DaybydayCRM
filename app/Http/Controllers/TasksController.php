@@ -293,6 +293,7 @@ class TasksController extends Controller
                     return response()->json(['error' => 'Invalid status external id'], 400);
                 }
                 session()->flash('flash_message_warning', __('Invalid status external id'));
+
                 return redirect()->back();
             }
             $input['status_id'] = $status->id;
@@ -302,6 +303,7 @@ class TasksController extends Controller
                 return response()->json(['error' => 'Invalid status id'], 400);
             }
             session()->flash('flash_message_warning', __('Invalid status id'));
+
             return redirect()->back();
         }
         // Validate that the status_id belongs to task statuses
@@ -311,6 +313,7 @@ class TasksController extends Controller
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Invalid status for task'], 400);
             }
+
             return redirect()->back();
         }
         $task = $this->findByExternalId($external_id);

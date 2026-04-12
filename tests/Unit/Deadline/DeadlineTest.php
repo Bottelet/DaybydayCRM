@@ -61,10 +61,10 @@ class DeadlineTest extends AbstractTestCase
     {
         $this->task->deadline = Carbon::now()->subDay();
         $this->task->save();
-        
+
         $this->lead->deadline = Carbon::now()->subDay();
         $this->lead->save();
-        
+
         $this->project->deadline = Carbon::now()->subDay();
         $this->project->save();
 

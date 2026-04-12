@@ -29,11 +29,11 @@ class InvoiceCalculatorTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Ensure Setting exists with VAT = 0 for consistent test behavior
         // Update existing setting from seeder instead of creating a new one
         \App\Models\Setting::query()->update(['vat' => 0]);
-        
+
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
         ]);

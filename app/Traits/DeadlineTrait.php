@@ -9,7 +9,7 @@ trait DeadlineTrait
     public function isOverDeadline(): bool
     {
         // If there's no deadline, it's not overdue
-        if (!$this->deadline) {
+        if (! $this->deadline) {
             return false;
         }
 

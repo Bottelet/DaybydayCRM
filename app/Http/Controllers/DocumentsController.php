@@ -44,7 +44,7 @@ class DocumentsController extends Controller
             if (request()->expectsJson()) {
                 abort(403, __('You do not have permission to view this document'));
             }
-            
+
             session()->flash('flash_message_warning', __('You do not have permission to view this document'));
 
             return redirect()->back();
@@ -84,7 +84,7 @@ class DocumentsController extends Controller
             if (request()->expectsJson()) {
                 abort(403, __('You do not have permission to download this document'));
             }
-            
+
             session()->flash('flash_message_warning', __('You do not have permission to download this document'));
 
             return redirect()->back();

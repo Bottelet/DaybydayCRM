@@ -37,6 +37,7 @@ class LeadsController extends Controller
                     abort(403);
                 }
                 session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
+
                 return redirect()->back();
             }
 
@@ -219,27 +220,28 @@ class LeadsController extends Controller
     public function updateDeadline(Request $request, $external_id)
     {
         $lead = $this->findByExternalId($external_id);
-        
+
         $deadlineTime = $request->deadline_time ?: '00:00';
         $deadlineDate = $request->deadline_date;
-        
+
         // Combine date and time
         $deadline = $deadlineDate.' '.$deadlineTime.':00';
-        
+
         // Always store as Y-m-d H:i:s string
         $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
         $lead->save();
-        
+
         event(new LeadAction($lead, self::UPDATED_DEADLINE));
-        
+
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
                 'message' => __('Deadline successfully updated'),
             ]);
         }
-        
+
         session()->flash('flash_message', __('Deadline successfully updated'));
+
         return redirect()->back();
     }
 

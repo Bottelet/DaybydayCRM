@@ -30,6 +30,7 @@ class Local implements FilesystemIntegration
         if (config('app.env') === 'testing' || config('app.env') === 'local') {
             return 'fake file content';
         }
+
         // TODO: Implement actual view() method for production
         return null;
     }
@@ -40,6 +41,7 @@ class Local implements FilesystemIntegration
         if (config('app.env') === 'testing' || config('app.env') === 'local') {
             return 'fake file content';
         }
+
         // TODO: Implement actual download() method for production
         return null;
     }

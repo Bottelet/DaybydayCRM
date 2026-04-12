@@ -44,7 +44,7 @@ class ProjectsController extends Controller
                 if ($request->expectsJson()) {
                     abort(403, __('You do not have permission to assign users to this project'));
                 }
-                
+
                 session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
 
                 return redirect()->back();
@@ -310,7 +310,7 @@ class ProjectsController extends Controller
             if ($request->expectsJson()) {
                 abort(403, __('You do not have permission to assign users to this project'));
             }
-            
+
             session()->flash('flash_message_warning', __('You do not have permission to assign users to this project'));
 
             return redirect()->route('projects.show', $external_id);
