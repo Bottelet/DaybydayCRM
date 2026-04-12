@@ -60,8 +60,13 @@ class DeadlineTest extends AbstractTestCase
     public function over_deadline()
     {
         $this->task->deadline = Carbon::now()->subDay();
+        $this->task->save();
+        
         $this->lead->deadline = Carbon::now()->subDay();
+        $this->lead->save();
+        
         $this->project->deadline = Carbon::now()->subDay();
+        $this->project->save();
 
         $this->assertTrue($this->lead->isOverDeadline());
         $this->assertTrue($this->task->isOverDeadline());

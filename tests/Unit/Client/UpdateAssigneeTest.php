@@ -48,7 +48,7 @@ class UpdateAssigneeTest extends AbstractTestCase
         Event::fake([ClientAction::class]);
 
         $user = User::factory()->create();
-        $this->setUser($user);
+        $this->actingAs($user);
 
         $this->client->updateAssignee($this->user);
         $this->assertEquals($this->client->user_id, $this->user->id);
