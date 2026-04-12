@@ -29,7 +29,7 @@ class ClientsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region crud
+    // region crud
 
     #[Test]
     public function it_can_create_client()
@@ -177,9 +177,9 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertEquals($client->refresh()->user_id, $targetUser->id);
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_can_update_client_without_primary_contact()
@@ -224,9 +224,9 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertNull($updatedClient->primaryContact);
     }
 
-    # endregion
+    // endregion
 
-    # region failure_path
+    // region failure_path
 
     #[Test]
     public function it_cant_update_assignee_without_permission()
@@ -248,5 +248,5 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertNotEquals($client->refresh()->user_id, $this->user->id);
     }
 
-    # endregion
+    // endregion
 }

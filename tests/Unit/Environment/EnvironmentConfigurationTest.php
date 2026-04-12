@@ -20,7 +20,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    # region happy_path
+    // region happy_path
 
     /**
      * Verify the test environment is configured correctly.
@@ -145,9 +145,9 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         $this->assertTrue($debugEnabled, 'APP_DEBUG should be true in testing environment');
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     /**
      * The old CACHE_DRIVER env var must NOT be used.
@@ -166,5 +166,5 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         $this->assertNull($cacheDriver, 'CACHE_DRIVER should not be set; use CACHE_STORE instead');
     }
 
-    # endregion
+    // endregion
 }

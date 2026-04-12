@@ -32,7 +32,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_can_update_draft_invoice()
@@ -47,9 +47,9 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         $this->assertTrue($result);
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_cant_update_invoice_if_its_sent()
@@ -93,5 +93,5 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         $this->assertTrue($result);
     }
 
-    # endregion
+    // endregion
 }

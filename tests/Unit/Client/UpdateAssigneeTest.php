@@ -41,7 +41,7 @@ class UpdateAssigneeTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_can_update_assignee()
@@ -92,9 +92,9 @@ class UpdateAssigneeTest extends AbstractTestCase
         Event::assertDispatched(ClientAction::class, 2);
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_updates_assignee_to_same_user_triggers_event()
@@ -147,5 +147,5 @@ class UpdateAssigneeTest extends AbstractTestCase
         Event::assertDispatched(ClientAction::class, 2);
     }
 
-    # endregion
+    // endregion
 }

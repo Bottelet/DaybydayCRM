@@ -46,7 +46,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_sets_next_invoice_number_takes_biggest_invoice_number_and_add_one()
@@ -92,9 +92,9 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         $this->assertEquals(20000, $result);
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_sets_next_invoice_number_with_multiple_existing_invoices()
@@ -140,5 +140,5 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         $this->assertEquals(15001, $secondNumber);
     }
 
-    # endregion
+    // endregion
 }

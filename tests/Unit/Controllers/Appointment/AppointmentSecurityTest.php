@@ -54,7 +54,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_authorized_user_can_update_appointment()
@@ -99,9 +99,9 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->assertSoftDeleted('appointments', ['id' => $this->appointment->id]);
     }
 
-    # endregion
+    // endregion
 
-    # region failure_path
+    // region failure_path
 
     #[Test]
     public function it_unauthorized_user_cannot_update_appointment()
@@ -156,5 +156,5 @@ class AppointmentSecurityTest extends AbstractTestCase
         $response->assertStatus(403);
     }
 
-    # endregion
+    // endregion
 }

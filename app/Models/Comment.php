@@ -19,7 +19,7 @@ class Comment extends Model
 
     protected $hidden = ['remember_token'];
 
-    # region Relationships
+    // region Relationships
 
     public function commentable()
     {
@@ -36,7 +36,7 @@ class Comment extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    # endregion
+    // endregion
 
     public function mentionedUsers()
     {

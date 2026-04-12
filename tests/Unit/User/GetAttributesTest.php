@@ -22,7 +22,7 @@ class GetAttributesTest extends AbstractTestCase
         parent::setUp();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -99,5 +99,5 @@ class GetAttributesTest extends AbstractTestCase
         $this->assertEquals('/storage/tiger.jpg', $avatar);
     }
 
-    # endregion
+    // endregion
 }

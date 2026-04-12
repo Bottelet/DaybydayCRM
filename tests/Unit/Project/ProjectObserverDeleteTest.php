@@ -47,7 +47,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_deletes_projects_soft_deletes()
@@ -143,9 +143,9 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         $this->assertNotNull($invoice->refresh());
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_deletes_project_with_no_relations()
@@ -211,5 +211,5 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         $this->assertSoftDeleted($this->project);
     }
 
-    # endregion
+    // endregion
 }

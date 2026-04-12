@@ -20,7 +20,7 @@ class TypeOfStatusTest extends AbstractTestCase
         parent::setUp();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -51,5 +51,5 @@ class TypeOfStatusTest extends AbstractTestCase
         $this->assertNotNull($projectStatuses);
     }
 
-    # endregion
+    // endregion
 }

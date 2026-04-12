@@ -66,7 +66,7 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id';
 
-    # region Relationships
+    // region Relationships
 
     public function absences()
     {
@@ -113,7 +113,7 @@ class User extends Authenticatable
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
     }
 
-    # endregion
+    // endregion
 
     /*public function tokens()
     {

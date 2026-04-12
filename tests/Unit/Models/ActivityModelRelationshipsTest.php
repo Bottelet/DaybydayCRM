@@ -47,7 +47,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
+    // region happy_path
 
     #[Test]
     public function it_activity_causer_relationship_returns_morph_to_instance()
@@ -171,9 +171,9 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    # endregion
+    // endregion
 
-    # region edge_cases
+    // region edge_cases
 
     #[Test]
     public function it_activity_all_relationship_methods_exist()
@@ -251,5 +251,5 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         $this->assertNull($causer);
     }
 
-    # endregion
+    // endregion
 }

@@ -22,12 +22,12 @@ class Setting extends Model
         'end_time',
     ];
 
-    # region Relationships
+    // region Relationships
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    # endregion
+    // endregion
 }
