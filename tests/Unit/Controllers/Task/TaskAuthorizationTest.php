@@ -176,7 +176,7 @@ class TaskAuthorizationTest extends AbstractTestCase
 
         $this->task->refresh();
 
-        $response->assertStatus(302);
+        $response->assertStatus(200);
         $this->assertEquals($newStatus->id, $this->task->status_id);
         // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->task->title);

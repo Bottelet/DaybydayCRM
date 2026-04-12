@@ -8,12 +8,12 @@ trait DeadlineTrait
 {
     public function isOverDeadline(): bool
     {
-        if ($this->isClosed()) {
+        // If there's no deadline, it's not overdue
+        if (!$this->deadline) {
             return false;
         }
 
-        // If there's no deadline, it's not overdue
-        if (!$this->deadline) {
+        if ($this->isClosed()) {
             return false;
         }
 
