@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Comment\StoreCommentRequest;
 use Illuminate\Support\Facades\Session;
 use Exception;
 
@@ -14,28 +14,24 @@ class CommentController extends Controller
      * @param  $id
      * @return mixed
      */
-    public function store(Request $request)
+    public function store(StoreCommentRequest $request)
     {
-        $this->validate($request, [
-            'description' => 'required',
-        ]);
-
         $modelsMapping = [
             'task' => 'App\Models\Task',
             'lead' => 'App\Models\Lead',
             'project' => 'App\Models\Project',
         ];
 
-        if (! array_key_exists($request->type, $modelsMapping)) {
+        if (! array_key_exists($request->validated('type'), $modelsMapping)) {
             \Illuminate\Support\Facades\Session::flash('flash_message_warning', __('Could not create comment, type not found! Please contact Daybyday support'));
-            throw new Exception('Could not create comment with type '.$request->type);
+            throw new Exception('Could not create comment with type '.$request->validated('type'));
         }
 
-        $model = $modelsMapping[$request->type];
-        $source = $model::whereExternalId($request->external_id)->first();
+        $model = $modelsMapping[$request->validated('type')];
+        $source = $model::whereExternalId($request->validated('external_id'))->first();
         $source->comments()->create(
             [
-                'description' => clean($request->description),
+                'description' => clean($request->validated('description')),
                 'user_id' => auth()->user()->id,
             ]
         );
