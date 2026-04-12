@@ -36,8 +36,21 @@ class InvoiceCalculatorTest extends AbstractTestCase
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         // Ensure Setting exists with VAT = 0 for consistent test behavior
-        // Update existing setting from seeder instead of creating a new one
-        \App\Models\Setting::query()->update(['vat' => 0]);
+        // Use firstOrCreate to ensure a setting exists, then update it
+        $setting = \App\Models\Setting::firstOrCreate(
+            ['id' => 1],
+            [
+                'client_number' => 10000,
+                'invoice_number' => 10000,
+                'company' => 'test company',
+                'max_users' => 10,
+                'currency' => 'USD',
+                'language' => 'en',
+                'country' => 'GB',
+            ]
+        );
+        $setting->vat = 0;
+        $setting->save();
 
         $this->invoice = Invoice::factory()->create([
             'sent_at' => Carbon::now(),
