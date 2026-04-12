@@ -22,13 +22,17 @@ class Setting extends Model
         'end_time',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    //region Relationships
 
     public function tasks()
     {
         return $this->belongsTo(Task::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    //endregion
 }

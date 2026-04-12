@@ -21,16 +21,17 @@ class Document extends Model
         // HasExternalId trait handles external_id generation
     }
 
+    //region Relationships
+
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    /**
-     * Get the owning source model (polymorphic relationship).
-     */
     public function source()
     {
         return $this->morphTo();
     }
+
+    //endregion
 }

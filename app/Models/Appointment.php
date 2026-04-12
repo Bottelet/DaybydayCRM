@@ -48,13 +48,17 @@ class Appointment extends Model
         return $date->format('Y-m-d\TH:i:s.000000\Z');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    //region Relationships
 
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    //endregion
 }

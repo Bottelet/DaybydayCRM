@@ -59,14 +59,16 @@ class Task extends Model implements Commentable
         return $this->title;
     }
 
-    public function user()
+    //region Relationships
+
+    public function activity()
     {
-        return $this->belongsTo(User::class, 'user_assigned_id');
+        return $this->morphMany(Activity::class, 'source');
     }
 
-    public function invoice()
+    public function appointments()
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function client()
@@ -74,15 +76,42 @@ class Task extends Model implements Commentable
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'source');
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'user_created_id');
     }
 
-    public function comments(): MorphMany
+    public function documents()
     {
-        return $this->morphMany(Comment::class, 'source');
+        return $this->morphMany(Document::class, 'source');
     }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_assigned_id');
+    }
+
+    //endregion
 
     public function getCreateCommentEndpoint(): string
     {
@@ -94,21 +123,6 @@ class Task extends Model implements Commentable
         return route('tasks.show', [$this->external_id]);
     }
 
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
-
-    public function appointments()
-    {
-        return $this->morphMany(Appointment::class, 'source');
-    }
-
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
-    }
-
     public function getAssignedUserAttribute()
     {
         return User::findOrFail($this->user_assigned_id);
@@ -117,16 +131,6 @@ class Task extends Model implements Commentable
     public function getCreatorUserAttribute()
     {
         return User::findOrFail($this->user_assigned_id);
-    }
-
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'source');
-    }
-
-    public function documents()
-    {
-        return $this->morphMany(Document::class, 'source');
     }
 
     public function canUpdateInvoice()

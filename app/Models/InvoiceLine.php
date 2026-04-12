@@ -41,15 +41,19 @@ class InvoiceLine extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    public function tasks()
-    {
-        return $this->belongsTo(Task::class);
-    }
+    //region Relationships
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
     }
+
+    public function tasks()
+    {
+        return $this->belongsTo(Task::class);
+    }
+
+    //endregion
 
     public function task()
     {

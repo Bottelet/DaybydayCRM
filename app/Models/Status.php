@@ -10,10 +10,7 @@ class Status extends Model
 {
     use HasFactory;
 
-    public function tasks()
-    {
-        return $this->hasMany(Task::class);
-    }
+    //region Relationships
 
     public function leads()
     {
@@ -24,6 +21,13 @@ class Status extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    //endregion
 
     public function scopeTypeOfTask(Builder $query)
     {
