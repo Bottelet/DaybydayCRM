@@ -91,22 +91,10 @@ parameters:
 			path: app/Http/Controllers/PaymentsController.php
 
 		-
-			message: '#^Call to static method flash\(\) on an unknown class App\\Http\\Controllers\\Session\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Http/Controllers/ProjectsController.php
-
-		-
 			message: '#^Class Yajra\\DataTables\\DataTables referenced with incorrect case\: Yajra\\Datatables\\Datatables\.$#'
 			identifier: class.nameCase
 			count: 2
 			path: app/Http/Controllers/RolesController.php
-
-		-
-			message: '#^Call to static method flash\(\) on an unknown class App\\Http\\Controllers\\Session\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Http/Controllers/TasksController.php
 
 		-
 			message: '#^Call to static method readAll\(\) on an unknown class App\\Http\\Controllers\\Notifynder\.$#'

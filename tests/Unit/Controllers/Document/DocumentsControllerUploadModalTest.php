@@ -8,6 +8,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -45,7 +46,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_view_returns_correct_view_for_task()
     {
         $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
@@ -54,7 +55,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewIs('documents._uploadFileModal');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_view_returns_correct_view_for_project()
     {
         $response = $this->get('/add-documents/'.$this->project->external_id.'/project');
@@ -63,7 +64,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewIs('documents._uploadFileModal');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_view_returns_correct_view_for_client()
     {
         $response = $this->get('/add-documents/'.$this->client->external_id.'/client');
@@ -72,7 +73,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewIs('documents._uploadFileModal');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_passes_correct_type_to_view_for_task()
     {
         $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
@@ -81,7 +82,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewHas('type', 'task');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_passes_correct_type_to_view_for_project()
     {
         $response = $this->get('/add-documents/'.$this->project->external_id.'/project');
@@ -90,7 +91,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewHas('type', 'project');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_passes_correct_type_to_view_for_client()
     {
         $response = $this->get('/add-documents/'.$this->client->external_id.'/client');
@@ -99,7 +100,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertViewHas('type', 'client');
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_correct_route_map_for_task()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
@@ -112,7 +113,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee("'task': 'tasks'", false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_correct_route_map_for_project()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
@@ -125,7 +126,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee("'project': 'projects'", false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_correct_route_map_for_client()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
@@ -138,7 +139,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee("'client': 'clients'", false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_base_url_in_subdirectory()
     {
         config(['app.url' => 'http://localhost/daybydaycrm/public']);
@@ -151,7 +152,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee('http://localhost/daybydaycrm/public', false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_base_url_at_root()
     {
         config(['app.url' => 'http://localhost']);
@@ -164,7 +165,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee('http://localhost', false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_contains_fail_fast_error_handling()
     {
         $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
@@ -177,7 +178,7 @@ class DocumentsControllerUploadModalTest extends TestCase
         $response->assertSee('return;', false);
     }
 
-    /** @test */
+    #[Test]
     public function upload_modal_has_no_fallback_for_invalid_types()
     {
         $response = $this->get('/add-documents/'.$this->task->external_id.'/task');
