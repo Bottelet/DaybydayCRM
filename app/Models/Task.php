@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
@@ -22,6 +23,9 @@ class Task extends Model implements Commentable
     use SearchableTrait;
     use SoftDeletes;
 
+    /**
+     * @deprecated Use TaskStatus::CLOSED->value instead
+     */
     public const TASK_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
@@ -146,7 +150,7 @@ class Task extends Model implements Commentable
     public function isClosed()
     {
         // Check if status relationship exists and compare title
-        return $this->status && $this->status->title == self::TASK_STATUS_CLOSED;
+        return $this->status && TaskStatus::isClosed($this->status->title);
     }
 
     public function getSearchableFields(): array

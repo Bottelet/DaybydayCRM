@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
@@ -19,6 +20,9 @@ class Project extends Model implements Commentable
     use SearchableTrait;
     use SoftDeletes;
 
+    /**
+     * @deprecated Use ProjectStatus::CLOSED->value instead
+     */
     public const PROJECT_STATUS_CLOSED = 'Closed';
 
     protected $searchableFields = ['title'];
@@ -111,7 +115,7 @@ class Project extends Model implements Commentable
     public function isClosed()
     {
         // Check if status relationship exists and compare title
-        return $this->status && $this->status->title == self::PROJECT_STATUS_CLOSED;
+        return $this->status && ProjectStatus::isClosed($this->status->title);
     }
 
     public function getCreateCommentEndpoint(): string
