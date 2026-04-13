@@ -33,6 +33,10 @@ class ClientNumberService
             throw new \InvalidArgumentException('Client number cannot be negative.');
         }
 
+        if ($clientNumber === 0) {
+            throw new \InvalidArgumentException('Client number cannot be zero.');
+        }
+
         $this->lockedSetting->client_number = $clientNumber;
 
         return $this->lockedSetting->save();
