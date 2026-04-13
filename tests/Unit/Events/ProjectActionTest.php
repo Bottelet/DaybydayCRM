@@ -28,19 +28,19 @@ class ProjectActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_constructor_stores_project_and_action()
     {
         /** Arrange */
         $project = Project::factory()->create();
-        $action = 'created';
+        $action  = 'created';
 
         /** Act */
         $event = new ProjectAction($project, $action);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($project->id, $event->getProject()->id);
         $this->assertEquals($action, $event->getAction());
     }
@@ -54,7 +54,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, 'updated');
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Project::class, $event->getProject());
     }
 
@@ -67,7 +67,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, 'deleted');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('deleted', $event->getAction());
     }
 
@@ -78,10 +78,10 @@ class ProjectActionTest extends AbstractTestCase
         $project = Project::factory()->create();
 
         /** Act */
-        $event = new ProjectAction($project, 'created');
+        $event   = new ProjectAction($project, 'created');
         $channel = $event->broadcastOn();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
@@ -94,7 +94,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, 'test');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($project->external_id, $event->getProject()->external_id);
     }
 
@@ -107,7 +107,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(ProjectAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
     }
 
@@ -120,13 +120,13 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(ProjectAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_action_can_be_non_string_value()
@@ -137,7 +137,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, 100);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(100, $event->getAction());
     }
 
@@ -150,7 +150,7 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, null);
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($event->getAction());
     }
 
@@ -163,9 +163,9 @@ class ProjectActionTest extends AbstractTestCase
         /** Act */
         $event = new ProjectAction($project, '');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('', $event->getAction());
     }
 
-    // endregion
+    # endregion
 }

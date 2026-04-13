@@ -8,10 +8,10 @@ use App\Models\Offer;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class OffersControllerTest extends AbstractTestCase
 {
@@ -28,11 +28,11 @@ class OffersControllerTest extends AbstractTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'employee']);
+        $role       = Role::firstOrCreate(['name' => 'employee']);
 
         // Attach both create and edit permissions
         $createPermission = Permission::firstOrCreate(['name' => 'offer-create']);
-        $editPermission = Permission::firstOrCreate(['name' => 'offer-edit']);
+        $editPermission   = Permission::firstOrCreate(['name' => 'offer-edit']);
 
         $role->attachPermission($createPermission);
         $role->attachPermission($editPermission);
@@ -49,7 +49,7 @@ class OffersControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->lead = Lead::factory()->create();
+        $this->lead  = Lead::factory()->create();
         $this->offer = Offer::factory()->create();
     }
 
@@ -59,12 +59,12 @@ class OffersControllerTest extends AbstractTestCase
     {
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             [
-                'title' => 'test line',
-                'price' => 1000,
+                'title'    => 'test line',
+                'price'    => 1000,
                 'quantity' => 2,
-                'type' => 'pieces',
-                'comment' => 'A comment',
-                'product' => '',
+                'type'     => 'pieces',
+                'comment'  => 'A comment',
+                'product'  => '',
             ],
         ]);
 
@@ -75,7 +75,6 @@ class OffersControllerTest extends AbstractTestCase
 
         $this->assertEquals($this->lead->offers->first()->source_id, $this->lead->id);
         $this->assertEquals($this->lead->offers->first()->source_type, Lead::class);
-
     }
 
     #[Test]
@@ -85,28 +84,28 @@ class OffersControllerTest extends AbstractTestCase
         $this->assertCount(0, $this->offer->invoiceLines);
         $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
-                'title' => 'test line',
-                'price' => 1000,
+                'title'    => 'test line',
+                'price'    => 1000,
                 'quantity' => 4,
-                'type' => 'pieces',
-                'comment' => 'A comment',
-                'product' => '',
+                'type'     => 'pieces',
+                'comment'  => 'A comment',
+                'product'  => '',
             ],
             [
-                'title' => 'test line',
-                'price' => 1000,
+                'title'    => 'test line',
+                'price'    => 1000,
                 'quantity' => 4,
-                'type' => 'pieces',
-                'comment' => 'A comment',
-                'product' => '',
+                'type'     => 'pieces',
+                'comment'  => 'A comment',
+                'product'  => '',
             ],
             [
-                'title' => 'test line',
-                'price' => 1000,
+                'title'    => 'test line',
+                'price'    => 1000,
                 'quantity' => 4,
-                'type' => 'pieces',
-                'comment' => 'A comment',
-                'product' => '',
+                'type'     => 'pieces',
+                'comment'  => 'A comment',
+                'product'  => '',
             ],
         ]);
 

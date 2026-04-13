@@ -9,12 +9,12 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class TaskAuthorizationTest extends AbstractTestCase
@@ -38,26 +38,26 @@ class TaskAuthorizationTest extends AbstractTestCase
             ['name' => 'task-delete'],
             [
                 'display_name' => 'Delete task',
-                'description' => 'Permission to delete task',
-                'grouping' => 'task',
+                'description'  => 'Permission to delete task',
+                'grouping'     => 'task',
             ]
         );
 
         // Create role with task-delete permission
         $roleWithPermission = Role::create([
-            'name' => 'task-deleter',
+            'name'         => 'task-deleter',
             'display_name' => 'Task Deleter',
-            'description' => 'Can delete tasks',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can delete tasks',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without task-delete permission
         $roleWithoutPermission = Role::create([
-            'name' => 'task-viewer',
+            'name'         => 'task-viewer',
             'display_name' => 'Task Viewer',
-            'description' => 'Cannot delete tasks',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Cannot delete tasks',
+            'external_id'  => Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -101,15 +101,15 @@ class TaskAuthorizationTest extends AbstractTestCase
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $roleWithPermission = Role::create([
-            'name' => 'project-updater',
+            'name'         => 'project-updater',
             'display_name' => 'Project Updater',
-            'description' => 'Can update task project',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can update task project',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $updateProjectPermission = Permission::firstOrCreate(['name' => 'task-update-linked-project'], [
             'display_name' => 'Update task linked project',
-            'description' => 'Can update task project',
-            'grouping' => 'task',
+            'description'  => 'Can update task project',
+            'grouping'     => 'task',
         ]);
         $roleWithPermission->attachPermission($updateProjectPermission);
 
@@ -144,15 +144,15 @@ class TaskAuthorizationTest extends AbstractTestCase
     public function it_task_update_status_only_accepts_status_id_field()
     {
         $roleWithPermission = Role::create([
-            'name' => 'status-updater',
+            'name'         => 'status-updater',
             'display_name' => 'Status Updater',
-            'description' => 'Can update status',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can update status',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $statusPermission = Permission::firstOrCreate(['name' => 'task-update-status'], [
             'display_name' => 'Update task status',
-            'description' => 'Can update task status',
-            'grouping' => 'task',
+            'description'  => 'Can update task status',
+            'grouping'     => 'task',
         ]);
         $roleWithPermission->attachPermission($statusPermission);
 
@@ -164,13 +164,13 @@ class TaskAuthorizationTest extends AbstractTestCase
         while ($newStatus->id == $this->task->status_id) {
             $newStatus = Status::factory()->create(['source_type' => \App\Models\Task::class]);
         }
-        $originalTitle = $this->task->title;
+        $originalTitle       = $this->task->title;
         $originalDescription = $this->task->description;
 
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
-            'status_id' => $newStatus->id,
-            'title' => 'Malicious Title Change',
-            'description' => 'Malicious Description Change',
+            'status_id'        => $newStatus->id,
+            'title'            => 'Malicious Title Change',
+            'description'      => 'Malicious Description Change',
             'user_assigned_id' => 999,
         ]);
 

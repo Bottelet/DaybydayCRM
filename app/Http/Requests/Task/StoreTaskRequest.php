@@ -27,13 +27,13 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'description' => 'required',
-            'status_id' => 'required',
-            'user_assigned_id' => 'required',
-            'user_created_id' => '',
+            'title'              => 'required',
+            'description'        => 'required',
+            'status_id'          => 'required',
+            'user_assigned_id'   => 'required',
+            'user_created_id'    => '',
             'client_external_id' => 'required',
-            'deadline' => '',
+            'deadline'           => '',
         ];
     }
 }

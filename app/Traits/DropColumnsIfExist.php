@@ -23,9 +23,9 @@ trait DropColumnsIfExist
 
     private function dropIndexIfExists(string $table, Blueprint $blueprint, string $column): void
     {
-        $connection = Schema::getConnection();
+        $connection    = Schema::getConnection();
         $schemaManager = $connection->getSchemaBuilder()->getConnection()->getDoctrineSchemaManager();
-        $indexes = $schemaManager->listTableIndexes($table);
+        $indexes       = $schemaManager->listTableIndexes($table);
 
         foreach ($indexes as $index) {
             if (in_array($column, $index->getColumns())) {

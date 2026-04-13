@@ -17,12 +17,12 @@ class TaskHeaderComposer
         $tasks = Task::findOrFail($view->getData()['tasks']['id']);
 
         /**
-         * [User assigned the task]
+         * [User assigned the task].
          *
          * @var contact
          */
-        $contact = $tasks->user;
-        $client = $tasks->client;
+        $contact      = $tasks->user;
+        $client       = $tasks->client;
         $contact_info = $client->contacts()->first();
 
         $view->with('contact', $contact);

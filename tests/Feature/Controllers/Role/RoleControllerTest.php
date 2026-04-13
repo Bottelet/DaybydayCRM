@@ -4,9 +4,9 @@ namespace Tests\Feature\Controllers\Role;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RoleControllerTest extends AbstractTestCase
 {

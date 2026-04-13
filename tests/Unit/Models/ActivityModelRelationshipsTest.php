@@ -47,7 +47,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_activity_causer_relationship_returns_morph_to_instance()
@@ -55,16 +55,16 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $relationship = $activity->causer();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphTo::class, $relationship);
     }
 
@@ -74,16 +74,16 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $causer = $activity->causer;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($causer);
         $this->assertInstanceOf(User::class, $causer);
         $this->assertEquals($this->user->id, $causer->id);
@@ -95,16 +95,16 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $relationship = $activity->source();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphTo::class, $relationship);
     }
 
@@ -114,16 +114,16 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $source = $activity->source;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($source);
         $this->assertInstanceOf(Task::class, $source);
         $this->assertEquals($this->task->id, $source->id);
@@ -137,16 +137,16 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         // but the BelongsTo relationship object can still be instantiated.
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $relationship = $activity->task();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
@@ -158,22 +158,22 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         // but the BelongsTo relationship object can still be instantiated.
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $relationship = $activity->user();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_activity_all_relationship_methods_exist()
@@ -181,7 +181,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = new Activity();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($activity, 'causer'), 'causer() relationship method should exist');
         $this->assertTrue(method_exists($activity, 'source'), 'source() relationship method should exist');
         $this->assertTrue(method_exists($activity, 'task'), 'task() relationship method should exist');
@@ -194,17 +194,17 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $causerRelationship = $activity->causer();
         $sourceRelationship = $activity->source();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphTo::class, $causerRelationship);
         $this->assertInstanceOf(MorphTo::class, $sourceRelationship);
         $this->assertNotSame($causerRelationship, $sourceRelationship);
@@ -215,18 +215,18 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     {
         /** Arrange */
         $anotherUser = User::factory()->create();
-        $activity = Activity::create([
+        $activity    = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $anotherUser->id,
+            'causer_id'   => $anotherUser->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
         /** Act */
         $causer = $activity->causer;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($causer);
         $this->assertEquals($anotherUser->id, $causer->id);
         $this->assertNotEquals($this->user->id, $causer->id);
@@ -238,18 +238,18 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         /** Arrange */
         $activity = Activity::create([
             'causer_type' => null,
-            'causer_id' => null,
+            'causer_id'   => null,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity without causer',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity without causer',
         ]);
 
         /** Act */
         $causer = $activity->causer;
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($causer);
     }
 
-    // endregion
+    # endregion
 }

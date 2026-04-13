@@ -11,7 +11,7 @@ class AppointmentsController extends Controller
 {
     public function calendar()
     {
-        if (! auth()->user()->can('calendar-view')) {
+        if ( ! auth()->user()->can('calendar-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
 
             return redirect()->back();
@@ -33,7 +33,7 @@ class AppointmentsController extends Controller
         // Parse the timestamps directly - they're already in the correct format
         // Don't convert timezone as that would shift the time
         $appointment->start_at = Carbon::parse($request->start);
-        $appointment->end_at = Carbon::parse($request->end);
+        $appointment->end_at   = Carbon::parse($request->end);
         $appointment->user()->associate(User::where('external_id', $request->group)->first());
         $appointment->save();
 
@@ -42,7 +42,7 @@ class AppointmentsController extends Controller
 
     public function destroy(Appointment $appointment)
     {
-        if (! auth()->user()->can('appointment-delete')) {
+        if ( ! auth()->user()->can('appointment-delete')) {
             return response('Access denied', 403);
         }
 

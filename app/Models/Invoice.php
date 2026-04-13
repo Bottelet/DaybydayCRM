@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\InvoiceStatus;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Traits\HasExternalId;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -41,13 +41,13 @@ class Invoice extends Model
     ];
 
     protected $casts = [
-        'due_at' => 'datetime',
+        'due_at'     => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    // region Relationships
+    # region Relationships
 
     public function client()
     {
@@ -79,15 +79,11 @@ class Invoice extends Model
         return $this->morphTo('source');
     }
 
-    // endregion
+    # endregion
 
     public function canUpdateInvoice()
     {
-        if ($this->isSent()) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->isSent());
     }
 
     public function isSent()
@@ -99,14 +95,15 @@ class Invoice extends Model
     {
         return $this->update([
             'integration_invoice_id' => null,
-            'integration_type' => null,
-            'source_id' => null,
-            'source_type' => null,
+            'integration_type'       => null,
+            'source_id'              => null,
+            'source_type'            => null,
         ]);
     }
 
     /**
-     * @param  bool  $sendMail
+     * @param bool $sendMail
+     *
      * @return array
      */
     public function invoice($contactId)
@@ -116,15 +113,15 @@ class Invoice extends Model
         if ($api && $contactId) {
             $results = $api->createInvoice(
                 [
-                    'currency' => Setting::first()->currency,
+                    'currency'            => Setting::first()->currency,
                     'show_lines_incl_vat' => true,
-                    'description' => $this->source->title,
-                    'contact_id' => $contactId,
-                    'invoice_lines' => $this->invoiceLines,
+                    'description'         => $this->source->title,
+                    'contact_id'          => $contactId,
+                    'invoice_lines'       => $this->invoiceLines,
                 ]
             );
             $this->integration_invoice_id = $results->invoiceId;
-            $this->integration_type = get_class($api);
+            $this->integration_type       = get_class($api);
             $this->save();
 
             $booked = $api->bookInvoice($results->invoiceId, $results->timestamp);
@@ -132,7 +129,7 @@ class Invoice extends Model
 
         return [
             'invoice_number' => isset($booked) ? $booked->invoiceNumber : app(InvoiceNumberService::class)->nextInvoiceNumber(),
-            'due_at' => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14),
+            'due_at'         => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14),
         ];
     }
 
@@ -141,7 +138,7 @@ class Invoice extends Model
         /** @var BillingIntegrationInterface $api */
         $api = Integration::initBillingIntegration();
 
-        if (! $api) {
+        if ( ! $api) {
             return false;
         }
 

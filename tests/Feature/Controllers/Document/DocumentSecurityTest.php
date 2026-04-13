@@ -8,12 +8,12 @@ use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('document-controller')]
@@ -35,7 +35,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
-        $this->task = Task::factory()->create();
+        $this->task    = Task::factory()->create();
         $this->project = Project::factory()->create();
 
         // Create a user without upload permissions
@@ -43,7 +43,7 @@ class DocumentSecurityTest extends AbstractTestCase
 
         // Mock file storage integration
         Integration::create([
-            'name' => 'local',
+            'name'     => 'local',
             'api_type' => 'file',
         ]);
 

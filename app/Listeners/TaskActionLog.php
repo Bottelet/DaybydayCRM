@@ -21,8 +21,8 @@ class TaskActionLog
         switch ($event->getAction()) {
             case 'created':
                 $text = __(':title was created by :creator and assigned to :assignee', [
-                    'title' => $event->getTask()->title,
-                    'creator' => $event->getTask()->creator->name,
+                    'title'    => $event->getTask()->title,
+                    'creator'  => $event->getTask()->creator->name,
                     'assignee' => $event->getTask()->user->name,
                 ]);
                 break;

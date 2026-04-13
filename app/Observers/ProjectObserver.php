@@ -22,20 +22,14 @@ class ProjectObserver
      *
      * @return void
      */
-    public function created(Project $project)
-    {
-        //
-    }
+    public function created(Project $project) {}
 
     /**
      * Handle the project "updated" event.
      *
      * @return void
      */
-    public function updated(Project $project)
-    {
-        //
-    }
+    public function updated(Project $project) {}
 
     /**
      * Handle the project "deleted" event.
@@ -45,7 +39,7 @@ class ProjectObserver
     public function deleted(Project $project)
     {
         foreach ($this->relations as $relation) {
-            $project->$relation()->delete();
+            $project->{$relation}()->delete();
         }
     }
 
@@ -57,7 +51,7 @@ class ProjectObserver
     public function restored(Project $project)
     {
         foreach ($this->relations as $relation) {
-            $project->$relation()->withTrashed()->restore();
+            $project->{$relation}()->withTrashed()->restore();
         }
     }
 
@@ -69,7 +63,7 @@ class ProjectObserver
     public function forceDeleted(Project $project)
     {
         foreach ($this->relations as $relation) {
-            $project->$relation()->forceDelete();
+            $project->{$relation}()->forceDelete();
         }
     }
 }

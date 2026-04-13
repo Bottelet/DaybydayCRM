@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Controllers\Lead;
 
+use App\Enums\PermissionName;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\Status;
-use App\Enums\PermissionName;
 use Carbon\Carbon;
+use DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use DB;
 
 class LeadsControllerTest extends AbstractTestCase
 {
@@ -39,14 +39,14 @@ class LeadsControllerTest extends AbstractTestCase
     public function it_can_create_lead()
     {
         $response = $this->json('POST', route('leads.store'), [
-            'title' => 'Lead test',
-            'description' => 'This is a description',
-            'status_id' => Status::factory()->create(['source_type' => Lead::class])->id,
-            'user_assigned_id' => $this->user->id,
-            'user_created_id' => $this->user->id,
+            'title'              => 'Lead test',
+            'description'        => 'This is a description',
+            'status_id'          => Status::factory()->create(['source_type' => Lead::class])->id,
+            'user_assigned_id'   => $this->user->id,
+            'user_created_id'    => $this->user->id,
             'client_external_id' => $this->client->external_id,
-            'deadline' => '2020-01-01',
-            'contact_time' => '15:00',
+            'deadline'           => '2020-01-01',
+            'contact_time'       => '15:00',
         ]);
 
         $leads = Lead::where('user_assigned_id', $this->user->id);
@@ -70,7 +70,7 @@ class LeadsControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_update_status()
     {
-        $lead = Lead::factory()->create();
+        $lead   = Lead::factory()->create();
         $status = Status::factory()->create(['source_type' => Lead::class]);
 
         $this->assertNotEquals($lead->status_id, $status->id);
@@ -110,7 +110,7 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         $response = $this->json('PATCH', route('lead.followup', $lead->external_id), [
-            'deadline' => '2025-06-15',
+            'deadline'     => '2025-06-15',
             'contact_time' => '10:30',
         ]);
 
@@ -137,12 +137,12 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
-            'deadline' => '2025-12-31',
+            'deadline'     => '2025-12-31',
             'contact_time' => '23:59',
         ]);
 
         $storedDeadline = $lead->refresh()->deadline;
-        $parsed = Carbon::parse($storedDeadline);
+        $parsed         = Carbon::parse($storedDeadline);
 
         $this->assertEquals('2025-12-31', $parsed->toDateString());
         $this->assertEquals('23:59', $parsed->format('H:i'));
@@ -156,7 +156,7 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
-            'deadline' => '2025-03-20',
+            'deadline'     => '2025-03-20',
             'contact_time' => '09:00',
         ]);
 

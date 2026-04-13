@@ -32,7 +32,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_can_update_draft_invoice()
@@ -43,55 +43,55 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         /** Act */
         $result = $this->invoice->canUpdateInvoice();
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue($result);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_cant_update_invoice_if_its_sent()
     {
-        /** Arrange */
+        /* Arrange */
         $this->invoice->sent_at = Carbon::now();
         $this->invoice->save();
 
         /** Act */
         $result = $this->invoice->canUpdateInvoice();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($result);
     }
 
     #[Test]
     public function it_cant_update_invoice_sent_in_the_past()
     {
-        /** Arrange */
+        /* Arrange */
         $this->invoice->sent_at = Carbon::now()->subDays(5);
         $this->invoice->save();
 
         /** Act */
         $result = $this->invoice->canUpdateInvoice();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($result);
     }
 
     #[Test]
     public function it_can_update_invoice_with_null_sent_at()
     {
-        /** Arrange */
+        /* Arrange */
         $this->invoice->sent_at = null;
         $this->invoice->save();
 
         /** Act */
         $result = $this->invoice->canUpdateInvoice();
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue($result);
     }
 
-    // endregion
+    # endregion
 }

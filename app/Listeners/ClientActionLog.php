@@ -9,10 +9,7 @@ class ClientActionLog
     /**
      * Create the event listener.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     /**
      * Handle the event.
@@ -26,7 +23,7 @@ class ClientActionLog
         switch ($event->getAction()) {
             case 'created':
                 $text = __('Client :company was assigned to :assignee', [
-                    'company' => $client->company_name,
+                    'company'  => $client->company_name,
                     'assignee' => $client->AssignedUser->name,
                 ]);
                 break;

@@ -32,17 +32,17 @@ class AuthServiceProvider extends ServiceProvider
         // Integrate Entrust role-based permissions with Laravel's Gate so that
         // $user->can('permission-name') correctly checks Entrust permissions.
         $gate->before(function ($user, $ability) {
-            if (! method_exists($user, 'cachedRoles')) {
-                return null;
+            if ( ! method_exists($user, 'cachedRoles')) {
+                return;
             }
 
             foreach ($user->cachedRoles() as $role) {
-                if (! is_object($role) || ! method_exists($role, 'cachedPermissions')) {
+                if ( ! is_object($role) || ! method_exists($role, 'cachedPermissions')) {
                     continue;
                 }
 
                 foreach ($role->cachedPermissions() as $perm) {
-                    if (! is_object($perm) || empty($perm->name)) {
+                    if ( ! is_object($perm) || empty($perm->name)) {
                         continue;
                     }
 
@@ -51,8 +51,6 @@ class AuthServiceProvider extends ServiceProvider
                     }
                 }
             }
-
-            return null;
         });
     }
 }

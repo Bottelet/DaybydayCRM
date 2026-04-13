@@ -18,6 +18,38 @@ class PaymentRequest extends FormRequest
     }
 
     /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            'amount'       => 'numeric|required|not_in:0',
+            'payment_date' => 'date|required',
+            'source'       => ['required', PaymentSource::validationRules()],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'amount.integer'        => __('The amount must be an integer.'),
+            'amount.required'       => __('The amount is required.'),
+            'amount.not_in'         => __('The amount can not be 0.'),
+            'payment_date.date'     => __('The payment date is not a valid date.'),
+            'payment_date.required' => __('The payment date is required.'),
+            'source.required'       => __('The source is required.'),
+            'source.in'             => __('Invalid source'),
+        ];
+    }
+
+    /**
      * Prepare the data for validation.
      * Normalize currency input by converting comma separators to dots.
      *
@@ -34,37 +66,5 @@ class PaymentRequest extends FormRequest
                 'amount' => $normalizedAmount,
             ]);
         }
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
-    {
-        return [
-            'amount' => 'numeric|required|not_in:0',
-            'payment_date' => 'date|required',
-            'source' => ['required', PaymentSource::validationRules()],
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'amount.integer' => __('The amount must be an integer.'),
-            'amount.required' => __('The amount is required.'),
-            'amount.not_in' => __('The amount can not be 0.'),
-            'payment_date.date' => __('The payment date is not a valid date.'),
-            'payment_date.required' => __('The payment date is required.'),
-            'source.required' => __('The source is required.'),
-            'source.in' => __('Invalid source'),
-        ];
     }
 }

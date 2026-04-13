@@ -7,18 +7,18 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\Test;
+use ReflectionClass;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use ReflectionClass;
 
 class HandlerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_handler_class_extends_laravel_exception_handler()
@@ -29,7 +29,7 @@ class HandlerTest extends AbstractTestCase
         /** Act */
         $handler = app(Handler::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(ExceptionHandler::class, $handler);
     }
 
@@ -37,15 +37,15 @@ class HandlerTest extends AbstractTestCase
     public function it_handler_dont_report_list_contains_expected_exceptions()
     {
         /** Arrange */
-        $handler = new Handler(app());
+        $handler    = new Handler(app());
         $reflection = new ReflectionClass($handler);
-        $property = $reflection->getProperty('dontReport');
+        $property   = $reflection->getProperty('dontReport');
         $property->setAccessible(true);
 
         /** Act */
         $dontReport = $property->getValue($handler);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains(AuthenticationException::class, $dontReport);
         $this->assertContains(AuthorizationException::class, $dontReport);
         $this->assertContains(ValidationException::class, $dontReport);
@@ -63,7 +63,7 @@ class HandlerTest extends AbstractTestCase
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(401);
         $response->assertJson(['error' => 'Unauthenticated.']);
     }
@@ -71,15 +71,15 @@ class HandlerTest extends AbstractTestCase
     #[Test]
     public function it_unauthenticated_redirects_to_login_for_web_request()
     {
-        /** Arrange */
+        /* Arrange */
         auth()->logout();
 
         /** Act */
         $response = $this->get('/dashboard');
 
-        /** Assert */
+        /* Assert */
         $response->assertRedirect();
     }
 
-    // endregion
+    # endregion
 }

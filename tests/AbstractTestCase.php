@@ -2,13 +2,13 @@
 
 namespace Tests;
 
+use App\Enums\PermissionName;
 use App\Models\Permission;
 use App\Models\Role;
-use App\Enums\PermissionName;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 
 abstract class AbstractTestCase extends BaseTestCase
 {
@@ -25,16 +25,16 @@ abstract class AbstractTestCase extends BaseTestCase
         // Reset Faker's unique state to avoid collisions with seeded data
         fake()->unique(true);
 
-        if (! static::$schemaIsUpToDate) {
+        if ( ! static::$schemaIsUpToDate) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
             static::$schemaIsUpToDate = true;
         }
 
         // Use a guaranteed unique email for the test user
-        $uniqueEmail = 'testuser_'.uniqid('', true).'@example.org';
-        $this->user = User::factory()->create([
+        $uniqueEmail = 'testuser_' . uniqid('', true) . '@example.org';
+        $this->user  = User::factory()->create([
             'email' => $uniqueEmail,
-            'name' => 'Admin',
+            'name'  => 'Admin',
         ]);
 
         // Standardize: Every user starts as an owner to minimize boilerplate 403s
@@ -44,7 +44,7 @@ abstract class AbstractTestCase extends BaseTestCase
     }
 
     /**
-     * Optimized for Entrust/Laravel 12 Bridge
+     * Optimized for Entrust/Laravel 12 Bridge.
      */
     public function withPermissions(array|PermissionName $permissions): self
     {
@@ -52,7 +52,7 @@ abstract class AbstractTestCase extends BaseTestCase
 
         // 1. Ensure the user has a role to attach permissions to
         $role = $this->user->roles()->first() ?? Role::firstOrCreate(['name' => 'owner']);
-        if (! $this->user->hasRole($role->name)) {
+        if ( ! $this->user->hasRole($role->name)) {
             $this->user->attachRole($role);
         }
 
@@ -62,7 +62,7 @@ abstract class AbstractTestCase extends BaseTestCase
             $p = Permission::firstOrCreate(['name' => $name], ['display_name' => $name]);
 
             // 2. Attach to the role
-            if (! $role->hasPermission($name)) {
+            if ( ! $role->hasPermission($name)) {
                 $role->attachPermission($p);
             }
         }
@@ -80,7 +80,7 @@ abstract class AbstractTestCase extends BaseTestCase
     }
 
     /**
-     * Refactored asOwner to use the new Enum for consistency
+     * Refactored asOwner to use the new Enum for consistency.
      */
     public function asOwner()
     {
@@ -90,7 +90,7 @@ abstract class AbstractTestCase extends BaseTestCase
         );
 
         // Attach role if not already attached
-        if (! $this->user->hasRole('owner')) {
+        if ( ! $this->user->hasRole('owner')) {
             $this->user->attachRole($role);
         }
 
@@ -138,7 +138,7 @@ abstract class AbstractTestCase extends BaseTestCase
         );
 
         // Attach role if not already attached
-        if (! $this->user->hasRole('admin')) {
+        if ( ! $this->user->hasRole('admin')) {
             $this->user->attachRole($role);
         }
 
@@ -180,7 +180,7 @@ abstract class AbstractTestCase extends BaseTestCase
             // If we got a redirect, it means canAccessDocument returned false.
             // Let's find out WHY by looking at the session.
             $message = session('flash_message_warning') ?? 'Redirected without message';
-            $this->fail('Test failed with a 302 Redirect. Session Message: '.$message);
+            $this->fail('Test failed with a 302 Redirect. Session Message: ' . $message);
         }
     }
 }

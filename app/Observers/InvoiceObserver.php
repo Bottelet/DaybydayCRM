@@ -21,10 +21,7 @@ class InvoiceObserver
      *
      * @return void
      */
-    public function created(Invoice $task)
-    {
-        //
-    }
+    public function created(Invoice $task) {}
 
     /**
      * Handle the task "updated" event.
@@ -41,7 +38,7 @@ class InvoiceObserver
     public function deleted(Invoice $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->delete();
+            $task->{$relation}()->delete();
         }
     }
 
@@ -53,7 +50,7 @@ class InvoiceObserver
     public function restored(Invoice $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->withTrashed()->restore();
+            $task->{$relation}()->withTrashed()->restore();
         }
     }
 
@@ -62,8 +59,5 @@ class InvoiceObserver
      *
      * @return void
      */
-    public function forceDeleted(Invoice $task)
-    {
-        //
-    }
+    public function forceDeleted(Invoice $task) {}
 }

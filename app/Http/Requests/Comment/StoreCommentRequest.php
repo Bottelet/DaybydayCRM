@@ -25,21 +25,21 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'description' => 'required|string',
-            'type' => 'required|string|in:task,lead,project',
+            'type'        => 'required|string|in:task,lead,project',
             'external_id' => [
                 'required',
                 'string',
                 function ($attribute, $value, $fail) {
-                    $type = $this->input('type');
+                    $type          = $this->input('type');
                     $modelsMapping = [
-                        'task' => \App\Models\Task::class,
-                        'lead' => \App\Models\Lead::class,
+                        'task'    => \App\Models\Task::class,
+                        'lead'    => \App\Models\Lead::class,
                         'project' => \App\Models\Project::class,
                     ];
 
                     if (isset($modelsMapping[$type])) {
                         $model = $modelsMapping[$type];
-                        if (! $model::where('external_id', $value)->exists()) {
+                        if ( ! $model::where('external_id', $value)->exists()) {
                             $fail("The selected {$type} does not exist.");
                         }
                     }

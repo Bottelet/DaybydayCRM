@@ -24,16 +24,16 @@ class StoreUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'email' => 'required|email',
-            'address' => '',
-            'primary_number' => 'numeric',
-            'secondary_number' => 'numeric',
-            'password' => 'required|min:6|confirmed',
+            'name'                  => 'required',
+            'email'                 => 'required|email',
+            'address'               => '',
+            'primary_number'        => 'numeric',
+            'secondary_number'      => 'numeric',
+            'password'              => 'required|min:6|confirmed',
             'password_confirmation' => 'required|min:6',
-            'image_path' => '',
-            'roles' => 'required',
-            'departments' => 'required',
+            'image_path'            => '',
+            'roles'                 => 'required',
+            'departments'           => 'required',
         ];
     }
 }

@@ -7,12 +7,12 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
@@ -37,8 +37,8 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
             ['name' => 'can-assign-new-user-to-task'],
             [
                 'display_name' => 'Assign users to tasks',
-                'description' => 'Can assign users to tasks',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Can assign users to tasks',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
@@ -47,8 +47,8 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
             ['name' => 'task-assigner'],
             [
                 'display_name' => 'Task Assigner',
-                'description' => 'Can assign tasks',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Can assign tasks',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
         $authorizedRole->perms()->sync([$permission->id]);
@@ -64,10 +64,10 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
         $this->newAssignee = User::factory()->create();
 
         // Create task
-        $client = Client::factory()->create();
+        $client     = Client::factory()->create();
         $this->task = Task::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
-            'client_id' => $client->id,
+            'client_id'        => $client->id,
         ]);
 
         // Explicitly clear the permissions cache
@@ -97,7 +97,7 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was updated in database
         $this->assertDatabaseHas('tasks', [
-            'id' => $this->task->id,
+            'id'               => $this->task->id,
             'user_assigned_id' => $this->newAssignee->id,
         ]);
         $this->assertEquals($this->newAssignee->id, $this->task->refresh()->user_assigned_id);
@@ -124,7 +124,7 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('tasks', [
-            'id' => $this->task->id,
+            'id'               => $this->task->id,
             'user_assigned_id' => $originalAssignee,
         ]);
         $this->assertEquals($originalAssignee, $this->task->refresh()->user_assigned_id);

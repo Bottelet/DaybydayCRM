@@ -17,6 +17,16 @@ class TaskAction
 
     private $action;
 
+    /**
+     * Create a new event instance.
+     * TaskAction constructor.
+     */
+    public function __construct(Task $task, $action)
+    {
+        $this->task   = $task;
+        $this->action = $action;
+    }
+
     public function getTask()
     {
         return $this->task;
@@ -25,16 +35,6 @@ class TaskAction
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Create a new event instance.
-     * TaskAction constructor.
-     */
-    public function __construct(Task $task, $action)
-    {
-        $this->task = $task;
-        $this->action = $action;
     }
 
     /**

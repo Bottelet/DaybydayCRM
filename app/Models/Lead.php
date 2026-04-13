@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\LeadStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,12 +31,12 @@ class Lead extends Model implements Commentable
     use SearchableTrait;
     use SoftDeletes;
 
-    protected $searchableFields = ['title'];
-
     /**
      * @deprecated Use LeadStatus::CLOSED->value instead
      */
     public const LEAD_STATUS_CLOSED = 'closed';
+
+    protected $searchableFields = ['title'];
 
     protected $fillable = [
         'external_id',
@@ -52,7 +52,7 @@ class Lead extends Model implements Commentable
     ];
 
     protected $casts = [
-        'deadline' => 'datetime',
+        'deadline'   => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
@@ -64,6 +64,16 @@ class Lead extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
+    {
+        return static::where('external_id', $externalId)->first();
+    }
+
     // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
@@ -71,7 +81,7 @@ class Lead extends Model implements Commentable
         return $this->title;
     }
 
-    // region Relationships
+    # region Relationships
 
     public function activity()
     {
@@ -133,7 +143,7 @@ class Lead extends Model implements Commentable
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
-    // endregion
+    # endregion
 
     public function getCreateCommentEndpoint(): string
     {
@@ -163,17 +173,17 @@ class Lead extends Model implements Commentable
 
     public function convertToOrder()
     {
-        if (! $this->canConvertToOrder()) {
+        if ( ! $this->canConvertToOrder()) {
             return false;
         }
         $invoice = Invoice::create([
-            'status' => 'draft',
-            'client_id' => $this->client->id,
+            'status'      => 'draft',
+            'client_id'   => $this->client->id,
             'external_id' => Uuid::uuid4()->toString(),
         ]);
 
         $this->invoice_id = $invoice->id;
-        $this->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->first()->id;
         $this->save();
 
         return $invoice;
@@ -181,20 +191,6 @@ class Lead extends Model implements Commentable
 
     public function canConvertToOrder()
     {
-        if ($this->invoice) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::where('external_id', $externalId)->first();
+        return ! ($this->invoice);
     }
 }

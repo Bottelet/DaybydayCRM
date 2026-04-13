@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Absence;
 use App\Models\User;
@@ -17,10 +17,10 @@ class AbsenceFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => Uuid::uuid4()->toString(),
-            'reason' => $this->faker->word,
-            'start_at' => now(),
-            'end_at' => now()->addDays(3),
-            'user_id' => User::factory(),
+            'reason'      => $this->faker->word,
+            'start_at'    => now(),
+            'end_at'      => now()->addDays(3),
+            'user_id'     => User::factory(),
         ];
     }
 }

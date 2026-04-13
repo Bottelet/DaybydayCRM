@@ -29,20 +29,14 @@ class ClientObserver
      *
      * @return void
      */
-    public function created(Client $client)
-    {
-        //
-    }
+    public function created(Client $client) {}
 
     /**
      * Handle the client "updated" event.
      *
      * @return void
      */
-    public function updated(Client $client)
-    {
-        //
-    }
+    public function updated(Client $client) {}
 
     /**
      * Handle the client "deleted" event.
@@ -52,7 +46,7 @@ class ClientObserver
     public function deleted(Client $client)
     {
         foreach ($this->relations as $relation) {
-            $client->$relation()->delete();
+            $client->{$relation}()->delete();
         }
     }
 
@@ -64,7 +58,7 @@ class ClientObserver
     public function restored(Client $client)
     {
         foreach ($this->relations as $relation) {
-            $client->$relation()->withTrashed()->restore();
+            $client->{$relation}()->withTrashed()->restore();
         }
     }
 
@@ -73,8 +67,5 @@ class ClientObserver
      *
      * @return void
      */
-    public function forceDeleted(Client $client)
-    {
-        //
-    }
+    public function forceDeleted(Client $client) {}
 }

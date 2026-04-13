@@ -23,7 +23,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         $this->paymentSource = PaymentSource::bank()->getSource();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -35,7 +35,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $result = PaymentSource::fromSource($this->paymentSource);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(PaymentSource::class, $result);
     }
 
@@ -49,7 +49,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $paymentSource = PaymentSource::fromSource($this->paymentSource);
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue(property_exists($paymentSource, 'source'));
         $this->assertTrue(property_exists($paymentSource, 'displayValue'));
     }
@@ -64,7 +64,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $displayValue = PaymentSource::fromSource($this->paymentSource)->getDisplayValue();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Bank', $displayValue);
     }
 
@@ -78,7 +78,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $source = PaymentSource::cash()->getSource();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('cash', $source);
     }
 
@@ -92,7 +92,7 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $source = PaymentSource::fromDisplayValue('Intercompany');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(PaymentSource::interCompany()->getSource(), $source);
     }
 
@@ -106,23 +106,23 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /** Act */
         $rule = PaymentSource::validationRules();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(In::class, $rule);
         $this->assertTrue(property_exists($rule, 'values'));
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     #[Group('junie_repaired')]
     public function throws_exception_if_source_is_not_known()
     {
-        /** Arrange */
+        /* Arrange */
         // No additional arrangement needed
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(Exception::class);
         PaymentSource::fromSource('None existing source');
     }
@@ -131,13 +131,13 @@ class PaymentSourceEnumTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function throws_exception_if_display_value_is_not_known()
     {
-        /** Arrange */
+        /* Arrange */
         // No additional arrangement needed
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(Exception::class);
         PaymentSource::fromDisplayValue('None existing display value');
     }
 
-    // endregion
+    # endregion
 }

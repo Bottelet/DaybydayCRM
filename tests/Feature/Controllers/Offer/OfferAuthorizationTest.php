@@ -9,11 +9,11 @@ use App\Models\Offer;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class OfferAuthorizationTest extends AbstractTestCase
@@ -34,12 +34,12 @@ class OfferAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->lead = Lead::factory()->create();
+        $this->lead  = Lead::factory()->create();
         $this->offer = Offer::create([
-            'source_id' => $this->lead->id,
+            'source_id'   => $this->lead->id,
             'source_type' => Lead::class,
-            'client_id' => $this->lead->client_id,
-            'status' => OfferStatus::inProgress()->getStatus(),
+            'client_id'   => $this->lead->client_id,
+            'status'      => OfferStatus::inProgress()->getStatus(),
         ]);
 
         // Create or get the offer-create permission
@@ -47,9 +47,9 @@ class OfferAuthorizationTest extends AbstractTestCase
             ['name' => 'offer-create'],
             [
                 'display_name' => 'Create offer',
-                'description' => 'Permission to create offer',
-                'grouping' => 'offer',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Permission to create offer',
+                'grouping'     => 'offer',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
@@ -58,36 +58,36 @@ class OfferAuthorizationTest extends AbstractTestCase
             ['name' => 'offer-edit'],
             [
                 'display_name' => 'Edit offer',
-                'description' => 'Permission to edit offer',
-                'grouping' => 'offer',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Permission to edit offer',
+                'grouping'     => 'offer',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
         // Create role with offer-create permission
         $roleWithCreatePermission = Role::create([
-            'name' => 'offer-creator',
+            'name'         => 'offer-creator',
             'display_name' => 'Offer Creator',
-            'description' => 'Can create offers',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can create offers',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithCreatePermission->attachPermission($createPermission);
 
         // Create role with offer-edit permission
         $roleWithEditPermission = Role::create([
-            'name' => 'offer-editor',
+            'name'         => 'offer-editor',
             'display_name' => 'Offer Editor',
-            'description' => 'Can edit offers',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can edit offers',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithEditPermission->attachPermission($editPermission);
 
         // Create role without any offer permissions
         $roleWithoutPermission = Role::create([
-            'name' => 'offer-viewer',
+            'name'         => 'offer-viewer',
             'display_name' => 'Offer Viewer',
-            'description' => 'Cannot manage offers',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Cannot manage offers',
+            'external_id'  => Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -116,11 +116,11 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
-                'title' => 'Test Item',
-                'type' => 'hours',
-                'price' => 100,
+                'title'    => 'Test Item',
+                'type'     => 'hours',
+                'price'    => 100,
                 'quantity' => 1,
-                'comment' => 'Test comment',
+                'comment'  => 'Test comment',
             ],
         ]);
 
@@ -137,11 +137,11 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
-                'title' => 'Test Item',
-                'type' => 'hours',
-                'price' => 100,
+                'title'    => 'Test Item',
+                'type'     => 'hours',
+                'price'    => 100,
                 'quantity' => 1,
-                'comment' => 'Test comment',
+                'comment'  => 'Test comment',
             ],
         ]);
 
@@ -160,11 +160,11 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
-                'title' => 'Updated Item',
-                'type' => 'hours',
-                'price' => 200,
+                'title'    => 'Updated Item',
+                'type'     => 'hours',
+                'price'    => 200,
                 'quantity' => 2,
-                'comment' => 'Updated comment',
+                'comment'  => 'Updated comment',
             ],
         ]);
 
@@ -178,11 +178,11 @@ class OfferAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
-                'title' => 'Updated Item',
-                'type' => 'hours',
-                'price' => 200,
+                'title'    => 'Updated Item',
+                'type'     => 'hours',
+                'price'    => 200,
                 'quantity' => 2,
-                'comment' => 'Updated comment',
+                'comment'  => 'Updated comment',
             ],
         ]);
 

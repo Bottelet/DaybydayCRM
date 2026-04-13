@@ -13,68 +13,47 @@ class CreditLinesController extends Controller
      *
      * @return Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.
      *
      * @return Response
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      *
      * @return Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
      *
      * @return Response
      */
-    public function show(CreditLine $creditLines)
-    {
-        //
-    }
+    public function show(CreditLine $creditLines) {}
 
     /**
      * Show the form for editing the specified resource.
      *
      * @return Response
      */
-    public function edit(CreditLine $creditLines)
-    {
-        //
-    }
+    public function edit(CreditLine $creditLines) {}
 
     /**
      * Update the specified resource in storage.
      *
      * @return Response
      */
-    public function update(Request $request, CreditLine $creditLines)
-    {
-        //
-    }
+    public function update(Request $request, CreditLine $creditLines) {}
 
     /**
      * Remove the specified resource from storage.
      *
      * @return Response
      */
-    public function destroy(CreditLine $creditLines)
-    {
-        //
-    }
+    public function destroy(CreditLine $creditLines) {}
 }

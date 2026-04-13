@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Enums\OfferStatus;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,7 +27,7 @@ class Offer extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    // region Relationships
+    # region Relationships
 
     public function invoice()
     {
@@ -59,7 +59,7 @@ class Offer extends Model
         return $this->belongsTo(Status::class, 'status_id');
     }
 
-    // endregion
+    # endregion
 
     public function setAsWon()
     {

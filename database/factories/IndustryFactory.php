@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Industry;
 use Illuminate\Database\Eloquent\Factory;
@@ -15,7 +15,7 @@ class IndustryFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => $this->faker->uuid(),
-            'name' => $this->faker->randomElement([
+            'name'        => $this->faker->randomElement([
                 'Accommodations',
                 'Accounting',
                 'Auto',

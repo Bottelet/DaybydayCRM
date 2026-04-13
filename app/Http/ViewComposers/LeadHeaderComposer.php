@@ -16,12 +16,12 @@ class LeadHeaderComposer
     {
         $lead = Lead::findOrFail($view->getData()['lead']['id']);
         /**
-         * [User assigned the task]
+         * [User assigned the task].
          *
          * @var contact
          */
-        $contact = $lead->user;
-        $client = $lead->client;
+        $contact      = $lead->user;
+        $client       = $lead->client;
         $contact_info = $client->contacts()->first();
 
         $view->with('contact', $contact);

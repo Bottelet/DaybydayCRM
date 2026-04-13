@@ -8,10 +8,10 @@ use App\Models\InvoiceLine;
 use App\Models\Payment;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PaymentsControllerTest extends AbstractTestCase
 {
@@ -30,7 +30,7 @@ class PaymentsControllerTest extends AbstractTestCase
 
         // Ensure owner role has payment-delete permission
         $permission = \App\Models\Permission::firstOrCreate(['name' => 'payment-delete']);
-        if (! $role->hasPermission('payment-delete')) {
+        if ( ! $role->hasPermission('payment-delete')) {
             $role->attachPermission($permission);
         }
 
@@ -42,15 +42,15 @@ class PaymentsControllerTest extends AbstractTestCase
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
-            'status' => 'unpaid',
+            'status'  => 'unpaid',
         ]);
 
-        $this->payment = Payment::factory()->create();
+        $this->payment     = Payment::factory()->create();
         $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
-            'price' => 5000,
-            'quantity' => 1,
-            'type' => 'hours',
+            'price'      => 5000,
+            'quantity'   => 1,
+            'type'       => 'hours',
         ]);
     }
 
@@ -84,10 +84,10 @@ class PaymentsControllerTest extends AbstractTestCase
         $this->actingAs(User::factory()->create());
 
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount' => 5000,
+            'amount'       => 5000,
             'payment_date' => '2020-01-01',
-            'source' => 'bank',
-            'description' => 'AThisVeryColInvoice12313',
+            'source'       => 'bank',
+            'description'  => 'AThisVeryColInvoice12313',
         ]);
 
         $response->assertStatus(403);

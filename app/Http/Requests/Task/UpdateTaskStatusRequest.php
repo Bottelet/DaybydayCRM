@@ -21,19 +21,6 @@ class UpdateTaskStatusRequest extends FormRequest
     }
 
     /**
-     * Normalize input before validation.
-     */
-    protected function prepareForValidation()
-    {
-        if ($this->has('statusExternalId') && ! $this->has('status_id')) {
-            $status = \App\Models\Status::whereExternalId($this->input('statusExternalId'))->first();
-            if ($status) {
-                $this->merge(['status_id' => $status->id]);
-            }
-        }
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -41,7 +28,7 @@ class UpdateTaskStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'status_id' => 'required_without:statusExternalId|integer|exists:statuses,id',
+            'status_id'        => 'required_without:statusExternalId|integer|exists:statuses,id',
             'statusExternalId' => 'required_without:status_id|string|exists:statuses,external_id',
         ];
     }
@@ -49,7 +36,8 @@ class UpdateTaskStatusRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * @param \Illuminate\Validation\Validator $validator
+     *
      * @return void
      */
     public function withValidator($validator)
@@ -60,10 +48,23 @@ class UpdateTaskStatusRequest extends FormRequest
             // Validate status belongs to Task
             if ($statusId) {
                 $validStatus = Status::typeOfTask()->where('id', $statusId)->exists();
-                if (! $validStatus) {
+                if ( ! $validStatus) {
                     $validator->errors()->add('status_id', __('Invalid status for task'));
                 }
             }
         });
+    }
+
+    /**
+     * Normalize input before validation.
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('statusExternalId') && ! $this->has('status_id')) {
+            $status = \App\Models\Status::whereExternalId($this->input('statusExternalId'))->first();
+            if ($status) {
+                $this->merge(['status_id' => $status->id]);
+            }
+        }
     }
 }

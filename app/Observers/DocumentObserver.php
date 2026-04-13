@@ -4,8 +4,8 @@ namespace App\Observers;
 
 use App\Models\Document;
 use App\Services\Storage\GetStorageProvider;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DocumentObserver
 {
@@ -25,8 +25,8 @@ class DocumentObserver
             // The file might already be deleted or the storage might be unavailable
             Log::warning('Failed to delete document file from storage', [
                 'document_id' => $document->id,
-                'path' => $document->path,
-                'error' => $e->getMessage(),
+                'path'        => $document->path,
+                'error'       => $e->getMessage(),
             ]);
         }
     }

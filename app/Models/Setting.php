@@ -22,7 +22,7 @@ class Setting extends Model
         'end_time',
     ];
 
-    // region Relationships
+    # region Relationships
 
     public function user()
     {
@@ -33,5 +33,5 @@ class Setting extends Model
     {
         return $this->hasMany(Task::class);
     }
-    // endregion
+    # endregion
 }

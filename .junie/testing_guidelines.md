@@ -134,28 +134,28 @@ public function test_creates_client_with_valid_data()
 ```php
 class ClientsControllerTest extends AbstractTestCase
 {
-    // region Setup
+    # region Setup
     protected function setUp(): void
     {
         parent::setUp();
         // Create test data here
     }
-    // endregion
+    # endregion
     
-    // region Happy Path
+    # region Happy Path
     public function it_creates_client_successfully() { }
     public function it_updates_client_successfully() { }
-    // endregion
+    # endregion
     
-    // region Validation
+    # region Validation
     public function it_validates_required_fields() { }
     public function it_validates_email_format() { }
-    // endregion
+    # endregion
     
-    // region Authorization
+    # region Authorization
     public function it_prevents_unauthorized_access() { }
     public function it_allows_admin_access() { }
-    // endregion
+    # endregion
 }
 ```
 
