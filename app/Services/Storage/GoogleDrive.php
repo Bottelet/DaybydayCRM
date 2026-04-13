@@ -157,14 +157,15 @@ class GoogleDrive implements FilesystemIntegration
 
     private function get($file, $options)
     {
-        $file = $this->driveService->files->get($file->integration_id, $options);
+        $document = $file;
+        $driveFile = $this->driveService->files->get($document->integration_id, $options);
 
-        if ( ! $file) {
-            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $file->path]));
+        if ( ! $driveFile) {
+            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $document->path ?? '']));
 
             return redirect()->back();
         }
 
-        return $file;
+        return $driveFile;
     }
 }
