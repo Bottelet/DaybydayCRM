@@ -9,7 +9,7 @@
  * if ( ! $this->config->get('purifier.finalize')) {
  *     $config->autoFinalize = false;
  * }
- * $config->loadArray($this->getConfig());.
+ * $config->loadArray($this->getConfig());
  *
  * You must NOT delete the default settings
  * anything in settings should be compacted with params that needed to instance HTMLPurifier_Config.
