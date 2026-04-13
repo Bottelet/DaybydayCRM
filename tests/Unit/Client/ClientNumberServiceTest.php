@@ -11,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
+use InvalidArgumentException;
 
 class ClientNumberServiceTest extends AbstractTestCase
 {
@@ -157,7 +158,7 @@ class ClientNumberServiceTest extends AbstractTestCase
         $negativeNumber = -100;
 
         /** Assert */
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Client number cannot be negative.');
 
         /** Act */

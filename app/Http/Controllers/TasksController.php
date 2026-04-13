@@ -371,21 +371,11 @@ class TasksController extends Controller
      *
      * @return mixed
      */
-    public function updateDeadline(Request $request, $external_id)
+    public function updateDeadline(\App\Http\Requests\Task\UpdateTaskDeadlineRequest $request, $external_id)
     {
-        if (! auth()->user()->can('task-update-deadline')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task deadline'));
-
-            return redirect()->route('tasks.show', $external_id);
-        }
         $task = $this->findByExternalId($external_id);
-        $date = $request->input('deadline_date');
-        $time = $request->input('deadline_time', '00:00');
-        if (! $date) {
-            return response()->json(['error' => 'Invalid deadline_date'], 400);
-        }
-        $deadline = Carbon::parse($date.' '.$time.':00');
-        $task->deadline = $deadline->toDateString();
+        $deadline = $request->validated('deadline');
+        $task->deadline = $deadline;
         $task->save();
         event(new TaskAction($task, self::UPDATED_DEADLINE));
         session()->flash('flash_message', 'New deadline is set');

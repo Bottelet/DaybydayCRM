@@ -5,6 +5,7 @@ namespace Tests\Unit\Environment;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Tests\AbstractTestCase;
 
 /**
  * Tests for project configuration files changed in this PR:
@@ -20,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  * inspect file contents and do not need the application container.
  */
 #[Group('project-files-configuration')]
-class ProjectFilesConfigurationTest extends TestCase
+class ProjectFilesConfigurationTest extends AbstractTestCase
 {
     private string $rootPath;
 

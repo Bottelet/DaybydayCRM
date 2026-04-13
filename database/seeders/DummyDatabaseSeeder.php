@@ -13,9 +13,9 @@ class DummyDatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call('UsersDummyTableSeeder');
-        $this->call('ClientsDummyTableSeeder');
-        $this->call('TasksDummyTableSeeder');
-        $this->call('LeadsDummyTableSeeder');
+        $this->call(UsersDummyTableSeeder::class);
+        $this->call(ClientsDummyTableSeeder::class);
+        $this->call(TasksDummyTableSeeder::class);
+        $this->call(LeadsDummyTableSeeder::class);
     }
 }

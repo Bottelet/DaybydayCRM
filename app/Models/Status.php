@@ -47,9 +47,7 @@ class Status extends Model
     /**
      * Check if a status ID is valid for a specific type
      *
-     * @param int $statusId
-     * @param string $sourceType The fully qualified class name (e.g., Task::class, Lead::class, Project::class)
-     * @return bool
+     * @param  string  $sourceType  The fully qualified class name (e.g., Task::class, Lead::class, Project::class)
      */
     public static function isValidForType(int $statusId, string $sourceType): bool
     {

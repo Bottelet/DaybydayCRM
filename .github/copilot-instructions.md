@@ -28,14 +28,8 @@ Tests must be **self-contained**. The "Cascade Problem" (tests depending on side
 - **ALWAYS use FormRequests** for controller input validation.
 - **NEVER use** `$request->input()` directly without a FormRequest.
 - **NEVER use** inline validation with `$this->validate()`.
-- If a FormRequest exists but code uses `$request->input()`, use `$request->validated()` instead.
 
-**Controllers needing FormRequests:**
-- `LeadsController`: `store()` method
-- `TasksController`: `updateAssign()`, `updateDeadline()`, `updateStatus()`
-- `ProjectsController`: `updateAssign()`, `updateDeadline()`, `updateStatus()`
-- `RolesController`: `update()` method
-- `CommentController`: `store()` method
+// See [refactor inventory](../.github/ROADMAP.md) for current migration targets and live inventories.
 
 ### 4. Model Consistency
 - Use **HasExternalId** trait for UUID routing.
@@ -55,16 +49,10 @@ Tests must be **self-contained**. The "Cascade Problem" (tests depending on side
 - `Invoice::STATUS_SENT` → Complete migration to existing `InvoiceStatus` enum
 
 ### 6. Service Layer
-- **Controllers > 200 lines** → Extract to service.
-- **Controllers must remain thin** — business logic belongs in services.
+**Controllers > 200 lines** → Extract to service.
+**Controllers must remain thin** — business logic belongs in services.
 
-**Controllers Needing Services:**
-- `ClientsController` (448 lines) → `ClientService`
-- `TasksController` (418 lines) → `TaskService`
-- `DocumentsController` (382 lines) → `DocumentStorageService`
-- `ProjectsController` (369 lines) → `ProjectService`
-- `UsersController` (362 lines) → `UserService`
-- `LeadsController` (330 lines) → `LeadService`
+// See [refactor inventory](../.github/ROADMAP.md) for current migration targets and live inventories.
 
 ### 7. Code Standards
 - **Routing:** Prefer tuple-based syntax `[Controller::class, 'method']`.
@@ -89,10 +77,9 @@ return redirect()->back();
 ### 9. Test Organization
 - **HTTP tests** (using `$this->get()`, `$this->post()`) → `tests/Feature/`
 - **Unit tests** (testing single classes) → `tests/Unit/`
-- **CRITICAL:** All controller tests MUST be in `tests/Feature/Controllers/`
+**CRITICAL:** All controller tests MUST be in `tests/Feature/Controllers/`
 
-**Currently Misplaced:**
-- 39 test files in `tests/Unit/Controllers/` should be in `tests/Feature/Controllers/`
+// See [refactor inventory](../.github/ROADMAP.md) for current migration targets and live inventories.
 
 ---
 

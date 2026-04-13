@@ -4,7 +4,7 @@ namespace Tests\Feature\Url;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
 /**
  * Edge case tests for URL generation in various scenarios
@@ -15,7 +15,7 @@ use Tests\TestCase;
  * - Different protocols and ports
  * - Trailing slashes
  */
-class UrlGenerationEdgeCasesTest extends TestCase
+class UrlGenerationEdgeCasesTest extends AbstractTestCase
 {
     use DatabaseTransactions;
     use WithoutMiddleware;

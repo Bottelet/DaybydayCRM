@@ -8,7 +8,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
 /**
  * Test URL generation for subdirectory installations
@@ -17,7 +17,7 @@ use Tests\TestCase;
  * is installed in a subdirectory (e.g., http://localhost/daybydaycrm/public/)
  * instead of at the domain root.
  */
-class SubdirectoryUrlGenerationTest extends TestCase
+class SubdirectoryUrlGenerationTest extends AbstractTestCase
 {
     use DatabaseTransactions;
     use WithoutMiddleware;

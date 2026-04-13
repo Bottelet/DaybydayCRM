@@ -39,7 +39,7 @@ class StoreCommentRequest extends FormRequest
 
                     if (isset($modelsMapping[$type])) {
                         $model = $modelsMapping[$type];
-                        if (!$model::where('external_id', $value)->exists()) {
+                        if (! $model::where('external_id', $value)->exists()) {
                             $fail("The selected {$type} does not exist.");
                         }
                     }

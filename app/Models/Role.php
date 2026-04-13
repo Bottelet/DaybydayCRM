@@ -46,6 +46,7 @@ class Role extends EntrustRole
     public function canBeDeleted()
     {
         $roleType = RoleType::fromString($this->name);
+
         return $roleType ? $roleType->canBeDeleted() : true;
     }
 }

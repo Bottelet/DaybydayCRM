@@ -426,257 +426,37 @@ session()->flash('flash_message', __('Task deleted'));
 return redirect()->back();
 ```
 
-## 8. Missing FormRequest Validation
+## 8. Completed: FormRequest Validation (as of April 2026)
 
-### Current Problem
-Several controllers use direct `$request->input()` without proper FormRequest validation, creating security and data integrity risks.
+All major controllers now use dedicated FormRequest classes for input validation. This refactor is complete and all previously missing request classes have been implemented.
 
-### Controllers Requiring FormRequests
+### Implemented FormRequests by Controller
 
 #### LeadsController
-- **Method:** `store()` (lines 100-105)
-- **Issue:** Uses `StoreLeadRequest` in signature but then directly accesses `$request->input()`
-- **Fields:** `title`, `description`, `user_assigned_id`, `deadline`, `status_id`
-- **Solution:** Use `$request->validated()` instead of direct input access
+- `StoreLeadRequest` (for store)
 
-#### TasksController  
-- **Methods:** `updateAssign()`, `updateDeadline()`, `updateStatus()` (lines 280+)
-- **Issue:** Direct `$request->input()` or `$request->only()` usage
-- **Missing:** `UpdateTaskAssignRequest`, `UpdateTaskDeadlineRequest`, `UpdateTaskStatusRequest`
+#### TasksController
+- `UpdateTaskAssignRequest` (for updateAssign)
+- `UpdateTaskDeadlineRequest` (for updateDeadline)
+- `UpdateTaskStatusRequest` (for updateStatus)
 
 #### ProjectsController
-- **Methods:** Similar pattern to TasksController
-- **Missing:** `UpdateProjectAssignRequest`, `UpdateProjectDeadlineRequest`, `UpdateProjectStatusRequest`
+- `UpdateProjectAssignRequest` (for updateAssign)
+- `UpdateProjectDeadlineRequest` (for updateDeadline)
+- `UpdateProjectStatusRequest` (for updateStatus)
 
 #### RolesController
-- **Method:** `update()` (line 91)
-- **Issue:** `$request->input('permissions')` without validation
-- **Missing:** `UpdateRoleRequest`
+- `UpdateRoleRequest` (for update)
 
 #### CommentController
-- **Method:** `store()` (line 19)
-- **Issue:** Uses inline validation via `$this->validate()`
-- **Missing:** `StoreCommentRequest`
+- `StoreCommentRequest` (for store)
 
-**Priority:** High — Security Risk
+This closes the outstanding security and data integrity risks related to missing FormRequest validation in these controllers.
 
 ---
-
-## 9. Model Constants → Enum Migration
-
-### Current Problem
-Models use string constants that should be type-safe enums.
-
-### Constants to Convert
-
-#### Task Model
-```php
-// Current
-public const TASK_STATUS_CLOSED = 'closed';
-
-// Proposed
-enum TaskStatus: string {
-    case OPEN = 'open';
-    case CLOSED = 'closed';
-    case IN_PROGRESS = 'in_progress';
-}
-```
-
-#### Lead Model
-```php
-// Current
-public const LEAD_STATUS_CLOSED = 'closed';
-
-// Proposed - consolidate with Status model
-enum LeadStatus: string
-```
-
-#### Project Model
-```php
-// Current (Note inconsistent casing!)
-public const PROJECT_STATUS_CLOSED = 'Closed';
-
-// Proposed
-enum ProjectStatus: string
-```
-
-#### Role Model
-```php
-// Current
-public const OWNER_ROLE = 'owner';
-public const ADMIN_ROLE = 'administrator';
-
-// Proposed
-enum RoleType: string {
-    case OWNER = 'owner';
-    case ADMINISTRATOR = 'administrator';
-}
-```
-
-#### Invoice Model
-```php
-// Current
-public const STATUS_SENT = 'sent';
-
-// Note: InvoiceStatus enum already exists!
-// Action: Complete migration, remove constant
-```
-
-**Priority:** Medium — Type Safety & Maintainability
-
 ---
-
-## 10. Status Model Enum Refactoring
-
-### Major Opportunity
-The `Status` model currently stores statuses in the database with `source_type` distinguishing between Task, Lead, and Project statuses.
-
-### Current Approach
-- Database table with `source_type` field (Task::class, Lead::class, Project::class)
-- Dynamic statuses managed in database
-- Scopes: `typeOfTask()`, `typeOfLead()`, `typeOfProject()`
-
-### Proposed Alternatives
-
-#### Option A: Keep Database, Add Validation Enums
-- Keep database table for flexibility
-- Create enums for **validation** and **default statuses**
-- Benefits: Flexibility + type safety for common statuses
-- Lower risk migration
-
-#### Option B: Full Enum Migration
-- Replace database statuses with dedicated enums
-- `TaskStatus`, `LeadStatus`, `ProjectStatus`
-- Benefits: Type-safe, no database lookups, simpler queries
-- Risks: Loss of dynamic status creation, complex migration
-
-**Recommendation:** Option A — provides type safety while maintaining flexibility.
-
-**Priority:** Medium-High — Affects core domain logic
-
 ---
-
-## 11. Controllers Requiring Service Extraction
-
-Controllers exceeding 200 lines should have business logic extracted to services.
-
-### ClientsController (448 lines)
-**Contains:**
-- Client number generation (already has `ClientNumberService`)
-- Billing API integration
-- File storage operations
-
-**Extract to:**
-- `ClientService` — orchestrate client operations
-- `ClientStorageService` — handle file operations
-- Better utilize existing `ClientNumberService`
-
-### TasksController (418 lines)
-**Contains:**
-- File upload logic
-- Status update validation
-- Assignment logic
-- Deadline management
-
-**Extract to:**
-- `TaskService` — orchestrate task operations
-- Note: Some logic exists in `TaskAction` — consolidate
-
-### DocumentsController (382 lines)
-**Contains:**
-- Complex authorization logic
-- File storage and retrieval
-
-**Extract to:**
-- `DocumentPolicy` (already identified in #6)
-- `DocumentStorageService`
-
-### ProjectsController (369 lines)
-**Contains:**
-- Project creation
-- Status updates
-- Assignment handling
-
-**Extract to:**
-- `ProjectService`
-
-### UsersController (362 lines)
-**Contains:**
-- User lifecycle management
-- Calendar integration
-
-**Extract to:**
-- `UserService`
-- `CalendarService`
-
-### LeadsController (330 lines)
-**Extract to:**
-- `LeadService`
-
-### InvoicesController (231 lines)
-**Note:** Already has `InvoiceCalculator` and `InvoiceNumberService`
-
-**Extract to:**
-- `InvoiceService` — orchestration layer
-
-### SettingsController (233 lines)
-**Contains:**
-- Multiple inline validation blocks
-- Integration with existing validation services
-
-**Action:** Improve integration with existing services
-
-**Priority:** High — Maintainability & Testability
-
 ---
-
-## 12. Test Organization — Unit vs Feature
-
-### Problem
-39 test files located in `tests/Unit/Controllers/` are actually Feature tests (making HTTP requests).
-
-**Why they're Feature tests:**
-- Use HTTP methods: `$this->get()`, `$this->post()`, `$this->put()`, `$this->delete()`
-- Exercise full controller stack (routes, middleware, controllers)
-- Are integration tests, not unit tests
-
-### Affected Directories
-```
-tests/Unit/Controllers/Absence/        (1 file)
-tests/Unit/Controllers/Appointment/    (3 files)
-tests/Unit/Controllers/Department/     (1 file)
-tests/Unit/Controllers/Document/       (4 files)
-tests/Unit/Controllers/Lead/           (5 files)
-tests/Unit/Controllers/Payment/        (2 files)
-tests/Unit/Controllers/Role/           (1 file)
-tests/Unit/Controllers/Search/         (1 file)
-tests/Unit/Controllers/Settings/       (2 files)
-tests/Unit/Controllers/Task/           (5 files)
-tests/Unit/Controllers/User/           (4 files)
-... and more
-```
-
-### Migration Strategy
-1. Move all files to `tests/Feature/Controllers/`
-2. Update namespace: `Tests\Unit\Controllers` → `Tests\Feature\Controllers`
-3. Continue extending `AbstractTestCase`
-4. Group by domain, not test type
-
-### True Unit Tests (Correctly Placed)
-```
-tests/Unit/Enums/*
-tests/Unit/Invoice/InvoiceCalculatorTest.php
-tests/Unit/Invoice/InvoiceNumberServiceTest.php
-tests/Unit/Repositories/RoleRepositoryTest.php
-tests/Unit/Format/*
-tests/Unit/Events/*
-tests/Unit/Models/*
-tests/Unit/Entrust/*
-tests/Unit/Deadline/*
-```
-
-**Priority:** Medium — Test Organization & Clarity
-
 ---
 
 ## Phase 2.2: Service Extraction - AI Agent Prompt
@@ -1467,62 +1247,3 @@ protected function attachPermissionAndReload(User $user, Permission $permission)
 }
 ```
 
----
-
-## Phase 2.2 Reminder: Service Extraction (Paused)
-
-This 40-hour task has been paused and documented above as an AI agent prompt. When ready to implement:
-
-1. Use the AI agent prompt in the Phase 2.2 section
-2. Implement controllers in priority order (largest first)
-3. Follow the service extraction pattern
-4. Ensure all tests pass after each extraction
-
----
-
-## Priority Order
-
-1. **High Priority** (Do first - affects all controllers):
-   - #1: Standardize JSON vs Web Response Handling
-   - #2: Consolidate Permission Checks in Middleware
-   - #8: Missing FormRequest Validation
-   - #11: Service Extraction (largest controllers first)
-
-2. **Medium Priority** (Improves code quality significantly):
-   - #3: Complete PermissionName Enum Migration
-   - #4: Improve Test Isolation and Setup
-   - #9: Model Constants → Enum Migration
-   - #10: Status Model Enum Refactoring
-   - #12: Test Organization
-
-3. **Low Priority** (Nice to have):
-   - #5: Standardize Status Validation
-   - #6: Extract Document Authorization Logic
-   - #7: Remove Duplicate Response Headers
-
-## Estimated Impact
-
-| Refactoring | Files Affected | LOC Reduced | Complexity Reduced | Bug Risk Reduced | Time Estimate |
-|-------------|----------------|-------------|-------------------|------------------|---------------|
-| #1 - Response Handling | ~10 | ~200 | High | High | 8 hours |
-| #2 - Permission Middleware | ~15 | ~300 | High | High | 12 hours |
-| #3 - Enum Migration | ~20 | ~50 | Medium | Medium | 6 hours |
-| #4 - Test Helpers | ~30 | ~400 | Medium | Low | 4 hours |
-| #5 - Status Validation | ~4 | ~30 | Low | Low | 2 hours |
-| #6 - Document Policy | ~2 | ~50 | Medium | Medium | 4 hours |
-| #7 - Remove Duplication | ~10 | ~100 | Low | Low | 2 hours |
-| #8 - FormRequest Creation | ~15 | +500/-100 | High | High | 8 hours |
-| #9 - Model Enums | ~8 | ~200 | Medium | Medium | 6 hours |
-| #10 - Status Enum | ~25 | ~300 | High | Medium | 12 hours |
-| #11 - Service Extraction | ~8 | -800/+1000 | High | Medium | 40 hours |
-| #12 - Test Migration | 39 | ~50 | Low | Low | 4 hours |
-| **TOTAL** | ~140+ files | ~2000+ | High | High | **~108 hours** |
-
-## Testing Strategy
-
-After each refactoring:
-1. Run the full test suite to ensure no regressions
-2. Test both web and API endpoints manually
-3. Verify authorization works correctly for both JSON and web requests
-4. Check that flash messages appear correctly in web UI
-5. Verify JSON responses have correct structure and status codes

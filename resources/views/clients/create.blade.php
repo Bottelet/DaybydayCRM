@@ -59,6 +59,8 @@
     </script>
 @endpush
 
+@dd("teeeheeest?");
+
     <?php
     $data = Session::get('data');
     ?>
@@ -83,7 +85,7 @@
             </div>
             <input type="submit" value="{{ __('Find Company') }}" class="btn btn-sm btn-brand clientvat">
         </div>
-    </div>  
+    </div>
     <hr>
     @endif
     </form>

@@ -8,7 +8,7 @@ use App\Enums\PermissionName;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Cache;
-use Artisan;
+use Illuminate\Support\Facades\Artisan;
 
 abstract class AbstractTestCase extends BaseTestCase
 {
