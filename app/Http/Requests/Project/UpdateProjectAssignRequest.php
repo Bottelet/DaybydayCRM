@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Project;
 
-use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectAssignRequest extends FormRequest
@@ -18,6 +17,7 @@ class UpdateProjectAssignRequest extends FormRequest
         if ($user === null) {
             return false;
         }
+
         return $user->can('can-assign-new-user-to-project');
     }
 

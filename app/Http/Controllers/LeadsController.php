@@ -102,7 +102,7 @@ class LeadsController extends Controller
 
         // Only append contact_time if it exists in validated data
         if (isset($validated['contact_time'])) {
-            $deadline .= ' ' . $validated['contact_time'] . ':00';
+            $deadline .= ' '.$validated['contact_time'].':00';
         } else {
             $deadline .= ' 00:00:00';
         }
@@ -209,7 +209,7 @@ class LeadsController extends Controller
     public function updateFollowup(UpdateLeadFollowUpRequest $request, $external_id)
     {
         $lead = $this->findByExternalId($external_id);
-        
+
         $validated = $request->validated();
         $contactTime = $validated['contact_time'];
         $deadline = $validated['deadline'];

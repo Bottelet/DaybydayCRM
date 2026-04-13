@@ -7,7 +7,6 @@ use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Role;
-use Illuminate\Http\Request;
 use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Session;
 use Yajra\Datatables\Datatables;

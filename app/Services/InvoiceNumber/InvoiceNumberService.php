@@ -45,11 +45,15 @@ class InvoiceNumberService
     public function nextInvoiceNumber()
     {
         $setting = $this->setting->first();
-        $settingNumber = $setting ? $setting->invoice_number : 1;
+        $settingNumber = $setting ? $setting->invoice_number : 0;
 
-        // Also check the maximum invoice number from existing invoices
-        // Add 1 to the max to get the next available number
-        $maxInvoiceNumber = (\App\Models\Invoice::max('invoice_number') ?? 0) + 1;
+        $maxInvoice = \App\Models\Invoice::max('invoice_number');
+        if ($maxInvoice === null) {
+            // No invoices exist, use the setting value as-is
+            return $settingNumber;
+        }
+        // At least one invoice exists, next available is max + 1
+        $maxInvoiceNumber = $maxInvoice + 1;
 
         // Return the higher of the two to ensure we don't reuse numbers
         return max($settingNumber, $maxInvoiceNumber);

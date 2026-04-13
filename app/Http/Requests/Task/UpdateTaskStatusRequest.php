@@ -15,7 +15,22 @@ class UpdateTaskStatusRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::TASK_UPDATE_STATUS->value);
+        $user = auth()->user();
+
+        return $user ? $user->can(PermissionName::TASK_UPDATE_STATUS->value) : false;
+    }
+
+    /**
+     * Normalize input before validation.
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('statusExternalId') && ! $this->has('status_id')) {
+            $status = \App\Models\Status::whereExternalId($this->input('statusExternalId'))->first();
+            if ($status) {
+                $this->merge(['status_id' => $status->id]);
+            }
+        }
     }
 
     /**
@@ -42,20 +57,10 @@ class UpdateTaskStatusRequest extends FormRequest
         $validator->after(function ($validator) {
             $statusId = $this->status_id;
 
-            // Convert external ID to ID if provided
-            if ($this->statusExternalId && !$statusId) {
-                $status = Status::whereExternalId($this->statusExternalId)->first();
-                if ($status) {
-                    $statusId = $status->id;
-                    // Merge resolved status_id back into request
-                    $this->merge(['status_id' => $statusId]);
-                }
-            }
-
             // Validate status belongs to Task
             if ($statusId) {
                 $validStatus = Status::typeOfTask()->where('id', $statusId)->exists();
-                if (!$validStatus) {
+                if (! $validStatus) {
                     $validator->errors()->add('status_id', __('Invalid status for task'));
                 }
             }

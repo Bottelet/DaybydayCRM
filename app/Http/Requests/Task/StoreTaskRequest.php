@@ -14,7 +14,9 @@ class StoreTaskRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::TASK_CREATE->value);
+        $user = auth()->user();
+
+        return $user ? $user->can(PermissionName::TASK_CREATE->value) : false;
     }
 
     /**

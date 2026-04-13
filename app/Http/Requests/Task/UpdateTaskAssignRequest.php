@@ -15,6 +15,7 @@ class UpdateTaskAssignRequest extends FormRequest
     public function authorize()
     {
         $user = auth()->user();
+
         return $user ? $user->can(PermissionName::TASK_UPDATE_ASSIGNMENT->value) : false;
     }
 

@@ -187,4 +187,14 @@ class Lead extends Model implements Commentable
 
         return true;
     }
+
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
+    {
+        return static::where('external_id', $externalId)->first();
+    }
 }

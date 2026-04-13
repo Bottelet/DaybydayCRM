@@ -3,6 +3,7 @@
 namespace App\Services\ClientNumber;
 
 use App\Models\Setting;
+use InvalidArgumentException;
 
 class ClientNumberService
 {
@@ -30,12 +31,9 @@ class ClientNumberService
     public function setClientNumber(int $clientNumber)
     {
         if ($clientNumber < 0) {
-            throw new \InvalidArgumentException('Client number cannot be negative.');
+            throw new InvalidArgumentException('Client number cannot be negative.');
         }
 
-        if ($clientNumber === 0) {
-            throw new \InvalidArgumentException('Client number cannot be zero.');
-        }
 
         $this->lockedSetting->client_number = $clientNumber;
 
