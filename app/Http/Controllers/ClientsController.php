@@ -44,9 +44,9 @@ class ClientsController extends Controller
 
     public function __construct()
     {
-        $this->middleware('client.create', ['only' => ['create']]);
+        /*$this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
-        $this->middleware('client.delete', ['only' => ['destroy']]);
+        $this->middleware('client.delete', ['only' => ['destroy']]);*/
         $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 

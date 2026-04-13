@@ -25,12 +25,6 @@ class User extends Authenticatable
 
     protected $searchableFields = ['name', 'email'];
 
-    public function restore()
-    {
-        $this->restoreA();
-        $this->restoreB();
-    }
-
     /**
      * The database table used by the model.
      *
@@ -223,5 +217,11 @@ class User extends Authenticatable
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
+    }
+
+    public function restore()
+    {
+        $this->restoreA();
+        $this->restoreB();
     }
 }
