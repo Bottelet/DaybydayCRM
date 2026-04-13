@@ -4,10 +4,10 @@ namespace Tests\Unit\Enums;
 
 use App\Enums\AbsenceReason;
 use Carbon\Carbon;
-use PHPUnit\Framework\Attributes\Test;
-use Tests\AbstractTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
 
 class AbsenceReasonTest extends AbstractTestCase
 {
@@ -27,7 +27,7 @@ class AbsenceReasonTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_getting_reason_returns_instance_of_absence_reason()
@@ -38,7 +38,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $result = AbsenceReason::fromStatus($statusValue);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $result);
     }
 
@@ -51,7 +51,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::fromStatus($statusValue);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('vacation', $reason->getReason());
         $this->assertEquals('Vacation', $reason->getDisplayValue());
     }
@@ -65,7 +65,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $displayValue = AbsenceReason::fromStatus($statusValue)->getDisplayValue();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Vacation', $displayValue);
     }
 
@@ -78,7 +78,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::sickLeave()->getReason();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('sick_leave', $reason);
     }
 
@@ -91,7 +91,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::fromDisplayValue($displayValue)->getReason();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('vacation', $reason);
     }
 
@@ -104,7 +104,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $values = AbsenceReason::values();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(8, $values);
     }
 
@@ -117,7 +117,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::vacation();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('vacation', $reason->getReason());
         $this->assertEquals('Vacation', $reason->getDisplayValue());
@@ -132,7 +132,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::vacationDay();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('vacation_day', $reason->getReason());
     }
@@ -146,7 +146,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::sickLeave();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('sick_leave', $reason->getReason());
         $this->assertEquals('Sick leave', $reason->getDisplayValue());
@@ -161,7 +161,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::timeOff();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('time_off', $reason->getReason());
     }
@@ -175,7 +175,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::timeOffInLieu();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         // Note: the AbsenceReason for TIME_OFF_IN_LIEU is constructed with self::TIME_OFF as the reason string
         $this->assertEquals('time_off', $reason->getReason());
@@ -191,7 +191,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::personalLeave();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('personal_leave', $reason->getReason());
         $this->assertEquals('Personal leave', $reason->getDisplayValue());
@@ -206,7 +206,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::flextime();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('flextime', $reason->getReason());
         $this->assertEquals('Flextime', $reason->getDisplayValue());
@@ -221,7 +221,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $reason = AbsenceReason::other();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
         $this->assertEquals('other', $reason->getReason());
         $this->assertEquals('Other', $reason->getDisplayValue());
@@ -236,7 +236,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Act */
         $stringValue = (string) $reason;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('vacation', $stringValue);
     }
 
@@ -247,10 +247,10 @@ class AbsenceReasonTest extends AbstractTestCase
         // No arrangement needed
 
         /** Act */
-        $first = AbsenceReason::values();
+        $first  = AbsenceReason::values();
         $second = AbsenceReason::values();
 
-        /** Assert */
+        /* Assert */
         $this->assertSame($first, $second);
     }
 
@@ -261,35 +261,35 @@ class AbsenceReasonTest extends AbstractTestCase
         // No arrangement needed
 
         /** Act */
-        $timeOff = AbsenceReason::timeOff();
+        $timeOff       = AbsenceReason::timeOff();
         $timeOffInLieu = AbsenceReason::timeOffInLieu();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($timeOff->getReason(), $timeOffInLieu->getReason());
         $this->assertNotEquals($timeOff->getDisplayValue(), $timeOffInLieu->getDisplayValue());
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_constructor_accepts_null_display_value()
     {
         /** Arrange */
-        $reasonValue = 'custom_reason';
+        $reasonValue  = 'custom_reason';
         $displayValue = null;
 
         /** Act */
         $reason = new AbsenceReason($reasonValue, $displayValue);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('custom_reason', $reason->getReason());
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function it_throws_exception_if_reason_is_not_known()
@@ -297,7 +297,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Arrange */
         $invalidReason = 'non_existing_reason';
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         AbsenceReason::fromStatus($invalidReason);
     }
@@ -308,7 +308,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Arrange */
         $invalidDisplayValue = 'None existing display value';
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         AbsenceReason::fromDisplayValue($invalidDisplayValue);
     }
@@ -319,7 +319,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Arrange */
         $wrongCase = 'Vacation';
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         AbsenceReason::fromStatus($wrongCase);
     }
@@ -330,7 +330,7 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Arrange */
         $wrongCase = 'vacation';
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         AbsenceReason::fromDisplayValue($wrongCase);
     }
@@ -341,10 +341,10 @@ class AbsenceReasonTest extends AbstractTestCase
         /** Arrange */
         $partialMatch = 'Vacatio';
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         AbsenceReason::fromDisplayValue($partialMatch);
     }
 
-    // endregion
+    # endregion
 }

@@ -32,16 +32,16 @@ class OffersController extends Controller
     {
         $offer->invoiceLines()->forceDelete();
         foreach ($request->all() as $line) {
-            if (! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
+            if ( ! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
                 return response('missing fields', 422);
             }
 
             $invoiceLine = InvoiceLine::make([
-                'title' => $line['title'],
-                'type' => $line['type'],
-                'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'] ?? null,
-                'price' => $line['price'] * 100,
+                'title'      => $line['title'],
+                'type'       => $line['type'],
+                'quantity'   => $line['quantity'] ?: 1,
+                'comment'    => $line['comment'] ?? null,
+                'price'      => $line['price'] * 100,
                 'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
@@ -51,24 +51,24 @@ class OffersController extends Controller
     public function create(Request $request, Lead $lead)
     {
         $offer = Offer::create([
-            'status' => OfferStatus::inProgress()->getStatus(),
-            'client_id' => $lead->client_id,
+            'status'      => OfferStatus::inProgress()->getStatus(),
+            'client_id'   => $lead->client_id,
             'external_id' => Uuid::uuid4()->toString(),
-            'source_id' => $lead->id,
+            'source_id'   => $lead->id,
             'source_type' => Lead::class,
         ]);
 
         foreach ($request->all() as $line) {
-            if (! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
+            if ( ! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
                 return response('missing fields', 422);
             }
 
             $invoiceLine = InvoiceLine::make([
-                'title' => $line['title'],
-                'type' => $line['type'],
-                'quantity' => $line['quantity'] ?: 1,
-                'comment' => $line['comment'] ?? null,
-                'price' => $line['price'] * 100,
+                'title'      => $line['title'],
+                'type'       => $line['type'],
+                'quantity'   => $line['quantity'] ?: 1,
+                'comment'    => $line['comment'] ?? null,
+                'price'      => $line['price'] * 100,
                 'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
@@ -79,7 +79,6 @@ class OffersController extends Controller
         }
 
         return response('OK');
-
     }
 
     public function won(Request $request)
@@ -87,13 +86,13 @@ class OffersController extends Controller
         $offer = Offer::whereExternalId($request->get('offer_external_id'))->with('invoiceLines')->firstOrFail();
         $offer->setAsWon();
 
-        $invoice = Invoice::create($offer->toArray());
-        $invoice->offer_id = $offer->id;
+        $invoice                 = Invoice::create($offer->toArray());
+        $invoice->offer_id       = $offer->id;
         $invoice->invoice_number = app(InvoiceNumberService::class)->setNextInvoiceNumber();
-        $invoice->status = InvoiceStatus::draft()->getStatus();
+        $invoice->status         = InvoiceStatus::draft()->getStatus();
         $invoice->save();
 
-        $lines = $offer->invoiceLines;
+        $lines    = $offer->invoiceLines;
         $newLines = collect();
         foreach ($lines as $invoiceLine) {
             $invoiceLine->offer_id = null;

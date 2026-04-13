@@ -9,7 +9,7 @@ use Ramsey\Uuid\Uuid;
 class IndustriesTableSeeder extends Seeder
 {
     /**
-     * Auto generated seed file
+     * Auto generated seed file.
      *
      * @return void
      */
@@ -19,103 +19,103 @@ class IndustriesTableSeeder extends Seeder
 
         DB::table('industries')->insert([
             [
-                'name' => 'Accommodations',
+                'name'        => 'Accommodations',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Accounting',
+                'name'        => 'Accounting',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Auto',
+                'name'        => 'Auto',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Beauty & Cosmetics',
+                'name'        => 'Beauty & Cosmetics',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Carpenter',
+                'name'        => 'Carpenter',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Communications',
+                'name'        => 'Communications',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Computer & IT',
+                'name'        => 'Computer & IT',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Construction',
+                'name'        => 'Construction',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Consulting',
+                'name'        => 'Consulting',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Education',
+                'name'        => 'Education',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Electronics',
+                'name'        => 'Electronics',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Entertainment',
+                'name'        => 'Entertainment',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Food & Beverages',
+                'name'        => 'Food & Beverages',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Legal Services',
+                'name'        => 'Legal Services',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Marketing',
+                'name'        => 'Marketing',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Real Estate',
+                'name'        => 'Real Estate',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Retail',
+                'name'        => 'Retail',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Sports',
+                'name'        => 'Sports',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Technology',
+                'name'        => 'Technology',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Tourism',
+                'name'        => 'Tourism',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Transportation',
+                'name'        => 'Transportation',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Travel',
+                'name'        => 'Travel',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Utilities',
+                'name'        => 'Utilities',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Web Services',
+                'name'        => 'Web Services',
                 'external_id' => Uuid::uuid4(),
             ],
             [
-                'name' => 'Other',
+                'name'        => 'Other',
                 'external_id' => Uuid::uuid4(),
             ],
         ]);

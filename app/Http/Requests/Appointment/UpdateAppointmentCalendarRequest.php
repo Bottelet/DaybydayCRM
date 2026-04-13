@@ -25,9 +25,9 @@ class UpdateAppointmentCalendarRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'required',
+            'id'    => 'required',
             'start' => ['required', 'date'],
-            'end' => ['required', 'date'],
+            'end'   => ['required', 'date'],
             'group' => 'required',
         ];
     }

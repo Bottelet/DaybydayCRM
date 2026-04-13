@@ -9,7 +9,7 @@ trait DeadlineTrait
     public function isOverDeadline(): bool
     {
         // If there's no deadline, it's not overdue
-        if (! $this->deadline) {
+        if ( ! $this->deadline) {
             return false;
         }
 
@@ -24,7 +24,7 @@ trait DeadlineTrait
     public function isCloseToDeadline(int $days = 2): bool
     {
         // If there's no deadline, it's not close to deadline
-        if (! $this->deadline) {
+        if ( ! $this->deadline) {
             return false;
         }
 
@@ -34,7 +34,7 @@ trait DeadlineTrait
     public function getDaysUntilDeadlineAttribute(): int
     {
         // If there's no deadline, return 0
-        if (! $this->deadline) {
+        if ( ! $this->deadline) {
             return 0;
         }
 

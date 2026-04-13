@@ -14,9 +14,9 @@ class ClientNumberService
     public function __construct(ClientNumberConfig $config)
     {
         if ($config->isDisabled()) {
-            return null;
+            return;
         }
-        $this->setting = Setting::query();
+        $this->setting       = Setting::query();
         $this->lockedSetting = $this->setting->lockForUpdate()->first();
     }
 
@@ -33,7 +33,6 @@ class ClientNumberService
         if ($clientNumber < 0) {
             throw new InvalidArgumentException('Client number cannot be negative.');
         }
-
 
         $this->lockedSetting->client_number = $clientNumber;
 

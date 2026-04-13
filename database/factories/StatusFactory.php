@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Status;
 use App\Models\Task;
@@ -38,9 +38,9 @@ class StatusFactory extends \Illuminate\Database\Eloquent\Factories\Factory
 
         return [
             'external_id' => $this->faker->uuid,
-            'title' => $this->faker->randomElement($statusTitles),
+            'title'       => $this->faker->randomElement($statusTitles),
             'source_type' => Task::class,
-            'color' => $this->faker->randomElement($colors),
+            'color'       => $this->faker->randomElement($colors),
         ];
     }
 }

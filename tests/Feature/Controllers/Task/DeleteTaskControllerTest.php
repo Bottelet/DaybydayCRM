@@ -7,18 +7,18 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeleteTaskControllerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    private $task;
-
     protected $user;
+
+    private $task;
 
     protected function setUp(): void
     {
@@ -27,7 +27,7 @@ class DeleteTaskControllerTest extends AbstractTestCase
         $this->task = Task::factory()->create();
 
         $this->user = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'employee']);
+        $role       = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);

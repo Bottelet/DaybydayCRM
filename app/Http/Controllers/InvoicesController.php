@@ -16,12 +16,12 @@ use App\Repositories\Tax\Tax;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
-use Yajra\DataTables\Facades\DataTables;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
-use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
 class InvoicesController extends Controller
 {
@@ -46,15 +46,15 @@ class InvoicesController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        if (! auth()->user()->can('invoice-see')) {
+        if ( ! auth()->user()->can('invoice-see')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this invoice'));
 
             return redirect()->route('clients.index');
         }
 
-        $apiConnected = false;
+        $apiConnected    = false;
         $invoiceContacts = [];
-        $primaryContact = null;
+        $primaryContact  = null;
 
         $api = Integration::initBillingIntegration();
 
@@ -70,10 +70,10 @@ class InvoicesController extends Controller
         }
 
         $invoiceCalculator = new InvoiceCalculator($invoice);
-        $totalPrice = $invoiceCalculator->getTotalPrice();
-        $subPrice = $invoiceCalculator->getSubTotal();
-        $vatPrice = $invoiceCalculator->getVatTotal();
-        $amountDue = $invoiceCalculator->getAmountDue();
+        $totalPrice        = $invoiceCalculator->getTotalPrice();
+        $subPrice          = $invoiceCalculator->getSubTotal();
+        $vatPrice          = $invoiceCalculator->getVatTotal();
+        $amountDue         = $invoiceCalculator->getAmountDue();
 
         return view('invoices.show')
             ->withInvoice($invoice)
@@ -91,13 +91,13 @@ class InvoicesController extends Controller
     }
 
     /**
-     * Update the sent status
+     * Update the sent status.
      *
      * @return mixed
      */
     public function updateSentStatus(Request $request, $external_id)
     {
-        if (! auth()->user()->can('invoice-send')) {
+        if ( ! auth()->user()->can('invoice-send')) {
             session()->flash('flash_message_warning', __('You do not have permission to send an invoice'));
 
             return redirect()->route('invoices.show', $external_id);
@@ -116,9 +116,9 @@ class InvoicesController extends Controller
             $invoice->sendMail($request->subject, $request->message, $request->recipientMail, $attachPdf);
         }
 
-        $invoice->sent_at = Carbon::now();
-        $invoice->status = InvoiceStatus::unpaid()->getStatus();
-        $invoice->due_at = $result['due_at'];
+        $invoice->sent_at        = Carbon::now();
+        $invoice->status         = InvoiceStatus::unpaid()->getStatus();
+        $invoice->due_at         = $result['due_at'];
         $invoice->invoice_number = app(InvoiceNumberService::class)->setInvoiceNumber($result['invoice_number']);
         $invoice->save();
 
@@ -126,7 +126,7 @@ class InvoicesController extends Controller
     }
 
     /**
-     * Add new invoice line
+     * Add new invoice line.
      *
      * @return mixed
      *
@@ -134,14 +134,14 @@ class InvoicesController extends Controller
      */
     public function newItem($external_id, AddInvoiceLine $request)
     {
-        if (! auth()->user()->can('modify-invoice-lines')) {
+        if ( ! auth()->user()->can('modify-invoice-lines')) {
             session()->flash('flash_message_warning', __('You do not have permission to modify invoice lines'));
 
             return redirect()->route('invoices.show', $external_id);
         }
         $invoice = $this->findByExternalId($external_id);
 
-        if (! $invoice->canUpdateInvoice()) {
+        if ( ! $invoice->canUpdateInvoice()) {
             Session::flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
 
             return redirect()->back();
@@ -156,13 +156,13 @@ class InvoicesController extends Controller
 
         InvoiceLine::create([
             'external_id' => Uuid::uuid4()->toString(),
-            'title' => $request->title,
-            'comment' => $request->comment,
-            'quantity' => $request->quantity,
-            'type' => $request->type,
-            'price' => $request->price * 100,
-            'invoice_id' => $invoice->id,
-            'product_id' => $product,
+            'title'       => $request->title,
+            'comment'     => $request->comment,
+            'quantity'    => $request->quantity,
+            'type'        => $request->type,
+            'price'       => $request->price * 100,
+            'invoice_id'  => $invoice->id,
+            'product_id'  => $product,
         ]);
 
         return redirect()->back();
@@ -199,12 +199,12 @@ class InvoicesController extends Controller
                 return __($payments->payment_source);
             })
             ->editColumn('description', function ($payments) {
-                return substr($payments->description, 0, 80);
+                return mb_substr($payments->description, 0, 80);
             })
             ->addColumn('delete', '
                 <form action="{{ route(\'payment.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="'.__('Delete').'" class="btn btn-link" onClick="return confirm(\'Are you sure you want to delete the payment?\')"">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure you want to delete the payment?\')"">
             {{csrf_field()}}
             </form>')
             ->rawColumns(['delete'])
@@ -213,11 +213,11 @@ class InvoicesController extends Controller
 
     public function moneyFormat()
     {
-        $formats = [];
-        $currency = app(Currency::class, ['code' => Setting::select('currency')->first()->currency]);
-        $formats = array_merge($formats, $currency->toArray());
+        $formats                  = [];
+        $currency                 = app(Currency::class, ['code' => Setting::select('currency')->first()->currency]);
+        $formats                  = array_merge($formats, $currency->toArray());
         $formats['vatPercentage'] = app(Tax::class)->multipleVatRate();
-        $formats['vatRate'] = app(Tax::class)->vatRate();
+        $formats['vatRate']       = app(Tax::class)->vatRate();
 
         return $formats;
     }

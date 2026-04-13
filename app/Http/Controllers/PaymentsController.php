@@ -8,9 +8,9 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Services\Invoice\GenerateInvoiceStatus;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Response;
 use Ramsey\Uuid\Uuid;
-use Exception;
 
 class PaymentsController extends Controller
 {
@@ -19,10 +19,7 @@ class PaymentsController extends Controller
      *
      * @return Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * Remove the specified resource from storage.
@@ -33,7 +30,7 @@ class PaymentsController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        if (! auth()->user()->can('payment-delete')) {
+        if ( ! auth()->user()->can('payment-delete')) {
             session()->flash('flash_message', __("You don't have permission to delete a payment"));
 
             return redirect()->back();
@@ -51,25 +48,25 @@ class PaymentsController extends Controller
 
     public function addPayment(PaymentRequest $request, Invoice $invoice)
     {
-        if (! $invoice->isSent()) {
+        if ( ! $invoice->isSent()) {
             session()->flash('flash_message_warning', __("Can't add payment on Invoice"));
 
             return redirect()->route('invoices.show', $invoice->external_id);
         }
 
         $payment = Payment::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'amount' => $request->amount * 100,
-            'payment_date' => Carbon::parse($request->payment_date),
+            'external_id'    => Uuid::uuid4()->toString(),
+            'amount'         => $request->amount * 100,
+            'payment_date'   => Carbon::parse($request->payment_date),
             'payment_source' => $request->source,
-            'description' => $request->description,
-            'invoice_id' => $invoice->id,
+            'description'    => $request->description,
+            'invoice_id'     => $invoice->id,
         ]);
         $api = Integration::initBillingIntegration();
         if ($api && $invoice->integration_invoice_id) {
-            $result = $api->createPayment($payment);
+            $result                          = $api->createPayment($payment);
             $payment->integration_payment_id = $result['Guid'];
-            $payment->integration_type = get_class($api);
+            $payment->integration_type       = get_class($api);
             $payment->save();
         }
         app(GenerateInvoiceStatus::class, ['invoice' => $invoice])->createStatus();

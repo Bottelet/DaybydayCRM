@@ -21,14 +21,15 @@ class TaskActionNotification extends Notification
      */
     public function __construct($task, $action)
     {
-        $this->task = $task;
+        $this->task   = $task;
         $this->action = $action;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -39,7 +40,8 @@ class TaskActionNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return MailMessage
      */
     public function toMail($notifiable)
@@ -53,7 +55,8 @@ class TaskActionNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -61,31 +64,31 @@ class TaskActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __(':title was created by :creator, and assigned to you', [
-                    'title' => $this->task->title,
+                    'title'   => $this->task->title,
                     'creator' => $this->task->creator->name,
                 ]);
                 break;
             case 'updated_status':
                 $text = __(':title was completed by :username', [
-                    'title' => $this->task->title,
+                    'title'    => $this->task->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_time':
                 $text = __(':username inserted a new time for :title', [
-                    'title' => $this->task->title,
+                    'title'    => $this->task->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned a task to you', [
-                    'title' => $this->task->title,
+                    'title'    => $this->task->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_deadline':
                 $text = __(':username updated the deadline for this :title', [
-                    'title' => $this->task->title,
+                    'title'    => $this->task->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
@@ -95,12 +98,12 @@ class TaskActionNotification extends Notification
 
         return [
             'assigned_user' => $notifiable->id, // Assigned user ID
-            'created_user' => $this->task->creator->id,
-            'message' => $text,
-            'type' => Task::class,
-            'type_id' => $this->task->id,
-            'url' => url('tasks/'.$this->task->external_id),
-            'action' => $this->action,
+            'created_user'  => $this->task->creator->id,
+            'message'       => $text,
+            'type'          => Task::class,
+            'type_id'       => $this->task->id,
+            'url'           => url('tasks/' . $this->task->external_id),
+            'action'        => $this->action,
         ];
     }
 }

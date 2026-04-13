@@ -3,7 +3,7 @@
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
-/**
+/*
  * Laravel - A PHP Framework For Web Artisans
  *
  * @author   Taylor Otwell <taylor@laravel.com>
@@ -20,7 +20,7 @@ define('LARAVEL_START', microtime(true));
 | loading any of our classes later on. It feels great to relax.
 |
 */
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 /*
 |--------------------------------------------------------------------------
 | Turn On The Lights
@@ -32,7 +32,7 @@ require __DIR__.'/../vendor/autoload.php';
 | the responses back to the browser and delight our users.
 |
 */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 /*
 |--------------------------------------------------------------------------
 | Run The Application
@@ -44,7 +44,7 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 | and wonderful application we have prepared for them.
 |
 */
-$kernel = $app->make(Kernel::class);
+$kernel   = $app->make(Kernel::class);
 $response = $kernel->handle(
     $request = Request::capture()
 );

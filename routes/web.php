@@ -13,14 +13,13 @@
 Route::auth();
 Route::get('/logout', 'Auth\LoginController@logout');
 Route::group(['middleware' => ['auth']], static function () {
-
-    /**
+    /*
      * Main
      */
     Route::get('/', 'PagesController@dashboard');
     Route::get('dashboard', 'PagesController@dashboard')->name('dashboard');
 
-    /**
+    /*
      * Users
      */
     Route::group(['prefix' => 'users'], static function () {
@@ -39,7 +38,7 @@ Route::group(['middleware' => ['auth']], static function () {
     });
     Route::resource('users', 'UsersController')->except(['update', 'destroy']);
 
-    /**
+    /*
      * Roles
      */
     Route::group(['prefix' => 'roles'], static function () {
@@ -49,7 +48,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::resource('roles', 'RolesController', ['except' => [
         'update',
     ]]);
-    /**
+    /*
      * Clients
      */
     Route::group(['prefix' => 'clients'], static function () {
@@ -72,7 +71,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
 
-    /**
+    /*
      * Tasks
      */
     Route::group(['prefix' => 'tasks'], static function () {
@@ -93,7 +92,7 @@ Route::group(['middleware' => ['auth']], static function () {
     });
     Route::resource('tasks', 'TasksController')->except(['destroy']);
 
-    /**
+    /*
      * Leads
      */
     Route::group(['prefix' => 'leads'], static function () {
@@ -115,7 +114,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::resource('leads', 'LeadsController')->except(['destroy']);
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
-    /**
+    /*
      * Products
      */
     Route::group(['prefix' => 'products'], static function () {
@@ -126,7 +125,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/data', 'ProductsController@allProducts')->name('products.data');
     });
 
-    /**
+    /*
      * Projects
      */
     Route::group(['prefix' => 'projects'], static function () {
@@ -142,7 +141,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::resource('projects', 'ProjectsController')->only(['destroy']);
     });
     Route::resource('projects', 'ProjectsController')->except(['destroy']);
-    /**
+    /*
      * Settings
      */
     Route::group(['prefix' => 'settings'], static function () {
@@ -154,7 +153,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/date-formats', 'SettingsController@dateFormats')->name('settings.date_formats');
     });
 
-    /**
+    /*
      * Departments
      */
     Route::group(['prefix' => 'departments'], static function () {
@@ -162,7 +161,7 @@ Route::group(['middleware' => ['auth']], static function () {
     });
     Route::resource('departments', 'DepartmentsController');
 
-    /**
+    /*
      * Integrations
      */
     Route::group(['prefix' => 'integrations'], static function () {
@@ -171,7 +170,7 @@ Route::group(['middleware' => ['auth']], static function () {
     });
     Route::resource('integrations', 'IntegrationsController');
 
-    /**
+    /*
      * Notifications
      */
     Route::group(['prefix' => 'notifications'], static function () {
@@ -180,7 +179,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/{id}', 'NotificationsController@markRead');
     });
 
-    /**
+    /*
      * Invoices
      */
     Route::group(['prefix' => 'invoices'], static function () {
@@ -196,12 +195,12 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::post('/offers/create/{lead}', 'OffersController@create')->name('offers.create');
     Route::post('/invoice/create/invoiceLine/{invoice}', 'InvoicesController@newItems')->name('create.invoiceLine');
 
-    /**
+    /*
      * Invoice Lines
      */
     Route::delete('/invoice-lines/{invoiceLine}', 'InvoiceLinesController@destroy')->name('invoiceLine.destroy');
 
-    /**
+    /*
      * Payment
      */
     Route::group(['prefix' => 'payment'], static function () {
@@ -209,7 +208,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/add-payment/{invoice}', 'PaymentsController@addPayment')->name('payment.add');
     });
 
-    /**
+    /*
      * Offers
      */
     Route::group(['prefix' => 'offer'], static function () {
@@ -224,7 +223,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::post('/offers/lost', 'OffersController@lost')->name('offers.lost');
     Route::post('/offers/{offer}/update', 'OffersController@update')->name('offers.update');
 
-    /**
+    /*
      * Documents
      */
     Route::get('/add-documents/{external_id}/{type}', 'DocumentsController@uploadFilesModalView');
@@ -232,7 +231,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::post('/uploaToProject/{external_id}', 'DocumentsController@uploadToProject')->name('document.project.upload');
     Route::get('/search/{query}/{type?}', 'SearchController@search')->name('search');
 
-    /**
+    /*
      * Appointments
      */
     Route::group(['prefix' => 'appointments'], static function () {
@@ -242,7 +241,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::delete('/{appointment}', 'AppointmentsController@destroy')->name('appointments.destroy');
     });
 
-    /**
+    /*
      * Absence
      */
     Route::group(['prefix' => 'absences'], static function () {

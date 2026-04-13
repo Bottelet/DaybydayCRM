@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\CreditNote;
 use Illuminate\Database\Eloquent\Factory;
@@ -14,7 +14,6 @@ class CreditNoteFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     public function definition()
     {
         return [
-            //
         ];
     }
 }

@@ -17,7 +17,7 @@ use Illuminate\Foundation\Application;
 */
 
 $app = new Application(
-    realpath(__DIR__.'/../')
+    realpath(__DIR__ . '/../')
 );
 
 /*

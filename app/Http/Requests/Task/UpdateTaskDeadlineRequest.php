@@ -47,7 +47,7 @@ class UpdateTaskDeadlineRequest extends FormRequest
         if ($date) {
             $deadline = $date;
             if ($time) {
-                $deadline .= ' '.$time;
+                $deadline .= ' ' . $time;
             } else {
                 $deadline .= ' 00:00:00';
             }

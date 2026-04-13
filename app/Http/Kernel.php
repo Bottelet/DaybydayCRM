@@ -65,28 +65,26 @@ class Kernel extends HttpKernel
             SubstituteBindings::class,
             Translation::class,
         ],
-        'client.create' => [CanClientCreate::class],
+        /*'client.create' => [CanClientCreate::class],
         'client.update' => [CanClientUpdate::class],
-        'client.delete' => [CanClientDelete::class],
-        'user.create' => [CanUserCreate::class],
-        'user.update' => [CanUserUpdate::class],
-        'task.create' => [CanTaskCreate::class],
-        'task.update.status' => [CanTaskUpdateStatus::class],
-        'task.assigned' => [IsTaskAssigned::class],
-        'lead.create' => [CanLeadCreate::class],
-        'lead.assigned' => [IsLeadAssigned::class],
-        'lead.update.status' => [CanLeadUpdateStatus::class],
-        'user.is.admin' => [RedirectIfNotAdmin::class],
-        'user.is.superadmin' => [RedirectIfNotSuperAdmin::class],
+        'client.delete' => [CanClientDelete::class],*/
+        'user.create'           => [CanUserCreate::class],
+        'user.update'           => [CanUserUpdate::class],
+        'task.create'           => [CanTaskCreate::class],
+        'task.update.status'    => [CanTaskUpdateStatus::class],
+        'task.assigned'         => [IsTaskAssigned::class],
+        'lead.create'           => [CanLeadCreate::class],
+        'lead.assigned'         => [IsLeadAssigned::class],
+        'lead.update.status'    => [CanLeadUpdateStatus::class],
+        'user.is.admin'         => [RedirectIfNotAdmin::class],
+        'user.is.superadmin'    => [RedirectIfNotSuperAdmin::class],
         'filesystem.is.enabled' => [RedirectIfFileSystemIsNotEnabled::class],
-        'is.demo' => [RedirectIfDemo::class],
-        'api' => [
+        'is.demo'               => [RedirectIfDemo::class],
+        'api'                   => [
             'auth:api',
             'throttle:60,1',
             'bindings',
-
         ],
-
     ];
 
     /**
@@ -97,14 +95,14 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => Authenticate::class,
+        'auth'       => Authenticate::class,
         'auth.basic' => AuthenticateWithBasicAuth::class,
-        'bindings' => SubstituteBindings::class,
-        'can' => Authorize::class,
-        'guest' => RedirectIfAuthenticated::class,
-        'throttle' => ThrottleRequests::class,
-        'role' => EntrustRole::class,
+        'bindings'   => SubstituteBindings::class,
+        'can'        => Authorize::class,
+        'guest'      => RedirectIfAuthenticated::class,
+        'throttle'   => ThrottleRequests::class,
+        'role'       => EntrustRole::class,
         'permission' => EntrustPermission::class,
-        'ability' => EntrustAbility::class,
+        'ability'    => EntrustAbility::class,
     ];
 }

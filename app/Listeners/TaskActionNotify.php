@@ -10,10 +10,7 @@ class TaskActionNotify
     /**
      * Create the event listener.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     /**
      * Handle the event.
@@ -22,7 +19,7 @@ class TaskActionNotify
      */
     public function handle(TaskAction $event)
     {
-        $task = $event->getTask();
+        $task   = $event->getTask();
         $action = $event->getAction();
         $task->assignedUser->notify(new TaskActionNotification(
             $task,

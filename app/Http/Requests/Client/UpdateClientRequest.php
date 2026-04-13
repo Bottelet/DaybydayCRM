@@ -24,18 +24,18 @@ class UpdateClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'vat' => 'max:12',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:6',
-            'city' => '',
-            'primary_number' => 'max:10',
+            'name'             => 'required',
+            'company_name'     => 'required',
+            'vat'              => 'max:12',
+            'email'            => 'required',
+            'address'          => '',
+            'zipcode'          => 'max:6',
+            'city'             => '',
+            'primary_number'   => 'max:10',
             'secondary_number' => 'max:10',
-            'industry' => '',
-            'company_type' => '',
-            'user_id' => 'required',
+            'industry'         => '',
+            'company_type'     => '',
+            'user_id'          => 'required',
         ];
     }
 }

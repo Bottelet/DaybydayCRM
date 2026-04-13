@@ -24,10 +24,10 @@ class AddInvoiceLine extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
+            'title'    => 'required',
             'quantity' => 'required|int',
-            'type' => 'required',
-            'price' => 'required',
+            'type'     => 'required',
+            'price'    => 'required',
         ];
     }
 }

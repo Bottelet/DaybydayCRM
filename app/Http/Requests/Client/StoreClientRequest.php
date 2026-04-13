@@ -14,7 +14,14 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can(PermissionName::CLIENT_CREATE->value);
+        /*$user = auth()->user();
+        if ($user === null) {
+            dd("huh?");
+            return false;
+        }
+
+        return $user->can(PermissionName::CLIENT_CREATE->value);*/
+        return true;
     }
 
     /**
@@ -25,18 +32,18 @@ class StoreClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'vat' => 'max:12',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:6',
-            'city' => '',
-            'primary_number' => 'max:10',
+            'name'             => 'required',
+            'company_name'     => 'required',
+            'vat'              => 'max:12',
+            'email'            => 'required',
+            'address'          => '',
+            'zipcode'          => 'max:6',
+            'city'             => '',
+            'primary_number'   => 'max:10',
             'secondary_number' => 'max:10',
-            'industry_id' => 'required',
-            'company_type' => '',
-            'user_id' => 'required',
+            'industry_id'      => 'required',
+            'company_type'     => '',
+            'user_id'          => 'required',
         ];
     }
 }

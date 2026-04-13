@@ -2,17 +2,17 @@
 
 namespace Tests\Feature\Controllers\Appointment;
 
+use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Appointment;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-use App\Enums\PermissionName;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('appointment-controller')]
@@ -36,9 +36,9 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         $this->appointment = Appointment::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'start_at' => Carbon::now(),
-            'end_at' => Carbon::now()->addHour(),
+            'end_at'   => Carbon::now()->addHour(),
         ]);
 
         // Create a user without appointment-update permission
@@ -54,26 +54,26 @@ class AppointmentSecurityTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_authorized_user_can_update_appointment()
     {
-        /** Arrange */
+        /* Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_EDIT);
         $expectedStart = Carbon::now()->addDay();
-        $expectedEnd = Carbon::now()->addDay()->addHour();
+        $expectedEnd   = Carbon::now()->addDay()->addHour();
 
         /** Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
-            'id' => $this->appointment->id,
-            'start' => $expectedStart->toISOString(),
-            'end' => $expectedEnd->toISOString(),
-            'group' => $this->unauthorizedUser->external_id,
+            'id'     => $this->appointment->id,
+            'start'  => $expectedStart->toISOString(),
+            'end'    => $expectedEnd->toISOString(),
+            'group'  => $this->unauthorizedUser->external_id,
             '_token' => csrf_token(),
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(200);
 
         $this->appointment->refresh();
@@ -86,7 +86,7 @@ class AppointmentSecurityTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_delete_appointment()
     {
-        /** Arrange */
+        /* Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
         /** Act */
@@ -94,57 +94,57 @@ class AppointmentSecurityTest extends AbstractTestCase
             '_token' => csrf_token(),
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(200);
         $this->assertSoftDeleted('appointments', ['id' => $this->appointment->id]);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function it_unauthorized_user_cannot_update_appointment()
     {
-        /** Arrange */
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
         /** Act */
         $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
             'start' => Carbon::now()->addDay()->toISOString(),
-            'end' => Carbon::now()->addDay()->addHour()->toISOString(),
+            'end'   => Carbon::now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(403);
     }
 
     #[Test]
     public function it_appointment_update_requires_permission_check()
     {
-        /** Arrange */
+        /* Arrange */
         $this->user->roles()->detach();
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
         /** Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
-            'id' => $this->appointment->id,
-            'start' => Carbon::now()->addDay()->toISOString(),
-            'end' => Carbon::now()->addDay()->addHour()->toISOString(),
-            'group' => $this->user->external_id,
+            'id'     => $this->appointment->id,
+            'start'  => Carbon::now()->addDay()->toISOString(),
+            'end'    => Carbon::now()->addDay()->addHour()->toISOString(),
+            'group'  => $this->user->external_id,
             '_token' => csrf_token(),
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(403);
     }
 
     #[Test]
     public function it_unauthorized_user_cannot_delete_appointment()
     {
-        /** Arrange */
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
         /** Act */
@@ -152,9 +152,9 @@ class AppointmentSecurityTest extends AbstractTestCase
             '_token' => csrf_token(),
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(403);
     }
 
-    // endregion
+    # endregion
 }

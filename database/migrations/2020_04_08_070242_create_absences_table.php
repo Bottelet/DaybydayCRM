@@ -33,20 +33,20 @@ class CreateAbsencesTable extends Migration
 
         /** Create new permissions */
         $acpp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Manage absences',
-            'name' => 'absence-manage',
-            'description' => 'Be able to manage absences for all users',
-            'grouping' => 'hr',
+            'name'         => 'absence-manage',
+            'description'  => 'Be able to manage absences for all users',
+            'grouping'     => 'hr',
         ]);
 
         /** Create new permissions */
         $vcpp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'View absences',
-            'name' => 'absence-view',
-            'description' => 'Be able to view absences for all users and see who is absent today on the dashboard',
-            'grouping' => 'hr',
+            'name'         => 'absence-view',
+            'description'  => 'Be able to view absences for all users and see who is absent today on the dashboard',
+            'grouping'     => 'hr',
         ]);
 
         $roles = Role::whereIn('name', ['owner', 'administrator'])->get();

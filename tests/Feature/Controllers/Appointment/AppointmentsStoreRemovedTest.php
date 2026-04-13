@@ -5,13 +5,13 @@ namespace Tests\Feature\Controllers\Appointment;
 use App\Http\Controllers\AppointmentsController;
 use App\Http\Requests\Appointment\CreateAppointmentCalendarRequest;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use Tests\AbstractTestCase;
 
 #[Group('appointments')]
 class AppointmentsStoreRemovedTest extends AbstractTestCase
@@ -30,15 +30,15 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_appointments_controller_does_not_have_store_method()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertFalse(
             method_exists(AppointmentsController::class, 'store'),
             'AppointmentsController::store() should have been removed'
@@ -52,10 +52,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         $reflector = new ReflectionClass(AppointmentsController::class);
 
         /** Act */
-        $methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods     = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodNames = array_map(fn ($m) => $m->getName(), $methods);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotContains('store', $methodNames);
     }
 
@@ -68,17 +68,17 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         /** Act */
         $response = $this->post('/appointments');
 
-        /** Assert */
+        /* Assert */
         $this->assertContains($response->getStatusCode(), [404, 405]);
     }
 
     #[Test]
     public function it_appointments_controller_retains_calendar_method()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(
             method_exists(AppointmentsController::class, 'calendar'),
             'AppointmentsController::calendar() should still exist'
@@ -88,10 +88,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_appointments_controller_retains_update_method()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(
             method_exists(AppointmentsController::class, 'update'),
             'AppointmentsController::update() should still exist'
@@ -101,10 +101,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_appointments_controller_retains_destroy_method()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(
             method_exists(AppointmentsController::class, 'destroy'),
             'AppointmentsController::destroy() should still exist'
@@ -114,10 +114,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_appointments_controller_retains_appointments_json_method()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(
             method_exists(AppointmentsController::class, 'appointmentsJson'),
             'AppointmentsController::appointmentsJson() should still exist'
@@ -129,9 +129,9 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     {
         /** Arrange */
         $reflector = new ReflectionClass(AppointmentsController::class);
-        $methods = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
+        $methods   = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        /** Act & Assert */
+        /* Act & Assert */
         foreach ($methods as $method) {
             $params = $method->getParameters();
             foreach ($params as $param) {
@@ -148,5 +148,5 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         }
     }
 
-    // endregion
+    # endregion
 }

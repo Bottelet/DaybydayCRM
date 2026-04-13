@@ -24,10 +24,10 @@ class UpdateTimeTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
+            'title'   => 'required',
             'comment' => '',
-            'time' => 'required',
-            'value' => 'required',
+            'time'    => 'required',
+            'value'   => 'required',
         ];
     }
 }

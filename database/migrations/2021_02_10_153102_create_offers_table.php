@@ -29,27 +29,27 @@ class CreateOffersTable extends Migration
         });
 
         $p1 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Add offer',
-            'name' => 'offer-create',
-            'description' => 'Be able to create an offer',
-            'grouping' => 'offer',
+            'name'         => 'offer-create',
+            'description'  => 'Be able to create an offer',
+            'grouping'     => 'offer',
         ]);
 
         $p2 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Edit offer',
-            'name' => 'offer-edit',
-            'description' => 'Be able to edit an offer',
-            'grouping' => 'offer',
+            'name'         => 'offer-edit',
+            'description'  => 'Be able to edit an offer',
+            'grouping'     => 'offer',
         ]);
 
         $p3 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Delete offer',
-            'name' => 'offer-delete',
-            'description' => 'Be able to delete an offer',
-            'grouping' => 'offer',
+            'name'         => 'offer-delete',
+            'description'  => 'Be able to delete an offer',
+            'grouping'     => 'offer',
         ]);
 
         $roles = Role::whereIn('name', ['owner', 'administrator'])->get();

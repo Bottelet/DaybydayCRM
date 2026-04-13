@@ -3,7 +3,6 @@
 use App\Models\Tenant;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -17,8 +16,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN', null),
-        'secret' => env('MAILGUN_SECRET', null),
+        'domain'   => env('MAILGUN_DOMAIN', null),
+        'secret'   => env('MAILGUN_SECRET', null),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.eu.mailgun.net'),
     ],
 
@@ -35,7 +34,7 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
@@ -43,7 +42,7 @@ return [
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+            'channel'              => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
 
@@ -52,20 +51,19 @@ return [
         'client' => env('DINERO_CLIENT_ID', null),
     ],
     'stripe' => [
-        'model' => Tenant::class,
-        'key' => env('STRIPE_KEY'),
+        'model'  => Tenant::class,
+        'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
     'dropbox' => [
-        'client_id' => env('DROPBOX_CLIENT_ID', null),
+        'client_id'     => env('DROPBOX_CLIENT_ID', null),
         'client_secret' => env('DROPBOX_CLIENT_SECRET', null),
     ],
     'google-drive' => [
-        'client_id' => env('GOOGLE_DRIVE_CLIENT_ID', null),
+        'client_id'     => env('GOOGLE_DRIVE_CLIENT_ID', null),
         'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET', null),
     ],
     'elasticsearch' => [
         'enabled' => env('ELASTICSEARCH_ENABLED', false),
     ],
-
 ];

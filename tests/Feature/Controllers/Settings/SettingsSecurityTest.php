@@ -4,10 +4,10 @@ namespace Tests\Feature\Controllers\Settings;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('settings-controller')]
@@ -54,14 +54,14 @@ class SettingsSecurityTest extends AbstractTestCase
     public function it_admin_can_update_overall_settings()
     {
         $response = $this->json('PATCH', route('settings.updateOverall'), [
-            'company' => 'Test Company',
-            'country' => 'GB',
-            'language' => 'en',
-            'client_number' => 1000,
+            'company'        => 'Test Company',
+            'country'        => 'GB',
+            'language'       => 'en',
+            'client_number'  => 1000,
             'invoice_number' => 2000,
-            'currency' => 'GBP',
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'currency'       => 'GBP',
+            'start_time'     => '09:00',
+            'end_time'       => '17:00',
         ]);
 
         $response->assertRedirect();
@@ -73,14 +73,14 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         $response = $this->json('PATCH', route('settings.updateOverall'), [
-            'company' => 'Hacked Company',
-            'country' => 'GB',
-            'language' => 'en',
-            'client_number' => 1000,
+            'company'        => 'Hacked Company',
+            'country'        => 'GB',
+            'language'       => 'en',
+            'client_number'  => 1000,
             'invoice_number' => 2000,
-            'currency' => 'GBP',
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'currency'       => 'GBP',
+            'start_time'     => '09:00',
+            'end_time'       => '17:00',
         ]);
 
         $response->assertStatus(403);
@@ -91,9 +91,9 @@ class SettingsSecurityTest extends AbstractTestCase
     {
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Test Company',
-            'country' => 'GB',
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'country'      => 'GB',
+            'start_time'   => '09:00',
+            'end_time'     => '17:00',
         ]);
 
         $response->assertRedirect();
@@ -106,9 +106,9 @@ class SettingsSecurityTest extends AbstractTestCase
 
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Hacked Company',
-            'country' => 'GB',
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'country'      => 'GB',
+            'start_time'   => '09:00',
+            'end_time'     => '17:00',
         ]);
 
         $response->assertStatus(403);

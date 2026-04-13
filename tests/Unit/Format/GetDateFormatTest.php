@@ -39,7 +39,7 @@ class GetDateFormatTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_gets_date_format_methods_return_correct_formats()
@@ -48,13 +48,13 @@ class GetDateFormatTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $carbonTime = $this->formatter->getCarbonTime();
-        $frontendDate = $this->formatter->getFrontendDate();
-        $frontendTime = $this->formatter->getFrontendTime();
+        $carbonTime             = $this->formatter->getCarbonTime();
+        $frontendDate           = $this->formatter->getFrontendDate();
+        $frontendTime           = $this->formatter->getFrontendTime();
         $carbonFullDateWithText = $this->formatter->getCarbonFullDateWithText();
-        $carbonDate = $this->formatter->getCarbonDate();
+        $carbonDate             = $this->formatter->getCarbonDate();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('H:i', $carbonTime);
         $this->assertEquals('dd/mm/yyyy', $frontendDate);
         $this->assertEquals('HH:i', $frontendTime);
@@ -69,13 +69,13 @@ class GetDateFormatTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $carbonTime = carbonTime();
-        $frontendDate = frontendDate();
-        $frontendTime = frontendTime();
+        $carbonTime             = carbonTime();
+        $frontendDate           = frontendDate();
+        $frontendTime           = frontendTime();
         $carbonFullDateWithText = carbonFullDateWithText();
-        $carbonDate = carbonDate();
+        $carbonDate             = carbonDate();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('H:i', $carbonTime);
         $this->assertEquals('dd/mm/yyyy', $frontendDate);
         $this->assertEquals('HH:i', $frontendTime);
@@ -87,19 +87,19 @@ class GetDateFormatTest extends AbstractTestCase
     public function it_formats_carbon_dates_correctly()
     {
         /** Arrange */
-        $testDate = Carbon::parse('22-02-2020 15:00:00');
+        $testDate  = Carbon::parse('22-02-2020 15:00:00');
         $testDate2 = Carbon::parse('22-02-2020 13:00:00');
 
         /** Act */
-        $formattedTime = $testDate->format($this->formatter->getCarbonTime());
-        $formattedDate = $testDate->format($this->formatter->getCarbonDate());
+        $formattedTime     = $testDate->format($this->formatter->getCarbonTime());
+        $formattedDate     = $testDate->format($this->formatter->getCarbonDate());
         $formattedFullDate = $testDate2->format($this->formatter->getCarbonFullDateWithText());
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('15:00', $formattedTime);
         $this->assertEquals('22/02/2020', $formattedDate);
         $this->assertEquals('22, February 2020 13:00', $formattedFullDate);
     }
 
-    // endregion
+    # endregion
 }

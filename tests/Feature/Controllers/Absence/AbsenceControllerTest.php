@@ -6,11 +6,11 @@ use App\Enums\PermissionName;
 use App\Models\Permission;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Session;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Session;
 
 class AbsenceControllerTest extends AbstractTestCase
 {
@@ -30,13 +30,13 @@ class AbsenceControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
     public function can_create_absence_for_other_user()
     {
-        /** Arrange */
+        /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::ABSENCE_MANAGE);
 
@@ -47,15 +47,15 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /** Act */
         $response = $this->json('POST', route('absence.store'), [
-            'reason' => 'Sick',
-            'user_external_id' => $user->external_id,
-            'start_date' => '2020-01-01',
-            'end_date' => '2020-01-02',
+            'reason'              => 'Sick',
+            'user_external_id'    => $user->external_id,
+            'start_date'          => '2020-01-01',
+            'end_date'            => '2020-01-02',
             'medical_certificate' => null,
-            'comment' => 'Sick kid',
+            'comment'             => 'Sick kid',
         ]);
 
-        /** Assert */
+        /* Assert */
         $response->assertStatus(302);
         $absences = $user->fresh()->absences;
         $this->assertNotNull(\Session::all()['flash_message']);
@@ -71,45 +71,45 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /** Act */
         $response = $this->json('POST', route('absence.store'), [
-            'reason' => 'Sick',
-            'start_date' => '2020-01-01',
-            'end_date' => '2020-01-02',
+            'reason'              => 'Sick',
+            'start_date'          => '2020-01-01',
+            'end_date'            => '2020-01-02',
             'medical_certificate' => null,
-            'comment' => 'Sick kid',
+            'comment'             => 'Sick kid',
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull(Session::all()['flash_message']);
         $this->assertCount(1, $this->user->absences);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     #[Group('junie_repaired')]
     public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
     {
-        /** Arrange */
+        /* Arrange */
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
         $absentUser = User::factory()->create();
 
         /** Act */
         $response = $this->json('POST', route('absence.store'), [
-            'reason' => 'Sick',
-            'user_external_id' => $absentUser->external_id,
-            'start_date' => '2020-01-01',
-            'end_date' => '2020-01-02',
+            'reason'              => 'Sick',
+            'user_external_id'    => $absentUser->external_id,
+            'start_date'          => '2020-01-01',
+            'end_date'            => '2020-01-02',
             'medical_certificate' => null,
-            'comment' => 'Sick kid',
+            'comment'             => 'Sick kid',
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(0, $absentUser->absences);
         $this->assertCount(1, $this->user->absences);
     }
 
-    // endregion
+    # endregion
 }

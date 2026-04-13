@@ -9,10 +9,7 @@ class LeadActionLog
     /**
      * Action the event listener.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     /**
      * Handle the event.
@@ -24,8 +21,8 @@ class LeadActionLog
         switch ($event->getAction()) {
             case 'created':
                 $text = __(':title was created by :creator and assigned to :assignee', [
-                    'title' => $event->getLead()->title,
-                    'creator' => $event->getLead()->creator->name,
+                    'title'    => $event->getLead()->title,
+                    'creator'  => $event->getLead()->creator->name,
                     'assignee' => $event->getLead()->user->name,
                 ]);
                 break;

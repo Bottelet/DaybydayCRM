@@ -2,7 +2,4 @@
 
 namespace App\Http\Controllers;
 
-class AuthRegisterController extends Controller
-{
-    //
-}
+class AuthRegisterController extends Controller {}

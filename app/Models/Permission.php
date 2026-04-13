@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -25,12 +25,29 @@ class Permission extends Model
         'grouping',
     ];
 
-    // region Relationships
+    # endregion
+
+    # region Static helpers
+
+    /**
+     * Get a permission by name, or create it if it does not exist.
+     *
+     * @param string $name
+     * @param array  $attributes
+     *
+     * @return static
+     */
+    public static function getOrCreateByName(string $name, array $attributes = [])
+    {
+        return static::firstOrCreate(['name' => $name], $attributes);
+    }
+
+    # region Relationships
 
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'permission_role', 'permission_id', 'role_id');
     }
 
-    // endregion
+    # endregion
 }

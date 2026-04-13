@@ -9,11 +9,11 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TasksControllerTest extends AbstractTestCase
 {
@@ -26,7 +26,7 @@ class TasksControllerTest extends AbstractTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $role = \App\Models\Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $role       = \App\Models\Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $this->user->attachRole($role);
         $this->client = Client::factory()->create();
     }
@@ -43,13 +43,13 @@ class TasksControllerTest extends AbstractTestCase
         Cache::tags('role_user')->flush();
 
         $response = $this->json('POST', route('tasks.store'), [
-            'title' => 'Task test',
-            'description' => 'This is a description',
-            'status_id' => Status::factory()->create(['source_type' => Task::class])->id,
-            'user_assigned_id' => $this->user->id,
-            'user_created_id' => $this->user->id,
+            'title'              => 'Task test',
+            'description'        => 'This is a description',
+            'status_id'          => Status::factory()->create(['source_type' => Task::class])->id,
+            'user_assigned_id'   => $this->user->id,
+            'user_created_id'    => $this->user->id,
             'client_external_id' => $this->client->external_id,
-            'deadline' => '2020-01-01',
+            'deadline'           => '2020-01-01',
         ]);
 
         $tasks = Task::where('user_assigned_id', $this->user->id);
@@ -69,7 +69,7 @@ class TasksControllerTest extends AbstractTestCase
         Cache::tags('role_user')->flush();
 
         $project = Project::factory()->create();
-        $task = Task::factory()->create();
+        $task    = Task::factory()->create();
 
         $this->assertNull($task->project_id);
         $response = $this->json('POST', route('tasks.update.project', $task->external_id), [
@@ -102,7 +102,7 @@ class TasksControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_update_status()
     {
-        $task = Task::factory()->create();
+        $task   = Task::factory()->create();
         $status = Status::factory()->create(['source_type' => Task::class]);
 
         $this->assertNotEquals($task->status_id, $status->id);

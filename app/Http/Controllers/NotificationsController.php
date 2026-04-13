@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class NotificationsController extends Controller
 {
     /**
-     * Mark a notification read
+     * Mark a notification read.
      *
      * @return mixed
      */
@@ -22,7 +22,7 @@ class NotificationsController extends Controller
     }
 
     /**
-     * Mark all notifications as read
+     * Mark all notifications as read.
      *
      * @return mixed
      */

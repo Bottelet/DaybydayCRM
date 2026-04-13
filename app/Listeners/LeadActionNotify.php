@@ -10,10 +10,7 @@ class LeadActionNotify
     /**
      * Action the event listener.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
     /**
      * Handle the event.
@@ -22,7 +19,7 @@ class LeadActionNotify
      */
     public function handle(LeadAction $event)
     {
-        $lead = $event->getLead();
+        $lead   = $event->getLead();
         $action = $event->getAction();
         $lead->user->notify(new LeadActionNotification(
             $lead,

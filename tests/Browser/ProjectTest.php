@@ -25,7 +25,7 @@ class ProjectTest extends DuskTestCase
                 ->type('.dataTables_filter input', $project->title)
                 ->waitForText($project->title)
                 ->clickLink($project->title)
-                ->assertPathIs('/projects/'.$project->external_id)
+                ->assertPathIs('/projects/' . $project->external_id)
                 ->waitForText($project->title);
         });
     }
@@ -33,9 +33,9 @@ class ProjectTest extends DuskTestCase
     #[Test]
     public function it_i_can_create_a_new_lead()
     {
-        $client = Client::factory()->create();
+        $client  = Client::factory()->create();
         $contact = $client->primary_contact;
-        $user = User::factory()->create();
+        $user    = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
@@ -59,15 +59,15 @@ class ProjectTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($project) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/'.$project->external_id)
+                ->visit('/projects/' . $project->external_id)
                 ->assertSeeLink('New task')
                 ->click('#page-content-wrapper > div > div > div > div:nth-child(3) > div > div > nav > a')
-                ->assertPathIs('/tasks/create/'.$project->client->external_id.'/'.$project->external_id);
+                ->assertPathIs('/tasks/create/' . $project->client->external_id . '/' . $project->external_id);
         });
     }
 
     /**
-     * Test i can comment on a project
+     * Test i can comment on a project.
      */
     #[Test]
     public function it_i_can_add_a_new_comment_on_a_project()
@@ -76,7 +76,7 @@ class ProjectTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($project) {
             $browser->driver->executeScript('window.scrollTo(0, 600)');
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/'.$project->external_id)
+                ->visit('/projects/' . $project->external_id)
                 ->type('.note-editable', 'This is a test comment')
                 ->press('Add Comment')
                 ->assertSee('This is a test comment')
@@ -85,7 +85,7 @@ class ProjectTest extends DuskTestCase
     }
 
     /**
-     * Test i can close a open project
+     * Test i can close a open project.
      */
     #[Test]
     public function it_i_can_change_status_on_a_open_project()
@@ -93,7 +93,7 @@ class ProjectTest extends DuskTestCase
         $project = Project::factory()->create();
         $this->browse(function (Browser $browser) use ($project) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/'.$project->external_id)
+                ->visit('/projects/' . $project->external_id)
                 ->assertSee($project->status->title)
                 ->click('#status-text')
                 ->clickLink('Pending')
@@ -105,11 +105,11 @@ class ProjectTest extends DuskTestCase
     public function it_i_can_assign_a_new_user_to_project()
     {
         $project = Project::factory()->create();
-        $user = User::factory()->create();
+        $user    = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($project, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/'.$project->external_id)
+                ->visit('/projects/' . $project->external_id)
                 ->click('#assignee-user')
                 ->clickLink($user->name)
                 ->waitForText($user->name)
@@ -118,7 +118,7 @@ class ProjectTest extends DuskTestCase
     }
 
     /**
-     * Test i can create a new task
+     * Test i can create a new task.
      */
     #[Test]
     public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_project()

@@ -7,11 +7,11 @@ use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
@@ -36,8 +36,8 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
             ['name' => 'can-assign-new-user-to-project'],
             [
                 'display_name' => 'Assign users to projects',
-                'description' => 'Can assign users to projects',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Can assign users to projects',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
@@ -46,8 +46,8 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
             ['name' => 'project-assigner'],
             [
                 'display_name' => 'Project Assigner',
-                'description' => 'Can assign projects',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Can assign projects',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
         $authorizedRole->perms()->sync([$permission->id]);
@@ -63,10 +63,10 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
         $this->newAssignee = User::factory()->create();
 
         // Create project
-        $client = Client::factory()->create();
+        $client        = Client::factory()->create();
         $this->project = Project::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
-            'client_id' => $client->id,
+            'client_id'        => $client->id,
         ]);
     }
 
@@ -95,7 +95,7 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was updated in database
         $this->assertDatabaseHas('projects', [
-            'id' => $this->project->id,
+            'id'               => $this->project->id,
             'user_assigned_id' => $this->newAssignee->id,
         ]);
         $this->assertEquals($this->newAssignee->id, $this->project->refresh()->user_assigned_id);
@@ -123,7 +123,7 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('projects', [
-            'id' => $this->project->id,
+            'id'               => $this->project->id,
             'user_assigned_id' => $originalAssignee,
         ]);
         $this->assertEquals($originalAssignee, $this->project->refresh()->user_assigned_id);

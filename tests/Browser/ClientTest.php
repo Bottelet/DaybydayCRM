@@ -32,7 +32,7 @@ class ClientTest extends DuskTestCase
                 ->assertSee($client->vat)
                 ->assertSee($client->address)
                 ->clickLink($client->company_name)
-                ->assertPathIs('/clients/'.$client->external_id)
+                ->assertPathIs('/clients/' . $client->external_id)
                 ->waitForText($client->primary_contact->name)
                 ->assertSee($client->primary_contact->name)
                 ->assertSee($client->company_name);
@@ -40,7 +40,7 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can see all the correct information on customer page
+     * Test i can see all the correct information on customer page.
      */
     #[Test]
     public function it_i_can_see_all_customer_values_on_show_page()
@@ -48,7 +48,7 @@ class ClientTest extends DuskTestCase
         $client = Client::factory()->create();
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/'.$client->external_id)
+                ->visit('/clients/' . $client->external_id)
                 ->waitForText($client->primary_contact->name)
                 ->assertSee($client->primary_contact->name)
                 ->assertSee($client->primary_contact->email)
@@ -61,13 +61,13 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can see all the correct relations for customer, and not the wrong ones
+     * Test i can see all the correct relations for customer, and not the wrong ones.
      */
     #[Test]
     public function it_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
     {
         $client = Client::factory()->create();
-        $task = Task::factory()->create([
+        $task   = Task::factory()->create([
             'client_id' => $client->id,
         ]);
         $lead = Lead::factory()->create([
@@ -75,7 +75,7 @@ class ClientTest extends DuskTestCase
         ]);
 
         $client_2 = Client::factory()->create();
-        $task_2 = Task::factory()->create([
+        $task_2   = Task::factory()->create([
             'client_id' => $client_2->id,
         ]);
         $lead_2 = Lead::factory()->create([
@@ -83,7 +83,7 @@ class ClientTest extends DuskTestCase
         ]);
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/'.$client->external_id);
+                ->visit('/clients/' . $client->external_id);
             // ->clickddLink($task->title, 'a');
             // ->assertDontSee($task_2->title);
             // ->press('Leads')->element(".tablet")
@@ -93,17 +93,17 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can assign a new user to client, and see the correct user info after new user is assigned
+     * Test i can assign a new user to client, and see the correct user info after new user is assigned.
      */
     #[Test]
     public function it_i_can_assign_a_new_user_to_customer()
     {
         $client = Client::factory()->create();
-        $user = User::factory()->create();
+        $user   = User::factory()->create();
 
         $this->browse(function (Browser $browser) use ($client, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first());
-            $browser->visit('/clients/'.$client->external_id);
+            $browser->visit('/clients/' . $client->external_id);
             $browser->assertDontSee($user->email);
             $browser->assertDontSee($user->name);
             $browser->click('#assignee-user');
@@ -114,7 +114,7 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can create a new customer
+     * Test i can create a new customer.
      */
     #[Test]
     public function it_i_can_create_a_new_customer()
@@ -140,7 +140,7 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test creating a new customer will fail if all values are not given
+     * Test creating a new customer will fail if all values are not given.
      */
     #[Test]
     public function it_i_cant_create_a_new_customer_without_name_company_and_email()
@@ -162,21 +162,21 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can see all the correct information on customer page
+     * Test i can see all the correct information on customer page.
      */
     #[Test]
     public function it_i_can_update_an_existing_client()
     {
-        $faker = Faker::create();
-        $client = Client::factory()->create();
-        $email = $faker->email;
-        $address = $faker->secondaryAddress;
+        $faker    = Faker::create();
+        $client   = Client::factory()->create();
+        $email    = $faker->email;
+        $address  = $faker->secondaryAddress;
         $zip_code = $faker->randomNumber(4);
-        $city = $faker->city;
+        $city     = $faker->city;
 
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/'.$client->external_id.'/edit')
+                ->visit('/clients/' . $client->external_id . '/edit')
                 ->assertInputValue('name', $client->primary_contact->name)
                 ->assertInputValue('email', $client->primary_contact->email)
                 ->assertInputValue('company_name', $client->company_name)
@@ -201,7 +201,7 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 // Assert new data is in use
-                ->visit('/clients/'.$client->external_id)
+                ->visit('/clients/' . $client->external_id)
                 ->assertSee($email)
                 ->assertSee($address)
                 ->assertSee($zip_code)

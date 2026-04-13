@@ -13,12 +13,12 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
-use Illuminate\Support\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Facades\Auth;
-use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
 class TasksController extends Controller
@@ -80,7 +80,7 @@ class TasksController extends Controller
 
         return DataTables::of($tasks)
             ->addColumn('titlelink', function ($task) {
-                return '<a href="'.route('tasks.show', [$task->external_id]).'">'.$task->title.'</a>';
+                return '<a href="' . route('tasks.show', [$task->external_id]) . '">' . $task->title . '</a>';
             })
             ->editColumn('client', function ($task) {
                 return $task->client ? $task->client->company_name : '';
@@ -95,11 +95,11 @@ class TasksController extends Controller
                 return $task->user ? $task->user->name : '';
             })
             ->editColumn('status_id', function ($task) {
-                return $task->status ? '<span class="label label-success" style="background-color:'.$task->status->color.'"> '.$task->status->title.'</span>' : '';
+                return $task->status ? '<span class="label label-success" style="background-color:' . $task->status->color . '"> ' . $task->status->title . '</span>' : '';
             })
             ->addColumn('view', function ($task) {
-                return '<a href="'.route('tasks.show', $task->external_id).'" class="btn btn-link">'.__('View').'</a>'
-                .'<a data-toggle="modal" data-id="'.route('tasks.destroy', $task->external_id).'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
+                return '<a href="' . route('tasks.show', $task->external_id) . '" class="btn btn-link">' . __('View') . '</a>'
+                . '<a data-toggle="modal" data-id="' . route('tasks.destroy', $task->external_id) . '" data-target="#deletion" class="btn btn-link">' . __('Delete') . '</a>';
             })
             ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
@@ -113,8 +113,8 @@ class TasksController extends Controller
     public function create($client_external_id = null, $project_external_id = null)
     {
         $projects = null;
-        $client = Client::whereExternalId($client_external_id);
-        $project = Project::whereExternalId($project_external_id)->first();
+        $client   = Client::whereExternalId($client_external_id);
+        $project  = Project::whereExternalId($project_external_id)->first();
         if ($client) {
             $projects = $client->projects()->whereHas('status', function ($q) {
                 return $q->where('title', '!=', 'Closed');
@@ -136,7 +136,7 @@ class TasksController extends Controller
      */
     public function store(StoreTaskRequest $request) // uses __contrust request
     {
-        $client = null;
+        $client  = null;
         $project = null;
 
         if ($request->client_external_id) {
@@ -154,15 +154,15 @@ class TasksController extends Controller
 
         $task = Task::create(
             [
-                'title' => $request->title,
-                'description' => clean($request->description),
+                'title'            => $request->title,
+                'description'      => clean($request->description),
                 'user_assigned_id' => $request->user_assigned_id,
-                'deadline' => Carbon::parse($request->deadline),
-                'status_id' => $request->status_id,
-                'user_created_id' => auth()->id(),
-                'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => optional($client)->id,
-                'project_id' => optional($project)->id,
+                'deadline'         => Carbon::parse($request->deadline),
+                'status_id'        => $request->status_id,
+                'user_created_id'  => auth()->id(),
+                'external_id'      => Uuid::uuid4()->toString(),
+                'client_id'        => optional($client)->id,
+                'project_id'       => optional($project)->id,
             ]
         );
 
@@ -171,7 +171,7 @@ class TasksController extends Controller
         session()->flash('flash_message', __('Task successfully added'));
         event(new TaskAction($task, self::CREATED));
 
-        if (! is_null($request->images)) {
+        if (null !== $request->images) {
             foreach ($request->file('images') as $image) {
                 $this->upload($image, $task);
             }
@@ -185,7 +185,7 @@ class TasksController extends Controller
 
     public function destroy(Task $task, Request $request)
     {
-        if (! auth()->user()->can('task-delete')) {
+        if ( ! auth()->user()->can('task-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete tasks'));
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('You do not have permission to delete tasks')], 403);
@@ -211,44 +211,6 @@ class TasksController extends Controller
         return redirect()->back();
     }
 
-    private function upload($image, $task)
-    {
-        if (! auth()->user()->can('task-upload-files')) {
-            session()->flash('flash_message_warning', __('You do not have permission to upload images'));
-
-            return redirect()->route('tasks.show', $task->external_id);
-        }
-        $file = $image;
-        $filename = str_random(8).'_'.$file->getClientOriginalName();
-        $fileOrginal = $file->getClientOriginalName();
-
-        $size = $file->getClientSize();
-        $mbsize = $size / 1048576;
-        $totaltsize = substr($mbsize, 0, 4);
-
-        if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
-
-            return redirect()->back();
-        }
-
-        $folder = $task->external_id;
-        $fileSystem = GetStorageProvider::getStorage();
-        $fileData = $fileSystem->upload($folder, $filename, $file);
-
-        Document::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'path' => $fileData['file_path'],
-            'size' => $totaltsize,
-            'original_filename' => $fileOrginal,
-            'source_id' => $task->id,
-            'source_type' => Task::class,
-            'mime' => $file->getClientMimeType(),
-            'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-            'integration_type' => get_class($fileSystem),
-        ]);
-    }
-
     /**
      * @return mixed
      *
@@ -257,7 +219,7 @@ class TasksController extends Controller
     public function show(Request $request, $external_id)
     {
         $task = $this->findByExternalId($external_id);
-        if (! $task) {
+        if ( ! $task) {
             abort(404);
         }
 
@@ -279,7 +241,7 @@ class TasksController extends Controller
      */
     public function updateStatus($external_id, Request $request)
     {
-        if (! auth()->user()->can('task-update-status')) {
+        if ( ! auth()->user()->can('task-update-status')) {
             session()->flash('flash_message_warning', __('You do not have permission to change task status'));
 
             return redirect()->route('tasks.show', $external_id);
@@ -288,7 +250,7 @@ class TasksController extends Controller
         // Accept status_id or statusExternalId (AJAX)
         if (isset($input['statusExternalId'])) {
             $status = Status::whereExternalId($input['statusExternalId'])->first();
-            if (! $status) {
+            if ( ! $status) {
                 if ($request->expectsJson()) {
                     return response()->json(['error' => 'Invalid status external id'], 400);
                 }
@@ -298,7 +260,7 @@ class TasksController extends Controller
             }
             $input['status_id'] = $status->id;
         }
-        if (! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
+        if ( ! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Invalid status id'], 400);
             }
@@ -308,7 +270,7 @@ class TasksController extends Controller
         }
         // Validate that the status_id belongs to task statuses
         $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
-        if (! $validStatus) {
+        if ( ! $validStatus) {
             session()->flash('flash_message_warning', __('Invalid status for task'));
             if ($request->expectsJson()) {
                 return response()->json(['error' => 'Invalid status for task'], 400);
@@ -316,7 +278,7 @@ class TasksController extends Controller
 
             return redirect()->back();
         }
-        $task = $this->findByExternalId($external_id);
+        $task            = $this->findByExternalId($external_id);
         $task->status_id = $input['status_id'];
         $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
@@ -331,11 +293,11 @@ class TasksController extends Controller
 
     public function updateProject($external_id, Request $request)
     {
-        $task = $this->findByExternalId($external_id);
+        $task       = $this->findByExternalId($external_id);
         $project_id = null;
         if ($request->project_external_id) {
             $project = Project::whereExternalId($request->project_external_id)->first();
-            if (! $project) {
+            if ( ! $project) {
                 return response()->json(['error' => 'Invalid project_external_id'], 400);
             }
             $project_id = $project->id;
@@ -352,9 +314,9 @@ class TasksController extends Controller
      */
     public function updateAssign($external_id, Request $request)
     {
-        $task = Task::with('user')->whereExternalId($external_id)->first();
+        $task             = Task::with('user')->whereExternalId($external_id)->first();
         $user_assigned_id = $request->input('user_assigned_id');
-        if (! $user_assigned_id || ! is_numeric($user_assigned_id)) {
+        if ( ! $user_assigned_id || ! is_numeric($user_assigned_id)) {
             return response()->json(['error' => 'Invalid user_assigned_id'], 400);
         }
         $task->user_assigned_id = $user_assigned_id;
@@ -367,14 +329,14 @@ class TasksController extends Controller
     }
 
     /**
-     * Update the follow up date (Deadline)
+     * Update the follow up date (Deadline).
      *
      * @return mixed
      */
     public function updateDeadline(\App\Http\Requests\Task\UpdateTaskDeadlineRequest $request, $external_id)
     {
-        $task = $this->findByExternalId($external_id);
-        $deadline = $request->validated('deadline');
+        $task           = $this->findByExternalId($external_id);
+        $deadline       = $request->validated('deadline');
         $task->deadline = $deadline;
         $task->save();
         event(new TaskAction($task, self::UPDATED_DEADLINE));
@@ -384,7 +346,8 @@ class TasksController extends Controller
     }
 
     /**
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function findByExternalId($external_id)
@@ -404,5 +367,43 @@ class TasksController extends Controller
         Notifynder::readAll(Auth::id());
 
         return redirect()->back();
+    }
+
+    private function upload($image, $task)
+    {
+        if ( ! auth()->user()->can('task-upload-files')) {
+            session()->flash('flash_message_warning', __('You do not have permission to upload images'));
+
+            return redirect()->route('tasks.show', $task->external_id);
+        }
+        $file        = $image;
+        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $fileOrginal = $file->getClientOriginalName();
+
+        $size       = $file->getClientSize();
+        $mbsize     = $size / 1048576;
+        $totaltsize = mb_substr($mbsize, 0, 4);
+
+        if ($totaltsize > 15) {
+            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
+            return redirect()->back();
+        }
+
+        $folder     = $task->external_id;
+        $fileSystem = GetStorageProvider::getStorage();
+        $fileData   = $fileSystem->upload($folder, $filename, $file);
+
+        Document::create([
+            'external_id'       => Uuid::uuid4()->toString(),
+            'path'              => $fileData['file_path'],
+            'size'              => $totaltsize,
+            'original_filename' => $fileOrginal,
+            'source_id'         => $task->id,
+            'source_type'       => Task::class,
+            'mime'              => $file->getClientMimeType(),
+            'integration_id'    => $fileData['id'] ?? null,
+            'integration_type'  => get_class($fileSystem),
+        ]);
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
 
@@ -24,12 +24,6 @@ class User extends Authenticatable
     use SoftDeletes;
 
     protected $searchableFields = ['name', 'email'];
-
-    public function restore()
-    {
-        $this->restoreA();
-        $this->restoreB();
-    }
 
     /**
      * The database table used by the model.
@@ -66,7 +60,7 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id';
 
-    // region Relationships
+    # region Relationships
 
     public function absences()
     {
@@ -113,20 +107,16 @@ class User extends Authenticatable
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
     }
 
-    // endregion
+    # endregion
 
     /*public function tokens()
     {
         return $this->hasMany(Token::class, 'user_id', 'id');
     }*/
 
-    public function canChangePasswordOn(User $user)
+    public function canChangePasswordOn(self $user)
     {
-        if ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE)) {
-            return true;
-        }
-
-        return false;
+        return (bool) ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE));
     }
 
     public function canChangeRole()
@@ -136,19 +126,19 @@ class User extends Authenticatable
 
     public function isOnline()
     {
-        return Cache::has('user-is-online-'.$this->id);
+        return Cache::has('user-is-online-' . $this->id);
     }
 
     public function getNameAndDepartmentAttribute()
     {
         // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name.' '.'('.$this->department()->first()->name.')';
+        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
     }
 
     public function getNameAndDepartmentEagerLoadingAttribute()
     {
         // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name.' '.'('.$this->relations['department'][0]->name.')';
+        return $this->name . ' ' . '(' . $this->relations['department'][0]->name . ')';
     }
 
     public function moveTasks($user_id)
@@ -188,7 +178,7 @@ class User extends Authenticatable
     public function totalOpenAndClosedLeads()
     {
         $groups = $this->leads()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
-        $keys = collect();
+        $keys   = collect();
         $counts = collect();
         foreach ($groups as $groupKey => $group) {
             $keys->push($groupKey);
@@ -199,13 +189,14 @@ class User extends Authenticatable
     }
 
     /**
-     * @param  $external_id
+     * @param $external_id
+     *
      * @return mixed
      */
     public function totalOpenAndClosedTasks()
     {
         $groups = $this->tasks()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
-        $keys = collect();
+        $keys   = collect();
         $counts = collect();
         foreach ($groups as $groupKey => $group) {
             $keys->push($groupKey);
@@ -223,5 +214,11 @@ class User extends Authenticatable
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
+    }
+
+    public function restore()
+    {
+        $this->restoreA();
+        $this->restoreB();
     }
 }

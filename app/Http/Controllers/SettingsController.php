@@ -34,16 +34,16 @@ class SettingsController extends Controller
     public function index()
     {
         $setting = Setting::first();
-        if (! $setting) {
+        if ( ! $setting) {
             $setting = Setting::create([
-                'company' => 'Default Company',
-                'currency' => 'USD',
-                'country' => 'US',
-                'language' => 'en',
-                'vat' => 0,
-                'client_number' => 1,
+                'company'        => 'Default Company',
+                'currency'       => 'USD',
+                'country'        => 'US',
+                'language'       => 'en',
+                'vat'            => 0,
+                'client_number'  => 1,
                 'invoice_number' => 1,
-                'max_users' => 10,
+                'max_users'      => 10,
             ]);
         }
 
@@ -59,25 +59,25 @@ class SettingsController extends Controller
 
     public function updateFirstStep(Request $request)
     {
-        $start_time = Carbon::parse('2020-01-01 '.$request->start_time.':00');
-        $end_time = Carbon::parse('2020-01-01 '.$request->end_time.':00');
-        $settings = Setting::first();
-        if (! $settings) {
+        $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
+        $end_time   = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
+        $settings   = Setting::first();
+        if ( ! $settings) {
             $settings = Setting::create([
-                'company' => 'Default Company',
-                'currency' => 'USD',
-                'country' => 'US',
-                'language' => 'en',
-                'vat' => 0,
-                'client_number' => 1,
+                'company'        => 'Default Company',
+                'currency'       => 'USD',
+                'country'        => 'US',
+                'language'       => 'en',
+                'vat'            => 0,
+                'client_number'  => 1,
                 'invoice_number' => 1,
-                'max_users' => 10,
+                'max_users'      => 10,
             ]);
         }
 
         if ($start_time->gt($end_time)) {
-            $end_tmp = clone $end_time;
-            $end_time = $start_time;
+            $end_tmp    = clone $end_time;
+            $end_time   = $start_time;
             $start_time = $end_tmp;
         } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
@@ -86,40 +86,40 @@ class SettingsController extends Controller
         if ($businessHours->isNotEmpty()) {
             foreach (BusinessHour::all() as $businessHour) {
                 $businessHour->update([
-                    'open_time' => $start_time->format('H:i:s'),
+                    'open_time'  => $start_time->format('H:i:s'),
                     'close_time' => $end_time->format('H:i:s'),
                 ]);
             }
         } else {
             for ($i = 1; $i < 8; $i++) {
                 BusinessHour::create([
-                    'day' => $this->integerToDay()[$i],
-                    'open_time' => '09:00',
-                    'close_time' => '18:00',
+                    'day'         => $this->integerToDay()[$i],
+                    'open_time'   => '09:00',
+                    'close_time'  => '18:00',
                     'settings_id' => $settings->id,
                 ]);
             }
         }
 
-        if (! $request->company_name) {
+        if ( ! $request->company_name) {
             $request->company_name = uniqid();
         }
-        if (! $request->country) {
+        if ( ! $request->country) {
             $request->country = 'GB';
         }
 
-        $country = Country::fromCode($request->country);
+        $country  = Country::fromCode($request->country);
         $currency = app(Currency::class, ['code' => $country->getCurrencyCode()]);
 
-        $settings->country = $request->country;
-        $settings->company = $request->company_name;
-        $settings->vat = $currency->getVatPercentage();
+        $settings->country  = $request->country;
+        $settings->company  = $request->company_name;
+        $settings->vat      = $currency->getVatPercentage();
         $settings->currency = $currency->getCode();
-        $settings->language = strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
+        $settings->language = mb_strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
         $settings->save();
 
-        $user = auth()->user();
-        $user->language = strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
+        $user           = auth()->user();
+        $user->language = mb_strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
         $user->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
@@ -133,26 +133,26 @@ class SettingsController extends Controller
     public function updateOverall(UpdateSettingOverallRequest $request)
     {
         $setting = Setting::first();
-        if (! $setting) {
+        if ( ! $setting) {
             $setting = Setting::create([
-                'company' => 'Default Company',
-                'currency' => 'USD',
-                'country' => 'US',
-                'language' => 'en',
-                'vat' => 0,
-                'client_number' => 1,
+                'company'        => 'Default Company',
+                'currency'       => 'USD',
+                'country'        => 'US',
+                'language'       => 'en',
+                'vat'            => 0,
+                'client_number'  => 1,
                 'invoice_number' => 1,
-                'max_users' => 10,
+                'max_users'      => 10,
             ]);
         }
 
-        if (! app(ClientNumberValidator::class)->validateClientNumber((int) $request->client_number)) {
+        if ( ! app(ClientNumberValidator::class)->validateClientNumber((int) $request->client_number)) {
             Session::flash('flash_message_warning', __('Client number invalid'));
 
             return redirect()->back();
         }
 
-        if (! app(InvoiceNumberValidator::class)->validateInvoiceNumber((int) $request->invoice_number)) {
+        if ( ! app(InvoiceNumberValidator::class)->validateInvoiceNumber((int) $request->invoice_number)) {
             Session::flash('flash_message_warning', __('Invoice number invalid'));
 
             return redirect()->back();
@@ -171,11 +171,11 @@ class SettingsController extends Controller
                 }
             }
         }
-        $start_time = Carbon::parse('2020-01-01 '.$request->start_time.':00');
-        $end_time = Carbon::parse('2020-01-01 '.$request->end_time.':00');
+        $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
+        $end_time   = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
         if ($start_time->gt($end_time)) {
-            $end_tmp = clone $end_time;
-            $end_time = $start_time;
+            $end_tmp    = clone $end_time;
+            $end_time   = $start_time;
             $start_time = $end_tmp;
         } elseif ($start_time->eq($end_time)) {
             $end_time->addHour();
@@ -183,16 +183,16 @@ class SettingsController extends Controller
 
         foreach (BusinessHour::all() as $businessHour) {
             $businessHour->update([
-                'open_time' => $start_time->format('H:i:s'),
+                'open_time'  => $start_time->format('H:i:s'),
                 'close_time' => $end_time->format('H:i:s'),
             ]);
         }
 
-        $setting->client_number = $request->client_number;
-        $setting->invoice_number = $request->invoice_number;
+        $setting->client_number                      = $request->client_number;
+        $setting->invoice_number                     = $request->invoice_number;
         isset($request->company) ? $setting->company = $request->company : null;
-        $setting->country = $request->country;
-        $setting->language = $request->language;
+        $setting->country                            = $request->country;
+        $setting->language                           = $request->language;
         $setting->save();
 
         cache()->delete(GetDateFormat::CACHE_KEY);
@@ -204,13 +204,18 @@ class SettingsController extends Controller
 
     public function businessHours()
     {
-        $openHour = BusinessHour::orderBy('open_time', 'asc')->limit(1)->first();
+        $openHour  = BusinessHour::orderBy('open_time', 'asc')->limit(1)->first();
         $closeHour = BusinessHour::orderBy('close_time', 'desc')->limit(1)->first();
 
         return [
-            'open' => $openHour ? $openHour->open_time : '09:00',
+            'open'  => $openHour ? $openHour->open_time : '09:00',
             'close' => $closeHour ? $closeHour->close_time : '17:00',
         ];
+    }
+
+    public function dateFormats()
+    {
+        return app(GetDateFormat::class)->getAllDateFormats();
     }
 
     private function integerToDay()
@@ -224,10 +229,5 @@ class SettingsController extends Controller
             6 => 'saturday',
             7 => 'sunday',
         ];
-    }
-
-    public function dateFormats()
-    {
-        return app(GetDateFormat::class)->getAllDateFormats();
     }
 }

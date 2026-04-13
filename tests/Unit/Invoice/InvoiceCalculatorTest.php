@@ -40,13 +40,13 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $setting = \App\Models\Setting::firstOrCreate(
             ['id' => 1],
             [
-                'client_number' => 10000,
+                'client_number'  => 10000,
                 'invoice_number' => 10000,
-                'company' => 'test company',
-                'max_users' => 10,
-                'currency' => 'USD',
-                'language' => 'en',
-                'country' => 'GB',
+                'company'        => 'test company',
+                'max_users'      => 10,
+                'currency'       => 'USD',
+                'language'       => 'en',
+                'country'        => 'GB',
             ]
         );
         $setting->vat = 0;
@@ -56,16 +56,16 @@ class InvoiceCalculatorTest extends AbstractTestCase
             'sent_at' => Carbon::now(),
         ]);
         $this->payment = Payment::factory()->create([
-            'invoice_id' => $this->invoice->id,
-            'amount' => 1000,
-            'payment_date' => Carbon::now(),
+            'invoice_id'     => $this->invoice->id,
+            'amount'         => 1000,
+            'payment_date'   => Carbon::now(),
             'payment_source' => 'test',
         ]);
         $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
-            'price' => 5000,
-            'quantity' => 1,
-            'type' => 'hours',
+            'price'      => 5000,
+            'quantity'   => 1,
+            'type'       => 'hours',
         ]);
         $this->invoiceCalculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
     }
@@ -76,7 +76,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('flaky')]
@@ -88,36 +88,36 @@ class InvoiceCalculatorTest extends AbstractTestCase
         /** Act */
         $amountDue = $this->invoiceCalculator->getAmountDue()->getAmount();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(4000, $amountDue);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_gets_amount_due_with_no_payments()
     {
-        /** Arrange */
+        /* Arrange */
         $this->payment->forceDelete();
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
 
         /** Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(5000, $amountDue);
     }
 
     #[Test]
     public function it_gets_amount_due_with_multiple_payments()
     {
-        /** Arrange */
+        /* Arrange */
         Payment::factory()->create([
-            'invoice_id' => $this->invoice->id,
-            'amount' => 2000,
-            'payment_date' => Carbon::now(),
+            'invoice_id'     => $this->invoice->id,
+            'amount'         => 2000,
+            'payment_date'   => Carbon::now(),
             'payment_source' => 'test',
         ]);
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
@@ -125,14 +125,14 @@ class InvoiceCalculatorTest extends AbstractTestCase
         /** Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(2000, $amountDue);
     }
 
     #[Test]
     public function it_gets_amount_due_when_fully_paid()
     {
-        /** Arrange */
+        /* Arrange */
         $this->payment->amount = 5000;
         $this->payment->save();
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
@@ -140,14 +140,14 @@ class InvoiceCalculatorTest extends AbstractTestCase
         /** Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(0, $amountDue);
     }
 
     #[Test]
     public function it_gets_amount_due_with_zero_price_invoice()
     {
-        /** Arrange */
+        /* Arrange */
         $this->payment->forceDelete();
         $this->invoiceLine->price = 0;
         $this->invoiceLine->save();
@@ -156,9 +156,9 @@ class InvoiceCalculatorTest extends AbstractTestCase
         /** Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(0, $amountDue);
     }
 
-    // endregion
+    # endregion
 }

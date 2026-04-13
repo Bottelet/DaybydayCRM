@@ -14,14 +14,14 @@ class AppointmentFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => $this->faker->uuid,
-            'title' => $this->faker->word,
+            'title'       => $this->faker->word,
             'description' => $this->faker->text,
-            'start_at' => now(),
-            'end_at' => now()->addHour(),
-            'user_id' => User::factory(),
+            'start_at'    => now(),
+            'end_at'      => now()->addHour(),
+            'user_id'     => User::factory(),
             'source_type' => Task::class,
-            'source_id' => Task::factory(),
-            'color' => '#000000',
+            'source_id'   => Task::factory(),
+            'color'       => '#000000',
         ];
     }
 }

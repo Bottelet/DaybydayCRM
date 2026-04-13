@@ -12,9 +12,9 @@ use App\Models\Setting;
 use App\Models\Status;
 use App\Models\User;
 use App\Services\Invoice\InvoiceCalculator;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Ramsey\Uuid\Uuid;
 
 class LeadsController extends Controller
@@ -33,7 +33,7 @@ class LeadsController extends Controller
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
         $this->middleware(function ($request, $next) {
-            if (! auth()->check() || ! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
+            if ( ! auth()->check() || ! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
                 if ($request->expectsJson()) {
                     abort(403);
                 }
@@ -53,7 +53,7 @@ class LeadsController extends Controller
     }
 
     /**
-     * Data for Data tables
+     * Data for Data tables.
      *
      * @return mixed
      */
@@ -87,7 +87,8 @@ class LeadsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  StoreLeadRequest|Request  $request
+     * @param StoreLeadRequest|Request $request
+     *
      * @return Response
      */
     public function store(StoreLeadRequest $request)
@@ -98,25 +99,25 @@ class LeadsController extends Controller
         }
 
         $validated = $request->validated();
-        $deadline = $validated['deadline'];
+        $deadline  = $validated['deadline'];
 
         // Only append contact_time if it exists in validated data
         if (isset($validated['contact_time'])) {
-            $deadline .= ' '.$validated['contact_time'].':00';
+            $deadline .= ' ' . $validated['contact_time'] . ':00';
         } else {
             $deadline .= ' 00:00:00';
         }
 
         $lead = Lead::create(
             [
-                'title' => $validated['title'],
-                'description' => clean($validated['description']),
+                'title'            => $validated['title'],
+                'description'      => clean($validated['description']),
                 'user_assigned_id' => $validated['user_assigned_id'],
-                'deadline' => \Illuminate\Support\Carbon::parse($deadline),
-                'status_id' => $validated['status_id'],
-                'user_created_id' => auth()->id(),
-                'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client ? $client->id : null,
+                'deadline'         => \Illuminate\Support\Carbon::parse($deadline),
+                'status_id'        => $validated['status_id'],
+                'user_created_id'  => auth()->id(),
+                'external_id'      => Uuid::uuid4()->toString(),
+                'client_id'        => $client ? $client->id : null,
             ]
         );
 
@@ -128,7 +129,7 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead, Request $request)
     {
-        if (! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
+        if ( ! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
 
             if ($request->expectsJson()) {
@@ -144,7 +145,7 @@ class LeadsController extends Controller
         } elseif ($lead->offers) {
             foreach ($lead->offers as $offer) {
                 $offer->update([
-                    'source_id' => null,
+                    'source_id'   => null,
                     'source_type' => null,
                 ]);
             }
@@ -163,7 +164,7 @@ class LeadsController extends Controller
 
     public function destroyJson(Lead $lead, Request $request)
     {
-        if (! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
+        if ( ! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
             return response('Access denied', 403);
         }
 
@@ -173,7 +174,7 @@ class LeadsController extends Controller
         } elseif ($lead->offers) {
             foreach ($lead->offers as $offer) {
                 $offer->update([
-                    'source_id' => null,
+                    'source_id'   => null,
                     'source_type' => null,
                 ]);
             }
@@ -186,12 +187,12 @@ class LeadsController extends Controller
 
     public function updateAssign($external_id, Request $request)
     {
-        if (! auth()->user()->can(PermissionName::LEAD_ASSIGN->value)) {
+        if ( ! auth()->user()->can(PermissionName::LEAD_ASSIGN->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to assign leads'));
 
             return redirect()->back();
         }
-        $lead = $this->findByExternalId($external_id);
+        $lead  = $this->findByExternalId($external_id);
         $input = $request->only(['user_assigned_id']);
         $lead->fill($input)->save();
 
@@ -202,7 +203,7 @@ class LeadsController extends Controller
     }
 
     /**
-     * Update the follow up date (Deadline)
+     * Update the follow up date (Deadline).
      *
      * @return mixed
      */
@@ -210,12 +211,12 @@ class LeadsController extends Controller
     {
         $lead = $this->findByExternalId($external_id);
 
-        $validated = $request->validated();
+        $validated   = $request->validated();
         $contactTime = $validated['contact_time'];
-        $deadline = $validated['deadline'];
+        $deadline    = $validated['deadline'];
         // If deadline is only a date, append the contact time
-        if (strlen($deadline) <= 10) {
-            $deadline = $deadline.' '.$contactTime.':00';
+        if (mb_strlen($deadline) <= 10) {
+            $deadline = $deadline . ' ' . $contactTime . ':00';
         }
         // Always store as Y-m-d H:i:s string
         $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
@@ -227,7 +228,7 @@ class LeadsController extends Controller
     }
 
     /**
-     * Update the deadline for a lead
+     * Update the deadline for a lead.
      *
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
@@ -239,7 +240,7 @@ class LeadsController extends Controller
         $deadlineDate = $request->input('deadline_date');
 
         // Combine date and time
-        $deadline = $deadlineDate.' '.$deadlineTime.':00';
+        $deadline = $deadlineDate . ' ' . $deadlineTime . ':00';
 
         // Always store as Y-m-d H:i:s string
         $lead->deadline = Carbon::parse($deadline)->format('Y-m-d H:i:s');
@@ -262,7 +263,8 @@ class LeadsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $external_id
+     * @param int $external_id
+     *
      * @return Response
      */
     public function show($external_id)
@@ -282,13 +284,13 @@ class LeadsController extends Controller
     }
 
     /**
-     * Complete lead
+     * Complete lead.
      *
      * @return mixed
      */
     public function updateStatus($external_id, Request $request)
     {
-        if (! auth()->user()->can(PermissionName::LEAD_UPDATE_STATUS->value)) {
+        if ( ! auth()->user()->can(PermissionName::LEAD_UPDATE_STATUS->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to change lead status'));
 
             return redirect()->route('leads.show', $external_id);
@@ -310,7 +312,7 @@ class LeadsController extends Controller
             $statusId = $request->input('status_id');
             // Validate that the status_id belongs to lead statuses
             $validStatus = Status::typeOfLead()->where('id', $statusId)->exists();
-            if (! $validStatus) {
+            if ( ! $validStatus) {
                 session()->flash('flash_message_warning', __('Invalid status for lead'));
 
                 return redirect()->back();

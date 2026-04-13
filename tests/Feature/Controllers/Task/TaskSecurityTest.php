@@ -9,11 +9,11 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('task-controller')]
@@ -79,14 +79,14 @@ class TaskSecurityTest extends AbstractTestCase
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
 
-        $newStatus = Status::factory()->create(['source_type' => Task::class]);
+        $newStatus        = Status::factory()->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
-            'status_id' => $newStatus->id,
+            'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
-            'title' => 'Hacked Title', // This should be ignored
+            'title'            => 'Hacked Title', // This should be ignored
         ]);
 
         $this->task->refresh();
@@ -143,7 +143,7 @@ class TaskSecurityTest extends AbstractTestCase
         Cache::tags('role_user')->flush();
 
         // Create a status that belongs to a different type (Lead instead of Task)
-        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
+        $leadStatus     = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->task->status_id;
 
         // Use PATCH (route is PATCH)

@@ -13,68 +13,47 @@ class CreditNoteController extends Controller
      *
      * @return Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.
      *
      * @return Response
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      *
      * @return Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
      *
      * @return Response
      */
-    public function show(CreditNote $creditNote)
-    {
-        //
-    }
+    public function show(CreditNote $creditNote) {}
 
     /**
      * Show the form for editing the specified resource.
      *
      * @return Response
      */
-    public function edit(CreditNote $creditNote)
-    {
-        //
-    }
+    public function edit(CreditNote $creditNote) {}
 
     /**
      * Update the specified resource in storage.
      *
      * @return Response
      */
-    public function update(Request $request, CreditNote $creditNote)
-    {
-        //
-    }
+    public function update(Request $request, CreditNote $creditNote) {}
 
     /**
      * Remove the specified resource from storage.
      *
      * @return Response
      */
-    public function destroy(CreditNote $creditNote)
-    {
-        //
-    }
+    public function destroy(CreditNote $creditNote) {}
 }

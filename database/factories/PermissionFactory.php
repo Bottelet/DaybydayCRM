@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Permission;
 use Faker\Factory as FakerFactory;
@@ -17,11 +17,11 @@ class PermissionFactory extends \Illuminate\Database\Eloquent\Factories\Factory
         $faker = FakerFactory::create();
 
         return [
-            'external_id' => $faker->uuid,
+            'external_id'  => $faker->uuid,
             'display_name' => $faker->words(2, true),
-            'name' => $faker->unique()->slug,
-            'description' => $faker->sentence,
-            'grouping' => $faker->word,
+            'name'         => $faker->unique()->slug,
+            'description'  => $faker->sentence,
+            'grouping'     => $faker->word,
         ];
     }
 }

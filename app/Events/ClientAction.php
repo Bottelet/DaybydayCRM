@@ -17,16 +17,6 @@ class ClientAction
 
     private $action;
 
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    public function getAction()
-    {
-        return $this->action;
-    }
-
     /**
      * Create a new event instance.
      * ClientAction constructor.
@@ -35,6 +25,16 @@ class ClientAction
     {
         $this->client = $client;
         $this->action = $action;
+    }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
     }
 
     /**

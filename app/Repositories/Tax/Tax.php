@@ -17,7 +17,7 @@ class Tax
     private $multipleVatRate;
 
     /**
-     * Create a new Tax Rate
+     * Create a new Tax Rate.
      *
      * @return void
      */
@@ -27,7 +27,7 @@ class Tax
     }
 
     /**
-     * Return the Tax Rate as a float
+     * Return the Tax Rate as a float.
      *
      * @return int
      */

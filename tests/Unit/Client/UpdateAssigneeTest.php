@@ -41,19 +41,19 @@ class UpdateAssigneeTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_can_update_assignee()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
         $originalUserId = $this->client->user_id;
 
-        /** Act */
+        /* Act */
         $this->client->updateAssignee($this->user);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEquals($originalUserId, $this->user->id);
         $this->assertEquals($this->client->user_id, $this->user->id);
         Event::assertDispatched(ClientAction::class);
@@ -62,15 +62,15 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function it_can_update_assignee_with_out_permissions_as_any_user()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
         $actingUser = User::factory()->create();
         $this->actingAs($actingUser);
 
-        /** Act */
+        /* Act */
         $this->client->updateAssignee($this->user);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($this->client->user_id, $this->user->id);
         Event::assertDispatched(ClientAction::class);
     }
@@ -78,36 +78,36 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function it_updates_assignee_to_different_user()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
-        $firstUser = User::factory()->create();
+        $firstUser  = User::factory()->create();
         $secondUser = User::factory()->create();
         $this->client->updateAssignee($firstUser);
 
-        /** Act */
+        /* Act */
         $this->client->updateAssignee($secondUser);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($secondUser->id, $this->client->user_id);
         Event::assertDispatched(ClientAction::class, 2);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_updates_assignee_to_same_user_triggers_event()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
         $this->client->updateAssignee($this->user);
         Event::assertDispatched(ClientAction::class, 1);
 
-        /** Act */
+        /* Act */
         $this->client->updateAssignee($this->user);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($this->user->id, $this->client->user_id);
         Event::assertDispatched(ClientAction::class, 2);
     }
@@ -115,16 +115,16 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function it_client_without_assignee_can_be_assigned()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
         $clientWithoutAssignee = Client::factory()->create([
             'user_id' => null,
         ]);
 
-        /** Act */
+        /* Act */
         $clientWithoutAssignee->updateAssignee($this->user);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($this->user->id, $clientWithoutAssignee->user_id);
         Event::assertDispatched(ClientAction::class);
     }
@@ -132,20 +132,20 @@ class UpdateAssigneeTest extends AbstractTestCase
     #[Test]
     public function it_multiple_clients_can_have_same_assignee()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake([ClientAction::class]);
         $client1 = Client::factory()->create();
         $client2 = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $client1->updateAssignee($this->user);
         $client2->updateAssignee($this->user);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($this->user->id, $client1->user_id);
         $this->assertEquals($this->user->id, $client2->user_id);
         Event::assertDispatched(ClientAction::class, 2);
     }
 
-    // endregion
+    # endregion
 }

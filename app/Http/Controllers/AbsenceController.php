@@ -14,7 +14,7 @@ class AbsenceController extends Controller
 {
     public function indexData()
     {
-        if (! auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
 
             return redirect()->back();
@@ -37,7 +37,7 @@ class AbsenceController extends Controller
             ->addColumn('delete', '
                 <form action="{{ route(\'absence.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="'.__('Delete').'" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
             {{csrf_field()}}
             </form>')
             ->rawColumns(['delete'])
@@ -46,7 +46,7 @@ class AbsenceController extends Controller
 
     public function index()
     {
-        if (! auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
 
             return redirect()->back();
@@ -70,11 +70,11 @@ class AbsenceController extends Controller
     public function store(Request $request, StoreAbsenceAction $storeAbsenceAction)
     {
         $medical_certificate = null;
-        $user = auth()->user();
+        $user                = auth()->user();
 
         if ($request->user_external_id && auth()->user()->can('absence-manage')) {
             $user = User::whereExternalId($request->user_external_id)->first();
-            if (! $user) {
+            if ( ! $user) {
                 Session::flash('flash_message_warning', __('Could not find user'));
 
                 return redirect()->back();
@@ -102,7 +102,7 @@ class AbsenceController extends Controller
 
     public function destroy(Absence $absence)
     {
-        if (! auth()->user()->can('absence-manage')) {
+        if ( ! auth()->user()->can('absence-manage')) {
             Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
 
             return redirect()->back();

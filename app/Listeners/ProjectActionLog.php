@@ -21,8 +21,8 @@ class ProjectActionLog
         switch ($event->getAction()) {
             case 'created':
                 $text = __(':title was created by :creator and assigned to :assignee', [
-                    'title' => $event->getProject()->title,
-                    'creator' => $event->getProject()->creator->name,
+                    'title'    => $event->getProject()->title,
+                    'creator'  => $event->getProject()->creator->name,
                     'assignee' => $event->getProject()->assignee->name,
                 ]);
                 break;

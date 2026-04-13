@@ -28,27 +28,27 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_invoice_line_stores_explicit_external_id_when_provided()
     {
         /** Arrange */
-        $invoice = Invoice::factory()->create();
+        $invoice    = Invoice::factory()->create();
         $externalId = Uuid::uuid4()->toString();
 
         /** Act */
         $invoiceLine = InvoiceLine::create([
             'external_id' => $externalId,
-            'title' => 'Test Line Item',
-            'comment' => 'Test comment',
-            'type' => 'hours',
-            'quantity' => 2,
-            'price' => 1000,
-            'invoice_id' => $invoice->id,
+            'title'       => 'Test Line Item',
+            'comment'     => 'Test comment',
+            'type'        => 'hours',
+            'quantity'    => 2,
+            'price'       => 1000,
+            'invoice_id'  => $invoice->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($invoiceLine->external_id);
         $this->assertNotEmpty($invoiceLine->external_id);
         $this->assertEquals($externalId, $invoiceLine->external_id);
@@ -66,26 +66,26 @@ class InvoiceLineModelBootTest extends AbstractTestCase
 
         $line1 = InvoiceLine::create([
             'external_id' => Uuid::uuid4()->toString(),
-            'title' => 'Line Item One',
-            'comment' => 'First comment',
-            'type' => 'hours',
-            'quantity' => 1,
-            'price' => 100,
-            'invoice_id' => $invoice->id,
+            'title'       => 'Line Item One',
+            'comment'     => 'First comment',
+            'type'        => 'hours',
+            'quantity'    => 1,
+            'price'       => 100,
+            'invoice_id'  => $invoice->id,
         ]);
 
         /** Act */
         $line2 = InvoiceLine::create([
             'external_id' => Uuid::uuid4()->toString(),
-            'title' => 'Line Item Two',
-            'comment' => 'Second comment',
-            'type' => 'days',
-            'quantity' => 2,
-            'price' => 200,
-            'invoice_id' => $invoice->id,
+            'title'       => 'Line Item Two',
+            'comment'     => 'Second comment',
+            'type'        => 'days',
+            'quantity'    => 2,
+            'price'       => 200,
+            'invoice_id'  => $invoice->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEquals($line1->external_id, $line2->external_id);
     }
 
@@ -98,39 +98,39 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         /** Act */
         $invoiceLine = InvoiceLine::factory()->create();
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($invoiceLine->external_id);
         $this->assertDatabaseHas('invoice_lines', [
-            'id' => $invoiceLine->id,
+            'id'          => $invoiceLine->id,
             'external_id' => $invoiceLine->external_id,
         ]);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_invoice_line_preserves_provided_external_id()
     {
         /** Arrange */
-        $invoice = Invoice::factory()->create();
+        $invoice          = Invoice::factory()->create();
         $customExternalId = 'custom-invoice-line-uuid-xyz';
 
         /** Act */
         $invoiceLine = InvoiceLine::create([
             'external_id' => $customExternalId,
-            'title' => 'Test Line Item',
-            'comment' => 'Test comment',
-            'type' => 'pieces',
-            'quantity' => 5,
-            'price' => 500,
-            'invoice_id' => $invoice->id,
+            'title'       => 'Test Line Item',
+            'comment'     => 'Test comment',
+            'type'        => 'pieces',
+            'quantity'    => 5,
+            'price'       => 500,
+            'invoice_id'  => $invoice->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($customExternalId, $invoiceLine->external_id);
     }
 
-    // endregion
+    # endregion
 }

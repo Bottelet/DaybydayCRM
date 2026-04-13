@@ -31,27 +31,27 @@ class CreateProductsTable extends Migration
         });
 
         $p1 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Add product',
-            'name' => 'product-create',
-            'description' => 'Be able to create an product',
-            'grouping' => 'product',
+            'name'         => 'product-create',
+            'description'  => 'Be able to create an product',
+            'grouping'     => 'product',
         ]);
 
         $p2 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Edit product',
-            'name' => 'product-edit',
-            'description' => 'Be able to edit an product',
-            'grouping' => 'product',
+            'name'         => 'product-edit',
+            'description'  => 'Be able to edit an product',
+            'grouping'     => 'product',
         ]);
 
         $p3 = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Delete product',
-            'name' => 'product-delete',
-            'description' => 'Be able to delete an product',
-            'grouping' => 'product',
+            'name'         => 'product-delete',
+            'description'  => 'Be able to delete an product',
+            'grouping'     => 'product',
         ]);
 
         $roles = Role::whereIn('name', ['owner', 'administrator'])->get();
