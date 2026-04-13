@@ -151,36 +151,33 @@ trait EntrustUserTrait
         if (is_array($permission)) {
             foreach ($permission as $permName) {
                 $hasPerm = $this->can($permName);
-
                 if ($hasPerm && ! $requireAll) {
                     return true;
                 }
-
                 if (! $hasPerm && $requireAll) {
                     return false;
                 }
             }
-
             return $requireAll;
         }
 
+        // Collect all permission names from all roles
+        $allPermissions = collect();
         foreach ($this->cachedRoles() as $role) {
-            if (! is_object($role)
-                || ! method_exists($role, 'cachedPermissions')
-            ) {
+            if (!is_object($role) || !method_exists($role, 'cachedPermissions')) {
                 continue;
             }
-
             foreach ($role->cachedPermissions() as $perm) {
-                if (! is_object($perm)
-                    || empty($perm->name)
-                ) {
-                    continue;
+                if (is_object($perm) && !empty($perm->name)) {
+                    $allPermissions->push($perm->name);
                 }
+            }
+        }
 
-                if (Str::is($permission, $perm->name)) {
-                    return true;
-                }
+        // Check for a match (supports wildcards)
+        foreach ($allPermissions as $permName) {
+            if (Str::is($permission, $permName)) {
+                return true;
             }
         }
 

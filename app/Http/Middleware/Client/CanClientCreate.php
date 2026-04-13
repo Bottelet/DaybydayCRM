@@ -15,6 +15,9 @@ class CanClientCreate
      */
     public function handle($request, Closure $next)
     {
+        $user = auth()->user();
+        \Log::info('User in CanClientCreate', ['user' => $user]);
+
         if (! auth()->user()->can('client-create')) {
             session()->flash('flash_message_warning', __("You don't have permission to create a client"));
 
