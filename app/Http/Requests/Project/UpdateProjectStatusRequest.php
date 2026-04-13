@@ -17,9 +17,9 @@ class UpdateProjectStatusRequest extends FormRequest
     {
         $user = auth()->user();
         if ($user === null) {
-            return false;
-        }
-        return $user->can(PermissionName::PROJECT_UPDATE_STATUS->value);
+    public function authorize()
+    {
+        return auth()->check() && auth()->user()->can('project-update-status');
     }
 
     /**

@@ -35,8 +35,15 @@ class CommentController extends Controller
                 return response()->json(['message' => 'Source not found'], 404);
             }
             return redirect()->back()->with('error', 'Source not found');
+        $model = $modelsMapping[$request->validated('type')];
+        $source = $model::whereExternalId($request->validated('external_id'))->first();
+        if (! $source) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => __('Source not found')], 404);
+            }
+            Session::flash('flash_message_warning', __('Could not create comment, source not found'));
+            return redirect()->back();
         }
-
         $source->comments()->create(
             [
                 'description' => clean($request->validated('description')),
