@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RoleType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\EntrustRole;
@@ -11,8 +12,14 @@ class Role extends EntrustRole
     use HasExternalId;
     use HasFactory;
 
+    /**
+     * @deprecated Use RoleType::OWNER->value instead
+     */
     public const OWNER_ROLE = 'owner';
 
+    /**
+     * @deprecated Use RoleType::ADMINISTRATOR->value instead
+     */
     public const ADMIN_ROLE = 'administrator';
 
     protected $fillable = [
@@ -38,6 +45,7 @@ class Role extends EntrustRole
 
     public function canBeDeleted()
     {
-        return $this->name !== Role::ADMIN_ROLE && $this->name !== Role::OWNER_ROLE;
+        $roleType = RoleType::fromString($this->name);
+        return $roleType ? $roleType->canBeDeleted() : true;
     }
 }
