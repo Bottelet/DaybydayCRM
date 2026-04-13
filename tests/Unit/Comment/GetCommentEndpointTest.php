@@ -26,12 +26,12 @@ class GetCommentEndpointTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->lead = Lead::factory()->create();
-        $this->task = Task::factory()->create();
+        $this->lead    = Lead::factory()->create();
+        $this->task    = Task::factory()->create();
         $this->project = Project::factory()->create();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_gets_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
@@ -40,15 +40,15 @@ class GetCommentEndpointTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $leadEndpoint = $this->lead->getCreateCommentEndpoint();
-        $taskEndpoint = $this->task->getCreateCommentEndpoint();
+        $leadEndpoint    = $this->lead->getCreateCommentEndpoint();
+        $taskEndpoint    = $this->task->getCreateCommentEndpoint();
         $projectEndpoint = $this->project->getCreateCommentEndpoint();
 
-        /** Assert */
-        $this->assertEquals(url('comments/lead/'.$this->lead->external_id), $leadEndpoint);
-        $this->assertEquals(url('comments/task/'.$this->task->external_id), $taskEndpoint);
-        $this->assertEquals(url('comments/project/'.$this->project->external_id), $projectEndpoint);
+        /* Assert */
+        $this->assertEquals(url('comments/lead/' . $this->lead->external_id), $leadEndpoint);
+        $this->assertEquals(url('comments/task/' . $this->task->external_id), $taskEndpoint);
+        $this->assertEquals(url('comments/project/' . $this->project->external_id), $projectEndpoint);
     }
 
-    // endregion
+    # endregion
 }

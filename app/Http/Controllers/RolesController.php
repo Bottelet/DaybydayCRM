@@ -7,8 +7,8 @@ use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Role;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Session;
+use Ramsey\Uuid\Uuid;
 use Yajra\Datatables\Datatables;
 
 class RolesController extends Controller
@@ -23,7 +23,7 @@ class RolesController extends Controller
     }
 
     /**
-     * Make json respnse for datatables
+     * Make json respnse for datatables.
      *
      * @return mixed
      */
@@ -34,13 +34,13 @@ class RolesController extends Controller
         return Datatables::of($roles)
             ->addColumn('namelink', function ($roles) {
                 if ($roles->name == Role::OWNER_ROLE) {
-                    return '<a href="'.route('roles.show', $roles->external_id).'">'.htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8').'</a>'.'<br>'.__('Extra: Owner is able to do the same as an administrator but also controls billing');
+                    return '<a href="' . route('roles.show', $roles->external_id) . '">' . htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8') . '</a>' . '<br>' . __('Extra: Owner is able to do the same as an administrator but also controls billing');
                 }
                 if ($roles->name == Role::ADMIN_ROLE) {
-                    return '<a href="'.route('roles.show', $roles->external_id).'">'.htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8').'</a>'.'<br>'.__('Extra: Administrator is able to update and create departments, integrations, and settings');
+                    return '<a href="' . route('roles.show', $roles->external_id) . '">' . htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8') . '</a>' . '<br>' . __('Extra: Administrator is able to update and create departments, integrations, and settings');
                 }
 
-                return '<a href="'.route('roles.show', $roles->external_id).'">'.htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8').'</a>';
+                return '<a href="' . route('roles.show', $roles->external_id) . '">' . htmlspecialchars($roles->display_name, ENT_QUOTES, 'UTF-8') . '</a>';
             })
             ->editColumn('permissions', function ($roles) {
                 return $roles->permissions->map(function ($permission) {
@@ -48,15 +48,15 @@ class RolesController extends Controller
                 })->implode('<br>');
             })
             ->addColumn('view', '
-                <a href="{{ route(\'roles.show\', $external_id) }}" class="btn btn-link" >'.__('View').'</a>')
+                <a href="{{ route(\'roles.show\', $external_id) }}" class="btn btn-link" >' . __('View') . '</a>')
 
             ->addColumn('delete', function ($roles) {
                 if ($roles->canBeDeleted()) {
                     return '
-                <form action="'.route('roles.destroy', $roles->external_id).'" method="POST">
+                <form action="' . route('roles.destroy', $roles->external_id) . '" method="POST">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="submit" name="submit" value="'.__('Delete').'" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
-            <input type="hidden" name="_token" value="'.csrf_token().'">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
+            <input type="hidden" name="_token" value="' . csrf_token() . '">
             </form>';
                 }
             })
@@ -87,7 +87,7 @@ class RolesController extends Controller
     {
         $permissions_grouping = Permission::all()->groupBy('grouping');
 
-        if (! Integration::whereApiType('file')->first()) {
+        if ( ! Integration::whereApiType('file')->first()) {
             unset($permissions_grouping['document']);
         }
 
@@ -101,13 +101,13 @@ class RolesController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        $roleName = $request->name;
+        $roleName        = $request->name;
         $roleDescription = $request->description;
         Role::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'name' => strtolower($roleName),
+            'external_id'  => Uuid::uuid4()->toString(),
+            'name'         => mb_strtolower($roleName),
             'display_name' => ucfirst($roleName),
-            'description' => $roleDescription,
+            'description'  => $roleDescription,
         ]);
         session()->flash('flash_message', __('Role created'));
 
@@ -120,7 +120,7 @@ class RolesController extends Controller
     public function destroy($external_id)
     {
         $role = Role::where('external_id', $external_id)->first();
-        if (! $role->users->isEmpty()) {
+        if ( ! $role->users->isEmpty()) {
             Session::flash('flash_message_warning', __("Can't delete role with users, please remove users"));
 
             return redirect()->route('roles.index');

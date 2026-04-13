@@ -21,13 +21,14 @@ class ProjectActionNotification extends Notification
     public function __construct($project, $action)
     {
         $this->project = $project;
-        $this->action = $action;
+        $this->action  = $action;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -38,7 +39,8 @@ class ProjectActionNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return MailMessage
      */
     public function toMail($notifiable)
@@ -52,7 +54,8 @@ class ProjectActionNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -60,31 +63,31 @@ class ProjectActionNotification extends Notification
         switch ($this->action) {
             case 'created':
                 $text = __(':title was created by :creator, and assigned to you', [
-                    'title' => $this->project->title,
+                    'title'   => $this->project->title,
                     'creator' => $this->project->creator->name,
                 ]);
                 break;
             case 'updated_status':
                 $text = __(':title was completed by :username', [
-                    'title' => $this->project->title,
+                    'title'    => $this->project->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_time':
                 $text = __(':username inserted a new time for :title', [
-                    'title' => $this->project->title,
+                    'title'    => $this->project->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_assign':
                 $text = __(':username assigned a project to you', [
-                    'title' => $this->project->title,
+                    'title'    => $this->project->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
             case 'updated_deadline':
                 $text = __(':username updated the deadline for this :title', [
-                    'title' => $this->project->title,
+                    'title'    => $this->project->title,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
@@ -94,12 +97,12 @@ class ProjectActionNotification extends Notification
 
         return [
             'assigned_user' => $notifiable->id, // Assigned user ID
-            'created_user' => $this->project->creator->id,
-            'message' => $text,
-            'type' => Project::class,
-            'type_id' => $this->project->id,
-            'url' => url('projects/'.$this->project->external_id),
-            'action' => $this->action,
+            'created_user'  => $this->project->creator->id,
+            'message'       => $text,
+            'type'          => Project::class,
+            'type_id'       => $this->project->id,
+            'url'           => url('projects/' . $this->project->external_id),
+            'action'        => $this->action,
         ];
     }
 }

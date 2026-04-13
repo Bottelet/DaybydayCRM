@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\TaskStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,7 +44,7 @@ class Task extends Model implements Commentable
     ];
 
     protected $casts = [
-        'deadline' => 'datetime',
+        'deadline'   => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
@@ -56,6 +56,16 @@ class Task extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
+    {
+        return static::where('external_id', $externalId)->first();
+    }
+
     // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
@@ -63,7 +73,7 @@ class Task extends Model implements Commentable
         return $this->title;
     }
 
-    // region Relationships
+    # region Relationships
 
     public function activity()
     {
@@ -115,7 +125,7 @@ class Task extends Model implements Commentable
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
-    // endregion
+    # endregion
 
     public function getCreateCommentEndpoint(): string
     {
@@ -140,7 +150,7 @@ class Task extends Model implements Commentable
     public function canUpdateInvoice()
     {
         // If there is no invoice, it should be possible, because it also creates
-        if (! $this->invoice) {
+        if ( ! $this->invoice) {
             return true;
         }
 
@@ -156,15 +166,5 @@ class Task extends Model implements Commentable
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
-    }
-
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::where('external_id', $externalId)->first();
     }
 }

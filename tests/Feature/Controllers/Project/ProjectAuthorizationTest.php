@@ -8,11 +8,11 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Status;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class ProjectAuthorizationTest extends AbstractTestCase
@@ -36,26 +36,26 @@ class ProjectAuthorizationTest extends AbstractTestCase
             ['name' => 'project-delete'],
             [
                 'display_name' => 'Delete project',
-                'description' => 'Permission to delete project',
-                'grouping' => 'project',
+                'description'  => 'Permission to delete project',
+                'grouping'     => 'project',
             ]
         );
 
         // Create role with project-delete permission
         $roleWithPermission = Role::create([
-            'name' => 'project-deleter',
+            'name'         => 'project-deleter',
             'display_name' => 'Project Deleter',
-            'description' => 'Can delete projects',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can delete projects',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without project-delete permission
         $roleWithoutPermission = Role::create([
-            'name' => 'project-viewer',
+            'name'         => 'project-viewer',
             'display_name' => 'Project Viewer',
-            'description' => 'Cannot delete projects',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Cannot delete projects',
+            'external_id'  => Str::uuid()->toString(),
         ]);
 
         // Create users
@@ -99,10 +99,10 @@ class ProjectAuthorizationTest extends AbstractTestCase
     public function it_user_with_assign_permission_can_update_project_assignment()
     {
         $roleWithPermission = Role::create([
-            'name' => 'project-assigner',
+            'name'         => 'project-assigner',
             'display_name' => 'Project Assigner',
-            'description' => 'Can assign projects',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can assign projects',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $assignPermission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-project']);
         $roleWithPermission->attachPermission($assignPermission);
@@ -131,7 +131,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs($this->userWithoutPermission);
 
-        $newUser = User::factory()->create();
+        $newUser          = User::factory()->create();
         $originalAssignee = $this->project->user_assigned_id;
 
         // Use PATCH (route is PATCH)
@@ -147,10 +147,10 @@ class ProjectAuthorizationTest extends AbstractTestCase
     public function it_project_update_status_only_accepts_status_id_field()
     {
         $roleWithPermission = Role::create([
-            'name' => 'status-updater',
+            'name'         => 'status-updater',
             'display_name' => 'Status Updater',
-            'description' => 'Can update status',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can update status',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $statusPermission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $roleWithPermission->attachPermission($statusPermission);
@@ -167,14 +167,14 @@ class ProjectAuthorizationTest extends AbstractTestCase
         while ($newStatus->id == $this->project->status_id) {
             $newStatus = Status::factory()->create(['source_type' => Project::class]);
         }
-        $originalTitle = $this->project->title;
+        $originalTitle       = $this->project->title;
         $originalDescription = $this->project->description;
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
-            'status_id' => $newStatus->id,
-            'title' => 'Malicious Title Change',
-            'description' => 'Malicious Description Change',
+            'status_id'        => $newStatus->id,
+            'title'            => 'Malicious Title Change',
+            'description'      => 'Malicious Description Change',
             'user_assigned_id' => 999,
         ]);
 

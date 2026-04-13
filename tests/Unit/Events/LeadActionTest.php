@@ -28,19 +28,19 @@ class LeadActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_constructor_stores_lead_and_action()
     {
         /** Arrange */
-        $lead = Lead::factory()->create();
+        $lead   = Lead::factory()->create();
         $action = 'created';
 
         /** Act */
         $event = new LeadAction($lead, $action);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($lead->id, $event->getLead()->id);
         $this->assertEquals($action, $event->getAction());
     }
@@ -54,7 +54,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, 'updated');
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Lead::class, $event->getLead());
     }
 
@@ -67,7 +67,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, 'deleted');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('deleted', $event->getAction());
     }
 
@@ -78,10 +78,10 @@ class LeadActionTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         /** Act */
-        $event = new LeadAction($lead, 'created');
+        $event   = new LeadAction($lead, 'created');
         $channel = $event->broadcastOn();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
@@ -94,7 +94,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, 'test');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($lead->external_id, $event->getLead()->external_id);
     }
 
@@ -107,7 +107,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(LeadAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
     }
 
@@ -120,13 +120,13 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(LeadAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_action_can_be_non_string_value()
@@ -137,7 +137,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, 99);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(99, $event->getAction());
     }
 
@@ -150,7 +150,7 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, null);
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($event->getAction());
     }
 
@@ -163,9 +163,9 @@ class LeadActionTest extends AbstractTestCase
         /** Act */
         $event = new LeadAction($lead, '');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('', $event->getAction());
     }
 
-    // endregion
+    # endregion
 }

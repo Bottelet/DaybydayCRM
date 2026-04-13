@@ -30,24 +30,24 @@ class DemoTableSeeder extends Seeder
     public function run()
     {
         User::factory()->create([
-            'id' => 2,
+            'id'          => 2,
             'external_id' => Uuid::uuid4(),
-            'name' => 'DaybydayCRM',
-            'email' => 'demo@daybydaycrm.com',
-            'password' => bcrypt('Daybydaycrm123'),
+            'name'        => 'DaybydayCRM',
+            'email'       => 'demo@daybydaycrm.com',
+            'password'    => bcrypt('Daybydaycrm123'),
         ])->each(function ($user) {
             $this->createData($user);
         });
 
-        $newrole = new RoleUser();
-        $newrole->role_id = '2';
-        $newrole->user_id = '2';
+        $newrole             = new RoleUser();
+        $newrole->role_id    = '2';
+        $newrole->user_id    = '2';
         $newrole->timestamps = false;
         $newrole->save();
 
         DB::table('department_user')->insert([
             'department_id' => 1,
-            'user_id' => 2,
+            'user_id'       => 2,
         ]);
 
         User::factory()->count(4)->create()->each(function ($user) {
@@ -61,9 +61,9 @@ class DemoTableSeeder extends Seeder
 
         $u = User::query()->latest()->first();
         Absence::factory()->create([
-            'user_id' => $u->id,
+            'user_id'  => $u->id,
             'start_at' => now()->subDays(2),
-            'end_at' => now()->addDays(1),
+            'end_at'   => now()->addDays(1),
         ]);
     }
 
@@ -73,31 +73,31 @@ class DemoTableSeeder extends Seeder
             $project = null;
             if (rand(1, 3) == 2) {
                 $project = Project::factory()->create([
-                    'client_id' => $client->id,
-                    'user_created_id' => $user->id,
+                    'client_id'        => $client->id,
+                    'user_created_id'  => $user->id,
                     'user_assigned_id' => $user->id,
                 ]);
                 Comment::factory()->count(rand(2, 6))->create([
                     'source_type' => Project::class,
-                    'source_id' => $project->id,
-                    'user_id' => $user->id,
+                    'source_id'   => $project->id,
+                    'user_id'     => $user->id,
                 ]);
             }
             Task::factory()->count(rand(5, 13))->create([
-                'client_id' => $client->id,
-                'user_created_id' => $user->id,
+                'client_id'        => $client->id,
+                'user_created_id'  => $user->id,
                 'user_assigned_id' => $user->id,
-                'project_id' => optional($project)->id,
+                'project_id'       => optional($project)->id,
             ])->each(function ($task) use ($user) {
                 if (rand(1, 5) == 1) {
                     Appointment::factory()->create([
                         'client_id' => $task->client_id,
-                        'user_id' => $user->id,
+                        'user_id'   => $user->id,
                         'source_id' => $task->id,
                     ]);
                     $invoice = Invoice::factory()->create([
-                        'client_id' => $task->client_id,
-                        'source_id' => $task->id,
+                        'client_id'   => $task->client_id,
+                        'source_id'   => $task->id,
                         'source_type' => Task::class,
                     ]);
                     InvoiceLine::factory()->count(4)->create([
@@ -106,44 +106,44 @@ class DemoTableSeeder extends Seeder
 
                     Comment::factory()->count(3)->create([
                         'source_type' => Task::class,
-                        'source_id' => $task->id,
-                        'user_id' => $user->id,
+                        'source_id'   => $task->id,
+                        'user_id'     => $user->id,
                     ]);
                 }
 
                 Comment::factory()->count(3)->create([
                     'source_type' => Task::class,
-                    'source_id' => $task->id,
-                    'user_id' => $user->id,
+                    'source_id'   => $task->id,
+                    'user_id'     => $user->id,
                 ]);
             });
 
             Lead::factory()->count(rand(3, 7))->create([
-                'client_id' => $client->id,
-                'user_created_id' => $user->id,
+                'client_id'        => $client->id,
+                'user_created_id'  => $user->id,
                 'user_assigned_id' => $user->id,
             ])->each(function ($lead) use ($user) {
                 if (rand(0, 5) == 1) {
                     Comment::factory()->count(3)->create([
                         'source_type' => Lead::class,
-                        'source_id' => $lead->id,
-                        'user_id' => $user->id,
+                        'source_id'   => $lead->id,
+                        'user_id'     => $user->id,
                     ]);
                 }
                 $offer = Offer::factory()->create([
-                    'status' => OfferStatus::inProgress()->getStatus(),
-                    'source_id' => $lead->id,
-                    'client_id' => $lead->client_id,
+                    'status'      => OfferStatus::inProgress()->getStatus(),
+                    'source_id'   => $lead->id,
+                    'client_id'   => $lead->client_id,
                     'source_type' => Lead::class,
                 ]);
                 InvoiceLine::factory()->count(rand(1, 5))->create([
-                    'offer_id' => $offer->id,
+                    'offer_id'   => $offer->id,
                     'product_id' => rand(1, 4) == 2 ? Product::factory()->create()->id : null,
                 ]);
                 Comment::factory()->count(2)->create([
                     'source_type' => Lead::class,
-                    'source_id' => $lead->id,
-                    'user_id' => $user->id,
+                    'source_id'   => $lead->id,
+                    'user_id'     => $user->id,
                 ]);
             });
         });

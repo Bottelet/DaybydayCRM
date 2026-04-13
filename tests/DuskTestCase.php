@@ -9,11 +9,11 @@ use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Laravel\Dusk\TestCase as BaseTestCase;
-use Exception;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -36,11 +36,11 @@ abstract class DuskTestCase extends BaseTestCase
         $user = User::factory()->create($attributes);
 
         $role = Role::whereName('factory')->first();
-        if (! $role) {
+        if ( ! $role) {
             $role = Role::factory()->create();
         }
         $department = Department::whereName('factory')->first();
-        if (! $department) {
+        if ( ! $department) {
             $department = Department::factory()->create();
         }
 
@@ -54,15 +54,15 @@ abstract class DuskTestCase extends BaseTestCase
     {
         $client = false;
 
-        if (! array_has($attributes, 'user_id')) {
+        if ( ! array_has($attributes, 'user_id')) {
             $client = Client::factory()->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
         }
 
-        if (! $client) {
+        if ( ! $client) {
             $client = Client::factory()->create($attributes);
         }
 
-        if (! array_has($attributes, 'contact_id')) {
+        if ( ! array_has($attributes, 'contact_id')) {
             $contact = Contact::factory()->create(['client_id' => $client->id]);
         }
 
@@ -71,11 +71,11 @@ abstract class DuskTestCase extends BaseTestCase
 
     public function createTaskWithRelations($attributes = [])
     {
-        if (! array_has($attributes, 'client_id')) {
+        if ( ! array_has($attributes, 'client_id')) {
             throw new Exception('Client id is required');
         }
-        if (! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
-            $user_id = User::whereEmail('admin@admin.com')->first()->id;
+        if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
+            $user_id    = User::whereEmail('admin@admin.com')->first()->id;
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
 
@@ -86,12 +86,12 @@ abstract class DuskTestCase extends BaseTestCase
 
     public function createLeadWithRelations($attributes = [])
     {
-        if (! array_has($attributes, 'client_id')) {
+        if ( ! array_has($attributes, 'client_id')) {
             throw new Exception('Client id is required');
         }
 
-        if (! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
-            $user_id = User::whereEmail('admin@admin.com')->first()->id;
+        if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
+            $user_id    = User::whereEmail('admin@admin.com')->first()->id;
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
 

@@ -46,7 +46,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_sets_next_invoice_number_takes_biggest_invoice_number_and_add_one()
@@ -55,10 +55,10 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         // Service initialized with one invoice in database
 
         /** Act */
-        $firstNumber = $this->invoiceNumberService->setNextInvoiceNumber();
+        $firstNumber  = $this->invoiceNumberService->setNextInvoiceNumber();
         $secondNumber = $this->invoiceNumberService->setNextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(10000, $firstNumber);
         $this->assertEquals(10001, $secondNumber);
     }
@@ -70,10 +70,10 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         // Service initialized with one invoice in database
 
         /** Act */
-        $firstCall = $this->invoiceNumberService->nextInvoiceNumber();
+        $firstCall  = $this->invoiceNumberService->nextInvoiceNumber();
         $secondCall = $this->invoiceNumberService->nextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(10000, $firstCall);
         $this->assertEquals(10000, $secondCall);
     }
@@ -84,22 +84,22 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         /** Arrange */
         $customNumber = 20000;
 
-        /** Act */
+        /* Act */
         $this->invoiceNumberService->setInvoiceNumber($customNumber);
         $result = $this->invoiceNumberService->nextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(20000, $result);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_sets_next_invoice_number_with_multiple_existing_invoices()
     {
-        /** Arrange */
+        /* Arrange */
         Invoice::factory()->create(['invoice_number' => 10005]);
         Invoice::factory()->create(['invoice_number' => 10003]);
         $service = app(InvoiceNumberService::class);
@@ -107,7 +107,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         /** Act */
         $nextNumber = $service->setNextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(10006, $nextNumber);
     }
 
@@ -117,28 +117,28 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         /** Arrange */
         $zeroNumber = 0;
 
-        /** Act */
+        /* Act */
         $this->invoiceNumberService->setInvoiceNumber($zeroNumber);
         $result = $this->invoiceNumberService->nextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(0, $result);
     }
 
     #[Test]
     public function it_sets_next_invoice_number_increments_from_manually_set_number()
     {
-        /** Arrange */
+        /* Arrange */
         $this->invoiceNumberService->setInvoiceNumber(15000);
 
         /** Act */
-        $firstNumber = $this->invoiceNumberService->setNextInvoiceNumber();
+        $firstNumber  = $this->invoiceNumberService->setNextInvoiceNumber();
         $secondNumber = $this->invoiceNumberService->setNextInvoiceNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(15000, $firstNumber);
         $this->assertEquals(15001, $secondNumber);
     }
 
-    // endregion
+    # endregion
 }

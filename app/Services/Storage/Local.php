@@ -15,7 +15,7 @@ class Local implements FilesystemIntegration
     {
         return [
             'file_path' => $filename,
-            'id' => $filename,
+            'id'        => $filename,
         ];
     }
 
@@ -32,7 +32,6 @@ class Local implements FilesystemIntegration
         }
 
         // TODO: Implement actual view() method for production
-        return null;
     }
 
     public function download($file)
@@ -43,7 +42,6 @@ class Local implements FilesystemIntegration
         }
 
         // TODO: Implement actual download() method for production
-        return null;
     }
 
     public function revokeAccess()

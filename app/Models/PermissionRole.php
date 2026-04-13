@@ -9,6 +9,8 @@ class PermissionRole extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'permission_role';
 
     protected $fillable = [
@@ -16,13 +18,11 @@ class PermissionRole extends Model
         'role_id',
     ];
 
-    public $timestamps = false;
-
-    // region Relationships
+    # region Relationships
 
     public function employee()
     {
-        return $this->hasMany(PermissionRole::class, 'role_id', 3);
+        return $this->hasMany(self::class, 'role_id', 3);
     }
 
     public function hasperm()
@@ -35,5 +35,5 @@ class PermissionRole extends Model
         return $this->belongsTo(Setting::class);
     }
 
-    // endregion
+    # endregion
 }

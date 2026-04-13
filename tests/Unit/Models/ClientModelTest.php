@@ -27,7 +27,7 @@ class ClientModelTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_gets_primary_contact_attribute_returns_primary_contact_when_one_exists()
@@ -37,14 +37,14 @@ class ClientModelTest extends AbstractTestCase
         $client->contacts()->forceDelete();
 
         $primaryContact = Contact::factory()->create([
-            'client_id' => $client->id,
+            'client_id'  => $client->id,
             'is_primary' => true,
         ]);
 
         /** Act */
         $result = $client->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($result);
         $this->assertInstanceOf(Contact::class, $result);
         $this->assertEquals($primaryContact->id, $result->id);
@@ -58,19 +58,19 @@ class ClientModelTest extends AbstractTestCase
         $client->contacts()->forceDelete();
 
         $primaryContact = Contact::factory()->create([
-            'client_id' => $client->id,
+            'client_id'  => $client->id,
             'is_primary' => true,
         ]);
 
         Contact::factory()->create([
-            'client_id' => $client->id,
+            'client_id'  => $client->id,
             'is_primary' => false,
         ]);
 
         /** Act */
         $result = $client->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($result);
         $this->assertEquals($primaryContact->id, $result->id);
         $this->assertTrue((bool) $result->is_primary);
@@ -84,23 +84,23 @@ class ClientModelTest extends AbstractTestCase
         $client->contacts()->forceDelete();
 
         $primaryContact = Contact::factory()->create([
-            'client_id' => $client->id,
+            'client_id'  => $client->id,
             'is_primary' => true,
         ]);
 
         /** Act */
-        $result = $client->primaryContact;
+        $result      = $client->primaryContact;
         $freshClient = Client::find($client->id);
         $freshResult = $freshClient->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($primaryContact->id, $result->id);
         $this->assertEquals($primaryContact->id, $freshResult->id);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_gets_primary_contact_attribute_returns_null_when_no_contacts_exist()
@@ -112,7 +112,7 @@ class ClientModelTest extends AbstractTestCase
         /** Act */
         $result = $client->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($result);
     }
 
@@ -124,14 +124,14 @@ class ClientModelTest extends AbstractTestCase
         $client->contacts()->forceDelete();
 
         Contact::factory()->create([
-            'client_id' => $client->id,
+            'client_id'  => $client->id,
             'is_primary' => false,
         ]);
 
         /** Act */
         $result = $client->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($result);
     }
 
@@ -145,9 +145,9 @@ class ClientModelTest extends AbstractTestCase
         /** Act */
         $result = $client->fresh()->primaryContact;
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($result);
     }
 
-    // endregion
+    # endregion
 }

@@ -10,13 +10,13 @@ use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Illuminate\Http\Request;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Session;
+use Ramsey\Uuid\Uuid;
 
 class DocumentsController extends Controller
 {
     /**
-     * Source types that support assignable ownership checks
+     * Source types that support assignable ownership checks.
      */
     private const ASSIGNABLE_TYPES = [Task::class, Project::class, Lead::class];
 
@@ -35,12 +35,12 @@ class DocumentsController extends Controller
             }
         }])->whereExternalId($external_id)->first();
 
-        if (! $document) {
+        if ( ! $document) {
             abort(404);
         }
 
         // Check if user has permission to view document via source ownership
-        if (! $this->canAccessDocument($document)) {
+        if ( ! $this->canAccessDocument($document)) {
             if (request()->expectsJson()) {
                 abort(403, __('You do not have permission to view this document'));
             }
@@ -51,9 +51,9 @@ class DocumentsController extends Controller
         }
 
         $fileSystem = GetStorageProvider::getStorage();
-        $file = $fileSystem->view($document);
+        $file       = $fileSystem->view($document);
 
-        if (! $file) {
+        if ( ! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
 
             return redirect()->back();
@@ -75,12 +75,12 @@ class DocumentsController extends Controller
             }
         }])->whereExternalId($external_id)->first();
 
-        if (! $document) {
+        if ( ! $document) {
             abort(404);
         }
 
         // Check if user has permission to download document via source ownership
-        if (! $this->canAccessDocument($document)) {
+        if ( ! $this->canAccessDocument($document)) {
             if (request()->expectsJson()) {
                 abort(403, __('You do not have permission to download this document'));
             }
@@ -91,9 +91,9 @@ class DocumentsController extends Controller
         }
 
         $fileSystem = GetStorageProvider::getStorage();
-        $file = $fileSystem->download($document);
+        $file       = $fileSystem->download($document);
 
-        if (! $file) {
+        if ( ! $file) {
             session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from dropbox (:path)', ['path' => $document->path]));
 
             return redirect()->back();
@@ -106,25 +106,26 @@ class DocumentsController extends Controller
     }
 
     /**
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function upload(Request $request, $external_id)
     {
-        if (! auth()->user()->can('document-upload')) {
+        if ( ! auth()->user()->can('document-upload')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload a document'));
 
             return redirect()->route('tasks.show', $external_id);
         }
         $client = Client::whereExternalId($external_id)->first();
 
-        $file = $request->file('file');
-        $filename = str_random(8).'_'.$file->getClientOriginalName();
+        $file        = $request->file('file');
+        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
-        $size = $file->getSize();
-        $mbsize = $size / 1048576;
-        $totaltsize = substr($mbsize, 0, 4);
+        $size       = $file->getSize();
+        $mbsize     = $size / 1048576;
+        $totaltsize = mb_substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
             Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -133,20 +134,20 @@ class DocumentsController extends Controller
         }
 
         $client_folder = $client->external_id;
-        $fileSystem = GetStorageProvider::getStorage();
-        $fileData = $fileSystem->upload($client_folder, $filename, $file);
-        $input = array_replace(
+        $fileSystem    = GetStorageProvider::getStorage();
+        $fileData      = $fileSystem->upload($client_folder, $filename, $file);
+        $input         = array_replace(
             $request->all(),
             [
-                'external_id' => Uuid::uuid4()->toString(),
-                'path' => $fileData['file_path'],
-                'size' => $totaltsize,
+                'external_id'       => Uuid::uuid4()->toString(),
+                'path'              => $fileData['file_path'],
+                'size'              => $totaltsize,
                 'original_filename' => $fileOrginal,
-                'source_id' => $client->id,
-                'source_type' => Client::class,
-                'mime' => $file->getClientMimeType(),
-                'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                'integration_type' => get_class($fileSystem),
+                'source_id'         => $client->id,
+                'source_type'       => Client::class,
+                'mime'              => $file->getClientMimeType(),
+                'integration_id'    => $fileData['id'] ?? null,
+                'integration_type'  => get_class($fileSystem),
             ]
         );
         Document::create($input);
@@ -154,12 +155,13 @@ class DocumentsController extends Controller
     }
 
     /**
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function uploadToTask(Request $request, $external_id)
     {
-        if (! auth()->user()->can('task-upload-files')) {
+        if ( ! auth()->user()->can('task-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload files'));
 
             return redirect()->back();
@@ -167,21 +169,21 @@ class DocumentsController extends Controller
 
         $task = Task::whereExternalId($external_id)->first();
 
-        if (! $task) {
+        if ( ! $task) {
             session()->flash('flash_message_warning', __('Task not found'));
 
             return redirect()->back();
         }
 
-        if (! is_null($request->files)) {
+        if (null !== $request->files) {
             foreach ($request->file('files') as $image) {
-                $file = $image;
-                $filename = str_random(8).'_'.$file->getClientOriginalName();
+                $file        = $image;
+                $filename    = str_random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size = $file->getSize();
-                $mbsize = $size / 1048576;
-                $totaltsize = substr($mbsize, 0, 4);
+                $size       = $file->getSize();
+                $mbsize     = $size / 1048576;
+                $totaltsize = mb_substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
                     Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -189,20 +191,20 @@ class DocumentsController extends Controller
                     return redirect()->back();
                 }
 
-                $folder = $external_id;
+                $folder     = $external_id;
                 $fileSystem = GetStorageProvider::getStorage();
-                $fileData = $fileSystem->upload($folder, $filename, $file);
+                $fileData   = $fileSystem->upload($folder, $filename, $file);
 
                 Document::create([
-                    'external_id' => Uuid::uuid4()->toString(),
-                    'path' => $fileData['file_path'],
-                    'size' => $totaltsize,
+                    'external_id'       => Uuid::uuid4()->toString(),
+                    'path'              => $fileData['file_path'],
+                    'size'              => $totaltsize,
                     'original_filename' => $fileOrginal,
-                    'source_id' => $task->id,
-                    'source_type' => Task::class,
-                    'mime' => $file->getClientMimeType(),
-                    'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                    'integration_type' => get_class($fileSystem),
+                    'source_id'         => $task->id,
+                    'source_type'       => Task::class,
+                    'mime'              => $file->getClientMimeType(),
+                    'integration_id'    => $fileData['id'] ?? null,
+                    'integration_type'  => get_class($fileSystem),
                 ]);
             }
         }
@@ -212,12 +214,13 @@ class DocumentsController extends Controller
     }
 
     /**
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function uploadToProject(Request $request, $external_id)
     {
-        if (! auth()->user()->can('project-upload-files')) {
+        if ( ! auth()->user()->can('project-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload files'));
 
             return redirect()->back();
@@ -225,21 +228,21 @@ class DocumentsController extends Controller
 
         $project = Project::whereExternalId($external_id)->first();
 
-        if (! $project) {
+        if ( ! $project) {
             session()->flash('flash_message_warning', __('Project not found'));
 
             return redirect()->back();
         }
 
-        if (! is_null($request->files)) {
+        if (null !== $request->files) {
             foreach ($request->file('files') as $image) {
-                $file = $image;
-                $filename = str_random(8).'_'.$file->getClientOriginalName();
+                $file        = $image;
+                $filename    = str_random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size = $file->getSize();
-                $mbsize = $size / 1048576;
-                $totaltsize = substr($mbsize, 0, 4);
+                $size       = $file->getSize();
+                $mbsize     = $size / 1048576;
+                $totaltsize = mb_substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
                     Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -254,15 +257,15 @@ class DocumentsController extends Controller
                 $fileData = $fileSystem->upload($folder, $filename, $file);
 
                 Document::create([
-                    'external_id' => Uuid::uuid4()->toString(),
-                    'path' => $fileData['file_path'],
-                    'size' => $totaltsize,
+                    'external_id'       => Uuid::uuid4()->toString(),
+                    'path'              => $fileData['file_path'],
+                    'size'              => $totaltsize,
                     'original_filename' => $fileOrginal,
-                    'source_id' => $project->id,
-                    'source_type' => Project::class,
-                    'mime' => $file->getClientMimeType(),
-                    'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-                    'integration_type' => get_class($fileSystem),
+                    'source_id'         => $project->id,
+                    'source_type'       => Project::class,
+                    'mime'              => $file->getClientMimeType(),
+                    'integration_id'    => $fileData['id'] ?? null,
+                    'integration_type'  => get_class($fileSystem),
                 ]);
             }
         }
@@ -273,7 +276,7 @@ class DocumentsController extends Controller
 
     public function destroy($external_id)
     {
-        if (! auth()->user()->can('document-delete')) {
+        if ( ! auth()->user()->can('document-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete a document'));
 
             return redirect()->route('tasks.show', $external_id);
@@ -281,7 +284,7 @@ class DocumentsController extends Controller
 
         $document = Document::whereExternalId($external_id)->first();
 
-        if (! $document) {
+        if ( ! $document) {
             session()->flash('flash_message_warning', __('Document not found'));
 
             return redirect()->back();
@@ -296,9 +299,10 @@ class DocumentsController extends Controller
     }
 
     /**
-     * Opens invoce line creation modal
+     * Opens invoce line creation modal.
      *
-     * @param  $external_id  Customer's external_id
+     * @param $external_id Customer's external_id
+     *
      * @return View
      */
     public function uploadFilesModalView(Request $request, $external_id, $type)
@@ -317,15 +321,16 @@ class DocumentsController extends Controller
             ->withTitle($task->title)
             ->with('external_id', $external_id)
             ->withType($type)
-            ->withRoute(route('document.'.$type.'.upload', $external_id));
+            ->withRoute(route('document.' . $type . '.upload', $external_id));
     }
 
     /**
      * Check if the authenticated user can access the document
      * User can access document if they are assigned to or created the source resource
-     * or if they have ownership of the associated client
+     * or if they have ownership of the associated client.
      *
-     * @param  Document  $document
+     * @param Document $document
+     *
      * @return bool
      */
     private function canAccessDocument($document)
@@ -335,7 +340,7 @@ class DocumentsController extends Controller
         // Use the morphTo relationship to get the source model
         $source = $document->source;
 
-        if (! $source) {
+        if ( ! $source) {
             return false;
         }
 
@@ -354,29 +359,26 @@ class DocumentsController extends Controller
 
     /**
      * Check if user owns an assignable source (Task, Project, Lead)
-     * via creation, assignment, or client ownership
+     * via creation, assignment, or client ownership.
      *
-     * @param  mixed  $source
-     * @param  User  $user
+     * @param mixed $source
+     * @param User  $user
+     *
      * @return bool
      */
     private function userOwnsAssignableSource($source, $user)
     {
         // Check if user created the source
-        if (! is_null($source->user_created_id) && $source->user_created_id === $user->id) {
+        if (null !== $source->user_created_id && $source->user_created_id === $user->id) {
             return true;
         }
 
         // Check if user is assigned to the source
-        if (! is_null($source->user_assigned_id) && $source->user_assigned_id === $user->id) {
+        if (null !== $source->user_assigned_id && $source->user_assigned_id === $user->id) {
             return true;
         }
 
         // Check if user owns the client associated with the source
-        if ($source->client && ! is_null($source->client->user_id) && $source->client->user_id === $user->id) {
-            return true;
-        }
-
-        return false;
+        return (bool) ($source->client && null !== $source->client->user_id && $source->client->user_id === $user->id);
     }
 }

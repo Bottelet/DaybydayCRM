@@ -8,7 +8,7 @@ class InvoiceLinesController extends Controller
 {
     public function destroy(InvoiceLine $invoiceLine)
     {
-        if (! auth()->user()->can('modify-invoice-lines')) {
+        if ( ! auth()->user()->can('modify-invoice-lines')) {
             session()->flash('flash_message_warning', __('You do not have permission to modify invoice lines'));
             if (request()->expectsJson()) {
                 return response()->json(['message' => __('You do not have permission to modify invoice lines')], 403);

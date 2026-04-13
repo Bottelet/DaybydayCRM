@@ -24,12 +24,12 @@ class Mail extends Model
         'send_at' => 'datetime',
     ];
 
-    // region Relationships
+    # region Relationships
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // endregion
+    # endregion
 }

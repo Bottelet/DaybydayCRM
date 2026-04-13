@@ -29,7 +29,7 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * @param  mixed  $user
+     * @param mixed $user
      */
     public function setUser($user): void
     {

@@ -16,7 +16,7 @@ class InvoiceHeaderComposer
     {
         $invoices = Invoice::findOrFail($view->getData()['invoice']['id']);
 
-        $client = $invoices->client;
+        $client       = $invoices->client;
         $contact_info = $client->contacts()->first();
 
         $view->with('client', $client);

@@ -25,11 +25,11 @@ class DueAtTest extends AbstractTestCase
 
         $this->invoice = Invoice::factory()->create([
             'sent_at' => Carbon::now(),
-            'due_at' => Carbon::now()->addDay(),
+            'due_at'  => Carbon::now()->addDay(),
         ]);
         $this->secondInvoice = Invoice::factory()->create([
             'sent_at' => Carbon::now(),
-            'due_at' => Carbon::now()->subDay(),
+            'due_at'  => Carbon::now()->subDay(),
         ]);
     }
 
@@ -39,7 +39,7 @@ class DueAtTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_gets_invoice_past_due_at()
@@ -50,26 +50,26 @@ class DueAtTest extends AbstractTestCase
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(1, $invoices);
         $this->assertEquals($this->secondInvoice->id, $invoices->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_dont_get_invoice_if_due_at_is_null()
     {
-        /** Arrange */
+        /* Arrange */
         $this->secondInvoice->due_at = null;
         $this->secondInvoice->save();
 
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(0, $invoices);
     }
 
@@ -86,7 +86,7 @@ class DueAtTest extends AbstractTestCase
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(0, $invoices);
     }
 
@@ -96,20 +96,20 @@ class DueAtTest extends AbstractTestCase
         /** Arrange */
         $thirdInvoice = Invoice::factory()->create([
             'sent_at' => Carbon::now(),
-            'due_at' => Carbon::now()->subDays(5),
+            'due_at'  => Carbon::now()->subDays(5),
         ]);
 
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(2, $invoices);
     }
 
     #[Test]
     public function it_dont_get_invoice_due_today()
     {
-        /** Arrange */
+        /* Arrange */
         $this->invoice->due_at = Carbon::now();
         $this->invoice->save();
         $this->secondInvoice->forceDelete();
@@ -117,23 +117,23 @@ class DueAtTest extends AbstractTestCase
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(0, $invoices);
     }
 
     #[Test]
     public function it_dont_get_invoice_due_in_future()
     {
-        /** Arrange */
+        /* Arrange */
         $this->secondInvoice->due_at = Carbon::now()->addDays(3);
         $this->secondInvoice->save();
 
         /** Act */
         $invoices = Invoice::pastDueAt()->get();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(0, $invoices);
     }
 
-    // endregion
+    # endregion
 }

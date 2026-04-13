@@ -2,15 +2,15 @@
 
 namespace Tests\Feature\Controllers\Lead;
 
+use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Status;
 use App\Models\User;
-use App\Enums\PermissionName;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class LeadAuthorizationTest extends AbstractTestCase
@@ -30,7 +30,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $this->lead = Lead::factory()->create();
 
         // Create users
-        $this->userWithPermission = User::factory()->create();
+        $this->userWithPermission    = User::factory()->create();
         $this->userWithoutPermission = User::factory()->create();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -62,19 +62,19 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_update_assign_only_accepts_user_assigned_id_field()
     {
-        $user = User::factory()->create();
+        $user       = User::factory()->create();
         $this->user = $user;
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
-        $newUser = User::factory()->create();
-        $originalTitle = $this->lead->title;
+        $newUser             = User::factory()->create();
+        $originalTitle       = $this->lead->title;
         $originalDescription = $this->lead->description;
 
         $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
-            'title' => 'Malicious Title Change',
-            'description' => 'Malicious Description Change',
-            'status_id' => 999,
+            'title'            => 'Malicious Title Change',
+            'description'      => 'Malicious Description Change',
+            'status_id'        => 999,
         ]);
 
         $this->lead->refresh();
@@ -90,7 +90,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_update_status_only_accepts_status_id_field()
     {
-        $user = User::factory()->create();
+        $user       = User::factory()->create();
         $this->user = $user;
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
@@ -99,13 +99,13 @@ class LeadAuthorizationTest extends AbstractTestCase
             $newStatus = Status::factory()->create(['source_type' => Lead::class]);
         }
 
-        $originalTitle = $this->lead->title;
+        $originalTitle       = $this->lead->title;
         $originalDescription = $this->lead->description;
 
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
-            'status_id' => $newStatus->id,
-            'title' => 'Malicious Title Change',
-            'description' => 'Malicious Description Change',
+            'status_id'        => $newStatus->id,
+            'title'            => 'Malicious Title Change',
+            'description'      => 'Malicious Description Change',
             'user_assigned_id' => 999,
         ]);
 

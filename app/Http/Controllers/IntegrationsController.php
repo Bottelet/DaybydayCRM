@@ -21,7 +21,7 @@ class IntegrationsController extends Controller
      */
     public function index()
     {
-        $billing_integration = Integration::whereApiType('billing')->first();
+        $billing_integration    = Integration::whereApiType('billing')->first();
         $filesystem_integration = Integration::whereApiType('file')->first();
 
         return view('integrations.index')
@@ -44,7 +44,7 @@ class IntegrationsController extends Controller
             // 'user_id' => $request->post['user_id'] ? $userId : null,
             'api_type' => $request->api_type,
         ])->get();
-        $existing = isset($existing[0]) ? $existing[0] : null;
+        $existing = $existing[0] ?? null;
 
         if ($existing) {
             $existing->fill($input)->save();

@@ -2,7 +2,7 @@
 
 namespace App\Zizaco\Entrust\Middleware;
 
-/**
+/*
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
@@ -30,12 +30,13 @@ class EntrustPermission
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return mixed
      */
     public function handle($request, Closure $next, $permissions)
     {
-        if (! is_array($permissions)) {
+        if ( ! is_array($permissions)) {
             $permissions = explode(self::DELIMITER, $permissions);
         }
 

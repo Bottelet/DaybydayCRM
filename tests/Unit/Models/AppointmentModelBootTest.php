@@ -32,7 +32,7 @@ class AppointmentModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_appointment_stores_explicit_external_id_when_provided()
@@ -43,16 +43,16 @@ class AppointmentModelBootTest extends AbstractTestCase
         /** Act */
         $appointment = Appointment::create([
             'external_id' => $externalId,
-            'title' => 'Test Appointment',
-            'start_at' => Carbon::now(),
-            'end_at' => Carbon::now()->addHour(),
-            'user_id' => $this->user->id,
-            'color' => '#FF0000',
+            'title'       => 'Test Appointment',
+            'start_at'    => Carbon::now(),
+            'end_at'      => Carbon::now()->addHour(),
+            'user_id'     => $this->user->id,
+            'color'       => '#FF0000',
             'source_type' => User::class,
-            'source_id' => $this->user->id,
+            'source_id'   => $this->user->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($appointment->external_id);
         $this->assertNotEmpty($appointment->external_id);
         $this->assertEquals($externalId, $appointment->external_id);
@@ -68,28 +68,28 @@ class AppointmentModelBootTest extends AbstractTestCase
         /** Arrange */
         $appointment1 = Appointment::create([
             'external_id' => Uuid::uuid4()->toString(),
-            'title' => 'Appointment One',
-            'start_at' => Carbon::now(),
-            'end_at' => Carbon::now()->addHour(),
-            'user_id' => $this->user->id,
-            'color' => '#FF0000',
+            'title'       => 'Appointment One',
+            'start_at'    => Carbon::now(),
+            'end_at'      => Carbon::now()->addHour(),
+            'user_id'     => $this->user->id,
+            'color'       => '#FF0000',
             'source_type' => User::class,
-            'source_id' => $this->user->id,
+            'source_id'   => $this->user->id,
         ]);
 
         /** Act */
         $appointment2 = Appointment::create([
             'external_id' => Uuid::uuid4()->toString(),
-            'title' => 'Appointment Two',
-            'start_at' => Carbon::now()->addDay(),
-            'end_at' => Carbon::now()->addDay()->addHour(),
-            'user_id' => $this->user->id,
-            'color' => '#00FF00',
+            'title'       => 'Appointment Two',
+            'start_at'    => Carbon::now()->addDay(),
+            'end_at'      => Carbon::now()->addDay()->addHour(),
+            'user_id'     => $this->user->id,
+            'color'       => '#00FF00',
             'source_type' => User::class,
-            'source_id' => $this->user->id,
+            'source_id'   => $this->user->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEquals($appointment1->external_id, $appointment2->external_id);
     }
 
@@ -101,23 +101,23 @@ class AppointmentModelBootTest extends AbstractTestCase
 
         /** Act */
         $appointment = Appointment::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'     => $this->user->id,
             'source_type' => User::class,
-            'source_id' => $this->user->id,
-            'color' => '#FFFFFF',
+            'source_id'   => $this->user->id,
+            'color'       => '#FFFFFF',
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($appointment->external_id);
         $this->assertDatabaseHas('appointments', [
-            'id' => $appointment->id,
+            'id'          => $appointment->id,
             'external_id' => $appointment->external_id,
         ]);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_appointment_preserves_provided_external_id()
@@ -128,18 +128,18 @@ class AppointmentModelBootTest extends AbstractTestCase
         /** Act */
         $appointment = Appointment::create([
             'external_id' => $customExternalId,
-            'title' => 'Test Appointment',
-            'start_at' => Carbon::now(),
-            'end_at' => Carbon::now()->addHour(),
-            'user_id' => $this->user->id,
-            'color' => '#FF0000',
+            'title'       => 'Test Appointment',
+            'start_at'    => Carbon::now(),
+            'end_at'      => Carbon::now()->addHour(),
+            'user_id'     => $this->user->id,
+            'color'       => '#FF0000',
             'source_type' => User::class,
-            'source_id' => $this->user->id,
+            'source_id'   => $this->user->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($customExternalId, $appointment->external_id);
     }
 
-    // endregion
+    # endregion
 }

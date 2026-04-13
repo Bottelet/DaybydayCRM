@@ -10,14 +10,15 @@ class Translation
     /**
      * Handle an incoming request.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         if (auth()->user()) {
             $language = auth()->user()->language;
-            if (! in_array($language, ['en', 'dk', 'es'])) {
+            if ( ! in_array($language, ['en', 'dk', 'es'])) {
                 $language = 'en';
             }
             app()->setLocale($language);

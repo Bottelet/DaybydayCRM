@@ -14,8 +14,8 @@ class InvoiceFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => $this->faker->uuid,
-            'status' => InvoiceStatus::draft(),
-            'client_id' => Client::factory(),
+            'status'      => InvoiceStatus::draft(),
+            'client_id'   => Client::factory(),
         ];
     }
 }

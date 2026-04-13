@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
 class ClientsDummyTableSeeder extends Seeder
 {
     /**
-     * Auto generated seed file
+     * Auto generated seed file.
      *
      * @return void
      */

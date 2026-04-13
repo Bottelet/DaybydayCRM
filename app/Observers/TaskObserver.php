@@ -26,7 +26,7 @@ class TaskObserver
     public function deleted(Task $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->delete();
+            $task->{$relation}()->delete();
         }
     }
 
@@ -38,7 +38,7 @@ class TaskObserver
     public function restored(Task $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->withTrashed()->restore();
+            $task->{$relation}()->withTrashed()->restore();
         }
     }
 
@@ -50,7 +50,7 @@ class TaskObserver
     public function forceDeleted(Task $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->forceDelete();
+            $task->{$relation}()->forceDelete();
         }
     }
 }

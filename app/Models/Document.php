@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,13 +15,7 @@ class Document extends Model
 
     protected $fillable = ['name', 'size', 'path', 'original_filename', 'client_id', 'external_id', 'mime', 'integration_id', 'integration_type', 'source_type', 'source_id'];
 
-    protected static function boot()
-    {
-        parent::boot();
-        // HasExternalId trait handles external_id generation
-    }
-
-    // region Relationships
+    # region Relationships
 
     public function client()
     {
@@ -33,5 +27,11 @@ class Document extends Model
         return $this->morphTo();
     }
 
-    // endregion
+    protected static function boot()
+    {
+        parent::boot();
+        // HasExternalId trait handles external_id generation
+    }
+
+    # endregion
 }

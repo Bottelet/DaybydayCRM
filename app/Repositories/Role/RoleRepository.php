@@ -7,7 +7,7 @@ use App\Models\Role;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * Class RoleRepository
+ * Class RoleRepository.
  */
 class RoleRepository implements RoleRepositoryContract
 {
@@ -60,12 +60,12 @@ class RoleRepository implements RoleRepositoryContract
 
     public function create($requestData)
     {
-        $roleName = $requestData->name;
+        $roleName        = $requestData->name;
         $roleDescription = $requestData->description;
         Role::create([
-            'name' => strtolower($roleName),
+            'name'         => mb_strtolower($roleName),
             'display_name' => ucfirst($roleName),
-            'description' => $roleDescription,
+            'description'  => $roleDescription,
         ]);
     }
 

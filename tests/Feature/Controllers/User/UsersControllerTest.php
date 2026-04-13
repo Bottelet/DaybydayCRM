@@ -4,11 +4,11 @@ namespace Tests\Feature\Controllers\User;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UsersControllerTest extends AbstractTestCase
 {
@@ -31,10 +31,10 @@ class UsersControllerTest extends AbstractTestCase
             'PATCH',
             route('users.update', $targetUser->external_id),
             [
-                'name' => $targetUser->name,
-                'email' => $targetUser->email,
+                'name'        => $targetUser->name,
+                'email'       => $targetUser->email,
                 'departments' => $targetUser->department()->first()->id,
-                'roles' => $targetRole->id,
+                'roles'       => $targetRole->id,
             ]
         )->assertRedirect();
 

@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -41,7 +41,7 @@ class Project extends Model implements Commentable
     ];
 
     protected $casts = [
-        'deadline' => 'date',
+        'deadline'   => 'date',
         'deleted_at' => 'datetime',
     ];
 
@@ -51,6 +51,16 @@ class Project extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
+    {
+        return static::where('external_id', $externalId)->first();
+    }
+
     // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
@@ -58,7 +68,7 @@ class Project extends Model implements Commentable
         return $this->title;
     }
 
-    // region Relationships
+    # region Relationships
 
     public function activity()
     {
@@ -110,7 +120,7 @@ class Project extends Model implements Commentable
         return $this->belongsTo(User::class, 'user_assigned_id');
     }
 
-    // endregion
+    # endregion
 
     public function isClosed()
     {
@@ -126,15 +136,5 @@ class Project extends Model implements Commentable
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
-    }
-
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::where('external_id', $externalId)->first();
     }
 }

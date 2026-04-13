@@ -22,7 +22,7 @@ class GetAttributesTest extends AbstractTestCase
         parent::setUp();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
@@ -40,7 +40,7 @@ class GetAttributesTest extends AbstractTestCase
         /** Act */
         $nameAndDepartment = $this->user->name_and_department;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
     }
 
@@ -59,9 +59,9 @@ class GetAttributesTest extends AbstractTestCase
 
         /** Act */
         $userWithEagerLoading = User::whereName($this->user->name)->with('department')->first();
-        $nameAndDepartment = $userWithEagerLoading->name_and_department_eager_loading;
+        $nameAndDepartment    = $userWithEagerLoading->name_and_department_eager_loading;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
     }
 
@@ -69,7 +69,7 @@ class GetAttributesTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function get_default_avatar_when_none_is_set()
     {
-        /** Arrange */
+        /* Arrange */
         $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
@@ -77,7 +77,7 @@ class GetAttributesTest extends AbstractTestCase
         /** Act */
         $avatar = $this->user->avatar;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('/images/default_avatar.jpg', $avatar);
     }
 
@@ -85,7 +85,7 @@ class GetAttributesTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function get_path_when_image_is_set()
     {
-        /** Arrange */
+        /* Arrange */
         $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
@@ -95,9 +95,9 @@ class GetAttributesTest extends AbstractTestCase
         /** Act */
         $avatar = $this->user->avatar;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('/storage/tiger.jpg', $avatar);
     }
 
-    // endregion
+    # endregion
 }

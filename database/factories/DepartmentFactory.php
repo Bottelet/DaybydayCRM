@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Factory;
@@ -14,7 +14,7 @@ class DepartmentFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     public function definition()
     {
         return [
-            'name' => 'factory',
+            'name'        => 'factory',
             'external_id' => $this->faker->uuid,
             'description' => 'Mock Department',
         ];

@@ -8,27 +8,27 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeleteProjectControllerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
+    protected $user;
+
     private $project;
 
     private $task;
-
-    protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'employee']);
+        $role       = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'project-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
@@ -41,7 +41,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         $this->project = Project::factory()->create();
-        $this->task = Task::factory()->create([
+        $this->task    = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
         $this->withoutMiddleware(VerifyCsrfToken::class);
@@ -94,7 +94,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_delete_project_if_there_is_no_tasks()
     {
-        $project = Project::factory()->create();
+        $project  = Project::factory()->create();
         $response = $this->json('DELETE', route('projects.destroy', $project->external_id));
 
         $response->assertStatus(200);
