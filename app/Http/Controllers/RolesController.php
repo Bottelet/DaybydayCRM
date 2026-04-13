@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Role\StoreRoleRequest;
+use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Role;
@@ -140,12 +141,12 @@ class RolesController extends Controller
     /**
      * @return mixed
      */
-    public function update(Request $request, $external_id)
+    public function update(UpdateRoleRequest $request, $external_id)
     {
         $allowed_permissions = [];
 
-        if ($request->input('permissions') != null) {
-            foreach ($request->input('permissions') as $permissionId => $permission) {
+        if ($request->validated()['permissions'] != null) {
+            foreach ($request->validated()['permissions'] as $permissionId => $permission) {
                 if ($permission === '1') {
                     $allowed_permissions[] = (int) $permissionId;
                 }

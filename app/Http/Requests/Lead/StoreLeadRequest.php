@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Lead;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLeadRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreLeadRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('lead-create');
+        return auth()->user()->can(PermissionName::LEAD_CREATE->value);
     }
 
     /**
@@ -29,8 +30,9 @@ class StoreLeadRequest extends FormRequest
             'status_id' => 'required',
             'user_assigned_id' => 'required',
             'user_created_id' => '',
-            'client_external_id' => 'required',
+            'client_external_id' => 'required|exists:clients,external_id',
             'deadline' => 'required',
+            'contact_time' => 'required',
         ];
     }
 }

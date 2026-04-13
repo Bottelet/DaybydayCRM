@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionName;
 use App\Events\LeadAction;
 use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
@@ -32,7 +33,7 @@ class LeadsController extends Controller
         $this->middleware('lead.assigned', ['only' => ['updateAssign']]);
         $this->middleware('lead.update.status', ['only' => ['updateStatus']]);
         $this->middleware(function ($request, $next) {
-            if (! auth()->check() || ! auth()->user()->can('lead-delete')) {
+            if (! auth()->check() || ! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
                 if ($request->expectsJson()) {
                     abort(403);
                 }
@@ -91,20 +92,31 @@ class LeadsController extends Controller
      */
     public function store(StoreLeadRequest $request)
     {
-        if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id)->first();
+        $client = null;
+        if ($request->validated()['client_external_id']) {
+            $client = Client::whereExternalId($request->validated()['client_external_id'])->first();
+        }
+
+        $validated = $request->validated();
+        $deadline = $validated['deadline'];
+
+        // Only append contact_time if it exists in validated data
+        if (isset($validated['contact_time'])) {
+            $deadline .= ' ' . $validated['contact_time'] . ':00';
+        } else {
+            $deadline .= ' 00:00:00';
         }
 
         $lead = Lead::create(
             [
-                'title' => $request->input('title'),
-                'description' => clean($request->input('description')),
-                'user_assigned_id' => $request->input('user_assigned_id'),
-                'deadline' => \Illuminate\Support\Carbon::parse($request->input('deadline').' '.$request->input('contact_time').':00'),
-                'status_id' => $request->input('status_id'),
+                'title' => $validated['title'],
+                'description' => clean($validated['description']),
+                'user_assigned_id' => $validated['user_assigned_id'],
+                'deadline' => \Illuminate\Support\Carbon::parse($deadline),
+                'status_id' => $validated['status_id'],
                 'user_created_id' => auth()->id(),
                 'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client->id,
+                'client_id' => $client ? $client->id : null,
             ]
         );
 
@@ -116,7 +128,7 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead, Request $request)
     {
-        if (! auth()->user()->can('lead-delete')) {
+        if (! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
 
             if ($request->expectsJson()) {
@@ -151,7 +163,7 @@ class LeadsController extends Controller
 
     public function destroyJson(Lead $lead, Request $request)
     {
-        if (! auth()->user()->can('lead-delete')) {
+        if (! auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
             return response('Access denied', 403);
         }
 
@@ -174,7 +186,7 @@ class LeadsController extends Controller
 
     public function updateAssign($external_id, Request $request)
     {
-        if (! auth()->user()->can('can-assign-new-user-to-lead')) {
+        if (! auth()->user()->can(PermissionName::LEAD_ASSIGN->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to assign leads'));
 
             return redirect()->back();
@@ -276,7 +288,7 @@ class LeadsController extends Controller
      */
     public function updateStatus($external_id, Request $request)
     {
-        if (! auth()->user()->can('lead-update-status')) {
+        if (! auth()->user()->can(PermissionName::LEAD_UPDATE_STATUS->value)) {
             session()->flash('flash_message_warning', __('You do not have permission to change lead status'));
 
             return redirect()->route('leads.show', $external_id);

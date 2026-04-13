@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeadStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
@@ -32,6 +33,9 @@ class Lead extends Model implements Commentable
 
     protected $searchableFields = ['title'];
 
+    /**
+     * @deprecated Use LeadStatus::CLOSED->value instead
+     */
     public const LEAD_STATUS_CLOSED = 'closed';
 
     protected $fillable = [
@@ -149,7 +153,7 @@ class Lead extends Model implements Commentable
     public function isClosed()
     {
         // Check if status relationship exists and compare title
-        return $this->status && $this->status->title == self::LEAD_STATUS_CLOSED;
+        return $this->status && LeadStatus::isClosed($this->status->title);
     }
 
     public function getSearchableFields(): array
