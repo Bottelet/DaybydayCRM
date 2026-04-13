@@ -12,7 +12,7 @@ class AppointmentTest extends DuskTestCase
     #[Test]
     public function it_icancreatean_appointment_in_calendar()
     {
-        $title = 'new appointment test '.uniqid();
+        $title = 'new appointment test ' . uniqid();
         $this->browse(function (Browser $browser) use ($title) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/appointments/calendar')

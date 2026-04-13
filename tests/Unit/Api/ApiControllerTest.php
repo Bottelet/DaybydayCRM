@@ -3,11 +3,11 @@
 namespace Tests\Unit\Api;
 
 use App\Api\v1\Controllers\ApiController;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiControllerTest extends AbstractTestCase
 {
@@ -21,7 +21,7 @@ class ApiControllerTest extends AbstractTestCase
         $this->controller = new ConcreteApiController();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_returns_a_json_response_with_data()
@@ -32,7 +32,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespond($data);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($data, $response->getData(true));
@@ -42,13 +42,13 @@ class ApiControllerTest extends AbstractTestCase
     public function it_returns_a_json_response_with_a_custom_status_code()
     {
         /** Arrange */
-        $data = ['test' => true];
+        $data       = ['test' => true];
         $statusCode = 201;
 
         /** Act */
         $response = $this->controller->callRespond($data, $statusCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(201, $response->getStatusCode());
     }
@@ -62,7 +62,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespond(['data' => true], 200, $headers);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('custom-value', $response->headers->get('X-Custom-Header'));
     }
 
@@ -75,7 +75,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondSuccess();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{}', $response->getContent());
@@ -90,7 +90,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondCreated($data);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertEquals($data, $response->getData(true));
@@ -105,7 +105,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondNoContent();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(204, $response->getStatusCode());
     }
@@ -114,13 +114,13 @@ class ApiControllerTest extends AbstractTestCase
     public function it_returns_an_error_response_with_the_correct_structure()
     {
         /** Arrange */
-        $message = 'Something went wrong';
+        $message    = 'Something went wrong';
         $statusCode = 500;
 
         /** Act */
         $response = $this->controller->callRespondError($message, $statusCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(500, $response->getStatusCode());
 
@@ -139,7 +139,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondUnauthorized();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(401, $response->getStatusCode());
 
@@ -156,7 +156,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondUnauthorized($customMessage);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(401, $response->getStatusCode());
         $data = $response->getData(true);
         $this->assertEquals('Custom unauthorized message', $data['errors']['message']);
@@ -171,7 +171,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondForbidden();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(403, $response->getStatusCode());
 
@@ -188,7 +188,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondForbidden($customMessage);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(403, $response->getStatusCode());
         $data = $response->getData(true);
         $this->assertEquals('Access denied to this resource', $data['errors']['message']);
@@ -203,7 +203,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondNotFound();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(404, $response->getStatusCode());
 
@@ -220,7 +220,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespondNotFound($customMessage);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(404, $response->getStatusCode());
         $data = $response->getData(true);
         $this->assertEquals('Resource not found', $data['errors']['message']);
@@ -229,25 +229,25 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_controller_extends_illuminate_routing_controller()
     {
-        /** Arrange */
+        /* Arrange */
         // Already arranged in setUp()
 
-        /** Act */
+        /* Act */
         // No action needed
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Controller::class, $this->controller);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_includes_the_status_code_in_the_error_response_body()
     {
         /** Arrange */
-        $message = 'Not found';
+        $message    = 'Not found';
         $statusCode = 404;
 
         /** Act */
@@ -267,7 +267,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $uses = class_uses(ApiController::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotContains('Dingo\Api\Routing\Helpers', $uses);
     }
 
@@ -280,7 +280,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespond($emptyData);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals([], $response->getData(true));
@@ -295,7 +295,7 @@ class ApiControllerTest extends AbstractTestCase
         /** Act */
         $response = $this->controller->callRespond($data);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($data, $response->getData(true));
     }
 
@@ -303,7 +303,7 @@ class ApiControllerTest extends AbstractTestCase
     public function it_includes_both_message_and_status_code_in_the_error_body()
     {
         /** Arrange */
-        $message = 'Bad Request';
+        $message    = 'Bad Request';
         $statusCode = 400;
 
         /** Act */
@@ -316,5 +316,5 @@ class ApiControllerTest extends AbstractTestCase
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    // endregion
+    # endregion
 }

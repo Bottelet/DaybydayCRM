@@ -13,9 +13,9 @@ class InvoiceNumberService
     public function __construct(InvoiceNumberConfig $config)
     {
         if ($config->isDisabled()) {
-            return null;
+            return;
         }
-        $this->setting = Setting::query();
+        $this->setting       = Setting::query();
         $this->lockedSetting = $this->setting->lockForUpdate()->first();
     }
 
@@ -33,7 +33,7 @@ class InvoiceNumberService
 
     public function setInvoiceNumber(int $invoiceNumber)
     {
-        if (! $this->lockedSetting) {
+        if ( ! $this->lockedSetting) {
             return false;
         }
 
@@ -44,7 +44,7 @@ class InvoiceNumberService
 
     public function nextInvoiceNumber()
     {
-        $setting = $this->setting->first();
+        $setting       = $this->setting->first();
         $settingNumber = $setting ? $setting->invoice_number : 0;
 
         $maxInvoice = \App\Models\Invoice::max('invoice_number');

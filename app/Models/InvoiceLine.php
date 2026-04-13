@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -41,7 +41,7 @@ class InvoiceLine extends Model
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    // region Relationships
+    # region Relationships
 
     public function invoice()
     {
@@ -53,7 +53,7 @@ class InvoiceLine extends Model
         return $this->belongsTo(Task::class);
     }
 
-    // endregion
+    # endregion
 
     public function task()
     {

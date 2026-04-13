@@ -3,18 +3,18 @@
 namespace App\Services\Activity;
 
 use App\Models\Activity;
+use Exception;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Database\Eloquent\Model;
-use Exception;
 use League\Config\Exception\InvalidConfigurationException;
 
 class ActivityLogger
 {
-    private $auth;
-
     protected $activity;
 
     protected $defaultLogName = 'default';
+
+    private $auth;
 
     public function __construct(AuthManager $auth)
     {
@@ -55,7 +55,7 @@ class ActivityLogger
 
     public function log(string $text)
     {
-        $activity = $this->activity;
+        $activity       = $this->activity;
         $activity->text = $text;
         $activity->save();
         $this->activity = null;
@@ -78,7 +78,7 @@ class ActivityLogger
     protected static function determineActivityModel(): string
     {
         $activityModel = Activity::class;
-        if (! is_a($activityModel, Activity::class, true)
+        if ( ! is_a($activityModel, Activity::class, true)
             || ! is_a($activityModel, Model::class, true)) {
             throw InvalidConfigurationException::modelIsNotValid($activityModel);
         }
@@ -98,9 +98,9 @@ class ActivityLogger
         if ($modelOrId instanceof Model) {
             return $modelOrId;
         }
-        $guard = $this->auth->guard();
+        $guard    = $this->auth->guard();
         $provider = method_exists($guard, 'getProvider') ? $guard->getProvider() : null;
-        $model = method_exists($provider, 'retrieveById') ? $provider->retrieveById($modelOrId) : null;
+        $model    = method_exists($provider, 'retrieveById') ? $provider->retrieveById($modelOrId) : null;
         if ($model instanceof Model) {
             return $model;
         }
@@ -109,7 +109,7 @@ class ActivityLogger
 
     protected function getActivity()
     {
-        if (! $this->activity instanceof Activity) {
+        if ( ! $this->activity instanceof Activity) {
             $this->activity = self::getActivityModelInstance();
             $this
                 ->withName($this->defaultLogName)

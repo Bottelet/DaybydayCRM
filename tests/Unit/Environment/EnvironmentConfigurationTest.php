@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Environment;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Tests for configuration changes introduced in this PR:
@@ -20,7 +20,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    // region happy_path
+    # region happy_path
 
     /**
      * Verify the test environment is configured correctly.
@@ -35,7 +35,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $environment = $this->app->environment();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('testing', $environment);
     }
 
@@ -52,7 +52,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $cacheDefault = config('cache.default');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('array', $cacheDefault);
     }
 
@@ -68,7 +68,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $cacheStore = env('CACHE_STORE');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('array', $cacheStore);
     }
 
@@ -84,7 +84,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $sessionDriver = config('session.driver');
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEmpty($sessionDriver, 'Session driver must be configured');
         $this->assertContains(
             $sessionDriver,
@@ -105,7 +105,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $queueDefault = config('queue.default');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('sync', $queueDefault);
     }
 
@@ -121,7 +121,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $mailer = config('mail.default');
 
-        /** Assert */
+        /* Assert */
         $this->assertContains(
             $mailer,
             $validMailers,
@@ -141,13 +141,13 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $debugEnabled = config('app.debug');
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue($debugEnabled, 'APP_DEBUG should be true in testing environment');
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     /**
      * The old CACHE_DRIVER env var must NOT be used.
@@ -162,9 +162,9 @@ class EnvironmentConfigurationTest extends AbstractTestCase
         /** Act */
         $cacheDriver = env('CACHE_DRIVER');
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($cacheDriver, 'CACHE_DRIVER should not be set; use CACHE_STORE instead');
     }
 
-    // endregion
+    # endregion
 }

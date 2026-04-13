@@ -27,7 +27,7 @@ class UserTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_user_has_many_appointments()
@@ -37,16 +37,16 @@ class UserTest extends AbstractTestCase
 
         $appointment = Appointment::factory()->create([
             'source_type' => User::class,
-            'source_id' => $user->id,
+            'source_id'   => $user->id,
         ]);
 
         /** Act */
         $user = $user->fresh();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(1, $user->appointments);
         $this->assertEquals($appointment->id, $user->appointments->first()->id);
     }
 
-    // endregion
+    # endregion
 }

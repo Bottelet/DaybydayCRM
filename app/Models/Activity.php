@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,7 +48,7 @@ class Activity extends Model
         });
     }
 
-    // region Relationships
+    # region Relationships
 
     public function causer(): MorphTo
     {
@@ -70,7 +70,7 @@ class Activity extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    // endregion
+    # endregion
 
     public function getExtraProperty(string $propertyName)
     {

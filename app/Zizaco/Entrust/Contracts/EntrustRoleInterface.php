@@ -30,7 +30,8 @@ interface EntrustRoleInterface
     /**
      * Save the inputted permissions.
      *
-     * @param  mixed  $inputPermissions
+     * @param mixed $inputPermissions
+     *
      * @return void
      */
     public function savePermissions($inputPermissions);
@@ -38,7 +39,8 @@ interface EntrustRoleInterface
     /**
      * Attach permission to current role.
      *
-     * @param  object|array  $permission
+     * @param object|array $permission
+     *
      * @return void
      */
     public function attachPermission($permission);
@@ -46,7 +48,8 @@ interface EntrustRoleInterface
     /**
      * Detach permission form current role.
      *
-     * @param  object|array  $permission
+     * @param object|array $permission
+     *
      * @return void
      */
     public function detachPermission($permission);
@@ -54,15 +57,17 @@ interface EntrustRoleInterface
     /**
      * Attach multiple permissions to current role.
      *
-     * @param  mixed  $permissions
+     * @param mixed $permissions
+     *
      * @return void
      */
     public function attachPermissions($permissions);
 
     /**
-     * Detach multiple permissions from current role
+     * Detach multiple permissions from current role.
      *
-     * @param  mixed  $permissions
+     * @param mixed $permissions
+     *
      * @return void
      */
     public function detachPermissions($permissions);

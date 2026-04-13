@@ -4,9 +4,9 @@ namespace Tests\Unit\Lead;
 
 use App\Models\Lead;
 use App\Models\Offer;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LeadObserverDeleteTest extends AbstractTestCase
 {
@@ -21,14 +21,14 @@ class LeadObserverDeleteTest extends AbstractTestCase
 
         $this->lead->comments()->create([
             'description' => 'Test',
-            'user_id' => $this->user->id,
+            'user_id'     => $this->user->id,
         ]);
         $this->lead->activity()->create([
             'text' => 'something happend!',
         ]);
         $this->lead->appointments()->create([
-            'title' => 'Some appointment',
-            'color' => '#FFFFF',
+            'title'   => 'Some appointment',
+            'color'   => '#FFFFF',
             'user_id' => $this->user->id,
         ]);
     }
@@ -58,7 +58,6 @@ class LeadObserverDeleteTest extends AbstractTestCase
         $this->assertSoftDeleted($this->lead->comments()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->activity()->withTrashed()->first());
         $this->assertSoftDeleted($this->lead->appointments()->withTrashed()->first());
-
     }
 
     #[Test]
@@ -77,9 +76,9 @@ class LeadObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_relations_from_database()
     {
-        $commentId = $this->lead->comments->first()->id;
+        $commentId     = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
-        $activityId = $this->lead->activity->first()->id;
+        $activityId    = $this->lead->activity->first()->id;
 
         $this->lead->forceDelete();
         $this->lead->refresh();

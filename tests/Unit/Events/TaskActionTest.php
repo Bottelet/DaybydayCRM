@@ -28,19 +28,19 @@ class TaskActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_constructor_stores_task_and_action()
     {
         /** Arrange */
-        $task = Task::factory()->create();
+        $task   = Task::factory()->create();
         $action = 'created';
 
         /** Act */
         $event = new TaskAction($task, $action);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($task->id, $event->getTask()->id);
         $this->assertEquals($action, $event->getAction());
     }
@@ -54,7 +54,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, 'updated');
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Task::class, $event->getTask());
     }
 
@@ -67,7 +67,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, 'deleted');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('deleted', $event->getAction());
     }
 
@@ -78,10 +78,10 @@ class TaskActionTest extends AbstractTestCase
         $task = Task::factory()->create();
 
         /** Act */
-        $event = new TaskAction($task, 'created');
+        $event   = new TaskAction($task, 'created');
         $channel = $event->broadcastOn();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
@@ -94,7 +94,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, 'test');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($task->external_id, $event->getTask()->external_id);
     }
 
@@ -107,7 +107,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(TaskAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
     }
 
@@ -120,13 +120,13 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(TaskAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_action_can_be_non_string_value()
@@ -137,7 +137,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, 42);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(42, $event->getAction());
     }
 
@@ -150,7 +150,7 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, null);
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($event->getAction());
     }
 
@@ -163,9 +163,9 @@ class TaskActionTest extends AbstractTestCase
         /** Act */
         $event = new TaskAction($task, '');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('', $event->getAction());
     }
 
-    // endregion
+    # endregion
 }

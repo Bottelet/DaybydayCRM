@@ -37,13 +37,13 @@ class DeadlineTest extends AbstractTestCase
 
         $this->task = Task::factory()->create(
             [
-                'deadline' => $futureDeadline,
+                'deadline'  => $futureDeadline,
                 'status_id' => $openStatus->id,
             ]
         );
         $this->lead = Lead::factory()->create(
             [
-                'deadline' => $futureDeadline,
+                'deadline'  => $futureDeadline,
                 'status_id' => $openStatus->id,
             ]
         );
@@ -60,7 +60,7 @@ class DeadlineTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_is_not_over_deadline()
@@ -69,11 +69,11 @@ class DeadlineTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $leadResult = $this->lead->isOverDeadline();
-        $taskResult = $this->task->isOverDeadline();
+        $leadResult    = $this->lead->isOverDeadline();
+        $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($leadResult);
         $this->assertFalse($taskResult);
         $this->assertFalse($projectResult);
@@ -86,11 +86,11 @@ class DeadlineTest extends AbstractTestCase
         // Task, Lead, and Project have deadlines in 2 hours (from setUp)
 
         /** Act */
-        $leadResult = $this->lead->isCloseToDeadline();
-        $taskResult = $this->task->isCloseToDeadline();
+        $leadResult    = $this->lead->isCloseToDeadline();
+        $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue($leadResult);
         $this->assertTrue($taskResult);
         $this->assertTrue($projectResult);
@@ -99,7 +99,7 @@ class DeadlineTest extends AbstractTestCase
     #[Test]
     public function it_gets_days_until_deadline()
     {
-        /** Arrange */
+        /* Arrange */
         $this->task->deadline = Carbon::now()->addDays(3);
         $this->task->save();
 
@@ -110,24 +110,24 @@ class DeadlineTest extends AbstractTestCase
         $this->project->save();
 
         /** Act */
-        $leadDays = $this->lead->days_until_deadline;
-        $taskDays = $this->task->days_until_deadline;
+        $leadDays    = $this->lead->days_until_deadline;
+        $taskDays    = $this->task->days_until_deadline;
         $projectDays = $this->project->days_until_deadline;
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(3, $leadDays);
         $this->assertEquals(3, $taskDays);
         $this->assertEquals(3, $projectDays);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_is_over_deadline()
     {
-        /** Arrange */
+        /* Arrange */
         $this->task->deadline = Carbon::now()->subDay();
         $this->task->save();
 
@@ -138,11 +138,11 @@ class DeadlineTest extends AbstractTestCase
         $this->project->save();
 
         /** Act */
-        $leadResult = $this->lead->isOverDeadline();
-        $taskResult = $this->task->isOverDeadline();
+        $leadResult    = $this->lead->isOverDeadline();
+        $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue($leadResult);
         $this->assertTrue($taskResult);
         $this->assertTrue($projectResult);
@@ -151,7 +151,7 @@ class DeadlineTest extends AbstractTestCase
     #[Test]
     public function it_is_not_close_to_deadline()
     {
-        /** Arrange */
+        /* Arrange */
         $this->task->deadline = Carbon::now()->addDays(3);
         $this->task->save();
 
@@ -162,11 +162,11 @@ class DeadlineTest extends AbstractTestCase
         $this->project->save();
 
         /** Act */
-        $leadResult = $this->lead->isCloseToDeadline();
-        $taskResult = $this->task->isCloseToDeadline();
+        $leadResult    = $this->lead->isCloseToDeadline();
+        $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($leadResult);
         $this->assertFalse($taskResult);
         $this->assertFalse($projectResult);
@@ -175,7 +175,7 @@ class DeadlineTest extends AbstractTestCase
     #[Test]
     public function it_returns_false_when_deadline_is_null()
     {
-        /** Arrange */
+        /* Arrange */
         $this->task->deadline = null;
         $this->task->save();
 
@@ -186,11 +186,11 @@ class DeadlineTest extends AbstractTestCase
         $this->project->save();
 
         /** Act */
-        $leadResult = $this->lead->isOverDeadline();
-        $taskResult = $this->task->isOverDeadline();
+        $leadResult    = $this->lead->isOverDeadline();
+        $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($leadResult);
         $this->assertFalse($taskResult);
         $this->assertFalse($projectResult);
@@ -199,7 +199,7 @@ class DeadlineTest extends AbstractTestCase
     #[Test]
     public function it_returns_false_when_checking_if_null_deadline_is_close()
     {
-        /** Arrange */
+        /* Arrange */
         $this->task->deadline = null;
         $this->task->save();
 
@@ -210,15 +210,15 @@ class DeadlineTest extends AbstractTestCase
         $this->project->save();
 
         /** Act */
-        $leadResult = $this->lead->isCloseToDeadline();
-        $taskResult = $this->task->isCloseToDeadline();
+        $leadResult    = $this->lead->isCloseToDeadline();
+        $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
 
-        /** Assert */
+        /* Assert */
         $this->assertFalse($leadResult);
         $this->assertFalse($taskResult);
         $this->assertFalse($projectResult);
     }
 
-    // endregion
+    # endregion
 }

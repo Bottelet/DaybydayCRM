@@ -23,8 +23,8 @@ class GenerateInvoiceStatus
     public function __construct(Invoice $invoice)
     {
         $this->invoice = $invoice;
-        $this->price = app(InvoiceCalculator::class, ['invoice' => $invoice])->getTotalPrice();
-        $this->sum = (int) $this->invoice->payments()->sum('amount');
+        $this->price   = app(InvoiceCalculator::class, ['invoice' => $invoice])->getTotalPrice();
+        $this->sum     = (int) $this->invoice->payments()->sum('amount');
     }
 
     public function createStatus()
@@ -55,7 +55,7 @@ class GenerateInvoiceStatus
         if ($this->isUnPaid()) {
             return InvoiceStatus::unpaid()->getStatus();
         }
-        throw new Exception("Can't generate invoice status for invoice: ".$this->invoice->id);
+        throw new Exception("Can't generate invoice status for invoice: " . $this->invoice->id);
     }
 
     public function isDraft(): bool

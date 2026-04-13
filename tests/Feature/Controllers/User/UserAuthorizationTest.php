@@ -6,12 +6,12 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class UserAuthorizationTest extends AbstractTestCase
@@ -32,20 +32,20 @@ class UserAuthorizationTest extends AbstractTestCase
 
         // Create role with user-delete permission
         $roleWithPermission = Role::create([
-            'name' => 'user-deleter',
+            'name'         => 'user-deleter',
             'display_name' => 'User Deleter',
-            'description' => 'Can delete users',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can delete users',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $deletePermission = Permission::firstOrCreate(['name' => 'user-delete'], ['display_name' => 'Delete User', 'description' => 'Delete user permission']);
         $roleWithPermission->attachPermission($deletePermission);
 
         // Create role without user-delete permission
         $roleWithoutPermission = Role::create([
-            'name' => 'user-viewer',
+            'name'         => 'user-viewer',
             'display_name' => 'User Viewer',
-            'description' => 'Cannot delete users',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Cannot delete users',
+            'external_id'  => Str::uuid()->toString(),
         ]);
 
         // Create users

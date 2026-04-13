@@ -14,33 +14,35 @@ class MoneyConverter
     /**
      * Format amount to currency equivalent string.
      *
-     * @param  bool  $useCode
+     * @param bool $useCode
+     *
      * @return string
      */
     public function format($useCode = true)
     {
         if ($this->money->getCurrency()->getCode() && $useCode == true) {
             return $this->codeFormat();
-        } elseif ($this->money->getCurrency()->getSymbolPlacement() == 'before') {
-            return $this->symbolBeforeFormat();
-        } else {
-            return $this->symbolAfterFormat();
         }
+        if ($this->money->getCurrency()->getSymbolPlacement() == 'before') {
+            return $this->symbolBeforeFormat();
+        }
+
+        return $this->symbolAfterFormat();
     }
 
     public function codeFormat()
     {
-        return $this->currencyFormat().' '.$this->money->getCurrency()->getCode();
+        return $this->currencyFormat() . ' ' . $this->money->getCurrency()->getCode();
     }
 
     public function symbolBeforeFormat()
     {
-        return $this->money->getCurrency()->getSymbol().$this->currencyFormat();
+        return $this->money->getCurrency()->getSymbol() . $this->currencyFormat();
     }
 
     public function symbolAfterFormat()
     {
-        return $this->currencyFormat().' '.$this->money->getCurrency()->getSymbol();
+        return $this->currencyFormat() . ' ' . $this->money->getCurrency()->getSymbol();
     }
 
     /**

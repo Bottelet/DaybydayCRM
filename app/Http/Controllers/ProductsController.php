@@ -21,7 +21,7 @@ class ProductsController extends Controller
 
     public function update(Request $request, $external_id = null)
     {
-        if (! auth()->user()->can('product-edit')) {
+        if ( ! auth()->user()->can('product-edit')) {
             session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
 
             return redirect()->back();
@@ -30,15 +30,15 @@ class ProductsController extends Controller
         if ($external_id) {
             $product = Product::whereExternalId($external_id)->firstOrFail();
         } else {
-            $product = Product::make();
+            $product              = Product::make();
             $product->external_id = Uuid::uuid4()->toString();
         }
 
-        $product->name = $request->name;
-        $product->description = $request->description;
+        $product->name         = $request->name;
+        $product->description  = $request->description;
         $product->default_type = $request->type;
-        $product->price = $request->price * 100;
-        $product->number = $request->product_number;
+        $product->price        = $request->price * 100;
+        $product->number       = $request->product_number;
 
         $product->save();
 
@@ -47,7 +47,7 @@ class ProductsController extends Controller
 
     public function productCreator(Request $request, $external_id = null)
     {
-        if (! auth()->user()->can('product-create')) {
+        if ( ! auth()->user()->can('product-create')) {
             session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
 
             return redirect()->back();
@@ -65,7 +65,7 @@ class ProductsController extends Controller
 
     public function destroy(Product $product)
     {
-        if (! auth()->user()->can('product-delete')) {
+        if ( ! auth()->user()->can('product-delete')) {
             session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
 
             return redirect()->back();

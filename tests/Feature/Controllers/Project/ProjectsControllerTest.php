@@ -7,12 +7,12 @@ use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\User;
+use Cache;
+use DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Cache;
-use DB;
 
 class ProjectsControllerTest extends AbstractTestCase
 {
@@ -25,7 +25,7 @@ class ProjectsControllerTest extends AbstractTestCase
         parent::setUp();
         $this->withoutExceptionHandling();
 
-        $this->user = User::factory()->create();
+        $this->user   = User::factory()->create();
         $this->client = Client::factory()->create();
     }
 
@@ -33,20 +33,19 @@ class ProjectsControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_create_project()
     {
-
         // Grant permission to create a project
         $permission = \App\Models\Permission::firstOrCreate([
             'name' => 'project-create',
         ], [
             'display_name' => 'Create project',
-            'description' => 'Permission to create a project',
-            'grouping' => 'project',
+            'description'  => 'Permission to create a project',
+            'grouping'     => 'project',
         ]);
         $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
-        if (! $this->user->hasRole($role->name)) {
+        if ( ! $this->user->hasRole($role->name)) {
             $this->user->attachRole($role);
         }
-        if (! $role->hasPermission('project-create')) {
+        if ( ! $role->hasPermission('project-create')) {
             $role->attachPermission($permission);
         }
         Cache::tags('role_user')->flush();
@@ -55,13 +54,13 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         $response = $this->json('POST', route('projects.store'), [
-            'title' => 'Project test',
-            'description' => 'This is a description',
-            'status_id' => Status::factory()->create(['source_type' => Project::class])->id,
-            'user_assigned_id' => $this->user->id,
-            'user_created_id' => $this->user->id,
+            'title'              => 'Project test',
+            'description'        => 'This is a description',
+            'status_id'          => Status::factory()->create(['source_type' => Project::class])->id,
+            'user_assigned_id'   => $this->user->id,
+            'user_created_id'    => $this->user->id,
             'client_external_id' => $this->client->external_id,
-            'deadline' => '2020-01-01',
+            'deadline'           => '2020-01-01',
         ]);
 
         $projects = Project::where('user_assigned_id', $this->user->id);
@@ -81,15 +80,15 @@ class ProjectsControllerTest extends AbstractTestCase
             'name' => 'can-assign-new-user-to-project',
         ], [
             'display_name' => 'Change assigned user',
-            'description' => 'Permission to change the assigned user on a project',
-            'grouping' => 'project',
+            'description'  => 'Permission to change the assigned user on a project',
+            'grouping'     => 'project',
         ]);
 
         $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
-        if (! $this->user->hasRole($role->name)) {
+        if ( ! $this->user->hasRole($role->name)) {
             $this->user->attachRole($role);
         }
-        if (! $role->hasPermission('can-assign-new-user-to-project')) {
+        if ( ! $role->hasPermission('can-assign-new-user-to-project')) {
             $role->attachPermission($permission);
         }
 
@@ -112,21 +111,21 @@ class ProjectsControllerTest extends AbstractTestCase
     public function it_can_update_status()
     {
         $project = Project::factory()->create();
-        $status = Status::factory()->create(['source_type' => Project::class]);
+        $status  = Status::factory()->create(['source_type' => Project::class]);
 
         // Grant permission to update project status
         $permission = \App\Models\Permission::firstOrCreate([
             'name' => 'project-update-status',
         ], [
             'display_name' => 'Update project status',
-            'description' => 'Permission to update project status',
-            'grouping' => 'project',
+            'description'  => 'Permission to update project status',
+            'grouping'     => 'project',
         ]);
         $role = $this->user->roles()->first() ?: \App\Models\Role::factory()->create();
-        if (! $this->user->hasRole($role->name)) {
+        if ( ! $this->user->hasRole($role->name)) {
             $this->user->attachRole($role);
         }
-        if (! $role->hasPermission('project-update-status')) {
+        if ( ! $role->hasPermission('project-update-status')) {
             $role->attachPermission($permission);
         }
         Cache::tags('role_user')->flush();
@@ -151,13 +150,13 @@ class ProjectsControllerTest extends AbstractTestCase
         $project = Project::factory()->create();
 
         // Always create a new role and attach the permission
-        $role = \App\Models\Role::factory()->create();
+        $role       = \App\Models\Role::factory()->create();
         $permission = \App\Models\Permission::firstOrCreate([
             'name' => 'project-update-deadline',
         ], [
             'display_name' => 'Change project deadline',
-            'description' => 'Permission to update a projects deadline',
-            'grouping' => 'project',
+            'description'  => 'Permission to update a projects deadline',
+            'grouping'     => 'project',
         ]);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
@@ -174,7 +173,7 @@ class ProjectsControllerTest extends AbstractTestCase
 
         // Debug: Check for redirect or flash message
         $this->assertTrue($response->isRedirect(), 'Expected a redirect response');
-        $this->assertFalse(session()->has('flash_message_warning'), 'Unexpected flash warning: '.session('flash_message_warning'));
+        $this->assertFalse(session()->has('flash_message_warning'), 'Unexpected flash warning: ' . session('flash_message_warning'));
 
         // Debug: Check the raw value in the database
         $rawDeadline = DB::table('projects')->where('id', $project->id)->value('deadline');

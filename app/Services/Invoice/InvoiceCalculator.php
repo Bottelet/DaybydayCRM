@@ -22,10 +22,10 @@ class InvoiceCalculator
 
     public function __construct($invoice)
     {
-        if (! $invoice instanceof Invoice && ! $invoice instanceof Offer) {
+        if ( ! $invoice instanceof Invoice && ! $invoice instanceof Offer) {
             throw new Exception('Not correct type for Invoice Calculator');
         }
-        $this->tax = new Tax();
+        $this->tax     = new Tax();
         $this->invoice = $invoice;
     }
 
@@ -46,7 +46,7 @@ class InvoiceCalculator
 
     public function getSubTotal(): Money
     {
-        $price = 0;
+        $price        = 0;
         $invoiceLines = $this->invoice->invoiceLines;
 
         foreach ($invoiceLines as $invoiceLine) {

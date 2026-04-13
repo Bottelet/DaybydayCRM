@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Client;
 use App\Models\Contact;
@@ -17,14 +17,14 @@ class ClientFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     public function definition()
     {
         return [
-            'external_id' => $this->faker->uuid,
-            'vat' => $this->faker->randomNumber(8),
+            'external_id'  => $this->faker->uuid,
+            'vat'          => $this->faker->randomNumber(8),
             'company_name' => $this->faker->company(),
-            'address' => $this->faker->secondaryAddress(),
-            'city' => $this->faker->city(),
-            'zipcode' => $this->faker->postcode(),
-            'user_id' => User::factory(),
-            'industry_id' => Industry::factory(),
+            'address'      => $this->faker->secondaryAddress(),
+            'city'         => $this->faker->city(),
+            'zipcode'      => $this->faker->postcode(),
+            'user_id'      => User::factory(),
+            'industry_id'  => Industry::factory(),
             'company_type' => 'ApS',
         ];
     }

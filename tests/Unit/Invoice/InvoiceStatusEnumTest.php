@@ -35,7 +35,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_getting_status_returns_instance_of_invoice_status()
@@ -46,7 +46,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Act */
         $result = InvoiceStatus::fromStatus($this->paidStatus);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(InvoiceStatus::class, $result);
     }
 
@@ -60,7 +60,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Act */
         $status = InvoiceStatus::fromStatus($this->paidStatus);
 
-        /** Assert */
+        /* Assert */
         $this->assertTrue(property_exists($status, 'status'));
         $this->assertTrue(property_exists($status, 'displayValue'));
     }
@@ -74,7 +74,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Act */
         $displayValue = InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Paid', $displayValue);
     }
 
@@ -87,7 +87,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Act */
         $status = InvoiceStatus::draft()->getStatus();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('draft', $status);
     }
 
@@ -100,13 +100,13 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Act */
         $status = InvoiceStatus::fromDisplayValue($displayValue);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(InvoiceStatus::partialPaid()->getStatus(), $status);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_all_status_types_have_display_values()
@@ -120,7 +120,7 @@ class InvoiceStatusEnumTest extends AbstractTestCase
             InvoiceStatus::overpaid(),
         ];
 
-        /** Act & Assert */
+        /* Act & Assert */
         foreach ($statuses as $status) {
             $this->assertNotEmpty($status->getDisplayValue());
             $this->assertNotEmpty($status->getStatus());
@@ -142,13 +142,13 @@ class InvoiceStatusEnumTest extends AbstractTestCase
             InvoiceStatus::overpaid()->getStatus(),
         ];
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($expectedStatuses, $actualStatuses);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function it_throws_exception_if_status_is_not_known()
@@ -156,10 +156,10 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Arrange */
         $invalidStatus = 'None existing status';
 
-        /** Assert */
+        /* Assert */
         $this->expectException(Exception::class);
 
-        /** Act */
+        /* Act */
         InvoiceStatus::fromStatus($invalidStatus);
     }
 
@@ -169,10 +169,10 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Arrange */
         $invalidDisplayValue = 'None existing display value';
 
-        /** Assert */
+        /* Assert */
         $this->expectException(Exception::class);
 
-        /** Act */
+        /* Act */
         InvoiceStatus::fromDisplayValue($invalidDisplayValue);
     }
 
@@ -182,10 +182,10 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Arrange */
         $emptyStatus = '';
 
-        /** Assert */
+        /* Assert */
         $this->expectException(Exception::class);
 
-        /** Act */
+        /* Act */
         InvoiceStatus::fromStatus($emptyStatus);
     }
 
@@ -195,12 +195,12 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /** Arrange */
         $nullDisplayValue = null;
 
-        /** Assert */
+        /* Assert */
         $this->expectException(Exception::class);
 
-        /** Act */
+        /* Act */
         InvoiceStatus::fromDisplayValue($nullDisplayValue);
     }
 
-    // endregion
+    # endregion
 }

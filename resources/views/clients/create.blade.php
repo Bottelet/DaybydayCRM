@@ -59,8 +59,6 @@
     </script>
 @endpush
 
-@dd("teeeheeest?");
-
     <?php
     $data = Session::get('data');
     ?>

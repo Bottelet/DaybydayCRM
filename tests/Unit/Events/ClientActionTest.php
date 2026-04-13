@@ -28,7 +28,7 @@ class ClientActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_constructor_stores_client_and_action()
@@ -40,7 +40,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, $action);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($client->id, $event->getClient()->id);
         $this->assertEquals($action, $event->getAction());
     }
@@ -54,7 +54,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, 'updated');
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Client::class, $event->getClient());
     }
 
@@ -67,7 +67,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, 'deleted');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('deleted', $event->getAction());
     }
 
@@ -78,10 +78,10 @@ class ClientActionTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /** Act */
-        $event = new ClientAction($client, 'created');
+        $event   = new ClientAction($client, 'created');
         $channel = $event->broadcastOn();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(PrivateChannel::class, $channel);
     }
 
@@ -94,7 +94,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, 'test');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($client->external_id, $event->getClient()->external_id);
     }
 
@@ -107,7 +107,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(ClientAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Broadcasting\InteractsWithSockets', $traits);
     }
 
@@ -120,13 +120,13 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(ClientAction::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_action_can_be_non_string_value()
@@ -137,7 +137,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, 42);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(42, $event->getAction());
     }
 
@@ -150,7 +150,7 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, null);
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($event->getAction());
     }
 
@@ -163,9 +163,9 @@ class ClientActionTest extends AbstractTestCase
         /** Act */
         $event = new ClientAction($client, '');
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('', $event->getAction());
     }
 
-    // endregion
+    # endregion
 }

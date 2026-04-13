@@ -5,7 +5,7 @@ namespace App\Traits;
 use App\Models\Status;
 
 /**
- * Statusable Trait
+ * Statusable Trait.
  *
  * Provides common status-related methods for models that have a status relationship.
  *
@@ -33,7 +33,7 @@ trait Statusable
     /**
      * Check if the model has a specific status.
      *
-     * @param  string  $statusTitle  The title of the status to check
+     * @param string $statusTitle The title of the status to check
      */
     public function hasStatus(string $statusTitle): bool
     {
@@ -59,7 +59,8 @@ trait Statusable
     /**
      * Scope a query to only include models with a specific status.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeWithStatus($query, string $statusTitle)
@@ -72,7 +73,8 @@ trait Statusable
     /**
      * Scope a query to exclude models with a specific status.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeWithoutStatus($query, string $statusTitle)

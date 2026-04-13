@@ -13,7 +13,6 @@ class CallbackController extends Controller
 {
     public function dropbox(Request $request)
     {
-
         $integration = Integration::whereApiType('file')->first();
         if ($integration) {
             session()->flash('flash_message_warning', __('File integration alredy exists'));
@@ -46,7 +45,7 @@ class CallbackController extends Controller
         }
         $res = app(GoogleDriveAuthenticator::class)->token($request->code);
 
-        if (! isset($res['refresh_token'])) {
+        if ( ! isset($res['refresh_token'])) {
             session()->flash('flash_message_warning', __('It seems you already have a connection to Daybyday. Please remove it in your Google console.'));
 
             return redirect()->route('integrations.index');

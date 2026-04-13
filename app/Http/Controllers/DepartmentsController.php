@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use App\Models\Department;
-use Yajra\DataTables\Facades\DataTables;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Session;
+use Ramsey\Uuid\Uuid;
+use Yajra\DataTables\Facades\DataTables;
 
 class DepartmentsController extends Controller
 {
@@ -43,7 +43,7 @@ class DepartmentsController extends Controller
                 <form action="{{ route(\'departments.destroy\', $external_id) }}" method="POST">
             <input type="hidden" name="_method" value="DELETE">
             {{csrf_field()}}
-            <input type="submit" name="submit" value="'.__('Delete').'" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
+            <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
             </form>')
             ->rawColumns(['delete'])
             ->make(true);
@@ -64,7 +64,7 @@ class DepartmentsController extends Controller
     {
         Department::create([
             'external_id' => Uuid::uuid4(),
-            'name' => $request->name,
+            'name'        => $request->name,
             'description' => $request->description,
         ]);
         Session::flash('flash_message', __('Successfully created new department'));
@@ -79,7 +79,7 @@ class DepartmentsController extends Controller
     {
         $department = Department::whereExternalId($external_id)->first();
 
-        if (! $department->users->isEmpty()) {
+        if ( ! $department->users->isEmpty()) {
             Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
 
             return redirect()->route('departments.index');

@@ -47,7 +47,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
-        $this->user = User::factory()->create();
+        $this->user   = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
     }
 
@@ -57,7 +57,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region Client relationships
+    # region Client relationships
 
     #[Test]
     public function it_client_all_relationship_methods_exist_after_reorganization()
@@ -65,7 +65,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $client = new Client();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($client, 'appointments'), 'appointments() should exist on Client');
         $this->assertTrue(method_exists($client, 'contacts'), 'contacts() should exist on Client');
         $this->assertTrue(method_exists($client, 'documents'), 'documents() should exist on Client');
@@ -85,9 +85,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
 
         /** Act */
         $relationship = $this->client->invoices();
-        $invoices = $this->client->invoices;
+        $invoices     = $this->client->invoices;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
         $this->assertCount(1, $invoices);
         $this->assertEquals($invoice->id, $invoices->first()->id);
@@ -101,17 +101,17 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
 
         /** Act */
         $relationship = $client->user();
-        $relatedUser = $client->user;
+        $relatedUser  = $client->user;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
         $this->assertNotNull($relatedUser);
         $this->assertEquals($this->user->id, $relatedUser->id);
     }
 
-    // endregion
+    # endregion
 
-    // region InvoiceLine relationships
+    # region InvoiceLine relationships
 
     #[Test]
     public function it_invoice_line_all_relationship_methods_exist_after_reorganization()
@@ -119,7 +119,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $invoiceLine = new InvoiceLine();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($invoiceLine, 'invoice'), 'invoice() should exist on InvoiceLine');
         $this->assertTrue(method_exists($invoiceLine, 'tasks'), 'tasks() should exist on InvoiceLine');
     }
@@ -128,22 +128,22 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     public function it_invoice_line_invoice_returns_belongs_to_relationship()
     {
         /** Arrange */
-        $invoice = Invoice::factory()->create(['client_id' => $this->client->id]);
+        $invoice     = Invoice::factory()->create(['client_id' => $this->client->id]);
         $invoiceLine = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
 
         /** Act */
-        $relationship = $invoiceLine->invoice();
+        $relationship   = $invoiceLine->invoice();
         $relatedInvoice = $invoiceLine->invoice;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
         $this->assertNotNull($relatedInvoice);
         $this->assertEquals($invoice->id, $relatedInvoice->id);
     }
 
-    // endregion
+    # endregion
 
-    // region Lead relationships
+    # region Lead relationships
 
     #[Test]
     public function it_lead_all_relationship_methods_exist_after_reorganization()
@@ -151,7 +151,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $lead = new Lead();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($lead, 'activity'), 'activity() should exist on Lead');
         $this->assertTrue(method_exists($lead, 'appointments'), 'appointments() should exist on Lead');
         $this->assertTrue(method_exists($lead, 'client'), 'client() should exist on Lead');
@@ -172,14 +172,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $lead = Lead::factory()->create([
             'user_created_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'client_id'       => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $lead->creator();
-        $creator = $lead->creator;
+        $creator      = $lead->creator;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
         $this->assertNotNull($creator);
         $this->assertEquals($this->user->id, $creator->id);
@@ -194,7 +194,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $lead->comments();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphMany::class, $relationship);
     }
 
@@ -205,17 +205,17 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
 
         /** Act */
-        $notesRelationship = $lead->notes();
+        $notesRelationship    = $lead->notes();
         $commentsRelationship = $lead->comments();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphMany::class, $notesRelationship);
         $this->assertInstanceOf(MorphMany::class, $commentsRelationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Offer relationships
+    # region Offer relationships
 
     #[Test]
     public function it_offer_all_relationship_methods_exist_after_reorganization()
@@ -223,7 +223,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $offer = new Offer();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($offer, 'invoice'), 'invoice() should exist on Offer');
         $this->assertTrue(method_exists($offer, 'invoiceLines'), 'invoiceLines() should exist on Offer');
         $this->assertTrue(method_exists($offer, 'lead'), 'lead() should exist on Offer');
@@ -236,16 +236,16 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     public function it_offer_source_returns_morph_to_relationship()
     {
         /** Arrange */
-        $lead = Lead::factory()->create(['client_id' => $this->client->id]);
+        $lead  = Lead::factory()->create(['client_id' => $this->client->id]);
         $offer = Offer::factory()->create([
             'source_type' => Lead::class,
-            'source_id' => $lead->id,
+            'source_id'   => $lead->id,
         ]);
 
         /** Act */
         $relationship = $offer->source();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphTo::class, $relationship);
     }
 
@@ -253,16 +253,16 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     public function it_offer_lead_delegates_to_source()
     {
         /** Arrange */
-        $lead = Lead::factory()->create(['client_id' => $this->client->id]);
+        $lead  = Lead::factory()->create(['client_id' => $this->client->id]);
         $offer = Offer::factory()->create([
             'source_type' => Lead::class,
-            'source_id' => $lead->id,
+            'source_id'   => $lead->id,
         ]);
 
         /** Act */
         $leadFromOffer = $offer->lead;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($leadFromOffer);
         $this->assertInstanceOf(Lead::class, $leadFromOffer);
         $this->assertEquals($lead->id, $leadFromOffer->id);
@@ -275,17 +275,17 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $offer = new Offer();
 
         /** Act */
-        $linesRelationship = $offer->lines();
+        $linesRelationship        = $offer->lines();
         $invoiceLinesRelationship = $offer->invoiceLines();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $linesRelationship);
         $this->assertInstanceOf(HasMany::class, $invoiceLinesRelationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Project relationships
+    # region Project relationships
 
     #[Test]
     public function it_project_all_relationship_methods_exist_after_reorganization()
@@ -293,7 +293,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $project = new Project();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($project, 'activity'), 'activity() should exist on Project');
         $this->assertTrue(method_exists($project, 'assignee'), 'assignee() should exist on Project');
         $this->assertTrue(method_exists($project, 'client'), 'client() should exist on Project');
@@ -312,14 +312,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $project = Project::factory()->create([
             'user_assigned_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'client_id'        => $this->client->id,
         ]);
 
         /** Act */
         $assignee = $project->assignee;
-        $user = $project->user;
+        $user     = $project->user;
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($assignee);
         $this->assertNotNull($user);
         $this->assertEquals($this->user->id, $assignee->id);
@@ -332,24 +332,24 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     {
         /** Arrange */
         $project = Project::factory()->create(['client_id' => $this->client->id]);
-        $task = Task::factory()->create([
+        $task    = Task::factory()->create([
             'project_id' => $project->id,
-            'client_id' => $this->client->id,
+            'client_id'  => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $project->tasks();
-        $tasks = $project->tasks;
+        $tasks        = $project->tasks;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
         $this->assertCount(1, $tasks);
         $this->assertEquals($task->id, $tasks->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region Role relationships
+    # region Role relationships
 
     #[Test]
     public function it_role_all_relationship_methods_exist_after_reorganization()
@@ -357,7 +357,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $role = new Role();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($role, 'permissions'), 'permissions() should exist on Role');
         $this->assertTrue(method_exists($role, 'userRole'), 'userRole() should exist on Role');
     }
@@ -371,13 +371,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $role->permissions();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Setting relationships
+    # region Setting relationships
 
     #[Test]
     public function it_setting_all_relationship_methods_exist_after_reorganization()
@@ -385,7 +385,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $setting = new Setting();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($setting, 'tasks'), 'tasks() should exist on Setting');
         $this->assertTrue(method_exists($setting, 'user'), 'user() should exist on Setting');
     }
@@ -399,13 +399,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $setting->user();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Status relationships
+    # region Status relationships
 
     #[Test]
     public function it_status_all_relationship_methods_exist_after_reorganization()
@@ -413,7 +413,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $status = new Status();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($status, 'leads'), 'leads() should exist on Status');
         $this->assertTrue(method_exists($status, 'projects'), 'projects() should exist on Status');
         $this->assertTrue(method_exists($status, 'tasks'), 'tasks() should exist on Status');
@@ -424,16 +424,16 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     {
         /** Arrange */
         $status = Status::factory()->create(['source_type' => Task::class]);
-        $task = Task::factory()->create([
+        $task   = Task::factory()->create([
             'status_id' => $status->id,
             'client_id' => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $status->tasks();
-        $tasks = $status->tasks;
+        $tasks        = $status->tasks;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
         $this->assertCount(1, $tasks);
     }
@@ -447,7 +447,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $status->leads();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
     }
 
@@ -460,13 +460,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $status->projects();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 
-    // region Task relationships
+    # region Task relationships
 
     #[Test]
     public function it_task_all_relationship_methods_exist_after_reorganization()
@@ -474,7 +474,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $task = new Task();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($task, 'activity'), 'activity() should exist on Task');
         $this->assertTrue(method_exists($task, 'appointments'), 'appointments() should exist on Task');
         $this->assertTrue(method_exists($task, 'client'), 'client() should exist on Task');
@@ -496,7 +496,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $task->comments();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphMany::class, $relationship);
     }
 
@@ -505,23 +505,23 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     {
         /** Arrange */
         $task = Task::factory()->create([
-            'client_id' => $this->client->id,
+            'client_id'       => $this->client->id,
             'user_created_id' => $this->user->id,
         ]);
 
         /** Act */
         $relationship = $task->creator();
-        $creator = $task->creator;
+        $creator      = $task->creator;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
         $this->assertNotNull($creator);
         $this->assertEquals($this->user->id, $creator->id);
     }
 
-    // endregion
+    # endregion
 
-    // region User relationships
+    # region User relationships
 
     #[Test]
     public function it_user_all_relationship_methods_exist_after_reorganization()
@@ -529,7 +529,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $user = new User();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($user, 'absences'), 'absences() should exist on User');
         $this->assertTrue(method_exists($user, 'appointments'), 'appointments() should exist on User');
         $this->assertTrue(method_exists($user, 'clients'), 'clients() should exist on User');
@@ -547,14 +547,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $task = Task::factory()->create([
             'user_assigned_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'client_id'        => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $this->user->tasks();
-        $tasks = $this->user->tasks;
+        $tasks        = $this->user->tasks;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
         $this->assertCount(1, $tasks);
         $this->assertEquals($task->id, $tasks->first()->id);
@@ -566,22 +566,22 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $lead = Lead::factory()->create([
             'user_assigned_id' => $this->user->id,
-            'client_id' => $this->client->id,
+            'client_id'        => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $this->user->leads();
-        $leads = $this->user->leads;
+        $leads        = $this->user->leads;
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
         $this->assertCount(1, $leads);
         $this->assertEquals($lead->id, $leads->first()->id);
     }
 
-    // endregion
+    # endregion
 
-    // region PermissionRole relationships
+    # region PermissionRole relationships
 
     #[Test]
     public function it_permission_role_all_relationship_methods_exist_after_reorganization()
@@ -589,7 +589,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $permissionRole = new PermissionRole();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($permissionRole, 'employee'), 'employee() should exist on PermissionRole');
         $this->assertTrue(method_exists($permissionRole, 'hasperm'), 'hasperm() should exist on PermissionRole');
         $this->assertTrue(method_exists($permissionRole, 'settings'), 'settings() should exist on PermissionRole');
@@ -601,7 +601,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Arrange */
         $permission = new Permission();
 
-        /** Act & Assert */
+        /* Act & Assert */
         $this->assertTrue(method_exists($permission, 'roles'), 'roles() should exist on Permission');
     }
 
@@ -614,9 +614,9 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         /** Act */
         $relationship = $permission->roles();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
 
-    // endregion
+    # endregion
 }

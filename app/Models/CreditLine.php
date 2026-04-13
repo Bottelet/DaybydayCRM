@@ -8,5 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class CreditLine extends Model
 {
     use HasFactory;
-    //
 }

@@ -5,8 +5,8 @@ namespace App\Services\Storage;
 use App\Models\Integration;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\Authentication\GoogleDriveAuthenticator;
-use Google_Client;
 use Exception;
+use Google_Client;
 use Google_Exception;
 use Google_Service_Drive_DriveFile;
 
@@ -19,7 +19,7 @@ class GoogleDrive implements FilesystemIntegration
     public function __construct()
     {
         $auth = [
-            'client_id' => config('services.google-drive.client_id'),
+            'client_id'     => config('services.google-drive.client_id'),
             'client_secret' => config('services.google-drive.client_secret'),
         ];
         $this->client = new Google_Client();
@@ -34,45 +34,45 @@ class GoogleDrive implements FilesystemIntegration
 
     public function upload($folder, $filename, $file): array
     {
-        $files = $this->driveService->files->listFiles(['q' => "mimeType = 'application/vnd.google-apps.folder' and trashed=false"]);
+        $files        = $this->driveService->files->listFiles(['q' => "mimeType = 'application/vnd.google-apps.folder' and trashed=false"]);
         $rootFolderId = null;
         foreach ($files['files'] as $item) {
             if ($item['name'] == 'Daybyday') {
-                $rootFolder = $item;
+                $rootFolder   = $item;
                 $rootFolderId = $item['id'];
                 break;
             }
         }
 
-        if (! $rootFolderId) {
+        if ( ! $rootFolderId) {
             $rootFolderBluePrint = new Google_Service_Drive_DriveFile(
                 [
-                    'name' => 'Daybyday',
+                    'name'     => 'Daybyday',
                     'mimeType' => 'application/vnd.google-apps.folder',
                 ]
             );
             $rootFolder = $this->driveService->files->create($rootFolderBluePrint, [
                 // 'data' => $content,
-                'mimeType' => 'image/jpeg',
+                'mimeType'   => 'image/jpeg',
                 'uploadType' => 'multipart',
-                'fields' => 'id']);
+                'fields'     => 'id']);
 
             $clientFolderBluePrint = new Google_Service_Drive_DriveFile(
                 [
-                    'name' => $folder,
+                    'name'     => $folder,
                     'mimeType' => 'application/vnd.google-apps.folder',
-                    'parents' => [$rootFolder['id']],
+                    'parents'  => [$rootFolder['id']],
                 ]
             );
 
             $clientFolder = $this->driveService->files->create($clientFolderBluePrint, [
-                'mimeType' => 'image/jpeg',
+                'mimeType'   => 'image/jpeg',
                 'uploadType' => 'multipart',
-                'fields' => 'id']);
+                'fields'     => 'id']);
         } else {
             $clientFolder = null;
-            $files = $this->driveService->files->listFiles(
-                ['q' => "'".$rootFolder['id']."'"." in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false"]
+            $files        = $this->driveService->files->listFiles(
+                ['q' => "'" . $rootFolder['id'] . "'" . " in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false"]
             );
 
             foreach ($files['files'] as $item) {
@@ -81,37 +81,37 @@ class GoogleDrive implements FilesystemIntegration
                     break;
                 }
             }
-            if (! $clientFolder) {
+            if ( ! $clientFolder) {
                 $clientFolderBluePrint = new Google_Service_Drive_DriveFile(
                     [
-                        'name' => $folder,
+                        'name'     => $folder,
                         'mimeType' => 'application/vnd.google-apps.folder',
-                        'parents' => [$rootFolder['id']],
+                        'parents'  => [$rootFolder['id']],
                     ]
                 );
 
                 $clientFolder = $this->driveService->files->create($clientFolderBluePrint, [
-                    'mimeType' => 'image/jpeg',
+                    'mimeType'   => 'image/jpeg',
                     'uploadType' => 'multipart',
-                    'fields' => 'id']);
+                    'fields'     => 'id']);
             }
         }
 
         $fileMetadata = new Google_Service_Drive_DriveFile(
             [
-                'name' => $filename,
+                'name'    => $filename,
                 'parents' => [$clientFolder['id']],
             ]
         );
         $content = file_get_contents($file);
-        $file = $this->driveService->files->create($fileMetadata, [
-            'data' => $content,
+        $file    = $this->driveService->files->create($fileMetadata, [
+            'data'       => $content,
             'uploadType' => 'multipart',
-            'fields' => 'id']);
+            'fields'     => 'id']);
 
         return [
-            'id' => $file['id'],
-            'file_path' => FilesystemIntegration::ROOT_FOLDER.'/'.$folder.'/'.$filename,
+            'id'        => $file['id'],
+            'file_path' => FilesystemIntegration::ROOT_FOLDER . '/' . $folder . '/' . $filename,
         ];
     }
 
@@ -124,19 +124,6 @@ class GoogleDrive implements FilesystemIntegration
         } catch (Exception $e) {
             return false;
         }
-    }
-
-    private function get($file, $options)
-    {
-        $file = $this->driveService->files->get($file->integration_id, $options);
-
-        if (! $file) {
-            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $file->path]));
-
-            return redirect()->back();
-        }
-
-        return $file;
     }
 
     /**
@@ -166,5 +153,18 @@ class GoogleDrive implements FilesystemIntegration
     public function isEnabled()
     {
         return true;
+    }
+
+    private function get($file, $options)
+    {
+        $file = $this->driveService->files->get($file->integration_id, $options);
+
+        if ( ! $file) {
+            session()->flash('flash_message_warning', __('File does not exists, make sure it has not been moved from google drive (:path)', ['path' => $file->path]));
+
+            return redirect()->back();
+        }
+
+        return $file;
     }
 }

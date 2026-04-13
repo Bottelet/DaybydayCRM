@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Absence extends Model
@@ -24,10 +24,17 @@ class Absence extends Model
 
     protected $casts = [
         'start_at' => 'datetime',
-        'end_at' => 'datetime',
+        'end_at'   => 'datetime',
     ];
 
     protected $hidden = ['id', 'user_id'];
+
+    # region Relationships
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     // getRouteKeyName() is provided by HasExternalId trait
 
@@ -36,12 +43,5 @@ class Absence extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    // region Relationships
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    // endregion
+    # endregion
 }

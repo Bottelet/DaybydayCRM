@@ -39,25 +39,34 @@ class AbsenceReason
 
     public function __construct(string $reason, ?string $displayValue = null)
     {
-        $this->reason = $reason;
+        $this->reason       = $reason;
         $this->displayValue = $displayValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->reason;
     }
 
     /**
      * @throws InvalidArgumentException
      */
-    public static function fromStatus(string $reason): AbsenceReason
+    public static function fromStatus(string $reason): self
     {
         foreach (self::values() as $absenceReason) {
             if ($absenceReason->getReason() === $reason) {
                 return $absenceReason;
             }
         }
-        throw new InvalidArgumentException('Unknown absence reason: '.$reason);
+        throw new InvalidArgumentException('Unknown absence reason: ' . $reason);
     }
 
     /**
-     * @param  string  $displayValue
+     * @param string $displayValue
+     *
      * @return AbsenceReason
      *
      * @throws InvalidArgumentException
@@ -69,7 +78,7 @@ class AbsenceReason
                 return $absenceReason;
             }
         }
-        throw new InvalidArgumentException('Unknown absence reason display value: '.$displayValue);
+        throw new InvalidArgumentException('Unknown absence reason display value: ' . $displayValue);
     }
 
     /**
@@ -77,58 +86,58 @@ class AbsenceReason
      */
     public static function values(): array
     {
-        if (is_null(self::$values)) {
+        if (null === self::$values) {
             self::$values = [
-                self::SICK_LEAVE => new AbsenceReason(self::SICK_LEAVE, 'Sick leave'),
-                self::PERSONAL_LEAVE => new AbsenceReason(self::PERSONAL_LEAVE, 'Personal leave'),
-                self::VACATION => new AbsenceReason(self::VACATION, 'Vacation'),
-                self::VACATION_DAY => new AbsenceReason(self::VACATION_DAY, 'Vacation day'),
-                self::TIME_OFF => new AbsenceReason(self::TIME_OFF, 'Time off'),
-                self::TIME_OFF_IN_LIEU => new AbsenceReason(self::TIME_OFF, 'Time off in lieu'),
-                self::FLEXTIME => new AbsenceReason(self::FLEXTIME, 'Flextime'),
-                self::OTHER => new AbsenceReason(self::OTHER, 'Other'),
+                self::SICK_LEAVE       => new self(self::SICK_LEAVE, 'Sick leave'),
+                self::PERSONAL_LEAVE   => new self(self::PERSONAL_LEAVE, 'Personal leave'),
+                self::VACATION         => new self(self::VACATION, 'Vacation'),
+                self::VACATION_DAY     => new self(self::VACATION_DAY, 'Vacation day'),
+                self::TIME_OFF         => new self(self::TIME_OFF, 'Time off'),
+                self::TIME_OFF_IN_LIEU => new self(self::TIME_OFF, 'Time off in lieu'),
+                self::FLEXTIME         => new self(self::FLEXTIME, 'Flextime'),
+                self::OTHER            => new self(self::OTHER, 'Other'),
             ];
         }
 
         return self::$values;
     }
 
-    public static function vacation(): AbsenceReason
+    public static function vacation(): self
     {
         return self::values()[self::VACATION];
     }
 
-    public static function vacationDay(): AbsenceReason
+    public static function vacationDay(): self
     {
         return self::values()[self::VACATION_DAY];
     }
 
-    public static function sickLeave(): AbsenceReason
+    public static function sickLeave(): self
     {
         return self::values()[self::SICK_LEAVE];
     }
 
-    public static function timeOff(): AbsenceReason
+    public static function timeOff(): self
     {
         return self::values()[self::TIME_OFF];
     }
 
-    public static function timeOffInLieu(): AbsenceReason
+    public static function timeOffInLieu(): self
     {
         return self::values()[self::TIME_OFF_IN_LIEU];
     }
 
-    public static function personalLeave(): AbsenceReason
+    public static function personalLeave(): self
     {
         return self::values()[self::PERSONAL_LEAVE];
     }
 
-    public static function flextime(): AbsenceReason
+    public static function flextime(): self
     {
         return self::values()[self::FLEXTIME];
     }
 
-    public static function other(): AbsenceReason
+    public static function other(): self
     {
         return self::values()[self::OTHER];
     }
@@ -141,13 +150,5 @@ class AbsenceReason
     public function getDisplayValue(): string
     {
         return $this->displayValue;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->reason;
     }
 }

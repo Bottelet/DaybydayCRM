@@ -8,11 +8,11 @@ use App\Models\InvoiceLine;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InvoiceLinesControllerTest extends AbstractTestCase
 {
@@ -26,7 +26,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     {
         parent::setUp();
         $this->withoutMiddleware([VerifyCsrfToken::class]);
-        $this->invoice = Invoice::factory()->create();
+        $this->invoice     = Invoice::factory()->create();
         $this->invoiceLine = InvoiceLine::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
@@ -40,8 +40,8 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             ['name' => 'modify-invoice-lines'],
             [
                 'display_name' => 'Modify invoice lines',
-                'description' => 'Permission to modify invoice lines',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Permission to modify invoice lines',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
@@ -50,18 +50,18 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             ['name' => 'owner'],
             [
                 'display_name' => 'Owner',
-                'description' => 'Owner role',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Owner role',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
 
         // Ensure the permission is attached to the role
-        if (! $ownerRole->hasPermission('modify-invoice-lines')) {
+        if ( ! $ownerRole->hasPermission('modify-invoice-lines')) {
             $ownerRole->attachPermission($permission);
         }
 
         // Ensure the user has the role
-        if (! $this->user->hasRole('owner')) {
+        if ( ! $this->user->hasRole('owner')) {
             $this->user->attachRole($ownerRole);
         }
 

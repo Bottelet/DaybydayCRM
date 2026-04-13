@@ -14,7 +14,7 @@ class GoogleDriveAuthenticator implements StorageAuthenticatorContract
     public function __construct()
     {
         $auth = [
-            'client_id' => config('services.google-drive.client_id'),
+            'client_id'     => config('services.google-drive.client_id'),
             'client_secret' => config('services.google-drive.client_secret'),
         ];
         $this->client = new Google_Client();

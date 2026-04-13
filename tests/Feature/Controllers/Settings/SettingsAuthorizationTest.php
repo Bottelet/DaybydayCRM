@@ -5,10 +5,10 @@ namespace Tests\Feature\Controllers\Settings;
 use App\Models\BusinessHour;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class SettingsAuthorizationTest extends AbstractTestCase
@@ -26,14 +26,14 @@ class SettingsAuthorizationTest extends AbstractTestCase
         parent::setUp();
 
         $this->setting = Setting::first() ?: Setting::create([
-            'company' => 'Default Company',
-            'vat' => 25,
-            'currency' => 'USD',
-            'language' => 'en',
-            'country' => 'US',
-            'client_number' => 1,
+            'company'        => 'Default Company',
+            'vat'            => 25,
+            'currency'       => 'USD',
+            'language'       => 'en',
+            'country'        => 'US',
+            'client_number'  => 1,
             'invoice_number' => 1,
-            'max_users' => 10,
+            'max_users'      => 10,
         ]);
 
         // Create business hours for the setting
@@ -77,15 +77,15 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->adminUser);
 
         $response = $this->json('PATCH', route('settings.updateOverall'), [
-            'company' => 'Test Company',
-            'vat' => 25,
-            'currency' => 'USD',
-            'language' => 'en',
-            'country' => 'US',
-            'client_number' => $this->setting->client_number,
+            'company'        => 'Test Company',
+            'vat'            => 25,
+            'currency'       => 'USD',
+            'language'       => 'en',
+            'country'        => 'US',
+            'client_number'  => $this->setting->client_number,
             'invoice_number' => $this->setting->invoice_number,
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'start_time'     => '09:00',
+            'end_time'       => '17:00',
         ]);
 
         $response->assertStatus(302);
@@ -100,15 +100,15 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $originalCompany = $this->setting->company;
 
         $response = $this->json('PATCH', route('settings.updateOverall'), [
-            'company' => 'Malicious Company',
-            'vat' => 25,
-            'currency' => 'USD',
-            'language' => 'en',
-            'country' => 'US',
-            'client_number' => $this->setting->client_number,
+            'company'        => 'Malicious Company',
+            'vat'            => 25,
+            'currency'       => 'USD',
+            'language'       => 'en',
+            'country'        => 'US',
+            'client_number'  => $this->setting->client_number,
             'invoice_number' => $this->setting->invoice_number,
-            'start_time' => '09:00',
-            'end_time' => '17:00',
+            'start_time'     => '09:00',
+            'end_time'       => '17:00',
         ]);
 
         $response->assertStatus(403); // JSON request returns 403 for unauthorized
@@ -122,9 +122,9 @@ class SettingsAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'New Company',
-            'country' => 'GB',
-            'start_time' => '08:00',
-            'end_time' => '18:00',
+            'country'      => 'GB',
+            'start_time'   => '08:00',
+            'end_time'     => '18:00',
         ]);
 
         $response->assertStatus(302);
@@ -140,9 +140,9 @@ class SettingsAuthorizationTest extends AbstractTestCase
 
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Malicious Company',
-            'country' => 'GB',
-            'start_time' => '08:00',
-            'end_time' => '18:00',
+            'country'      => 'GB',
+            'start_time'   => '08:00',
+            'end_time'     => '18:00',
         ]);
 
         $response->assertStatus(403); // JSON request returns 403 for unauthorized

@@ -32,10 +32,9 @@ class UsersDummyTableSeeder extends Seeder
 
         $u = User::query()->latest()->first();
         Absence::factory()->create([
-            'user_id' => $u->id,
+            'user_id'  => $u->id,
             'start_at' => now()->subDays(2),
-            'end_at' => now()->addDays(1),
+            'end_at'   => now()->addDays(1),
         ]);
-
     }
 }

@@ -39,10 +39,10 @@ return [
      * This is where you can register your custom dataTables builder.
      */
     'engines' => [
-        'eloquent' => EloquentDataTable::class,
-        'query' => QueryDataTable::class,
+        'eloquent'   => EloquentDataTable::class,
+        'query'      => QueryDataTable::class,
         'collection' => CollectionDataTable::class,
-        'resource' => ApiResourceDataTable::class,
+        'resource'   => ApiResourceDataTable::class,
     ],
     /*
      * DataTables accepted builder to engine mapping.
@@ -100,7 +100,7 @@ return [
      * JsonResponse header and options config.
      */
     'json' => [
-        'header' => [],
+        'header'  => [],
         'options' => 0,
     ],
 ];

@@ -16,7 +16,7 @@ class RolePermissionTableSeeder extends Seeder
      */
     public function run()
     {
-        $ownerRole = Role::where('name', Role::OWNER_ROLE)->first();
+        $ownerRole      = Role::where('name', Role::OWNER_ROLE)->first();
         $allPermissions = Permission::all()->pluck('id')->toArray();
 
         // Use syncWithoutDetaching to prevent duplicate key errors

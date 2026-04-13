@@ -35,36 +35,36 @@ class CreateAppointmentsTable extends Migration
 
         /** Create new permissions */
         $scpp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'View calendar',
-            'name' => 'calendar-view',
-            'description' => 'Be able to view the calendar for appointments',
-            'grouping' => 'appointment',
+            'name'         => 'calendar-view',
+            'description'  => 'Be able to view the calendar for appointments',
+            'grouping'     => 'appointment',
         ]);
         /** Create new permissions */
         $cpp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Add appointment',
-            'name' => 'appointment-create',
-            'description' => 'Be able to create a new appointment for a user',
-            'grouping' => 'appointment',
+            'name'         => 'appointment-create',
+            'description'  => 'Be able to create a new appointment for a user',
+            'grouping'     => 'appointment',
         ]);
 
         /** Create new permissions */
         $epp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Edit appointment',
-            'name' => 'appointment-edit',
-            'description' => 'Be able to edit appointment such as times and title',
-            'grouping' => 'appointment',
+            'name'         => 'appointment-edit',
+            'description'  => 'Be able to edit appointment such as times and title',
+            'grouping'     => 'appointment',
         ]);
 
         $dpp = Permission::create([
-            'external_id' => Str::uuid()->toString(),
+            'external_id'  => Str::uuid()->toString(),
             'display_name' => 'Delete appointment',
-            'name' => 'appointment-delete',
-            'description' => 'Be able to delete an appointment',
-            'grouping' => 'appointment',
+            'name'         => 'appointment-delete',
+            'description'  => 'Be able to delete an appointment',
+            'grouping'     => 'appointment',
         ]);
 
         $roles = Role::whereIn('name', ['owner', 'administrator'])->get();

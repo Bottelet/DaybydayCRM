@@ -20,32 +20,32 @@ class TypeOfStatusTest extends AbstractTestCase
         parent::setUp();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     #[Group('junie_repaired')]
     public function type_of_status_scopes_correctly_filter_by_source_type()
     {
-        /** Arrange */
+        /* Arrange */
         Status::factory()->create([
             'source_type' => Task::class,
-            'title' => 'Hello',
+            'title'       => 'Hello',
         ]);
         Status::factory()->create([
             'source_type' => Lead::class,
-            'title' => 'Hello',
+            'title'       => 'Hello',
         ]);
         Status::factory()->create([
             'source_type' => Project::class,
-            'title' => 'Hello',
+            'title'       => 'Hello',
         ]);
 
         /** Act */
-        $taskStatuses = Status::typeOfTask()->get()->where('title', 'Hello');
-        $leadStatuses = Status::typeOfLead()->get()->where('title', 'Hello');
+        $taskStatuses    = Status::typeOfTask()->get()->where('title', 'Hello');
+        $leadStatuses    = Status::typeOfLead()->get()->where('title', 'Hello');
         $projectStatuses = Status::typeOfProject()->get()->where('title', 'Hello');
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(1, $taskStatuses);
         $this->assertCount(1, $leadStatuses);
         $this->assertCount(1, $projectStatuses);
@@ -54,5 +54,5 @@ class TypeOfStatusTest extends AbstractTestCase
         $this->assertEquals(Project::class, $projectStatuses->first()->source_type);
     }
 
-    // endregion
+    # endregion
 }

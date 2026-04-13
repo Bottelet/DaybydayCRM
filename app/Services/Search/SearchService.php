@@ -11,18 +11,18 @@ class SearchService
     public function getClient()
     {
         if (app()->environment('testing')) {
-            return null;
+            return;
         }
 
-        $hosts = config('elasticsearch.hosts');
+        $hosts          = config('elasticsearch.hosts');
         $formattedHosts = [];
         foreach ($hosts as $host) {
-            $scheme = $host['scheme'] ?? 'http';
-            $formattedHosts[] = $scheme.'://'.(($host['user'] ?? null) ? $host['user'].':'.$host['pass'].'@' : '').$host['host'].':'.$host['port'];
+            $scheme           = $host['scheme'] ?? 'http';
+            $formattedHosts[] = $scheme . '://' . (($host['user'] ?? null) ? $host['user'] . ':' . $host['pass'] . '@' : '') . $host['host'] . ':' . $host['port'];
         }
 
-        if (is_null($this->elasticsearch)) {
-            $builder = ClientBuilder::create()->setHosts($formattedHosts);
+        if (null === $this->elasticsearch) {
+            $builder             = ClientBuilder::create()->setHosts($formattedHosts);
             $this->elasticsearch = $builder->build();
         }
 
@@ -33,26 +33,25 @@ class SearchService
     {
         $elasticClient = $this->getClient();
 
-        if (is_null($elasticClient)) {
+        if (null === $elasticClient) {
             return ['hits' => ['total' => 0, 'hits' => []]];
         }
 
         $params = [
             'index' => $type,
-            'type' => $type,
-            'body' => [
-                'size' => $prPage,
-                'from' => $offset,
+            'type'  => $type,
+            'body'  => [
+                'size'  => $prPage,
+                'from'  => $offset,
                 'query' => [
                     'multi_match' => [
                         'fuzziness' => 'AUTO',
-                        'query' => strtolower($query),
-
+                        'query'     => mb_strtolower($query),
                     ],
                 ],
             ],
         ];
-        if (! is_null($sortBy)) {
+        if (null !== $sortBy) {
             $params['body']['sort'] = [$sortBy => $sortDirection];
         }
 

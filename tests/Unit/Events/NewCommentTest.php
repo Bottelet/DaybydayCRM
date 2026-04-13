@@ -28,7 +28,7 @@ class NewCommentTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_constructor_stores_comment()
@@ -39,7 +39,7 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $event = new NewComment($comment);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($comment->id, $event->comment->id);
     }
 
@@ -52,7 +52,7 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $event = new NewComment($comment);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Comment::class, $event->comment);
     }
 
@@ -65,35 +65,35 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $event = new NewComment($comment);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Test comment text', $event->comment->description);
     }
 
     #[Test]
     public function it_event_can_be_dispatched()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake();
         $comment = Comment::factory()->create();
 
-        /** Act */
+        /* Act */
         NewComment::dispatch($comment);
 
-        /** Assert */
+        /* Assert */
         Event::assertDispatched(NewComment::class);
     }
 
     #[Test]
     public function it_dispatched_event_carries_correct_comment()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake();
         $comment = Comment::factory()->create(['description' => 'dispatch check']);
 
-        /** Act */
+        /* Act */
         NewComment::dispatch($comment);
 
-        /** Assert */
+        /* Assert */
         Event::assertDispatched(NewComment::class, function ($event) use ($comment) {
             return $event->comment->id === $comment->id;
         });
@@ -108,7 +108,7 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(NewComment::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Foundation\Events\Dispatchable', $traits);
     }
 
@@ -121,13 +121,13 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $traits = class_uses(NewComment::class);
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_event_preserves_null_description()
@@ -138,7 +138,7 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $event = new NewComment($comment);
 
-        /** Assert */
+        /* Assert */
         $this->assertNull($event->comment->description);
     }
 
@@ -151,25 +151,25 @@ class NewCommentTest extends AbstractTestCase
         /** Act */
         $event = new NewComment($comment);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('', $event->comment->description);
     }
 
     #[Test]
     public function it_dispatched_event_preserves_comment_relationships()
     {
-        /** Arrange */
+        /* Arrange */
         Event::fake();
         $comment = Comment::factory()->create();
 
-        /** Act */
+        /* Act */
         NewComment::dispatch($comment);
 
-        /** Assert */
+        /* Assert */
         Event::assertDispatched(NewComment::class, function ($event) use ($comment) {
             return $event->comment->user_id === $comment->user_id;
         });
     }
 
-    // endregion
+    # endregion
 }

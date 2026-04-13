@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
@@ -11,8 +11,8 @@ class Department extends Model
     use HasExternalId;
     use HasFactory;
 
-    protected $fillable =
-        [
+    protected $fillable
+        = [
             'name',
             'external_id',
             'description',
@@ -20,12 +20,12 @@ class Department extends Model
 
     protected $hidden = ['pivot'];
 
-    // region Relationships
+    # region Relationships
 
     public function users()
     {
         return $this->belongsToMany(User::class);
     }
 
-    // endregion
+    # endregion
 }

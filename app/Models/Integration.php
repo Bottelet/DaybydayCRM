@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Exception;
 
 class Integration extends Model
 {
@@ -19,14 +19,14 @@ class Integration extends Model
      */
     public static function getApi($type)
     {
-        $integration = Integration::where([
+        $integration = self::where([
             'api_type' => $type,
         ])->first();
         if ($integration) {
             $className = ucfirst($integration->name);
 
-            call_user_func_array(['App\\'.$className, 'initialize'], [$integration]);
-            $apiInstance = call_user_func_array(['App\\'.$className, 'getInstance'], []);
+            call_user_func_array(['App\\' . $className, 'initialize'], [$integration]);
+            $apiInstance = call_user_func_array(['App\\' . $className, 'getInstance'], []);
 
             return $apiInstance;
         }
@@ -36,9 +36,9 @@ class Integration extends Model
 
     public static function initBillingIntegration()
     {
-        $integration = Integration::whereApiType('billing')->first();
-        if (! $integration) {
-            return null;
+        $integration = self::whereApiType('billing')->first();
+        if ( ! $integration) {
+            return;
         }
 
         return $integration->api_class;

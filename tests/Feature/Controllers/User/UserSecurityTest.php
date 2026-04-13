@@ -6,12 +6,12 @@ use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Cache;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Cache;
 
 #[Group('security')]
 #[Group('user-controller')]
@@ -46,7 +46,7 @@ class UserSecurityTest extends AbstractTestCase
     {
         $adminRole = Role::firstOrCreate(['name' => 'admin'], [
             'display_name' => 'Administrator',
-            'description' => 'Administrator role',
+            'description'  => 'Administrator role',
         ]);
         // Ensure the admin role has the user-update permission
         $permission = Permission::firstOrCreate(['name' => 'user-update']);
@@ -79,7 +79,7 @@ class UserSecurityTest extends AbstractTestCase
     {
         $adminRole = Role::firstOrCreate(['name' => 'admin'], [
             'display_name' => 'Administrator',
-            'description' => 'Administrator role',
+            'description'  => 'Administrator role',
         ]);
         // Ensure the admin role has the user-update permission
         $permission = Permission::firstOrCreate(['name' => 'user-update']);
@@ -90,10 +90,10 @@ class UserSecurityTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
-            'name' => 'Updated Name',
-            'email' => $this->targetUser->email,
+            'name'        => 'Updated Name',
+            'email'       => $this->targetUser->email,
             'departments' => $this->targetUser->department()->first()->id,
-            'roles' => $this->targetUser->roles->first()->id,
+            'roles'       => $this->targetUser->roles->first()->id,
         ]);
 
         $response->assertStatus(302);
@@ -107,10 +107,10 @@ class UserSecurityTest extends AbstractTestCase
         $originalName = $this->targetUser->name;
 
         $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
-            'name' => 'Hacked Name',
-            'email' => $this->targetUser->email,
+            'name'        => 'Hacked Name',
+            'email'       => $this->targetUser->email,
             'departments' => $this->targetUser->department()->first()->id,
-            'roles' => $this->targetUser->roles->first()->id,
+            'roles'       => $this->targetUser->roles->first()->id,
         ]);
 
         $response->assertStatus(403);
@@ -128,8 +128,8 @@ class UserSecurityTest extends AbstractTestCase
             ['name' => 'manager'],
             [
                 'display_name' => 'Manager',
-                'description' => 'Manager role',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Manager role',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
         $manager->attachRole($managerRole);
@@ -143,11 +143,11 @@ class UserSecurityTest extends AbstractTestCase
         $originalPassword = $this->targetUser->password;
 
         $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
-            'name' => $this->targetUser->name,
-            'email' => $this->targetUser->email,
-            'password' => 'newpassword123',
+            'name'        => $this->targetUser->name,
+            'email'       => $this->targetUser->email,
+            'password'    => 'newpassword123',
             'departments' => $this->targetUser->department()->first()->id,
-            'roles' => $this->targetUser->roles->first()->id,
+            'roles'       => $this->targetUser->roles->first()->id,
         ]);
 
         // Password should not be changed if user doesn't have permission

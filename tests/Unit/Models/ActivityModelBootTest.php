@@ -36,7 +36,7 @@ class ActivityModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_activity_auto_generates_external_id_and_ip_address_when_not_provided()
@@ -47,13 +47,13 @@ class ActivityModelBootTest extends AbstractTestCase
         /** Act */
         $activity = Activity::create([
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($activity->external_id);
         $this->assertNotEmpty($activity->external_id);
         $this->assertNotNull($activity->ip_address);
@@ -71,63 +71,63 @@ class ActivityModelBootTest extends AbstractTestCase
         $activity1 = new Activity();
         $activity1->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
-            'ip_address' => '127.0.0.1',
+            'ip_address'  => '127.0.0.1',
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'First activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'First activity',
         ]);
         $activity1->save();
 
         $activity2 = new Activity();
         $activity2->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
-            'ip_address' => '127.0.0.1',
+            'ip_address'  => '127.0.0.1',
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Second activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Second activity',
         ]);
 
-        /** Act */
+        /* Act */
         $activity2->save();
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEquals($activity1->external_id, $activity2->external_id);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_activity_preserves_explicitly_provided_external_id_when_saved()
     {
         /** Arrange */
         $customExternalId = 'custom-external-id-12345';
-        $customIpAddress = '127.0.0.1';
+        $customIpAddress  = '127.0.0.1';
 
         $activity = new Activity();
         $activity->forceFill([
             'external_id' => $customExternalId,
-            'ip_address' => $customIpAddress,
+            'ip_address'  => $customIpAddress,
             'causer_type' => User::class,
-            'causer_id' => $this->user->id,
+            'causer_id'   => $this->user->id,
             'source_type' => Task::class,
-            'source_id' => $this->task->id,
-            'text' => 'Test activity',
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $activity->save();
         $activity = $activity->fresh();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($customExternalId, $activity->external_id);
         $this->assertEquals($customIpAddress, $activity->ip_address);
     }
 
-    // endregion
+    # endregion
 }

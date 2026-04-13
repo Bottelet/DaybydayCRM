@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class SettingsTableSeeder extends Seeder
 {
     /**
-     * Auto generated seed file
+     * Auto generated seed file.
      *
      * @return void
      */
@@ -17,25 +17,25 @@ class SettingsTableSeeder extends Seeder
     {
         DB::table('settings')->insert([
             0 => [
-                'id' => 1,
-                'client_number' => 10000,
+                'id'             => 1,
+                'client_number'  => 10000,
                 'invoice_number' => 10000,
-                'country' => 'US',
-                'company' => 'Media',
-                'max_users' => 10,
-                'vat' => 0,
-                'currency' => 'USD',
-                'language' => 'en',
-                'created_at' => null,
-                'updated_at' => null,
+                'country'        => 'US',
+                'company'        => 'Media',
+                'max_users'      => 10,
+                'vat'            => 0,
+                'currency'       => 'USD',
+                'language'       => 'en',
+                'created_at'     => null,
+                'updated_at'     => null,
             ],
         ]);
 
         for ($i = 1; $i < 8; $i++) {
             BusinessHour::create([
-                'day' => $this->integerToDay()[$i],
-                'open_time' => '09:00',
-                'close_time' => '18:00',
+                'day'         => $this->integerToDay()[$i],
+                'open_time'   => '09:00',
+                'close_time'  => '18:00',
                 'settings_id' => 1,
             ]);
         }

@@ -2,15 +2,15 @@
 
 namespace App\Zizaco\Entrust;
 
-/**
+/*
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
  */
 
-use Illuminate\Support\ServiceProvider;
 use Blade;
+use Illuminate\Support\ServiceProvider;
 
 class EntrustServiceProvider extends ServiceProvider
 {
@@ -28,7 +28,6 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         // Register blade directives
         $this->bladeDirectives();
     }
@@ -46,13 +45,25 @@ class EntrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the blade directives
+     * Get the services provided.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'command.entrust.migration',
+        ];
+    }
+
+    /**
+     * Register the blade directives.
      *
      * @return void
      */
     private function bladeDirectives()
     {
-        if (! class_exists('\Blade')) {
+        if ( ! class_exists('\Blade')) {
             return;
         }
 
@@ -118,20 +129,8 @@ class EntrustServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php',
+            __DIR__ . '/../config/config.php',
             'entrust'
         );
-    }
-
-    /**
-     * Get the services provided.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'command.entrust.migration',
-        ];
     }
 }

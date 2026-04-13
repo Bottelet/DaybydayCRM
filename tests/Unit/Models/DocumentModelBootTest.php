@@ -28,7 +28,7 @@ class DocumentModelBootTest extends AbstractTestCase
         // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
-        $this->user = User::factory()->create();
+        $this->user   = User::factory()->create();
         $this->client = Client::factory()->create(['user_id' => $this->user->id]);
     }
 
@@ -38,7 +38,7 @@ class DocumentModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_document_stores_explicit_external_id_when_provided()
@@ -48,17 +48,17 @@ class DocumentModelBootTest extends AbstractTestCase
 
         /** Act */
         $document = Document::create([
-            'external_id' => $externalId,
-            'size' => 1.5,
-            'path' => '/path/to/file.pdf',
+            'external_id'       => $externalId,
+            'size'              => 1.5,
+            'path'              => '/path/to/file.pdf',
             'original_filename' => 'file.pdf',
-            'mime' => 'application/pdf',
-            'integration_type' => 'local',
-            'source_type' => Client::class,
-            'source_id' => $this->client->id,
+            'mime'              => 'application/pdf',
+            'integration_type'  => 'local',
+            'source_type'       => Client::class,
+            'source_id'         => $this->client->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($document->external_id);
         $this->assertNotEmpty($document->external_id);
         $this->assertEquals($externalId, $document->external_id);
@@ -73,29 +73,29 @@ class DocumentModelBootTest extends AbstractTestCase
     {
         /** Arrange */
         $document1 = Document::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'size' => 1.0,
-            'path' => '/path/to/file1.pdf',
+            'external_id'       => Uuid::uuid4()->toString(),
+            'size'              => 1.0,
+            'path'              => '/path/to/file1.pdf',
             'original_filename' => 'file1.pdf',
-            'mime' => 'application/pdf',
-            'integration_type' => 'local',
-            'source_type' => Client::class,
-            'source_id' => $this->client->id,
+            'mime'              => 'application/pdf',
+            'integration_type'  => 'local',
+            'source_type'       => Client::class,
+            'source_id'         => $this->client->id,
         ]);
 
         /** Act */
         $document2 = Document::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'size' => 2.0,
-            'path' => '/path/to/file2.pdf',
+            'external_id'       => Uuid::uuid4()->toString(),
+            'size'              => 2.0,
+            'path'              => '/path/to/file2.pdf',
             'original_filename' => 'file2.pdf',
-            'mime' => 'application/pdf',
-            'integration_type' => 'local',
-            'source_type' => Client::class,
-            'source_id' => $this->client->id,
+            'mime'              => 'application/pdf',
+            'integration_type'  => 'local',
+            'source_type'       => Client::class,
+            'source_id'         => $this->client->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEquals($document1->external_id, $document2->external_id);
     }
 
@@ -105,13 +105,13 @@ class DocumentModelBootTest extends AbstractTestCase
         /** Arrange */
         $document = Document::factory()->create([
             'source_type' => Client::class,
-            'source_id' => $this->client->id,
+            'source_id'   => $this->client->id,
         ]);
 
         /** Act */
         $relationship = $document->source();
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(MorphTo::class, $relationship);
         $this->assertTrue(method_exists($document, 'source'));
     }
@@ -125,20 +125,20 @@ class DocumentModelBootTest extends AbstractTestCase
         /** Act */
         $document = Document::factory()->create([
             'source_type' => Task::class,
-            'source_id' => $task->id,
+            'source_id'   => $task->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertNotNull($document->external_id);
         $this->assertDatabaseHas('documents', [
-            'id' => $document->id,
+            'id'          => $document->id,
             'external_id' => $document->external_id,
         ]);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_document_preserves_provided_external_id()
@@ -148,19 +148,19 @@ class DocumentModelBootTest extends AbstractTestCase
 
         /** Act */
         $document = Document::create([
-            'external_id' => $customExternalId,
-            'size' => 1.5,
-            'path' => '/path/to/file.pdf',
+            'external_id'       => $customExternalId,
+            'size'              => 1.5,
+            'path'              => '/path/to/file.pdf',
             'original_filename' => 'file.pdf',
-            'mime' => 'application/pdf',
-            'integration_type' => 'local',
-            'source_type' => Client::class,
-            'source_id' => $this->client->id,
+            'mime'              => 'application/pdf',
+            'integration_type'  => 'local',
+            'source_type'       => Client::class,
+            'source_id'         => $this->client->id,
         ]);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals($customExternalId, $document->external_id);
     }
 
-    // endregion
+    # endregion
 }

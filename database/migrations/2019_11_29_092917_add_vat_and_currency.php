@@ -13,12 +13,12 @@ class AddVatAndCurrency extends Migration
      */
     public function up()
     {
-        if (! Schema::hasColumn('settings', 'currency')) {
+        if ( ! Schema::hasColumn('settings', 'currency')) {
             Schema::table('settings', static function (Blueprint $table) {
                 $table->string('currency', 3)->default('USD')->after('company');
             });
         }
-        if (! Schema::hasColumn('settings', 'vat')) {
+        if ( ! Schema::hasColumn('settings', 'vat')) {
             Schema::table('settings', static function (Blueprint $table) {
                 $table->smallInteger('vat')->default(725)->after('currency');
             });

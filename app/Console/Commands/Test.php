@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Class Test
+ * Class Test.
  */
 class Test extends Command
 {
@@ -23,18 +23,6 @@ class Test extends Command
      * @var string
      */
     protected $description = 'Run all tests';
-
-    private function runPhpunit($files = [])
-    {
-        // If no files were specified we run all tests.
-        if (empty($files)) {
-            $files[] = '';
-        }
-
-        $this->info('Running phpunit:');
-        $cmd = base_path().'/vendor/bin/phpunit -c '.base_path().'/phpunit.xml';
-        passthru($cmd);
-    }
 
     /**
      * Execute the console command.
@@ -58,5 +46,17 @@ class Test extends Command
         return [
             ['file', InputOption::VALUE_OPTIONAL, 'Specify a test files.'],
         ];
+    }
+
+    private function runPhpunit($files = [])
+    {
+        // If no files were specified we run all tests.
+        if (empty($files)) {
+            $files[] = '';
+        }
+
+        $this->info('Running phpunit:');
+        $cmd = base_path() . '/vendor/bin/phpunit -c ' . base_path() . '/phpunit.xml';
+        passthru($cmd);
     }
 }

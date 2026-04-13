@@ -7,10 +7,10 @@ use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Status;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('project-controller')]
@@ -64,14 +64,14 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->user = $this->user->fresh();
         $this->actingAs($this->user);
 
-        $newStatus = Status::factory()->create(['source_type' => Project::class]);
+        $newStatus        = Status::factory()->create(['source_type' => Project::class]);
         $originalAssignee = $this->project->user_assigned_id;
 
         // Attempt to change both status_id and user_assigned_id (mass assignment attack)
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
-            'status_id' => $newStatus->id,
+            'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
-            'title' => 'Hacked Title', // This should be ignored
+            'title'            => 'Hacked Title', // This should be ignored
         ]);
 
         $this->project->refresh();
@@ -127,7 +127,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->user->roles->first()->attachPermission($permission);
 
         // Create a status that belongs to a different type (Lead instead of Project)
-        $leadStatus = Status::factory()->create(['source_type' => Lead::class]);
+        $leadStatus     = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->project->status_id;
 
         // Attempt to assign a Lead status to a Project

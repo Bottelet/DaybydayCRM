@@ -7,8 +7,8 @@ use App\Models\Integration;
 class GetStorageProvider
 {
     private static $storageProviders = [
-        'local' => Local::class,
-        'dropbox' => Dropbox::class,
+        'local'       => Local::class,
+        'dropbox'     => Dropbox::class,
         'googledrive' => GoogleDrive::class,
     ];
 
@@ -16,12 +16,12 @@ class GetStorageProvider
     {
         $integration = Integration::where('api_type', 'file')->first();
         if ($integration) {
-            $providerName = strtolower($integration->name);
-            $className = self::$storageProviders[$providerName] ?? Local::class;
+            $providerName = mb_strtolower($integration->name);
+            $className    = self::$storageProviders[$providerName] ?? Local::class;
 
             return new $className();
-        } else {
-            return new Local();
         }
+
+        return new Local();
     }
 }

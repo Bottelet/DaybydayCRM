@@ -8,20 +8,21 @@ use Illuminate\Support\Facades\Session;
 class CommentController extends Controller
 {
     /**
-     * Create a comment for tasks and leads
+     * Create a comment for tasks and leads.
      *
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function store(StoreCommentRequest $request)
     {
         $modelsMapping = [
-            'task' => 'App\\Models\\Task',
-            'lead' => 'App\\Models\\Lead',
+            'task'    => 'App\\Models\\Task',
+            'lead'    => 'App\\Models\\Lead',
             'project' => 'App\\Models\\Project',
         ];
 
-        if (! array_key_exists($request->validated('type'), $modelsMapping)) {
+        if ( ! array_key_exists($request->validated('type'), $modelsMapping)) {
             $message = __('Could not create comment, type not found! Please contact Daybyday support');
             if ($request->expectsJson()) {
                 return response()->json(['error' => $message], 400);
@@ -31,14 +32,13 @@ class CommentController extends Controller
             return redirect()->back();
         }
 
-
-        $model = $modelsMapping[$request->validated('type')];
+        $model  = $modelsMapping[$request->validated('type')];
         $source = $model::findByExternalId($request->validated('external_id'));
 
         // At this point, $source is guaranteed to exist due to FormRequest validation
         $source->comments()->create([
             'description' => clean($request->validated('description')),
-            'user_id' => auth()->user()->id,
+            'user_id'     => auth()->user()->id,
         ]);
 
         Session::flash('flash_message', __('Comment successfully added'));

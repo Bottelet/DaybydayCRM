@@ -18,7 +18,7 @@ class ClientHeaderComposer
 
         $contact_info = $clients->contacts()->first();
         /**
-         * [User assigned the client]
+         * [User assigned the client].
          *
          * @var contact
          */

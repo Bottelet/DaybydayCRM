@@ -29,25 +29,34 @@ class OfferStatus
 
     public function __construct(string $status, ?string $displayValue = null)
     {
-        $this->status = $status;
+        $this->status       = $status;
         $this->displayValue = $displayValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->status;
     }
 
     /**
      * @throws Exception
      */
-    public static function fromStatus(string $status): OfferStatus
+    public static function fromStatus(string $status): self
     {
         foreach (self::values() as $offerStatus) {
             if ($offerStatus->getStatus() === $status) {
                 return $offerStatus;
             }
         }
-        throw new Exception('Unknown invoice status: '.$status);
+        throw new Exception('Unknown invoice status: ' . $status);
     }
 
     /**
-     * @param  string  $displayValue
+     * @param string $displayValue
+     *
      * @return OfferStatus
      *
      * @throws Exception
@@ -59,7 +68,7 @@ class OfferStatus
                 return $offerStatus;
             }
         }
-        throw new Exception('Unknown invoice status display value: '.$displayValue);
+        throw new Exception('Unknown invoice status display value: ' . $displayValue);
     }
 
     /**
@@ -67,28 +76,28 @@ class OfferStatus
      */
     public static function values(): array
     {
-        if (is_null(self::$values)) {
+        if (null === self::$values) {
             self::$values = [
-                self::IN_PROGRESS => new OfferStatus(self::IN_PROGRESS, 'In-progress'),
-                self::LOST => new OfferStatus(self::LOST, 'Lost'),
-                self::WON => new OfferStatus(self::WON, 'Won'),
+                self::IN_PROGRESS => new self(self::IN_PROGRESS, 'In-progress'),
+                self::LOST        => new self(self::LOST, 'Lost'),
+                self::WON         => new self(self::WON, 'Won'),
             ];
         }
 
         return self::$values;
     }
 
-    public static function inProgress(): OfferStatus
+    public static function inProgress(): self
     {
         return self::values()[self::IN_PROGRESS];
     }
 
-    public static function lost(): OfferStatus
+    public static function lost(): self
     {
         return self::values()[self::LOST];
     }
 
-    public static function won(): OfferStatus
+    public static function won(): self
     {
         return self::values()[self::WON];
     }
@@ -101,13 +110,5 @@ class OfferStatus
     public function getDisplayValue(): string
     {
         return $this->displayValue;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->status;
     }
 }

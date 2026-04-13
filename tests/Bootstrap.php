@@ -20,7 +20,7 @@ class Bootstrap
 
     public static function setUpBeforeClass(): void
     {
-        $console = (new self())->createApplication()->make(Kernel::class);
+        $console  = (new self())->createApplication()->make(Kernel::class);
         $commands = [
             'config:cache',
             'event:cache',

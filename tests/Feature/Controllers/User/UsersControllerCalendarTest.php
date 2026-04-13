@@ -4,10 +4,10 @@ namespace Tests\Feature\Controllers\User;
 
 use App\Models\Absence;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class UsersControllerCalendarTest extends AbstractTestCase
 {
@@ -22,25 +22,25 @@ class UsersControllerCalendarTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->create();
+        $this->user              = User::factory()->create();
         $this->absenceWithInTime = Absence::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'start_at' => now(),
-            'end_at' => now()->addDay(),
-            'reason' => 'test',
+            'end_at'   => now()->addDay(),
+            'reason'   => 'test',
         ]);
 
         $this->absenceWithToLate = Absence::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'start_at' => now()->addWeeks(5),
-            'end_at' => now()->addWeeks(6),
-            'reason' => 'test',
+            'end_at'   => now()->addWeeks(6),
+            'reason'   => 'test',
         ]);
         $this->absenceWithToEarly = Absence::factory()->create([
-            'user_id' => $this->user->id,
+            'user_id'  => $this->user->id,
             'start_at' => now()->subWeeks(4),
-            'end_at' => now()->subWeeks(3),
-            'reason' => 'test',
+            'end_at'   => now()->subWeeks(3),
+            'reason'   => 'test',
         ]);
     }
 
@@ -48,9 +48,8 @@ class UsersControllerCalendarTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_get_absences_within_time_slot()
     {
-
         $correctUser = null;
-        $r = $this->json('GET', '/users/calendar-users/');
+        $r           = $this->json('GET', '/users/calendar-users/');
         foreach ($r->json() as $user) {
             if ($user['external_id'] == $this->user->external_id) {
                 $correctUser = $user;

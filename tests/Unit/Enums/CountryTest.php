@@ -4,9 +4,9 @@ namespace Tests\Unit\Enums;
 
 use App\Enums\Country;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CountryTest extends AbstractTestCase
 {
@@ -26,7 +26,7 @@ class CountryTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_from_code_returns_correct_country_instance()
@@ -37,7 +37,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Country::class, $country);
         $this->assertEquals('DK', $country->getCode());
     }
@@ -51,7 +51,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Denmark', $country->getDisplayValue());
     }
 
@@ -64,7 +64,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('DKK', $country->getCurrencyCode());
     }
 
@@ -77,7 +77,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Danish', $country->getLanguage());
     }
 
@@ -90,7 +90,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('+45', $country->getPhoneCode());
     }
 
@@ -102,9 +102,9 @@ class CountryTest extends AbstractTestCase
 
         /** Act */
         $country = Country::fromCode($countryCode);
-        $format = $country->getFormat();
+        $format  = $country->getFormat();
 
-        /** Assert */
+        /* Assert */
         $this->assertIsArray($format);
         $this->assertArrayHasKey('carbonDate', $format);
         $this->assertArrayHasKey('carbonTime', $format);
@@ -120,7 +120,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Germany', $country->getDisplayValue());
         $this->assertEquals('EUR', $country->getCurrencyCode());
         $this->assertEquals('German', $country->getLanguage());
@@ -135,7 +135,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('United Kingdom', $country->getDisplayValue());
         $this->assertEquals('+44', $country->getPhoneCode());
     }
@@ -149,7 +149,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('Sweden', $country->getDisplayValue());
         $this->assertEquals('SEK', $country->getCurrencyCode());
         $this->assertEquals('Swedish', $country->getLanguage());
@@ -162,10 +162,10 @@ class CountryTest extends AbstractTestCase
         $countryCode = 'US';
 
         /** Act */
-        $us = Country::fromCode($countryCode);
+        $us     = Country::fromCode($countryCode);
         $format = $us->getFormat();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('mm/dd/yyyy', $format['frontendDate']);
         $this->assertEquals('m/d/Y', $format['carbonDate']);
     }
@@ -177,10 +177,10 @@ class CountryTest extends AbstractTestCase
         $countryCode = 'US';
 
         /** Act */
-        $us = Country::fromCode($countryCode);
+        $us     = Country::fromCode($countryCode);
         $format = $us->getFormat();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('m/d/Y', $format['carbonDate']);
         $this->assertEquals('g:i A', $format['carbonTime']);
     }
@@ -194,7 +194,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $values = Country::values();
 
-        /** Assert */
+        /* Assert */
         $this->assertCount(10, $values);
     }
 
@@ -207,7 +207,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $values = Country::values();
 
-        /** Assert */
+        /* Assert */
         $this->assertArrayHasKey('DK', $values);
         $this->assertArrayHasKey('DE', $values);
         $this->assertArrayHasKey('SE', $values);
@@ -224,19 +224,19 @@ class CountryTest extends AbstractTestCase
     public function it_country_constructor_sets_all_properties()
     {
         /** Arrange */
-        $code = 'TEST';
+        $code       = 'TEST';
         $properties = [
             'displayValue' => 'Test Country',
             'currencyCode' => 'TST',
-            'language' => 'Testish',
-            'phoneCode' => '+999',
-            'format' => ['frontendDate' => 'dd/mm/yyyy'],
+            'language'     => 'Testish',
+            'phoneCode'    => '+999',
+            'format'       => ['frontendDate' => 'dd/mm/yyyy'],
         ];
 
         /** Act */
         $country = new Country($code, $properties);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('TEST', $country->getCode());
         $this->assertEquals('Test Country', $country->getDisplayValue());
         $this->assertEquals('TST', $country->getCurrencyCode());
@@ -254,15 +254,15 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($countryCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Country::class, $country);
         $this->assertEquals('OT', $country->getCode());
         $this->assertEquals('Other', $country->getDisplayValue());
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_from_code_returns_fallback_to_other_for_unknown_code()
@@ -273,7 +273,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($unknownCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertInstanceOf(Country::class, $country);
         $this->assertEquals('OT', $country->getCode());
         $this->assertEquals('Other', $country->getDisplayValue());
@@ -288,7 +288,7 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($emptyCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('OT', $country->getCode());
     }
 
@@ -301,11 +301,11 @@ class CountryTest extends AbstractTestCase
         /** Act */
         $country = Country::fromCode($unknownCode);
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals('EUR', $country->getCurrencyCode());
         $this->assertEquals('English', $country->getLanguage());
         $this->assertEquals('+44', $country->getPhoneCode());
     }
 
-    // endregion
+    # endregion
 }

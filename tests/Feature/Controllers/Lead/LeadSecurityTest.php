@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Controllers\Lead;
 
+use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Permission;
@@ -9,11 +10,10 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
-use App\Enums\PermissionName;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('lead-controller')]
@@ -71,7 +71,7 @@ class LeadSecurityTest extends AbstractTestCase
     {
         $this->actingAs($this->unauthorizedUser);
 
-        $response = $this->json('DELETE', '/leads/'.$this->lead->external_id.'/json');
+        $response = $this->json('DELETE', '/leads/' . $this->lead->external_id . '/json');
 
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
@@ -82,15 +82,15 @@ class LeadSecurityTest extends AbstractTestCase
     {
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
-        $newUser = User::factory()->create();
+        $newUser        = User::factory()->create();
         $originalStatus = $this->lead->status_id;
-        $originalTitle = $this->lead->title;
+        $originalTitle  = $this->lead->title;
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
-            'status_id' => 999, // This should be ignored
-            'title' => 'Hacked Title', // This should be ignored
+            'status_id'        => 999, // This should be ignored
+            'title'            => 'Hacked Title', // This should be ignored
         ]);
 
         $this->lead->refresh();
@@ -110,14 +110,14 @@ class LeadSecurityTest extends AbstractTestCase
     {
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
-        $newStatus = Status::factory()->create(['source_type' => Lead::class]);
+        $newStatus        = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
 
         // Use PATCH (route is PATCH)
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
-            'status_id' => $newStatus->id,
+            'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id, // This should be ignored
-            'title' => 'Hacked Title', // This should be ignored
+            'title'            => 'Hacked Title', // This should be ignored
         ]);
 
         $this->lead->refresh();
@@ -138,7 +138,7 @@ class LeadSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         // Create a status that belongs to a different type (Task instead of Lead)
-        $taskStatus = Status::factory()->create(['source_type' => Task::class]);
+        $taskStatus     = Status::factory()->create(['source_type' => Task::class]);
         $originalStatus = $this->lead->status_id;
 
         // Use PATCH (route is PATCH)

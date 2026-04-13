@@ -13,15 +13,15 @@ use Illuminate\Database\Seeder;
 class TasksDummyTableSeeder extends Seeder
 {
     /**
-     * Auto generated seed file
+     * Auto generated seed file.
      *
      * @return void
      */
     public function run()
     {
         Task::factory()->count(50)->create([
-            'client_id' => Client::all()->random()->id,
-            'user_created_id' => User::all()->random()->id,
+            'client_id'        => Client::all()->random()->id,
+            'user_created_id'  => User::all()->random()->id,
             'user_assigned_id' => User::all()->random()->id,
         ])->each(function ($t) {
             if (random_int(1, 5) == 1) {
@@ -34,15 +34,15 @@ class TasksDummyTableSeeder extends Seeder
 
                 Comment::factory()->count(3)->create([
                     'source_type' => Task::class,
-                    'source_id' => $t->id,
-                    'user_id' => User::all()->random()->id,
+                    'source_id'   => $t->id,
+                    'user_id'     => User::all()->random()->id,
                 ]);
             }
 
             Comment::factory()->count(3)->create([
                 'source_type' => Task::class,
-                'source_id' => $t->id,
-                'user_id' => User::all()->random()->id,
+                'source_id'   => $t->id,
+                'user_id'     => User::all()->random()->id,
             ]);
         });
     }

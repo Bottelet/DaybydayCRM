@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Enums\RoleType;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\EntrustRole;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Role extends EntrustRole
 {
@@ -29,7 +29,7 @@ class Role extends EntrustRole
         'external_id',
     ];
 
-    // region Relationships
+    # region Relationships
 
     public function permissions()
     {
@@ -41,7 +41,7 @@ class Role extends EntrustRole
         return $this->hasMany(RoleUser::class, 'role_id', 'id');
     }
 
-    // endregion
+    # endregion
 
     public function canBeDeleted()
     {

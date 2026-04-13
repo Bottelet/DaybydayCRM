@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Enums\OfferStatus;
 use App\Models\Client;
@@ -19,9 +19,9 @@ class OfferFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => Uuid::uuid4()->toString(),
-            'client_id' => Client::factory(),
-            'status' => OfferStatus::inProgress()->getStatus(),
-            'source_id' => Lead::factory(),
+            'client_id'   => Client::factory(),
+            'status'      => OfferStatus::inProgress()->getStatus(),
+            'source_id'   => Lead::factory(),
             'source_type' => Lead::class,
         ];
     }

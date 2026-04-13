@@ -20,14 +20,14 @@ class LeadsDummyTableSeeder extends Seeder
             if (random_int(0, 5) == 1) {
                 Comment::factory()->count(3)->create([
                     'source_type' => Lead::class,
-                    'source_id' => $l->id,
-                    'user_id' => User::all()->random()->id,
+                    'source_id'   => $l->id,
+                    'user_id'     => User::all()->random()->id,
                 ]);
             }
             Comment::factory()->count(2)->create([
                 'source_type' => Lead::class,
-                'source_id' => $l->id,
-                'user_id' => User::all()->random()->id,
+                'source_id'   => $l->id,
+                'user_id'     => User::all()->random()->id,
             ]);
         });
     }

@@ -41,7 +41,6 @@ class Login extends UnauthenticatedPage
     public function elements()
     {
         return [
-            //
         ];
     }
 }
