@@ -1,6 +1,39 @@
 # ============================================================================
-# Makefile for DaybydayCRM (Docker & Host Unified)
+# Makefile for DaybydayCRM
+# Unified Docker & Host Development Workflow
 # ============================================================================
+#
+# This Makefile provides a unified interface for common development tasks,
+# supporting both host and Docker container execution. It is designed for
+# developer productivity, CI/CD, and onboarding ease.
+#
+# Usage:
+#   - Run from project root: `make <target>`
+#   - For Dockerized workflows, ensure containers are running (`make up`).
+#
+# Primary Targets:
+#   dtest      Run PHPUnit tests inside Docker (optionally filter by name)
+#   dfail      Run all tests, stop on first failure
+#   dsh        Open a shell in the workspace container
+#   dmfs       Fresh migrate and seed database inside Docker
+#   install    Composer install (inside container)
+#   mfs        Fresh migrate/seed (inside container)
+#   yarn-setup Install JS deps and build (inside container)
+#   setup      Full setup: composer, migrate, yarn
+#   clear      Clear Laravel caches (inside container)
+#   phpunit    Run PHPUnit (inside container)
+#   test-fail  Run PHPUnit, stop on failure (inside container)
+#   test-filter Run PHPUnit with filter (inside container)
+#   paratest   Run tests in parallel (inside container)
+#   parafail   Parallel tests, stop on failure (inside container)
+#   up         Start Docker containers
+#   down       Stop and remove Docker containers
+#   rebuild    Rebuild Docker containers
+#   help       Show this help message
+#
+# See also: README.md for onboarding and troubleshooting.
+#
+# -----------------------------------------------------------------------------
 
 # --- Configuration ---
 CONTAINER_NAME := workspace
@@ -57,10 +90,10 @@ test-filter:
 # --- Parallel Testing (Inside Container) ---
 
 paratest:
-	vendor/bin/paratest --exclude-group flaky -p8 > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
+	vendor/bin/paratest --exclude-group flaky -p16 > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
 
 parafail:
-	vendor/bin/paratest --exclude-group flaky -p8 --stop-on-failure > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
+	vendor/bin/paratest --exclude-group flaky -p16 --stop-on-failure > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
 
 # --- Docker Compose (Host Level) ---
 
