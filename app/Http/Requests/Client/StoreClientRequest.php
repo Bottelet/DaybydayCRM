@@ -14,14 +14,13 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize()
     {
-        /*$user = auth()->user();
+        $user = auth()->user();
+
         if ($user === null) {
-            dd("huh?");
             return false;
         }
 
-        return $user->can(PermissionName::CLIENT_CREATE->value);*/
-        return true;
+        return $user->can(PermissionName::CLIENT_CREATE->value);
     }
 
     /**
