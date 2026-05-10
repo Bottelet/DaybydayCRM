@@ -215,10 +215,4 @@ class User extends Authenticatable
     {
         return $this->searchableFields;
     }
-
-    public function restore()
-    {
-        $this->restoreA();
-        $this->restoreB();
-    }
 }

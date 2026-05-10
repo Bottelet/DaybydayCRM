@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware\Client;
 
+use App\Enums\PermissionName;
 use Closure;
 use Illuminate\Http\Request;
-use Log;
 
 class CanClientCreate
 {
@@ -18,14 +18,14 @@ class CanClientCreate
     public function handle($request, Closure $next)
     {
         $user = auth()->user();
+        $message = __("You don't have permission to create a client");
 
-        if (config('app.debug')) {
-            Log::debug('CanClientCreate middleware check', ['user_id' => $user?->id]);
-        }
+        if ( ! $user?->can(PermissionName::CLIENT_CREATE->value)) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 403);
+            }
 
-        if ( ! $user->can('client-create')) {
-            session()->flash('flash_message_warning', __("You don't have permission to create a client"));
-
+            session()->flash('flash_message_warning', $message);
             return redirect()->route('clients.index');
         }
 

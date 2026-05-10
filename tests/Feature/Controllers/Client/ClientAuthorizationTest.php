@@ -5,6 +5,7 @@ namespace Tests\Feature\Controllers\Client;
 use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;
+use App\Models\Industry;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,6 +76,65 @@ class ClientAuthorizationTest extends AbstractTestCase
         /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('clients', ['id' => $this->client->id, 'deleted_at' => null]);
+    }
+
+    #[Test]
+    public function userWithoutClientCreatePermissionIsRedirectedFromClientCreatePage()
+    {
+        /* Arrange */
+        $this->actingAs($this->userWithoutPermission);
+
+        /** Act */
+        $response = $this->get(route('clients.create'));
+
+        /* Assert */
+        $response->assertRedirect(route('clients.index'));
+        $response->assertSessionHas('flash_message_warning');
+    }
+
+    #[Test]
+    public function jsonRequestWithoutClientCreatePermissionGetsForbiddenFromClientCreatePage()
+    {
+        /* Arrange */
+        $this->actingAs($this->userWithoutPermission);
+
+        /** Act */
+        $response = $this->getJson(route('clients.create'));
+
+        /* Assert */
+        $response
+            ->assertForbidden()
+            ->assertJson(['message' => __("You don't have permission to create a client")]);
+    }
+
+    #[Test]
+    public function userWithoutClientCreatePermissionCannotStoreClient()
+    {
+        /* Arrange */
+        $industry = Industry::factory()->create();
+        $owner    = User::factory()->create();
+
+        $this->actingAs($this->userWithoutPermission);
+
+        /** Act */
+        $response = $this->post(route('clients.store'), [
+            'name'             => 'James Test',
+            'email'            => 'james@test.com',
+            'primary_number'   => '2342342342',
+            'secondary_number' => '423423432',
+            'vat'              => '12312334',
+            'company_name'     => 'James & Co',
+            'address'          => 'james street',
+            'zipcode'          => '2222',
+            'city'             => 'Bond city',
+            'company_type'     => 'Aps',
+            'industry_id'      => $industry->id,
+            'user_id'          => $owner->id,
+        ]);
+
+        /* Assert */
+        $response->assertForbidden();
+        $this->assertDatabaseMissing('clients', ['company_name' => 'James & Co']);
     }
 
     # endregion
