@@ -164,7 +164,7 @@ class ClientsController extends Controller
     {
         $client = $this->clientService->findByExternalId($external_id);
 
-        $invoices = $this->clientService->getInvoicesWithRelations($client);
+        $invoices = $client->invoices()->with('invoiceLines');
 
         return Datatables::of($invoices)
             ->editColumn('invoice_number', function ($invoices) {
