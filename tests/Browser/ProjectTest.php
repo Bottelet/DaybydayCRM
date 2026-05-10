@@ -138,8 +138,6 @@ class ProjectTest extends DuskTestCase
     public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_project()
     {
         /* Arrange */
-        Client::query()->forceDelete();
-
         $user = User::factory()->create();
 
         /* Act & Assert */

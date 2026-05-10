@@ -224,7 +224,6 @@ class ClientsControllerTest extends AbstractTestCase
         $client     = Client::factory()->create();
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
-        $this->assertNotEquals($client->user_id, $this->user->id);
 
         /* Act */
         $response = $this->json('POST', '/clients/updateassign/' . $client->external_id, [

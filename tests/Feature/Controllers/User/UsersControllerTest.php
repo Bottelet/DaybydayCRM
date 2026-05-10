@@ -50,12 +50,13 @@ class UsersControllerTest extends AbstractTestCase
         /* Arrange */
         /** @var User $manager */
         $manager = User::factory()->withRole('manager')->create();
+        $targetUser = User::factory()->create();
         $this->actingAs($manager);
 
         /* Act */
         $response = $this->json(
             'PATCH',
-            route('users.update', 1)
+            route('users.update', $targetUser->id)
         );
 
         /* Assert */

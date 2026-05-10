@@ -214,7 +214,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
 
         /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount'       => -5000.234,
+            'amount'       => '-5000,234',
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
             'description'  => 'A random description',

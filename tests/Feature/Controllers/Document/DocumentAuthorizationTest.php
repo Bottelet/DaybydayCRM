@@ -74,12 +74,15 @@ class DocumentAuthorizationTest extends AbstractTestCase
 
         $this->userWithTaskUploadPermission = User::factory()->create();
         $this->userWithTaskUploadPermission->attachRole($roleWithTaskUpload);
+        $this->userWithTaskUploadPermission = $this->userWithTaskUploadPermission->fresh();
 
         $this->userWithProjectUploadPermission = User::factory()->create();
         $this->userWithProjectUploadPermission->attachRole($roleWithProjectUpload);
+        $this->userWithProjectUploadPermission = $this->userWithProjectUploadPermission->fresh();
 
         $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
+        $this->userWithoutPermission = $this->userWithoutPermission->fresh();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }

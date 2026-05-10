@@ -133,6 +133,7 @@ class UserSecurityTest extends AbstractTestCase
         $manager->attachRole($managerRole);
         $permission = Permission::firstOrCreate(['name' => 'user-update']);
         $managerRole->attachPermission($permission);
+        $manager = $manager->fresh();
         $this->actingAs($manager);
         $originalPassword = $this->targetUser->password;
 
