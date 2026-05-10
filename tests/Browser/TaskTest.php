@@ -155,7 +155,7 @@ class TaskTest extends DuskTestCase
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/tasks/' . $task->external_id)
                 ->click('#time-manager')
-                ->pause(200) // Wait for modal to popup
+                ->pause(200)
                 ->type('title', 'This is a test time title')
                 ->type('comment', 'This is a short comment about what has been made')
                 ->type('price', 200)
