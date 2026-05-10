@@ -92,11 +92,6 @@ class ClientTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/' . $client->external_id);
-            // ->clickddLink($task->title, 'a');
-            // ->assertDontSee($task_2->title);
-            // ->press('Leads')->element(".tablet")
-            // ->assertSee($lead->title)
-            // ->assertDontSee($lead_2->title);
         });
     }
 
@@ -214,11 +209,8 @@ class ClientTest extends DuskTestCase
                 ->press('Update client');
         });
 
-        // Had to split this in to two functions as i had to use element to locate the submit button.
-        // And can't chain it from submit. got error  Element is not clickable at point (966, 852)
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                // Assert new data is in use
                 ->visit('/clients/' . $client->external_id)
                 ->assertSee($email)
                 ->assertSee($address)
