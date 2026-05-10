@@ -24,7 +24,6 @@ class LeadsControllerTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Ensure user has all necessary lead permissions
         $this->withPermissions([
             PermissionName::LEAD_CREATE,
             PermissionName::LEAD_ASSIGN,

@@ -31,17 +31,14 @@ class DocumentSecurityTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create and authenticate a user
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
         $this->task    = Task::factory()->create();
         $this->project = Project::factory()->create();
 
-        // Create a user without upload permissions
         $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
-        // Mock file storage integration
         Integration::create([
             'name'     => 'local',
             'api_type' => 'file',
