@@ -54,6 +54,13 @@ class UserSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'user' => [
+                'id',
+                'name',
+                'email',
+            ],
+        ]);
     }
 
     #[Test]
@@ -68,6 +75,9 @@ class UserSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'This action is unauthorized.',
+        ]);
     }
 
     #[Test]
@@ -95,6 +105,10 @@ class UserSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(302);
+        $this->assertDatabaseHas('users', [
+            'id'   => $this->targetUser->id,
+            'name' => 'Updated Name',
+        ]);
     }
 
     #[Test]
@@ -147,6 +161,7 @@ class UserSecurityTest extends AbstractTestCase
         ]);
 
         /* Assert */
+        $response->assertStatus(302);
         $this->assertEquals($originalPassword, $this->targetUser->refresh()->password);
     }
 }
