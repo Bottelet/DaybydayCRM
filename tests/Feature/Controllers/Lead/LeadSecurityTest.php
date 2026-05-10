@@ -31,14 +31,11 @@ class LeadSecurityTest extends AbstractTestCase
 
         $this->lead = Lead::factory()->create();
 
-        // Create and authenticate a user with default role
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
-        // Create a user without lead-delete permission
         $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
-        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 

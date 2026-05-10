@@ -37,7 +37,6 @@ class DocumentAuthorizationTest extends AbstractTestCase
         $this->task    = Task::factory()->create();
         $this->project = Project::factory()->create();
 
-        // Create role with task-upload-files permission
         $roleWithTaskUpload = Role::create([
             'name'         => 'task-uploader',
             'display_name' => 'Task Uploader',
@@ -52,7 +51,6 @@ class DocumentAuthorizationTest extends AbstractTestCase
         ]);
         $roleWithTaskUpload->attachPermission($taskUploadPermission);
 
-        // Create role with project-upload-files permission
         $roleWithProjectUpload = Role::create([
             'name'         => 'project-uploader',
             'display_name' => 'Project Uploader',
@@ -67,7 +65,6 @@ class DocumentAuthorizationTest extends AbstractTestCase
         ]);
         $roleWithProjectUpload->attachPermission($projectUploadPermission);
 
-        // Create role without upload permissions
         $roleWithoutPermission = Role::create([
             'name'         => 'document-viewer',
             'display_name' => 'Document Viewer',
@@ -75,7 +72,6 @@ class DocumentAuthorizationTest extends AbstractTestCase
             'external_id'  => Str::uuid()->toString(),
         ]);
 
-        // Create users
         $this->userWithTaskUploadPermission = User::factory()->create();
         $this->userWithTaskUploadPermission->attachRole($roleWithTaskUpload);
 

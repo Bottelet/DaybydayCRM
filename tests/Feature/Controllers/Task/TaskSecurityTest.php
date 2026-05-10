@@ -31,17 +31,13 @@ class TaskSecurityTest extends AbstractTestCase
 
         $this->task = Task::factory()->create();
 
-        // Create and authenticate a user with default role
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
-        // Create a user without task-delete permission
         $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
-        // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();
 
-        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 

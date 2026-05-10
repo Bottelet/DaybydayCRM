@@ -33,7 +33,6 @@ class TaskAuthorizationTest extends AbstractTestCase
 
         $this->task = Task::factory()->create();
 
-        // Create or find task-delete permission
         $deletePermission = Permission::firstOrCreate(
             ['name' => 'task-delete'],
             [
@@ -43,7 +42,6 @@ class TaskAuthorizationTest extends AbstractTestCase
             ]
         );
 
-        // Create role with task-delete permission
         $roleWithPermission = Role::create([
             'name'         => 'task-deleter',
             'display_name' => 'Task Deleter',
@@ -52,7 +50,6 @@ class TaskAuthorizationTest extends AbstractTestCase
         ]);
         $roleWithPermission->attachPermission($deletePermission);
 
-        // Create role without task-delete permission
         $roleWithoutPermission = Role::create([
             'name'         => 'task-viewer',
             'display_name' => 'Task Viewer',
@@ -60,14 +57,12 @@ class TaskAuthorizationTest extends AbstractTestCase
             'external_id'  => Str::uuid()->toString(),
         ]);
 
-        // Create users
         $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
         $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
-        // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
