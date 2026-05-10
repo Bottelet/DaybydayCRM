@@ -175,7 +175,7 @@ class ClientPerformanceTest extends AbstractTestCase
         $response->assertStatus(200);
         
         // Should have minimal queries with proper eager loading
-        // Test ensures assigned_user relationship is eager loaded
+        // Query count assertion verifies assigned_user relationship is eager loaded to prevent N+1 queries
         $this->assertLessThan(10, $queryCount,
             "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in task datatable."
         );
@@ -220,7 +220,7 @@ class ClientPerformanceTest extends AbstractTestCase
         $response->assertStatus(200);
         
         // Should have minimal queries with proper eager loading
-        // Test ensures assignee relationship is eager loaded
+        // Query count assertion verifies assignee relationship is eager loaded to prevent N+1 queries
         $this->assertLessThan(10, $queryCount,
             "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in project datatable."
         );
@@ -265,7 +265,7 @@ class ClientPerformanceTest extends AbstractTestCase
         $response->assertStatus(200);
         
         // Should have minimal queries with proper eager loading
-        // Test ensures assigned_user relationship is eager loaded
+        // Query count assertion verifies assigned_user relationship is eager loaded to prevent N+1 queries
         $this->assertLessThan(10, $queryCount,
             "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in lead datatable."
         );
