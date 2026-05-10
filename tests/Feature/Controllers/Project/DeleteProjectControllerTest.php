@@ -27,19 +27,16 @@ class DeleteProjectControllerTest extends AbstractTestCase
     {
         parent::setUp();
 
+        /* Arrange */
         $this->user = User::factory()->create();
         $role       = Role::firstOrCreate(['name' => 'employee']);
         $permission = Permission::firstOrCreate(['name' => 'project-delete']);
         $role->attachPermission($permission);
         $this->user->attachRole($role);
-
-        // Explicitly clear both permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
         $this->user = $this->user->fresh();
-
         $this->actingAs($this->user);
-
         $this->project = Project::factory()->create();
         $this->task    = Task::factory()->create([
             'project_id' => $this->project->id,
@@ -50,8 +47,11 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function it_deletes_project()
     {
+        /* Arrange */
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
+        /* Assert */
         $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
@@ -59,14 +59,17 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function it_deletes_tasks_if_flag_given()
     {
+        /* Arrange */
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id), [
             'delete_tasks' => 'on',
         ]);
 
+        /* Assert */
         $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
@@ -76,17 +79,18 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function it_removes_project_id_from_task_if_flag_not_given()
     {
+        /* Arrange */
         $task = Task::factory()->create([
             'project_id' => $this->project->id,
         ]);
 
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
+        /* Assert */
         $response->assertStatus(200);
-
         $this->assertNull($this->task->refresh()->deleted_at);
         $this->assertNull($this->task->refresh()->project_id);
-
         $this->assertNull($task->refresh()->deleted_at);
         $this->assertNull($task->refresh()->project_id);
     }
@@ -94,10 +98,14 @@ class DeleteProjectControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_delete_project_if_there_is_no_tasks()
     {
+        /* Arrange */
         $project  = Project::factory()->create();
+
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $project->external_id));
 
+        /* Assert */
         $response->assertStatus(200);
-        $this->assertnotNull($project->refresh()->deleted_at);
+        $this->assertNotNull($project->refresh()->deleted_at);
     }
 }

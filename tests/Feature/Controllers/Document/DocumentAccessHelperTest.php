@@ -37,6 +37,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
     #[Test]
     public function it_helper_method_correctly_identifies_ownership_via_creator()
     {
+        /* Arrange */
         $task = Task::factory()->create([
             'user_created_id'  => $this->owner->id,
             'user_assigned_id' => $this->otherUser->id,
@@ -48,24 +49,23 @@ class DocumentAccessHelperTest extends AbstractTestCase
             'source_id'   => $task->id,
         ]);
 
-        // Use reflection to test private helper method
-        // Testing private methods via reflection allows us to verify the helper's logic in isolation,
-        // providing granular test coverage beyond what's possible through the public API alone.
-        // The helper method is intentionally private as it's an internal implementation detail.
         $controller = new DocumentsController();
         $reflection = new ReflectionClass($controller);
         $method     = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
+        /* Act */
         $this->actingAs($this->owner);
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
 
+        /* Assert */
         $this->assertTrue($result, 'Owner should have access via user_created_id');
     }
 
     #[Test]
     public function it_helper_method_correctly_identifies_ownership_via_assignee()
     {
+        /* Arrange */
         $task = Task::factory()->create([
             'user_created_id'  => $this->otherUser->id,
             'user_assigned_id' => $this->owner->id,
@@ -77,15 +77,18 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $method     = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
+        /* Act */
         $this->actingAs($this->owner);
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
 
+        /* Assert */
         $this->assertTrue($result, 'Owner should have access via user_assigned_id');
     }
 
     #[Test]
     public function it_helper_method_correctly_identifies_ownership_via_client()
     {
+        /* Arrange */
         $task = Task::factory()->create([
             'user_created_id'  => $this->otherUser->id,
             'user_assigned_id' => $this->otherUser->id,
@@ -97,18 +100,19 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $method     = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
+        /* Act */
         $this->actingAs($this->owner);
-        // Eager load the client relationship since the helper method checks $source->client->user_id
-        // Without loading, accessing the relationship could cause a query or null reference
         $task->load('client');
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
 
+        /* Assert */
         $this->assertTrue($result, 'Owner should have access via client ownership');
     }
 
     #[Test]
     public function it_helper_method_correctly_denies_access_to_non_owner()
     {
+        /* Arrange */
         $otherClient = Client::factory()->create(['user_id' => $this->otherUser->id]);
         $task        = Task::factory()->create([
             'user_created_id'  => $this->otherUser->id,
@@ -121,10 +125,12 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $method     = $reflection->getMethod('userOwnsAssignableSource');
         $method->setAccessible(true);
 
+        /* Act */
         $this->actingAs($this->owner);
         $task->load('client');
         $result = $method->invokeArgs($controller, [$task, $this->owner]);
 
+        /* Assert */
         $this->assertFalse($result, 'Owner should NOT have access to other user\'s task');
     }
 }

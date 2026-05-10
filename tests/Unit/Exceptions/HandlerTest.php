@@ -18,15 +18,12 @@ class HandlerTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    # region happy_path
-
     #[Test]
     public function it_handler_class_extends_laravel_exception_handler()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $handler = app(Handler::class);
 
         /* Assert */
@@ -36,13 +33,13 @@ class HandlerTest extends AbstractTestCase
     #[Test]
     public function it_handler_dont_report_list_contains_expected_exceptions()
     {
-        /** Arrange */
+        /* Arrange */
         $handler    = new Handler(app());
         $reflection = new ReflectionClass($handler);
         $property   = $reflection->getProperty('dontReport');
         $property->setAccessible(true);
 
-        /** Act */
+        /* Act */
         $dontReport = $property->getValue($handler);
 
         /* Assert */
@@ -56,10 +53,9 @@ class HandlerTest extends AbstractTestCase
     #[Test]
     public function it_unauthenticated_returns_json_for_json_request()
     {
-        /** Arrange */
-        // No authentication credentials
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->withHeaders(['Accept' => 'application/json'])
             ->getJson('/api/users');
 
@@ -74,12 +70,10 @@ class HandlerTest extends AbstractTestCase
         /* Arrange */
         auth()->logout();
 
-        /** Act */
+        /* Act */
         $response = $this->get('/dashboard');
 
         /* Assert */
         $response->assertRedirect();
     }
-
-    # endregion
 }

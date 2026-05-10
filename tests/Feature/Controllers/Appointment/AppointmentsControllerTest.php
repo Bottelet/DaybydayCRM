@@ -26,14 +26,12 @@ class AppointmentsControllerTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
         $role       = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $this->user->attachRole($role);
 
-        // Give user permissions for appointment operations
         $this->withPermissions([
             PermissionName::APPOINTMENT_EDIT,
             PermissionName::APPOINTMENT_DELETE,
@@ -75,15 +73,13 @@ class AppointmentsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_can_get_appointments_within_time_slot()
     {
-        /** Arrange */
+        /* Arrange */
         $correctAppointment = null;
 
-        /** Act */
+        /* Act */
         $r = $this->json('GET', '/appointments/data');
 
         /* Assert */
@@ -99,10 +95,6 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->assertEquals($this->appointmentsWithInTime->end_at->toISOString(), $correctAppointment['end_at']);
         $this->assertCount(3, User::whereExternalId($this->user->external_id)->first()->appointments);
     }
-
-    # endregion
-
-    # region crud
 
     #[Test]
     public function it_can_update_appointment_times()
@@ -120,7 +112,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         ]);
         $newAssignee = User::factory()->create();
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $appointment->external_id), [
             'id'     => $appointment->id,
             'start'  => Carbon::now()->addDay()->toISOString(),
@@ -151,7 +143,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         ]);
         $appointmentExternalId = $appointment->external_id;
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $appointmentExternalId), [
             '_token' => csrf_token(),
         ]);
@@ -161,18 +153,13 @@ class AppointmentsControllerTest extends AbstractTestCase
         $this->assertNull(Appointment::whereExternalId($appointmentExternalId)->first());
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     #[Group('regression')]
     public function user_appointments_relationship_returns_appointments_via_morph()
     {
-        /** Arrange */
-        // All three setUp appointments use source_type = User::class, source_id = user->id
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $appointments = $this->user->appointments;
 
         /* Assert */
@@ -187,7 +174,7 @@ class AppointmentsControllerTest extends AbstractTestCase
     #[Group('regression')]
     public function user_appointments_morph_does_not_return_appointments_for_other_source_types()
     {
-        /** Arrange */
+        /* Arrange */
         $otherUser        = User::factory()->create();
         $otherAppointment = Appointment::factory()->create([
             'user_id'     => $this->user->id,
@@ -197,15 +184,13 @@ class AppointmentsControllerTest extends AbstractTestCase
             'color'       => '#000000',
         ]);
 
-        /** Act */
+        /* Act */
         $appointments          = $this->user->appointments;
         $otherUserAppointments = $otherUser->appointments;
 
-        /** Assert */
+        /* Assert */
         $otherIds = $appointments->pluck('external_id')->toArray();
         $this->assertNotContains($otherAppointment->external_id, $otherIds);
         $this->assertContains($otherAppointment->external_id, $otherUserAppointments->pluck('external_id')->toArray());
     }
-
-    # endregion
 }

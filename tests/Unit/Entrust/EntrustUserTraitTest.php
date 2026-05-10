@@ -33,12 +33,10 @@ class EntrustUserTraitTest extends AbstractTestCase
         $this->role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
     }
 
-    # region happy_path
-
     #[Test]
     public function it_attach_role_accepts_role_object()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
@@ -52,7 +50,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_attach_role_accepts_role_id()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
@@ -66,7 +64,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_attach_role_accepts_role_array()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
@@ -80,10 +78,9 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_cached_roles_returns_eloquent_model_instances()
     {
-        /** Arrange */
-        // User already created in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $cachedRoles = $this->user->cachedRoles();
 
         /* Assert */
@@ -96,12 +93,12 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_cached_roles_returns_collection_with_correct_roles()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
-        $user->attachRole($adminRole);
 
-        /** Act */
+        /* Act */
+        $user->attachRole($adminRole);
         $cachedRoles = $user->cachedRoles();
         $roleNames   = $cachedRoles->pluck('name')->toArray();
 
@@ -112,7 +109,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_has_role_works_correctly_after_attach_role_fix()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
@@ -123,10 +120,6 @@ class EntrustUserTraitTest extends AbstractTestCase
 
         $this->assertTrue($user->hasRole('administrator'), 'User should have role after attaching');
     }
-
-    # endregion
-
-    # region edge_cases
 
     #[Test]
     public function it_attach_role_does_not_create_duplicate_role_assignment()
@@ -147,7 +140,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_attach_role_called_multiple_times_results_in_only_one_db_entry()
     {
-        /** Arrange */
+        /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
@@ -156,7 +149,7 @@ class EntrustUserTraitTest extends AbstractTestCase
         $user->attachRole($adminRole);
         $user->attachRole($adminRole);
 
-        /** Assert */
+        /* Assert */
         $count = $user->roles()->where('roles.id', $adminRole->id)->count();
         $this->assertEquals(1, $count, 'Multiple attachRole calls should result in only one assignment');
     }
@@ -164,10 +157,10 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_cached_roles_returns_empty_when_no_roles_attached()
     {
-        /** Arrange */
+        /* Arrange */
         $user = User::factory()->create();
 
-        /** Act */
+        /* Act */
         $cachedRoles = $user->cachedRoles();
 
         /* Assert */
@@ -177,7 +170,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     #[Test]
     public function it_attaching_same_role_twice_does_not_throw_unique_constraint_exception()
     {
-        /** Arrange */
+        /* Arrange */
         $user = User::factory()->create();
         $role = Role::factory()->create();
 
@@ -190,6 +183,4 @@ class EntrustUserTraitTest extends AbstractTestCase
             $this->fail('attachRole threw an exception on duplicate: ' . $e->getMessage());
         }
     }
-
-    # endregion
 }

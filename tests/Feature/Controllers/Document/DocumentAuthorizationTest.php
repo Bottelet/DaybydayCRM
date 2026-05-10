@@ -91,61 +91,64 @@ class DocumentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_task_upload_permission_can_upload_files_to_task()
     {
+        /* Arrange */
         $this->actingAs($this->userWithTaskUploadPermission);
-
-        // Mock file upload
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
-        // Since this is integration test and file system may not be configured,
-        // we mainly check that authorization passes (not 403)
+        /* Assert */
         $this->assertNotEquals(403, $response->status());
     }
 
     #[Test]
     public function it_user_without_task_upload_permission_cannot_upload_files_to_task()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
-
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
-        $response->assertStatus(302); // Redirect with error message
+        /* Assert */
+        $response->assertStatus(302);
     }
 
     #[Test]
     public function it_user_with_project_upload_permission_can_upload_files_to_project()
     {
+        /* Arrange */
         $this->actingAs($this->userWithProjectUploadPermission);
-
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
-        // Since this is integration test and file system may not be configured,
-        // we mainly check that authorization passes (not 403)
+        /* Assert */
         $this->assertNotEquals(403, $response->status());
     }
 
     #[Test]
     public function it_user_without_project_upload_permission_cannot_upload_files_to_project()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
-
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
-        $response->assertStatus(302); // Redirect with error message
+        /* Assert */
+        $response->assertStatus(302);
     }
 }

@@ -18,7 +18,6 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -28,16 +27,14 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_invoice_line_stores_explicit_external_id_when_provided()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice    = Invoice::factory()->create();
         $externalId = Uuid::uuid4()->toString();
 
-        /** Act */
+        /* Act */
         $invoiceLine = InvoiceLine::create([
             'external_id' => $externalId,
             'title'       => 'Test Line Item',
@@ -61,7 +58,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     #[Test]
     public function it_invoice_line_generates_unique_external_ids_for_each_record()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice = Invoice::factory()->create();
 
         $line1 = InvoiceLine::create([
@@ -74,7 +71,7 @@ class InvoiceLineModelBootTest extends AbstractTestCase
             'invoice_id'  => $invoice->id,
         ]);
 
-        /** Act */
+        /* Act */
         $line2 = InvoiceLine::create([
             'external_id' => Uuid::uuid4()->toString(),
             'title'       => 'Line Item Two',
@@ -92,10 +89,10 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     #[Test]
     public function it_invoice_line_factory_creates_record_with_external_id()
     {
-        /** Arrange */
-        // Factory will create invoice automatically
+        /* Arrange */
+        $placeholder = null;
 
-        /** Act */
+        /* Act */
         $invoiceLine = InvoiceLine::factory()->create();
 
         /* Assert */
@@ -106,18 +103,14 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         ]);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_invoice_line_preserves_provided_external_id()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice          = Invoice::factory()->create();
         $customExternalId = 'custom-invoice-line-uuid-xyz';
 
-        /** Act */
+        /* Act */
         $invoiceLine = InvoiceLine::create([
             'external_id' => $customExternalId,
             'title'       => 'Test Line Item',
@@ -131,6 +124,4 @@ class InvoiceLineModelBootTest extends AbstractTestCase
         /* Assert */
         $this->assertEquals($customExternalId, $invoiceLine->external_id);
     }
-
-    # endregion
 }

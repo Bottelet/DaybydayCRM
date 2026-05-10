@@ -38,6 +38,10 @@ class LeadsControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_create_lead()
     {
+        /* Arrange */
+        $this->client = Client::factory()->create();
+
+        /* Act */
         $response = $this->json('POST', route('leads.store'), [
             'title'              => 'Lead test',
             'description'        => 'This is a description',
@@ -49,6 +53,7 @@ class LeadsControllerTest extends AbstractTestCase
             'contact_time'       => '15:00',
         ]);
 
+        /* Assert */
         $leads = Lead::where('user_assigned_id', $this->user->id);
 
         $this->assertCount(1, $leads->get());
@@ -57,68 +62,76 @@ class LeadsControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_update_assignee()
     {
+        /* Arrange */
         $lead = Lead::factory()->create();
         $this->assertNotEquals($lead->user_assigned_id, $this->user->id);
 
+        /* Act */
         $response = $this->json('PATCH', route('leads.updateAssign', $lead->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 
+        /* Assert */
         $this->assertEquals($lead->refresh()->user_assigned_id, $this->user->id);
     }
 
     #[Test]
     public function it_can_update_status()
     {
+        /* Arrange */
         $lead   = Lead::factory()->create();
         $status = Status::factory()->create(['source_type' => Lead::class]);
 
         $this->assertNotEquals($lead->status_id, $status->id);
 
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.status', $lead->external_id), [
             'status_id' => $status->id,
         ]);
 
+        /* Assert */
         $this->assertEquals($lead->refresh()->status_id, $status->id);
     }
 
     #[Test]
     public function it_can_update_deadline_for_lead()
     {
+        /* Arrange */
         $lead = Lead::factory()->create();
 
-        // Ensure user has permission
         $permission = Permission::firstOrCreate(['name' => 'lead-update-deadline']);
         $this->user->roles->first()->attachPermission($permission);
         $this->user = $this->user->fresh();
         $this->actingAs($this->user);
         Cache::tags('role_user')->flush();
 
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.deadline', $lead->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);
 
+        /* Assert */
         $this->assertEquals(Carbon::parse('2020-08-06')->toDateString(), Carbon::parse($lead->refresh()->deadline)->toDateString());
     }
 
     #[Test]
     public function it_updates_followup_stores_deadline_as_datetime_string()
     {
-        // Regression for the deadline fix: Carbon::parse(...)->toDateTimeString()
-        // ensures the deadline is stored as a string, not a Carbon object.
+        /* Arrange */
         $lead = Lead::factory()->create();
 
+        /* Act */
         $response = $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-06-15',
             'contact_time' => '10:30',
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
 
         $storedDeadline = $lead->refresh()->deadline;
 
-        // Should be parseable and match the expected date
         $this->assertEquals(
             '2025-06-15',
             Carbon::parse($storedDeadline)->toDateString()
@@ -133,14 +146,16 @@ class LeadsControllerTest extends AbstractTestCase
     #[Test]
     public function it_updates_followup_stores_deadline_with_correct_time_component()
     {
-        // Boundary: verify the time part of the deadline is stored correctly
+        /* Arrange */
         $lead = Lead::factory()->create();
 
+        /* Act */
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-12-31',
             'contact_time' => '23:59',
         ]);
 
+        /* Assert */
         $storedDeadline = $lead->refresh()->deadline;
         $parsed         = Carbon::parse($storedDeadline);
 
@@ -151,18 +166,18 @@ class LeadsControllerTest extends AbstractTestCase
     #[Test]
     public function it_updates_followup_deadline_is_stored_as_parseable_date_in_database()
     {
-        // Ensures the fix (using ->toDateTimeString()) causes the deadline column
-        // to contain a plain string representation, not an object.
+        /* Arrange */
         $lead = Lead::factory()->create();
 
+        /* Act */
         $this->json('PATCH', route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-03-20',
             'contact_time' => '09:00',
         ]);
 
+        /* Assert */
         $rawDeadline = DB::table('leads')->where('id', $lead->id)->value('deadline');
 
-        // The stored value should be a parseable string, not null
         $this->assertNotNull($rawDeadline);
         $this->assertStringContainsString('2025-03-20', $rawDeadline);
     }

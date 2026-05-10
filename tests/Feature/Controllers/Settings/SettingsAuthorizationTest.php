@@ -36,7 +36,6 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'max_users'      => 10,
         ]);
 
-        // Create business hours for the setting
         foreach (['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day) {
             BusinessHour::firstOrCreate(
                 ['day' => $day],
@@ -44,38 +43,44 @@ class SettingsAuthorizationTest extends AbstractTestCase
             );
         }
 
-        // Create admin user
         $this->adminUser = User::factory()->withRole('administrator')->create();
 
-        // Create non-admin user
         $this->nonAdminUser = User::factory()->withRole('employee')->create();
     }
 
     #[Test]
     public function it_admin_can_access_settings_index()
     {
+        /* Arrange */
         $this->actingAs($this->adminUser);
 
+        /* Act */
         $response = $this->get(route('settings.index'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_non_admin_cannot_access_settings_index()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
+        /* Act */
         $response = $this->get(route('settings.index'));
 
-        $response->assertStatus(302); // Redirect back
+        /* Assert */
+        $response->assertStatus(302);
     }
 
     #[Test]
     public function it_admin_can_update_overall_settings()
     {
+        /* Arrange */
         $this->actingAs($this->adminUser);
 
+        /* Act */
         $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company'        => 'Test Company',
             'vat'            => 25,
@@ -88,6 +93,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time'       => '17:00',
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals('Test Company', Setting::first()->company);
     }
@@ -95,10 +101,12 @@ class SettingsAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_non_admin_cannot_update_overall_settings()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
         $originalCompany = $this->setting->company;
 
+        /* Act */
         $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company'        => 'Malicious Company',
             'vat'            => 25,
@@ -111,15 +119,18 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time'       => '17:00',
         ]);
 
-        $response->assertStatus(403); // JSON request returns 403 for unauthorized
+        /* Assert */
+        $response->assertStatus(403);
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 
     #[Test]
     public function it_admin_can_update_first_step_settings()
     {
+        /* Arrange */
         $this->actingAs($this->adminUser);
 
+        /* Act */
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'New Company',
             'country'      => 'GB',
@@ -127,6 +138,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time'     => '18:00',
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals('New Company', Setting::first()->company);
     }
@@ -134,10 +146,12 @@ class SettingsAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_non_admin_cannot_update_first_step_settings()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
         $originalCompany = $this->setting->company;
 
+        /* Act */
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Malicious Company',
             'country'      => 'GB',
@@ -145,7 +159,8 @@ class SettingsAuthorizationTest extends AbstractTestCase
             'end_time'     => '18:00',
         ]);
 
-        $response->assertStatus(403); // JSON request returns 403 for unauthorized
+        /* Assert */
+        $response->assertStatus(403);
         $this->assertEquals($originalCompany, Setting::first()->company);
     }
 }

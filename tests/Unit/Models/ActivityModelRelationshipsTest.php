@@ -34,7 +34,6 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
@@ -47,12 +46,10 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_activity_causer_relationship_returns_morph_to_instance()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -61,7 +58,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $activity->causer();
 
         /* Assert */
@@ -71,7 +68,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_causer_resolves_to_user_model()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -80,7 +77,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $causer = $activity->causer;
 
         /* Assert */
@@ -92,7 +89,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_source_relationship_returns_morph_to_instance()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -101,7 +98,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $activity->source();
 
         /* Assert */
@@ -111,7 +108,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_source_resolves_to_task_model()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -120,7 +117,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $source = $activity->source;
 
         /* Assert */
@@ -132,9 +129,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_task_relationship_method_returns_belongs_to_instance()
     {
-        /** Arrange */
-        // task() uses 'task_id' foreign key. The column doesn't exist in the DB table,
-        // but the BelongsTo relationship object can still be instantiated.
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -143,7 +138,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $activity->task();
 
         /* Assert */
@@ -153,9 +148,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_user_relationship_method_returns_belongs_to_instance()
     {
-        /** Arrange */
-        // user() uses 'user_id' foreign key. The column doesn't exist in the DB table,
-        // but the BelongsTo relationship object can still be instantiated.
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -164,21 +157,17 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $activity->user();
 
         /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_activity_all_relationship_methods_exist()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = new Activity();
 
         /* Act & Assert */
@@ -191,7 +180,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_causer_and_source_are_different_relationships()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => User::class,
             'causer_id'   => $this->user->id,
@@ -200,7 +189,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $causerRelationship = $activity->causer();
         $sourceRelationship = $activity->source();
 
@@ -213,7 +202,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_with_different_causer_resolves_correctly()
     {
-        /** Arrange */
+        /* Arrange */
         $anotherUser = User::factory()->create();
         $activity    = Activity::create([
             'causer_type' => User::class,
@@ -223,7 +212,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity',
         ]);
 
-        /** Act */
+        /* Act */
         $causer = $activity->causer;
 
         /* Assert */
@@ -235,7 +224,7 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     #[Test]
     public function it_activity_with_null_causer_returns_null()
     {
-        /** Arrange */
+        /* Arrange */
         $activity = Activity::create([
             'causer_type' => null,
             'causer_id'   => null,
@@ -244,12 +233,10 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
             'text'        => 'Test activity without causer',
         ]);
 
-        /** Act */
+        /* Act */
         $causer = $activity->causer;
 
         /* Assert */
         $this->assertNull($causer);
     }
-
-    # endregion
 }

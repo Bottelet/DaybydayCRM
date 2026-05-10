@@ -35,7 +35,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     #[Test]
     public function it_happy_path()
     {
-        // Ensure the permission exists
+        /* Arrange */
         $permission = Permission::firstOrCreate(
             ['name' => 'modify-invoice-lines'],
             [
@@ -45,7 +45,6 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             ]
         );
 
-        // Get or create owner role and attach permission
         $ownerRole = Role::firstOrCreate(
             ['name' => 'owner'],
             [
@@ -55,25 +54,24 @@ class InvoiceLinesControllerTest extends AbstractTestCase
             ]
         );
 
-        // Ensure the permission is attached to the role
         if ( ! $ownerRole->hasPermission('modify-invoice-lines')) {
             $ownerRole->attachPermission($permission);
         }
 
-        // Ensure the user has the role
         if ( ! $this->user->hasRole('owner')) {
             $this->user->attachRole($ownerRole);
         }
 
-        // Explicitly clear the permissions cache and re-authenticate
         Cache::tags('role_user')->flush();
         $this->user = $this->user->fresh();
         $this->actingAs($this->user);
 
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
+        /* Act */
         $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
+        /* Assert */
         $r->assertStatus(302);
         $this->assertSoftDeleted('invoice_lines', ['external_id' => $this->invoiceLine->external_id]);
     }
@@ -81,12 +79,15 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     #[Test]
     public function it_cant_delete_without_permission()
     {
+        /* Arrange */
         $user = User::factory()->create();
-        $this->actingAs($user); // Use Laravel's authentication helper
+        $this->actingAs($user);
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());
 
+        /* Act */
         $response = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $response->assertJson(['message' => __('You do not have permission to modify invoice lines')]);
         $this->assertNotNull(InvoiceLine::where('external_id', $this->invoiceLine->external_id)->first());

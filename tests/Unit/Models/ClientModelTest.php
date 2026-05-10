@@ -17,7 +17,6 @@ class ClientModelTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -27,12 +26,10 @@ class ClientModelTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_gets_primary_contact_attribute_returns_primary_contact_when_one_exists()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -41,7 +38,7 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => true,
         ]);
 
-        /** Act */
+        /* Act */
         $result = $client->primaryContact;
 
         /* Assert */
@@ -53,7 +50,7 @@ class ClientModelTest extends AbstractTestCase
     #[Test]
     public function it_gets_primary_contact_attribute_returns_only_the_primary_contact_when_multiple_contacts_exist()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -67,7 +64,7 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => false,
         ]);
 
-        /** Act */
+        /* Act */
         $result = $client->primaryContact;
 
         /* Assert */
@@ -79,7 +76,7 @@ class ClientModelTest extends AbstractTestCase
     #[Test]
     public function it_primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -88,7 +85,7 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => true,
         ]);
 
-        /** Act */
+        /* Act */
         $result      = $client->primaryContact;
         $freshClient = Client::find($client->id);
         $freshResult = $freshClient->primaryContact;
@@ -98,18 +95,14 @@ class ClientModelTest extends AbstractTestCase
         $this->assertEquals($primaryContact->id, $freshResult->id);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_gets_primary_contact_attribute_returns_null_when_no_contacts_exist()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
-        /** Act */
+        /* Act */
         $result = $client->primaryContact;
 
         /* Assert */
@@ -119,7 +112,7 @@ class ClientModelTest extends AbstractTestCase
     #[Test]
     public function it_gets_primary_contact_attribute_returns_null_when_no_primary_contact()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
@@ -128,7 +121,7 @@ class ClientModelTest extends AbstractTestCase
             'is_primary' => false,
         ]);
 
-        /** Act */
+        /* Act */
         $result = $client->primaryContact;
 
         /* Assert */
@@ -138,16 +131,14 @@ class ClientModelTest extends AbstractTestCase
     #[Test]
     public function it_gets_primary_contact_attribute_returns_null_on_fresh_client_without_contacts()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $client->contacts()->forceDelete();
 
-        /** Act */
+        /* Act */
         $result = $client->fresh()->primaryContact;
 
         /* Assert */
         $this->assertNull($result);
     }
-
-    # endregion
 }

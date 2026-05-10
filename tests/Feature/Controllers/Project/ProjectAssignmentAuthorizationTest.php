@@ -31,7 +31,7 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create permission
+        /* Arrange */
         $permission = Permission::firstOrCreate(
             ['name' => 'can-assign-new-user-to-project'],
             [
@@ -40,8 +40,6 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
                 'external_id'  => Str::uuid()->toString(),
             ]
         );
-
-        // Create role with permission
         $authorizedRole = Role::firstOrCreate(
             ['name' => 'project-assigner'],
             [
@@ -51,18 +49,10 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
             ]
         );
         $authorizedRole->perms()->sync([$permission->id]);
-
-        // Create authorized user
         $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
-
-        // Create unauthorized user
         $this->unauthorizedUser = User::factory()->create();
-
-        // Create user to assign to
         $this->newAssignee = User::factory()->create();
-
-        // Create project
         $client        = Client::factory()->create();
         $this->project = Project::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
@@ -73,27 +63,22 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_reassign_project()
     {
+        /* Arrange */
         $originalAssignee = $this->project->user_assigned_id;
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->authorizedUser = $this->authorizedUser->fresh();
-
-        // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-project'));
-
-        // Verify initial state
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
 
+        /* Act */
         $response = $this->actingAs($this->authorizedUser)
             ->patch(route('project.update.assignee', $this->project->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message');
-
-        // Verify assignment was updated in database
         $this->assertDatabaseHas('projects', [
             'id'               => $this->project->id,
             'user_assigned_id' => $this->newAssignee->id,
@@ -104,24 +89,21 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_unauthorized_user_cannot_reassign_project()
     {
+        /* Arrange */
         $originalAssignee = $this->project->user_assigned_id;
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->unauthorizedUser = $this->unauthorizedUser->fresh();
-
-        // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-project'));
 
+        /* Act */
         $response = $this->actingAs($this->unauthorizedUser)
             ->patch(route('project.update.assignee', $this->project->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this project'));
-
-        // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('projects', [
             'id'               => $this->project->id,
             'user_assigned_id' => $originalAssignee,

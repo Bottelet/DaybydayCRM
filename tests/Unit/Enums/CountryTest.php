@@ -16,7 +16,6 @@ class CountryTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -26,15 +25,13 @@ class CountryTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_from_code_returns_correct_country_instance()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -45,10 +42,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_correct_display_value()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -58,10 +55,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_correct_currency_code()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -71,10 +68,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_correct_language()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -84,10 +81,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_correct_phone_code()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -97,10 +94,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_format_array()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DK';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
         $format  = $country->getFormat();
 
@@ -114,10 +111,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_germany_correctly()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'DE';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -129,10 +126,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_united_kingdom_correctly()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'GB';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -143,10 +140,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_sweden_correctly()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'SE';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -158,10 +155,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_us_country_has_different_date_format()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'US';
 
-        /** Act */
+        /* Act */
         $us     = Country::fromCode($countryCode);
         $format = $us->getFormat();
 
@@ -173,10 +170,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_us_with_different_carbon_date_format()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'US';
 
-        /** Act */
+        /* Act */
         $us     = Country::fromCode($countryCode);
         $format = $us->getFormat();
 
@@ -188,10 +185,9 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_values_returns_all_ten_countries()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $values = Country::values();
 
         /* Assert */
@@ -201,10 +197,9 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_values_contains_expected_country_codes()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $values = Country::values();
 
         /* Assert */
@@ -223,7 +218,7 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_country_constructor_sets_all_properties()
     {
-        /** Arrange */
+        /* Arrange */
         $code       = 'TEST';
         $properties = [
             'displayValue' => 'Test Country',
@@ -233,7 +228,7 @@ class CountryTest extends AbstractTestCase
             'format'       => ['frontendDate' => 'dd/mm/yyyy'],
         ];
 
-        /** Act */
+        /* Act */
         $country = new Country($code, $properties);
 
         /* Assert */
@@ -248,10 +243,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_returns_ot_directly_when_ot_is_requested()
     {
-        /** Arrange */
+        /* Arrange */
         $countryCode = 'OT';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($countryCode);
 
         /* Assert */
@@ -260,17 +255,13 @@ class CountryTest extends AbstractTestCase
         $this->assertEquals('Other', $country->getDisplayValue());
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_from_code_returns_fallback_to_other_for_unknown_code()
     {
-        /** Arrange */
+        /* Arrange */
         $unknownCode = 'XX';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($unknownCode);
 
         /* Assert */
@@ -282,10 +273,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_other_country_fallback_is_returned_for_empty_string()
     {
-        /** Arrange */
+        /* Arrange */
         $emptyCode = '';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($emptyCode);
 
         /* Assert */
@@ -295,10 +286,10 @@ class CountryTest extends AbstractTestCase
     #[Test]
     public function it_from_code_fallback_ot_has_expected_properties()
     {
-        /** Arrange */
+        /* Arrange */
         $unknownCode = 'ZZ';
 
-        /** Act */
+        /* Act */
         $country = Country::fromCode($unknownCode);
 
         /* Assert */
@@ -306,6 +297,4 @@ class CountryTest extends AbstractTestCase
         $this->assertEquals('English', $country->getLanguage());
         $this->assertEquals('+44', $country->getPhoneCode());
     }
-
-    # endregion
 }

@@ -32,11 +32,8 @@ class InvoiceCalculatorTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
-        // Ensure Setting exists with VAT = 0 for consistent test behavior
-        // Use firstOrCreate to ensure a setting exists, then update it
         $setting = \App\Models\Setting::firstOrCreate(
             ['id' => 1],
             [
@@ -76,25 +73,18 @@ class InvoiceCalculatorTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     #[Group('flaky')]
     public function get_amount_due()
     {
-        /** Arrange */
-        // Invoice with line item 5000, payment 1000, expected due: 4000
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $amountDue = $this->invoiceCalculator->getAmountDue()->getAmount();
 
         /* Assert */
         $this->assertEquals(4000, $amountDue);
     }
-
-    # endregion
-
-    # region edge_cases
 
     #[Test]
     public function it_gets_amount_due_with_no_payments()
@@ -103,7 +93,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $this->payment->forceDelete();
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
         /* Assert */
@@ -122,7 +112,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
         ]);
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
         /* Assert */
@@ -137,7 +127,7 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $this->payment->save();
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
         /* Assert */
@@ -153,12 +143,10 @@ class InvoiceCalculatorTest extends AbstractTestCase
         $this->invoiceLine->save();
         $calculator = app(InvoiceCalculator::class, ['invoice' => $this->invoice->refresh()]);
 
-        /** Act */
+        /* Act */
         $amountDue = $calculator->getAmountDue()->getAmount();
 
         /* Assert */
         $this->assertEquals(0, $amountDue);
     }
-
-    # endregion
 }

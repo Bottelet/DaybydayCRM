@@ -25,7 +25,6 @@ class DocumentModelBootTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user   = User::factory()->create();
@@ -38,15 +37,13 @@ class DocumentModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_document_stores_explicit_external_id_when_provided()
     {
-        /** Arrange */
+        /* Arrange */
         $externalId = Uuid::uuid4()->toString();
 
-        /** Act */
+        /* Act */
         $document = Document::create([
             'external_id'       => $externalId,
             'size'              => 1.5,
@@ -71,7 +68,7 @@ class DocumentModelBootTest extends AbstractTestCase
     #[Test]
     public function it_document_generates_unique_external_ids_for_each_record()
     {
-        /** Arrange */
+        /* Arrange */
         $document1 = Document::create([
             'external_id'       => Uuid::uuid4()->toString(),
             'size'              => 1.0,
@@ -83,7 +80,7 @@ class DocumentModelBootTest extends AbstractTestCase
             'source_id'         => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $document2 = Document::create([
             'external_id'       => Uuid::uuid4()->toString(),
             'size'              => 2.0,
@@ -102,13 +99,13 @@ class DocumentModelBootTest extends AbstractTestCase
     #[Test]
     public function it_document_has_sourceable_morph_to_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $document = Document::factory()->create([
             'source_type' => Client::class,
             'source_id'   => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $document->source();
 
         /* Assert */
@@ -119,10 +116,10 @@ class DocumentModelBootTest extends AbstractTestCase
     #[Test]
     public function it_document_factory_creates_record_with_external_id()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $document = Document::factory()->create([
             'source_type' => Task::class,
             'source_id'   => $task->id,
@@ -136,17 +133,13 @@ class DocumentModelBootTest extends AbstractTestCase
         ]);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_document_preserves_provided_external_id()
     {
-        /** Arrange */
+        /* Arrange */
         $customExternalId = 'custom-document-uuid-abcd';
 
-        /** Act */
+        /* Act */
         $document = Document::create([
             'external_id'       => $customExternalId,
             'size'              => 1.5,
@@ -161,6 +154,4 @@ class DocumentModelBootTest extends AbstractTestCase
         /* Assert */
         $this->assertEquals($customExternalId, $document->external_id);
     }
-
-    # endregion
 }

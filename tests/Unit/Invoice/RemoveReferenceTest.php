@@ -20,7 +20,6 @@ class RemoveReferenceTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->invoice = Invoice::factory()->create([
@@ -36,13 +35,10 @@ class RemoveReferenceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_removes_reference_clears_integration_fields()
     {
         /* Arrange */
-        // Invoice created with integration reference in setUp()
         $this->assertNotNull($this->invoice->integration_invoice_id);
         $this->assertNotNull($this->invoice->integration_type);
 
@@ -54,14 +50,10 @@ class RemoveReferenceTest extends AbstractTestCase
         $this->assertNull($this->invoice->integration_type);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_removes_reference_on_invoice_with_project_reference()
     {
-        /** Arrange */
+        /* Arrange */
         $project = Project::factory()->create();
         $invoice = Invoice::factory()->create([
             'sent_at'                => null,
@@ -80,7 +72,7 @@ class RemoveReferenceTest extends AbstractTestCase
     #[Test]
     public function it_removes_reference_on_invoice_without_reference()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice = Invoice::factory()->create([
             'sent_at'                => null,
             'integration_invoice_id' => null,
@@ -98,17 +90,15 @@ class RemoveReferenceTest extends AbstractTestCase
     #[Test]
     public function it_removes_reference_persists_to_database()
     {
-        /** Arrange */
+        /* Arrange */
         $invoiceId = $this->invoice->id;
 
         /* Act */
         $this->invoice->removeReference();
 
-        /** Assert */
+        /* Assert */
         $freshInvoice = Invoice::find($invoiceId);
         $this->assertNull($freshInvoice->integration_invoice_id);
         $this->assertNull($freshInvoice->integration_type);
     }
-
-    # endregion
 }

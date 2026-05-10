@@ -28,10 +28,8 @@ class AppointmentSecurityTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
-        // Create and authenticate a user with default role
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
@@ -41,10 +39,8 @@ class AppointmentSecurityTest extends AbstractTestCase
             'end_at'   => Carbon::now()->addHour(),
         ]);
 
-        // Create a user without appointment-update permission
         $this->unauthorizedUser = User::factory()->withRole('employee')->create();
 
-        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
@@ -54,8 +50,6 @@ class AppointmentSecurityTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_authorized_user_can_update_appointment()
     {
@@ -64,7 +58,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $expectedStart = Carbon::now()->addDay();
         $expectedEnd   = Carbon::now()->addDay()->addHour();
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'id'     => $this->appointment->id,
             'start'  => $expectedStart->toISOString(),
@@ -89,7 +83,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         /* Arrange */
         $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
             '_token' => csrf_token(),
         ]);
@@ -99,17 +93,13 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->assertSoftDeleted('appointments', ['id' => $this->appointment->id]);
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     public function it_unauthorized_user_cannot_update_appointment()
     {
         /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', route('appointments.update', $this->appointment->external_id), [
             'start' => Carbon::now()->addDay()->toISOString(),
             'end'   => Carbon::now()->addDay()->addHour()->toISOString(),
@@ -128,7 +118,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->user = User::factory()->withRole('employee')->create();
         $this->actingAs($this->user);
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $this->appointment->external_id), [
             'id'     => $this->appointment->id,
             'start'  => Carbon::now()->addDay()->toISOString(),
@@ -147,7 +137,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
-        /** Act */
+        /* Act */
         $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $this->appointment->external_id), [
             '_token' => csrf_token(),
         ]);
@@ -155,6 +145,4 @@ class AppointmentSecurityTest extends AbstractTestCase
         /* Assert */
         $response->assertStatus(403);
     }
-
-    # endregion
 }

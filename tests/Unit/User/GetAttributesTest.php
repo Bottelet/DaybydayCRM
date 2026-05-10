@@ -14,7 +14,6 @@ class GetAttributesTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
-    /** @var User */
     protected $user;
 
     protected function setUp(): void
@@ -22,13 +21,11 @@ class GetAttributesTest extends AbstractTestCase
         parent::setUp();
     }
 
-    # region happy_path
-
     #[Test]
     #[Group('junie_repaired')]
     public function get_name_and_department()
     {
-        /** Arrange */
+        /* Arrange */
         $department = Department::factory()->create([
             'name' => 'Tiger',
         ]);
@@ -37,7 +34,7 @@ class GetAttributesTest extends AbstractTestCase
         ]);
         $this->user->department()->sync([$department->id]);
 
-        /** Act */
+        /* Act */
         $nameAndDepartment = $this->user->name_and_department;
 
         /* Assert */
@@ -48,7 +45,7 @@ class GetAttributesTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function get_name_and_department_with_eager_loading()
     {
-        /** Arrange */
+        /* Arrange */
         $department = Department::factory()->create([
             'name' => 'Tiger',
         ]);
@@ -57,7 +54,7 @@ class GetAttributesTest extends AbstractTestCase
         ]);
         $this->user->department()->sync([$department->id]);
 
-        /** Act */
+        /* Act */
         $userWithEagerLoading = User::whereName($this->user->name)->with('department')->first();
         $nameAndDepartment    = $userWithEagerLoading->name_and_department_eager_loading;
 
@@ -74,7 +71,7 @@ class GetAttributesTest extends AbstractTestCase
             'name' => 'Eye of the',
         ]);
 
-        /** Act */
+        /* Act */
         $avatar = $this->user->avatar;
 
         /* Assert */
@@ -92,12 +89,10 @@ class GetAttributesTest extends AbstractTestCase
         Config::set('filesystems.default', 'local');
         $this->user->image_path = 'tiger.jpg';
 
-        /** Act */
+        /* Act */
         $avatar = $this->user->avatar;
 
         /* Assert */
         $this->assertEquals('/storage/tiger.jpg', $avatar);
     }
-
-    # endregion
 }

@@ -7,19 +7,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Tests\AbstractTestCase;
 
-/**
- * Tests for project configuration files changed in this PR:
- * - .env.ci       : CACHE_DRIVER → CACHE_STORE, SESSION_DOMAIN=null added
- * - .env.dusk.local: CACHE_DRIVER → CACHE_STORE
- * - .env.testing  : new file with required test environment keys
- * - .env.example  : MAIL_SCHEME=null added, PHP_CLI_SERVER_WORKERS commented out, EOF newline
- * - phpunit.yml   : PHP version 8.3, yarn build steps removed
- * - .gitignore    : expanded with categorised sections
- * - .gitattributes: rewrote with eol=lf, diff drivers, export-ignore
- *
- * These tests use plain PHPUnit (not the Laravel TestCase) because they only
- * inspect file contents and do not need the application container.
- */
 #[Group('project-files-configuration')]
 class ProjectFilesConfigurationTest extends AbstractTestCase
 {
@@ -31,19 +18,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         $this->rootPath = realpath(__DIR__ . '/../../..');
     }
 
-    # region happy_path
-
-    // -------------------------------------------------------------------------
-    // .env.ci
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_env_ci_uses_cache_store_not_cache_driver(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.ci');
 
-        /** Act */
+        /* Act */
         $hasCacheStore  = str_contains($content, 'CACHE_STORE=');
         $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
 
@@ -61,10 +42,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_ci_cache_store_is_set_to_array(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
-        /** Act */
+        /* Act */
         $cacheStore = $vars['CACHE_STORE'] ?? null;
 
         /* Assert */
@@ -79,11 +60,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_ci_contains_session_domain(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
         /* Act */
-        // Check for key existence
 
         /* Assert */
         $this->assertArrayHasKey(
@@ -96,10 +76,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_ci_app_env_is_testing(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.ci');
 
-        /** Act */
+        /* Act */
         $appEnv = $vars['APP_ENV'] ?? null;
 
         /* Assert */
@@ -110,7 +90,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_ci_contains_required_keys(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars     = $this->parseEnvFile('.env.ci');
         $required = [
             'APP_ENV',
@@ -122,7 +102,6 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         ];
 
         /* Act */
-        // Check each required key
 
         /* Assert */
         foreach ($required as $key) {
@@ -130,17 +109,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         }
     }
 
-    // -------------------------------------------------------------------------
-    // .env.dusk.local
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_env_dusk_local_uses_cache_store_not_cache_driver(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.dusk.local');
 
-        /** Act */
+        /* Act */
         $hasCacheStore  = str_contains($content, 'CACHE_STORE=');
         $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
 
@@ -158,10 +133,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_dusk_local_cache_store_is_set_to_array(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.dusk.local');
 
-        /** Act */
+        /* Act */
         $cacheStore = $vars['CACHE_STORE'] ?? null;
 
         /* Assert */
@@ -169,17 +144,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         $this->assertEquals('array', $cacheStore);
     }
 
-    // -------------------------------------------------------------------------
-    // .env.testing
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_env_testing_file_exists(): void
     {
-        /** Arrange */
+        /* Arrange */
         $filePath = $this->rootPath . '/.env.testing';
 
-        /** Act */
+        /* Act */
         $fileExists = file_exists($filePath);
 
         /* Assert */
@@ -192,10 +163,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_app_env_is_testing(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
-        /** Act */
+        /* Act */
         $appEnv = $vars['APP_ENV'] ?? null;
 
         /* Assert */
@@ -206,10 +177,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_uses_cache_store_not_cache_driver(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.testing');
 
-        /** Act */
+        /* Act */
         $hasCacheStore  = str_contains($content, 'CACHE_STORE=');
         $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
 
@@ -227,10 +198,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_cache_store_is_array(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
-        /** Act */
+        /* Act */
         $cacheStore = $vars['CACHE_STORE'] ?? null;
 
         /* Assert */
@@ -241,12 +212,11 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_contains_required_database_keys(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars     = $this->parseEnvFile('.env.testing');
         $required = ['DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME'];
 
         /* Act */
-        // Check each required key
 
         /* Assert */
         foreach ($required as $key) {
@@ -257,10 +227,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_database_name_is_test_database(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
-        /** Act */
+        /* Act */
         $dbDatabase = $vars['DB_DATABASE'] ?? '';
 
         /* Assert */
@@ -275,7 +245,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_contains_required_keys(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars     = $this->parseEnvFile('.env.testing');
         $required = [
             'APP_ENV',
@@ -287,7 +257,6 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         ];
 
         /* Act */
-        // Check each required key
 
         /* Assert */
         foreach ($required as $key) {
@@ -298,10 +267,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_testing_queue_driver_is_sync(): void
     {
-        /** Arrange */
+        /* Arrange */
         $vars = $this->parseEnvFile('.env.testing');
 
-        /** Act */
+        /* Act */
         $queueDriver = $vars['QUEUE_DRIVER'] ?? null;
 
         /* Assert */
@@ -313,17 +282,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         );
     }
 
-    // -------------------------------------------------------------------------
-    // .env.example
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_env_example_contains_mail_scheme_key(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.example');
 
-        /** Act */
+        /* Act */
         $hasMailScheme = str_contains($content, 'MAIL_SCHEME=');
 
         /* Assert */
@@ -336,10 +301,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_example_uses_cache_store_not_cache_driver(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.example');
 
-        /** Act */
+        /* Act */
         $hasCacheStore  = str_contains($content, 'CACHE_STORE=');
         $hasCacheDriver = str_contains($content, 'CACHE_DRIVER=');
 
@@ -357,10 +322,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_example_php_cli_server_workers_is_commented_out(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.example');
 
-        /** Act */
+        /* Act */
         $isCommented   = preg_match('/^#\s*PHP_CLI_SERVER_WORKERS=/m', $content);
         $isUncommented = preg_match('/^PHP_CLI_SERVER_WORKERS=/m', $content);
 
@@ -380,10 +345,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_env_example_ends_with_newline(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.env.example');
 
-        /** Act */
+        /* Act */
         $endsWithNewline = str_ends_with($content, "\n");
 
         /* Assert */
@@ -393,17 +358,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         );
     }
 
-    // -------------------------------------------------------------------------
-    // .gitignore
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_gitignore_excludes_vendor_directory(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasVendor = str_contains($content, '/vendor/');
 
         /* Assert */
@@ -416,10 +377,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_env_files(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasEnv           = str_contains($content, '.env');
         $hasEnvProduction = str_contains($content, '.env.production');
 
@@ -431,10 +392,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_node_modules(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasNodeModules = str_contains($content, '/node_modules/');
 
         /* Assert */
@@ -447,10 +408,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_phpunit_result_cache(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasPhpunitCache = str_contains($content, '.phpunit.result.cache');
 
         /* Assert */
@@ -463,10 +424,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_ide_directories(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasIdea   = str_contains($content, '.idea/');
         $hasVscode = str_contains($content, '.vscode/');
 
@@ -478,10 +439,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_log_files(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasLogFiles = str_contains($content, '*.log');
 
         /* Assert */
@@ -494,10 +455,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_build_artifacts(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasBuildArtifacts = str_contains($content, 'public/build/');
 
         /* Assert */
@@ -510,10 +471,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitignore_excludes_ds_store_and_thumbs_db(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitignore');
 
-        /** Act */
+        /* Act */
         $hasDsStore  = str_contains($content, '.DS_Store');
         $hasThumbsDb = str_contains($content, 'Thumbs.db');
 
@@ -522,21 +483,13 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         $this->assertTrue($hasThumbsDb, '.gitignore must exclude Thumbs.db (Windows thumbnails)');
     }
 
-    # endregion
-
-    # region edge_cases
-
-    // -------------------------------------------------------------------------
-    // .gitattributes
-    // -------------------------------------------------------------------------
-
     #[Test]
     public function it_gitattributes_enforces_lf_line_endings(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasLfEnforcement = preg_match('/\*\s+text=auto\s+eol=lf/', $content);
 
         /* Assert */
@@ -550,10 +503,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_sets_diff_driver_for_php_files(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasPhpDiff = str_contains($content, '*.php diff=php');
 
         /* Assert */
@@ -566,10 +519,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_sets_diff_driver_for_blade_files(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasBladeDiff = str_contains($content, '*.blade.php diff=html');
 
         /* Assert */
@@ -582,10 +535,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_excludes_github_directory_from_exports(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasGithubExportIgnore = str_contains($content, '/.github export-ignore');
 
         /* Assert */
@@ -598,10 +551,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_excludes_changelog_from_exports(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasChangelogExportIgnore = str_contains($content, 'CHANGELOG.md export-ignore');
 
         /* Assert */
@@ -614,10 +567,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_sets_diff_driver_for_css_and_html(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasCssDiff  = str_contains($content, '*.css diff=css');
         $hasHtmlDiff = str_contains($content, '*.html diff=html');
 
@@ -629,10 +582,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     #[Test]
     public function it_gitattributes_does_not_contain_old_linguist_settings(): void
     {
-        /** Arrange */
+        /* Arrange */
         $content = $this->readFile('.gitattributes');
 
-        /** Act */
+        /* Act */
         $hasLinguistVendored = str_contains($content, 'linguist-vendored');
         $hasLinguistLanguage = str_contains($content, 'linguist-language=Php');
 
@@ -647,15 +600,6 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         );
     }
 
-    # endregion
-
-    // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-    /**
-     * Read a file relative to the project root and return its contents.
-     */
     private function readFile(string $relativePath): string
     {
         $fullPath = $this->rootPath . '/' . $relativePath;
@@ -664,10 +608,6 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         return file_get_contents($fullPath);
     }
 
-    /**
-     * Parse a .env-format file into a key→value map.
-     * Skips blank lines and comments. Does not expand variable references.
-     */
     private function parseEnvFile(string $relativePath): array
     {
         $content = $this->readFile($relativePath);
@@ -677,12 +617,10 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         foreach ($lines as $line) {
             $line = trim($line);
 
-            // Skip blanks and comments
             if ($line === '' || str_starts_with($line, '#')) {
                 continue;
             }
 
-            // KEY=VALUE  (value may be quoted or unquoted)
             if (str_contains($line, '=')) {
                 [$key, $value] = explode('=', $line, 2);
                 $key           = trim($key);

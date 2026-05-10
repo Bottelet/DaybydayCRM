@@ -18,7 +18,6 @@ class CanUpdateInvoiceTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->invoice = Invoice::factory()->create([
@@ -32,24 +31,17 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_can_update_draft_invoice()
     {
-        /** Arrange */
-        // Invoice created with sent_at = null in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $result = $this->invoice->canUpdateInvoice();
 
         /* Assert */
         $this->assertTrue($result);
     }
-
-    # endregion
-
-    # region edge_cases
 
     #[Test]
     public function it_cant_update_invoice_if_its_sent()
@@ -58,7 +50,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         $this->invoice->sent_at = Carbon::now();
         $this->invoice->save();
 
-        /** Act */
+        /* Act */
         $result = $this->invoice->canUpdateInvoice();
 
         /* Assert */
@@ -72,7 +64,7 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         $this->invoice->sent_at = Carbon::now()->subDays(5);
         $this->invoice->save();
 
-        /** Act */
+        /* Act */
         $result = $this->invoice->canUpdateInvoice();
 
         /* Assert */
@@ -86,12 +78,10 @@ class CanUpdateInvoiceTest extends AbstractTestCase
         $this->invoice->sent_at = null;
         $this->invoice->save();
 
-        /** Act */
+        /* Act */
         $result = $this->invoice->canUpdateInvoice();
 
         /* Assert */
         $this->assertTrue($result);
     }
-
-    # endregion
 }

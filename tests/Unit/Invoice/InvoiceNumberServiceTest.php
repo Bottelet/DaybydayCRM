@@ -27,12 +27,10 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
 
-        // Ensure a Setting record exists for the service
         Setting::factory()->create();
 
         $this->client = Invoice::factory()->create([]);
@@ -46,15 +44,12 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_sets_next_invoice_number_takes_biggest_invoice_number_and_add_one()
     {
-        /** Arrange */
-        // Service initialized with one invoice in database
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $firstNumber  = $this->invoiceNumberService->setNextInvoiceNumber();
         $secondNumber = $this->invoiceNumberService->setNextInvoiceNumber();
 
@@ -66,10 +61,9 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     #[Test]
     public function it_next_invoice_number_takes_biggest_invoice_number_and_does_not_add_one()
     {
-        /** Arrange */
-        // Service initialized with one invoice in database
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $firstCall  = $this->invoiceNumberService->nextInvoiceNumber();
         $secondCall = $this->invoiceNumberService->nextInvoiceNumber();
 
@@ -81,7 +75,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     #[Test]
     public function it_manually_set_next_invoice_number()
     {
-        /** Arrange */
+        /* Arrange */
         $customNumber = 20000;
 
         /* Act */
@@ -92,10 +86,6 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         $this->assertEquals(20000, $result);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_sets_next_invoice_number_with_multiple_existing_invoices()
     {
@@ -104,7 +94,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         Invoice::factory()->create(['invoice_number' => 10003]);
         $service = app(InvoiceNumberService::class);
 
-        /** Act */
+        /* Act */
         $nextNumber = $service->setNextInvoiceNumber();
 
         /* Assert */
@@ -114,7 +104,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
     #[Test]
     public function it_sets_invoice_number_to_zero()
     {
-        /** Arrange */
+        /* Arrange */
         $zeroNumber = 0;
 
         /* Act */
@@ -131,7 +121,7 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         /* Arrange */
         $this->invoiceNumberService->setInvoiceNumber(15000);
 
-        /** Act */
+        /* Act */
         $firstNumber  = $this->invoiceNumberService->setNextInvoiceNumber();
         $secondNumber = $this->invoiceNumberService->setNextInvoiceNumber();
 
@@ -139,6 +129,4 @@ class InvoiceNumberServiceTest extends AbstractTestCase
         $this->assertEquals(15000, $firstNumber);
         $this->assertEquals(15001, $secondNumber);
     }
-
-    # endregion
 }
