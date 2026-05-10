@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Performance;
+namespace Tests\Feature\Controllers\Client;
 
 use App\Enums\PermissionName;
 use App\Http\Controllers\ClientsController;
