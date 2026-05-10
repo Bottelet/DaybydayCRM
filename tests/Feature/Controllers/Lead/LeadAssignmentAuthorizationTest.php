@@ -49,6 +49,7 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
         $originalAssignee = $this->lead->user_assigned_id;
         $this->user = $this->authorizedUser;
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
+        $this->user = $this->user->fresh();
         $this->assertTrue($this->user->can('can-assign-new-user-to-lead'));
         $this->assertEquals($this->user->id, $originalAssignee);
 

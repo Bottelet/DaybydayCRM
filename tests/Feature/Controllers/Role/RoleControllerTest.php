@@ -19,10 +19,11 @@ class RoleControllerTest extends AbstractTestCase
         $this->withoutMiddleware();
         /** @var User $user */
         $user = User::factory()->create();
-        $this->actingAs($user);
         /** @var Role $role */
         $role = Role::factory()->create();
         $user->roles()->save($role);
+        $user = $user->fresh();
+        $this->actingAs($user);
 
         /* Act */
         $response = $this->patch("/roles/update/{$role->external_id}");
