@@ -61,7 +61,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         
         // Create 50 clients to simulate load
@@ -100,7 +101,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         $assignedUser = User::factory()->create();
         
@@ -140,7 +142,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW, PermissionName::TASK_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         $assignedUser = User::factory()->create();
         
@@ -184,7 +187,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW, PermissionName::PROJECT_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         $assignedUser = User::factory()->create();
         
@@ -228,7 +232,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW, PermissionName::LEAD_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         $assignedUser = User::factory()->create();
         
@@ -272,7 +277,8 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_VIEW);
-        
+        $this->user = $this->user->fresh();
+
         $industry = Industry::factory()->create();
         
         // Create 100 clients with contacts to simulate realistic load
