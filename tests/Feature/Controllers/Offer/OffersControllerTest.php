@@ -81,8 +81,9 @@ class OffersControllerTest extends AbstractTestCase
     public function can_update_offer()
     {
         /* Arrange */
-        /* Act */
         $this->assertCount(0, $this->offer->invoiceLines);
+
+        /* Act */
         $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'test line',

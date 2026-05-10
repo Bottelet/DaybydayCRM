@@ -29,13 +29,7 @@ class DeleteProjectControllerTest extends AbstractTestCase
 
         /* Arrange */
         $this->user = User::factory()->create();
-        $role       = Role::firstOrCreate(['name' => 'employee']);
-        $permission = Permission::firstOrCreate(['name' => 'project-delete']);
-        $role->attachPermission($permission);
-        $this->user->attachRole($role);
-        Cache::tags('role_user')->flush();
-        Cache::tags('permission_role')->flush();
-        $this->user = $this->user->fresh();
+        $this->asOwner();
         $this->actingAs($this->user);
         $this->project = Project::factory()->create();
         $this->task    = Task::factory()->create([

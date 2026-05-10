@@ -170,7 +170,8 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->assertTrue($response->isRedirect(), 'Expected a redirect response');
         $this->assertFalse(session()->has('flash_message_warning'), 'Unexpected flash warning: ' . session('flash_message_warning'));
         $rawDeadline = DB::table('projects')->where('id', $project->id)->value('deadline');
-        $this->assertStringContainsString('2020-08-06', $rawDeadline, 'Raw DB deadline mismatch');
-        $this->assertEquals('2020-08-06', $project->refresh()->deadline->format('Y-m-d'));
+        $expectedIso = \Carbon\Carbon::parse('2020-08-06 00:00:00')->toISOString();
+        $this->assertEquals($expectedIso, \Carbon\Carbon::parse($rawDeadline)->toISOString(), 'Raw DB deadline mismatch');
+        $this->assertEquals($expectedIso, $project->refresh()->deadline->toISOString());
     }
 }

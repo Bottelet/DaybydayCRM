@@ -47,6 +47,7 @@ class TaskSecurityTest extends AbstractTestCase
         /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
+        $this->user = $this->user->fresh();
 
         Cache::tags('role_user')->flush();
 
