@@ -32,7 +32,6 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create permission
         $permission = Permission::firstOrCreate(
             ['name' => 'can-assign-new-user-to-task'],
             [
@@ -42,7 +41,6 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
             ]
         );
 
-        // Create role with permission
         $authorizedRole = Role::firstOrCreate(
             ['name' => 'task-assigner'],
             [
@@ -53,24 +51,19 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
         );
         $authorizedRole->perms()->sync([$permission->id]);
 
-        // Create authorized user
         $this->authorizedUser = User::factory()->create();
         $this->authorizedUser->attachRole($authorizedRole);
 
-        // Create unauthorized user (no permissions)
         $this->unauthorizedUser = User::factory()->create();
 
-        // Create user to assign to
         $this->newAssignee = User::factory()->create();
 
-        // Create task
         $client     = Client::factory()->create();
         $this->task = Task::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
             'client_id'        => $client->id,
         ]);
 
-        // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();
     }
 

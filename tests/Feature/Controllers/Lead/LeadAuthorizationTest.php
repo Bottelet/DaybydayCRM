@@ -29,7 +29,6 @@ class LeadAuthorizationTest extends AbstractTestCase
 
         $this->lead = Lead::factory()->create();
 
-        // Create users
         $this->userWithPermission    = User::factory()->create();
         $this->userWithoutPermission = User::factory()->create();
 
