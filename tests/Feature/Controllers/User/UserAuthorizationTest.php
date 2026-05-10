@@ -73,7 +73,7 @@ class UserAuthorizationTest extends AbstractTestCase
     public function it_user_without_user_delete_permission_cannot_delete_user()
     {
         /* Arrange */
-        $this->actingAs($this->userWithoutPermission);
+        $this->actingAs($this->userWithoutPermission->fresh());
 
         /* Act */
         $response = $this->json('DELETE', route('users.destroy', $this->targetUser->external_id));
