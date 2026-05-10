@@ -90,7 +90,6 @@ class InvoiceLineModelBootTest extends AbstractTestCase
     public function it_invoice_line_factory_creates_record_with_external_id()
     {
         /* Arrange */
-        $placeholder = null;
 
         /* Act */
         $invoiceLine = InvoiceLine::factory()->create();

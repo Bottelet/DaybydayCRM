@@ -159,12 +159,6 @@ class ClientsControllerTest extends AbstractTestCase
         $initialUser = User::factory()->create();
         $client      = Client::factory()->create(['user_id' => $initialUser->id]);
         $targetUser  = User::factory()->create();
-        $this->withPermissions(PermissionName::CLIENT_UPDATE);
-        $initialUser = User::factory()->create();
-        $client      = Client::factory()->create(['user_id' => $initialUser->id]);
-        $targetUser  = User::factory()->create();
-
-        /* Act */
 
         /* Act */
         $r = $this->json('POST', '/clients/updateassign/' . $client->external_id, [

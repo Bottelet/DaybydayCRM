@@ -16,7 +16,6 @@ class RoleControllerTest extends AbstractTestCase
     public function it_unprivileged_user_cannot_change_roles()
     {
         /* Arrange */
-        $this->withoutMiddleware();
         /** @var User $user */
         $user = User::factory()->create();
         /** @var Role $role */

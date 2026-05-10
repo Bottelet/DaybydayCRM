@@ -180,7 +180,6 @@ class PaymentModelTest extends AbstractTestCase
     public function it_payment_has_external_id_after_creation()
     {
         /* Arrange */
-        $placeholder = null;
 
         /* Act */
         $payment = Payment::factory()->create([
@@ -196,7 +195,6 @@ class PaymentModelTest extends AbstractTestCase
     public function it_payment_does_not_depend_on_dingo_api()
     {
         /* Arrange */
-        $placeholder = null;
 
         /* Act */
         $uses = class_uses_recursive(Payment::class);
