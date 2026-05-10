@@ -149,7 +149,10 @@ class TasksControllerTest extends AbstractTestCase
         ]);
 
         /* Assert */
-        $this->assertEquals(Carbon::parse('2020-08-06')->toDateString(), Carbon::parse($task->refresh()->deadline)->toDateString());
+        $this->assertSame(
+            Carbon::parse('2020-08-06')->toISOString(),
+            Carbon::parse($task->refresh()->deadline)->toISOString()
+        );
     }
 
     #[Test]
