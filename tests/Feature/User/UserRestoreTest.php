@@ -12,7 +12,7 @@ class UserRestoreTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function user_can_be_restored_after_soft_delete()
+    public function userCanBeRestoredAfterSoftDelete()
     {
         /* Arrange */
         $user = User::factory()->create();
