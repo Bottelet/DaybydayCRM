@@ -90,6 +90,8 @@ class ClientServiceTest extends AbstractTestCase
         /* Assert */
         $this->assertInstanceOf(Client::class, $result);
         $this->assertEquals($client->id, $result->id);
+        $this->assertEquals($client->company_name, $result->company_name);
+        $this->assertEquals($client->external_id, $result->external_id);
         
         // Verify relationships are eager loaded
         $this->assertTrue($result->relationLoaded('user'));
@@ -97,6 +99,10 @@ class ClientServiceTest extends AbstractTestCase
         $this->assertTrue($result->relationLoaded('industry'));
         $this->assertTrue($result->relationLoaded('documents'));
         $this->assertTrue($result->relationLoaded('appointments'));
+        
+        // Verify relationship data matches
+        $this->assertEquals($user->id, $result->user->id);
+        $this->assertEquals($industry->id, $result->industry->id);
     }
 
     #[Test]
@@ -109,7 +115,7 @@ class ClientServiceTest extends AbstractTestCase
             'source_type' => Task::class,
         ]);
         
-        Task::factory()->count(3)->create([
+        $createdTasks = Task::factory()->count(3)->create([
             'client_id' => $client->id,
             'user_assigned_id' => $user->id,
             'status_id' => $status->id,
@@ -129,6 +135,11 @@ class ClientServiceTest extends AbstractTestCase
         // Verify we can access the relationship without additional queries
         $this->assertEquals($status->id, $firstTask->status->id);
         $this->assertEquals($user->id, $firstTask->user->id);
+        
+        // Verify all tasks belong to the client
+        foreach ($tasks as $task) {
+            $this->assertEquals($client->id, $task->client_id);
+        }
     }
 
     #[Test]
@@ -141,7 +152,7 @@ class ClientServiceTest extends AbstractTestCase
             'source_type' => Project::class,
         ]);
         
-        Project::factory()->count(3)->create([
+        $createdProjects = Project::factory()->count(3)->create([
             'client_id' => $client->id,
             'user_assigned_id' => $user->id,
             'status_id' => $status->id,
@@ -161,6 +172,11 @@ class ClientServiceTest extends AbstractTestCase
         // Verify we can access the relationship without additional queries
         $this->assertEquals($status->id, $firstProject->status->id);
         $this->assertEquals($user->id, $firstProject->assignee->id);
+        
+        // Verify all projects belong to the client
+        foreach ($projects as $project) {
+            $this->assertEquals($client->id, $project->client_id);
+        }
     }
 
     #[Test]
@@ -173,7 +189,7 @@ class ClientServiceTest extends AbstractTestCase
             'source_type' => Lead::class,
         ]);
         
-        Lead::factory()->count(3)->create([
+        $createdLeads = Lead::factory()->count(3)->create([
             'client_id' => $client->id,
             'user_assigned_id' => $user->id,
             'status_id' => $status->id,
@@ -193,6 +209,11 @@ class ClientServiceTest extends AbstractTestCase
         // Verify we can access the relationship without additional queries
         $this->assertEquals($status->id, $firstLead->status->id);
         $this->assertEquals($user->id, $firstLead->user->id);
+        
+        // Verify all leads belong to the client
+        foreach ($leads as $lead) {
+            $this->assertEquals($client->id, $lead->client_id);
+        }
     }
 
     #[Test]
@@ -210,9 +231,14 @@ class ClientServiceTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $invoices = $this->clientService->getInvoicesWithRelations($client);
-
+        $invoicesQuery = $this->clientService->getInvoicesWithRelations($client);
+        
         /* Assert */
+        // Should return a Builder, not a Collection
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $invoicesQuery);
+        
+        // Execute the query to verify eager loading works
+        $invoices = $invoicesQuery->get();
         $this->assertCount(1, $invoices);
         
         // Verify relationships are eager loaded
@@ -221,6 +247,9 @@ class ClientServiceTest extends AbstractTestCase
         
         // Verify we can access the relationship without additional queries
         $this->assertCount(2, $firstInvoice->invoiceLines);
+        
+        // Verify invoice belongs to the client
+        $this->assertEquals($client->id, $firstInvoice->client_id);
     }
 
     #[Test]
