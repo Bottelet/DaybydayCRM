@@ -93,7 +93,7 @@ class UsersController extends Controller
      */
     public function taskData($id)
     {
-        $tasks = Task::with(['status', 'client'])->select(
+        $tasks = Task::with(['status', 'client.primaryContact'])->select(
             ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )
             ->where('user_assigned_id', $id)->get();
@@ -125,7 +125,7 @@ class UsersController extends Controller
      */
     public function leadData($id)
     {
-        $leads = Lead::with(['status', 'client'])->select(
+        $leads = Lead::with(['status', 'client.primaryContact'])->select(
             ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
         )
             ->where('user_assigned_id', $id)->get();
