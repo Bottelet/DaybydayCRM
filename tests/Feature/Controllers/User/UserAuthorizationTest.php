@@ -87,7 +87,7 @@ class UserAuthorizationTest extends AbstractTestCase
     public function it_owner_user_cannot_be_deleted_even_with_permission()
     {
         /* Arrange */
-        $this->actingAs($this->userWithPermission);
+        $this->actingAs($this->userWithPermission->fresh());
         $ownerUser = User::factory()->withRole('owner')->create();
 
         /* Act */
