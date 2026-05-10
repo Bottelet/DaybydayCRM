@@ -24,12 +24,21 @@ class RoleControllerTest extends AbstractTestCase
         $user->roles()->save($role);
         $user = $user->fresh();
         $this->actingAs($user);
+        $originalRoleName = $role->name;
 
         /* Act */
-        $response = $this->patch("/roles/update/{$role->external_id}");
+        $response = $this->patch("/roles/update/{$role->external_id}", [
+            'name'         => 'hacked-role',
+            'display_name' => 'Hacked Role',
+        ]);
 
         /* Assert */
         $response->assertRedirect();
+        $this->assertEquals($originalRoleName, $role->refresh()->name);
+        $this->assertDatabaseMissing('roles', [
+            'id'   => $role->id,
+            'name' => 'hacked-role',
+        ]);
     }
 
     #[Test]
