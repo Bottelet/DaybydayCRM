@@ -12,7 +12,10 @@ class AppointmentTest extends DuskTestCase
     #[Test]
     public function it_icancreatean_appointment_in_calendar()
     {
+        /* Arrange */
         $title = 'new appointment test ' . uniqid();
+
+        /* Act */
         $this->browse(function (Browser $browser) use ($title) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/appointments/calendar')
@@ -24,6 +27,7 @@ class AppointmentTest extends DuskTestCase
                 ->press('Close');
         });
 
+        /* Assert */
         $this->assertDatabaseHas('appointments', [
             'title' => $title,
             'color' => '#ffd6d6',

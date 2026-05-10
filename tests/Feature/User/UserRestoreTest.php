@@ -17,10 +17,9 @@ class UserRestoreTest extends AbstractTestCase
         /* Arrange */
         $user = User::factory()->create();
         $user->delete();
-
         $this->assertSoftDeleted('users', ['id' => $user->id]);
 
-        /** Act */
+        /* Act */
         $result = $user->restore();
 
         /* Assert */
