@@ -174,10 +174,10 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Assert */
         $response->assertStatus(200);
         
-        // Should have minimal queries with proper eager loading
-        // Currently has N+1 problem accessing assigned_user->name for each task
+        // Verify N+1 problem has been resolved with proper eager loading
+        // Test ensures assigned_user relationship is eager loaded
         $this->assertLessThan(10, $queryCount,
-            "Expected less than 10 queries but got {$queryCount}. N+1 problem in task datatable - missing eager load for assigned_user."
+            "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in task datatable."
         );
     }
 
@@ -219,10 +219,10 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Assert */
         $response->assertStatus(200);
         
-        // Should have minimal queries with proper eager loading
-        // Currently has N+1 problem accessing assignee->name for each project
+        // Verify N+1 problem has been resolved with proper eager loading
+        // Test ensures assignee relationship is eager loaded
         $this->assertLessThan(10, $queryCount,
-            "Expected less than 10 queries but got {$queryCount}. N+1 problem in project datatable - missing eager load for assignee."
+            "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in project datatable."
         );
     }
 
@@ -264,10 +264,10 @@ class ClientPerformanceTest extends AbstractTestCase
         /* Assert */
         $response->assertStatus(200);
         
-        // Should have minimal queries with proper eager loading
-        // Currently has N+1 problem accessing assigned_user->name for each lead
+        // Verify N+1 problem has been resolved with proper eager loading
+        // Test ensures assigned_user relationship is eager loaded
         $this->assertLessThan(10, $queryCount,
-            "Expected less than 10 queries but got {$queryCount}. N+1 problem in lead datatable - missing eager load for assigned_user."
+            "Expected less than 10 queries but got {$queryCount}. This indicates an N+1 problem in lead datatable."
         );
     }
 
