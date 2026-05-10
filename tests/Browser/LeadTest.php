@@ -12,6 +12,9 @@ use Tests\DuskTestCase;
 
 class LeadTest extends DuskTestCase
 {
+    /**
+     * Test user can access lead thorugh index page.
+     */
     #[Test]
     public function it_user_can_see_leads_on_lead_index_and_go_to_the_lead_with_link()
     {
@@ -22,23 +25,21 @@ class LeadTest extends DuskTestCase
             'status_id' => Status::typeOfLead()->whereTitle('Open')->first()->id,
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($lead) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads')
                 ->type('.dataTables_filter input', $lead->title)
                 ->waitForText($lead->title)
-                ->clickLink($lead->title);
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($lead) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->clickLink($lead->title)
                 ->assertPathIs('/leads/' . $lead->external_id)
                 ->waitForText($lead->title);
         });
     }
 
+    /**
+     * Test user can access lead thorugh index page.
+     */
     #[Test]
     public function it_i_can_see_all_the_correct_information_on_lead_info_page()
     {
@@ -48,16 +49,11 @@ class LeadTest extends DuskTestCase
             'client_id' => $client->id,
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($lead) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads/' . $lead->external_id)
-                ->waitForText($lead->title);
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($lead) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->waitForText($lead->title)
                 ->assertSee($lead->description)
                 ->assertsee(date(carbonFullDateWithText(), strtotime($lead->created_at)))
                 ->assertSee(date(carbonFullDateWithText(), strtotime($lead->deadline)))
@@ -65,6 +61,9 @@ class LeadTest extends DuskTestCase
         });
     }
 
+    /**
+     * Test i can assign a new user to the lead, and see the correct user info after new user is assigned.
+     */
     #[Test]
     public function it_i_can_assign_a_new_user_to_lead()
     {
@@ -75,23 +74,21 @@ class LeadTest extends DuskTestCase
         ]);
         $user = User::factory()->create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($lead, $user) {
             $browser->driver->executeScript('window.scrollTo(0, 500)');
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads/' . $lead->external_id)
                 ->click('#assignee-user')
                 ->clickLink($user->name)
-                ->waitForText($user->name);
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($user) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->waitForText($user->name)
                 ->assertSee($user->email);
         });
     }
 
+    /**
+     * Test i can close a open lead.
+     */
     #[Test]
     public function it_i_can_change_lead_status()
     {
@@ -102,22 +99,20 @@ class LeadTest extends DuskTestCase
             'status_id' => Status::typeOfLead()->first()->id,
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($lead) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads/' . $lead->external_id)
                 ->assertSee($lead->status->title)
                 ->click('#status-text')
-                ->clickLink('Pending');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->clickLink('Pending')
                 ->assertSee('Pending');
         });
     }
 
+    /**
+     * Test i can comment on a lead.
+     */
     #[Test]
     public function it_i_can_add_a_new_comment_on_a_lead()
     {
@@ -127,23 +122,21 @@ class LeadTest extends DuskTestCase
             'client_id' => $client->id,
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($lead) {
             $browser->driver->executeScript('window.scrollTo(0, 500)');
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads/' . $lead->external_id)
                 ->type('.note-editable', 'This is a test comment')
-                ->press('Add Comment');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->press('Add Comment')
                 ->assertSee('This is a test comment')
                 ->assertSee('Comment by: Admin');
         });
     }
 
+    /**
+     * Test i can create a new task.
+     */
     #[Test]
     public function it_i_can_create_a_new_lead()
     {
@@ -152,7 +145,7 @@ class LeadTest extends DuskTestCase
         $contact = $client->primary_contact;
         $user    = User::factory()->create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/leads/create')
@@ -160,36 +153,30 @@ class LeadTest extends DuskTestCase
                 ->type('.note-editable', 'This is a short comment about the lead')
                 ->select('user_assigned_id', $user->id)
                 ->select('client_external_id', $client->external_id)
-                ->press('Create lead');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($user, $contact) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->press('Create lead')
                 ->assertSee($user->name)
                 ->assertSee($contact->name)
                 ->assertSee('This is a test lead title');
         });
     }
 
+    /**
+     * Test i can create a new task.
+     */
     #[Test]
     public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_lead()
     {
         /* Arrange */
         Client::query()->forceDelete();
+
         $user = User::factory()->create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/create')
                 ->select('user_assigned_id', $user->id)
-                ->select('client_external_id', 'new_client');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->select('client_external_id', 'new_client')
                 ->assertPathIs('/clients/create');
         });
     }

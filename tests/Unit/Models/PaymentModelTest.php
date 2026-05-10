@@ -69,7 +69,6 @@ class PaymentModelTest extends AbstractTestCase
     public function it_payment_factory_creates_payment_with_invoice()
     {
         /* Arrange */
-        $placeholder = null;
 
         /* Act */
         $payment = Payment::factory()->create();
