@@ -48,18 +48,21 @@ class UsersControllerCalendarTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function can_get_absences_within_time_slot()
     {
+        /* Arrange */
         $correctUser = null;
-        $r           = $this->json('GET', '/users/calendar-users/');
+
+        /* Act */
+        $r = $this->json('GET', '/users/calendar-users/');
         foreach ($r->json() as $user) {
             if ($user['external_id'] == $this->user->external_id) {
                 $correctUser = $user;
             }
         }
 
+        /* Assert */
         $this->assertCount(1, $correctUser['absences']);
         $this->assertEquals($this->absenceWithInTime->start_at, $correctUser['absences'][0]['start_at']);
         $this->assertEquals($this->absenceWithInTime->end_at, $correctUser['absences'][0]['end_at']);
-
         $this->assertCount(3, User::whereExternalId($correctUser['external_id'])->first()->absences);
     }
 }
