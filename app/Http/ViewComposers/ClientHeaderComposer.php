@@ -18,7 +18,8 @@ class ClientHeaderComposer
         $clients = Client::with(['contacts', 'user'])
             ->findOrFail($view->getData()['client']['id']);
 
-        $contact_info = $clients->contacts()->first();
+        // Use the already eager-loaded contacts collection instead of querying again
+        $contact_info = $clients->contacts->first();
         /**
          * [User assigned the client].
          *
