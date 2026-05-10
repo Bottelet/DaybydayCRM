@@ -56,7 +56,7 @@ class UsersControllerTest extends AbstractTestCase
         /* Act */
         $response = $this->json(
             'PATCH',
-            route('users.update', $targetUser->id)
+            route('users.update', $targetUser->external_id)
         );
 
         /* Assert */
