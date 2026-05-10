@@ -127,7 +127,11 @@ jobs:
             PHPUNIT_FAILFAST=""
           fi
 
+          # Set GROUP to input value, or default to "full" for push/PR events
           GROUP="${{ github.event.inputs.test_group }}"
+          if [ -z "$GROUP" ]; then
+            GROUP="full"
+          fi
           CUSTOM_GROUP="${{ github.event.inputs.custom_group_name }}"
           echo "OUT_OPT=${OUT_OPT}" >> $GITHUB_ENV
           echo "PARATEST_FAILFAST=${PARATEST_FAILFAST}" >> $GITHUB_ENV
