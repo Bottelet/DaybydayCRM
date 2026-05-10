@@ -34,11 +34,13 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
     {
         /* Arrange */
         $user = User::factory()->create();
+        Permission::firstOrCreate(['name' => 'client-create']);
 
         /* Act */
+        $hasPermission = $user->can('client-create');
 
         /* Assert */
-        $this->assertFalse($user->can('client-create'));
+        $this->assertFalse($hasPermission);
     }
 
     #[Test]
