@@ -69,7 +69,6 @@ use Yajra\Datatables\Datatables;
 use Yajra\Datatables\DatatablesServiceProvider;
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -168,7 +167,6 @@ return [
     'key' => env('APP_KEY'),
 
     'providers' => [
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -221,47 +219,46 @@ return [
     */
 
     'aliases' => [
-
-        'App' => Illuminate\Support\Facades\App::class,
-        'Artisan' => Artisan::class,
-        'Auth' => Auth::class,
-        'Blade' => Blade::class,
-        'Cache' => Cache::class,
-        'Config' => Config::class,
-        'Cookie' => Cookie::class,
-        'Crypt' => Crypt::class,
-        'DB' => DB::class,
-        'Eloquent' => Model::class,
-        'Event' => Event::class,
-        'File' => File::class,
-        'Gate' => Gate::class,
-        'Hash' => Hash::class,
-        'Lang' => Lang::class,
-        'Log' => Log::class,
-        'Mail' => Mail::class,
-        'Password' => Password::class,
-        'Queue' => Queue::class,
-        'Redirect' => Redirect::class,
-        'Redis' => Redis::class,
-        'Request' => Request::class,
-        'Response' => Response::class,
-        'Route' => Route::class,
-        'Schema' => Schema::class,
-        'Session' => Session::class,
-        'Storage' => Storage::class,
-        'Str' => Str::class,
-        'URL' => URL::class,
+        'App'       => Illuminate\Support\Facades\App::class,
+        'Artisan'   => Artisan::class,
+        'Auth'      => Auth::class,
+        'Blade'     => Blade::class,
+        'Cache'     => Cache::class,
+        'Config'    => Config::class,
+        'Cookie'    => Cookie::class,
+        'Crypt'     => Crypt::class,
+        'DB'        => DB::class,
+        'Eloquent'  => Model::class,
+        'Event'     => Event::class,
+        'File'      => File::class,
+        'Gate'      => Gate::class,
+        'Hash'      => Hash::class,
+        'Lang'      => Lang::class,
+        'Log'       => Log::class,
+        'Mail'      => Mail::class,
+        'Password'  => Password::class,
+        'Queue'     => Queue::class,
+        'Redirect'  => Redirect::class,
+        'Redis'     => Redis::class,
+        'Request'   => Request::class,
+        'Response'  => Response::class,
+        'Route'     => Route::class,
+        'Schema'    => Schema::class,
+        'Session'   => Session::class,
+        'Storage'   => Storage::class,
+        'Str'       => Str::class,
+        'URL'       => URL::class,
         'Validator' => Validator::class,
-        'View' => View::class,
+        'View'      => View::class,
         //        'Form' => FormFacade::class,
         //        'Html' => HtmlFacade::class,
         'Datatables' => Datatables::class,
-        'Carbon' => Carbon\Carbon::class,
-        'Notifty' => Notification::class,
-        'Entrust' => EntrustFacade::class,
-        'role' => EntrustRole::class,
+        'Carbon'     => Carbon\Carbon::class,
+        'Notifty'    => Notification::class,
+        'Entrust'    => EntrustFacade::class,
+        'role'       => EntrustRole::class,
         'permission' => EntrustPermission::class,
-        'ability' => EntrustAbility::class,
+        'ability'    => EntrustAbility::class,
     ],
 
     'previous_keys' => [
@@ -285,7 +282,6 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+        'store'  => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
 ];

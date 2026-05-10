@@ -29,16 +29,16 @@ class CreateCreditNotesTable extends Migration
         /** Create new permissions */
         $cpp = Permission::create([
             'display_name' => 'Create credit note',
-            'name' => 'credit-note-create',
-            'description' => 'Be able to add a credit note for an invoice',
-            'grouping' => 'credit-note',
+            'name'         => 'credit-note-create',
+            'description'  => 'Be able to add a credit note for an invoice',
+            'grouping'     => 'credit-note',
         ]);
 
         $dpp = Permission::create([
             'display_name' => 'Delete credit note',
-            'name' => 'credit-note-delete',
-            'description' => 'Be able to delete a credit note',
-            'grouping' => 'credit-note',
+            'name'         => 'credit-note-delete',
+            'description'  => 'Be able to delete a credit note',
+            'grouping'     => 'credit-note',
         ]);
 
         $roles = Role::where('name', 'owner')->get();
@@ -55,8 +55,8 @@ class CreateCreditNotesTable extends Migration
     public function down()
     {
         return;
-        $cpp = Permission::where('name', 'credit-note-create')->firstOrFail();
-        $dpp = Permission::where('name', 'credit-note-delete')->firstOrFail();
+        $cpp   = Permission::where('name', 'credit-note-create')->firstOrFail();
+        $dpp   = Permission::where('name', 'credit-note-delete')->firstOrFail();
         $roles = Role::where('name', 'owner')->get();
         foreach ($roles as $role) {
             $role->permissions()->detach([$cpp->id, $dpp->id]);

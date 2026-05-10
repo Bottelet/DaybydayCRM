@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Comment;
 use App\Models\Task;
@@ -18,9 +18,9 @@ class CommentFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     {
         return [
             'external_id' => Uuid::uuid4()->toString(),
-            'user_id' => User::factory(),
+            'user_id'     => User::factory(),
             'source_type' => Task::class,
-            'source_id' => Task::factory(),
+            'source_id'   => Task::factory(),
             'description' => $this->faker->paragraph(rand(2, 10)),
         ];
     }

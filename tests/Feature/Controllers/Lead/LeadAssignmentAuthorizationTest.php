@@ -2,15 +2,15 @@
 
 namespace Tests\Feature\Controllers\Lead;
 
+use App\Enums\PermissionName;
 use App\Models\Client;
 use App\Models\Lead;
 use App\Models\Permission;
 use App\Models\User;
-use App\Enums\PermissionName;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('security')]
 #[Group('assignment_authorization')]
@@ -31,15 +31,15 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
         parent::setUp();
 
         // Create users
-        $this->authorizedUser = User::factory()->create();
+        $this->authorizedUser   = User::factory()->create();
         $this->unauthorizedUser = User::factory()->create();
-        $this->newAssignee = User::factory()->create();
+        $this->newAssignee      = User::factory()->create();
 
         // Create lead
-        $client = Client::factory()->create();
+        $client     = Client::factory()->create();
         $this->lead = Lead::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
-            'client_id' => $client->id,
+            'client_id'        => $client->id,
         ]);
     }
 
@@ -67,7 +67,7 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was updated in database
         $this->assertDatabaseHas('leads', [
-            'id' => $this->lead->id,
+            'id'               => $this->lead->id,
             'user_assigned_id' => $this->newAssignee->id,
         ]);
         $this->assertEquals($this->newAssignee->id, $this->lead->refresh()->user_assigned_id);
@@ -95,7 +95,7 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
 
         // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('leads', [
-            'id' => $this->lead->id,
+            'id'               => $this->lead->id,
             'user_assigned_id' => $originalAssignee,
         ]);
         $this->assertEquals($originalAssignee, $this->lead->refresh()->user_assigned_id);

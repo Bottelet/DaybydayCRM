@@ -17,6 +17,16 @@ class ProjectAction
 
     private $action;
 
+    /**
+     * Create a new event instance.
+     * projectAction constructor.
+     */
+    public function __construct(Project $project, $action)
+    {
+        $this->project = $project;
+        $this->action  = $action;
+    }
+
     public function getProject()
     {
         return $this->project;
@@ -25,16 +35,6 @@ class ProjectAction
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Create a new event instance.
-     * projectAction constructor.
-     */
-    public function __construct(Project $project, $action)
-    {
-        $this->project = $project;
-        $this->action = $action;
     }
 
     /**

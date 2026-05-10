@@ -7,36 +7,35 @@ use App\Models\Setting;
 
 class GetDateFormat
 {
-    private $format;
+    public const CACHE_KEY = 'date_format_cache';
 
     private const DEFAULT_COUNTRY = 'US';
 
-    public const CACHE_KEY = 'date_format_cache';
+    private $format;
 
     public function __construct()
     {
         // if (!cache(self::CACHE_KEY)){
-        $setting = Setting::first();
-        $country = $setting ? $setting->country : self::DEFAULT_COUNTRY;
+        $setting      = Setting::first();
+        $country      = $setting ? $setting->country : self::DEFAULT_COUNTRY;
         $this->format = Country::fromCode($country)->getFormat();
         cache()->set('country_date_format', $this->format);
         // }
 
         // $this->format = cache(self::CACHE_KEY);
-
     }
 
     public function getAllDateFormats()
     {
         return [
-            'frontend_date' => $this->getFrontendDate(),
-            'frontend_time' => $this->getFrontendTime(),
-            'carbon_date' => $this->getCarbonDate(),
-            'carbon_time' => $this->getCarbonTime(),
-            'carbon_full_date_with_text' => $this->getFrontendDate(),
-            'carbon_date_with_text' => $this->getFrontendDate(),
+            'frontend_date'                   => $this->getFrontendDate(),
+            'frontend_time'                   => $this->getFrontendTime(),
+            'carbon_date'                     => $this->getCarbonDate(),
+            'carbon_time'                     => $this->getCarbonTime(),
+            'carbon_full_date_with_text'      => $this->getFrontendDate(),
+            'carbon_date_with_text'           => $this->getFrontendDate(),
             'momentjs_day_and_date_with_text' => $this->getMomentDateWithText(),
-            'momentjs_time' => $this->getMomentTime(),
+            'momentjs_time'                   => $this->getMomentTime(),
         ];
     }
 

@@ -52,34 +52,34 @@ class Currency
 
     private static $currencies = [
         'DKK' => [
-            'code' => 'DKK',
-            'title' => 'Danish Krone',
-            'symbol' => 'kr.',
-            'precision' => 2,
+            'code'              => 'DKK',
+            'title'             => 'Danish Krone',
+            'symbol'            => 'kr.',
+            'precision'         => 2,
             'thousandSeparator' => '.',
-            'decimalSeparator' => ',',
-            'symbolPlacement' => 'after',
-            'vatPercentage' => 2500,
+            'decimalSeparator'  => ',',
+            'symbolPlacement'   => 'after',
+            'vatPercentage'     => 2500,
         ],
         'USD' => [
-            'title' => 'US Dollar',
-            'code' => 'USD',
-            'symbol' => '$',
-            'precision' => 2,
+            'title'             => 'US Dollar',
+            'code'              => 'USD',
+            'symbol'            => '$',
+            'precision'         => 2,
             'thousandSeparator' => '.',
-            'decimalSeparator' => ',',
-            'symbolPlacement' => 'before',
-            'vatPercentage' => 725,
+            'decimalSeparator'  => ',',
+            'symbolPlacement'   => 'before',
+            'vatPercentage'     => 725,
         ],
         'EUR' => [
-            'title' => 'Euro',
-            'code' => 'EUR',
-            'symbol' => '€',
-            'precision' => 2,
+            'title'             => 'Euro',
+            'code'              => 'EUR',
+            'symbol'            => '€',
+            'precision'         => 2,
             'thousandSeparator' => '.',
-            'decimalSeparator' => ',',
-            'symbolPlacement' => 'before',
-            'vatPercentage' => 2000,
+            'decimalSeparator'  => ',',
+            'symbolPlacement'   => 'before',
+            'vatPercentage'     => 2000,
         ],
     ];
 
@@ -88,14 +88,19 @@ class Currency
         $currency = $this->getCurrency($code);
         foreach ($currency as $key => $value) {
             if (property_exists($this, $key)) {
-                $this->$key = $value;
+                $this->{$key} = $value;
             }
         }
     }
 
-    protected function defaultCurrency()
+    /**
+     * Get all currencies.
+     *
+     * @return array
+     */
+    public static function getAllCurrencies()
     {
-        return $this->getCurrency('EUR');
+        return self::$currencies;
     }
 
     /**
@@ -137,7 +142,8 @@ class Currency
     }
 
     /**
-     * @param  int  $precision
+     * @param int $precision
+     *
      * @return $this
      */
     public function setPrecision($precision)
@@ -168,7 +174,8 @@ class Currency
     }
 
     /**
-     * @param  string  $separator
+     * @param string $separator
+     *
      * @return $this
      */
     public function setThousandSeparator($separator)
@@ -189,7 +196,8 @@ class Currency
     }
 
     /**
-     * @param  string  $separator
+     * @param string $separator
+     *
      * @return $this
      */
     public function setDecimalSeparator($separator)
@@ -210,7 +218,8 @@ class Currency
     }
 
     /**
-     * @param  string  $placement  [before|after]
+     * @param string $placement [before|after]
+     *
      * @return $this
      */
     public function setSymbolPlacement($placement)
@@ -223,24 +232,14 @@ class Currency
     public function toArray()
     {
         return [
-            'code' => $this->getCode(),
-            'title' => $this->getTitle(),
-            'symbol' => $this->getSymbol(),
-            'precision' => $this->getPrecision(),
+            'code'              => $this->getCode(),
+            'title'             => $this->getTitle(),
+            'symbol'            => $this->getSymbol(),
+            'precision'         => $this->getPrecision(),
             'thousandSeparator' => $this->getThousandSeparator(),
-            'decimalSeparator' => $this->getDecimalSeparator(),
-            'symbolPlacement' => $this->getSymbolPlacement(),
+            'decimalSeparator'  => $this->getDecimalSeparator(),
+            'symbolPlacement'   => $this->getSymbolPlacement(),
         ];
-    }
-
-    /**
-     * Get all currencies.
-     *
-     * @return array
-     */
-    public static function getAllCurrencies()
-    {
-        return self::$currencies;
     }
 
     /**
@@ -250,16 +249,21 @@ class Currency
      */
     public function getCurrency($code)
     {
-        return isset(self::$currencies[$code]) ? self::$currencies[$code] : $this->defaultCurrency();
+        return self::$currencies[$code] ?? $this->defaultCurrency();
     }
 
     /**
-     * Check currency existence (within the class)
+     * Check currency existence (within the class).
      *
      * @return bool
      */
     public function hasCurrency($code)
     {
         return isset(self::$currencies[$code]);
+    }
+
+    protected function defaultCurrency()
+    {
+        return $this->getCurrency('EUR');
     }
 }

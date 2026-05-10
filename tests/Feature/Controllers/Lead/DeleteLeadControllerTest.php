@@ -3,16 +3,16 @@
 namespace Tests\Feature\Controllers\Lead;
 
 use App\Enums\OfferStatus;
+use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Lead;
 use App\Models\Offer;
 use App\Models\Role;
 use App\Models\User;
-use App\Enums\PermissionName;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeleteLeadControllerTest extends AbstractTestCase
 {
@@ -25,12 +25,12 @@ class DeleteLeadControllerTest extends AbstractTestCase
         parent::setUp();
 
         $this->user = User::factory()->create();
-        $role = Role::firstOrCreate(
+        $role       = Role::firstOrCreate(
             ['name' => 'employee'],
             [
                 'display_name' => 'Employee',
-                'description' => 'Employee role',
-                'external_id' => Str::uuid()->toString(),
+                'description'  => 'Employee role',
+                'external_id'  => Str::uuid()->toString(),
             ]
         );
         $this->user->attachRole($role);
@@ -53,12 +53,12 @@ class DeleteLeadControllerTest extends AbstractTestCase
     #[Test]
     public function it_deletes_offers_if_flag_given()
     {
-        $lead = Lead::factory()->create();
+        $lead  = Lead::factory()->create();
         $offer = Offer::create([
-            'source_id' => $lead->id,
+            'source_id'   => $lead->id,
             'source_type' => Lead::class,
-            'client_id' => $lead->client_id,
-            'status' => OfferStatus::inProgress()->getStatus(),
+            'client_id'   => $lead->client_id,
+            'status'      => OfferStatus::inProgress()->getStatus(),
         ]);
 
         $response = $this->json('DELETE', route('leads.destroy', $lead->external_id), [
@@ -73,12 +73,12 @@ class DeleteLeadControllerTest extends AbstractTestCase
     #[Test]
     public function it_does_not_delete_offers_if_flag_is_not_given_but_remove_reference()
     {
-        $lead = Lead::factory()->create();
+        $lead  = Lead::factory()->create();
         $offer = Offer::create([
-            'source_id' => $lead->id,
+            'source_id'   => $lead->id,
             'source_type' => Lead::class,
-            'client_id' => $lead->client_id,
-            'status' => OfferStatus::inProgress()->getStatus(),
+            'client_id'   => $lead->client_id,
+            'status'      => OfferStatus::inProgress()->getStatus(),
         ]);
 
         $response = $this->json('DELETE', route('leads.destroy', $lead->external_id));

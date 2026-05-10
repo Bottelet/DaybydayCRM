@@ -79,14 +79,12 @@ class Kernel extends HttpKernel
         'user.is.admin' => [RedirectIfNotAdmin::class],
         'user.is.superadmin' => [RedirectIfNotSuperAdmin::class],
         'filesystem.is.enabled' => [RedirectIfFileSystemIsNotEnabled::class],
-        'is.demo' => [RedirectIfDemo::class],
-        'api' => [
+        'is.demo'               => [RedirectIfDemo::class],
+        'api'                   => [
             'auth:api',
             'throttle:60,1',
             'bindings',
-
         ],
-
     ];
 
     /**
@@ -97,14 +95,14 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => Authenticate::class,
+        'auth'       => Authenticate::class,
         'auth.basic' => AuthenticateWithBasicAuth::class,
-        'bindings' => SubstituteBindings::class,
-        'can' => Authorize::class,
-        'guest' => RedirectIfAuthenticated::class,
-        'throttle' => ThrottleRequests::class,
-        'role' => EntrustRole::class,
+        'bindings'   => SubstituteBindings::class,
+        'can'        => Authorize::class,
+        'guest'      => RedirectIfAuthenticated::class,
+        'throttle'   => ThrottleRequests::class,
+        'role'       => EntrustRole::class,
         'permission' => EntrustPermission::class,
-        'ability' => EntrustAbility::class,
+        'ability'    => EntrustAbility::class,
     ];
 }

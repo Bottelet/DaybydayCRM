@@ -13,13 +13,13 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
-use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 class UsersController extends Controller
 {
@@ -49,7 +49,7 @@ class UsersController extends Controller
 
     public function calendarUsers()
     {
-        if (! auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
 
             return redirect()->back();
@@ -74,10 +74,10 @@ class UsersController extends Controller
         return Datatables::of($users)
             ->addColumn('namelink', '<a href="{{ route("users.show",[$external_id]) }}">{{$name}}</a>')
             ->addColumn('view', function ($user) {
-                return '<a href="'.route('users.show', $user->external_id).'" class="btn btn-link">'.__('View').'</a>';
+                return '<a href="' . route('users.show', $user->external_id) . '" class="btn btn-link">' . __('View') . '</a>';
             })
             ->addColumn('edit', function ($user) {
-                return '<a href="'.route('users.edit', $user->external_id).'" class="btn btn-link">'.__('Edit').'</a>';
+                return '<a href="' . route('users.edit', $user->external_id) . '" class="btn btn-link">' . __('Edit') . '</a>';
             })
 //            ->addColumn('delete', function ($user) {
 //                return '<button type="button" class="btn btn-link" data-client_id="' . $user->external_id . '" onClick="openModal(\'' . $user->external_id . '\')" id="myBtn">' . __('Delete') .'</button>';
@@ -87,7 +87,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Json for Data tables
+     * Json for Data tables.
      *
      * @return mixed
      */
@@ -109,7 +109,7 @@ class UsersController extends Controller
                     ->format(carbonDate()) : '';
             })
             ->editColumn('status_id', function ($tasks) {
-                return '<span class="label label-success" style="background-color:'.$tasks->status->color.'"> '.$tasks->status->title.'</span>';
+                return '<span class="label label-success" style="background-color:' . $tasks->status->color . '"> ' . $tasks->status->title . '</span>';
             })
             ->editColumn('client_id', function ($tasks) {
                 return $tasks->client->primaryContact->name;
@@ -119,7 +119,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Json for Data tables
+     * Json for Data tables.
      *
      * @return mixed
      */
@@ -141,8 +141,8 @@ class UsersController extends Controller
                     ->format(carbonDate()) : '';
             })
             ->editColumn('status_id', function ($leads) {
-                return '<span class="label label-success" style="background-color:'.$leads->status->color.'"> '.
-                    $leads->status->title.'</span>';
+                return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> '
+                    . $leads->status->title . '</span>';
             })
             ->editColumn('client_id', function ($tasks) {
                 return $tasks->client->primaryContact->name;
@@ -152,7 +152,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Json for Data tables
+     * Json for Data tables.
      *
      * @return mixed
      */
@@ -162,7 +162,7 @@ class UsersController extends Controller
 
         return Datatables::of($clients)
             ->addColumn('clientlink', function ($clients) {
-                return '<a href="'.route('clients.show', $clients->external_id).'">'.$clients->company_name.'</a>';
+                return '<a href="' . route('clients.show', $clients->external_id) . '">' . $clients->company_name . '</a>';
             })
             ->editColumn('created_at', function ($clients) {
                 return $clients->created_at ? with(new Carbon($clients->created_at))
@@ -183,7 +183,8 @@ class UsersController extends Controller
     }
 
     /**
-     * @param  StoreUserRequest  $userRequest
+     * @param StoreUserRequest $userRequest
+     *
      * @return mixed
      */
     public function store(StoreUserRequest $request)
@@ -198,20 +199,20 @@ class UsersController extends Controller
         if ($request->hasFile('image_path')) {
             $file = $request->file('image_path');
 
-            $filename = str_random(8).'_'.$file->getClientOriginalName();
-            $path = Storage::put($settings->external_id, $file);
+            $filename = str_random(8) . '_' . $file->getClientOriginalName();
+            $path     = Storage::put($settings->external_id, $file);
         }
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->external_id = Uuid::uuid4()->toString();
-        $user->email = $request->email;
-        $user->address = $request->address;
-        $user->primary_number = $request->primary_number;
+        $user                   = new User();
+        $user->name             = $request->name;
+        $user->external_id      = Uuid::uuid4()->toString();
+        $user->email            = $request->email;
+        $user->address          = $request->address;
+        $user->primary_number   = $request->primary_number;
         $user->secondary_number = $request->secondary_number;
-        $user->password = bcrypt($request->password);
-        $user->image_path = $path;
-        $user->language = $request->language == 'dk' ?: 'en';
+        $user->password         = bcrypt($request->password);
+        $user->image_path       = $path;
+        $user->language         = $request->language == 'dk' ?: 'en';
         $user->save();
         $user->roles()->attach($request->roles);
         $user->department()->attach($request->departments);
@@ -255,32 +256,32 @@ class UsersController extends Controller
      */
     public function update($external_id, UpdateUserRequest $request)
     {
-        $user = $this->findByExternalId($external_id);
-        $password = bcrypt($request->password);
-        $role = $request->roles;
+        $user       = $this->findByExternalId($external_id);
+        $password   = bcrypt($request->password);
+        $role       = $request->roles;
         $department = $request->departments;
 
-        if (! auth()->user()->canChangePasswordOn($user)) {
+        if ( ! auth()->user()->canChangePasswordOn($user)) {
             unset($request['password']);
         }
 
         if ($request->hasFile('image_path')) {
             $companyname = Setting::first()->external_id;
-            $file = $request->file('image_path');
+            $file        = $request->file('image_path');
 
-            $filename = str_random(8).'_'.$file->getClientOriginalName();
+            $filename = str_random(8) . '_' . $file->getClientOriginalName();
 
             $path = Storage::put($companyname, $file);
             if ($request->password == '') {
-                $input = array_replace($request->except('password'), ['image_path' => "$path"]);
+                $input = array_replace($request->except('password'), ['image_path' => "{$path}"]);
             } else {
-                $input = array_replace($request->all(), ['image_path' => "$path", 'password' => "$password"]);
+                $input = array_replace($request->all(), ['image_path' => "{$path}", 'password' => "{$password}"]);
             }
         } else {
             if ($request->password == '') {
                 $input = array_replace($request->except('password'));
             } else {
-                $input = array_replace($request->all(), ['password' => "$password"]);
+                $input = array_replace($request->all(), ['password' => "{$password}"]);
             }
         }
 

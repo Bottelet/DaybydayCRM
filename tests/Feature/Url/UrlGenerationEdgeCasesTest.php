@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\AbstractTestCase;
 
 /**
- * Edge case tests for URL generation in various scenarios
+ * Edge case tests for URL generation in various scenarios.
  *
  * This test suite covers edge cases including:
  * - Multiple subdirectory levels
@@ -98,7 +98,7 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $externalId = '12345-abcde';
-        $url = url('/add-documents/'.$externalId.'/task');
+        $url        = url('/add-documents/' . $externalId . '/task');
 
         $this->assertEquals('http://localhost/crm/add-documents/12345-abcde/task', $url);
     }
@@ -109,7 +109,7 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
         config(['app.url' => 'http://localhost/crm']);
 
         $externalId = 'abc-123_xyz';
-        $url = url('/tasks/'.$externalId);
+        $url        = url('/tasks/' . $externalId);
 
         $this->assertEquals('http://localhost/crm/tasks/abc-123_xyz', $url);
     }
@@ -178,7 +178,7 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
 
         // Simulate what JavaScript would construct
         $jsBaseUrl = config('app.url');
-        $jsUrl = $jsBaseUrl.'/products/creator';
+        $jsUrl     = $jsBaseUrl . '/products/creator';
 
         $this->assertEquals($phpUrl, $jsUrl);
     }
@@ -219,10 +219,10 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
     {
         config(['app.url' => 'http://localhost/crm']);
 
-        $type = 'task';
+        $type       = 'task';
         $externalId = 'abc123';
 
-        $url = url('/'.$type.'s/'.$externalId);
+        $url = url('/' . $type . 's/' . $externalId);
 
         $this->assertEquals('http://localhost/crm/tasks/abc123', $url);
     }

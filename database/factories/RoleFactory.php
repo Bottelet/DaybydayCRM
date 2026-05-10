@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-/** @var Factory $factory */
+/* @var Factory $factory */
 
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factory;
@@ -14,11 +14,10 @@ class RoleFactory extends \Illuminate\Database\Eloquent\Factories\Factory
     public function definition()
     {
         return [
-            'name' => 'factory',
-            'external_id' => $this->faker->uuid,
+            'name'         => 'factory',
+            'external_id'  => $this->faker->uuid,
             'display_name' => 'Factory Role',
-            'description' => 'Mock role',
-
+            'description'  => 'Mock role',
         ];
     }
 }

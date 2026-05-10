@@ -10,8 +10,9 @@ class ApiController extends Controller
     /**
      * Return generic json response with the given data.
      *
-     * @param  int  $statusCode
-     * @param  array  $headers
+     * @param int   $statusCode
+     * @param array $headers
+     *
      * @return JsonResponse
      */
     protected function respond($data, $statusCode = 200, $headers = [])
@@ -58,7 +59,7 @@ class ApiController extends Controller
     {
         return $this->respond([
             'errors' => [
-                'message' => $message,
+                'message'     => $message,
                 'status_code' => $statusCode,
             ],
         ], $statusCode);
@@ -67,7 +68,8 @@ class ApiController extends Controller
     /**
      * Respond with unauthorized.
      *
-     * @param  string  $message
+     * @param string $message
+     *
      * @return JsonResponse
      */
     protected function respondUnauthorized($message = 'Unauthorized')
@@ -78,7 +80,8 @@ class ApiController extends Controller
     /**
      * Respond with forbidden.
      *
-     * @param  string  $message
+     * @param string $message
+     *
      * @return JsonResponse
      */
     protected function respondForbidden($message = 'Forbidden')
@@ -89,7 +92,8 @@ class ApiController extends Controller
     /**
      * Respond with not found.
      *
-     * @param  string  $message
+     * @param string $message
+     *
      * @return JsonResponse
      */
     protected function respondNotFound($message = 'Not Found')

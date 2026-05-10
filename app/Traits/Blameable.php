@@ -5,7 +5,7 @@ namespace App\Traits;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Blameable Trait
+ * Blameable Trait.
  *
  * Automatically populates user_created_id and user_updated_id fields
  * for models that track who created and updated records.

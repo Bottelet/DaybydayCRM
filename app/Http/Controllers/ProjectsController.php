@@ -13,10 +13,10 @@ use App\Models\Status;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Session;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProjectsController extends Controller
 {
@@ -33,7 +33,7 @@ class ProjectsController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (! auth()->check() || ! auth()->user()->can('project-delete')) {
+            if ( ! auth()->check() || ! auth()->user()->can('project-delete')) {
                 abort(403);
             }
 
@@ -41,7 +41,7 @@ class ProjectsController extends Controller
         }, ['only' => ['destroy']]);
 
         $this->middleware(function ($request, $next) {
-            if (! auth()->check() || ! auth()->user()->can('can-assign-new-user-to-project')) {
+            if ( ! auth()->check() || ! auth()->user()->can('can-assign-new-user-to-project')) {
                 if ($request->expectsJson()) {
                     abort(403, __('You do not have permission to assign users to this project'));
                 }
@@ -78,12 +78,12 @@ class ProjectsController extends Controller
                 return $projects->assignee->name;
             })
             ->editColumn('status_id', function ($projects) {
-                return '<span class="label label-success" style="background-color:'.$projects->status->color.'"> '.
-                    $projects->status->title.'</span>';
+                return '<span class="label label-success" style="background-color:' . $projects->status->color . '"> '
+                    . $projects->status->title . '</span>';
             })
             ->addColumn('view', function ($projects) {
-                return '<a href="'.route('projects.show', $projects->external_id).'" class="btn btn-link">'.__('View').'</a>'
-                .'<a data-toggle="modal" data-id="'.route('projects.destroy', $projects->external_id).'" data-title="'.$projects->title.'" data-target="#deletion" class="btn btn-link">'.__('Delete').'</a>';
+                return '<a href="' . route('projects.show', $projects->external_id) . '" class="btn btn-link">' . __('View') . '</a>'
+                . '<a data-toggle="modal" data-id="' . route('projects.destroy', $projects->external_id) . '" data-title="' . $projects->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') . '</a>';
             })
             ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
@@ -97,7 +97,7 @@ class ProjectsController extends Controller
 
     public function destroy(Project $project, Request $request)
     {
-        if (! auth()->user()->can('project-delete')) {
+        if ( ! auth()->user()->can('project-delete')) {
             session()->flash('flash_message_warning', __('You do not have permission to delete projects'));
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('You do not have permission to delete projects')], 403);
@@ -124,7 +124,8 @@ class ProjectsController extends Controller
     }
 
     /**
-     * @param  StoreTaskRequest  $request
+     * @param StoreTaskRequest $request
+     *
      * @return mixed
      */
     public function store(StoreProjectRequest $request)
@@ -133,7 +134,7 @@ class ProjectsController extends Controller
             $client = Client::whereExternalId($request->client_external_id);
         }
 
-        if (! $client) {
+        if ( ! $client) {
             session()->flash('flash_message', __('Could not find client'));
 
             return redirect()->back();
@@ -141,14 +142,14 @@ class ProjectsController extends Controller
 
         $project = Project::create(
             [
-                'title' => $request->title,
-                'description' => clean($request->description),
+                'title'            => $request->title,
+                'description'      => clean($request->description),
                 'user_assigned_id' => $request->user_assigned_id,
-                'deadline' => Carbon::parse($request->deadline),
-                'status_id' => $request->status_id,
-                'user_created_id' => auth()->id(),
-                'external_id' => Uuid::uuid4()->toString(),
-                'client_id' => $client ? $client->id : null,
+                'deadline'         => Carbon::parse($request->deadline),
+                'status_id'        => $request->status_id,
+                'user_created_id'  => auth()->id(),
+                'external_id'      => Uuid::uuid4()->toString(),
+                'client_id'        => $client ? $client->id : null,
             ]
         );
 
@@ -157,7 +158,7 @@ class ProjectsController extends Controller
         session()->flash('flash_message', __('Project successfully added'));
         event(new ProjectAction($project, self::CREATED));
 
-        if (! is_null($request->images)) {
+        if (null !== $request->images) {
             foreach ($request->file('images') as $image) {
                 $this->upload($image, $project);
             }
@@ -165,44 +166,6 @@ class ProjectsController extends Controller
 
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
         return response()->json(['project_external_id' => $project->external_id]);
-    }
-
-    private function upload($image, $project)
-    {
-        if (! auth()->user()->can('task-upload-files')) {
-            session()->flash('flash_message_warning', __('You do not have permission to upload images'));
-
-            return redirect()->route('tasks.show', $project->external_id);
-        }
-        $file = $image;
-        $filename = str_random(8).'_'.$file->getClientOriginalName();
-        $fileOrginal = $file->getClientOriginalName();
-
-        $size = $file->getSize();
-        $mbsize = $size / 1048576;
-        $totaltsize = substr($mbsize, 0, 4);
-
-        if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
-
-            return redirect()->back();
-        }
-
-        $folder = $project->external_id;
-        $fileSystem = GetStorageProvider::getStorage();
-        $fileData = $fileSystem->upload($folder, $filename, $file);
-
-        Document::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'path' => $fileData['file_path'],
-            'size' => $totaltsize,
-            'original_filename' => $fileOrginal,
-            'source_id' => $project->id,
-            'source_type' => Project::class,
-            'mime' => $file->getClientMimeType(),
-            'integration_id' => isset($fileData['id']) ? $fileData['id'] : null,
-            'integration_type' => get_class($fileSystem),
-        ]);
     }
 
     /**
@@ -250,12 +213,11 @@ class ProjectsController extends Controller
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->withFiles($project->documents)
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
-
     }
 
     public function updateStatus($external_id, Request $request)
     {
-        if (! auth()->user()->can('project-update-status')) {
+        if ( ! auth()->user()->can('project-update-status')) {
             session()->flash('flash_message_warning', __('You do not have permission to change project status'));
             if ($request->ajax()) {
                 return response()->json(['error' => __('You do not have permission to change project status')], 403);
@@ -267,7 +229,7 @@ class ProjectsController extends Controller
 
         if ($request->ajax() && isset($request->statusExternalId)) {
             $status = Status::whereExternalId($request->statusExternalId)->first();
-            if (! $status) {
+            if ( ! $status) {
                 if ($request->ajax()) {
                     return response()->json(['error' => __('Invalid status')], 400);
                 }
@@ -281,7 +243,7 @@ class ProjectsController extends Controller
         // Validate that the status_id belongs to project statuses
         if (isset($input['status_id'])) {
             $validStatus = Status::typeOfProject()->where('id', $input['status_id'])->exists();
-            if (! $validStatus) {
+            if ( ! $validStatus) {
                 if ($request->ajax()) {
                     return response()->json(['error' => __('Invalid status for project')], 400);
                 }
@@ -322,25 +284,25 @@ class ProjectsController extends Controller
     }
 
     /**
-     * Update the follow up date (Deadline)
+     * Update the follow up date (Deadline).
      *
-     * @param  UpdateLeadFollowUpRequest  $request
+     * @param UpdateLeadFollowUpRequest $request
+     *
      * @return mixed
      */
     public function updateDeadline(Request $request, $external_id)
     {
-
-        if (! auth()->user()->can('project-update-deadline')) {
+        if ( ! auth()->user()->can('project-update-deadline')) {
             session()->flash('flash_message_warning', __('You do not have permission to change project deadline'));
 
             return redirect()->route('projects.show', $external_id);
         }
 
         $project = $this->findByExternalId($external_id);
-        $input = $request->all();
+        $input   = $request->all();
         if (isset($request->deadline_date)) {
-            $deadlineTime = $request->deadline_time ?: '00:00';
-            $input['deadline'] = $request->deadline_date.' '.$deadlineTime.':00';
+            $deadlineTime      = $request->deadline_time ?: '00:00';
+            $input['deadline'] = $request->deadline_date . ' ' . $deadlineTime . ':00';
         }
         $project->fill($input)->save();
         event(new ProjectAction($project, self::UPDATED_DEADLINE));
@@ -350,11 +312,50 @@ class ProjectsController extends Controller
     }
 
     /**
-     * @param  $id
+     * @param $id
+     *
      * @return mixed
      */
     public function findByExternalId($external_id)
     {
         return Project::whereExternalId($external_id)->firstOrFail();
+    }
+
+    private function upload($image, $project)
+    {
+        if ( ! auth()->user()->can('task-upload-files')) {
+            session()->flash('flash_message_warning', __('You do not have permission to upload images'));
+
+            return redirect()->route('tasks.show', $project->external_id);
+        }
+        $file        = $image;
+        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $fileOrginal = $file->getClientOriginalName();
+
+        $size       = $file->getSize();
+        $mbsize     = $size / 1048576;
+        $totaltsize = mb_substr($mbsize, 0, 4);
+
+        if ($totaltsize > 15) {
+            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+
+            return redirect()->back();
+        }
+
+        $folder     = $project->external_id;
+        $fileSystem = GetStorageProvider::getStorage();
+        $fileData   = $fileSystem->upload($folder, $filename, $file);
+
+        Document::create([
+            'external_id'       => Uuid::uuid4()->toString(),
+            'path'              => $fileData['file_path'],
+            'size'              => $totaltsize,
+            'original_filename' => $fileOrginal,
+            'source_id'         => $project->id,
+            'source_type'       => Project::class,
+            'mime'              => $file->getClientMimeType(),
+            'integration_id'    => $fileData['id'] ?? null,
+            'integration_type'  => get_class($fileSystem),
+        ]);
     }
 }

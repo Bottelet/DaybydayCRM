@@ -34,7 +34,7 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->repository = new RoleRepository();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_all_roles_excludes_owner_role()
@@ -43,10 +43,10 @@ class RoleRepositoryTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $roles = $this->repository->allRoles();
+        $roles     = $this->repository->allRoles();
         $roleNames = $roles->pluck('name')->toArray();
 
-        /** Assert */
+        /* Assert */
         $this->assertNotContains('owner', $roleNames, 'allRoles() should not include the owner role');
     }
 
@@ -59,7 +59,7 @@ class RoleRepositoryTest extends AbstractTestCase
         /** Act */
         $roles = $this->repository->allRoles();
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEmpty($roles, 'allRoles() should return at least one role');
 
         foreach ($roles as $role) {
@@ -78,7 +78,7 @@ class RoleRepositoryTest extends AbstractTestCase
         /** Act */
         $roles = $this->repository->allRoles();
 
-        /** Assert */
+        /* Assert */
         foreach ($roles as $role) {
             $this->assertInstanceOf(Role::class, $role, 'Each item should be a Role model');
         }
@@ -91,10 +91,10 @@ class RoleRepositoryTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $roles = $this->repository->allRoles();
+        $roles     = $this->repository->allRoles();
         $roleNames = $roles->pluck('name')->toArray();
 
-        /** Assert */
+        /* Assert */
         $this->assertContains('administrator', $roleNames, 'allRoles() should include administrator role');
     }
 
@@ -107,7 +107,7 @@ class RoleRepositoryTest extends AbstractTestCase
         /** Act */
         $roles = $this->repository->listAllRoles();
 
-        /** Assert */
+        /* Assert */
         $this->assertNotEmpty($roles);
 
         foreach ($roles as $id => $displayName) {
@@ -123,11 +123,11 @@ class RoleRepositoryTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $roles = $this->repository->listAllRoles();
+        $roles        = $this->repository->listAllRoles();
         $displayNames = $roles->toArray();
-        $ownerRole = Role::where('name', 'owner')->first();
+        $ownerRole    = Role::where('name', 'owner')->first();
 
-        /** Assert */
+        /* Assert */
         if ($ownerRole) {
             $this->assertArrayNotHasKey($ownerRole->id, $displayNames, 'listAllRoles() should not include the owner role');
         }
@@ -135,9 +135,9 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->assertNotContains('Owner', $displayNames);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_all_roles_is_not_broken_by_column_selection_fix()
@@ -146,13 +146,13 @@ class RoleRepositoryTest extends AbstractTestCase
         // Already arranged in setUp()
 
         /** Act */
-        $roles = $this->repository->allRoles();
+        $roles    = $this->repository->allRoles();
         $filtered = $roles->filter(fn ($r) => $r->name !== 'owner');
 
-        /** Assert */
+        /* Assert */
         $this->assertGreaterThanOrEqual(1, $roles->count(), 'Should return at least 1 non-owner role');
         $this->assertEquals($roles->count(), $filtered->count(), 'allRoles() already filters owner so re-filtering changes nothing');
     }
 
-    // endregion
+    # endregion
 }

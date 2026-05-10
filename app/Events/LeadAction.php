@@ -17,6 +17,16 @@ class LeadAction
 
     private $action;
 
+    /**
+     * Create a new event instance.
+     * LeadAction constructor.
+     */
+    public function __construct(Lead $lead, $action)
+    {
+        $this->lead   = $lead;
+        $this->action = $action;
+    }
+
     public function getLead()
     {
         return $this->lead;
@@ -25,16 +35,6 @@ class LeadAction
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Create a new event instance.
-     * LeadAction constructor.
-     */
-    public function __construct(Lead $lead, $action)
-    {
-        $this->lead = $lead;
-        $this->action = $action;
     }
 
     /**

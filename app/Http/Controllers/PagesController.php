@@ -14,21 +14,21 @@ use Carbon\CarbonPeriod;
 class PagesController extends Controller
 {
     /**
-     * Dashobard view
+     * Dashobard view.
      *
      * @return mixed
      */
     public function dashboard()
     {
-        $today = today();
+        $today     = today();
         $startDate = today()->subdays(14);
-        $period = CarbonPeriod::create($startDate, $today);
+        $period    = CarbonPeriod::create($startDate, $today);
         $datasheet = [];
 
         // Iterate over the period
         foreach ($period as $date) {
-            $datasheet[$date->format(carbonDate())] = [];
-            $datasheet[$date->format(carbonDate())]['monthly'] = [];
+            $datasheet[$date->format(carbonDate())]                     = [];
+            $datasheet[$date->format(carbonDate())]['monthly']          = [];
             $datasheet[$date->format(carbonDate())]['monthly']['tasks'] = 0;
             $datasheet[$date->format(carbonDate())]['monthly']['leads'] = 0;
         }
@@ -42,7 +42,7 @@ class PagesController extends Controller
         foreach ($leads as $lead) {
             $datasheet[$lead->created_at->format(carbonDate())]['monthly']['leads']++;
         }
-        if (! auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             $absences = [];
         } else {
             // Get the latest qualifying absence per user at the database level

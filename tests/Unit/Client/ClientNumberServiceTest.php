@@ -9,9 +9,9 @@ use App\Services\ClientNumber\ClientNumberService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use InvalidArgumentException;
 
 class ClientNumberServiceTest extends AbstractTestCase
 {
@@ -35,7 +35,7 @@ class ClientNumberServiceTest extends AbstractTestCase
 
         Setting::factory()->create();
 
-        $this->user = User::factory()->create();
+        $this->user   = User::factory()->create();
         $this->client = Client::factory()->create([
             'company_name' => 'Just something',
         ]);
@@ -50,7 +50,7 @@ class ClientNumberServiceTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    // region happy_path
+    # region happy_path
 
     #[Test]
     public function it_sets_next_client_number_and_increments_it()
@@ -59,10 +59,10 @@ class ClientNumberServiceTest extends AbstractTestCase
         // Service initialized with 980200 in setUp()
 
         /** Act */
-        $firstNumber = $this->clientNumberService->setNextClientNumber();
+        $firstNumber  = $this->clientNumberService->setNextClientNumber();
         $secondNumber = $this->clientNumberService->setNextClientNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(980200, $firstNumber);
         $this->assertEquals(980201, $secondNumber);
     }
@@ -74,10 +74,10 @@ class ClientNumberServiceTest extends AbstractTestCase
         // Service initialized with 980200 in setUp()
 
         /** Act */
-        $firstNumber = $this->clientNumberService->nextClientNumber();
+        $firstNumber  = $this->clientNumberService->nextClientNumber();
         $secondNumber = $this->clientNumberService->nextClientNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(980200, $firstNumber);
         $this->assertEquals(980200, $secondNumber);
     }
@@ -88,29 +88,29 @@ class ClientNumberServiceTest extends AbstractTestCase
         /** Arrange */
         $newNumber = 20000;
 
-        /** Act */
+        /* Act */
         $this->clientNumberService->setClientNumber($newNumber);
         $result = $this->clientNumberService->nextClientNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(20000, $result);
     }
 
-    // endregion
+    # endregion
 
-    // region edge_cases
+    # region edge_cases
 
     #[Test]
     public function it_starts_incrementing_sequence_from_zero_when_set_to_zero()
     {
-        /** Arrange */
+        /* Arrange */
         $this->clientNumberService->setClientNumber(0);
 
         /** Act */
-        $firstClient = $this->clientNumberService->setNextClientNumber();
+        $firstClient  = $this->clientNumberService->setNextClientNumber();
         $secondClient = $this->clientNumberService->setNextClientNumber();
 
-        /** Assert */
+        /* Assert */
         // Setting the client number to 0 starts the sequence at 0
         // and subsequent calls continue incrementing without duplicates.
         $this->assertEquals(0, $firstClient);
@@ -124,32 +124,32 @@ class ClientNumberServiceTest extends AbstractTestCase
         /** Arrange */
         $largeNumber = 99999999;
 
-        /** Act */
+        /* Act */
         $this->clientNumberService->setClientNumber($largeNumber);
         $result = $this->clientNumberService->setNextClientNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(99999999, $result);
     }
 
     #[Test]
     public function it_increments_from_zero()
     {
-        /** Arrange */
+        /* Arrange */
         $this->clientNumberService->setClientNumber(0);
 
         /** Act */
-        $firstNumber = $this->clientNumberService->setNextClientNumber();
+        $firstNumber  = $this->clientNumberService->setNextClientNumber();
         $secondNumber = $this->clientNumberService->setNextClientNumber();
 
-        /** Assert */
+        /* Assert */
         $this->assertEquals(0, $firstNumber);
         $this->assertEquals(1, $secondNumber);
     }
 
-    // endregion
+    # endregion
 
-    // region failure_path
+    # region failure_path
 
     #[Test]
     public function it_rejects_negative_client_numbers()
@@ -157,13 +157,13 @@ class ClientNumberServiceTest extends AbstractTestCase
         /** Arrange */
         $negativeNumber = -100;
 
-        /** Assert */
+        /* Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Client number cannot be negative.');
 
-        /** Act */
+        /* Act */
         $this->clientNumberService->setClientNumber($negativeNumber);
     }
 
-    // endregion
+    # endregion
 }

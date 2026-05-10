@@ -28,7 +28,8 @@ class ClientActionNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -39,7 +40,8 @@ class ClientActionNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return MailMessage
      */
     public function toMail($notifiable)
@@ -53,7 +55,8 @@ class ClientActionNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -66,7 +69,7 @@ class ClientActionNotification extends Notification
                 break;
             case 'updated_assign':
                 $text = __(':username assigned :company to you', [
-                    'company' => $this->client->company_name,
+                    'company'  => $this->client->company_name,
                     'username' => Auth()->user()->name,
                 ]);
                 break;
@@ -76,12 +79,12 @@ class ClientActionNotification extends Notification
 
         return [
             'assigned_user' => $notifiable->id, // Assigned user ID
-            'created_user' => auth()->user()->id,
-            'message' => $text,
-            'type' => Client::class,
-            'type_id' => $this->client->id,
-            'url' => url('clients/'.$this->client->external_id),
-            'action' => $this->action,
+            'created_user'  => auth()->user()->id,
+            'message'       => $text,
+            'type'          => Client::class,
+            'type_id'       => $this->client->id,
+            'url'           => url('clients/' . $this->client->external_id),
+            'action'        => $this->action,
         ];
     }
 }

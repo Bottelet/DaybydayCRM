@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Repositories\Money\Money;
 use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,19 +30,19 @@ class Payment extends Model
 
     protected $casts = [
         'payment_date' => 'date',
-        'deleted_at' => 'datetime',
+        'deleted_at'   => 'datetime',
     ];
 
     // getRouteKeyName() is provided by HasExternalId trait
 
-    // region Relationships
+    # region Relationships
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
     }
 
-    // endregion
+    # endregion
 
     public function getPriceAttribute()
     {

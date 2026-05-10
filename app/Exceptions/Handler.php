@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -12,7 +13,6 @@ use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
-use Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -35,7 +35,8 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  Exception  $exception
+     * @param Exception $exception
+     *
      * @return void
      */
     public function report(Throwable $exception)
@@ -50,8 +51,9 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  Request  $request
-     * @param  Exception  $exception
+     * @param Request   $request
+     * @param Exception $exception
+     *
      * @return Response
      */
     public function render($request, Throwable $exception)
@@ -62,7 +64,8 @@ class Handler extends ExceptionHandler
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  Request  $request
+     * @param Request $request
+     *
      * @return Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)

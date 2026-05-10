@@ -8,12 +8,12 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 #[Group('authorization-fix')]
 class DocumentAuthorizationTest extends AbstractTestCase
@@ -34,45 +34,45 @@ class DocumentAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->task = Task::factory()->create();
+        $this->task    = Task::factory()->create();
         $this->project = Project::factory()->create();
 
         // Create role with task-upload-files permission
         $roleWithTaskUpload = Role::create([
-            'name' => 'task-uploader',
+            'name'         => 'task-uploader',
             'display_name' => 'Task Uploader',
-            'description' => 'Can upload files to tasks',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can upload files to tasks',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $taskUploadPermission = Permission::firstOrCreate(['name' => 'task-upload-files'], [
             'display_name' => 'Upload task files',
-            'description' => 'Can upload files to tasks',
-            'grouping' => 'task',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can upload files to tasks',
+            'grouping'     => 'task',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithTaskUpload->attachPermission($taskUploadPermission);
 
         // Create role with project-upload-files permission
         $roleWithProjectUpload = Role::create([
-            'name' => 'project-uploader',
+            'name'         => 'project-uploader',
             'display_name' => 'Project Uploader',
-            'description' => 'Can upload files to projects',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can upload files to projects',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $projectUploadPermission = Permission::firstOrCreate(['name' => 'project-upload-files'], [
             'display_name' => 'Upload project files',
-            'description' => 'Can upload files to projects',
-            'grouping' => 'project',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Can upload files to projects',
+            'grouping'     => 'project',
+            'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithProjectUpload->attachPermission($projectUploadPermission);
 
         // Create role without upload permissions
         $roleWithoutPermission = Role::create([
-            'name' => 'document-viewer',
+            'name'         => 'document-viewer',
             'display_name' => 'Document Viewer',
-            'description' => 'Cannot upload files',
-            'external_id' => Str::uuid()->toString(),
+            'description'  => 'Cannot upload files',
+            'external_id'  => Str::uuid()->toString(),
         ]);
 
         // Create users

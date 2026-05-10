@@ -24,13 +24,13 @@ class UserTest extends DuskTestCase
                 ->type('.dataTables_filter input', $user->name)
                 ->waitForText($user->name)
                 ->clickLink($user->name)
-                ->assertPathIs('/users/'.$user->external_id)
+                ->assertPathIs('/users/' . $user->external_id)
                 ->waitForText($user->name);
         });
     }
 
     /**
-     * Test user can see all the correct info on user page
+     * Test user can see all the correct info on user page.
      */
     #[Test]
     public function it_i_can_see_all_the_correct_information_on_user_info_page()
@@ -38,7 +38,7 @@ class UserTest extends DuskTestCase
         $user = User::factory()->create();
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/users/'.$user->external_id)
+                ->visit('/users/' . $user->external_id)
                 ->waitForText($user->name)
                 ->assertSee($user->primary_number)
                 ->assertSee($user->secondary_number);
@@ -46,7 +46,7 @@ class UserTest extends DuskTestCase
     }
 
     /**
-     * Test i can create a new User
+     * Test i can create a new User.
      */
     #[Test]
     public function it_i_can_create_a_new_user()

@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
 use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,6 +46,11 @@ class Client extends Model
         parent::boot();
     }
 
+    public static function whereExternalId($external_id)
+    {
+        return self::where('external_id', $external_id)->first();
+    }
+
     public function updateAssignee(User $user)
     {
         $this->user_id = $user->id;
@@ -59,7 +64,7 @@ class Client extends Model
         return $this->company_name;
     }
 
-    // region Relationships
+    # region Relationships
 
     public function appointments()
     {
@@ -108,7 +113,7 @@ class Client extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    // endregion
+    # endregion
 
     public function getPrimaryContactAttribute()
     {
@@ -118,11 +123,6 @@ class Client extends Model
     public function getAssignedUserAttribute()
     {
         return User::findOrFail($this->user_id);
-    }
-
-    public static function whereExternalId($external_id)
-    {
-        return self::where('external_id', $external_id)->first();
     }
 
     public function getSearchableFields(): array

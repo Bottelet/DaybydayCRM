@@ -25,7 +25,7 @@ class UpdateProjectStatusRequest extends FormRequest
     public function rules()
     {
         return [
-            'status_id' => 'sometimes|integer|exists:statuses,id|required_without:statusExternalId',
+            'status_id'        => 'sometimes|integer|exists:statuses,id|required_without:statusExternalId',
             'statusExternalId' => 'sometimes|string|exists:statuses,external_id|required_without:status_id',
         ];
     }
@@ -33,7 +33,8 @@ class UpdateProjectStatusRequest extends FormRequest
     /**
      * Configure the validator instance.
      *
-     * @param  \Illuminate\Validation\Validator  $validator
+     * @param \Illuminate\Validation\Validator $validator
+     *
      * @return void
      */
     public function withValidator($validator)
@@ -54,7 +55,7 @@ class UpdateProjectStatusRequest extends FormRequest
             // Validate status belongs to Project
             if ($statusId) {
                 $validStatus = Status::typeOfProject()->where('id', $statusId)->exists();
-                if (! $validStatus) {
+                if ( ! $validStatus) {
                     $validator->errors()->add('status_id', __('Invalid status for project'));
                 }
             }

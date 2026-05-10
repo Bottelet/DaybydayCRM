@@ -24,7 +24,7 @@ class UpdateSettingOverallRequest extends FormRequest
     public function rules()
     {
         return [
-            'client_number' => 'required|integer',
+            'client_number'  => 'required|integer',
             'invoice_number' => 'required|integer',
         ];
     }

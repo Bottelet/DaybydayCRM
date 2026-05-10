@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Tests\AbstractTestCase;
 
 /**
- * Test URL generation for subdirectory installations
+ * Test URL generation for subdirectory installations.
  *
  * This test ensures that URLs are generated correctly when the application
  * is installed in a subdirectory (e.g., http://localhost/daybydaycrm/public/)
@@ -32,9 +32,9 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->user = factory(User::class)->create();
+        $this->user   = factory(User::class)->create();
         $this->client = factory(Client::class)->create();
-        $this->task = factory(Task::class)->create([
+        $this->task   = factory(Task::class)->create([
             'user_assigned_id' => $this->user->id,
         ]);
         $this->project = factory(Project::class)->create([
@@ -74,7 +74,7 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
         $response->assertStatus(200);
 
         // The view should contain the correct URL for document upload
-        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/'.$this->task->external_id.'/task';
+        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->task->external_id . '/task';
         $response->assertSee($expectedUrl, false);
     }
 
@@ -87,7 +87,7 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
 
         $response->assertStatus(200);
 
-        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/'.$this->project->external_id.'/project';
+        $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->project->external_id . '/project';
         $response->assertSee($expectedUrl, false);
     }
 
