@@ -79,7 +79,7 @@ class ClientAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_client_create_permission_is_redirected_from_client_create_page()
+    public function user_without_client_create_permission_is_redirected_from_client_create_page()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -93,7 +93,7 @@ class ClientAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_json_request_without_client_create_permission_gets_forbidden_from_client_create_page()
+    public function json_request_without_client_create_permission_gets_forbidden_from_client_create_page()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -108,7 +108,7 @@ class ClientAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_client_create_permission_cannot_store_client()
+    public function user_without_client_create_permission_cannot_store_client()
     {
         /* Arrange */
         $industry = Industry::factory()->create();
