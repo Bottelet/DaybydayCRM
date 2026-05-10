@@ -44,7 +44,6 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user   = User::factory()->create();
@@ -57,12 +56,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region Client relationships
-
     #[Test]
     public function it_client_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $client = new Client();
 
         /* Act & Assert */
@@ -80,10 +77,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_client_invoices_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice = Invoice::factory()->create(['client_id' => $this->client->id]);
 
-        /** Act */
+        /* Act */
         $relationship = $this->client->invoices();
         $invoices     = $this->client->invoices;
 
@@ -96,10 +93,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_client_user_returns_belongs_to_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $client = $this->client->fresh();
 
-        /** Act */
+        /* Act */
         $relationship = $client->user();
         $relatedUser  = $client->user;
 
@@ -109,14 +106,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($this->user->id, $relatedUser->id);
     }
 
-    # endregion
-
-    # region InvoiceLine relationships
-
     #[Test]
     public function it_invoice_line_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $invoiceLine = new InvoiceLine();
 
         /* Act & Assert */
@@ -127,11 +120,11 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_invoice_line_invoice_returns_belongs_to_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice     = Invoice::factory()->create(['client_id' => $this->client->id]);
         $invoiceLine = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
 
-        /** Act */
+        /* Act */
         $relationship   = $invoiceLine->invoice();
         $relatedInvoice = $invoiceLine->invoice;
 
@@ -141,14 +134,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($invoice->id, $relatedInvoice->id);
     }
 
-    # endregion
-
-    # region Lead relationships
-
     #[Test]
     public function it_lead_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $lead = new Lead();
 
         /* Act & Assert */
@@ -169,13 +158,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_creator_returns_belongs_to_user()
     {
-        /** Arrange */
+        /* Arrange */
         $lead = Lead::factory()->create([
             'user_created_id' => $this->user->id,
             'client_id'       => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $lead->creator();
         $creator      = $lead->creator;
 
@@ -188,10 +177,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_comments_returns_morph_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
 
-        /** Act */
+        /* Act */
         $relationship = $lead->comments();
 
         /* Assert */
@@ -201,10 +190,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_notes_is_alias_for_comments()
     {
-        /** Arrange */
+        /* Arrange */
         $lead = Lead::factory()->create(['client_id' => $this->client->id]);
 
-        /** Act */
+        /* Act */
         $notesRelationship    = $lead->notes();
         $commentsRelationship = $lead->comments();
 
@@ -213,14 +202,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(MorphMany::class, $commentsRelationship);
     }
 
-    # endregion
-
-    # region Offer relationships
-
     #[Test]
     public function it_offer_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $offer = new Offer();
 
         /* Act & Assert */
@@ -235,14 +220,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_offer_source_returns_morph_to_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $lead  = Lead::factory()->create(['client_id' => $this->client->id]);
         $offer = Offer::factory()->create([
             'source_type' => Lead::class,
             'source_id'   => $lead->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $offer->source();
 
         /* Assert */
@@ -252,14 +237,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_offer_lead_delegates_to_source()
     {
-        /** Arrange */
+        /* Arrange */
         $lead  = Lead::factory()->create(['client_id' => $this->client->id]);
         $offer = Offer::factory()->create([
             'source_type' => Lead::class,
             'source_id'   => $lead->id,
         ]);
 
-        /** Act */
+        /* Act */
         $leadFromOffer = $offer->lead;
 
         /* Assert */
@@ -271,10 +256,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_offer_lines_is_alias_for_invoice_lines()
     {
-        /** Arrange */
+        /* Arrange */
         $offer = new Offer();
 
-        /** Act */
+        /* Act */
         $linesRelationship        = $offer->lines();
         $invoiceLinesRelationship = $offer->invoiceLines();
 
@@ -283,14 +268,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertInstanceOf(HasMany::class, $invoiceLinesRelationship);
     }
 
-    # endregion
-
-    # region Project relationships
-
     #[Test]
     public function it_project_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $project = new Project();
 
         /* Act & Assert */
@@ -309,13 +290,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_project_assignee_and_user_both_return_belongs_to_same_user()
     {
-        /** Arrange */
+        /* Arrange */
         $project = Project::factory()->create([
             'user_assigned_id' => $this->user->id,
             'client_id'        => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $assignee = $project->assignee;
         $user     = $project->user;
 
@@ -330,14 +311,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_project_tasks_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $project = Project::factory()->create(['client_id' => $this->client->id]);
         $task    = Task::factory()->create([
             'project_id' => $project->id,
             'client_id'  => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $project->tasks();
         $tasks        = $project->tasks;
 
@@ -347,14 +328,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($task->id, $tasks->first()->id);
     }
 
-    # endregion
-
-    # region Role relationships
-
     #[Test]
     public function it_role_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $role = new Role();
 
         /* Act & Assert */
@@ -365,24 +342,20 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_role_permissions_returns_belongs_to_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $role = Role::factory()->create();
 
-        /** Act */
+        /* Act */
         $relationship = $role->permissions();
 
         /* Assert */
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
 
-    # endregion
-
-    # region Setting relationships
-
     #[Test]
     public function it_setting_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $setting = new Setting();
 
         /* Act & Assert */
@@ -393,24 +366,20 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_setting_user_returns_belongs_to_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $setting = new Setting();
 
-        /** Act */
+        /* Act */
         $relationship = $setting->user();
 
         /* Assert */
         $this->assertInstanceOf(BelongsTo::class, $relationship);
     }
 
-    # endregion
-
-    # region Status relationships
-
     #[Test]
     public function it_status_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $status = new Status();
 
         /* Act & Assert */
@@ -422,14 +391,14 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_status_tasks_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $status = Status::factory()->create(['source_type' => Task::class]);
         $task   = Task::factory()->create([
             'status_id' => $status->id,
             'client_id' => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $status->tasks();
         $tasks        = $status->tasks;
 
@@ -441,10 +410,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_status_leads_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $status = Status::factory()->create();
 
-        /** Act */
+        /* Act */
         $relationship = $status->leads();
 
         /* Assert */
@@ -454,24 +423,20 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_status_projects_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $status = Status::factory()->create();
 
-        /** Act */
+        /* Act */
         $relationship = $status->projects();
 
         /* Assert */
         $this->assertInstanceOf(HasMany::class, $relationship);
     }
 
-    # endregion
-
-    # region Task relationships
-
     #[Test]
     public function it_task_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $task = new Task();
 
         /* Act & Assert */
@@ -490,10 +455,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_task_comments_returns_morph_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create(['client_id' => $this->client->id]);
 
-        /** Act */
+        /* Act */
         $relationship = $task->comments();
 
         /* Assert */
@@ -503,13 +468,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_task_creator_returns_belongs_to_user()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create([
             'client_id'       => $this->client->id,
             'user_created_id' => $this->user->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $task->creator();
         $creator      = $task->creator;
 
@@ -519,14 +484,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($this->user->id, $creator->id);
     }
 
-    # endregion
-
-    # region User relationships
-
     #[Test]
     public function it_user_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $user = new User();
 
         /* Act & Assert */
@@ -544,13 +505,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_user_tasks_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create([
             'user_assigned_id' => $this->user->id,
             'client_id'        => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $this->user->tasks();
         $tasks        = $this->user->tasks;
 
@@ -563,13 +524,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_user_leads_returns_has_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $lead = Lead::factory()->create([
             'user_assigned_id' => $this->user->id,
             'client_id'        => $this->client->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $this->user->leads();
         $leads        = $this->user->leads;
 
@@ -579,14 +540,10 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $this->assertEquals($lead->id, $leads->first()->id);
     }
 
-    # endregion
-
-    # region PermissionRole relationships
-
     #[Test]
     public function it_permission_role_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $permissionRole = new PermissionRole();
 
         /* Act & Assert */
@@ -598,7 +555,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_permission_all_relationship_methods_exist_after_reorganization()
     {
-        /** Arrange */
+        /* Arrange */
         $permission = new Permission();
 
         /* Act & Assert */
@@ -608,15 +565,13 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     #[Test]
     public function it_permission_roles_returns_belongs_to_many_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $permission = Permission::factory()->create();
 
-        /** Act */
+        /* Act */
         $relationship = $permission->roles();
 
         /* Assert */
         $this->assertInstanceOf(BelongsToMany::class, $relationship);
     }
-
-    # endregion
 }

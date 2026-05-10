@@ -20,7 +20,6 @@ class PaymentModelTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->invoice = Invoice::factory()->create([
@@ -34,17 +33,15 @@ class PaymentModelTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_payment_invoice_relationship_returns_belongs_to_instance()
     {
-        /** Arrange */
+        /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relationship = $payment->invoice();
 
         /* Assert */
@@ -54,12 +51,12 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_payment_belongs_to_invoice()
     {
-        /** Arrange */
+        /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
 
-        /** Act */
+        /* Act */
         $relatedInvoice = $payment->invoice;
 
         /* Assert */
@@ -71,10 +68,10 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_payment_factory_creates_payment_with_invoice()
     {
-        /** Arrange */
-        // Payment factory automatically creates an invoice via Invoice::factory()
+        /* Arrange */
+        $placeholder = null;
 
-        /** Act */
+        /* Act */
         $payment = Payment::factory()->create();
 
         /* Assert */
@@ -86,7 +83,7 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_multiple_payments_can_belong_to_same_invoice()
     {
-        /** Arrange */
+        /* Arrange */
         $payment1 = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
             'amount'     => 500,
@@ -96,7 +93,7 @@ class PaymentModelTest extends AbstractTestCase
             'amount'     => 300,
         ]);
 
-        /** Act */
+        /* Act */
         $invoice1 = $payment1->invoice;
         $invoice2 = $payment2->invoice;
 
@@ -109,7 +106,7 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_payment_invoice_method_exists_on_model()
     {
-        /** Arrange */
+        /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
@@ -118,14 +115,10 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertTrue(method_exists($payment, 'invoice'));
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_payment_without_invoice_id_returns_null_for_invoice()
     {
-        /** Arrange */
+        /* Arrange */
         $payment = new Payment([
             'external_id'    => 'test-uuid',
             'amount'         => 1000,
@@ -134,7 +127,7 @@ class PaymentModelTest extends AbstractTestCase
         ]);
         $payment->invoice_id = null;
 
-        /** Act */
+        /* Act */
         $relatedInvoice = $payment->invoice;
 
         /* Assert */
@@ -144,14 +137,14 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_soft_deleted_payment_still_has_invoice_relationship()
     {
-        /** Arrange */
+        /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
         $paymentId = $payment->id;
         $payment->delete();
 
-        /** Act */
+        /* Act */
         $deletedPayment = Payment::withTrashed()->find($paymentId);
 
         /* Assert */
@@ -163,7 +156,7 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_payment_invoice_relationship_returns_correct_invoice_when_multiple_invoices_exist()
     {
-        /** Arrange */
+        /* Arrange */
         $otherInvoice = Invoice::factory()->create([
             'status' => 'draft',
         ]);
@@ -174,7 +167,7 @@ class PaymentModelTest extends AbstractTestCase
             'invoice_id' => $otherInvoice->id,
         ]);
 
-        /** Act */
+        /* Act */
         $paymentInvoice      = $payment->invoice;
         $otherPaymentInvoice = $otherPayment->invoice;
 
@@ -187,10 +180,10 @@ class PaymentModelTest extends AbstractTestCase
     #[Test]
     public function it_payment_has_external_id_after_creation()
     {
-        /** Arrange */
-        // Payment factory provides external_id via faker
+        /* Arrange */
+        $placeholder = null;
 
-        /** Act */
+        /* Act */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
@@ -200,22 +193,16 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertNotEmpty($payment->external_id);
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     public function it_payment_does_not_depend_on_dingo_api()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
+        $placeholder = null;
 
-        /** Act */
+        /* Act */
         $uses = class_uses_recursive(Payment::class);
 
         /* Assert */
         $this->assertNotContains('Dingo\Api\Routing\Helpers', $uses);
     }
-
-    # endregion
 }

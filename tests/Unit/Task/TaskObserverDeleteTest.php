@@ -19,7 +19,6 @@ class TaskObserverDeleteTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->task = Task::factory()->create();
@@ -50,12 +49,10 @@ class TaskObserverDeleteTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_deletes_tasks_soft_deletes()
     {
-        /** Arrange */
+        /* Arrange */
         $document = $this->task->documents()->first();
 
         /* Act */
@@ -93,7 +90,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_task_from_database()
     {
-        /** Arrange */
+        /* Arrange */
         $taskId = $this->task->id;
 
         /* Act */
@@ -108,7 +105,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_relations_from_database()
     {
-        /** Arrange */
+        /* Arrange */
         $commentId     = $this->task->comments->first()->id;
         $appointmentId = $this->task->appointments->first()->id;
         $documentId    = $this->task->documents->first()->id;
@@ -132,14 +129,10 @@ class TaskObserverDeleteTest extends AbstractTestCase
         ]);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_deletes_task_with_no_relations()
     {
-        /** Arrange */
+        /* Arrange */
         $taskWithoutRelations = Task::factory()->create();
 
         /* Act */
@@ -175,7 +168,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_task_with_no_relations()
     {
-        /** Arrange */
+        /* Arrange */
         $taskWithoutRelations = Task::factory()->create();
         $taskId               = $taskWithoutRelations->id;
 
@@ -187,6 +180,4 @@ class TaskObserverDeleteTest extends AbstractTestCase
             'id' => $taskId,
         ]);
     }
-
-    # endregion
 }

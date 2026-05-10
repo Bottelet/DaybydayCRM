@@ -48,26 +48,30 @@ class TaskSecurityTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_delete_task()
     {
-        // Give user permission to delete tasks
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-delete']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear cache after attaching permission
         Cache::tags('role_user')->flush();
 
+        /* Act */
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertStatus(200); // JSON request returns 200
+        /* Assert */
+        $response->assertStatus(200);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 
     #[Test]
     public function it_unauthorized_user_cannot_delete_task()
     {
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
+        /* Act */
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('tasks', ['id' => $this->task->id, 'deleted_at' => null]);
     }
@@ -75,6 +79,7 @@ class TaskSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_status_only_accepts_status_id_field()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
@@ -82,37 +87,37 @@ class TaskSecurityTest extends AbstractTestCase
         $newStatus        = Status::factory()->create(['source_type' => Task::class]);
         $originalAssignee = $this->task->user_assigned_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id'        => $newStatus->id,
-            'user_assigned_id' => $this->user->id, // This should be ignored
-            'title'            => 'Hacked Title', // This should be ignored
+            'user_assigned_id' => $this->user->id,
+            'title'            => 'Hacked Title',
         ]);
 
+        /* Assert */
         $this->task->refresh();
 
-        // Status should be updated
         $this->assertEquals($newStatus->id, $this->task->status_id);
 
-        // But user_assigned_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalAssignee, $this->task->user_assigned_id);
 
-        // Title should not be changed
         $this->assertNotEquals('Hacked Title', $this->task->title);
     }
 
     #[Test]
     public function it_updates_status_with_invalid_status_external_id_returns_error()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
+        /* Assert */
         $response->assertStatus(400)
             ->assertJson(['error' => 'Invalid status external id']);
     }
@@ -120,17 +125,19 @@ class TaskSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_status_via_ajax_with_valid_external_id()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
 
         $newStatus = Status::factory()->create(['source_type' => Task::class]);
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'statusExternalId' => $newStatus->external_id,
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
+        /* Assert */
         $this->task->refresh();
         $this->assertEquals($newStatus->id, $this->task->status_id);
     }
@@ -138,25 +145,24 @@ class TaskSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_status_rejects_invalid_status_type()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
 
-        // Create a status that belongs to a different type (Lead instead of Task)
         $leadStatus     = Status::factory()->create(['source_type' => Lead::class]);
         $originalStatus = $this->task->status_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => $leadStatus->id,
         ]);
 
+        /* Assert */
         $this->task->refresh();
 
-        // Status should NOT be changed because it's not a valid task status
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should return 400 error for JSON request
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Invalid status for task']);
     }
@@ -164,23 +170,23 @@ class TaskSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_status_rejects_nonexistent_status_id()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-update-status']);
         $this->user->roles->first()->attachPermission($permission);
         Cache::tags('role_user')->flush();
 
         $originalStatus = $this->task->status_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id' => 999999,
         ]);
 
+        /* Assert */
         $this->task->refresh();
 
-        // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        // Should return 400 error for JSON request
         $response->assertStatus(400);
         $response->assertJson(['error' => 'Invalid status for task']);
     }

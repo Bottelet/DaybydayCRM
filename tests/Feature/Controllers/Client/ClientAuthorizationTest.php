@@ -43,8 +43,6 @@ class ClientAuthorizationTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_user_with_client_delete_permission_can_delete_client()
     {
@@ -52,7 +50,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         $this->user = $this->userWithPermission;
         $this->withPermissions(PermissionName::CLIENT_DELETE);
 
-        /** Act */
+        /* Act */
         $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         /* Assert */
@@ -60,17 +58,13 @@ class ClientAuthorizationTest extends AbstractTestCase
         $this->assertSoftDeleted('clients', ['id' => $this->client->id]);
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     public function it_user_without_client_delete_permission_cannot_delete_client()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
-        /** Act */
+        /* Act */
         $response = $this->delete(route('clients.destroy', $this->client->external_id));
 
         /* Assert */
@@ -84,7 +78,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
-        /** Act */
+        /* Act */
         $response = $this->get(route('clients.create'));
 
         /* Assert */
@@ -98,7 +92,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
-        /** Act */
+        /* Act */
         $response = $this->getJson(route('clients.create'));
 
         /* Assert */
@@ -116,7 +110,7 @@ class ClientAuthorizationTest extends AbstractTestCase
 
         $this->actingAs($this->userWithoutPermission);
 
-        /** Act */
+        /* Act */
         $response = $this->post(route('clients.store'), [
             'name'             => 'James Test',
             'email'            => 'james@test.com',
@@ -136,6 +130,4 @@ class ClientAuthorizationTest extends AbstractTestCase
         $response->assertForbidden();
         $this->assertDatabaseMissing('clients', ['company_name' => 'James & Co']);
     }
-
-    # endregion
 }

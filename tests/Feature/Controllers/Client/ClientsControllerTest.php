@@ -33,15 +33,12 @@ class ClientsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region crud
-
     #[Test]
     public function it_can_create_client()
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_CREATE);
-
         Setting::firstOrCreate(
             ['id' => 1],
             [
@@ -55,11 +52,10 @@ class ClientsControllerTest extends AbstractTestCase
                 'language'       => 'en',
             ]
         );
-
         $industry = Industry::factory()->create();
         $user     = User::factory()->create();
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', route('clients.store'), [
             'name'             => 'James Test',
             'email'            => 'james@test.com',
@@ -108,10 +104,8 @@ class ClientsControllerTest extends AbstractTestCase
         $role       = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $this->user->attachRole($role);
         $this->withPermissions(PermissionName::CLIENT_UPDATE);
-
         $industry = Industry::factory()->create();
         $user     = User::factory()->create();
-
         $client = Client::factory()->create([
             'vat'          => '5898989898',
             'company_type' => 'A/S',
@@ -119,7 +113,6 @@ class ClientsControllerTest extends AbstractTestCase
             'industry_id'  => $industry->id,
             'user_id'      => $user->id,
         ]);
-
         $contact = Contact::factory()->create([
             'name'             => 'Kristian',
             'secondary_number' => '11111111',
@@ -128,7 +121,7 @@ class ClientsControllerTest extends AbstractTestCase
             'is_primary'       => true,
         ]);
 
-        /** Act */
+        /* Act */
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
             'name'             => 'Mads',
             'email'            => 'james@test.com',
@@ -166,11 +159,10 @@ class ClientsControllerTest extends AbstractTestCase
         $initialUser = User::factory()->create();
         $client      = Client::factory()->create(['user_id' => $initialUser->id]);
         $targetUser  = User::factory()->create();
-
         $this->assertEquals($client->user_id, $initialUser->id);
         $this->assertNotEquals($client->user_id, $targetUser->id);
 
-        /** Act */
+        /* Act */
         $r = $this->json('POST', '/clients/updateassign/' . $client->external_id, [
             'user_external_id' => $targetUser->external_id,
         ]);
@@ -181,29 +173,22 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertEquals($client->refresh()->user_id, $targetUser->id);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_can_update_client_without_primary_contact()
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::CLIENT_UPDATE);
-
         $industry = Industry::factory()->create();
         $user     = User::factory()->create();
-
         $client = Client::factory()->create([
             'vat'          => '9999999999',
             'company_type' => 'A/S',
             'company_name' => 'NoPrimary Co',
         ]);
-
         $client->contacts()->forceDelete();
 
-        /** Act */
+        /* Act */
         $response = $this->json('PATCH', route('clients.update', $client->external_id), [
             'name'             => 'No Contact Name',
             'email'            => 'noprimary@test.com',
@@ -228,20 +213,16 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertNull($updatedClient->primaryContact);
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     public function it_cant_update_assignee_without_permission()
     {
-        /** Arrange */
+        /* Arrange */
         $client     = Client::factory()->create();
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
         $this->assertNotEquals($client->user_id, $this->user->id);
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', '/clients/updateassign/' . $client->external_id, [
             'user_external_id' => $this->user->external_id,
         ]);
@@ -251,6 +232,4 @@ class ClientsControllerTest extends AbstractTestCase
         $response->assertSessionHas('flash_message_warning');
         $this->assertNotEquals($client->refresh()->user_id, $this->user->id);
     }
-
-    # endregion
 }

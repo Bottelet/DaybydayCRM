@@ -25,7 +25,6 @@ class UpdateAssigneeTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
@@ -40,8 +39,6 @@ class UpdateAssigneeTest extends AbstractTestCase
         Carbon::setTestNow();
         parent::tearDown();
     }
-
-    # region happy_path
 
     #[Test]
     public function it_can_update_assignee()
@@ -91,10 +88,6 @@ class UpdateAssigneeTest extends AbstractTestCase
         $this->assertEquals($secondUser->id, $this->client->user_id);
         Event::assertDispatched(ClientAction::class, 2);
     }
-
-    # endregion
-
-    # region edge_cases
 
     #[Test]
     public function it_updates_assignee_to_same_user_triggers_event()
@@ -146,6 +139,4 @@ class UpdateAssigneeTest extends AbstractTestCase
         $this->assertEquals($this->user->id, $client2->user_id);
         Event::assertDispatched(ClientAction::class, 2);
     }
-
-    # endregion
 }

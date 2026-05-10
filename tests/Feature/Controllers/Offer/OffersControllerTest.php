@@ -30,7 +30,6 @@ class OffersControllerTest extends AbstractTestCase
         $this->user = User::factory()->create();
         $role       = Role::firstOrCreate(['name' => 'employee']);
 
-        // Attach both create and edit permissions
         $createPermission = Permission::firstOrCreate(['name' => 'offer-create']);
         $editPermission   = Permission::firstOrCreate(['name' => 'offer-edit']);
 
@@ -39,13 +38,10 @@ class OffersControllerTest extends AbstractTestCase
 
         $this->user->attachRole($role);
 
-        // Clear permission cache AFTER attaching permissions
         \Illuminate\Support\Facades\Cache::flush();
 
-        // Refresh user to reload roles and permissions
         $this->user = $this->user->fresh();
 
-        // MUST call actingAs AFTER refresh to ensure permission check works
         $this->actingAs($this->user);
 
         $this->withoutMiddleware([VerifyCsrfToken::class]);
@@ -57,6 +53,8 @@ class OffersControllerTest extends AbstractTestCase
     #[Group('keeps_failing')]
     public function can_create_offer()
     {
+        /* Arrange */
+        /* Act */
         $this->json('POST', route('create.offer', $this->lead->external_id), [
             [
                 'title'    => 'test line',
@@ -68,6 +66,7 @@ class OffersControllerTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
         $this->assertNotEmpty($this->lead->offers);
@@ -81,6 +80,8 @@ class OffersControllerTest extends AbstractTestCase
     #[Group('keeps_failing')]
     public function can_update_offer()
     {
+        /* Arrange */
+        /* Act */
         $this->assertCount(0, $this->offer->invoiceLines);
         $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
@@ -109,6 +110,7 @@ class OffersControllerTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $this->offer->refresh();
 
         $this->assertCount(3, $this->offer->invoiceLines);
@@ -117,12 +119,15 @@ class OffersControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_set_offer_as_won()
     {
+        /* Arrange */
         $offer = Offer::factory()->create();
 
+        /* Act */
         $this->json('POST', route('offer.won'), [
             'offer_external_id' => $offer->external_id,
         ]);
 
+        /* Assert */
         $offer->refresh();
 
         $this->assertEquals('won', $offer->status);
@@ -132,12 +137,15 @@ class OffersControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_set_offer_as_lost()
     {
+        /* Arrange */
         $offer = Offer::factory()->create();
 
+        /* Act */
         $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $offer->external_id,
         ]);
 
+        /* Assert */
         $offer->refresh();
 
         $this->assertEquals('lost', $offer->status);

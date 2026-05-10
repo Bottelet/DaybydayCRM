@@ -39,22 +39,28 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_lead_delete_permission_can_delete_lead()
     {
+        /* Arrange */
         $this->user = $this->userWithPermission;
         $this->withPermissions(PermissionName::LEAD_DELETE);
 
+        /* Act */
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
-        $response->assertStatus(302); // Redirect on success
+        /* Assert */
+        $response->assertStatus(302);
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
     }
 
     #[Test]
     public function it_user_without_lead_delete_permission_cannot_delete_lead()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
     }
@@ -62,6 +68,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_update_assign_only_accepts_user_assigned_id_field()
     {
+        /* Arrange */
         $user       = User::factory()->create();
         $this->user = $user;
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
@@ -70,6 +77,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $originalTitle       = $this->lead->title;
         $originalDescription = $this->lead->description;
 
+        /* Act */
         $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
             'title'            => 'Malicious Title Change',
@@ -77,11 +85,11 @@ class LeadAuthorizationTest extends AbstractTestCase
             'status_id'        => 999,
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
         $response->assertStatus(302);
         $this->assertEquals($newUser->id, $this->lead->user_assigned_id);
-        // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->lead->title);
         $this->assertEquals($originalDescription, $this->lead->description);
         $this->assertNotEquals(999, $this->lead->status_id);
@@ -90,6 +98,7 @@ class LeadAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_lead_update_status_only_accepts_status_id_field()
     {
+        /* Arrange */
         $user       = User::factory()->create();
         $this->user = $user;
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
@@ -102,6 +111,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $originalTitle       = $this->lead->title;
         $originalDescription = $this->lead->description;
 
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
@@ -109,11 +119,11 @@ class LeadAuthorizationTest extends AbstractTestCase
             'user_assigned_id' => 999,
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
         $response->assertStatus(302);
         $this->assertEquals($newStatus->id, $this->lead->status_id);
-        // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->lead->title);
         $this->assertEquals($originalDescription, $this->lead->description);
         $this->assertNotEquals(999, $this->lead->user_assigned_id);

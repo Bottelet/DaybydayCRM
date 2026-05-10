@@ -30,12 +30,11 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create users
+        /* Arrange */
         $this->authorizedUser   = User::factory()->create();
         $this->unauthorizedUser = User::factory()->create();
         $this->newAssignee      = User::factory()->create();
 
-        // Create lead
         $client     = Client::factory()->create();
         $this->lead = Lead::factory()->create([
             'user_assigned_id' => $this->authorizedUser->id,
@@ -46,26 +45,22 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_reassign_lead()
     {
+        /* Arrange */
         $originalAssignee = $this->lead->user_assigned_id;
-
         $this->user = $this->authorizedUser;
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
-
-        // Verify the authorized user has the permission
         $this->assertTrue($this->user->can('can-assign-new-user-to-lead'));
-
-        // Verify initial state
         $this->assertEquals($this->user->id, $originalAssignee);
 
+        /* Act */
         $response = $this->actingAs($this->user)
             ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message');
-
-        // Verify assignment was updated in database
         $this->assertDatabaseHas('leads', [
             'id'               => $this->lead->id,
             'user_assigned_id' => $this->newAssignee->id,
@@ -76,24 +71,21 @@ class LeadAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_unauthorized_user_cannot_reassign_lead()
     {
+        /* Arrange */
         $originalAssignee = $this->lead->user_assigned_id;
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->unauthorizedUser = $this->unauthorizedUser->fresh();
-
-        // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-lead'));
 
+        /* Act */
         $response = $this->actingAs($this->unauthorizedUser)
             ->patch(route('leads.updateAssign', $this->lead->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning');
-
-        // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('leads', [
             'id'               => $this->lead->id,
             'user_assigned_id' => $originalAssignee,

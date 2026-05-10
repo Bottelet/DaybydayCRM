@@ -27,12 +27,10 @@ class DeadlineTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $futureDeadline = Carbon::now()->addHours(2);
 
-        // Create an "open" status for tasks and leads
         $openStatus = \App\Models\Status::factory()->create(['title' => 'open']);
 
         $this->task = Task::factory()->create(
@@ -60,15 +58,12 @@ class DeadlineTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_is_not_over_deadline()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isOverDeadline();
         $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
@@ -82,10 +77,9 @@ class DeadlineTest extends AbstractTestCase
     #[Test]
     public function it_is_close_to_deadline()
     {
-        /** Arrange */
-        // Task, Lead, and Project have deadlines in 2 hours (from setUp)
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isCloseToDeadline();
         $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
@@ -109,7 +103,7 @@ class DeadlineTest extends AbstractTestCase
         $this->project->deadline = Carbon::now()->addDays(3);
         $this->project->save();
 
-        /** Act */
+        /* Act */
         $leadDays    = $this->lead->days_until_deadline;
         $taskDays    = $this->task->days_until_deadline;
         $projectDays = $this->project->days_until_deadline;
@@ -119,10 +113,6 @@ class DeadlineTest extends AbstractTestCase
         $this->assertEquals(3, $taskDays);
         $this->assertEquals(3, $projectDays);
     }
-
-    # endregion
-
-    # region edge_cases
 
     #[Test]
     public function it_is_over_deadline()
@@ -137,7 +127,7 @@ class DeadlineTest extends AbstractTestCase
         $this->project->deadline = Carbon::now()->subDay();
         $this->project->save();
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isOverDeadline();
         $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
@@ -161,7 +151,7 @@ class DeadlineTest extends AbstractTestCase
         $this->project->deadline = Carbon::now()->addDays(3);
         $this->project->save();
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isCloseToDeadline();
         $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
@@ -185,7 +175,7 @@ class DeadlineTest extends AbstractTestCase
         $this->project->deadline = null;
         $this->project->save();
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isOverDeadline();
         $taskResult    = $this->task->isOverDeadline();
         $projectResult = $this->project->isOverDeadline();
@@ -209,7 +199,7 @@ class DeadlineTest extends AbstractTestCase
         $this->project->deadline = null;
         $this->project->save();
 
-        /** Act */
+        /* Act */
         $leadResult    = $this->lead->isCloseToDeadline();
         $taskResult    = $this->task->isCloseToDeadline();
         $projectResult = $this->project->isCloseToDeadline();
@@ -219,6 +209,4 @@ class DeadlineTest extends AbstractTestCase
         $this->assertFalse($taskResult);
         $this->assertFalse($projectResult);
     }
-
-    # endregion
 }

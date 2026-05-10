@@ -36,14 +36,21 @@ class LeadObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_deletes_leads_soft_deletes()
     {
+        /* Arrange */
+
+        /* Act */
         $this->lead->delete();
 
+        /* Assert */
         $this->assertSoftDeleted($this->lead);
     }
 
     #[Test]
     public function it_deletes_leadsoft_deletes_relations()
     {
+        /* Arrange */
+
+        /* Act */
         $this->assertNotEmpty($this->lead->comments);
         $this->assertNotEmpty($this->lead->activity);
         $this->assertNotEmpty($this->lead->appointments);
@@ -51,6 +58,7 @@ class LeadObserverDeleteTest extends AbstractTestCase
         $this->lead->delete();
         $this->lead->refresh();
 
+        /* Assert */
         $this->assertEmpty($this->lead->comments);
         $this->assertEmpty($this->lead->activity);
         $this->assertEmpty($this->lead->appointments);
@@ -63,11 +71,14 @@ class LeadObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_lead_from_database()
     {
+        /* Arrange */
         $leadId = $this->lead->id;
 
+        /* Act */
         $this->lead->forceDelete();
         $this->lead->refresh();
 
+        /* Assert */
         $this->assertDatabaseMissing('leads', [
             'id' => $leadId,
         ]);
@@ -76,13 +87,16 @@ class LeadObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_relations_from_database()
     {
+        /* Arrange */
         $commentId     = $this->lead->comments->first()->id;
         $appointmentId = $this->lead->appointments->first()->id;
         $activityId    = $this->lead->activity->first()->id;
 
+        /* Act */
         $this->lead->forceDelete();
         $this->lead->refresh();
 
+        /* Assert */
         $this->assertDatabaseMissing('comments', [
             'id' => $commentId,
         ]);
@@ -97,12 +111,15 @@ class LeadObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_offer_is_not_deleted_by_observer()
     {
+        /* Arrange */
         $offer = Offer::factory()->create([
             'source_id' => $this->lead->id,
         ]);
 
+        /* Act */
         $this->lead->forceDelete();
 
+        /* Assert */
         $this->assertNotNull($offer->refresh());
     }
 }

@@ -34,15 +34,12 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->repository = new RoleRepository();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_all_roles_excludes_owner_role()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles     = $this->repository->allRoles();
         $roleNames = $roles->pluck('name')->toArray();
 
@@ -53,10 +50,9 @@ class RoleRepositoryTest extends AbstractTestCase
     #[Test]
     public function it_all_roles_returns_roles_with_required_columns()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles = $this->repository->allRoles();
 
         /* Assert */
@@ -72,10 +68,9 @@ class RoleRepositoryTest extends AbstractTestCase
     #[Test]
     public function it_all_roles_returns_collection_of_role_models()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles = $this->repository->allRoles();
 
         /* Assert */
@@ -87,10 +82,9 @@ class RoleRepositoryTest extends AbstractTestCase
     #[Test]
     public function it_all_roles_includes_administrator_role()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles     = $this->repository->allRoles();
         $roleNames = $roles->pluck('name')->toArray();
 
@@ -101,10 +95,9 @@ class RoleRepositoryTest extends AbstractTestCase
     #[Test]
     public function it_list_all_roles_returns_display_names_keyed_by_id()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles = $this->repository->listAllRoles();
 
         /* Assert */
@@ -119,10 +112,9 @@ class RoleRepositoryTest extends AbstractTestCase
     #[Test]
     public function it_list_all_roles_does_not_include_owner()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles        = $this->repository->listAllRoles();
         $displayNames = $roles->toArray();
         $ownerRole    = Role::where('name', 'owner')->first();
@@ -135,17 +127,12 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->assertNotContains('Owner', $displayNames);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_all_roles_is_not_broken_by_column_selection_fix()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $roles    = $this->repository->allRoles();
         $filtered = $roles->filter(fn ($r) => $r->name !== 'owner');
 
@@ -153,6 +140,4 @@ class RoleRepositoryTest extends AbstractTestCase
         $this->assertGreaterThanOrEqual(1, $roles->count(), 'Should return at least 1 non-owner role');
         $this->assertEquals($roles->count(), $filtered->count(), 'allRoles() already filters owner so re-filtering changes nothing');
     }
-
-    # endregion
 }

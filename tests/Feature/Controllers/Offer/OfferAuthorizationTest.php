@@ -106,14 +106,15 @@ class OfferAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_offer_create_permission_can_create_offer()
     {
+        /* Arrange */
         $this->actingAs($this->userWithCreatePermission);
 
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->userWithCreatePermission = $this->userWithCreatePermission->fresh();
 
         $newLead = Lead::factory()->create();
 
+        /* Act */
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
                 'title'    => 'Test Item',
@@ -124,6 +125,7 @@ class OfferAuthorizationTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $response->assertStatus(200);
         $this->assertDatabaseHas('offers', ['source_id' => $newLead->id]);
     }
@@ -131,10 +133,12 @@ class OfferAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_without_offer_create_permission_cannot_create_offer()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
         $newLead = Lead::factory()->create();
 
+        /* Act */
         $response = $this->json('POST', route('create.offer', $newLead->external_id), [
             [
                 'title'    => 'Test Item',
@@ -145,6 +149,7 @@ class OfferAuthorizationTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseMissing('offers', ['source_id' => $newLead->id]);
     }
@@ -152,12 +157,13 @@ class OfferAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_offer_edit_permission_can_update_offer()
     {
+        /* Arrange */
         $this->actingAs($this->userWithEditPermission);
 
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
+        /* Act */
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'Updated Item',
@@ -168,14 +174,17 @@ class OfferAuthorizationTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_user_without_offer_edit_permission_cannot_update_offer()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('POST', route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'Updated Item',
@@ -186,37 +195,42 @@ class OfferAuthorizationTest extends AbstractTestCase
             ],
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
     }
 
     #[Test]
     public function it_user_with_offer_edit_permission_can_mark_offer_as_won()
     {
+        /* Arrange */
         $this->actingAs($this->userWithEditPermission);
 
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
+        /* Act */
         $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals(OfferStatus::won()->getStatus(), $this->offer->refresh()->status);
-        // Verify invoice was created
         $this->assertDatabaseHas('invoices', ['offer_id' => $this->offer->id]);
     }
 
     #[Test]
     public function it_user_without_offer_edit_permission_cannot_mark_offer_as_won()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('POST', route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertEquals(OfferStatus::inProgress()->getStatus(), $this->offer->refresh()->status);
     }
@@ -224,16 +238,18 @@ class OfferAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_offer_edit_permission_can_mark_offer_as_lost()
     {
+        /* Arrange */
         $this->actingAs($this->userWithEditPermission);
 
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
+        /* Act */
         $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals(OfferStatus::lost()->getStatus(), $this->offer->refresh()->status);
     }
@@ -241,12 +257,15 @@ class OfferAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_without_offer_edit_permission_cannot_mark_offer_as_lost()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('POST', route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertEquals(OfferStatus::inProgress()->getStatus(), $this->offer->refresh()->status);
     }

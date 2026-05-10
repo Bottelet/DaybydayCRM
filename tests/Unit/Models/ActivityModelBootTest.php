@@ -23,7 +23,6 @@ class ActivityModelBootTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
@@ -36,19 +35,18 @@ class ActivityModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_activity_auto_generates_external_id_and_ip_address_when_not_provided()
     {
-        /** Arrange */
-        // User and task already created in setUp()
+        /* Arrange */
+        $causer_type = User::class;
+        $source_type = Task::class;
 
-        /** Act */
+        /* Act */
         $activity = Activity::create([
-            'causer_type' => User::class,
+            'causer_type' => $causer_type,
             'causer_id'   => $this->user->id,
-            'source_type' => Task::class,
+            'source_type' => $source_type,
             'source_id'   => $this->task->id,
             'text'        => 'Test activity',
         ]);
@@ -67,7 +65,7 @@ class ActivityModelBootTest extends AbstractTestCase
     #[Test]
     public function it_activity_generates_unique_external_ids_for_each_record()
     {
-        /** Arrange */
+        /* Arrange */
         $activity1 = new Activity();
         $activity1->forceFill([
             'external_id' => Uuid::uuid4()->toString(),
@@ -98,14 +96,10 @@ class ActivityModelBootTest extends AbstractTestCase
         $this->assertNotEquals($activity1->external_id, $activity2->external_id);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_activity_preserves_explicitly_provided_external_id_when_saved()
     {
-        /** Arrange */
+        /* Arrange */
         $customExternalId = 'custom-external-id-12345';
         $customIpAddress  = '127.0.0.1';
 
@@ -128,6 +122,4 @@ class ActivityModelBootTest extends AbstractTestCase
         $this->assertEquals($customExternalId, $activity->external_id);
         $this->assertEquals($customIpAddress, $activity->ip_address);
     }
-
-    # endregion
 }

@@ -77,25 +77,24 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_reassign_task()
     {
+        /* Arrange */
         $originalAssignee = $this->task->user_assigned_id;
 
-        // Verify the authorized user has the permission
         $this->assertTrue($this->authorizedUser->can('can-assign-new-user-to-task'));
 
-        // Verify initial state and prevent false positives
-        // Ensure we're actually changing the assignment (not reassigning to same user)
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
         $this->assertNotEquals($this->newAssignee->id, $originalAssignee);
 
+        /* Act */
         $response = $this->actingAs($this->authorizedUser)
             ->patch(route('task.update.assignee', $this->task->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message');
 
-        // Verify assignment was updated in database
         $this->assertDatabaseHas('tasks', [
             'id'               => $this->task->id,
             'user_assigned_id' => $this->newAssignee->id,
@@ -106,23 +105,23 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_unauthorized_user_cannot_reassign_task()
     {
+        /* Arrange */
         $originalAssignee = $this->task->user_assigned_id;
 
-        // Verify the unauthorized user does NOT have the permission
         $this->assertFalse($this->unauthorizedUser->can('can-assign-new-user-to-task'));
 
-        // Verify initial state
         $this->assertEquals($this->authorizedUser->id, $originalAssignee);
 
+        /* Act */
         $response = $this->actingAs($this->unauthorizedUser)
             ->patch(route('task.update.assignee', $this->task->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning');
 
-        // Verify assignment was NOT changed in database
         $this->assertDatabaseHas('tasks', [
             'id'               => $this->task->id,
             'user_assigned_id' => $originalAssignee,

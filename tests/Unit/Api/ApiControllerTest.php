@@ -21,15 +21,13 @@ class ApiControllerTest extends AbstractTestCase
         $this->controller = new ConcreteApiController();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_returns_a_json_response_with_data()
     {
-        /** Arrange */
+        /* Arrange */
         $data = ['key' => 'value'];
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespond($data);
 
         /* Assert */
@@ -41,11 +39,11 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_a_json_response_with_a_custom_status_code()
     {
-        /** Arrange */
+        /* Arrange */
         $data       = ['test' => true];
         $statusCode = 201;
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespond($data, $statusCode);
 
         /* Assert */
@@ -56,10 +54,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_a_json_response_with_custom_headers()
     {
-        /** Arrange */
+        /* Arrange */
         $headers = ['X-Custom-Header' => 'custom-value'];
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespond(['data' => true], 200, $headers);
 
         /* Assert */
@@ -69,10 +67,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_200_with_an_empty_body_on_success()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondSuccess();
 
         /* Assert */
@@ -84,10 +81,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_201_with_data_when_a_resource_is_created()
     {
-        /** Arrange */
+        /* Arrange */
         $data = ['id' => 42, 'name' => 'Test'];
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondCreated($data);
 
         /* Assert */
@@ -99,10 +96,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_204_with_no_content()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondNoContent();
 
         /* Assert */
@@ -113,11 +109,11 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_an_error_response_with_the_correct_structure()
     {
-        /** Arrange */
+        /* Arrange */
         $message    = 'Something went wrong';
         $statusCode = 500;
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondError($message, $statusCode);
 
         /* Assert */
@@ -133,10 +129,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_401_when_unauthorized()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondUnauthorized();
 
         /* Assert */
@@ -150,10 +145,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_uses_a_custom_message_for_unauthorized_responses()
     {
-        /** Arrange */
+        /* Arrange */
         $customMessage = 'Custom unauthorized message';
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondUnauthorized($customMessage);
 
         /* Assert */
@@ -165,10 +160,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_403_when_forbidden()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondForbidden();
 
         /* Assert */
@@ -182,10 +176,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_uses_a_custom_message_for_forbidden_responses()
     {
-        /** Arrange */
+        /* Arrange */
         $customMessage = 'Access denied to this resource';
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondForbidden($customMessage);
 
         /* Assert */
@@ -197,10 +191,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_status_404_when_a_resource_is_not_found()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondNotFound();
 
         /* Assert */
@@ -214,10 +207,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_uses_a_custom_message_for_not_found_responses()
     {
-        /** Arrange */
+        /* Arrange */
         $customMessage = 'Resource not found';
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondNotFound($customMessage);
 
         /* Assert */
@@ -230,30 +223,24 @@ class ApiControllerTest extends AbstractTestCase
     public function it_controller_extends_illuminate_routing_controller()
     {
         /* Arrange */
-        // Already arranged in setUp()
 
         /* Act */
-        // No action needed
 
         /* Assert */
         $this->assertInstanceOf(Controller::class, $this->controller);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_includes_the_status_code_in_the_error_response_body()
     {
-        /** Arrange */
+        /* Arrange */
         $message    = 'Not found';
         $statusCode = 404;
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondError($message, $statusCode);
 
-        /** Assert */
+        /* Assert */
         $data = $response->getData(true);
         $this->assertEquals(404, $data['errors']['status_code']);
     }
@@ -261,10 +248,9 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_controller_does_not_depend_on_dingo_api()
     {
-        /** Arrange */
-        // No specific arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $uses = class_uses(ApiController::class);
 
         /* Assert */
@@ -274,10 +260,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_returns_an_empty_json_object_when_data_is_an_empty_array()
     {
-        /** Arrange */
+        /* Arrange */
         $emptyData = [];
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespond($emptyData);
 
         /* Assert */
@@ -289,10 +275,10 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_preserves_nested_data_structure_in_the_response()
     {
-        /** Arrange */
+        /* Arrange */
         $data = ['user' => ['id' => 1, 'name' => 'Alice'], 'roles' => ['admin', 'editor']];
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespond($data);
 
         /* Assert */
@@ -302,19 +288,17 @@ class ApiControllerTest extends AbstractTestCase
     #[Test]
     public function it_includes_both_message_and_status_code_in_the_error_body()
     {
-        /** Arrange */
+        /* Arrange */
         $message    = 'Bad Request';
         $statusCode = 400;
 
-        /** Act */
+        /* Act */
         $response = $this->controller->callRespondError($message, $statusCode);
 
-        /** Assert */
+        /* Assert */
         $data = $response->getData(true);
         $this->assertEquals('Bad Request', $data['errors']['message']);
         $this->assertEquals(400, $data['errors']['status_code']);
         $this->assertEquals(400, $response->getStatusCode());
     }
-
-    # endregion
 }
