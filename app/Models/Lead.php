@@ -157,6 +157,11 @@ class Lead extends Model implements Commentable
 
     public function getAssignedUserAttribute()
     {
+        // Use the loaded relationship if available to prevent N+1 queries
+        if ($this->relationLoaded('user')) {
+            return $this->user;
+        }
+        
         return User::findOrFail($this->user_assigned_id);
     }
 

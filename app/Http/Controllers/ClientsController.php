@@ -16,6 +16,7 @@ use App\Models\Status;
 use App\Models\User;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Repositories\Money\MoneyConverter;
+use App\Services\Client\ClientService;
 use App\Services\ClientNumber\ClientNumberService;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\Storage\GetStorageProvider;
@@ -42,8 +43,14 @@ class ClientsController extends Controller
      */
     private $filesystem;
 
-    public function __construct()
+    /**
+     * @var ClientService
+     */
+    private $clientService;
+
+    public function __construct(ClientService $clientService)
     {
+        $this->clientService = $clientService;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);
@@ -65,7 +72,7 @@ class ClientsController extends Controller
      */
     public function anyData()
     {
-        $clients = Client::select(['external_id', 'company_name', 'vat', 'address']);
+        $clients = $this->clientService->getClientsForDataTable();
 
         return Datatables::of($clients)
             ->addColumn('namelink', '<a href="{{ route("clients.show",[$external_id]) }}">{{$company_name}}</a>')
@@ -85,10 +92,8 @@ class ClientsController extends Controller
 
     public function taskDataTable($external_id)
     {
-        $client = Client::where('external_id', $external_id)->firstOrFail();
-        $tasks  = $client->tasks()->with(['status'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )->get();
+        $client = $this->clientService->findByExternalId($external_id);
+        $tasks  = $this->clientService->getTasksWithRelations($client);
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
@@ -112,10 +117,8 @@ class ClientsController extends Controller
 
     public function projectDataTable($external_id)
     {
-        $client   = Client::where('external_id', $external_id)->firstOrFail();
-        $projects = $client->projects()->with(['status'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )->get();
+        $client   = $this->clientService->findByExternalId($external_id);
+        $projects = $this->clientService->getProjectsWithRelations($client);
 
         return Datatables::of($projects)
             ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
@@ -139,10 +142,8 @@ class ClientsController extends Controller
 
     public function leadDataTable($external_id)
     {
-        $client = Client::where('external_id', $external_id)->firstOrFail();
-        $leads  = $client->leads()->with(['status'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )->get();
+        $client = $this->clientService->findByExternalId($external_id);
+        $leads  = $this->clientService->getLeadsWithRelations($client);
 
         return Datatables::of($leads)
             ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
@@ -167,11 +168,9 @@ class ClientsController extends Controller
 
     public function invoiceDataTable($external_id)
     {
-        $client = Client::where('external_id', $external_id)->firstOrFail();
+        $client = $this->clientService->findByExternalId($external_id);
 
-        $invoices = $client->invoices()->select(
-            ['id', 'external_id', 'sent_at', 'status', 'invoice_number']
-        );
+        $invoices = $this->clientService->getInvoicesWithRelations($client);
 
         return Datatables::of($invoices)
             ->editColumn('invoice_number', function ($invoices) {
@@ -302,13 +301,13 @@ class ClientsController extends Controller
      */
     public function show($external_id)
     {
-        $client = $this->findByExternalId($external_id);
+        $client = $this->clientService->getClientWithRelations($external_id);
 
         // dd($client->appointments);
         return view('clients.show')
             ->withClient($client)
             ->withCompanyname(Setting::first()->company)
-            ->withInvoices($this->getInvoices($client))
+            ->withInvoices($this->clientService->getInvoices($client))
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->with('filesystem_integration', Integration::whereApiType('file')->first())
             ->with('documents', $client->documents()->where('integration_type', get_class(GetStorageProvider::getStorage()))->get())
@@ -326,7 +325,7 @@ class ClientsController extends Controller
      */
     public function edit($external_id)
     {
-        $client  = $this->findByExternalId($external_id);
+        $client  = $this->clientService->findByExternalId($external_id);
         $contact = $client->primaryContact;
         $client  = (object) array_merge($contact->toArray(), $client->toArray());
 
@@ -341,7 +340,7 @@ class ClientsController extends Controller
      */
     public function update($external_id, UpdateClientRequest $request)
     {
-        $client = $this->findByExternalId($external_id);
+        $client = $this->clientService->findByExternalId($external_id);
         $client->fill([
             'vat'          => $request->vat,
             'company_name' => $request->company_name,
@@ -375,7 +374,7 @@ class ClientsController extends Controller
     public function destroy($external_id)
     {
         try {
-            $client = $this->findByExternalId($external_id);
+            $client = $this->clientService->findByExternalId($external_id);
             $client->delete();
             session()->flash('flash_message', __('Client successfully deleted'));
         } catch (Exception $e) {
@@ -414,14 +413,12 @@ class ClientsController extends Controller
      */
     public function getInvoices($client)
     {
-        $invoice = $client->invoices()->with('invoiceLines')->get();
-
-        return $invoice;
+        return $this->clientService->getInvoices($client);
     }
 
     public function findByExternalId($external_id)
     {
-        return Client::where('external_id', $external_id)->firstOrFail();
+        return $this->clientService->findByExternalId($external_id);
     }
 
     /**
