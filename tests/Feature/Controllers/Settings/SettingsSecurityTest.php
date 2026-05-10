@@ -39,6 +39,9 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'settings',
+        ]);
     }
 
     #[Test]
@@ -52,6 +55,9 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(403);
+        $response->assertJson([
+            'message' => 'This action is unauthorized.',
+        ]);
     }
 
     #[Test]
@@ -73,6 +79,14 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertRedirect();
+        $this->assertDatabaseHas('settings', [
+            'company'        => 'Test Company',
+            'country'        => 'GB',
+            'language'       => 'en',
+            'client_number'  => 1000,
+            'invoice_number' => 2000,
+            'currency'       => 'GBP',
+        ]);
     }
 
     #[Test]
@@ -95,6 +109,9 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(403);
+        $this->assertDatabaseMissing('settings', [
+            'company' => 'Hacked Company',
+        ]);
     }
 
     #[Test]
@@ -112,6 +129,10 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertRedirect();
+        $this->assertDatabaseHas('settings', [
+            'company' => 'Test Company',
+            'country' => 'GB',
+        ]);
     }
 
     #[Test]
@@ -130,5 +151,8 @@ class SettingsSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(403);
+        $this->assertDatabaseMissing('settings', [
+            'company' => 'Hacked Company',
+        ]);
     }
 }

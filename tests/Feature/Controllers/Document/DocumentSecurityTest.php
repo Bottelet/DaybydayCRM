@@ -67,6 +67,10 @@ class DocumentSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(200);
+        $this->assertDatabaseHas('documents', [
+            'source_type' => Task::class,
+            'source_id'   => $this->task->id,
+        ]);
     }
 
     #[Test]
@@ -84,6 +88,10 @@ class DocumentSecurityTest extends AbstractTestCase
         /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to upload files'));
+        $this->assertDatabaseMissing('documents', [
+            'source_type' => Task::class,
+            'source_id'   => $this->task->id,
+        ]);
     }
 
     #[Test]
@@ -106,6 +114,10 @@ class DocumentSecurityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertStatus(200);
+        $this->assertDatabaseHas('documents', [
+            'source_type' => Project::class,
+            'source_id'   => $this->project->id,
+        ]);
     }
 
     #[Test]
@@ -123,6 +135,10 @@ class DocumentSecurityTest extends AbstractTestCase
         /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to upload files'));
+        $this->assertDatabaseMissing('documents', [
+            'source_type' => Project::class,
+            'source_id'   => $this->project->id,
+        ]);
     }
 
     #[Test]
