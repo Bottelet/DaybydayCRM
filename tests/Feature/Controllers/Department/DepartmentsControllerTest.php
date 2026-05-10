@@ -25,15 +25,11 @@ class DepartmentsControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region crud
-
     #[Test]
     public function it_can_create_department()
     {
-        /** Arrange */
-        // Already arranged in setUp
-
-        /** Act */
+        /* Arrange */
+        /* Act */
         $response = $this->json('POST', route('departments.store'), [
             'name'        => 'Test Department',
             'description' => 'This is a test department',
@@ -47,7 +43,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     #[Test]
     public function it_can_delete_department()
     {
-        /** Arrange */
+        /* Arrange */
         $department = Department::factory()->create();
 
         /* Act */
@@ -58,14 +54,10 @@ class DepartmentsControllerTest extends AbstractTestCase
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     public function it_cant_delete_department_if_user_is_associated()
     {
-        /** Arrange */
+        /* Arrange */
         $department = Department::factory()->create();
         $this->user->department()->attach([$department->id]);
 
@@ -77,6 +69,4 @@ class DepartmentsControllerTest extends AbstractTestCase
         $this->assertNotNull(Session::all()['flash_message_warning']);
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
     }
-
-    # endregion
 }

@@ -18,7 +18,6 @@ class ClientActionTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -28,16 +27,14 @@ class ClientActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_constructor_stores_client_and_action()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
         $action = 'created';
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, $action);
 
         /* Assert */
@@ -48,10 +45,10 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_gets_client_returns_client_model()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, 'updated');
 
         /* Assert */
@@ -61,10 +58,10 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_gets_action_returns_action_string()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, 'deleted');
 
         /* Assert */
@@ -74,10 +71,10 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_broadcasts_on_returns_private_channel()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event   = new ClientAction($client, 'created');
         $channel = $event->broadcastOn();
 
@@ -88,10 +85,10 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_event_preserves_client_reference_after_construction()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, 'test');
 
         /* Assert */
@@ -101,10 +98,9 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_event_uses_interacts_with_sockets_trait()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $traits = class_uses(ClientAction::class);
 
         /* Assert */
@@ -114,27 +110,22 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_event_uses_serializes_models_trait()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $traits = class_uses(ClientAction::class);
 
         /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_action_can_be_non_string_value()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, 42);
 
         /* Assert */
@@ -144,10 +135,10 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_action_can_be_null()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, null);
 
         /* Assert */
@@ -157,15 +148,13 @@ class ClientActionTest extends AbstractTestCase
     #[Test]
     public function it_action_can_be_empty_string()
     {
-        /** Arrange */
+        /* Arrange */
         $client = Client::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new ClientAction($client, '');
 
         /* Assert */
         $this->assertEquals('', $event->getAction());
     }
-
-    # endregion
 }

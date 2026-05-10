@@ -20,13 +20,10 @@ class SetStatusTest extends AbstractTestCase
         $this->offer = Offer::factory()->create();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_sets_offer_as_won()
     {
         /* Arrange */
-        // Offer already created in setUp()
 
         /* Act */
         $this->offer->setAsWon();
@@ -39,7 +36,6 @@ class SetStatusTest extends AbstractTestCase
     public function it_sets_offer_as_lost()
     {
         /* Arrange */
-        // Offer already created in setUp()
 
         /* Act */
         $this->offer->setAsLost();
@@ -47,6 +43,4 @@ class SetStatusTest extends AbstractTestCase
         /* Assert */
         $this->assertEquals('lost', $this->offer->status);
     }
-
-    # endregion
 }

@@ -21,7 +21,6 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->project = Project::factory()->create();
@@ -47,12 +46,10 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_deletes_projects_soft_deletes()
     {
-        /** Arrange */
+        /* Arrange */
         $document = $this->project->documents()->first();
 
         /* Act */
@@ -87,7 +84,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_project_from_database()
     {
-        /** Arrange */
+        /* Arrange */
         $projectId = $this->project->id;
 
         /* Act */
@@ -102,7 +99,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_removes_relations_from_database()
     {
-        /** Arrange */
+        /* Arrange */
         $commentId  = $this->project->comments->first()->id;
         $documentId = $this->project->documents->first()->id;
         $activityId = $this->project->activity->first()->id;
@@ -125,7 +122,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_invoice_is_not_deleted_by_observer()
     {
-        /** Arrange */
+        /* Arrange */
         $invoice = Invoice::factory()->create([
             'status'                 => 'Test',
             'client_id'              => Client::factory()->create()->id,
@@ -143,14 +140,10 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         $this->assertNotNull($invoice->refresh());
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_deletes_project_with_no_relations()
     {
-        /** Arrange */
+        /* Arrange */
         $projectWithoutRelations = Project::factory()->create();
 
         /* Act */
@@ -184,7 +177,7 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     #[Test]
     public function it_force_delete_project_with_no_relations()
     {
-        /** Arrange */
+        /* Arrange */
         $projectWithoutRelations = Project::factory()->create();
         $projectId               = $projectWithoutRelations->id;
 
@@ -210,6 +203,4 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         /* Assert */
         $this->assertSoftDeleted($this->project);
     }
-
-    # endregion
 }

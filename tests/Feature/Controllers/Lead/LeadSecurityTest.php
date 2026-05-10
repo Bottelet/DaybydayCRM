@@ -45,11 +45,13 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_delete_lead()
     {
-        // Give user permission to delete leads
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_DELETE);
 
+        /* Act */
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
+        /* Assert */
         $response->assertRedirect();
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
     }
@@ -57,11 +59,13 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function it_unauthorized_user_cannot_delete_lead()
     {
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
+        /* Act */
         $response = $this->delete(route('leads.destroy', $this->lead->external_id));
 
-        // Route middleware 'permission:lead-delete' returns 403 for unauthorized users
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
     }
@@ -69,10 +73,13 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function it_unauthorized_user_cannot_delete_lead_via_json()
     {
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
 
+        /* Act */
         $response = $this->json('DELETE', '/leads/' . $this->lead->external_id . '/json');
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('leads', ['id' => $this->lead->id, 'deleted_at' => null]);
     }
@@ -80,78 +87,75 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_assign_only_accepts_user_assigned_id_field()
     {
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_ASSIGN);
 
         $newUser        = User::factory()->create();
         $originalStatus = $this->lead->status_id;
         $originalTitle  = $this->lead->title;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
-            'status_id'        => 999, // This should be ignored
-            'title'            => 'Hacked Title', // This should be ignored
+            'status_id'        => 999,
+            'title'            => 'Hacked Title',
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
-        // user_assigned_id should be updated
         $this->assertEquals($newUser->id, $this->lead->user_assigned_id);
 
-        // But status_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalStatus, $this->lead->status_id);
 
-        // Title should not be changed
         $this->assertEquals($originalTitle, $this->lead->title);
     }
 
     #[Test]
     public function it_updates_status_only_accepts_status_id_field()
     {
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $newStatus        = Status::factory()->create(['source_type' => Lead::class]);
         $originalAssignee = $this->lead->user_assigned_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id'        => $newStatus->id,
-            'user_assigned_id' => $this->user->id, // This should be ignored
-            'title'            => 'Hacked Title', // This should be ignored
+            'user_assigned_id' => $this->user->id,
+            'title'            => 'Hacked Title',
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
-        // Status should be updated
         $this->assertEquals($newStatus->id, $this->lead->status_id);
 
-        // But user_assigned_id should NOT be changed (mass assignment protection)
         $this->assertEquals($originalAssignee, $this->lead->user_assigned_id);
 
-        // Title should not be changed
         $this->assertNotEquals('Hacked Title', $this->lead->title);
     }
 
     #[Test]
     public function it_updates_status_rejects_invalid_status_type()
     {
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
-        // Create a status that belongs to a different type (Task instead of Lead)
         $taskStatus     = Status::factory()->create(['source_type' => Task::class]);
         $originalStatus = $this->lead->status_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => $taskStatus->id,
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
-        // Status should NOT be changed because it's not a valid lead status
         $this->assertEquals($originalStatus, $this->lead->status_id);
 
-        // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));
     }
@@ -159,21 +163,21 @@ class LeadSecurityTest extends AbstractTestCase
     #[Test]
     public function it_updates_status_rejects_nonexistent_status_id()
     {
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_UPDATE_STATUS);
 
         $originalStatus = $this->lead->status_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
             'status_id' => 999999,
         ]);
 
+        /* Assert */
         $this->lead->refresh();
 
-        // Status should NOT be changed
         $this->assertEquals($originalStatus, $this->lead->status_id);
 
-        // Should show warning message
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Invalid status for lead'));
     }

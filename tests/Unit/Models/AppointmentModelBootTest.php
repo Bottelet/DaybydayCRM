@@ -20,7 +20,6 @@ class AppointmentModelBootTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
         $this->user = User::factory()->create();
@@ -32,15 +31,13 @@ class AppointmentModelBootTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_appointment_stores_explicit_external_id_when_provided()
     {
-        /** Arrange */
+        /* Arrange */
         $externalId = Uuid::uuid4()->toString();
 
-        /** Act */
+        /* Act */
         $appointment = Appointment::create([
             'external_id' => $externalId,
             'title'       => 'Test Appointment',
@@ -65,7 +62,7 @@ class AppointmentModelBootTest extends AbstractTestCase
     #[Test]
     public function it_appointment_generates_unique_external_ids_for_each_record()
     {
-        /** Arrange */
+        /* Arrange */
         $appointment1 = Appointment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'title'       => 'Appointment One',
@@ -77,7 +74,7 @@ class AppointmentModelBootTest extends AbstractTestCase
             'source_id'   => $this->user->id,
         ]);
 
-        /** Act */
+        /* Act */
         $appointment2 = Appointment::create([
             'external_id' => Uuid::uuid4()->toString(),
             'title'       => 'Appointment Two',
@@ -96,10 +93,9 @@ class AppointmentModelBootTest extends AbstractTestCase
     #[Test]
     public function it_appointment_factory_creates_record_with_external_id()
     {
-        /** Arrange */
-        // User already created in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $appointment = Appointment::factory()->create([
             'user_id'     => $this->user->id,
             'source_type' => User::class,
@@ -115,17 +111,13 @@ class AppointmentModelBootTest extends AbstractTestCase
         ]);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_appointment_preserves_provided_external_id()
     {
-        /** Arrange */
+        /* Arrange */
         $customExternalId = 'custom-appointment-uuid-6789';
 
-        /** Act */
+        /* Act */
         $appointment = Appointment::create([
             'external_id' => $customExternalId,
             'title'       => 'Test Appointment',
@@ -140,6 +132,4 @@ class AppointmentModelBootTest extends AbstractTestCase
         /* Assert */
         $this->assertEquals($customExternalId, $appointment->external_id);
     }
-
-    # endregion
 }

@@ -76,21 +76,27 @@ class TaskAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_task_delete_permission_can_delete_task()
     {
+        /* Arrange */
         $this->actingAs($this->userWithPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
-        $response->assertStatus(200); // JSON request returns 200
+        /* Assert */
+        $response->assertStatus(200);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 
     #[Test]
     public function it_user_without_task_delete_permission_cannot_delete_task()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('tasks', ['id' => $this->task->id, 'deleted_at' => null]);
     }
@@ -98,6 +104,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_update_project_permission_can_update_task_project()
     {
+        /* Arrange */
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $roleWithPermission = Role::create([
@@ -117,10 +124,12 @@ class TaskAuthorizationTest extends AbstractTestCase
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
 
+        /* Act */
         $response = $this->json('PATCH', route('tasks.updateProject', $this->task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals($project->id, $this->task->refresh()->project_id);
     }
@@ -128,14 +137,17 @@ class TaskAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_without_update_project_permission_cannot_update_task_project()
     {
+        /* Arrange */
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('PATCH', route('tasks.updateProject', $this->task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertNull($this->task->refresh()->project_id);
     }
@@ -143,6 +155,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_task_update_status_only_accepts_status_id_field()
     {
+        /* Arrange */
         $roleWithPermission = Role::create([
             'name'         => 'status-updater',
             'display_name' => 'Status Updater',
@@ -167,6 +180,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $originalTitle       = $this->task->title;
         $originalDescription = $this->task->description;
 
+        /* Act */
         $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
@@ -174,11 +188,11 @@ class TaskAuthorizationTest extends AbstractTestCase
             'user_assigned_id' => 999,
         ]);
 
+        /* Assert */
         $this->task->refresh();
 
         $response->assertStatus(200);
         $this->assertEquals($newStatus->id, $this->task->status_id);
-        // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->task->title);
         $this->assertEquals($originalDescription, $this->task->description);
         $this->assertNotEquals(999, $this->task->user_assigned_id);

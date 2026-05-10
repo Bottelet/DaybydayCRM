@@ -30,13 +30,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region edge_cases
-
     #[Test]
     public function it_appointments_controller_does_not_have_store_method()
     {
         /* Arrange */
-        // Already arranged
 
         /* Act & Assert */
         $this->assertFalse(
@@ -48,10 +45,10 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_appointments_controller_does_not_have_create_request_dependency()
     {
-        /** Arrange */
+        /* Arrange */
         $reflector = new ReflectionClass(AppointmentsController::class);
 
-        /** Act */
+        /* Act */
         $methods     = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodNames = array_map(fn ($m) => $m->getName(), $methods);
 
@@ -62,10 +59,9 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_posting_to_appointments_resource_route_returns_not_found()
     {
-        /** Arrange */
-        // Already arranged
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->post('/appointments');
 
         /* Assert */
@@ -76,7 +72,6 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     public function it_appointments_controller_retains_calendar_method()
     {
         /* Arrange */
-        // Already arranged
 
         /* Act & Assert */
         $this->assertTrue(
@@ -89,7 +84,6 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     public function it_appointments_controller_retains_update_method()
     {
         /* Arrange */
-        // Already arranged
 
         /* Act & Assert */
         $this->assertTrue(
@@ -102,7 +96,6 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     public function it_appointments_controller_retains_destroy_method()
     {
         /* Arrange */
-        // Already arranged
 
         /* Act & Assert */
         $this->assertTrue(
@@ -115,7 +108,6 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     public function it_appointments_controller_retains_appointments_json_method()
     {
         /* Arrange */
-        // Already arranged
 
         /* Act & Assert */
         $this->assertTrue(
@@ -127,7 +119,7 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
     #[Test]
     public function it_creates_appointment_calendar_request_class_no_longer_used_by_controller()
     {
-        /** Arrange */
+        /* Arrange */
         $reflector = new ReflectionClass(AppointmentsController::class);
         $methods   = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
 
@@ -147,6 +139,4 @@ class AppointmentsStoreRemovedTest extends AbstractTestCase
             }
         }
     }
-
-    # endregion
 }

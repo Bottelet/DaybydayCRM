@@ -31,15 +31,12 @@ class GetCommentEndpointTest extends AbstractTestCase
         $this->project = Project::factory()->create();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_gets_comment_endpoint_returns_correct_urls_for_lead_task_and_project()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $leadEndpoint    = $this->lead->getCreateCommentEndpoint();
         $taskEndpoint    = $this->task->getCreateCommentEndpoint();
         $projectEndpoint = $this->project->getCreateCommentEndpoint();
@@ -49,6 +46,4 @@ class GetCommentEndpointTest extends AbstractTestCase
         $this->assertEquals(url('comments/task/' . $this->task->external_id), $taskEndpoint);
         $this->assertEquals(url('comments/project/' . $this->project->external_id), $projectEndpoint);
     }
-
-    # endregion
 }

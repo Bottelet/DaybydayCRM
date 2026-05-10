@@ -53,35 +53,38 @@ class DocumentSecurityTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_upload_file_to_task()
     {
-        // Give user permission to upload files to tasks
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
         $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_unauthorized_user_cannot_upload_file_to_task()
     {
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
-
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to upload files'));
     }
@@ -89,35 +92,38 @@ class DocumentSecurityTest extends AbstractTestCase
     #[Test]
     public function it_authorized_user_can_upload_file_to_project()
     {
-        // Give user permission to upload files to projects
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
         $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_unauthorized_user_cannot_upload_file_to_project()
     {
+        /* Arrange */
         $this->actingAs($this->unauthorizedUser);
-
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to upload files'));
     }
@@ -125,20 +131,22 @@ class DocumentSecurityTest extends AbstractTestCase
     #[Test]
     public function it_upload_to_nonexistent_task_returns_error()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'task-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
         $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.task.upload', 'nonexistent-uuid'), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Task not found'));
     }
@@ -146,20 +154,22 @@ class DocumentSecurityTest extends AbstractTestCase
     #[Test]
     public function it_upload_to_nonexistent_project_returns_error()
     {
+        /* Arrange */
         $permission = Permission::firstOrCreate(['name' => 'project-upload-files']);
         $this->user->roles->first()->attachPermission($permission);
 
-        // Clear permission caches
         Cache::tags('role_user')->flush();
         Cache::tags('permission_role')->flush();
         $this->user = $this->user->fresh();
 
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
+        /* Act */
         $response = $this->json('POST', route('document.project.upload', 'nonexistent-uuid'), [
             'files' => [$file],
         ]);
 
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning', __('Project not found'));
     }

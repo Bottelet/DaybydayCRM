@@ -18,7 +18,6 @@ class TaskActionTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -28,16 +27,14 @@ class TaskActionTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_constructor_stores_task_and_action()
     {
-        /** Arrange */
+        /* Arrange */
         $task   = Task::factory()->create();
         $action = 'created';
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, $action);
 
         /* Assert */
@@ -48,10 +45,10 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_gets_task_returns_task_model()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, 'updated');
 
         /* Assert */
@@ -61,10 +58,10 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_gets_action_returns_action_string()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, 'deleted');
 
         /* Assert */
@@ -74,10 +71,10 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_broadcasts_on_returns_private_channel()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event   = new TaskAction($task, 'created');
         $channel = $event->broadcastOn();
 
@@ -88,10 +85,10 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_event_preserves_task_reference_after_construction()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, 'test');
 
         /* Assert */
@@ -101,10 +98,9 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_event_uses_interacts_with_sockets_trait()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $traits = class_uses(TaskAction::class);
 
         /* Assert */
@@ -114,27 +110,22 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_event_uses_serializes_models_trait()
     {
-        /** Arrange */
-        // No arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $traits = class_uses(TaskAction::class);
 
         /* Assert */
         $this->assertContains('Illuminate\Queue\SerializesModels', $traits);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_action_can_be_non_string_value()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, 42);
 
         /* Assert */
@@ -144,10 +135,10 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_action_can_be_null()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, null);
 
         /* Assert */
@@ -157,15 +148,13 @@ class TaskActionTest extends AbstractTestCase
     #[Test]
     public function it_action_can_be_empty_string()
     {
-        /** Arrange */
+        /* Arrange */
         $task = Task::factory()->create();
 
-        /** Act */
+        /* Act */
         $event = new TaskAction($task, '');
 
         /* Assert */
         $this->assertEquals('', $event->getAction());
     }
-
-    # endregion
 }

@@ -29,9 +29,8 @@ class ProjectAuthorizationTest extends AbstractTestCase
     {
         parent::setUp();
 
+        /* Arrange */
         $this->project = Project::factory()->create();
-
-        // Create or find project-delete permission
         $deletePermission = Permission::firstOrCreate(
             ['name' => 'project-delete'],
             [
@@ -40,8 +39,6 @@ class ProjectAuthorizationTest extends AbstractTestCase
                 'grouping'     => 'project',
             ]
         );
-
-        // Create role with project-delete permission
         $roleWithPermission = Role::create([
             'name'         => 'project-deleter',
             'display_name' => 'Project Deleter',
@@ -49,48 +46,45 @@ class ProjectAuthorizationTest extends AbstractTestCase
             'external_id'  => Str::uuid()->toString(),
         ]);
         $roleWithPermission->attachPermission($deletePermission);
-
-        // Create role without project-delete permission
         $roleWithoutPermission = Role::create([
             'name'         => 'project-viewer',
             'display_name' => 'Project Viewer',
             'description'  => 'Cannot delete projects',
             'external_id'  => Str::uuid()->toString(),
         ]);
-
-        // Create users
         $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
-
         $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
-
-        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function it_user_with_project_delete_permission_can_delete_project()
     {
+        /* Arrange */
         $this->actingAs($this->userWithPermission);
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->userWithPermission = $this->userWithPermission->fresh();
 
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
-        $response->assertStatus(200); // JSON request returns 200
+        /* Assert */
+        $response->assertStatus(200);
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
     #[Test]
     public function it_user_without_project_delete_permission_cannot_delete_project()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
     }
@@ -98,6 +92,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_with_assign_permission_can_update_project_assignment()
     {
+        /* Arrange */
         $roleWithPermission = Role::create([
             'name'         => 'project-assigner',
             'display_name' => 'Project Assigner',
@@ -106,22 +101,19 @@ class ProjectAuthorizationTest extends AbstractTestCase
         ]);
         $assignPermission = Permission::firstOrCreate(['name' => 'can-assign-new-user-to-project']);
         $roleWithPermission->attachPermission($assignPermission);
-
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $user = $user->fresh();
-
         $newUser = User::factory()->create();
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals($newUser->id, $this->project->refresh()->user_assigned_id);
     }
@@ -129,16 +121,17 @@ class ProjectAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_user_without_assign_permission_cannot_update_project_assignment()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
-
         $newUser          = User::factory()->create();
         $originalAssignee = $this->project->user_assigned_id;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertEquals($originalAssignee, $this->project->refresh()->user_assigned_id);
     }
@@ -146,6 +139,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_project_update_status_only_accepts_status_id_field()
     {
+        /* Arrange */
         $roleWithPermission = Role::create([
             'name'         => 'status-updater',
             'display_name' => 'Status Updater',
@@ -154,15 +148,11 @@ class ProjectAuthorizationTest extends AbstractTestCase
         ]);
         $statusPermission = Permission::firstOrCreate(['name' => 'project-update-status']);
         $roleWithPermission->attachPermission($statusPermission);
-
         $user = User::factory()->create();
         $user->attachRole($roleWithPermission);
         $this->actingAs($user);
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $user = $user->fresh();
-
         $newStatus = Status::factory()->create(['source_type' => Project::class]);
         while ($newStatus->id == $this->project->status_id) {
             $newStatus = Status::factory()->create(['source_type' => Project::class]);
@@ -170,19 +160,18 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $originalTitle       = $this->project->title;
         $originalDescription = $this->project->description;
 
-        // Use PATCH (route is PATCH)
+        /* Act */
         $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',
             'user_assigned_id' => 999,
         ]);
-
         $this->project->refresh();
 
+        /* Assert */
         $response->assertStatus(302);
         $this->assertEquals($newStatus->id, $this->project->status_id);
-        // Verify mass assignment protection
         $this->assertEquals($originalTitle, $this->project->title);
         $this->assertEquals($originalDescription, $this->project->description);
         $this->assertNotEquals(999, $this->project->user_assigned_id);

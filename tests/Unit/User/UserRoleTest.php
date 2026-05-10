@@ -18,15 +18,12 @@ class UserRoleTest extends AbstractTestCase
         parent::setUp();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_factory_state_with_role_attaches_specified_role()
     {
-        /** Arrange */
-        // No additional arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $user = User::factory()->withRole('employee')->create();
 
         /* Assert */
@@ -38,10 +35,9 @@ class UserRoleTest extends AbstractTestCase
     #[Test]
     public function it_factory_state_with_role_supports_different_roles()
     {
-        /** Arrange */
-        // No additional arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $employee = User::factory()->withRole('employee')->create();
         $owner    = User::factory()->withRole('owner')->create();
         $admin    = User::factory()->withRole('administrator')->create();
@@ -57,10 +53,9 @@ class UserRoleTest extends AbstractTestCase
     #[Test]
     public function it_user_role_relationship_is_accessible_when_using_factory_state()
     {
-        /** Arrange */
-        // No additional arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $user = User::factory()->withRole('employee')->create();
 
         /* Assert */
@@ -71,17 +66,12 @@ class UserRoleTest extends AbstractTestCase
         $this->assertNotNull($user->roles->first()->display_name);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     public function it_users_created_without_role_state_have_no_roles_by_default()
     {
-        /** Arrange */
-        // No additional arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $user = User::factory()->create();
 
         /* Assert */
@@ -91,10 +81,9 @@ class UserRoleTest extends AbstractTestCase
     #[Test]
     public function it_multiple_users_can_share_the_same_role_via_factory_state()
     {
-        /** Arrange */
-        // No additional arrangement needed
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $user1 = User::factory()->withRole('employee')->create();
         $user2 = User::factory()->withRole('employee')->create();
         $user3 = User::factory()->withRole('employee')->create();
@@ -115,6 +104,4 @@ class UserRoleTest extends AbstractTestCase
             'All users should share the same employee role instance'
         );
     }
-
-    # endregion
 }

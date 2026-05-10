@@ -17,7 +17,6 @@ class UserTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -27,12 +26,10 @@ class UserTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_user_has_many_appointments()
     {
-        /** Arrange */
+        /* Arrange */
         $user = User::factory()->create();
 
         $appointment = Appointment::factory()->create([
@@ -40,13 +37,11 @@ class UserTest extends AbstractTestCase
             'source_id'   => $user->id,
         ]);
 
-        /** Act */
+        /* Act */
         $user = $user->fresh();
 
         /* Assert */
         $this->assertCount(1, $user->appointments);
         $this->assertEquals($appointment->id, $user->appointments->first()->id);
     }
-
-    # endregion
 }

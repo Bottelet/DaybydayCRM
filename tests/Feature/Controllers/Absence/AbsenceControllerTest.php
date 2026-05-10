@@ -20,7 +20,6 @@ class AbsenceControllerTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
     }
 
@@ -30,8 +29,6 @@ class AbsenceControllerTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     #[Group('junie_repaired')]
     public function can_create_absence_for_other_user()
@@ -40,12 +37,11 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->user = User::factory()->withRole('employee')->create();
         $this->withPermissions(PermissionName::ABSENCE_MANAGE);
 
-        // Assert permission is active for this user
         $this->assertTrue($this->user->can(PermissionName::ABSENCE_MANAGE->value), 'User should have absence-manage permission');
 
         $user = User::factory()->create();
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', route('absence.store'), [
             'reason'              => 'Sick',
             'user_external_id'    => $user->external_id,
@@ -66,10 +62,9 @@ class AbsenceControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function not_providing_user_external_id_creates_absence_for_authenticated_user()
     {
-        /** Arrange */
-        // $this->user is already defined and acting as in setUp
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', route('absence.store'), [
             'reason'              => 'Sick',
             'start_date'          => '2020-01-01',
@@ -83,10 +78,6 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->assertCount(1, $this->user->absences);
     }
 
-    # endregion
-
-    # region failure_path
-
     #[Test]
     #[Group('junie_repaired')]
     public function creating_absence_for_other_users_without_permission_creates_for_user_it_self()
@@ -96,7 +87,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
         $absentUser = User::factory()->create();
 
-        /** Act */
+        /* Act */
         $response = $this->json('POST', route('absence.store'), [
             'reason'              => 'Sick',
             'user_external_id'    => $absentUser->external_id,
@@ -110,6 +101,4 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->assertCount(0, $absentUser->absences);
         $this->assertCount(1, $this->user->absences);
     }
-
-    # endregion
 }

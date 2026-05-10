@@ -32,11 +32,8 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Freeze time for deterministic tests
         Carbon::setTestNow('2024-01-15 12:00:00');
 
-        // Ensure Setting exists with VAT = 0 for consistent test behavior
-        // Use firstOrCreate to ensure a setting exists, then update it
         $setting = \App\Models\Setting::firstOrCreate(
             ['id' => 1],
             [
@@ -76,8 +73,6 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     #[Group('flaky')]
     public function is_status_paid()
@@ -88,7 +83,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->payment->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isPaid();
 
         /* Assert */
@@ -98,10 +93,9 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     #[Test]
     public function it_is_status_partial_paid()
     {
-        /** Arrange */
-        // Invoice with 5000 total and 1000 payment from setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $result = $this->generateInvoiceStatus->isPartialPaid();
 
         /* Assert */
@@ -118,7 +112,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->payment->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isOverPaid();
 
         /* Assert */
@@ -133,7 +127,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->payment->forceDelete();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isUnPaid();
 
         /* Assert */
@@ -149,7 +143,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoice->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isDraft();
 
         /* Assert */
@@ -165,17 +159,17 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoice->sent_at = null;
         $this->invoice->save();
 
-        /* Act & Assert - Draft status */
+        /* Act & Assert */
         $this->assertEquals('draft', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        /* Arrange - Send invoice */
+        /* Arrange */
         $this->invoice->sent_at = Carbon::now();
         $this->invoice->save();
 
-        /* Act & Assert - Unpaid status */
+        /* Act & Assert */
         $this->assertEquals('unpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        /* Arrange - Partial payment */
+        /* Arrange */
         Payment::factory()->create([
             'invoice_id'     => $this->invoice->id,
             'amount'         => 1000,
@@ -184,10 +178,10 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         ]);
         $this->invoice->refresh();
 
-        /* Act & Assert - Partial paid status */
+        /* Act & Assert */
         $this->assertEquals('partial_paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        /* Arrange - Complete payment */
+        /* Arrange */
         Payment::factory()->create([
             'invoice_id'     => $this->invoice->id,
             'amount'         => 4000,
@@ -195,10 +189,10 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
             'payment_source' => 'test',
         ]);
 
-        /* Act & Assert - Paid status */
+        /* Act & Assert */
         $this->assertEquals('paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
-        /* Arrange - Overpayment */
+        /* Arrange */
         Payment::factory()->create([
             'invoice_id'     => $this->invoice->id,
             'amount'         => 4000,
@@ -206,7 +200,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
             'payment_source' => 'test',
         ]);
 
-        /* Act & Assert - Overpaid status */
+        /* Act & Assert */
         $this->assertEquals('overpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
     }
 
@@ -223,36 +217,32 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->assertEquals('partial_paid', $this->invoice->refresh()->status);
     }
 
-    # endregion
-
-    # region edge_cases
-
     #[Test]
     #[Group('flaky')]
     public function is_only_partial_paid_if_values_is_between_invoice_amount()
     {
-        /* Arrange & Assert - Initially partial paid */
+        /* Arrange & Assert */
         $this->assertTrue($this->generateInvoiceStatus->isPartialPaid());
 
-        /* Arrange - Full payment */
+        /* Arrange */
         $this->payment->amount = 5000;
         $this->payment->save();
 
-        /* Act & Assert - Not partial paid when fully paid */
+        /* Act & Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
 
-        /* Arrange - Overpayment */
+        /* Arrange */
         $this->payment->amount = 6000;
         $this->payment->save();
 
-        /* Act & Assert - Not partial paid when overpaid */
+        /* Act & Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
 
-        /* Arrange - Negative payment */
+        /* Arrange */
         $this->payment->amount = -2000;
         $this->payment->save();
 
-        /* Act & Assert - Not partial paid with negative payment */
+        /* Act & Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
     }
 
@@ -265,7 +255,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoiceLine->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
 
-        /** Act */
+        /* Act */
         $isUnpaid = $invoiceStatus->isUnPaid();
         $status   = $invoiceStatus->getStatus();
 
@@ -282,7 +272,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoiceLine->forceDelete();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isPaid();
 
         /* Assert */
@@ -299,7 +289,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoice->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
 
-        /** Act */
+        /* Act */
         $status = $invoiceStatus->getStatus();
 
         /* Assert */
@@ -315,7 +305,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->payment->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice->refresh()]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isUnPaid();
 
         /* Assert */
@@ -336,7 +326,7 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         ]);
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $result = $invoiceStatus->isPaid();
 
         /* Assert */
@@ -351,12 +341,10 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoice->save();
         $invoiceStatus = app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice]);
 
-        /** Act */
+        /* Act */
         $status = $invoiceStatus->getStatus();
 
         /* Assert */
         $this->assertEquals('draft', $status);
     }
-
-    # endregion
 }

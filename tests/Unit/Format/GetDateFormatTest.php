@@ -39,15 +39,12 @@ class GetDateFormatTest extends AbstractTestCase
         parent::tearDown();
     }
 
-    # region happy_path
-
     #[Test]
     public function it_gets_date_format_methods_return_correct_formats()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $carbonTime             = $this->formatter->getCarbonTime();
         $frontendDate           = $this->formatter->getFrontendDate();
         $frontendTime           = $this->formatter->getFrontendTime();
@@ -65,10 +62,9 @@ class GetDateFormatTest extends AbstractTestCase
     #[Test]
     public function it_helper_functions_return_correct_formats()
     {
-        /** Arrange */
-        // Already arranged in setUp()
+        /* Arrange */
 
-        /** Act */
+        /* Act */
         $carbonTime             = carbonTime();
         $frontendDate           = frontendDate();
         $frontendTime           = frontendTime();
@@ -86,11 +82,11 @@ class GetDateFormatTest extends AbstractTestCase
     #[Test]
     public function it_formats_carbon_dates_correctly()
     {
-        /** Arrange */
+        /* Arrange */
         $testDate  = Carbon::parse('22-02-2020 15:00:00');
         $testDate2 = Carbon::parse('22-02-2020 13:00:00');
 
-        /** Act */
+        /* Act */
         $formattedTime     = $testDate->format($this->formatter->getCarbonTime());
         $formattedDate     = $testDate->format($this->formatter->getCarbonDate());
         $formattedFullDate = $testDate2->format($this->formatter->getCarbonFullDateWithText());
@@ -100,6 +96,4 @@ class GetDateFormatTest extends AbstractTestCase
         $this->assertEquals('22/02/2020', $formattedDate);
         $this->assertEquals('22, February 2020 13:00', $formattedFullDate);
     }
-
-    # endregion
 }

@@ -21,38 +21,45 @@ class SettingsSecurityTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create a non-admin user
         $this->nonAdminUser = User::factory()->withRole('employee')->create();
 
-        // Create and authenticate an admin user
         $this->user = User::factory()->withRole('administrator')->create();
         $this->actingAs($this->user);
 
-        // Disable CSRF middleware for all tests
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function it_admin_can_access_settings_index()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->json('GET', route('settings.index'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_non_admin_cannot_access_settings_index()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
+        /* Act */
         $response = $this->json('GET', route('settings.index'));
 
+        /* Assert */
         $response->assertStatus(403);
     }
 
     #[Test]
     public function it_admin_can_update_overall_settings()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company'        => 'Test Company',
             'country'        => 'GB',
@@ -64,14 +71,17 @@ class SettingsSecurityTest extends AbstractTestCase
             'end_time'       => '17:00',
         ]);
 
+        /* Assert */
         $response->assertRedirect();
     }
 
     #[Test]
     public function it_non_admin_cannot_update_overall_settings()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
+        /* Act */
         $response = $this->json('PATCH', route('settings.updateOverall'), [
             'company'        => 'Hacked Company',
             'country'        => 'GB',
@@ -83,12 +93,16 @@ class SettingsSecurityTest extends AbstractTestCase
             'end_time'       => '17:00',
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
     }
 
     #[Test]
     public function it_admin_can_update_first_step_settings()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Test Company',
             'country'      => 'GB',
@@ -96,14 +110,17 @@ class SettingsSecurityTest extends AbstractTestCase
             'end_time'     => '17:00',
         ]);
 
+        /* Assert */
         $response->assertRedirect();
     }
 
     #[Test]
     public function it_non_admin_cannot_update_first_step_settings()
     {
+        /* Arrange */
         $this->actingAs($this->nonAdminUser);
 
+        /* Act */
         $response = $this->json('POST', route('settings.updateFirstStep'), [
             'company_name' => 'Hacked Company',
             'country'      => 'GB',
@@ -111,6 +128,7 @@ class SettingsSecurityTest extends AbstractTestCase
             'end_time'     => '17:00',
         ]);
 
+        /* Assert */
         $response->assertStatus(403);
     }
 }
