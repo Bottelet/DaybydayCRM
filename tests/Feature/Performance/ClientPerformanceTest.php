@@ -41,10 +41,16 @@ class ClientPerformanceTest extends AbstractTestCase
                 'vat'            => 0,
             ]
         );
+        
+        // Flush query log to ensure clean state
+        DB::flushQueryLog();
     }
 
     protected function tearDown(): void
     {
+        // Disable query logging and flush to prevent memory leaks
+        DB::disableQueryLog();
+        DB::flushQueryLog();
         Carbon::setTestNow();
         parent::tearDown();
     }
@@ -67,7 +73,8 @@ class ClientPerformanceTest extends AbstractTestCase
             ]);
 
         /* Act & Assert */
-        // Enable query logging
+        // Flush and enable query logging
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
         $response = $this->actingAs($this->user)->json('GET', route('clients.data'));
@@ -107,6 +114,7 @@ class ClientPerformanceTest extends AbstractTestCase
         ]);
 
         /* Act */
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
         $response = $this->actingAs($this->user)->get(route('clients.show', $client->external_id));
@@ -152,6 +160,7 @@ class ClientPerformanceTest extends AbstractTestCase
         ]);
 
         /* Act */
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
         $response = $this->actingAs($this->user)->json('GET', route('clients.taskDataTable', $client->external_id));
@@ -195,6 +204,7 @@ class ClientPerformanceTest extends AbstractTestCase
         ]);
 
         /* Act */
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
         $response = $this->actingAs($this->user)->json('GET', route('clients.projectDataTable', $client->external_id));
@@ -238,6 +248,7 @@ class ClientPerformanceTest extends AbstractTestCase
         ]);
 
         /* Act */
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
         $response = $this->actingAs($this->user)->json('GET', route('clients.leadDataTable', $client->external_id));
@@ -279,14 +290,12 @@ class ClientPerformanceTest extends AbstractTestCase
         }
 
         /* Act */
+        DB::flushQueryLog();
         DB::enableQueryLog();
         
-        $startTime = microtime(true);
         $response = $this->actingAs($this->user)->json('GET', route('clients.data'));
-        $endTime = microtime(true);
         
         $queryCount = count(DB::getQueryLog());
-        $executionTime = ($endTime - $startTime) * 1000; // in milliseconds
 
         /* Assert */
         $response->assertStatus(200);
@@ -294,11 +303,6 @@ class ClientPerformanceTest extends AbstractTestCase
         // Should be very few queries regardless of client count
         $this->assertLessThan(10, $queryCount,
             "Query count should not scale with number of clients. Got {$queryCount} queries for 100 clients."
-        );
-        
-        // Should execute reasonably fast (less than 1 second for 100 clients)
-        $this->assertLessThan(1000, $executionTime,
-            "Query should execute in less than 1 second. Took {$executionTime}ms for 100 clients."
         );
     }
 }

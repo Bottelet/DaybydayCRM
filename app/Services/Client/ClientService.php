@@ -3,10 +3,6 @@
 namespace App\Services\Client;
 
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\Lead;
-use App\Models\Project;
-use App\Models\Task;
 use Illuminate\Database\Eloquent\Collection;
 
 class ClientService
@@ -121,12 +117,13 @@ class ClientService
     }
 
     /**
-     * Get invoices for client with optimized eager loading
+     * Get invoices query for client with optimized eager loading
+     * Returns a Builder for DataTables server-side processing
      *
      * @param Client $client
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function getInvoicesWithRelations(Client $client): Collection
+    public function getInvoicesWithRelations(Client $client)
     {
         return $client->invoices()
             ->with(['invoiceLines'])  // Eager load invoice lines for calculations
@@ -137,8 +134,7 @@ class ClientService
                 'status', 
                 'invoice_number',
                 'client_id'
-            ])
-            ->get();
+            ]);
     }
 
     /**

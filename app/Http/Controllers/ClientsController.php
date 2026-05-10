@@ -43,14 +43,8 @@ class ClientsController extends Controller
      */
     private $filesystem;
 
-    /**
-     * @var ClientService
-     */
-    private $clientService;
-
-    public function __construct(ClientService $clientService)
+    public function __construct(private ClientService $clientService)
     {
-        $this->clientService = $clientService;
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);
