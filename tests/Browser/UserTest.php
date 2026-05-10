@@ -11,50 +11,49 @@ use Tests\DuskTestCase;
 
 class UserTest extends DuskTestCase
 {
+    /**
+     * Test user can access user thorugh index page.
+     */
     #[Test]
     public function it_user_can_see_users_on_user_index_and_go_to_the_user_with_link()
     {
         /* Arrange */
         $user = User::factory()->create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users')
                 ->type('.dataTables_filter input', $user->name)
                 ->waitForText($user->name)
-                ->clickLink($user->name);
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($user) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->clickLink($user->name)
                 ->assertPathIs('/users/' . $user->external_id)
                 ->waitForText($user->name);
         });
     }
 
+    /**
+     * Test user can see all the correct info on user page.
+     */
     #[Test]
     public function it_i_can_see_all_the_correct_information_on_user_info_page()
     {
         /* Arrange */
         $user = User::factory()->create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/' . $user->external_id)
-                ->waitForText($user->name);
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) use ($user) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->waitForText($user->name)
                 ->assertSee($user->primary_number)
                 ->assertSee($user->secondary_number);
         });
     }
 
+    /**
+     * Test i can create a new User.
+     */
     #[Test]
     public function it_i_can_create_a_new_user()
     {
@@ -62,7 +61,7 @@ class UserTest extends DuskTestCase
         Setting::whereId(1)->update(['max_users' => 10000000]);
         $faker = Faker::create();
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/create')
@@ -76,12 +75,7 @@ class UserTest extends DuskTestCase
                 ->type('password_confirmation', 'Password123')
                 ->select('roles', 1)
                 ->select('departments', 1)
-                ->press('Create user');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->press('Create user')
                 ->assertSee('User successfully added');
         });
     }

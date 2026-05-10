@@ -39,14 +39,12 @@ class ActivityModelBootTest extends AbstractTestCase
     public function it_activity_auto_generates_external_id_and_ip_address_when_not_provided()
     {
         /* Arrange */
-        $causer_type = User::class;
-        $source_type = Task::class;
 
         /* Act */
         $activity = Activity::create([
-            'causer_type' => $causer_type,
+            'causer_type' => User::class,
             'causer_id'   => $this->user->id,
-            'source_type' => $source_type,
+            'source_type' => Task::class,
             'source_id'   => $this->task->id,
             'text'        => 'Test activity',
         ]);

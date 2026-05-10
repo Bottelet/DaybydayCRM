@@ -9,6 +9,11 @@ use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
 {
+    /**
+     * A Dusk test example.
+     *
+     * @return void
+     */
     #[Test]
     public function it_example()
     {
@@ -17,22 +22,22 @@ class LoginTest extends DuskTestCase
             'password' => bcrypt('secretpassword'),
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)
                 ->type('password', 'wrongpassword')
-                ->press('Login');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->press('Login')
                 ->assertPathIs('/login')
                 ->assertSee('These credentials do not match our records.');
         });
     }
 
+    /**
+     * A Dusk test example.
+     *
+     * @return void
+     */
     #[Test]
     public function it_user_can_login_successfully()
     {
@@ -41,17 +46,12 @@ class LoginTest extends DuskTestCase
             'password' => bcrypt('secretpassword'),
         ]);
 
-        /* Act */
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)
                 ->type('password', 'secretpassword')
-                ->press('Login');
-        });
-
-        /* Assert */
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->press('Login')
                 ->assertPathIs('/dashboard');
         });
     }
