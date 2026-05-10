@@ -76,6 +76,7 @@ class ClientPerformanceTest extends AbstractTestCase
         // Flush and enable query logging
         DB::flushQueryLog();
         DB::enableQueryLog();
+        DB::flushQueryLog();
         
         $response = $this->actingAs($this->user)->json('GET', route('clients.data'));
         
