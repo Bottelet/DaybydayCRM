@@ -14,7 +14,9 @@ class ClientHeaderComposer
      */
     public function compose(View $view)
     {
-        $clients = Client::findOrFail($view->getData()['client']['id']);
+        // Eager load relationships to prevent N+1 queries
+        $clients = Client::with(['contacts', 'user'])
+            ->findOrFail($view->getData()['client']['id']);
 
         $contact_info = $clients->contacts()->first();
         /**
