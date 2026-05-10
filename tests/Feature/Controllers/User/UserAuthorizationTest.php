@@ -29,8 +29,6 @@ class UserAuthorizationTest extends AbstractTestCase
         parent::setUp();
 
         $this->targetUser = User::factory()->create();
-
-        // Create role with user-delete permission
         $roleWithPermission = Role::create([
             'name'         => 'user-deleter',
             'display_name' => 'User Deleter',
@@ -40,7 +38,6 @@ class UserAuthorizationTest extends AbstractTestCase
         $deletePermission = Permission::firstOrCreate(['name' => 'user-delete'], ['display_name' => 'Delete User', 'description' => 'Delete user permission']);
         $roleWithPermission->attachPermission($deletePermission);
 
-        // Create role without user-delete permission
         $roleWithoutPermission = Role::create([
             'name'         => 'user-viewer',
             'display_name' => 'User Viewer',
@@ -48,37 +45,40 @@ class UserAuthorizationTest extends AbstractTestCase
             'external_id'  => Str::uuid()->toString(),
         ]);
 
-        // Create users
         $this->userWithPermission = User::factory()->create();
         $this->userWithPermission->attachRole($roleWithPermission);
 
         $this->userWithoutPermission = User::factory()->create();
         $this->userWithoutPermission->attachRole($roleWithoutPermission);
 
-        // Explicitly clear the permissions cache
         Cache::tags('role_user')->flush();
-
         $this->withoutMiddleware(VerifyCsrfToken::class);
     }
 
     #[Test]
     public function it_user_with_user_delete_permission_can_delete_user()
     {
+        /* Arrange */
         $this->actingAs($this->userWithPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('users.destroy', $this->targetUser->external_id));
 
-        $response->assertStatus(302); // Redirect on success
+        /* Assert */
+        $response->assertStatus(302);
         $this->assertSoftDeleted('users', ['id' => $this->targetUser->id]);
     }
 
     #[Test]
     public function it_user_without_user_delete_permission_cannot_delete_user()
     {
+        /* Arrange */
         $this->actingAs($this->userWithoutPermission);
 
+        /* Act */
         $response = $this->json('DELETE', route('users.destroy', $this->targetUser->external_id));
 
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('users', ['id' => $this->targetUser->id, 'deleted_at' => null]);
     }
@@ -86,13 +86,14 @@ class UserAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_owner_user_cannot_be_deleted_even_with_permission()
     {
+        /* Arrange */
         $this->actingAs($this->userWithPermission);
-
         $ownerUser = User::factory()->withRole('owner')->create();
 
+        /* Act */
         $response = $this->json('DELETE', route('users.destroy', $ownerUser->external_id));
 
-        // Owner deletion is blocked by application logic and redirects back
+        /* Assert */
         $response->assertStatus(302);
         $this->assertDatabaseHas('users', ['id' => $ownerUser->id, 'deleted_at' => null]);
     }

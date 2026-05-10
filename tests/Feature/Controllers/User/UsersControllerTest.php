@@ -18,15 +18,14 @@ class UsersControllerTest extends AbstractTestCase
     #[Group('junie_repaired')]
     public function owner_can_update_user_role()
     {
+        /* Arrange */
         $this->asOwner();
         Cache::tags('role_user')->flush();
-
-        // Create a different user to update, because we can't demote the only owner
         $targetUser = User::factory()->withRole('employee')->create();
-
         /** @var Role $targetRole */
         $targetRole = Role::firstOrCreate(['name' => 'manager'], ['display_name' => 'Manager', 'description' => 'Manager role']);
 
+        /* Act */
         $this->json(
             'PATCH',
             route('users.update', $targetUser->external_id),
@@ -38,6 +37,7 @@ class UsersControllerTest extends AbstractTestCase
             ]
         )->assertRedirect();
 
+        /* Assert */
         $this->assertEquals(
             [$targetRole->id],
             $targetUser->roles()->get()->pluck('id')->toArray()
@@ -47,13 +47,18 @@ class UsersControllerTest extends AbstractTestCase
     #[Test]
     public function it_only_owner_role_can_update_user()
     {
+        /* Arrange */
         /** @var User $manager */
         $manager = User::factory()->withRole('manager')->create();
         $this->actingAs($manager);
 
-        $this->json(
+        /* Act */
+        $response = $this->json(
             'PATCH',
             route('users.update', 1)
-        )->assertForbidden();
+        );
+
+        /* Assert */
+        $response->assertForbidden();
     }
 }

@@ -21,11 +21,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     {
         parent::setUp();
         $this->asOwner();
-
-        // Clear permission cache to ensure fresh permission check
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-
-        // Ensure Setting exists with VAT = 0 for consistent test behavior
         \App\Models\Setting::updateOrCreate(
             ['id' => 1],
             [
@@ -39,7 +35,6 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
                 'language'       => 'en',
             ]
         );
-
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         $this->invoice = Invoice::factory()->create([
             'sent_at' => today(),
@@ -56,7 +51,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_can_add_payment()
     {
-        $this->assertTrue($this->invoice->payments->isEmpty());
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2020-01-01',
@@ -64,6 +62,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertTrue($isEmpty);
         $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
@@ -71,7 +71,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_can_add_payment_with_decimals_dot_separator()
     {
-        $this->assertTrue($this->invoice->payments->isEmpty());
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 50.234,
             'payment_date' => '2020-01-01',
@@ -79,6 +82,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertTrue($isEmpty);
         $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
@@ -86,7 +91,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_can_add_payment_with_decimals_comma_separator()
     {
-        $this->assertTrue($this->invoice->payments->isEmpty());
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => '50,234',
             'payment_date' => '2020-01-01',
@@ -94,6 +102,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertTrue($isEmpty);
         $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
     }
@@ -101,7 +111,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_adding_payment_updates_invoice_status()
     {
-        $this->assertEquals('unpaid', $this->invoice->status);
+        /* Arrange */
+        $invoiceStatus = $this->invoice->status;
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2020-01-01',
@@ -109,6 +122,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertEquals('unpaid', $invoiceStatus);
         $response->assertStatus(302);
         $this->assertEquals('paid', $this->invoice->refresh()->status);
     }
@@ -116,7 +131,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_adding_wrong_amount_parameter_return_error()
     {
-        $this->assertEquals('unpaid', $this->invoice->status);
+        /* Arrange */
+        $invoiceStatus = $this->invoice->status;
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 'a string',
             'payment_date' => '2020-01-01',
@@ -124,13 +142,18 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertEquals('unpaid', $invoiceStatus);
         $response->assertStatus(422);
     }
 
     #[Test]
     public function it_adding_wrong_source_parameter_return_error()
     {
-        $this->assertEquals('unpaid', $this->invoice->status);
+        /* Arrange */
+        $invoiceStatus = $this->invoice->status;
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 5000,
             'payment_date' => '2020-01-01',
@@ -138,13 +161,18 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertEquals('unpaid', $invoiceStatus);
         $response->assertStatus(422);
     }
 
     #[Test]
     public function it_adding_invalid_payment_date_parameter_return_error()
     {
-        $this->assertEquals('unpaid', $this->invoice->status);
+        /* Arrange */
+        $invoiceStatus = $this->invoice->status;
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 5000,
             'payment_date' => '2020-15-15',
@@ -152,13 +180,18 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertEquals('unpaid', $invoiceStatus);
         $response->assertStatus(422);
     }
 
     #[Test]
     public function it_can_add_payment_with_minus_amount()
     {
-        $this->assertTrue($this->invoice->payments->isEmpty());
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => -50,
             'payment_date' => '2020-01-01',
@@ -166,6 +199,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertTrue($isEmpty);
         $response->assertStatus(302);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $this->assertEquals(-5000, $this->invoice->refresh()->payments->first()->amount);
@@ -174,22 +209,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_can_add_negative_payment_with_comma_separator()
     {
-        $this->assertTrue($this->invoice->payments->isEmpty());
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount'       => -5000, 234,
-            'payment_date' => '2020-01-01',
-            'source'       => 'bank',
-            'description'  => 'A random description',
-        ]);
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
 
-        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
-        $response->assertStatus(302);
-    }
-
-    #[Test]
-    public function it_can_add_negative_payment_with_dot_separator()
-    {
-        $this->assertTrue($this->invoice->payments->isEmpty());
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => -5000.234,
             'payment_date' => '2020-01-01',
@@ -197,6 +220,28 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertTrue($isEmpty);
+        $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
+        $response->assertStatus(302);
+    }
+
+    #[Test]
+    public function it_can_add_negative_payment_with_dot_separator()
+    {
+        /* Arrange */
+        $isEmpty = $this->invoice->payments->isEmpty();
+
+        /* Act */
+        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+            'amount'       => -5000.234,
+            'payment_date' => '2020-01-01',
+            'source'       => 'bank',
+            'description'  => 'A random description',
+        ]);
+
+        /* Assert */
+        $this->assertTrue($isEmpty);
         $this->assertFalse($this->invoice->refresh()->payments->isEmpty());
         $response->assertStatus(302);
     }
@@ -204,7 +249,10 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
     #[Test]
     public function it_cant_add_payment_where_amount_is_0()
     {
-        $this->assertEquals('unpaid', $this->invoice->status);
+        /* Arrange */
+        $invoiceStatus = $this->invoice->status;
+
+        /* Act */
         $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
             'amount'       => 0,
             'payment_date' => '2020-01-01',
@@ -212,6 +260,8 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
             'description'  => 'A random description',
         ]);
 
+        /* Assert */
+        $this->assertEquals('unpaid', $invoiceStatus);
         $response->assertStatus(422);
     }
 }
