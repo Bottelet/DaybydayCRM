@@ -161,8 +161,8 @@ class Lead extends Model implements Commentable
         if ($this->relationLoaded('user')) {
             return $this->user;
         }
-        
-        return User::findOrFail($this->user_assigned_id);
+
+        return User::find($this->user_assigned_id);
     }
 
     public function isClosed()
