@@ -7,7 +7,7 @@ window.$ = window.jQuery = $;
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import './bootstrap';
 import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
@@ -126,7 +126,7 @@ $(document).ready(function () {
         $('#view-offer').modal('show');
     });
 
-    
+
 });
 
 
