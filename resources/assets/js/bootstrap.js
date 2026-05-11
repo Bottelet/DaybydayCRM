@@ -1,8 +1,7 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 
-import _ from 'lodash';
-window._ = _;
+window._ = require('lodash');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -10,35 +9,26 @@ window._ = _;
  * code may be modified to fit the specific needs of your application.
  */
 
-import 'bootstrap-sass';
-import selectpicker from 'bootstrap-select';
-window.selectpicker = selectpicker;
+require('bootstrap-sass');
+window.selectpicker = require('bootstrap-select');
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
  * and simple, leaving you to focus on building your next great project.
  */
 
-import Vue from 'vue';
-window.Vue = Vue;
-import VueResource from 'vue-resource';
-Vue.use(VueResource);
 
-import axios from 'axios';
-window.axios = axios;
+window.Vue = require('vue');
+require('vue-resource');
 
-// Set CSRF token
-const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-if (csrfToken) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
-}
+window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
  * Set the base URL for axios from the global DayByDay configuration.
  * This ensures that all axios requests work correctly when the app
  * is installed in a subdirectory.
- *
+ * 
  * Note: DayByDay is defined in master.blade.php before this script loads,
  * so it will always be available. The typeof check is defensive programming.
  */
@@ -53,10 +43,8 @@ if (typeof DayByDay !== 'undefined' && DayByDay.baseUrl) {
  */
 
 Vue.http.interceptors.push((request, next) => {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-    if (csrfToken) {
-        request.headers.set('X-CSRF-TOKEN', csrfToken);
-    }
+    request.headers.set('X-CSRF-TOKEN', Laravel.csrfToken);
+
     next();
 });
 
@@ -64,7 +52,7 @@ Vue.http.interceptors.push((request, next) => {
  * Chart.js for charts
  */
 
-import 'chart.js';
+require('chart.js');
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
