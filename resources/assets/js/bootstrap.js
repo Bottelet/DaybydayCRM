@@ -1,7 +1,5 @@
-// ===== CRITICAL: Set up jQuery globally FIRST before any other code uses it =====
-// Import jQuery and immediately make it global
 import $ from 'jquery';
-window.jQuery = window.$ = $;
+window.$ = window.jQuery = $;
 
 import _ from 'lodash';
 window._ = _;
