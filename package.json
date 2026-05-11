@@ -4,6 +4,7 @@
     "dev": "mix",
     "watch": "mix watch",
     "hot": "mix watch --hot",
+    "build": "mix --production",
     "prod": "mix --production"
   },
   "devDependencies": {
