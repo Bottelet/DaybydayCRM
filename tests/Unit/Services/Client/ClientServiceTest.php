@@ -234,8 +234,8 @@ class ClientServiceTest extends AbstractTestCase
         $invoicesQuery = $this->clientService->getInvoicesWithRelations($client);
         
         /* Assert */
-        // Should return a Builder, not a Collection
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Builder::class, $invoicesQuery);
+        // Should return the invoices relation query, not a materialized Collection
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $invoicesQuery);
         
         // Execute the query to verify eager loading works
         $invoices = $invoicesQuery->get();
