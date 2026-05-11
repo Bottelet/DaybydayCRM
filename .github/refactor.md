@@ -875,12 +875,102 @@ Into:
 
 ---
 
-## Phase 2 — Documentation & Standards
+## Phase 2 — Architecture Cleanup
+
+1. Extract services
+2. Introduce DTO boundaries
+3. Remove controller orchestration
+4. Extract policies
+5. Improve repositories
+
+---
+
+## Phase 3 — Domain Modeling
+
+1. Enum migration
+2. Domain exceptions
+3. Status refactor
+4. Transaction boundaries
+
+---
+
+## Phase 4 — Documentation & Standards
 
 1. Consolidate refactor docs
 2. Expand AGENTS.md
 3. Expand copilot instructions
 4. Add architecture decision records
+
+---
+
+# 9. Estimated Impact
+
+| Refactoring                       | Files Affected  | Complexity Reduction | Bug Risk Reduction | Time Estimate |
+| --------------------------------- | --------------- | -------------------- | ------------------ | ------------- |
+| FormRequest Creation              | ~15 controllers | High                 | High               | ~8 hours      |
+| Move Tests to Feature             | 39 test files   | Low                  | Low                | ~4 hours      |
+| Status Enum Migration             | ~20 files       | Medium               | Medium             | ~12 hours     |
+| Service Extraction                | ~6 controllers  | High                 | Medium             | ~40 hours     |
+| JSON/Web Response Standardization | ~10 controllers | High                 | High               | ~8 hours      |
+| Permission Enum Migration         | ~25 files       | Medium               | Medium             | ~6 hours      |
+| Documentation Consolidation       | ~5 files        | N/A                  | N/A                | ~8 hours      |
+
+---
+
+# 10. File Consolidation Recommendation
+
+## Decision
+
+Use:
+
+```text
+.github/refactor.md
+```
+
+as the master refactoring document.
+
+---
+
+## Reasons
+
+* more comprehensive
+* better structured
+* includes examples
+* includes priorities
+* includes impact analysis
+* contains newer findings
+
+---
+
+## Action Plan
+
+1. Keep:
+
+   ```text
+   .github/refactor.md
+   ```
+
+2. Merge unique items from:
+
+   ```text
+   .github/refactoring.md
+   ```
+
+3. Add findings from this analysis
+
+4. Archive:
+
+   ```text
+   .github/refactoring.md
+   ```
+
+5. Update:
+
+   ```text
+   .junie/refactor_plan.md
+   ```
+
+6. Simplify `.junie/*.md` to high-level summaries referencing `.github/`
 
 ---
 
@@ -897,3 +987,26 @@ The codebase already demonstrates:
 * separation efforts
 
 The primary issue is inconsistency between modernized and legacy areas.
+
+---
+
+## Highest ROI Refactors
+
+### Immediate ROI
+
+1. FormRequest standardization
+2. Controller → Service extraction
+3. Feature vs Unit test separation
+4. Enum completion
+
+---
+
+### Long-Term ROI
+
+1. Status model replacement
+2. DTO-first architecture
+3. Transaction boundaries
+4. Domain exception hierarchy
+
+```
+```
