@@ -11,11 +11,9 @@
     <link href="{{ URL::asset('css/bootstrap-tour-standalone.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7.3.4/styles/vis-timeline-graph2d.min.css">
-    <link rel="stylesheet" href="{{ mix('css/vendor.css') }}">
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
     <link href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <link rel="stylesheet" href="{{ mix('css/bootstrap-select.min.css') }}">
+    @vite(['resources/assets/sass/vendor.scss', 'resources/assets/sass/app.scss'])
     <link href="{{ URL::asset('css/summernote.css') }}" rel="stylesheet">
     <link rel="shortcut icon" href="{{{ asset('images/favicon.png') }}}">
     <script>
@@ -120,10 +118,10 @@
                 class="fa fa-dollar sidebar-icon"></i><span id="menu-txt">{{ __('Sales') }}</span>
                 <i class="icon ion-md-arrow-dropup arrow-side sidebar-arrow"></i></a>
             <div class="collapse {{Request::is('invoices*') || Request::is('products*') ? 'in' : ''}}" id="sales">
-            <a href="{{ route('invoices.overdue')}}" class="list-group-item childlist"> 
+            <a href="{{ route('invoices.overdue')}}" class="list-group-item childlist">
                 <i class="bullet-point"><span></span></i> {{ __('Overdue') }}
             </a>
-            <a href="{{ route('products.index')}}" class="list-group-item childlist"> 
+            <a href="{{ route('products.index')}}" class="list-group-item childlist">
                 <i class="bullet-point"><span></span></i> {{ __('Products') }}
             </a>
             </div>
@@ -206,15 +204,12 @@
 
     <!-- /#page-content-wrapper -->
 </div>
-<script src="{{ mix('js/manifest.js') }}"></script>
-<script src="{{ mix('js/vendor.js') }}"></script>
-<script src="{{ mix('js/jquery-init.js') }}"></script>
-<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>
+@vite(['resources/assets/js/app.js', 'resources/assets/js/jquery-init.js'])
 <script>
     // Ensure jQuery and $ are globally available for scripts loaded via URL::asset()
-    if (typeof window.jQuery === 'undefined' && typeof __webpack_require__ !== 'undefined') {
+    if (typeof window.jQuery === 'undefined') {
         try {
-            window.jQuery = window.$ = __webpack_require__(require.resolveWeak('jquery'));
+            window.jQuery = window.$ = require('jquery');
         } catch (e) {}
     }
     window.jQuery = window.$ = window.jQuery || window.$;
