@@ -48,6 +48,13 @@
    - **Prevention:** Storage integration services should provide test doubles for local/testing
    - **Affected:** DocumentsController tests for view/download operations
 
+7. **ProjectStatus::CLOSED Capital-C Data Mismatch**
+   - **Symptom:** `ProjectStatus::isClosed()` behaves unexpectedly; projects never appear closed
+   - **Cause:** `ProjectStatus::CLOSED = 'Closed'` (capital C) to match legacy database values; other statuses use lowercase
+   - **Pattern:** `isClosed()` uses `strcasecmp` to handle both casings; direct string comparison will fail
+   - **Fix:** Always go through `ProjectStatus::isClosed($title)` — never compare `$project->status->title === 'closed'` directly
+   - **Prevention:** Use the enum's `isClosed()` helper; do not hard-code status strings for projects
+
 ---
 
 ## Overview
@@ -69,6 +76,7 @@ The system follows a **modular architecture**, separating domain logic into clea
 ```text
 app/
  ├── Actions/       # Single-purpose business operations
+ ├── Enums/         # Type-safe enums for fixed value sets
  ├── Http/          # Controllers, Middleware, Requests
  ├── Models/        # Eloquent models
  ├── Repositories/  # Data access abstraction & Integrations
@@ -145,7 +153,7 @@ Typical domain components include:
 ## Model Observers
 - Registered in `AppServiceProvider::boot()`.
 - Handle **automatic side effects**: File deletion, Cascade deletes, Search indexing, Audit logging.
-- Example: `DocumentObserver`, `TaskObserver`, `ClientObserver`.
+- Registered observers: `ClientObserver`, `TaskObserver`, `LeadObserver`, `ProjectObserver`, `InvoiceObserver`, `DocumentObserver`, `ElasticSearchObserver`.
 
 ---
 
@@ -153,12 +161,31 @@ Typical domain components include:
 
 All tests must follow strict isolation rules to ensure reliability and performance.
 
+### Base Test Classes
+- **`AbstractTestCase`** (`tests/AbstractTestCase.php`) — Use for all Feature/Controller tests. Provides `asOwner()`, `asAdmin()`, `withPermissions()`, and `followRedirectsAndFail()` helpers. Runs `migrate:fresh --seed` once per process, then creates a fresh user for each test already assigned the owner role.
+- **`TestCase`** (`tests/TestCase.php`) — Legacy base class; still used by some Unit tests. Depends on the seeded `Admin` user via `User::where('name', 'Admin')->first()` — avoid for new tests.
+
 ### Required Rules
-- **Self-Contained:** Create own data, avoid dependency on other tests or seeders.
+- **Self-Contained:** Create own data via factories, avoid dependency on other tests or seeders.
 - **Normalization:** Never compare `Carbon` vs `String`. Always normalize (e.g., `$model->created_at->toISOString()`).
 - **Single Purpose:** One clear behavior per test, typically one HTTP request.
-- **Role Usage:** Use `owner` or `administrator` roles for elevated permission requirements.
-- **Cache Handling:** Always call `$user = $user->fresh()` after attaching permissions before `actingAs($user)`.
+- **Role Usage:** Use `$this->asOwner()` or `$this->asAdmin()` helpers from `AbstractTestCase` for elevated permission requirements.
+- **Cache Handling:** Use `$this->withPermissions([...])` which automatically flushes cache and reloads the user; never manually call `$user->fresh()` without also re-binding via `actingAs()`.
+
+### Key Test Helpers (AbstractTestCase)
+```php
+// Grant owner role + all standard permissions
+$this->asOwner();
+
+// Grant admin role + permissions  
+$this->asAdmin();
+
+// Grant specific permissions (flushes cache, reloads user, re-binds actingAs)
+$this->withPermissions([PermissionName::TASK_CREATE, PermissionName::TASK_DELETE]);
+
+// Assert no unexpected redirect occurred
+$this->followRedirectsAndFail($response);
+```
 
 ---
 
@@ -166,6 +193,7 @@ All tests must follow strict isolation rules to ensure reliability and performan
 
 - **Frontend:** Blade partials, Custom SASS, Vue 2 (Legacy), DataTables (`yajra/laravel-datatables-oracle`).
 - **API:** RESTful routes in `routes/api.php` with `auth:api` middleware.
+- **Domain Middleware:** Per-domain authorization middleware exists under `app/Http/Middleware/{Client,Lead,Task,User}/` (e.g., `CanClientCreate`, `CanLeadUpdateStatus`, `IsTaskAssigned`).
 
 ---
 

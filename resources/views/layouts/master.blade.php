@@ -204,16 +204,7 @@
 
     <!-- /#page-content-wrapper -->
 </div>
-@vite(['resources/assets/js/app.js', 'resources/assets/js/jquery-init.js'])
-<script>
-    // Ensure jQuery and $ are globally available for scripts loaded via URL::asset()
-    if (typeof window.jQuery === 'undefined') {
-        try {
-            window.jQuery = window.$ = require('jquery');
-        } catch (e) {}
-    }
-    window.jQuery = window.$ = window.jQuery || window.$;
-</script>
+@vite(['resources/assets/js/app.js'])
 <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>

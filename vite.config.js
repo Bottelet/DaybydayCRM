@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import laravel from 'laravel-vite-plugin'
-import { copyFileSync, mkdirSync } from 'fs'
+import { copyFileSync, mkdirSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({
@@ -9,7 +9,6 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/assets/js/app.js',
-                'resources/assets/js/jquery-init.js',
                 'resources/assets/sass/app.scss',
                 'resources/assets/sass/vendor.scss',
             ],
@@ -36,8 +35,36 @@ export default defineConfig({
                     console.warn('Failed to copy bootstrap fonts:', err.message)
                 }
             }
+        },
+        {
+            name: 'move-manifest',
+            apply: 'build',
+            writeBundle() {
+                // Move manifest from .vite/ to root build directory
+                const srcManifest = resolve('public/build/.vite/manifest.json')
+                const destManifest = resolve('public/build/manifest.json')
+                try {
+                    if (existsSync(srcManifest)) {
+                        copyFileSync(srcManifest, destManifest)
+                        console.log('✓ Manifest moved to public/build/manifest.json')
+                    }
+                } catch (err) {
+                    console.warn('Failed to move manifest:', err.message)
+                }
+            }
         }
     ],
+    build: {
+        manifest: true,
+        outDir: 'public/build',
+        rollupOptions: {
+            output: {
+                entryFileNames: 'assets/[name]-[hash].js',
+                chunkFileNames: 'assets/[name]-[hash].js',
+                assetFileNames: 'assets/[name]-[hash][extname]',
+            }
+        }
+    },
     resolve: {
         alias: {
             vue$: 'vue/dist/vue.esm.js',
