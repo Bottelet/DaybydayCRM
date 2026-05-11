@@ -1,1249 +1,1012 @@
-# Refactoring Suggestions
+````markdown
+# Comprehensive Refactoring Opportunities Analysis
 
-After fixing the test failures, several patterns emerged that could benefit from refactoring to improve code quality, consistency, and maintainability.
-
-## 0. Lessons Learned from Recent Test Fixes (2026-04-11)
-
-This section documents critical patterns discovered while fixing 30+ test failures. These should inform future development and refactoring efforts.
-
-### VAT/Percentage Storage Convention
-**Discovery:** VAT is stored as `percentage × 100` (e.g., 2100 for 21%) but was being divided by 100 instead of 10000.
-
-**Impact:** All invoice calculations were off by factor of 100.
-
-**Pattern to Follow:**
-```php
-// CORRECT: For percentage stored as integer (2100 = 21%)
-$decimalRate = $storedValue / 10000; // 2100 / 10000 = 0.21
-
-// WRONG: Double division
-$decimalRate = ($storedValue / 100) / 100; // Results in 0.21 instead of 0.0021
-```
-
-**Action Item:** Document this convention clearly in:
-- Model docblocks for fields storing percentages
-- Service classes handling percentage calculations
-- Migration files that create percentage columns
-
-### JSON vs Web Response Handling Must Be Explicit
-**Discovery:** Many controller methods don't check `$request->expectsJson()`, causing wrong HTTP status codes in tests.
-
-**Impact:** 
-- JSON API tests fail expecting 200/403 but get 302 redirects
-- Web tests might fail expecting redirects but get JSON responses
-- Inconsistent user experience between web and API
-
-**Pattern to Follow:**
-```php
-// In controllers with mixed web/JSON usage:
-if ($request->expectsJson()) {
-    return response()->json(['message' => 'Success'], 200);
-}
-
-session()->flash('flash_message', 'Success');
-return redirect()->back();
-```
-
-**Critical Controllers:**
-- TasksController (delete, update status)
-- ProjectsController (delete, update assignment, update status)
-- LeadsController (delete, update deadline)
-- DocumentsController (view, download)
-- SettingsController (admin-only actions via middleware)
-
-### Status source_type Must Use Full Class Names
-**Discovery:** Some tests/code use string literals (`'task'`) but scopes expect full class names (`Task::class`).
-
-**Impact:** Status validation fails because `Status::typeOfTask()` scope filters by `Task::class` not `'task'`.
-
-**Pattern to Follow:**
-```php
-// CORRECT:
-Status::factory()->create(['source_type' => Task::class]);
-Status::where('source_type', Task::class)->get();
-
-// WRONG:
-Status::factory()->create(['source_type' => 'task']);
-Status::where('source_type', 'task')->get();
-```
-
-**Action Item:** Create a migration to update existing `source_type` values from strings to class names.
-
-### Trait Methods Must Handle Null Values
-**Discovery:** DeadlineTrait's `isOverDeadline()` didn't check if deadline was null before comparing with Carbon::now().
-
-**Impact:** Tests fail with unexpected true/false results when models don't have deadlines set.
-
-**Pattern to Follow:**
-```php
-// In trait methods that access optional model properties:
-public function isOverDeadline(): bool
-{
-    if ($this->isClosed()) {
-        return false;
-    }
-    
-    // MUST check for null before comparison
-    if (!$this->deadline) {
-        return false;
-    }
-    
-    return $this->deadline < Carbon::now();
-}
-```
-
-**Action Item:** Audit all trait methods for similar null-safety issues.
-
-### Storage Services Need Test Doubles
-**Discovery:** Local storage's `view()` and `download()` return null in testing, breaking document tests.
-
-**Impact:** All document authorization tests fail with "File does not exist" errors.
-
-**Pattern to Follow:**
-```php
-// In storage service methods:
-public function view($file)
-{
-    if (config('app.env') === 'testing' || config('app.env') === 'local') {
-        return 'fake file content'; // Test double
-    }
-    
-    // Real implementation
-    return Storage::disk('local')->get($file);
-}
-```
-
-**Action Item:** Review all integration services (billing, filesystem, etc.) for proper test doubles.
-
-### Test Data Setup for Calculations
-**Discovery:** Invoice/tax calculation tests inherit random VAT from database seeder, causing non-deterministic failures.
-
-**Impact:** Tests fail intermittently based on seeded data.
-
-**Pattern to Follow:**
-```php
-// In test setUp() when testing calculations:
-protected function setUp(): void
-{
-    parent::setUp();
-    
-    // Explicitly create Setting with known values
-    Setting::factory()->create(['vat' => 0]);
-    
-    // Now calculations are deterministic
-    $this->invoice = Invoice::factory()->create();
-}
-```
-
-**Action Item:** Add to testing guidelines - always create Setting records in calculation tests.
+Based on the analysis of the codebase, here are the key refactoring opportunities identified.
 
 ---
 
-## 1. Standardize JSON vs Web Response Handling
+# 1. Validation & Form Request Issues
 
-### Current Problem
-Controllers have inconsistent handling of JSON vs web requests for authorization failures and validation errors:
-- Some use `abort(403)` unconditionally
-- Some check `expectsJson()` and return different responses
-- Some use middleware that always aborts
-- Response codes are inconsistent (302, 403, 400)
+## Controllers Using Direct `$request->input()` Without Validation
 
-### Recommendation
-Create a trait or base controller method for consistent response handling:
-
-```php
-trait RespondsWithHttpStatus
-{
-    protected function respondUnauthorized(string $message, Request $request)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], 403);
-        }
-        
-        session()->flash('flash_message_warning', $message);
-        return redirect()->back();
-    }
-    
-    protected function respondValidationError(string $message, Request $request)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => $message], 400);
-        }
-        
-        session()->flash('flash_message_warning', $message);
-        return redirect()->back();
-    }
-    
-    protected function respondSuccess(string $message, Request $request, int $jsonStatus = 200)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['message' => $message], $jsonStatus);
-        }
-        
-        session()->flash('flash_message', $message);
-        return redirect()->back();
-    }
-}
-```
-
-**Files to update:**
-- `app/Http/Controllers/DocumentsController.php`
-- `app/Http/Controllers/TasksController.php`
-- `app/Http/Controllers/ProjectsController.php`
-- `app/Http/Controllers/LeadsController.php`
-- `app/Http/Controllers/InvoiceLinesController.php`
-
-## 2. Consolidate Permission Checks in Middleware
-
-### Current Problem
-Permission checks are scattered:
-- Some in controller constructors as inline closures
-- Some in controller methods directly
-- Some in named middleware
-- Duplicated `can()` checks with flash messages
-
-### Recommendation
-Create dedicated permission middleware classes for each permission type:
-
-```php
-class EnsureUserCan
-{
-    public function handle($request, Closure $next, string $permission)
-    {
-        if (! auth()->check() || ! auth()->user()->can($permission)) {
-            if ($request->expectsJson()) {
-                abort(403, __('You do not have permission'));
-            }
-            
-            session()->flash('flash_message_warning', __('You do not have permission'));
-            return redirect()->back();
-        }
-        
-        return $next($request);
-    }
-}
-```
-
-Then use in routes:
-```php
-Route::delete('/tasks/{task}', [TasksController::class, 'destroy'])
-    ->middleware('can:task-delete');
-```
-
-**Benefits:**
-- Removes permission checks from controller methods
-- Centralizes authorization logic
-- Consistent error responses
-- Easier to test
-
-## 3. Complete the PermissionName Enum Migration
-
-### Current Problem
-Some permissions are defined in the enum, others only in the seeder. Tests sometimes use string literals, sometimes use enum values.
-
-### Recommendation
-1. Add ALL permissions to `PermissionName` enum
-2. Update seeder to use enum values
-3. Convert all string permission checks to enum usage:
-
-```php
-// Instead of:
-auth()->user()->can('task-upload-files')
-
-// Use:
-auth()->user()->can(PermissionName::TASK_UPLOAD_FILES->value)
-```
-
-**Files to update:**
-- `app/Enums/PermissionName.php` - add missing permissions
-- `database/seeders/PermissionsTableSeeder.php` - use enum
-- All controllers - replace string literals
-- All tests - replace string literals
-
-## 4. Improve Test Isolation and Setup
-
-### Current Problem
-- Tests manually set up permissions in verbose, repetitive ways
-- Cache flushing is inconsistent
-- Some tests create new users instead of using `$this->user`
-- `fresh()` is called without re-authenticating
-
-### Recommendation
-Enhance `AbstractTestCase` with better helpers:
-
-```php
-abstract class AbstractTestCase extends BaseTestCase
-{
-    /**
-     * Grant permissions to current test user and re-authenticate
-     */
-    protected function grantPermissions(array|PermissionName $permissions): self
-    {
-        $this->withPermissions($permissions);
-        $this->user = $this->user->fresh();
-        $this->actingAs($this->user);
-        return $this;
-    }
-    
-    /**
-     * Create a user with specific permissions for testing unauthorized access
-     */
-    protected function createUserWithPermissions(array|PermissionName $permissions): User
-    {
-        $user = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'test-role']);
-        
-        foreach ((array)$permissions as $permission) {
-            $name = $permission instanceof PermissionName ? $permission->value : $permission;
-            $p = Permission::firstOrCreate(['name' => $name]);
-            $role->attachPermission($p);
-        }
-        
-        $user->attachRole($role);
-        Cache::flush();
-        
-        return $user->fresh();
-    }
-}
-```
-
-**Files to update:**
-- `tests/AbstractTestCase.php`
-- All test files - simplify permission setup
-
-## 5. Standardize Status Validation
-
-### Current Problem
-Status validation is duplicated across controllers with slightly different implementations:
-
-```php
-// TasksController
-$validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
-
-// ProjectsController  
-$validStatus = Status::typeOfProject()->where('id', $input['status_id'])->exists();
-```
-
-### Recommendation
-Create a status validation service or add to existing status model:
-
-```php
-class Status extends Model
-{
-    public static function isValidForType(int $statusId, string $type): bool
-    {
-        return self::where('source_type', $type)
-            ->where('id', $statusId)
-            ->exists();
-    }
-}
-
-// Usage:
-if (!Status::isValidForType($statusId, Task::class)) {
-    // handle error
-}
-```
-
-**Files to update:**
-- `app/Models/Status.php`
-- `app/Http/Controllers/TasksController.php`
-- `app/Http/Controllers/ProjectsController.php`
-- `app/Http/Controllers/LeadsController.php`
-
-## 6. Extract Document Authorization Logic
-
-### Current Problem
-`DocumentsController` has complex ownership checking logic embedded in private methods.
-
-### Recommendation
-Create a dedicated policy or service:
-
-```php
-class DocumentPolicy
-{
-    public function view(User $user, Document $document): bool
-    {
-        $source = $document->source;
-        
-        if (!$source) {
-            return false;
-        }
-        
-        if ($document->source_type === Client::class) {
-            return $source->user_id === $user->id;
-        }
-        
-        if (in_array($document->source_type, [Task::class, Project::class, Lead::class])) {
-            return $this->userOwnsAssignableSource($source, $user);
-        }
-        
-        return false;
-    }
-    
-    private function userOwnsAssignableSource($source, User $user): bool
-    {
-        return $source->user_created_id === $user->id
-            || $source->user_assigned_id === $user->id
-            || ($source->client && $source->client->user_id === $user->id);
-    }
-}
-```
-
-Register in `AuthServiceProvider`:
-```php
-protected $policies = [
-    Document::class => DocumentPolicy::class,
-];
-```
-
-**Files to update:**
-- Create `app/Policies/DocumentPolicy.php`
-- `app/Http/Controllers/DocumentsController.php` - use policy
-- `app/Providers/AuthServiceProvider.php` - register policy
-
-## 7. Remove Duplicate Response Headers
-
-### Current Problem
-Some successful operations return both session flash messages AND JSON responses, wasting session storage for API calls.
-
-### Recommendation
-Only flash session messages for web requests:
-
-```php
-// Before:
-session()->flash('flash_message', __('Task deleted'));
-if ($request->expectsJson()) {
-    return response()->json(['message' => __('Task deleted')], 200);
-}
-return redirect()->back();
-
-// After:
-if ($request->expectsJson()) {
-    return response()->json(['message' => __('Task deleted')], 200);
-}
-
-session()->flash('flash_message', __('Task deleted'));
-return redirect()->back();
-```
-
-## 8. Completed: FormRequest Validation (as of April 2026)
-
-All major controllers now use dedicated FormRequest classes for input validation. This refactor is complete and all previously missing request classes have been implemented.
-
-### Implemented FormRequests by Controller
-
-#### LeadsController
-- `StoreLeadRequest` (for store)
-
-#### TasksController
-- `UpdateTaskAssignRequest` (for updateAssign)
-- `UpdateTaskDeadlineRequest` (for updateDeadline)
-- `UpdateTaskStatusRequest` (for updateStatus)
-
-#### ProjectsController
-- `UpdateProjectAssignRequest` (for updateAssign)
-- `UpdateProjectDeadlineRequest` (for updateDeadline)
-- `UpdateProjectStatusRequest` (for updateStatus)
-
-#### RolesController
-- `UpdateRoleRequest` (for update)
-
-#### CommentController
-- `StoreCommentRequest` (for store)
-
-This closes the outstanding security and data integrity risks related to missing FormRequest validation in these controllers.
+**Priority:** High  
+**Impact:** Security & Data Integrity
 
 ---
----
----
----
----
 
-## Phase 2.2: Service Extraction - AI Agent Prompt
+## LeadsController (~330 LOC)
 
-**Note:** This is a large architectural refactoring (40 hours) best suited for agentic AI implementation.
+### Issues
+- `store()` uses direct `$request->input()` without validation
+- Direct access:
+  - `title`
+  - `description`
+  - `user_assigned_id`
+  - `deadline`
+  - `status_id`
+- `StoreLeadRequest` exists in the method signature, but direct `input()` usage bypasses proper validated payload usage
 
-### AI Agent Instructions
+### Recommended Improvements
+- Replace:
+  ```php
+  $request->input()
+````
 
-Extract business logic from the following controllers into dedicated service classes. For each controller:
+* With:
 
-1. **Analyze the controller** to identify:
-   - Complex business logic (>10 lines per method)
-   - Multiple database operations in sequence
-   - External API integration calls
-   - File storage/manipulation logic
-   - Complex calculations or transformations
+  ```php
+  $request->validated()
+  ```
 
-2. **Create the service class** following these patterns:
-   ```php
-   namespace App\Services\{Domain};
-   
-   class {Domain}Service
-   {
-       // Inject dependencies via constructor
-       public function __construct(
-           private Repository $repository,
-           private OtherService $otherService
-       ) {}
-       
-       // Single-purpose, well-named methods
-       public function createClientWithValidation(array $data): Client
-       {
-           // Business logic here
-       }
-   }
-   ```
+* Introduce:
 
-3. **Update the controller** to use the service:
-   - Inject service via constructor
-   - Replace business logic with service calls
-   - Keep only: validation, authorization, response formatting
-
-4. **Write tests** for the service (in `tests/Unit/{Domain}/`)
-
-5. **Update existing controller tests** to mock the service if needed
-
-### Controllers to Extract (in priority order):
-
-1. **ClientsController** (448 lines) → `ClientService`
-   - Priority: Highest (largest controller)
-   - Extract: Client number generation, billing API integration, file storage
-
-2. **TasksController** (418 lines) → `TaskService`
-   - Extract: File upload logic, status update validation, assignment logic
-
-3. **DocumentsController** (382 lines) → `DocumentStorageService`
-   - Extract: File storage, retrieval, complex authorization
-
-4. **ProjectsController** (359 lines) → `ProjectService`
-   - Extract: Project creation, status updates, assignment handling
-
-5. **UsersController** (362 lines) → `UserService`
-   - Extract: User lifecycle management, calendar integration
-
-6. **LeadsController** (341 lines) → `LeadService`
-   - Extract: Lead lifecycle logic, status management
-
-7. **InvoicesController** (231 lines) → `InvoiceService`
-   - Note: Already has InvoiceCalculator and InvoiceNumberService
-   - Create orchestration layer to coordinate existing services
-
-### Success Criteria:
-- All controllers under 200 lines
-- Business logic fully tested in service unit tests
-- No functionality regressions (all existing tests pass)
-- Improved separation of concerns
+  * `LeadData` DTO
+  * `LeadService`
 
 ---
 
-## Phase 3: Medium Priority - Code Quality & Developer Experience
+## RolesController (~165 LOC)
 
-**Estimated Total Time:** 26 hours across 6 tasks
+### Issues
 
-This phase focuses on improving code quality, consistency, and developer experience through better patterns, tooling, and test infrastructure.
+* `update()` uses:
+
+  ```php
+  $request->input('permissions')
+  ```
+
+* No `FormRequest` exists for updates
+
+### Recommended Improvements
+
+Create:
+
+```php
+UpdateRoleRequest
+```
+
+Validation should include:
+
+* permission existence
+* array validation
+* uniqueness checks
+* authorization rules
 
 ---
 
-### 3.1: Standardize JSON vs Web Response Handling (8 hours)
+## CommentController (~47 LOC)
 
-**Goal:** Create consistent response handling across all controllers that serve both web and API requests.
+### Issues
 
-#### Step 1: Create RespondsWithHttpStatus Trait (2 hours)
+* Uses inline validation:
 
-Create `app/Http/Traits/RespondsWithHttpStatus.php`:
+  ```php
+  $this->validate()
+  ```
 
-```php
-<?php
+### Recommended Improvements
 
-namespace App\Http\Traits;
-
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-
-trait RespondsWithHttpStatus
-{
-    /**
-     * Return success response based on request type
-     */
-    protected function respondWithSuccess(
-        Request $request,
-        string $message,
-        array $data = [],
-        int $jsonStatus = 200
-    ): JsonResponse|RedirectResponse {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => $message,
-                'data' => $data,
-            ], $jsonStatus);
-        }
-
-        session()->flash('flash_message', $message);
-        return redirect()->back();
-    }
-
-    /**
-     * Return error response based on request type
-     */
-    protected function respondWithError(
-        Request $request,
-        string $message,
-        int $jsonStatus = 400,
-        ?string $flashType = 'flash_message_warning'
-    ): JsonResponse|RedirectResponse {
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => $message,
-            ], $jsonStatus);
-        }
-
-        if ($flashType) {
-            session()->flash($flashType, $message);
-        }
-        return redirect()->back();
-    }
-
-    /**
-     * Return not found response based on request type
-     */
-    protected function respondNotFound(
-        Request $request,
-        string $message = 'Resource not found'
-    ): JsonResponse|RedirectResponse {
-        return $this->respondWithError($request, $message, 404);
-    }
-
-    /**
-     * Return unauthorized response based on request type
-     */
-    protected function respondUnauthorized(
-        Request $request,
-        string $message = 'Unauthorized'
-    ): JsonResponse|RedirectResponse {
-        return $this->respondWithError($request, $message, 403);
-    }
-}
-```
-
-#### Step 2: Apply Trait to Controllers (4 hours)
-
-**Controllers to update (in priority order):**
-
-1. **TasksController** - Delete, update status, update assignment methods
-2. **ProjectsController** - Delete, update status, update assignment methods  
-3. **LeadsController** - Delete, update deadline methods
-4. **DocumentsController** - View, download methods
-5. **ClientsController** - Delete methods
-6. **OffersController** - Status update methods
-7. **InvoiceLinesController** - CRUD operations
-8. **CommentController** - Store method
-
-**Migration pattern for each controller:**
+Create:
 
 ```php
-// Before:
-public function destroy(Request $request, $id)
-{
-    $task = Task::findOrFail($id);
-    $task->delete();
-    
-    session()->flash('flash_message', 'Task deleted');
-    return redirect()->back();
-}
-
-// After:
-use App\Http\Traits\RespondsWithHttpStatus;
-
-class TasksController extends Controller
-{
-    use RespondsWithHttpStatus;
-    
-    public function destroy(Request $request, $id)
-    {
-        $task = Task::findOrFail($id);
-        $task->delete();
-        
-        return $this->respondWithSuccess(
-            $request,
-            __('Task deleted successfully')
-        );
-    }
-}
-```
-
-#### Step 3: Update Tests (2 hours)
-
-For each updated controller, verify:
-- Web tests still pass (expect 302 redirects)
-- JSON tests (if they exist) pass (expect 200/201/204 status codes)
-- Add JSON tests where missing
-
-**Test pattern:**
-```php
-public function test_it_deletes_task_via_web()
-{
-    $task = Task::factory()->create();
-    
-    $response = $this->actingAs($this->owner)
-        ->delete(route('tasks.destroy', $task->external_id));
-    
-    $response->assertRedirect();
-    $response->assertSessionHas('flash_message');
-}
-
-public function test_it_deletes_task_via_json()
-{
-    $task = Task::factory()->create();
-    
-    $response = $this->actingAs($this->owner)
-        ->json('DELETE', route('tasks.destroy', $task->external_id));
-    
-    $response->assertStatus(200);
-    $response->assertJson(['message' => 'Task deleted successfully']);
-}
-```
-
----
-
-### 3.2: Consolidate Permission Checks into Middleware (6 hours)
-
-**Goal:** Move scattered permission checks from controllers into reusable middleware.
-
-#### Step 1: Create Permission Middleware (1 hour)
-
-Create `app/Http/Middleware/EnsureUserCan.php`:
-
-```php
-<?php
-
-namespace App\Http\Middleware;
-
-use App\Enums\PermissionName;
-use Closure;
-use Illuminate\Http\Request;
-
-class EnsureUserCan
-{
-    public function handle(Request $request, Closure $next, string $permission)
-    {
-        // Convert string to enum if needed
-        $permissionEnum = PermissionName::tryFrom($permission);
-        
-        if (!$permissionEnum) {
-            abort(500, "Invalid permission: {$permission}");
-        }
-        
-        if (!auth()->check() || !auth()->user()->can($permissionEnum->value)) {
-            if ($request->expectsJson()) {
-                abort(403, 'Unauthorized');
-            }
-            
-            session()->flash('flash_message_warning', __('You do not have permission to perform this action'));
-            return redirect()->back();
-        }
-
-        return $next($request);
-    }
-}
-```
-
-#### Step 2: Register Middleware (15 minutes)
-
-In `app/Http/Kernel.php`:
-```php
-protected $middlewareAliases = [
-    // ... existing middleware
-    'can' => \App\Http\Middleware\EnsureUserCan::class,
-];
-```
-
-#### Step 3: Update Controllers (3 hours)
-
-**Controllers with inline permission checks:**
-- LeadsController (delete permission check in constructor)
-- TasksController (various permission checks)
-- ProjectsController (permission checks)
-- DocumentsController (view/download permissions)
-- ClientsController (delete permissions)
-- UsersController (admin checks)
-- RolesController (admin checks)
-- SettingsController (admin checks)
-
-**Migration pattern:**
-
-```php
-// Before:
-public function __construct()
-{
-    $this->middleware(function ($request, $next) {
-        if (!auth()->check() || !auth()->user()->can(PermissionName::LEAD_DELETE->value)) {
-            if ($request->expectsJson()) {
-                abort(403);
-            }
-            session()->flash('flash_message_warning', __('You do not have permission to delete leads'));
-            return redirect()->back();
-        }
-        return $next($request);
-    }, ['only' => ['destroy', 'destroyJson']]);
-}
-
-// After:
-public function __construct()
-{
-    $this->middleware('can:' . PermissionName::LEAD_DELETE->value, [
-        'only' => ['destroy', 'destroyJson']
-    ]);
-}
-```
-
-#### Step 4: Update Routes (1 hour)
-
-For some routes, apply middleware directly in route definition:
-
-```php
-// In routes/web.php:
-Route::middleware(['auth', 'can:' . PermissionName::CLIENT_DELETE->value])
-    ->delete('/clients/{id}', [ClientsController::class, 'destroy'])
-    ->name('clients.destroy');
-```
-
-#### Step 5: Test Coverage (45 minutes)
-
-Verify for each updated controller:
-- Authorized users can perform actions
-- Unauthorized users get 403 (JSON) or redirect with flash message (web)
-- Permission checks work consistently
-
----
-
-### 3.3: Add Test Metadata Attributes (4 hours)
-
-**Goal:** Improve test clarity and code coverage reporting with PHP 8 attributes.
-
-#### Step 1: Add Attributes to Test Classes (3 hours)
-
-For each test class in `tests/Feature/` and `tests/Unit/`:
-
-```php
-<?php
-
-namespace Tests\Feature\Controllers\Task;
-
-use App\Models\Task;
-use App\Models\User;
-use Tests\AbstractTestCase;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
-
-#[CoversClass(TasksController::class)]
-#[UsesClass(Task::class)]
-#[UsesClass(Status::class)]
-class TasksControllerTest extends AbstractTestCase
-{
-    // ... tests
-}
-```
-
-**Mapping guide:**
-- `#[CoversClass]` - The primary class being tested
-- `#[UsesClass]` - Models, services, or other classes used but not directly tested
-
-#### Step 2: Verify Coverage Reports (1 hour)
-
-Run with coverage:
-```bash
-php artisan test --coverage --min=80
+StoreCommentRequest
 ```
 
 Benefits:
-- More accurate coverage reporting
-- IDE support for "jump to test"
-- Better test organization
+
+* consistency
+* reusable authorization
+* centralized validation
+* easier testing
 
 ---
 
-### 3.4: Standardize Test Naming Conventions (3 hours)
+## ClientsController (~448 LOC)
 
-**Goal:** Convert remaining tests to modern `it_*` naming pattern.
+### Issues
 
-#### Current Status
-- 48 tests already use `it_*` pattern
-- 41 tests still use old `test*` pattern
+* Mixed validation approaches
+* Some methods use `FormRequest`
+* Others use direct request access
 
-#### Migration Pattern
+### Recommended Improvements
 
-```php
-// Before:
-public function testUserCanCreateTask()
-{
-    // ...
-}
+Standardize:
 
-// After:
-public function it_allows_authorized_user_to_create_task()
-{
-    // ...
-}
-```
-
-#### Naming Guidelines
-
-- Use snake_case after `it_`
-- Be descriptive and specific
-- Include actor: "authorized_user", "owner", "admin"
-- Include action: "create", "update", "delete", "view"
-- Include expected outcome: "successfully", "with_validation_error", "returns_404"
-
-**Examples:**
-```php
-it_allows_owner_to_delete_client()
-it_prevents_unauthorized_user_from_viewing_document()
-it_returns_validation_error_when_title_is_missing()
-it_updates_task_status_successfully()
-it_calculates_invoice_total_with_tax()
-```
-
-#### Affected Test Files (41 files):
-
-Search and update:
-```bash
-grep -r "public function test" tests/ --include="*.php" | grep -v "it_"
-```
+* dedicated `FormRequest`
+* DTO hydration
+* service orchestration
+* transformer usage
 
 ---
 
-### 3.5: Improve AbstractTestCase Helpers (3 hours)
+## TasksController (~418 LOC)
 
-**Goal:** Reduce test boilerplate with better helper methods.
+### Issues
 
-#### Step 1: Add Permission Helper (1 hour)
+Methods such as:
 
-In `tests/AbstractTestCase.php`:
+* `updateAssign()`
+* `updateDeadline()`
+
+use direct request access.
+
+### Recommended Improvements
+
+Create:
 
 ```php
-/**
- * Grant specific permissions to a user
- */
-protected function grantPermissions(User $user, PermissionName ...$permissions): User
-{
-    foreach ($permissions as $permission) {
-        $permissionModel = Permission::firstOrCreate([
-            'name' => $permission->value,
-            'display_name' => $permission->label(),
-        ]);
-        
-        // Ensure user's role has the permission
-        $role = $user->roles->first();
-        if ($role && !$role->permissions->contains($permissionModel)) {
-            $role->permissions()->attach($permissionModel);
-        }
-    }
-    
-    // Reload user to clear cached permissions
-    return $user->fresh();
-}
+UpdateTaskAssignRequest
+UpdateTaskDeadlineRequest
 ```
 
-Usage in tests:
-```php
-public function it_allows_user_with_permission_to_delete_client()
-{
-    $user = User::factory()->create();
-    $user = $this->grantPermissions($user, PermissionName::CLIENT_DELETE);
-    
-    $client = Client::factory()->create();
-    
-    $response = $this->actingAs($user)
-        ->delete(route('clients.destroy', $client->external_id));
-    
-    $response->assertSuccessful();
-}
-```
-
-#### Step 2: Add Resource Creation Helpers (1 hour)
+Move orchestration into:
 
 ```php
-/**
- * Create a task with status
- */
-protected function createTaskWithStatus(string $statusTitle = 'Open', array $attributes = []): Task
-{
-    $status = Status::factory()->create([
-        'title' => $statusTitle,
-        'source_type' => Task::class,
-    ]);
-    
-    return Task::factory()->create(array_merge([
-        'status_id' => $status->id,
-    ], $attributes));
-}
-
-/**
- * Create a lead with status
- */
-protected function createLeadWithStatus(string $statusTitle = 'Open', array $attributes = []): Lead
-{
-    $status = Status::factory()->create([
-        'title' => $statusTitle,
-        'source_type' => Lead::class,
-    ]);
-    
-    return Lead::factory()->create(array_merge([
-        'status_id' => $status->id,
-    ], $attributes));
-}
-```
-
-#### Step 3: Add Assertion Helpers (1 hour)
-
-```php
-/**
- * Assert JSON response has success message
- */
-protected function assertJsonSuccess($response, string $expectedMessage = null): void
-{
-    $response->assertStatus(200);
-    $response->assertJsonStructure(['message']);
-    
-    if ($expectedMessage) {
-        $response->assertJson(['message' => $expectedMessage]);
-    }
-}
-
-/**
- * Assert redirect with flash message
- */
-protected function assertRedirectWithFlash($response, string $expectedMessage = null): void
-{
-    $response->assertRedirect();
-    $response->assertSessionHas('flash_message');
-    
-    if ($expectedMessage) {
-        $this->assertEquals($expectedMessage, session('flash_message'));
-    }
-}
+TaskService
 ```
 
 ---
 
-### 3.6: Standardize Status Validation ✅ (COMPLETED)
+## ProjectsController (~369 LOC)
 
-Already implemented in commit 54b8829. Added `Status::isValidForType()` static method.
+### Issues
 
----
+Same anti-pattern as `TasksController`.
 
-## Phase 4: Low Priority - Polish & Consistency
+### Recommended Improvements
 
-**Estimated Total Time:** 11 hours across 4 tasks
+Create:
 
-This phase addresses final polish items, consistency improvements, and technical debt cleanup.
-
----
-
-### 4.1: Update PHPStorm Region Syntax (2 hours)
-
-**Goal:** Modernize region syntax from `//region` to `#region` for better IDE support.
-
-#### Current Usage
-- 48 test files use `//region` syntax
-- 22 model files use `//region` syntax
-
-#### Migration Script
-
-Create `scripts/update-regions.sh`:
-```bash
-#!/bin/bash
-
-# Find all PHP files with //region and convert to #region
-find tests/ app/Models/ -name "*.php" -type f -exec sed -i 's|//region|#region|g' {} \;
-find tests/ app/Models/ -name "*.php" -type f -exec sed -i 's|//endregion|#endregion|g' {} \;
-
-echo "Updated region syntax in test and model files"
-```
-
-#### Manual Review (1 hour)
-
-After running script:
-1. Review changes in Git
-2. Ensure no false positives (e.g., in comments or strings)
-3. Verify IDE still recognizes regions
-
-#### Benefits
-- Modern PHP 8+ syntax
-- Better PHPStorm/IDE integration
-- Consistent with Laravel 10+ conventions
-
----
-
-### 4.2: Role Constants to Enums ✅ (COMPLETED)
-
-Already implemented in commit 54b8829. Created `RoleType` enum.
-
-#### Remaining Work: Replace Usage (1 hour)
-
-Find remaining string literal usage:
-```bash
-grep -r "Role::OWNER_ROLE\|Role::ADMIN_ROLE" app/ --include="*.php"
-```
-
-Update to use enum:
 ```php
-// Before:
-if ($role->name === Role::OWNER_ROLE) {
-    // ...
-}
+UpdateProjectAssignRequest
+UpdateProjectDeadlineRequest
+```
 
-// After:
-if (RoleType::fromString($role->name) === RoleType::OWNER) {
-    // ...
-}
+Move orchestration into:
+
+```php
+ProjectService
 ```
 
 ---
 
-### 4.3: Remove Duplicate Response Headers (2 hours)
+# 2. Model Constants → Enum Refactoring Opportunities
 
-**Goal:** Ensure flash messages only set for web requests, clean up redundant header setting.
+## Constants That Should Become Enums
 
-#### Step 1: Audit Flash Message Usage (1 hour)
-
-Find all `session()->flash()` calls:
-```bash
-grep -r "session()->flash\|Session::flash" app/Http/Controllers/ --include="*.php"
-```
-
-Identify controllers that:
-- Set flash messages for JSON requests
-- Set flash messages before `expectsJson()` check
-- Set multiple flash messages for same action
-
-#### Step 2: Fix Controllers (1 hour)
-
-**Pattern to follow:**
-```php
-// Before:
-session()->flash('flash_message', 'Success');
-if ($request->expectsJson()) {
-    return response()->json(['message' => 'Success'], 200);
-}
-return redirect()->back();
-
-// After:
-if ($request->expectsJson()) {
-    return response()->json(['message' => 'Success'], 200);
-}
-session()->flash('flash_message', 'Success');
-return redirect()->back();
-```
-
-**Controllers to check:**
-- TasksController
-- ProjectsController
-- LeadsController
-- ClientsController
-- DocumentsController
-- SettingsController
+**Priority:** Medium
+**Impact:** Type Safety & Maintainability
 
 ---
 
-### 4.4: Audit Critical Bug Patterns (4 hours)
+## Task Model
 
-**Goal:** Systematically check for known bug patterns discovered during test fixes.
+### Current
 
-#### Pattern 1: Relationship Object vs String Comparisons (1 hour)
-
-**Search for potential issues:**
-```bash
-grep -r "->status ==" app/Models/ --include="*.php"
-grep -r "->role ==" app/Models/ --include="*.php"
-```
-
-**Check pattern:**
 ```php
-// WRONG: Comparing relationship object to string
-if ($model->status == 'closed') { }
-
-// CORRECT: Access relationship property
-if ($model->status && $model->status->title == 'closed') { }
-
-// BETTER: Use enum helper
-if ($model->status && TaskStatus::isClosed($model->status->title)) { }
+TASK_STATUS_CLOSED = 'closed';
 ```
 
-#### Pattern 2: Double Division in Calculations (1 hour)
+### Refactor To
 
-**Search for potential issues:**
-```bash
-grep -r "/ 100.*/ 100\|/ 10000" app/ --include="*.php"
-```
-
-**Check pattern:**
 ```php
-// WRONG: Double division
-$rate = ($percentage / 100) / 100;
-
-// CORRECT: Single division for percentage stored as integer
-$rate = $percentage / 10000; // 2100 / 10000 = 0.21
+TaskStatus
 ```
 
-**Files to audit:**
-- InvoiceCalculator
-- Tax model methods
-- Any percentage calculations
+---
 
-#### Pattern 3: Null Checks in Traits (1 hour)
+## Lead Model
 
-**Audit all traits:**
-```bash
-find app/Traits/ -name "*.php" -type f
-```
+### Current
 
-For each trait method that accesses model properties:
-- Check if property is optional (nullable in database)
-- Ensure null check before comparison/operation
-- Add return early pattern
-
-**Pattern:**
 ```php
-// In DeadlineTrait.php:
-public function isOverDeadline(): bool
-{
-    // Early returns for null/closed cases
-    if ($this->isClosed() || !$this->deadline) {
-        return false;
-    }
-    
-    return $this->deadline < Carbon::now();
-}
+LEAD_STATUS_CLOSED = 'closed';
 ```
 
-#### Pattern 4: Cached Permissions in Tests (1 hour)
+### Refactor To
 
-**Audit test files:**
-```bash
-grep -r "attachPermission\|detachPermission" tests/ --include="*.php" -A 5
-```
-
-Ensure pattern:
 ```php
-// WRONG: Permissions cached, user not reloaded
-$user->roles->first()->attachPermission($permission);
-$this->actingAs($user); // Uses cached permissions
-
-// CORRECT: Reload user after permission change
-$user->roles->first()->attachPermission($permission);
-$user = $user->fresh(); // Clear cache
-$this->actingAs($user);
+LeadStatus
 ```
 
-**Create test helper** (if not exists):
+---
+
+## Project Model
+
+### Current
+
 ```php
-// In AbstractTestCase:
-protected function attachPermissionAndReload(User $user, Permission $permission): User
-{
-    $user->roles->first()->attachPermission($permission);
-    return $user->fresh();
-}
+PROJECT_STATUS_CLOSED = 'Closed';
 ```
 
+### Issues
+
+* inconsistent casing
+
+### Refactor To
+
+```php
+ProjectStatus
+```
+
+---
+
+## Invoice Model
+
+### Current
+
+```php
+STATUS_SENT = 'sent';
+```
+
+### Issues
+
+* `InvoiceStatus` enum already exists
+* migration is incomplete
+
+### Recommended Improvements
+
+* Complete enum migration
+* Remove legacy constants
+
+---
+
+## Role Model
+
+### Current
+
+```php
+OWNER_ROLE = 'owner';
+ADMIN_ROLE = 'administrator';
+```
+
+### Refactor To
+
+```php
+RoleType
+```
+
+---
+
+## Controller Constants
+
+Controllers contain action constants such as:
+
+```php
+CREATED
+UPDATED_STATUS
+DELETED
+```
+
+### Recommendation
+
+Either:
+
+* migrate to:
+
+  ```php
+  EntityAction
+  ```
+* or keep as-is if tightly coupled to events
+
+---
+
+## Status Model Itself — Larger Enum Opportunity
+
+Current approach:
+
+* database-driven statuses
+* `source_type`
+* lookup queries
+
+Potential replacement:
+
+```php
+TaskStatus
+LeadStatus
+ProjectStatus
+```
+
+### Benefits
+
+* eliminates status lookup queries
+* type-safe comparisons
+* simpler validation
+* cleaner domain logic
+
+### Risks
+
+* database migration
+* seed updates
+* existing data migration
+* reporting impact
+
+### Recommendation
+
+Only perform after:
+
+* FormRequest migration
+* service extraction
+* test stabilization
+
+---
+
+# 3. Controllers With Excessive Logic → Service Extraction
+
+## Service Extraction Candidates
+
+**Priority:** High
+**Impact:** Maintainability & Testability
+
+---
+
+## ClientsController (~448 LOC)
+
+### Responsibilities Mixed Together
+
+* client creation
+* number generation
+* file storage
+* billing integration
+* validation orchestration
+
+### Recommended Extraction
+
+```php
+ClientService
+ClientStorageService
+ClientBillingService
+```
+
+Keep:
+
+```php
+ClientNumberService
+```
+
+---
+
+## TasksController (~418 LOC)
+
+### Issues
+
+* upload logic
+* assignment logic
+* status transitions
+* validation branching
+
+### Recommended Extraction
+
+```php
+TaskService
+```
+
+Potential split:
+
+```php
+TaskAssignmentService
+TaskDeadlineService
+TaskStatusService
+```
+
+---
+
+## DocumentsController (~382 LOC)
+
+### Issues
+
+* authorization logic embedded in controller
+* storage orchestration
+* retrieval branching
+
+### Recommended Extraction
+
+```php
+DocumentPolicy
+DocumentStorageService
+```
+
+---
+
+## ProjectsController (~369 LOC)
+
+### Recommended Extraction
+
+```php
+ProjectService
+ProjectAssignmentService
+ProjectStatusService
+```
+
+---
+
+## UsersController (~362 LOC)
+
+### Recommended Extraction
+
+```php
+UserService
+CalendarService
+```
+
+---
+
+## LeadsController (~330 LOC)
+
+### Recommended Extraction
+
+```php
+LeadService
+LeadAssignmentService
+LeadStatusService
+```
+
+---
+
+## InvoicesController (~231 LOC)
+
+### Existing Services
+
+* `InvoiceCalculator`
+* `InvoiceNumberService`
+
+### Missing
+
+```php
+InvoiceService
+```
+
+Responsible for orchestration.
+
+---
+
+# 4. Unit Tests That Are Actually Feature Tests
+
+## Current Problem
+
+Many tests inside:
+
+```text
+tests/Unit/Controllers/*
+```
+
+are actually integration/feature tests.
+
+These tests:
+
+* perform HTTP requests
+* use middleware
+* hit routes
+* use the database
+* test framework integration
+
+---
+
+## Recommended Migration
+
+Move:
+
+```text
+tests/Unit/Controllers/*
+```
+
+To:
+
+```text
+tests/Feature/Controllers/*
+```
+
+---
+
+## Namespace Migration
+
+From:
+
+```php
+Tests\Unit\Controllers
+```
+
+To:
+
+```php
+Tests\Feature\Controllers
+```
+
+---
+
+## True Unit Tests (Correctly Placed)
+
+These belong in `Unit/`:
+
+* enums
+* repositories
+* services
+* traits
+* utility functions
+* event classes
+* model methods
+
+Examples:
+
+```text
+tests/Unit/Enums/*
+tests/Unit/Invoice/*
+tests/Unit/Repositories/*
+tests/Unit/Events/*
+```
+
+---
+
+## Additional Testing Improvements
+
+### Standardize Naming
+
+Prefer:
+
+```php
+it_creates_a_user()
+```
+
+Instead of:
+
+```php
+testCreateUser()
+```
+
+---
+
+### Standardize Structure
+
+```php
+/* Arrange */
+/* Act */
+/* Assert */
+```
+
+---
+
+### Add Metadata Attributes
+
+Use:
+
+```php
+#[CoversClass]
+#[UsesClass]
+```
+
+---
+
+### Improve Test Isolation
+
+Enhance:
+
+```php
+AbstractTestCase
+```
+
+with:
+
+```php
+grantPermissions()
+```
+
+and reusable fixtures.
+
+---
+
+# 5. Existing Refactoring Documents
+
+## `.github/refactor.md`
+
+### Strong Existing Topics
+
+* response standardization
+* middleware extraction
+* enum migration
+* test isolation
+* document authorization extraction
+
+### Recommendation
+
+Use as the canonical refactoring source.
+
+---
+
+## `.github/refactoring.md`
+
+Contains additional useful topics:
+
+* `ClientNumberService` validation
+* test naming conventions
+* metadata attributes
+* PHPStorm region syntax
+
+### Recommendation
+
+Merge into:
+
+```text
+.github/refactor.md
+```
+
+Then archive:
+
+```text
+.github/archive/refactoring.md
+```
+
+---
+
+# 6. Critical Bug Patterns To Audit
+
+---
+
+## Relationship Object vs String Comparison
+
+Already fixed in:
+
+* Task
+* Lead
+* Project
+
+### Audit Entire Codebase For
+
+```php
+$model->relation === 'string'
+```
+
+---
+
+## Double Division / Percentage Bugs
+
+Already fixed:
+
+* tax calculations
+
+### Audit Remaining Areas
+
+* discounts
+* commissions
+* reports
+
+---
+
+## Null Relationship Access
+
+Audit:
+
+* traits
+* transformers
+* presenters
+* policies
+
+Especially:
+
+* `Blameable`
+* `Statusable`
+* `SearchableTrait`
+
+---
+
+## Cached Roles & Permissions In Tests
+
+### Recommendation
+
+Centralize cache resets in:
+
+```php
+AbstractTestCase
+```
+
+---
+
+## External Integration Test Doubles
+
+Audit:
+
+* billing integrations
+* storage integrations
+* calendar integrations
+* mail integrations
+
+Prefer:
+
+* fakes
+* fixtures
+
+Avoid:
+
+* brittle mocks
+
+---
+
+# 7. Additional Improvements Not Yet Mentioned
+
+---
+
+## Introduce DTO Boundaries Everywhere
+
+Recommended flow:
+
+```text
+FormRequest
+→ DTO
+→ Service
+→ Repository
+→ Transformer
+```
+
+---
+
+## Remove Controller Persistence Logic
+
+Controllers should:
+
+* validate
+* authorize
+* delegate
+* respond
+
+Controllers should not:
+
+* build queries
+* orchestrate transactions
+* persist models directly
+
+---
+
+## Introduce Dedicated Action Classes Carefully
+
+Good examples:
+
+```php
+AssignTaskAction
+GenerateInvoiceAction
+UploadDocumentAction
+```
+
+Avoid:
+
+```php
+TaskAction
+ProjectAction
+```
+
+Those usually become god classes.
+
+---
+
+## Repository Standardization
+
+Avoid:
+
+```php
+updateOrCreate()
+```
+
+Prefer:
+
+```php
+upsertByExternalId()
+```
+
+or dedicated repository methods.
+
+---
+
+## Transformer Consistency
+
+Never return raw Eloquent models from:
+
+* services
+* APIs
+* integrations
+
+Use:
+
+```text
+Model → DTO → Transformer
+```
+
+---
+
+## Introduce Domain-Level Exceptions
+
+Examples:
+
+```php
+InvalidStatusTransitionException
+DocumentStorageException
+InvoiceGenerationException
+```
+
+Benefits:
+
+* cleaner logging
+* improved observability
+* better API consistency
+
+---
+
+## Add Transaction Boundaries
+
+Wrap multi-write operations in:
+
+```php
+DB::transaction()
+```
+
+Especially:
+
+* invoice generation
+* lead conversion
+* project creation
+* document persistence
+
+---
+
+## Reduce Fat Models
+
+Move:
+
+* workflow logic
+* integration logic
+* orchestration logic
+
+Into:
+
+* services
+* repositories
+* actions
+* specifications
+
+---
+
+# 8. Recommended Refactoring Order
+
+## Phase 1 — Stabilization
+
+1. FormRequests everywhere
+2. Fix direct request access
+3. Move Feature tests
+4. Add missing validation
+5. Standardize responses
+
+---
+
+## Phase 2 — Architecture Cleanup
+
+1. Extract services
+2. Introduce DTO boundaries
+3. Remove controller orchestration
+4. Extract policies
+5. Improve repositories
+
+---
+
+## Phase 3 — Domain Modeling
+
+1. Enum migration
+2. Domain exceptions
+3. Status refactor
+4. Transaction boundaries
+
+---
+
+## Phase 4 — Documentation & Standards
+
+1. Consolidate refactor docs
+2. Expand AGENTS.md
+3. Expand copilot instructions
+4. Add architecture decision records
+
+---
+
+# 9. Estimated Impact
+
+| Refactoring                       | Files Affected  | Complexity Reduction | Bug Risk Reduction | Time Estimate |
+| --------------------------------- | --------------- | -------------------- | ------------------ | ------------- |
+| FormRequest Creation              | ~15 controllers | High                 | High               | ~8 hours      |
+| Move Tests to Feature             | 39 test files   | Low                  | Low                | ~4 hours      |
+| Status Enum Migration             | ~20 files       | Medium               | Medium             | ~12 hours     |
+| Service Extraction                | ~6 controllers  | High                 | Medium             | ~40 hours     |
+| JSON/Web Response Standardization | ~10 controllers | High                 | High               | ~8 hours      |
+| Permission Enum Migration         | ~25 files       | Medium               | Medium             | ~6 hours      |
+| Documentation Consolidation       | ~5 files        | N/A                  | N/A                | ~8 hours      |
+
+---
+
+# 10. File Consolidation Recommendation
+
+## Decision
+
+Use:
+
+```text
+.github/refactor.md
+```
+
+as the master refactoring document.
+
+---
+
+## Reasons
+
+* more comprehensive
+* better structured
+* includes examples
+* includes priorities
+* includes impact analysis
+* contains newer findings
+
+---
+
+## Action Plan
+
+1. Keep:
+
+   ```text
+   .github/refactor.md
+   ```
+
+2. Merge unique items from:
+
+   ```text
+   .github/refactoring.md
+   ```
+
+3. Add findings from this analysis
+
+4. Archive:
+
+   ```text
+   .github/refactoring.md
+   ```
+
+5. Update:
+
+   ```text
+   .junie/refactor_plan.md
+   ```
+
+6. Simplify `.junie/*.md` to high-level summaries referencing `.github/`
+
+---
+
+# Overall Assessment
+
+## Current State
+
+The codebase already demonstrates:
+
+* architectural direction
+* service abstraction
+* enum adoption
+* testing awareness
+* separation efforts
+
+The primary issue is inconsistency between modernized and legacy areas.
+
+---
+
+## Highest ROI Refactors
+
+### Immediate ROI
+
+1. FormRequest standardization
+2. Controller → Service extraction
+3. Feature vs Unit test separation
+4. Enum completion
+
+---
+
+### Long-Term ROI
+
+1. Status model replacement
+2. DTO-first architecture
+3. Transaction boundaries
+4. Domain exception hierarchy
+
+```
+```
