@@ -79,6 +79,12 @@ return redirect()->back();
 - **Unit tests** (testing single classes) → `tests/Unit/`
 **CRITICAL:** All controller tests MUST be in `tests/Feature/Controllers/`
 
+### 10. Commit Linting (MANDATORY)
+- **Every commit must be linted before push/PR.**
+- At minimum, run PHP syntax lint on tracked PHP files:
+  - `git ls-files '*.php' | xargs -n1 php -l`
+- CI enforces this with the `php-lint` GitHub Action on every push.
+
 // See [refactor inventory](../.github/ROADMAP.md) for current migration targets and live inventories.
 
 ---
@@ -95,4 +101,3 @@ return redirect()->back();
 - **Missing FormRequest validation:** Create FormRequest for any controller method using `$request->input()` directly.
 - **Controller too large (>200 LOC):** Extract business logic to a dedicated service class.
 - **Model constants for fixed values:** Convert to type-safe enums instead of string constants.
-

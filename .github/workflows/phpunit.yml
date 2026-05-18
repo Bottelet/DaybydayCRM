@@ -36,6 +36,14 @@ on:
         options:
           - pao
           - testdox
+      test_runner:
+        description: 'Test runner'
+        required: true
+        default: 'phpunit'
+        type: choice
+        options:
+          - phpunit
+          - paratest
       fail_fast:
         description: 'Fail fast (stop on first error)?'
         required: true
@@ -45,12 +53,16 @@ on:
           - "false"
           - "true"
 
+permissions:
+  contents: read
+
 jobs:
   tests:
-    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} (output:${{ inputs.output }}, fail_fast:${{ inputs.fail_fast }})
+    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} (runner:${{ inputs.test_runner || 'phpunit' }}, output:${{ inputs.output }}, fail_fast:${{ inputs.fail_fast }})
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         php: ['8.3', '8.4']
 
@@ -71,12 +83,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Setup PHP with Composer
+        uses: ./.github/actions/setup-php-composer
         with:
-          php-version: '8.3'
-          coverage: none
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+          php-version: ${{ matrix.php }}
+          php-extensions: 'dom,curl,libxml,mbstring,zip,pcntl,pdo,sqlite,pdo_sqlite,bcmath,soap,intl,gd,exif,iconv,imagick'
+          composer-args: '--no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist'
 
       - name: Wait for MySQL
         run: |
@@ -93,58 +105,87 @@ jobs:
           cp .env.ci .env.testing
           cp .env.ci .env
 
-      - name: Install Composer dependencies
-        run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
+      - name: Regenerate autoloader
+        run: composer dump-autoload --no-scripts
 
       - name: Generate app key
         run: php artisan key:generate
 
-      - name: Create test DBs for parallel
+      - name: Clear configurations
         run: |
-          for i in {1..8}; do
-            mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test_$i CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-          done
+          php artisan config:clear
+          php artisan cache:clear
+
+      - name: Create test database
+        run: |
+          mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
       - name: Run migrations
-        run: php artisan migrate --seed
+        run: php artisan migrate:fresh --seed
 
       - name: Set test run options
         id: opts
         run: |
-          # Output style flag (for paratest only)
+          # Output style flag
           if [ "${{ github.event.inputs.output }}" = "pao" ]; then
-            OUT_OPT="--pao"
+            OUT_OPT=""
           else
             OUT_OPT="--testdox"
           fi
 
-          # Fail fast: for paratest --stop-on-failure, for phpunit --fail-on-incomplete --stop-on-risky --stop-on-failure
+          # Fail fast settings
           if [ "${{ github.event.inputs.fail_fast }}" = "true" ]; then
-            PARATEST_FAILFAST="--stop-on-failure"
-            PHPUNIT_FAILFAST="--fail-on-incomplete --stop-on-risky --stop-on-failure"
+            FAILFAST="--stop-on-failure"
           else
-            PARATEST_FAILFAST=""
-            PHPUNIT_FAILFAST=""
+            FAILFAST=""
           fi
 
-          # Set GROUP to input value, or default to "full" for push/PR events
+          # Set GROUP to input value, or default to "full"
           GROUP="${{ github.event.inputs.test_group }}"
           if [ -z "$GROUP" ]; then
             GROUP="full"
           fi
-          CUSTOM_GROUP="${{ github.event.inputs.custom_group_name }}"
-          echo "OUT_OPT=${OUT_OPT}" >> $GITHUB_ENV
-          echo "PARATEST_FAILFAST=${PARATEST_FAILFAST}" >> $GITHUB_ENV
-          echo "PHPUNIT_FAILFAST=${PHPUNIT_FAILFAST}" >> $GITHUB_ENV
-          echo "GROUP=${GROUP}" >> $GITHUB_ENV
-          echo "CUSTOM_GROUP=${CUSTOM_GROUP}" >> $GITHUB_ENV
 
-      - name: Run tests (selected group, style, fail fast)
+          echo "OUT_OPT=${OUT_OPT}" >> $GITHUB_ENV
+          echo "FAILFAST=${FAILFAST}" >> $GITHUB_ENV
+          echo "GROUP=${GROUP}" >> $GITHUB_ENV
+          echo "CUSTOM_GROUP=${{ github.event.inputs.custom_group_name }}" >> $GITHUB_ENV
+          echo "RUNNER=${{ github.event.inputs.test_runner || 'phpunit' }}" >> $GITHUB_ENV
+
+      - name: Run tests
+        shell: bash
         run: |
-          if [ "$GROUP" = "full" ]; then
-            ./vendor/bin/phpunit --exclude-group flaky $PHPUNIT_FAILFAST $OUT_OPT
-          elif [ "$GROUP" = "custom" ]; then
-            vendor/bin/paratest --exclude-group flaky --processes=8 --runner=WrapperRunner --group="$CUSTOM_GROUP" $OUT_OPT $PARATEST_FAILFAST
-          else
-            vendor/bin/paratest --exclude-group flaky --processes=8 --runner=WrapperRunner --group="$GROUP" $OUT_OPT $PARATEST_FAILFAST
+          LOG_FILE="phpunit-output.log"
+          RUNNER_BIN="vendor/bin/phpunit"
+          if [ "$RUNNER" = "paratest" ]; then
+            RUNNER_BIN="vendor/bin/paratest"
           fi
+
+          if [ ! -x "$RUNNER_BIN" ]; then
+            echo "::error title=Missing test runner::Selected runner '$RUNNER' requires '$RUNNER_BIN', but it was not found or is not executable."
+            if [ "$RUNNER" = "paratest" ]; then
+              echo "Install Paratest in composer.json require-dev (for example, brianium/paratest) or select the phpunit runner."
+            fi
+            exit 1
+          fi
+
+          # Stream phpunit output through the parser (shows only failures/errors live on screen)
+          # while tee saves the full raw log to disk for the artifact upload.
+          if [ "$GROUP" = "full" ]; then
+            $RUNNER_BIN --exclude-group flaky $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          elif [ "$GROUP" = "custom" ]; then
+            $RUNNER_BIN --exclude-group flaky --group="$CUSTOM_GROUP" $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          else
+            $RUNNER_BIN --exclude-group flaky --group="$GROUP" $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          fi
+
+          # Preserve the phpunit exit code (not tee/parser exit code)
+          exit "${PIPESTATUS[0]}"
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-log-php${{ matrix.php }}
+          path: phpunit-output.log
+          retention-days: 7

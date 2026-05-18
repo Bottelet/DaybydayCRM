@@ -1,0 +1,129 @@
+name: Laravel Pint
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Pint mode to run'
+        required: true
+        default: 'dirty'
+        type: choice
+        options:
+          - dirty
+          - full
+  pull_request:
+    branches:
+      - master
+      - develop
+
+permissions:
+  contents: write
+
+jobs:
+  pint:
+    name: Code Style Check with Laravel Pint
+    runs-on: ubuntu-latest
+
+    steps:
+      # NOTE: Auto-commits pushed with GITHUB_TOKEN do NOT trigger downstream
+      # workflow runs (e.g. phpunit.yml / required status checks).  If CI must
+      # re-run against Pint-formatted code automatically, replace the token
+      # below with a PAT or a GitHub App token that has the necessary scopes.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # For fork PRs the head branch doesn't exist in the base repo, so use the
+          # commit SHA instead; for non-fork PRs and pushes use the branch name so
+          # the auto-commit step can push style fixes back.
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork && github.event.pull_request.head.sha || (github.head_ref || github.ref_name) }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup PHP with Composer
+        uses: ./.github/actions/setup-php-composer
+        with:
+          php-version: '8.4'
+          composer-flags: '--prefer-dist --no-interaction --no-progress --optimize-autoloader'
+
+      - name: Run Laravel Pint
+        id: pint_run
+        run: |
+          PINT_MODE="${{ github.event.inputs.mode || 'dirty' }}"
+          if [[ "$PINT_MODE" == "full" ]]; then
+            echo "Running Laravel Pint in full mode (this may take over 2 minutes)..."
+          else
+            echo "Running Laravel Pint in dirty mode (checking only changed files)..."
+          fi
+
+          if [[ "$PINT_MODE" == "dirty" ]]; then
+            vendor/bin/pint --dirty 2>&1 | tee pint_output.log || true
+          else
+            vendor/bin/pint 2>&1 | tee pint_output.log || true
+          fi
+
+          if grep -q "Parse error" pint_output.log; then
+            echo "parse_errors=true" >> $GITHUB_OUTPUT
+            echo "WARNING: Parse errors detected in one or more files"
+          else
+            echo "parse_errors=false" >> $GITHUB_OUTPUT
+          fi
+
+          exit 0
+
+      - name: Check for changes
+        id: verify_diff
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Files were modified by Pint"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No files were modified"
+          fi
+
+      - name: Lint PHP files changed by Pint
+        if: steps.verify_diff.outputs.has_changes == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        run: git diff --name-only --diff-filter=ACM -- '*.php' | xargs -r -n1 php -l
+
+      - name: Commit and Push Changes
+        if: steps.verify_diff.outputs.has_changes == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false)
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "style: apply Laravel Pint fixes"
+
+          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+
+          until git push origin "HEAD:${BRANCH_NAME}"; do
+            if [[ $ATTEMPT -ge $MAX_ATTEMPTS ]]; then
+              echo "ERROR: Failed to push changes after ${MAX_ATTEMPTS} attempts"
+              exit 1
+            fi
+
+            echo "Push rejected; rebasing onto origin/${BRANCH_NAME} and retrying (${ATTEMPT}/${MAX_ATTEMPTS})..."
+            git pull --rebase origin "${BRANCH_NAME}"
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          if [[ "${{ steps.pint_run.outputs.parse_errors }}" == "true" ]]; then
+            echo "WARNING: Changes committed successfully, but some files had parse errors and were not formatted"
+            echo "Please fix the parse errors in the files marked with '!' in the Pint output above"
+          else
+            echo "SUCCESS: All changes committed and pushed successfully"
+          fi
+
+      - name: Report Parse Errors
+        if: steps.pint_run.outputs.parse_errors == 'true'
+        run: |
+          echo "Pint encountered parse errors in one or more files"
+          echo "Files with parse errors are marked with '!' in the output above"
+          echo "Successfully formatted files have been committed, but files with parse errors were skipped"
+          echo ""
+          echo "To fix:"
+          echo "1. Review the Pint output above to identify files with parse errors"
+          echo "2. Fix the syntax errors in those files"
+          echo "3. Re-run this workflow"
+          exit 1
