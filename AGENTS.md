@@ -1,6 +1,6 @@
 # DaybydayCRM — AI Agent & Developer Guide
 
-## Recent Updates (2026-04-11)
+## Recent Updates (2026-05-11)
 
 ### Critical Bug Patterns to Watch For
 
@@ -48,6 +48,13 @@
    - **Prevention:** Storage integration services should provide test doubles for local/testing
    - **Affected:** DocumentsController tests for view/download operations
 
+7. **ProjectStatus::CLOSED Capital-C Data Mismatch**
+   - **Symptom:** `ProjectStatus::isClosed()` behaves unexpectedly; projects never appear closed
+   - **Cause:** `ProjectStatus::CLOSED = 'Closed'` (capital C) to match legacy database values; other statuses use lowercase
+   - **Pattern:** `isClosed()` uses `strcasecmp` to handle both casings; direct string comparison will fail
+   - **Fix:** Always go through `ProjectStatus::isClosed($title)` — never compare `$project->status->title === 'closed'` directly
+   - **Prevention:** Use the enum's `isClosed()` helper; do not hard-code status strings for projects
+
 ---
 
 ## Overview
@@ -69,6 +76,7 @@ The system follows a **modular architecture**, separating domain logic into clea
 ```text
 app/
  ├── Actions/       # Single-purpose business operations
+ ├── Enums/         # Type-safe enums for fixed value sets
  ├── Http/          # Controllers, Middleware, Requests
  ├── Models/        # Eloquent models
  ├── Repositories/  # Data access abstraction & Integrations
@@ -145,7 +153,7 @@ Typical domain components include:
 ## Model Observers
 - Registered in `AppServiceProvider::boot()`.
 - Handle **automatic side effects**: File deletion, Cascade deletes, Search indexing, Audit logging.
-- Example: `DocumentObserver`, `TaskObserver`, `ClientObserver`.
+- Registered observers: `ClientObserver`, `TaskObserver`, `LeadObserver`, `ProjectObserver`, `InvoiceObserver`, `DocumentObserver`, `ElasticSearchObserver`.
 
 ---
 
@@ -153,12 +161,32 @@ Typical domain components include:
 
 All tests must follow strict isolation rules to ensure reliability and performance.
 
+### Base Test Classes
+- **`AbstractTestCase`** (`tests/AbstractTestCase.php`) — Use for all Feature/Controller tests. Provides `asOwner()`, `asAdmin()`, `withPermissions()`, and `followRedirectsAndFail()` helpers. Runs `migrate:fresh --seed` once per process, then creates a fresh user for each test already assigned the owner role.
+- **`TestCase`** (`tests/TestCase.php`) — Legacy base class; still used by some Unit tests. Depends on the seeded `Admin` user via `User::where('name', 'Admin')->first()` — avoid for new tests.
+
 ### Required Rules
-- **Self-Contained:** Create own data, avoid dependency on other tests or seeders.
+- **Self-Contained:** Create own data via factories, avoid dependency on other tests or seeders.
 - **Normalization:** Never compare `Carbon` vs `String`. Always normalize (e.g., `$model->created_at->toISOString()`).
 - **Single Purpose:** One clear behavior per test, typically one HTTP request.
-- **Role Usage:** Use `owner` or `administrator` roles for elevated permission requirements.
-- **Cache Handling:** Always call `$user = $user->fresh()` after attaching permissions before `actingAs($user)`.
+- **Role Usage:** Use `$this->asOwner()` or `$this->asAdmin()` helpers from `AbstractTestCase` for elevated permission requirements.
+- **Cache Handling:** Use `$this->withPermissions([...])` which automatically flushes cache and reloads the user; never manually call `$user->fresh()` without also re-binding via `actingAs()`.
+- **Commit Linting:** Every commit must pass lint checks before push/PR. Minimum required command: `git ls-files '*.php' | xargs -n1 php -l` (also enforced in CI by the `php-lint` workflow).
+
+### Key Test Helpers (AbstractTestCase)
+```php
+// Grant owner role + all standard permissions
+$this->asOwner();
+
+// Grant admin role + permissions  
+$this->asAdmin();
+
+// Grant specific permissions (flushes cache, reloads user, re-binds actingAs)
+$this->withPermissions([PermissionName::TASK_CREATE, PermissionName::TASK_DELETE]);
+
+// Assert no unexpected redirect occurred
+$this->followRedirectsAndFail($response);
+```
 
 ---
 
@@ -166,6 +194,7 @@ All tests must follow strict isolation rules to ensure reliability and performan
 
 - **Frontend:** Blade partials, Custom SASS, Vue 2 (Legacy), DataTables (`yajra/laravel-datatables-oracle`).
 - **API:** RESTful routes in `routes/api.php` with `auth:api` middleware.
+- **Domain Middleware:** Per-domain authorization middleware exists under `app/Http/Middleware/{Client,Lead,Task,User}/` (e.g., `CanClientCreate`, `CanLeadUpdateStatus`, `IsTaskAssigned`).
 
 ---
 
@@ -193,7 +222,7 @@ All tests must follow strict isolation rules to ensure reliability and performan
 - **Action required:** 400+ lines
 
 **Controllers exceeding threshold:**
-- `ClientsController` (448 lines) → Extract to `ClientService`
+- `ClientsController` (448 lines) → `ClientService` partially extracted (`app/Services/Client/ClientService.php`)
 - `TasksController` (418 lines) → Extract to `TaskService`
 - `DocumentsController` (382 lines) → Extract to `DocumentStorageService`
 - `ProjectsController` (369 lines) → Extract to `ProjectService`
@@ -216,9 +245,11 @@ Convert constants to enums when:
 4. Values used in validation or comparison
 
 **Current migration targets:**
-- Task, Lead, Project status constants → Enums
-- Role type constants → `RoleType` enum
-- Complete `InvoiceStatus` enum migration
+- ~~Task, Lead, Project status constants → Enums~~ ✅ `TaskStatus`, `LeadStatus`, `ProjectStatus` enums exist in `app/Enums/`
+- ~~Role type constants → `RoleType` enum~~ ✅ `RoleType` enum exists with `OWNER`, `ADMINISTRATOR`, `USER`
+- ~~`PermissionName` enum~~ ✅ Complete enum with all permission strings
+- **`InvoiceStatus`** → Still a legacy class (`app/Enums/InvoiceStatus.php`), not a native PHP enum — needs migration
+- **Additional enums added:** `AbsenceReason`, `Country`, `OfferStatus`, `PaymentSource` (all in `app/Enums/`)
 
 ---
 
@@ -227,9 +258,7 @@ Convert constants to enums when:
 See **[.github/refactor.md](.github/refactor.md)** for complete details.
 
 ### High Priority (Security & Stability)
-1. **Missing FormRequests** (15 controllers, 8 hours)
-   - Prevent unvalidated input from reaching business logic and improve data integrity
-   - Controllers: Leads, Tasks, Projects, Roles, Comments
+1. **Missing FormRequests** — ✅ Largely resolved. FormRequests now exist for: Task, Lead, Project, Role, Comment, Appointment, Department, Setting, Payment, User, Client, Invoice. Remaining gaps should be audited per controller.
 2. **Response Handling Standardization** (10 controllers, 8 hours)
    - Fix JSON vs Web response inconsistencies
    - Affects API reliability and user experience
@@ -251,13 +280,9 @@ See **[.github/refactor.md](.github/refactor.md)** for complete details.
    - Add validation enums while keeping database flexibility
    - Type-safe status checks
 
-3. **Test Organization** (39 files, 4 hours)
-   - Move HTTP tests from `Unit/` to `Feature/`
-   - Proper test categorization
+3. **Test Organization** (39 files, 4 hours) — ✅ **RESOLVED**. `tests/Unit/Controllers/` no longer exists; all controller HTTP tests are now in `tests/Feature/Controllers/`.
 
-4. **Permission Enum Completion** (25 files, 6 hours)
-   - Add all permissions to `PermissionName` enum
-   - Replace string literals
+4. **Permission Enum Completion** (25 files, 6 hours) — ✅ **RESOLVED**. `PermissionName` enum is fully complete with all domain permissions.
 
 ### Low Priority (Nice to Have)
 1. Status validation standardization
@@ -421,22 +446,11 @@ public function update(UpdateTaskStatusRequest $request, $id)
 
 ## Current Test Organization Issues
 
-**Problem:** 39 HTTP tests in `tests/Unit/Controllers/`
+**RESOLVED (2026-05-11):** The 39 HTTP tests in `tests/Unit/Controllers/` have been migrated. All controller HTTP tests now live in `tests/Feature/Controllers/` with the correct namespace `Tests\Feature\Controllers\{Domain}`.
 
-**These tests:**
-- Make HTTP requests (`$this->get()`, `$this->post()`)
-- Exercise full stack
-- Are integration tests
-
-**Solution:** Move to `tests/Feature/Controllers/`
-
-**Migration:**
-```bash
-# Move files
-mv tests/Unit/Controllers/Task tests/Feature/Controllers/Task
-
-# Update namespace in files
-sed -i 's/Tests\\Unit\\Controllers/Tests\\Feature\\Controllers/g' tests/Feature/Controllers/Task/*.php
-```
+**Current test structure:**
+- `tests/Feature/Controllers/{Domain}/` — HTTP/controller integration tests
+- `tests/Feature/User/`, `tests/Feature/Url/` — other feature tests
+- `tests/Unit/{Domain}/` — pure unit tests (no HTTP calls)
 
 ---

@@ -72,7 +72,7 @@ abstract class DuskTestCase extends BaseTestCase
     public function createTaskWithRelations($attributes = [])
     {
         if ( ! array_has($attributes, 'client_id')) {
-            throw new Exception('Client id is required');
+            throw new Exception('Clients id is required');
         }
         if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
             $user_id    = User::whereEmail('admin@admin.com')->first()->id;
@@ -87,7 +87,7 @@ abstract class DuskTestCase extends BaseTestCase
     public function createLeadWithRelations($attributes = [])
     {
         if ( ! array_has($attributes, 'client_id')) {
-            throw new Exception('Client id is required');
+            throw new Exception('Clients id is required');
         }
 
         if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {

@@ -8,6 +8,7 @@ use App\Services\Storage\Authentication\GoogleDriveAuthenticator;
 use Exception;
 use Google_Client;
 use Google_Exception;
+use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
 
 class GoogleDrive implements FilesystemIntegration
@@ -27,7 +28,13 @@ class GoogleDrive implements FilesystemIntegration
         $this->client->setRedirectUri(route('googleDrive.callback'));
         $this->client->setAccessType('offline');
         $this->client->setScopes(['https://www.googleapis.com/auth/drive.file']);
-        $this->client->fetchAccessTokenWithRefreshToken(Integration::where(['name' => get_class($this)])->first()->api_key);
+        
+        $integration = Integration::query()->where(['name' => get_class($this)])->first();
+        if (!$integration) {
+            throw new \RuntimeException('Google Drive integration not configured');
+        }
+        
+        $this->client->fetchAccessTokenWithRefreshToken($integration->api_key);
 
         $this->driveService = new Google_Service_Drive($this->client);
     }
@@ -157,7 +164,7 @@ class GoogleDrive implements FilesystemIntegration
 
     private function get($file, $options)
     {
-        $document = $file;
+        $document  = $file;
         $driveFile = $this->driveService->files->get($document->integration_id, $options);
 
         if ( ! $driveFile) {

@@ -2,6 +2,11 @@
 
 Refer to **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** for a detailed structural analysis.
 
+## Commit Linting Requirement
+- Every commit must be linted before push/PR.
+- Run: `git ls-files '*.php' | xargs -n1 php -l`
+- CI also enforces this via the `php-lint` workflow.
+
 ## Core Weaknesses
 1. **Database Schema:** Mandatory fields (UUIDs, IP addresses) often lack DB-level defaults, relying on application-level boot methods.
 2. **Infrastructure:** Heavy reliance on `db:seed` in tests leads to slow execution and duplicate entry errors.

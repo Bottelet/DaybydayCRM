@@ -15,7 +15,7 @@ class Dropbox implements FilesystemIntegration
 
     public function __construct()
     {
-        $dropbox_integration = Integration::where('name', self::class)->first();
+        $dropbox_integration = Integration::query()->where('name', self::class)->first();
 
         if ( ! $dropbox_integration) {
             throw new Exception('Dropbox integration is not configured');

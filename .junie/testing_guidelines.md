@@ -2,6 +2,12 @@
 
 **Also see:** [.github/TESTING.md](../.github/TESTING.md) for comprehensive testing documentation.
 
+## Commit Linting Requirement
+
+- Every commit must be linted before push/PR.
+- Run: `git ls-files '*.php' | xargs -n1 php -l`
+- CI also enforces this via the `php-lint` workflow.
+
 ## Quick Rules
 
 ### MUST Follow

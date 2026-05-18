@@ -2,6 +2,11 @@
 
 Refer to **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** for the full analysis.
 
+## Commit Linting Requirement
+- Every commit must be linted before push/PR.
+- Run: `git ls-files '*.php' | xargs -n1 php -l`
+- CI also enforces this via the `php-lint` workflow.
+
 ## Core Issues
 1. **Infrastructure:** Legacy factories and inconsistent UUID generation across models.
 2. **Logic Leaks:** Business logic scattered across controllers instead of Services/Actions.

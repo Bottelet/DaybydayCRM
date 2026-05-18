@@ -2,6 +2,11 @@
 
 Refer to **[.github/TESTING.md](../.github/TESTING.md)** for detailed isolation standards and common fix patterns.
 
+## Commit Linting Requirement
+- Every commit must be linted before push/PR.
+- Run: `git ls-files '*.php' | xargs -n1 php -l`
+- CI also enforces this via the `php-lint` workflow.
+
 ## Quick Fix Summary
 - **SQLSTATE 1364 (Missing Default):** Ensure model uses `HasExternalId` or update the factory.
 - **SQLSTATE 1062 (Duplicate Entry):** Flush cache and reload user (`$user->fresh()`) after role/permission changes.

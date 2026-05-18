@@ -2,6 +2,11 @@
 
 **For complete refactoring opportunities and details, see [.github/refactor.md](../.github/refactor.md)**
 
+## Commit Linting Requirement
+- Every commit must be linted before push/PR.
+- Run: `git ls-files '*.php' | xargs -n1 php -l`
+- CI also enforces this via the `php-lint` workflow.
+
 ## Quick Reference
 
 ### Documentation
