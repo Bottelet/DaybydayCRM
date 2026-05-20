@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\RoleUser;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UserRoleTableSeeder extends Seeder
@@ -14,10 +15,16 @@ class UserRoleTableSeeder extends Seeder
      */
     public function run()
     {
-        $newrole             = new RoleUser();
-        $newrole->role_id    = '1';
-        $newrole->user_id    = '1';
-        $newrole->timestamps = false;
-        $newrole->save();
+        $ownerRole = Role::where('name', 'owner')->first();
+        $adminUser = User::orderBy('id')->first();
+
+        if ( ! $ownerRole || ! $adminUser) {
+            $this->command->warn('UserRoleTableSeeder: owner role or first user not found, skipping.');
+
+            return;
+        }
+
+        // Use syncWithoutDetaching so re-seeding doesn't create duplicates
+        $adminUser->roles()->syncWithoutDetaching([$ownerRole->id]);
     }
 }

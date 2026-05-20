@@ -10,6 +10,7 @@ use Google_Client;
 use Google_Exception;
 use Google_Service_Drive;
 use Google_Service_Drive_DriveFile;
+use RuntimeException;
 
 class GoogleDrive implements FilesystemIntegration
 {
@@ -28,12 +29,12 @@ class GoogleDrive implements FilesystemIntegration
         $this->client->setRedirectUri(route('googleDrive.callback'));
         $this->client->setAccessType('offline');
         $this->client->setScopes(['https://www.googleapis.com/auth/drive.file']);
-        
+
         $integration = Integration::query()->where(['name' => get_class($this)])->first();
-        if (!$integration) {
-            throw new \RuntimeException('Google Drive integration not configured');
+        if ( ! $integration) {
+            throw new RuntimeException('Google Drive integration not configured');
         }
-        
+
         $this->client->fetchAccessTokenWithRefreshToken($integration->api_key);
 
         $this->driveService = new Google_Service_Drive($this->client);

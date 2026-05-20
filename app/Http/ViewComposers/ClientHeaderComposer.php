@@ -14,18 +14,17 @@ class ClientHeaderComposer
      */
     public function compose(View $view)
     {
-        // Eager load relationships to prevent N+1 queries
-        $clients = Client::with(['contacts', 'user'])
-            ->findOrFail($view->getData()['client']['id']);
+        // Re-use the already eager-loaded client from the view data to prevent N+1 queries.
+        // getClientWithRelations() in ClientsController pre-loads 'user' and 'primaryContact'.
+        $client = $view->getData()['client'];
 
-        // Use the already eager-loaded contacts collection instead of querying again
-        $contact_info = $clients->contacts->first();
-        /**
-         * [User assigned the client].
-         *
-         * @var contact
-         */
-        $contact = $clients->user;
+        $contact_info = $client->relationLoaded('primaryContact')
+            ? $client->primaryContact
+            : $client->contacts->first();
+
+        $contact = $client->relationLoaded('user')
+            ? $client->user
+            : $client->user()->first();
 
         $view->with('contact', $contact)->with('contact_info', $contact_info);
     }

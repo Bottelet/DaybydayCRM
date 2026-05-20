@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProjectStatus;
 use App\Events\TaskAction;
 use App\Http\Requests\Task\StoreTaskRequest;
+use App\Http\Requests\Task\UpdateTaskAssignRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -13,12 +15,15 @@ use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\GetStorageProvider;
+use App\Services\Task\TaskService;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class TasksController extends Controller
@@ -35,7 +40,7 @@ class TasksController extends Controller
 
     protected $invoices;
 
-    public function __construct()
+    public function __construct(private TaskService $taskService)
     {
         $this->middleware('filesystem.is.enabled', ['only' => ['upload']]);
         $this->middleware('task.create', ['only' => ['create']]);
@@ -113,18 +118,18 @@ class TasksController extends Controller
     public function create($client_external_id = null, $project_external_id = null)
     {
         $projects = null;
-        $client   = Client::whereExternalId($client_external_id);
+        $client   = $client_external_id ? Client::whereExternalId($client_external_id)->first() : null;
         $project  = Project::whereExternalId($project_external_id)->first();
         if ($client) {
             $projects = $client->projects()->whereHas('status', function ($q) {
-                return $q->where('title', '!=', 'Closed');
+                return $q->whereRaw('LOWER(title) != ?', [mb_strtolower(ProjectStatus::CLOSED->value)]);
             })->pluck('title', 'external_id');
         }
 
         return view('tasks.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withClients(Client::pluck('company_name', 'external_id'))
-            ->withClient($client ?: null)
+            ->withClients(Client::query()->pluck('company_name', 'external_id'))
+            ->withClient($client)
             ->withProjects($projects ?: null)
             ->withProject($project ?: null)
             ->withStatuses(Status::typeOfTask()->pluck('title', 'id'))
@@ -134,41 +139,22 @@ class TasksController extends Controller
     /**
      * @return mixed
      */
-    public function store(StoreTaskRequest $request) // uses __contrust request
+    public function store(StoreTaskRequest $request)
     {
-        $client  = null;
-        $project = null;
+        $validated = $request->validated();
 
-        if ($request->client_external_id) {
-            $client = Client::whereExternalId($request->client_external_id)->first();
+        try {
+            $task = $this->taskService->create($validated, auth()->id());
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $this->failureResponse(
+                $request,
+                __('Task could not be created. Please try again.'),
+                'task'
+            );
         }
 
-        if ($request->project_external_id) {
-            $project = Project::whereExternalId($request->project_external_id)->first();
-        }
-
-        $input = array_merge(
-            $request->all(),
-            []
-        );
-
-        $task = Task::create(
-            [
-                'title'            => $request->title,
-                'description'      => clean($request->description),
-                'user_assigned_id' => $request->user_assigned_id,
-                'deadline'         => Carbon::parse($request->deadline),
-                'status_id'        => $request->status_id,
-                'user_created_id'  => auth()->id(),
-                'external_id'      => Uuid::uuid4()->toString(),
-                'client_id'        => optional($client)->id,
-                'project_id'       => optional($project)->id,
-            ]
-        );
-
-        $insertedExternalId = $task->external_id;
-
-        session()->flash('flash_message', __('Task successfully added'));
         event(new TaskAction($task, self::CREATED));
 
         if (null !== $request->images) {
@@ -178,9 +164,7 @@ class TasksController extends Controller
         }
 
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $project ? $project->external_id : null]);
-
-        return redirect()->route('tasks.show', $insertedExternalId);
+        return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
     }
 
     public function destroy(Task $task, Request $request)
@@ -226,9 +210,9 @@ class TasksController extends Controller
         return view('tasks.show')
             ->withTasks($task)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('company_name', Setting::first()->company)
+            ->with('company_name', Setting::first()->company ?? '')
             ->withStatuses(Status::typeOfTask()->pluck('title', 'id'))
-            ->withProjects($task->client->projects()->pluck('title', 'external_id'))
+            ->withProjects($task->client ? $task->client->projects()->pluck('title', 'external_id') : collect())
             ->withFiles($task->documents)
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
     }
@@ -298,12 +282,21 @@ class TasksController extends Controller
         if ($request->project_external_id) {
             $project = Project::whereExternalId($request->project_external_id)->first();
             if ( ! $project) {
-                return response()->json(['error' => 'Invalid project_external_id'], 400);
+                if ($request->expectsJson()) {
+                    return response()->json(['error' => 'Invalid project_external_id'], 400);
+                }
+                session()->flash('flash_message_warning', __('Invalid project_external_id'));
+
+                return redirect()->back();
             }
             $project_id = $project->id;
         }
         $task->project_id = $project_id;
         $task->save();
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Task project is updated')], 200);
+        }
         session()->flash('flash_message', __('Task project is updated'));
 
         return redirect()->back();
@@ -312,17 +305,15 @@ class TasksController extends Controller
     /**
      * @return mixed
      */
-    public function updateAssign($external_id, Request $request)
+    public function updateAssign($external_id, UpdateTaskAssignRequest $request)
     {
-        $task             = Task::with('user')->whereExternalId($external_id)->first();
-        $user_assigned_id = $request->input('user_assigned_id');
-        if ( ! $user_assigned_id || ! is_numeric($user_assigned_id)) {
-            return response()->json(['error' => 'Invalid user_assigned_id'], 400);
-        }
-        $task->user_assigned_id = $user_assigned_id;
-        $task->save();
-        $task->refresh();
+        $task = Task::whereExternalId($external_id)->firstOrFail();
+        $this->taskService->assign($task, $request->validated('user_assigned_id'));
         event(new TaskAction($task, self::UPDATED_ASSIGN));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('New user is assigned')], 200);
+        }
         session()->flash('flash_message', __('New user is assigned'));
 
         return redirect()->back();
@@ -335,11 +326,13 @@ class TasksController extends Controller
      */
     public function updateDeadline(\App\Http\Requests\Task\UpdateTaskDeadlineRequest $request, $external_id)
     {
-        $task           = $this->findByExternalId($external_id);
-        $deadline       = $request->validated('deadline');
-        $task->deadline = $deadline;
-        $task->save();
+        $task = $this->findByExternalId($external_id);
+        $this->taskService->updateDeadline($task, $request->validated('deadline'));
         event(new TaskAction($task, self::UPDATED_DEADLINE));
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'New deadline is set'], 200);
+        }
         session()->flash('flash_message', 'New deadline is set');
 
         return redirect()->back();
@@ -394,7 +387,7 @@ class TasksController extends Controller
         $fileSystem = GetStorageProvider::getStorage();
         $fileData   = $fileSystem->upload($folder, $filename, $file);
 
-        Document::create([
+        Document::query()->create([
             'external_id'       => Uuid::uuid4()->toString(),
             'path'              => $fileData['file_path'],
             'size'              => $totaltsize,

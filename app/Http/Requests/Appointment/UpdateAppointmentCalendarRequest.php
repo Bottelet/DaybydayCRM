@@ -28,7 +28,7 @@ class UpdateAppointmentCalendarRequest extends FormRequest
             'id'    => 'required',
             'start' => ['required', 'date'],
             'end'   => ['required', 'date'],
-            'group' => 'required',
+            'group' => ['required', 'exists:users,external_id'],
         ];
     }
 }

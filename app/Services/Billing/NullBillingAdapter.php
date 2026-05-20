@@ -20,25 +20,13 @@ use App\Repositories\BillingIntegration\BillingIntegrationInterface;
  */
 class NullBillingAdapter implements BillingIntegrationInterface
 {
-    public function getClient()
-    {
-        return null;
-    }
+    public function getClient() {}
 
-    public function convertJson($response)
-    {
-        return null;
-    }
+    public function convertJson($response) {}
 
-    public function createInvoice($params)
-    {
-        return null;
-    }
+    public function createInvoice($params) {}
 
-    public function bookInvoice($invoiceGuid, $timestamp)
-    {
-        return null;
-    }
+    public function bookInvoice($invoiceGuid, $timestamp) {}
 
     public function sendInvoice(Invoice $invoice, $subject, $message, $recipient, $attachPdf = false)
     {
@@ -50,20 +38,14 @@ class NullBillingAdapter implements BillingIntegrationInterface
         return [];
     }
 
-    public function getPrimaryContact(Client $client)
-    {
-        return null;
-    }
+    public function getPrimaryContact(Client $client) {}
 
     public function getProductMapping(): array
     {
         return [];
     }
 
-    public function createPayment(Payment $payment)
-    {
-        return null;
-    }
+    public function createPayment(Payment $payment) {}
 
     public function deletePayment(Payment $payment)
     {

@@ -8,6 +8,8 @@ use Ramsey\Uuid\Uuid;
 
 class UsersTableSeeder extends Seeder
 {
+    public const ADMIN_EMAIL = 'admin@admin.com';
+
     /**
      * Auto generated seed file.
      *
@@ -22,7 +24,7 @@ class UsersTableSeeder extends Seeder
                 'id'               => 1,
                 'external_id'      => Uuid::uuid4(),
                 'name'             => 'Admin',
-                'email'            => 'admin@admin.com',
+                'email'            => self::ADMIN_EMAIL,
                 'password'         => bcrypt('admin123'),
                 'address'          => '',
                 'primary_number'   => null,

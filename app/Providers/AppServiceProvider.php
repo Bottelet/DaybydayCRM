@@ -15,6 +15,7 @@ use App\Observers\LeadObserver;
 use App\Observers\ProjectObserver;
 use App\Observers\TaskObserver;
 use App\Repositories\Format\GetDateFormat;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,6 +33,20 @@ class AppServiceProvider extends ServiceProvider
         Project::observe(ProjectObserver::class);
         Invoice::observe(InvoiceObserver::class);
         Document::observe(DocumentObserver::class);
+
+        // Force URL generation to respect APP_URL configuration.
+        // In testing, this remains disabled by default to avoid polluting the
+        // URL generator with production/staging values, but it can be enabled
+        // explicitly for tests that need absolute URLs to honor APP_URL.
+        $forceUrlInTesting = (bool) config('app.force_url_in_testing', env('APP_FORCE_URL_IN_TESTING', false));
+
+        if (($appUrl = config('app.url')) && ( ! $this->app->environment('testing') || $forceUrlInTesting)) {
+            URL::forceRootUrl($appUrl);
+
+            if ($scheme = parse_url($appUrl, PHP_URL_SCHEME)) {
+                URL::forceScheme($scheme);
+            }
+        }
     }
 
     /**

@@ -35,15 +35,9 @@ class NullStorageAdapter implements FilesystemIntegration
         return true;
     }
 
-    public function view($file)
-    {
-        return null;
-    }
+    public function view($file) {}
 
-    public function download($file)
-    {
-        return null;
-    }
+    public function download($file) {}
 
     public function revokeAccess()
     {

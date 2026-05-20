@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Payment\PaymentRequest;
-use App\Models\Integration;
 use App\Models\Invoice;
 use App\Models\Payment;
-use App\Services\Invoice\GenerateInvoiceStatus;
-use Carbon\Carbon;
-use Exception;
+use App\Services\Payment\PaymentService;
 use Illuminate\Http\Response;
-use Ramsey\Uuid\Uuid;
+use InvalidArgumentException;
 
 class PaymentsController extends Controller
 {
+    public function __construct(private PaymentService $paymentService) {}
+
     /**
      * Display a listing of the resource.
      *
@@ -24,23 +23,25 @@ class PaymentsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return Response
-     *
-     * @throws Exception
+     * @return mixed
      */
-    public function destroy(Payment $payment)
+    public function destroy(Payment $payment, \Illuminate\Http\Request $request)
     {
         if ( ! auth()->user()->can('payment-delete')) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __("You don't have permission to delete a payment")], 403);
+            }
             session()->flash('flash_message', __("You don't have permission to delete a payment"));
 
             return redirect()->back();
         }
-        $api = Integration::initBillingIntegration();
-        if ($api) {
-            $api->deletePayment($payment);
+
+        $this->paymentService->deletePayment($payment);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Payment successfully deleted')], 200);
         }
 
-        $payment->delete();
         session()->flash('flash_message', __('Payment successfully deleted'));
 
         return redirect()->back();
@@ -48,28 +49,44 @@ class PaymentsController extends Controller
 
     public function addPayment(PaymentRequest $request, Invoice $invoice)
     {
+        if ( ! auth()->user()->can('payment-create')) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __("You don't have permission to add a payment")], 403);
+            }
+            session()->flash('flash_message', __("You don't have permission to add a payment"));
+
+            return redirect()->back();
+        }
+
         if ( ! $invoice->isSent()) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __("Can't add payment on Invoice")], 422);
+            }
             session()->flash('flash_message_warning', __("Can't add payment on Invoice"));
 
             return redirect()->route('invoices.show', $invoice->external_id);
         }
 
-        $payment = Payment::create([
-            'external_id'    => Uuid::uuid4()->toString(),
-            'amount'         => $request->amount * 100,
-            'payment_date'   => Carbon::parse($request->payment_date),
-            'payment_source' => $request->source,
-            'description'    => $request->description,
-            'invoice_id'     => $invoice->id,
-        ]);
-        $api = Integration::initBillingIntegration();
-        if ($api && $invoice->integration_invoice_id) {
-            $result                          = $api->createPayment($payment);
-            $payment->integration_payment_id = $result['Guid'];
-            $payment->integration_type       = get_class($api);
-            $payment->save();
+        try {
+            $this->paymentService->addPayment(
+                $invoice,
+                (float) $request->amount,
+                $request->payment_date,
+                $request->source,
+                $request->description ?? null,
+            );
+        } catch (InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+            session()->flash('flash_message_warning', $e->getMessage());
+
+            return redirect()->route('invoices.show', $invoice->external_id);
         }
-        app(GenerateInvoiceStatus::class, ['invoice' => $invoice])->createStatus();
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Payment successfully added')], 201);
+        }
 
         session()->flash('flash_message', __('Payment successfully added'));
 

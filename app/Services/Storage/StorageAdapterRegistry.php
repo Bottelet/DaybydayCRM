@@ -5,6 +5,7 @@ namespace App\Services\Storage;
 use App\Models\Integration;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Registry that resolves the active filesystem/storage adapter.
@@ -61,7 +62,7 @@ class StorageAdapterRegistry
 
         $integration = Integration::whereApiType('file')->first();
 
-        if (! $integration) {
+        if ( ! $integration) {
             return $this->resolved = new Local();
         }
 
@@ -76,7 +77,7 @@ class StorageAdapterRegistry
 
         try {
             return $this->resolved = app($class);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::warning('StorageAdapterRegistry: could not instantiate adapter', [
                 'class' => $class,
                 'error' => $e->getMessage(),

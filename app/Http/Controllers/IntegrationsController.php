@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Integration\StoreIntegrationRequest;
 use App\Models\Integration;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Services\Integration\IntegrationService;
+use Illuminate\Http\JsonResponse;
 
 class IntegrationsController extends Controller
 {
@@ -17,9 +18,9 @@ class IntegrationsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
      */
-    public function index()
+    public function index(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
     {
         $billing_integration    = Integration::whereApiType('billing')->first();
         $filesystem_integration = Integration::whereApiType('file')->first();
@@ -34,22 +35,14 @@ class IntegrationsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreIntegrationRequest $request, IntegrationService $integrationService): JsonResponse|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\View\View
     {
-        $input = $request->all();
+        $integrationService->storeOrUpdateByApiType($request->validated());
 
-        $existing = Integration::where([
-            // 'user_id' => $request->post['user_id'] ? $userId : null,
-            'api_type' => $request->api_type,
-        ])->get();
-        $existing = $existing[0] ?? null;
-
-        if ($existing) {
-            $existing->fill($input)->save();
-        } else {
-            Integration::create($input);
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'Integration saved successfully'], 201);
         }
 
         return $this->index();
