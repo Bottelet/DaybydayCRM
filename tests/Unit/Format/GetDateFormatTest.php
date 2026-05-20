@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Format;
 
+use App\Helpers\GetDateFormat as LegacyGetDateFormat;
 use App\Models\Setting;
 use App\Models\User;
 use App\Repositories\Format\GetDateFormat;
@@ -95,5 +96,19 @@ class GetDateFormatTest extends AbstractTestCase
         $this->assertEquals('15:00', $formattedTime);
         $this->assertEquals('22/02/2020', $formattedDate);
         $this->assertEquals('22, February 2020 13:00', $formattedFullDate);
+    }
+
+    #[Test]
+    public function it_supports_the_legacy_get_date_format_namespace()
+    {
+        /* Arrange */
+
+        /* Act */
+        $legacyFormatter = app(LegacyGetDateFormat::class);
+
+        /* Assert */
+        $this->assertInstanceOf(GetDateFormat::class, $legacyFormatter);
+        $this->assertEquals(GetDateFormat::CACHE_KEY, LegacyGetDateFormat::CACHE_KEY);
+        $this->assertEquals($this->formatter->getFrontendDate(), $legacyFormatter->getFrontendDate());
     }
 }

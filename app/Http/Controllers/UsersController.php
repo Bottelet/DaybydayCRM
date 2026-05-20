@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class UsersController extends Controller
@@ -191,32 +192,47 @@ class UsersController extends Controller
     {
         $settings = Setting::first();
         if (User::count() >= $settings->max_users) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('Max number of users reached')], 400);
+            }
+
             Session::flash('flash_message_warning', __('Max number of users reached'));
 
             return redirect()->back();
         }
-        $path = null;
-        if ($request->hasFile('image_path')) {
-            $file = $request->file('image_path');
 
-            $filename = str_random(8) . '_' . $file->getClientOriginalName();
-            $path     = Storage::put($settings->external_id, $file);
+        try {
+            $path = null;
+            if ($request->hasFile('image_path')) {
+                $file = $request->file('image_path');
+
+                $filename = str_random(8) . '_' . $file->getClientOriginalName();
+                $path     = Storage::put($settings->external_id, $file);
+            }
+
+            $user                   = new User();
+            $user->name             = $request->name;
+            $user->external_id      = Uuid::uuid4()->toString();
+            $user->email            = $request->email;
+            $user->address          = $request->address;
+            $user->primary_number   = $request->primary_number;
+            $user->secondary_number = $request->secondary_number;
+            $user->password         = bcrypt($request->password);
+            $user->image_path       = $path;
+            $user->language         = $request->language == 'dk' ?: 'en';
+            $user->save();
+            $user->roles()->attach($request->roles);
+            $user->department()->attach($request->departments);
+            $user->save();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $this->failureResponse(
+                $request,
+                __('User could not be created. Please try again.'),
+                'user'
+            );
         }
-
-        $user                   = new User();
-        $user->name             = $request->name;
-        $user->external_id      = Uuid::uuid4()->toString();
-        $user->email            = $request->email;
-        $user->address          = $request->address;
-        $user->primary_number   = $request->primary_number;
-        $user->secondary_number = $request->secondary_number;
-        $user->password         = bcrypt($request->password);
-        $user->image_path       = $path;
-        $user->language         = $request->language == 'dk' ?: 'en';
-        $user->save();
-        $user->roles()->attach($request->roles);
-        $user->department()->attach($request->departments);
-        $user->save();
 
         Session::flash('flash_message', __('User successfully added'));
 
