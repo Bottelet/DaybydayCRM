@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All projects')}}
+    @if(Entrust::can('project-create'))
+        <a href="{{ route('projects.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New Project')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')
@@ -37,11 +42,11 @@
             <h4 class="modal-title">@lang('Deletion of ') <span id="deletion-title"></span></h4>
             </div>
             <div class="modal-body">
-   
+
             @method('delete')
             @csrf
             <label style="font-weight: 300; color:#333; font-size:14px;">
-                <input type="checkbox" name="delete_tasks"> @lang('Delete tasks') 
+                <input type="checkbox" name="delete_tasks"> @lang('Delete tasks')
             </label>
             <p>
             @lang('If the tasks are not deleted, they will be attached to the client, without a reference to the project').
@@ -52,7 +57,7 @@
             <p>
             @lang('Once deleted, it is not possible to restore it. Are you sure?')
             </p>
-            
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang('Cancel')</button>
@@ -122,7 +127,7 @@
             var target = e.relatedTarget;
             var id = $(target).data('id');
             var title = $(target).data('title');
-         
+
             $("#deletion-title").text(title);
             $('#deletion-form').attr('action', id)
 

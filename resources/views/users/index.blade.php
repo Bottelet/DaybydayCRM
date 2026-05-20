@@ -1,6 +1,11 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All users') }}
+    @if(Entrust::can('user-create'))
+        <a href="{{ route('users.create')}}">
+            <button class="btn btn-brand cta-btn pull-right">@lang('New User')</button>
+        </a>
+    @endif
 @stop
 
 @section('content')
@@ -20,7 +25,7 @@
 
         <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header" style="padding:35px 50px;">
@@ -36,7 +41,7 @@
         <select name="handle_tasks" id="handle_tasks" class="form-control">
             <option value="delete_all_tasks">{{ __('Delete all tasks') }}</option>
             <option value="move_all_tasks"> {{ __('Move all tasks') }}</option>
-        </select>   
+        </select>
      </div>
             <div class="form-group" id="assign_tasks" style="display:none">
           <label for="user_tasks"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the tasks') }}</label>
@@ -45,7 +50,7 @@
             @foreach ($users as $user)
                 <option value="{{ $user->id }}">{{ $user->name }}</option>
             @endforeach
-        </select>   
+        </select>
             </div>
 
              <!--HANDLE LEADS-->
@@ -54,7 +59,7 @@
         <select name="leads" id="handle_leads" class="form-control">
             <option value="delete_all_leads">{{ __('Delete all leads') }}</option>
             <option value="move_all_leads"> {{ __('Move all leads') }}</option>
-        </select>   
+        </select>
         </div>
             <div class="form-group" id="assign_leads" style="display:none">
           <label for="user_leads"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the leads') }}</label>
@@ -63,7 +68,7 @@
             @foreach ($users as $user)
                 <option value="{{ $user->id }}">{{ $user->name }}</option>
             @endforeach
-        </select>   
+        </select>
             </div>
 
             <!--HANDLE CLIENTS-->
@@ -72,7 +77,7 @@
         <select name="clients" id="handle_clients" class="form-control">
             <option value="delete_all_clients">{{ __('Delete all clients') }}</option>
             <option value="move_all_clients"> {{ __('Move all clients') }}</option>
-        </select>   
+        </select>
         </div>
             <div class="form-group" id="assign_clients" style="display:none">
           <label for="user_clients"><span class="glyphicon glyphicon-user"></span> {{ __('Choose a new user to assign the clients') }}</label>
@@ -81,7 +86,7 @@
             @foreach ($users as $user)
                 <option value="{{ $user->id }}">{{ $user->name }}</option>
             @endforeach
-        </select>   
+        </select>
             </div>
           </form>
         </div>
@@ -90,9 +95,9 @@
           <button type="submit" id="confirm_delete" class="btn btn-success"><span class="glyphicon glyphicon-off"></span> {{ __('Delete') }}</button>
         </div>
       </div>
-      
+
     </div>
-  </div> 
+  </div>
 
 @stop
 
@@ -151,12 +156,12 @@
         $("#confirm_delete").attr('delete-id', client_id);
         $("#myModal").modal();
     }
-    
+
     $("#handle_tasks").click(function () {
-    
+
     if($("#handle_tasks").val() == "move_all_tasks") {
         $("#assign_tasks").css('display', 'block');
-    } else 
+    } else
     {
         $("#assign_tasks").css('display', 'none');
     }
@@ -172,7 +177,7 @@
         $("#assign_clients").css('display', 'none');
     }
     });
-    
+
     $("#handle_leads").click(function () {
 
    if($("#handle_leads").val() == "move_all_leads") {
@@ -183,7 +188,7 @@
     });
 
     $("#confirm_delete").click(function () {
-        external_id = $(this).attr("delete-id"); 
+        external_id = $(this).attr("delete-id");
        handle_leads = $("#handle_leads").val();
        handle_tasks =  $("#handle_tasks").val();
        handle_clients =  $("#handle_clients").val()
@@ -203,7 +208,7 @@
         task_user: tasks_user,
         lead_user: leads_user,
         client_user: clients_user,
-       },   
+       },
         complete: function (jqXHR, textStatus) {
                 location.reload();
             },
