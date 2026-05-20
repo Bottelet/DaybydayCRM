@@ -206,7 +206,6 @@ class UsersController extends Controller
             if ($request->hasFile('image_path')) {
                 $file = $request->file('image_path');
 
-                $filename = str_random(8) . '_' . $file->getClientOriginalName();
                 $path     = Storage::put($settings->external_id, $file);
             }
 
