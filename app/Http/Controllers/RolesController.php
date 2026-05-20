@@ -154,7 +154,7 @@ class RolesController extends Controller
             $allowed_permissions = [];
         }
 
-        $role = Role::whereExternalId($external_id)->first();
+        $role = Role::whereExternalId($external_id)->firstOrFail();
 
         $role->permissions()->sync($allowed_permissions);
         $role->save();

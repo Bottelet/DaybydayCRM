@@ -58,4 +58,16 @@ class RoleControllerTest extends AbstractTestCase
         $response->assertRedirect()
             ->assertSessionHas('flash_message_warning');
     }
+
+    #[Test]
+    public function it_returns_404_when_updating_a_role_with_an_invalid_external_id()
+    {
+        /* Act */
+        $response = $this->patch('/roles/update/invalid-external-id', [
+            'permissions' => [],
+        ]);
+
+        /* Assert */
+        $response->assertNotFound();
+    }
 }
