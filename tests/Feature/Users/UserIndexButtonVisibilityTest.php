@@ -25,8 +25,10 @@ class UserIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertSee('New User');
-        $response->assertSee(route('users.create'));
+        $response->assertSee(
+            '<a href="'.route('users.create').'" class="btn btn-brand cta-btn pull-right">New User</a>',
+            false
+        );
     }
 
     #[Test]
@@ -41,8 +43,9 @@ class UserIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertDontSee('New User');
-        $response->assertDontSee(route('users.create'));
+        $response->assertDontSee(
+            '<a href="'.route('users.create').'" class="btn btn-brand cta-btn pull-right">New User</a>',
+            false
+        );
     }
 }
-

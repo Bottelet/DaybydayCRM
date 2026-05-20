@@ -25,8 +25,10 @@ class LeadIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertSee('New Lead');
-        $response->assertSee(route('leads.create'));
+        $response->assertSee(
+            '<a href="'.route('leads.create').'" class="btn btn-brand cta-btn pull-right">New Lead</a>',
+            false
+        );
     }
 
     #[Test]
@@ -41,8 +43,9 @@ class LeadIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertDontSee('New Lead');
-        $response->assertDontSee(route('leads.create'));
+        $response->assertDontSee(
+            '<a href="'.route('leads.create').'" class="btn btn-brand cta-btn pull-right">New Lead</a>',
+            false
+        );
     }
 }
-

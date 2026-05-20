@@ -1,10 +1,8 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All clients') }}
-    @if(Entrust::can('client-create'))
-        <a href="{{ route('clients.create')}}">
-            <button class="btn btn-brand cta-btn pull-right">@lang('New Client')</button>
-        </a>
+    @if(Entrust::can(\App\Enums\PermissionName::CLIENT_CREATE->value))
+        <a href="{{ route('clients.create') }}" class="btn btn-brand cta-btn pull-right">@lang('New Client')</a>
     @endif
 @stop
 
@@ -120,5 +118,4 @@
     });
 </script>
 @endpush
-
 
