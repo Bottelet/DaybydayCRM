@@ -24,7 +24,7 @@ class RolesController extends Controller
     }
 
     /**
-     * Make json respnse for datatables.
+     * Make json response for datatables.
      *
      * @return mixed
      */
