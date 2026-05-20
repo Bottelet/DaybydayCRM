@@ -1,25 +1,24 @@
-# Error Repair Guidelines
+# Error Repair Plan
 
-Refer to **[.github/TESTING.md](../.github/TESTING.md)** for detailed isolation standards and common fix patterns.
+Use this as the short debugging checklist. Refer to `.github/TESTING.md`, `.github/ARCHITECTURE.md`, and `AGENTS.md` for full context.
 
-## Commit Linting Requirement
-- Every commit must be linted before push/PR.
-- Run: `git ls-files '*.php' | xargs -n1 php -l`
-- CI also enforces this via the `php-lint` workflow.
+## Repair workflow
+1. Reproduce the failure in isolation.
+2. Identify whether the issue is in validation, authorization, service logic, storage integration, or seeded/test setup.
+3. Fix the smallest domain-local cause.
+4. Add or update isolated coverage.
+5. Re-run the failing test and the minimum required lint.
 
-## Quick Fix Summary
-- **SQLSTATE 1364 (Missing Default):** Ensure model uses `HasExternalId` or update the factory.
-- **SQLSTATE 1062 (Duplicate Entry):** Flush cache and reload user (`$user->fresh()`) after role/permission changes.
-- **Member function on null:** Ensure related models are correctly setup in test (e.g., `primaryContact`).
-- **PHPUnit 10 Compatibility:** Use attributes (`#[Test]`, `#[Group]`) and native PHP property checks.
-- **VAT/Tax Calculation Errors:** Check for double division - VAT stored as `percentage × 100`, divide by 10000 not 100.
-- **Expected 302 got 200/403:** JSON requests return different status codes (200/403) vs web (302).
-- **Status Validation Failures:** Use full class names (`Task::class`) not strings (`'task'`) for `source_type`.
-- **Null Trait Methods:** Add null checks before accessing optional properties in traits (e.g., DeadlineTrait).
-- **Storage/File Tests:** Storage services need test doubles returning fake content in testing environment.
+## Frequent failure signatures
+- `SQLSTATE 1364` — missing required factory/model data or missing `HasExternalId`
+- `SQLSTATE 1062` — stale permission/role setup or duplicate seeded relationships
+- `Call to a member function ... on null` — missing relationship or missing null guard
+- `Expected 302 got 200/403` — JSON/web mismatch
+- wrong totals or statuses — stored percentage values interpreted incorrectly
+- storage/file errors in tests — missing deterministic test behavior or fallback handling
 
-## Junie's Workflow
-1. Add `#[Group('junie_repaired')]` attribute.
-2. Fix the error/failure following the isolation rules.
-3. Verify the fix in isolation.
-4. Document the fix in the session summary.
+## Branch-specific attention areas
+- refactored controller flows now delegating into services
+- FormRequest coverage for update/status/assignment endpoints
+- Entrust cache and permission diagnostics
+- Dropbox authentication and null-handling behavior

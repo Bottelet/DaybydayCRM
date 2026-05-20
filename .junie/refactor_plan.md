@@ -1,41 +1,25 @@
-# Project Refactor Plan
+# Refactor Plan Summary
 
-**For complete refactoring opportunities and details, see [.github/refactor.md](../.github/refactor.md)**
+This is the short-form refactor plan. The full roadmap lives in `.github/ROADMAP.md`.
 
-## Commit Linting Requirement
-- Every commit must be linted before push/PR.
-- Run: `git ls-files '*.php' | xargs -n1 php -l`
-- CI also enforces this via the `php-lint` workflow.
+## Completed or actively addressed on this branch
+- controller-to-service extraction across multiple domains
+- broader FormRequest adoption
+- stronger storage/authentication abstractions
+- expanded Feature coverage and test isolation work
+- seed/demo/test data cleanup
+- contributor and agent documentation refresh
 
-## Quick Reference
+## Next priorities
+1. Continue extracting remaining large controllers.
+2. Keep replacing inline validation with FormRequests.
+3. Reduce legacy Entrust complexity where safe.
+4. Continue migrating fixed-value domain constants toward enums and helper methods.
+5. Keep test infrastructure deterministic and isolated.
+6. Document any workflow or architecture change as part of the same PR.
 
-### Documentation
-- **[.github/refactor.md](../.github/refactor.md)** — Complete refactoring opportunities (12 major sections)
-- **[.github/ROADMAP.md](../.github/ROADMAP.md)** — Current status and milestones
-- **[.github/TESTING.md](../.github/TESTING.md)** — Testing standards and patterns
-- **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** — System architecture details
-
-### Priority Goals
-1. **Request Validation:** Create missing FormRequests for all controllers
-2. **Service Extraction:** Move business logic from large controllers (>200 LOC) to services
-3. **Enum Migration:** Convert model constants to type-safe enums
-4. **Test Organization:** Move 39 HTTP tests from `tests/Unit/Controllers/` to `tests/Feature/Controllers/`
-5. **Response Handling:** Standardize JSON vs Web response handling
-6. **Permission Middleware:** Consolidate scattered permission checks
-
-### High-Priority Refactorings (from .github/refactor.md)
-1. **#1:** Standardize JSON vs Web Response Handling (~10 files, 8 hours)
-2. **#2:** Consolidate Permission Checks in Middleware (~15 files, 12 hours)
-3. **#8:** Missing FormRequest Validation (~15 controllers, 8 hours)
-4. **#11:** Service Extraction (8 controllers, 40 hours)
-
-### Estimated Total Effort
-- **Files Affected:** 140+
-- **Lines Changed:** ~2000+
-- **Time Estimate:** ~108 hours
-- **Risk Reduction:** High (security, maintainability, testability)
-
-## Archive
-Historical refactoring documents have been moved to `.github/archive/`:
-- `refactoring.md` (merged into refactor.md)
-- `refactoring-plan.md` (replaced by this summary)
+## Refactor guardrails
+- do not move business logic back into controllers
+- do not rely on shared seeded state in new tests
+- do not introduce new hard-coded status strings when helpers already exist
+- do not skip JSON-vs-web response handling in mixed endpoints

@@ -1,456 +1,123 @@
-# DaybydayCRM — AI Agent & Developer Guide
+# DaybydayCRM Agent Guide
 
-## Recent Updates (2026-05-11)
+This file is the primary working guide for contributors and coding agents operating in this repository.
 
-### Critical Bug Patterns to Watch For
+## Documentation map
+- `README.md` — project overview, setup, and contributor entry points
+- `CHANGELOG.md` — current branch changelog summary
+- `.github/ARCHITECTURE.md` — architecture, debt, and layering details
+- `.github/TESTING.md` — mandatory testing and isolation rules
+- `.github/ROADMAP.md` — ongoing modernization work
+- `.github/copilot-instructions.md` — shorter Copilot-specific operating rules
+- `.junie/*.md` — compressed working summaries for analysis, testing, repairs, and refactors
 
-1. **Relationship Object vs String Comparison**
-   - **Symptom:** Methods like `isClosed()` return unexpected results
-   - **Cause:** Comparing Eloquent relationship objects directly to strings
-   - **Example:** `$this->status == 'closed'` when `status` is a BelongsTo relationship
-   - **Fix:** Access relationship property: `$this->status->title == 'closed'`
-   - **Always check:** Lead, Task, Project, or any model with status_id foreign key
+## Project snapshot
+DaybydayCRM is a Laravel CRM covering clients, leads, projects, tasks, offers, invoices, payments, appointments, absences, documents, notifications, and search.
 
-2. **Double Division in Percentage Calculations**
-   - **Symptom:** Calculations off by factor of 100 (e.g., VAT totals)
-   - **Cause:** Converting percentage to decimal twice
-   - **Pattern:** `(value / 100) / 100` when should be just `(value / 100)`
-   - **Check:** Tax calculations, discount calculations, commission calculations
-   - **Example Found:** `Tax::integerToVatRate()` was dividing by 100 twice
+Core technical themes in the current branch:
+- Laravel 12 on PHP 8.3
+- Blade + Vue 2 + Vite frontend stack
+- expanding service/action architecture
+- FormRequest-driven validation
+- permission-heavy business rules
+- extensive feature and unit test coverage
+- active refactoring of legacy controllers, seeders, and integrations
 
-3. **Null Relationship Access**
-   - **Symptom:** "Call to member function on null" errors
-   - **Cause:** Accessing relationship properties without null checks
-   - **Prevention:** Always use `$this->relationship && $this->relationship->property`
-   - **Example:** `isClosed()` methods now check `$this->status` exists first
+## Architecture rules
 
-4. **Cached Roles/Permissions in Tests**
-   - **Symptom:** Permission checks fail in tests after attaching permissions
-   - **Cause:** Accessing `$user->roles` loads relationship into memory before permission is attached
-   - **Pattern:** `$user->roles->first()->attachPermission($perm)` then `actingAs($user)` fails permission check
-   - **Fix:** Call `$user = $user->fresh()` after attaching permission to reload from database
-   - **Prevention:** Always reload user after modifying roles/permissions before authentication
-   - **Affected:** Tests using EntrustUserTrait's `can()` method
+### Keep controllers thin
+Controllers should orchestrate requests, authorization, and responses only.
 
-5. **JSON vs Web Response Status Codes**
-   - **Symptom:** Tests expecting 200/403 get 302 redirects (or vice versa)
-   - **Cause:** Controllers not checking `$request->expectsJson()` before returning responses
-   - **Pattern:** Middleware/controllers always redirect with 302 instead of aborting with 403 for JSON
-   - **Fix:** Check `expectsJson()` and return appropriate status (200 for success, 403/400 for errors)
-   - **Prevention:** Always differentiate JSON and web responses in authorization/validation logic
-   - **Example:** Delete operations return 200 for JSON, 302 redirect for web
+Move business logic into:
+- `app/Services/*` for workflows or multi-step orchestration
+- `app/Actions/*` for focused, single-purpose business operations
 
-6. **Storage Services in Testing Environment**
-   - **Symptom:** Document view/download tests fail with "File does not exist"
-   - **Cause:** Storage services return null in testing environment
-   - **Pattern:** `Local::view()` and `Local::download()` return null when file doesn't exist
-   - **Fix:** Return fake content in testing/local environments: `if (config('app.env') === 'testing') return 'fake file content';`
-   - **Prevention:** Storage integration services should provide test doubles for local/testing
-   - **Affected:** DocumentsController tests for view/download operations
+### Prefer FormRequests
+Do not add new inline controller validation when a FormRequest should own the input rules and normalization.
 
-7. **ProjectStatus::CLOSED Capital-C Data Mismatch**
-   - **Symptom:** `ProjectStatus::isClosed()` behaves unexpectedly; projects never appear closed
-   - **Cause:** `ProjectStatus::CLOSED = 'Closed'` (capital C) to match legacy database values; other statuses use lowercase
-   - **Pattern:** `isClosed()` uses `strcasecmp` to handle both casings; direct string comparison will fail
-   - **Fix:** Always go through `ProjectStatus::isClosed($title)` — never compare `$project->status->title === 'closed'` directly
-   - **Prevention:** Use the enum's `isClosed()` helper; do not hard-code status strings for projects
+### Prefer enums and typed helpers
+Use enums for fixed value sets such as statuses, roles, permissions, and other repeated domain values.
 
----
+### Reuse existing extension points
+Before adding new logic, check whether the behavior belongs in:
+- a service
+- an action
+- an observer
+- a trait
+- a policy or middleware class
+- an existing repository or adapter abstraction
 
-## Overview
+## Model and domain conventions
+- Use `HasExternalId` for UUID routing and route keys.
+- Use `Blameable` for creator/updater tracking.
+- Use `Statusable` for status relationships and helper behavior.
+- Keep model side effects in observers instead of controllers where possible.
+- Avoid hard-coded status strings when helper methods or enums already exist.
 
-**DaybydayCRM** is a Laravel-based CRM platform designed to manage:
+## Response rules
+Mixed web/API endpoints must differentiate between JSON and browser requests.
 
-* Clients, Leads, Projects, Tasks
-* Invoices, Offers, Payments
-* Integrations, Documents, Notifications
-
-The system follows a **modular architecture**, separating domain logic into clear functional areas.
-
----
-
-# System Architecture
-
-## Core Directory Structure
-
-```text
-app/
- ├── Actions/       # Single-purpose business operations
- ├── Enums/         # Type-safe enums for fixed value sets
- ├── Http/          # Controllers, Middleware, Requests
- ├── Models/        # Eloquent models
- ├── Repositories/  # Data access abstraction & Integrations
- ├── Services/      # Complex business logic & Workflows
- ├── Traits/        # Reusable domain behavior
- ├── Observers/     # Automatic model side effects
-
-resources/
- ├── views/         # Blade templates
-
-routes/
- ├── web.php        # Web routes
- ├── api.php        # API routes
-
-database/
- ├── factories/     # Model factories (modern & legacy)
- ├── migrations/    # Database schema
- ├── seeders/       # Initial/Test data
-```
-
-## Domain Organization
-
-Each major domain is isolated into its own structure:
-- **Clients, Leads, Projects, Tasks, Invoices, Offers, Integrations, Documents, Users**
-
-Typical domain components include:
-`Controllers`, `Models`, `Services`, `Actions`, `Repositories`, `Observers`, `Factories`
-
----
-
-# Request Lifecycle
-
-## HTTP Flow
-
-`Request` → `Routes` → `Middleware` → `Controller` → `Service / Action` → `Repository / Model` → `Response (View or JSON)`
-
-## Responsibilities by Layer
-
-### Controllers
-- Request validation & Authorization
-- Delegating logic to services/actions
-- Returning responses
-- **Must remain thin**.
-
-### Services
-- Complex business logic & Domain rules
-- Coordination of workflows (e.g., `InvoiceCalculator`, `InvoiceNumberService`)
-
-### Actions
-- Encapsulate **single-purpose business operations** (e.g., `StoreAbsenceAction`).
-- Reusable, Testable, Decoupled from HTTP layer.
-- Location: `app/Actions/{Domain}/{ActionName}Action.php`
-
-### Repositories
-- Data access abstraction & Complex queries
-- External integrations & Multi-tenancy logic
-- **Must not contain business logic**.
-
----
-
-# Core Conventions
-
-## Data Handling & Integrations
-- **External IDs (UUID Routing):** Most entities use `external_id` (UUID) instead of auto-increment IDs for routing and APIs.
-- **Integrations:** Managed via `integrations` table and repository interfaces (`app/Repositories/BillingIntegration/`, `FilesystemIntegration/`).
-- **Notifications:** Uses Laravel's notification system (Database, Mail, Custom). Should remain event-driven and decoupled.
-
-## Trait Standards
-- **Blameable:** Automatically tracks `user_created_id` and `user_updated_id`.
-- **Statusable:** Standardized status handling (`status()` relationship, `hasStatus()`, `setStatus()`).
-- **HasExternalId:** Automatically generates UUID `external_id` and sets it as route key.
-- **SearchableTrait / DeadlineTrait:** Search logic and deadline management.
-
-## Model Observers
-- Registered in `AppServiceProvider::boot()`.
-- Handle **automatic side effects**: File deletion, Cascade deletes, Search indexing, Audit logging.
-- Registered observers: `ClientObserver`, `TaskObserver`, `LeadObserver`, `ProjectObserver`, `InvoiceObserver`, `DocumentObserver`, `ElasticSearchObserver`.
-
----
-
-# Testing Standards
-
-All tests must follow strict isolation rules to ensure reliability and performance.
-
-### Base Test Classes
-- **`AbstractTestCase`** (`tests/AbstractTestCase.php`) — Use for all Feature/Controller tests. Provides `asOwner()`, `asAdmin()`, `withPermissions()`, and `followRedirectsAndFail()` helpers. Runs `migrate:fresh --seed` once per process, then creates a fresh user for each test already assigned the owner role.
-- **`TestCase`** (`tests/TestCase.php`) — Legacy base class; still used by some Unit tests. Depends on the seeded `Admin` user via `User::where('name', 'Admin')->first()` — avoid for new tests.
-
-### Required Rules
-- **Self-Contained:** Create own data via factories, avoid dependency on other tests or seeders.
-- **Normalization:** Never compare `Carbon` vs `String`. Always normalize (e.g., `$model->created_at->toISOString()`).
-- **Single Purpose:** One clear behavior per test, typically one HTTP request.
-- **Role Usage:** Use `$this->asOwner()` or `$this->asAdmin()` helpers from `AbstractTestCase` for elevated permission requirements.
-- **Cache Handling:** Use `$this->withPermissions([...])` which automatically flushes cache and reloads the user; never manually call `$user->fresh()` without also re-binding via `actingAs()`.
-- **Commit Linting:** Every commit must pass lint checks before push/PR. Minimum required command: `git ls-files '*.php' | xargs -n1 php -l` (also enforced in CI by the `php-lint` workflow).
-
-### Key Test Helpers (AbstractTestCase)
+Pattern:
 ```php
-// Grant owner role + all standard permissions
-$this->asOwner();
+if ($request->expectsJson()) {
+    return response()->json(['message' => 'Success'], 200);
+}
 
-// Grant admin role + permissions  
-$this->asAdmin();
-
-// Grant specific permissions (flushes cache, reloads user, re-binds actingAs)
-$this->withPermissions([PermissionName::TASK_CREATE, PermissionName::TASK_DELETE]);
-
-// Assert no unexpected redirect occurred
-$this->followRedirectsAndFail($response);
+session()->flash('flash_message', 'Success');
+return redirect()->back();
 ```
 
----
+## Testing rules (mandatory)
+- Tests must be self-contained.
+- Use factories to create the data you need.
+- Avoid relying on shared seeded state unless a test explicitly targets seeded behavior.
+- Prefer one HTTP request per test unless validating a real workflow.
+- Normalize Carbon/date values before comparing them.
+- Put controller HTTP tests in `tests/Feature/*`.
+- Rebind/reload users after role or permission changes before asserting authorization.
 
-# UI & API
+### Base classes
+- `tests/AbstractTestCase.php` is the preferred base for new Feature/controller tests.
+- `tests/TestCase.php` remains in use for some legacy or unit coverage.
 
-- **Frontend:** Blade partials, Custom SASS, Vue 2 (Legacy), DataTables (`yajra/laravel-datatables-oracle`).
-- **API:** RESTful routes in `routes/api.php` with `auth:api` middleware.
-- **Domain Middleware:** Per-domain authorization middleware exists under `app/Http/Middleware/{Client,Lead,Task,User}/` (e.g., `CanClientCreate`, `CanLeadUpdateStatus`, `IsTaskAssigned`).
-
----
-
-# Operational Guidelines
-
-| Always Follow | Never Allow |
-| :--- | :--- |
-| Thin Controllers | Business logic in controllers |
-| Service/Action-Based Logic | Direct external calls from controllers |
-| Strict Test Isolation | Shared test dependencies |
-| UUID-Based Routing | Untracked model ownership |
-| Trait-Based Model Behavior | Hard-coded status logic |
-| FormRequest Validation | Direct `$request->input()` without validation |
-| Type-Safe Enums | String constants for fixed value sets |
-
----
-
-# Refactoring & Code Quality
-
-## Code Quality Thresholds
-
-### Controller Complexity
-- **Maximum recommended:** 200 lines
-- **Red flag:** 300+ lines
-- **Action required:** 400+ lines
-
-**Controllers exceeding threshold:**
-- `ClientsController` (448 lines) → `ClientService` partially extracted (`app/Services/Client/ClientService.php`)
-- `TasksController` (418 lines) → Extract to `TaskService`
-- `DocumentsController` (382 lines) → Extract to `DocumentStorageService`
-- `ProjectsController` (369 lines) → Extract to `ProjectService`
-- `UsersController` (362 lines) → Extract to `UserService`
-- `LeadsController` (330 lines) → Extract to `LeadService`
-
-### Service Extraction Triggers
-Extract to service when controller contains:
-1. Complex business logic (>50 lines in single method)
-2. Multiple database operations in sequence
-3. External API integration logic
-4. File storage/manipulation logic
-5. Complex calculations or transformations
-
-### Enum Conversion Criteria
-Convert constants to enums when:
-1. Fixed set of values used across codebase
-2. Type safety would prevent bugs
-3. IDE autocomplete would improve DX
-4. Values used in validation or comparison
-
-**Current migration targets:**
-- ~~Task, Lead, Project status constants → Enums~~ ✅ `TaskStatus`, `LeadStatus`, `ProjectStatus` enums exist in `app/Enums/`
-- ~~Role type constants → `RoleType` enum~~ ✅ `RoleType` enum exists with `OWNER`, `ADMINISTRATOR`, `USER`
-- ~~`PermissionName` enum~~ ✅ Complete enum with all permission strings
-- **`InvoiceStatus`** → Still a legacy class (`app/Enums/InvoiceStatus.php`), not a native PHP enum — needs migration
-- **Additional enums added:** `AbsenceReason`, `Country`, `OfferStatus`, `PaymentSource` (all in `app/Enums/`)
-
----
-
-## Refactoring Roadmap
-
-See **[.github/refactor.md](.github/refactor.md)** for complete details.
-
-### High Priority (Security & Stability)
-1. **Missing FormRequests** — ✅ Largely resolved. FormRequests now exist for: Task, Lead, Project, Role, Comment, Appointment, Department, Setting, Payment, User, Client, Invoice. Remaining gaps should be audited per controller.
-2. **Response Handling Standardization** (10 controllers, 8 hours)
-   - Fix JSON vs Web response inconsistencies
-   - Affects API reliability and user experience
-
-3. **Permission Middleware Consolidation** (15 files, 12 hours)
-   - Centralize scattered authorization logic
-   - Improve security consistency
-
-4. **Service Extraction** (8 controllers, 40 hours)
-   - Reduce controller complexity
-   - Improve testability and maintainability
-
-### Medium Priority (Code Quality)
-1. **Enum Migration** (8 models, 6 hours)
-   - Replace string constants with type-safe enums
-   - Improve IDE support and prevent typos
-
-2. **Status Model Refactoring** (25 files, 12 hours)
-   - Add validation enums while keeping database flexibility
-   - Type-safe status checks
-
-3. **Test Organization** (39 files, 4 hours) — ✅ **RESOLVED**. `tests/Unit/Controllers/` no longer exists; all controller HTTP tests are now in `tests/Feature/Controllers/`.
-
-4. **Permission Enum Completion** (25 files, 6 hours) — ✅ **RESOLVED**. `PermissionName` enum is fully complete with all domain permissions.
-
-### Low Priority (Nice to Have)
-1. Status validation standardization
-2. Document policy extraction
-3. Remove duplicate response headers
-4. Test naming convention updates
-5. PHPStorm region syntax updates
-
-**Total Estimated Effort:** ~108 hours across 140+ files
-
----
-
-## Migration Guides
-
-### Controller → Service Migration
-
-**Step 1: Identify extraction candidates**
+### Minimum validation before push/PR
 ```bash
-# Find controllers > 200 lines
-wc -l app/Http/Controllers/*.php | sort -rn | head -10
+git ls-files '*.php' | xargs -n1 php -l
 ```
 
-**Step 2: Create service**
-```php
-// app/Services/Task/TaskService.php
-namespace App\Services\Task;
+## Common failure patterns
 
-class TaskService
-{
-    public function updateStatus(Task $task, int $statusId): bool
-    {
-        // Validation
-        if (!Status::isValidForType($statusId, Task::class)) {
-            throw new InvalidArgumentException('Invalid status');
-        }
-        
-        // Business logic
-        $task->status_id = $statusId;
-        return $task->save();
-    }
-}
-```
+### Relationship object vs string comparison
+If a model uses a relationship-backed status, compare the related property, not the relation object.
 
-**Step 3: Update controller**
-```php
-// Before
-public function updateStatus(Request $request, $external_id)
-{
-    $task = Task::whereExternalId($external_id)->first();
-    $validStatus = Status::typeOfTask()->where('id', $request->status_id)->exists();
-    if (!$validStatus) {
-        return redirect()->back();
-    }
-    $task->status_id = $request->status_id;
-    $task->save();
-}
+### Null relationship access
+Guard optional relationships and optional date fields before accessing methods or properties.
 
-// After
-public function updateStatus(UpdateTaskStatusRequest $request, $external_id, TaskService $service)
-{
-    $task = Task::whereExternalId($external_id)->first();
-    $service->updateStatus($task, $request->validated('status_id'));
-    
-    if ($request->expectsJson()) {
-        return response()->json(['message' => 'Status updated']);
-    }
-    return redirect()->back();
-}
-```
+### Cached roles and permissions in tests
+After attaching permissions or roles, refresh the user and re-authenticate so Entrust checks use fresh data.
 
-### Constant → Enum Migration
+### JSON vs web status mismatches
+A `json()` test request should not expect the same response path as a browser redirect flow.
 
-**Step 1: Create enum**
-```php
-// app/Enums/TaskStatus.php
-namespace App\Enums;
+### Storage behavior in tests
+Storage services should be deterministic in testing and local fallback scenarios; avoid real external dependencies in isolated tests.
 
-enum TaskStatus: string
-{
-    case OPEN = 'open';
-    case CLOSED = 'closed';
-    case IN_PROGRESS = 'in_progress';
-}
-```
+### Project closed-status casing
+Project closed-state checks must use the project status helper logic rather than direct string equality because legacy data casing differs.
 
-**Step 2: Replace usage**
-```php
-// Before
-if ($task->status == Task::TASK_STATUS_CLOSED) { }
+## Current modernization themes
+The current branch includes work in these areas:
+- fat-controller extraction into service classes
+- request validation expansion
+- test suite reorganization and isolation improvements
+- storage/authentication hardening, especially Dropbox flows
+- seeder and demo-data cleanup
+- role/permission tooling and cache diagnostics
 
-// After
-use App\Enums\TaskStatus;
-if ($task->status->title == TaskStatus::CLOSED->value) { }
-```
-
-**Step 3: Remove constant from model**
-
-### FormRequest Creation
-
-**Step 1: Generate request**
-```bash
-php artisan make:request Task/UpdateTaskStatusRequest
-```
-
-**Step 2: Add validation**
-```php
-namespace App\Http\Requests\Task;
-
-class UpdateTaskStatusRequest extends FormRequest
-{
-    public function rules()
-    {
-        return [
-            'status_id' => 'required|integer|exists:statuses,id',
-        ];
-    }
-    
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $status = Status::find($this->status_id);
-            if ($status && $status->source_type !== Task::class) {
-                $validator->errors()->add('status_id', 'Invalid status for task');
-            }
-        });
-    }
-}
-```
-
-**Step 3: Update controller**
-```php
-// Before
-public function update(Request $request, $id)
-{
-    $task = Task::find($id);
-    $task->update($request->all());
-}
-
-// After
-public function update(UpdateTaskStatusRequest $request, $id)
-{
-    $task = Task::find($id);
-    $task->update($request->validated());
-}
-```
-
----
-
-# Testing Standards (Extended)
-
-## Feature vs Unit Test Decision Matrix
-
-| Characteristic | Feature Test | Unit Test |
-|----------------|-------------|-----------|
-| HTTP requests | Yes | No |
-| Database | Yes | Mock/Stub |
-| External services | Yes (faked) | Mock/Stub |
-| Multiple classes | Yes | Ideally one |
-| Execution time | Slower | Fast |
-| Location | `tests/Feature/` | `tests/Unit/` |
-
-## Current Test Organization Issues
-
-**RESOLVED (2026-05-11):** The 39 HTTP tests in `tests/Unit/Controllers/` have been migrated. All controller HTTP tests now live in `tests/Feature/Controllers/` with the correct namespace `Tests\Feature\Controllers\{Domain}`.
-
-**Current test structure:**
-- `tests/Feature/Controllers/{Domain}/` — HTTP/controller integration tests
-- `tests/Feature/User/`, `tests/Feature/Url/` — other feature tests
-- `tests/Unit/{Domain}/` — pure unit tests (no HTTP calls)
-
----
+## Practical workflow
+1. Read the relevant docs first.
+2. Reuse an existing service, request, enum, or helper when possible.
+3. Keep the change local to the domain you are touching.
+4. Update or add tests with strict isolation.
+5. Run the minimum required validation.
+6. Update docs when workflows, commands, or architecture guidance change.
