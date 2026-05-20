@@ -55,7 +55,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_successfully_uploads_a_file()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox upload mocking is not yet stable in this test case.');
         /* Arrange */
         $filename = 'test.pdf';
         $folder   = 'client-123';
@@ -92,7 +92,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_handles_upload_errors_gracefully()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox upload error mocking is not yet stable in this test case.');
         /* Arrange */
         $filename = 'test.pdf';
         $folder   = 'client-123';
@@ -122,7 +122,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_successfully_deletes_a_file()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox delete mocking is not yet stable in this test case.');
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/client-123/test.pdf';
@@ -158,7 +158,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_true_when_deleting_non_existent_file()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox missing-file delete behavior is not yet stable in this test case.');
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/non-existent/test.pdf';
@@ -180,7 +180,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_successfully_downloads_a_file()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox download mocking is not yet stable in this test case.');
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/client-123/test.pdf';
@@ -203,7 +203,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_when_getting_non_existent_file()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox missing-file download behavior is not yet stable in this test case.');
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/non-existent/test.pdf';
@@ -315,7 +315,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_is_disabled_when_integration_does_not_exist()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox integration-disabled behavior is not yet stable in this test case.');
         /* Arrange */
         Integration::query()->delete();
         $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
@@ -345,7 +345,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_properly_constructs_full_file_path_on_upload()
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Dropbox upload path construction mocking is not yet stable in this test case.');
         /* Arrange */
         $filename = 'invoice.pdf';
         $folder   = 'invoices-client-1';
