@@ -87,10 +87,11 @@ composer dev
 
 ### Setup Commands
 - `php artisan user:create-admin` — create an admin user interactively (safe on fresh or seeded databases)
-- `php artisan user:create-admin --name="Admin" --email="admin@example.com" --password="SecureP@ss123"` — non-interactive admin creation (Ansible-friendly)
+- `php artisan user:create-admin --name="Admin" --email="admin@example.com"` — safer interactive password prompt
+- `ADMIN_PASSWORD="$(op read 'op://vault/admin/password')" php artisan user:create-admin --name="Admin" --email="admin@example.com" --password="$ADMIN_PASSWORD"` — automation example using a secret source
 - `php artisan daybyday:upgrade` — safely upgrade DaybydayCRM permissions, roles, and verify the system
 - `php artisan entrust:diagnose` — diagnose permission and role chain issues
-- `php artisan entrust:clear` — clear permission and role cache
+- `php artisan entrust:cache-clear` — clear permission and role cache
 
 ### Repository guide
 - `AGENTS.md` — contributor and AI-agent workflow guide

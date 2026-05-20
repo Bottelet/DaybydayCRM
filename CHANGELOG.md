@@ -17,9 +17,9 @@ This changelog is focused on the work currently represented by the active PR bra
 - New service-layer coverage across multiple domains, including Absence, Appointment, Comment, Department, Invoice, InvoiceLine, Lead, Offer, Payment, Project, Role, Task, and user update workflows.
 - New operational Artisan commands:
   - `user:create-admin` for interactive or scripted admin user creation with automatic dependency provisioning
-  - `entrust:clear` for permission cache cleanup
+  - `entrust:cache-clear` for permission cache cleanup
   - `entrust:diagnose` for permission troubleshooting
-  - `upgrade` for upgrade-related workflows
+  - `daybyday:upgrade` for upgrade-related workflows
 - New request validation for several controller flows, including integration storage, lead assignment/status/deadline changes, offer creation, settings updates, and user input handling.
 - New storage and billing fallback infrastructure, including null adapters and registry-style service resolution.
 - New seeders and world-building helpers to support cleaner local, demo, and test environments.

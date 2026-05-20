@@ -2,17 +2,22 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\RoleType;
 use App\Models\Department;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
 class CreateAdminUser extends Command
 {
+    private const DEFAULT_LANGUAGE = 'en';
+
     protected $signature = 'daybyday:create-admin {--name=} {--email=} {--password=}';
 
     protected $description = 'Create an admin user with all required dependencies (settings, owner role, management department). Safe to run on both fresh and seeded databases.';
@@ -50,36 +55,40 @@ class CreateAdminUser extends Command
         $email    = $this->option('email') ?: $this->ask('What is the admin email?');
         $password = $this->option('password') ?: $this->secret('What is the admin password?');
 
-        // Validate inputs
+        // Validate inputs (accept ?string to handle null from ask()/secret() gracefully)
         if ( ! $this->validateInputs($name, $email, $password)) {
             return Command::FAILURE;
         }
 
-        // Check if user with this email already exists
-        if (User::where('email', $email)->exists()) {
+        try {
+            DB::transaction(function () use ($name, $email, $password) {
+                if (User::where('email', $email)->exists()) {
+                    throw new \RuntimeException('exists');
+                }
+
+                $this->ensureDependencies();
+                $user = $this->createAdminUser($name, $email, $password);
+
+                $department = Department::where('name', Department::MANAGEMENT)->first();
+                if ($department) {
+                    $user->department()->syncWithoutDetaching([$department->id]);
+                    $this->line('   ✓ Attached user to Management department');
+                }
+
+                $role = Role::where('name', RoleType::OWNER->value)->first();
+                if ($role) {
+                    $user->roles()->syncWithoutDetaching([$role->id]);
+                    $this->line('   ✓ Attached owner role');
+                }
+            });
+        } catch (\RuntimeException $e) {
             $this->error("❌ User with email '{$email}' already exists.");
 
             return Command::FAILURE;
-        }
+        } catch (QueryException $e) {
+            $this->error('❌ Admin creation failed safely.');
 
-        // Ensure dependencies exist
-        $this->ensureDependencies();
-
-        // Create the user
-        $user = $this->createAdminUser($name, $email, $password);
-
-        // Attach user to Management department
-        $department = Department::where('name', 'Management')->first();
-        if ($department && ! $user->department()->where('department_id', $department->id)->exists()) {
-            $user->department()->attach($department->id);
-            $this->line('   ✓ Attached user to Management department');
-        }
-
-        // Attach owner role
-        $role = Role::where('name', 'owner')->first();
-        if ($role && ! $user->roles()->where('role_id', $role->id)->exists()) {
-            $user->roles()->attach($role->id);
-            $this->line('   ✓ Attached owner role');
+            return Command::FAILURE;
         }
 
         $this->newLine();
@@ -91,7 +100,7 @@ class CreateAdminUser extends Command
     /**
      * Validate input values.
      */
-    private function validateInputs(string $name, string $email, string $password): bool
+    private function validateInputs(?string $name, ?string $email, ?string $password): bool
     {
         $validator = Validator::make(
             ['name' => $name, 'email' => $email, 'password' => $password],
@@ -132,7 +141,7 @@ class CreateAdminUser extends Command
                 'max_users'      => 50,
                 'vat'            => 0,
                 'currency'       => 'USD',
-                'language'       => 'en',
+                'language'       => self::DEFAULT_LANGUAGE,
             ]);
             $this->line('   + Created default settings');
         } else {
@@ -141,9 +150,9 @@ class CreateAdminUser extends Command
 
         // Ensure owner Role exists
         $role = Role::firstOrCreate(
-            ['name' => 'owner'],
+            ['name' => RoleType::OWNER->value],
             [
-                'display_name' => 'Owner',
+                'display_name' => RoleType::OWNER->label(),
                 'description'  => 'Full system owner',
                 'external_id'  => (string) Str::uuid(),
             ]
@@ -156,7 +165,7 @@ class CreateAdminUser extends Command
 
         // Ensure Management Department exists
         $department = Department::firstOrCreate(
-            ['name' => 'Management'],
+            ['name' => Department::MANAGEMENT],
             ['external_id' => (string) Str::uuid()]
         );
         if ($department->wasRecentlyCreated) {
@@ -178,7 +187,7 @@ class CreateAdminUser extends Command
             'email'       => $email,
             'password'    => Hash::make($password),
             'external_id' => (string) Str::uuid(),
-            'language'    => 'en',
+            'language'    => self::DEFAULT_LANGUAGE,
         ]);
     }
 }
