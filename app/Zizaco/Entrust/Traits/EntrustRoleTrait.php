@@ -41,11 +41,20 @@ trait EntrustRoleTrait
     // Big block of caching functionality.
     public function cachedPermissions()
     {
-        $rolePrimaryKey = $this->primaryKey;
-        $cacheKey       = 'entrust_permissions_for_role_' . $this->{$rolePrimaryKey};
+        $rolePrimaryKey  = $this->primaryKey;
+        $cacheKey        = 'entrust_permissions_for_role_' . $this->{$rolePrimaryKey};
+        $permissionModel = Config::get('entrust.permission');
+
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
-                return $this->perms()->get();
+            // Store as arrays (like cachedRoles does) to avoid serialization issues with Redis
+            $permissionsArray = Cache::tags(Config::get('entrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+                return $this->perms()->get()->toArray();
+            });
+
+            // Reconstruct Permission objects from arrays
+            return collect($permissionsArray)->map(function ($permArr) use ($permissionModel) {
+                return (new $permissionModel())
+                    ->newFromBuilder($permArr);
             });
         } else {
             return $this->perms()->get();
@@ -183,7 +192,9 @@ trait EntrustRoleTrait
         }
 
         if (is_array($permission)) {
-            return $this->attachPermissions($permission);
+            $this->attachPermissions($permission);
+
+            return;
         }
 
         // Validate that we have a valid permission ID (must be numeric and > 0)
@@ -193,6 +204,11 @@ trait EntrustRoleTrait
 
         // Use syncWithoutDetaching to prevent duplicate key errors
         $this->perms()->syncWithoutDetaching([$permission]);
+
+        // Clear cache after attaching permission
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        }
     }
 
     /**
@@ -209,10 +225,17 @@ trait EntrustRoleTrait
         }
 
         if (is_array($permission)) {
-            return $this->detachPermissions($permission);
+            $this->detachPermissions($permission);
+
+            return;
         }
 
         $this->perms()->detach($permission);
+
+        // Clear cache after detaching permission
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
+        }
     }
 
     /**
@@ -272,7 +295,16 @@ trait EntrustRoleTrait
         }
 
         foreach ($permissions as $permission) {
-            $this->detachPermission($permission);
+            if (is_object($permission)) {
+                $this->perms()->detach($permission->getKey());
+            } else {
+                $this->perms()->detach($permission);
+            }
+        }
+
+        // Clear cache once after detaching all permissions
+        if (Cache::getStore() instanceof TaggableStore) {
+            Cache::tags(Config::get('entrust.permission_role_table'))->flush();
         }
     }
 }

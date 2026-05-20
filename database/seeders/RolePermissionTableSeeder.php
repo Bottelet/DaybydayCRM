@@ -10,21 +10,23 @@ class RolePermissionTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * Uses syncWithoutDetaching to prevent duplicate key errors.
+     * Uses syncWithoutDetaching to prevent duplicate key errors on re-seed.
      *
      * @return void
      */
     public function run()
     {
-        $ownerRole      = Role::where('name', Role::OWNER_ROLE)->first();
         $allPermissions = Permission::all()->pluck('id')->toArray();
 
-        // Use syncWithoutDetaching to prevent duplicate key errors
-        $ownerRole->perms()->syncWithoutDetaching($allPermissions);
+        foreach ([Role::OWNER_ROLE, Role::ADMIN_ROLE] as $roleName) {
+            $role = Role::where('name', $roleName)->first();
 
-        $adminRole = Role::where('name', Role::ADMIN_ROLE)->first();
+            if ( ! $role) {
+                $this->command->warn("RolePermissionTableSeeder: role '{$roleName}' not found, skipping.");
+                continue;
+            }
 
-        // Use syncWithoutDetaching to prevent duplicate key errors
-        $adminRole->perms()->syncWithoutDetaching($allPermissions);
+            $role->perms()->syncWithoutDetaching($allPermissions);
+        }
     }
 }

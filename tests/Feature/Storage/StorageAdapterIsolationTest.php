@@ -5,6 +5,7 @@ namespace Tests\Feature\Storage;
 use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;
+use App\Models\Document;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\NullStorageAdapter;
 use App\Services\Storage\StorageAdapterRegistry;

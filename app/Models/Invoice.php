@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use App\Enums\InvoiceStatus;
-use App\Repositories\BillingIntegration\BillingIntegrationInterface;
 use App\Services\Invoice\InvoiceCalculator;
-use App\Services\InvoiceNumber\InvoiceNumberService;
 use App\Traits\HasExternalId;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -81,14 +78,14 @@ class Invoice extends Model
 
     # endregion
 
-    public function canUpdateInvoice()
+    public function canUpdateInvoice(): bool
     {
-        return ! ($this->isSent());
+        return ! $this->isSent();
     }
 
-    public function isSent()
+    public function isSent(): bool
     {
-        return $this->sent_at != null;
+        return $this->sent_at !== null;
     }
 
     public function removeReference(): bool
@@ -99,57 +96,6 @@ class Invoice extends Model
             'source_id'              => null,
             'source_type'            => null,
         ]);
-    }
-
-    /**
-     * @param bool $sendMail
-     *
-     * @return array
-     */
-    public function invoice($contactId)
-    {
-        /** @var BillingIntegrationInterface $api */
-        $api = Integration::initBillingIntegration();
-        if ($api && $contactId) {
-            $results = $api->createInvoice(
-                [
-                    'currency'            => Setting::first()->currency,
-                    'show_lines_incl_vat' => true,
-                    'description'         => $this->source->title,
-                    'contact_id'          => $contactId,
-                    'invoice_lines'       => $this->invoiceLines,
-                ]
-            );
-            $this->integration_invoice_id = $results->invoiceId;
-            $this->integration_type       = get_class($api);
-            $this->save();
-
-            $booked = $api->bookInvoice($results->invoiceId, $results->timestamp);
-        }
-
-        return [
-            'invoice_number' => isset($booked) ? $booked->invoiceNumber : app(InvoiceNumberService::class)->nextInvoiceNumber(),
-            'due_at'         => isset($booked) ? Carbon::parse($booked->paymentDate) : Carbon::today()->addDays(14),
-        ];
-    }
-
-    public function sendMail($subject, $message, $recipient, $attachPdf = false)
-    {
-        /** @var BillingIntegrationInterface $api */
-        $api = Integration::initBillingIntegration();
-
-        if ( ! $api) {
-            return false;
-        }
-
-        $api->sendInvoice($this, $subject, $message, $recipient, $attachPdf);
-
-        activity('task')
-            ->performedOn($this)
-            ->withProperties(['action' => 'sent_invoice'])
-            ->log('user has send the invoice to the customer');
-
-        return true;
     }
 
     public function scopePastDueAt($query)
@@ -164,8 +110,6 @@ class Invoice extends Model
 
     public function getTotalPriceAttribute()
     {
-        $invoiceCalculator = new InvoiceCalculator($this);
-
-        return $invoiceCalculator->getTotalPrice();
+        return (new InvoiceCalculator($this))->getTotalPrice();
     }
 }

@@ -71,7 +71,7 @@ class Lead extends Model implements Commentable
      */
     public static function findByExternalId(string $externalId)
     {
-        return static::where('external_id', $externalId)->first();
+        return static::query()->where('external_id', $externalId)->first();
     }
 
     // getRouteKeyName() is provided by HasExternalId trait
@@ -162,7 +162,7 @@ class Lead extends Model implements Commentable
             return $this->user;
         }
 
-        return User::find($this->user_assigned_id);
+        return User::query()->find($this->user_assigned_id);
     }
 
     public function isClosed()
@@ -181,7 +181,7 @@ class Lead extends Model implements Commentable
         if ( ! $this->canConvertToOrder()) {
             return false;
         }
-        $invoice = Invoice::create([
+        $invoice = Invoice::query()->create([
             'status'      => 'draft',
             'client_id'   => $this->client->id,
             'external_id' => Uuid::uuid4()->toString(),

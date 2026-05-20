@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Models\Integration;
 use App\Repositories\BillingIntegration\BillingIntegrationInterface;
+use Throwable;
 
 /**
  * Registry that resolves the active billing integration adapter.
@@ -42,14 +43,14 @@ class BillingIntegrationRegistry
         // BillingIntegrationInterface – no dynamic "App\{Name}" guessing.
         $candidates = [
             $integration->name,
-            'App\\' . ltrim($integration->name, '\\'),
+            'App\\' . mb_ltrim($integration->name, '\\'),
         ];
 
         foreach ($candidates as $candidate) {
             if (class_exists($candidate) && is_a($candidate, BillingIntegrationInterface::class, true)) {
                 try {
                     return $this->resolved = app($candidate);
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     // Adapter could not be instantiated (missing credentials,
                     // network not available at boot time, …).  Fall through to
                     // the null adapter so the rest of the application can keep

@@ -39,7 +39,7 @@ class Permission extends Model
      */
     public static function getOrCreateByName(string $name, array $attributes = [])
     {
-        return static::firstOrCreate(['name' => $name], $attributes);
+        return static::query()->firstOrCreate(['name' => $name], $attributes);
     }
 
     # region Relationships

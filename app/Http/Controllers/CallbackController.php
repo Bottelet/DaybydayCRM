@@ -25,7 +25,7 @@ class CallbackController extends Controller
             return redirect()->route('integrations.index');
         }
         $res = app(DropboxAuthenticator::class)->token($request->code);
-        Integration::create(['name' => Dropbox::class, 'api_key' => $res->access_token, 'api_type' => 'file']);
+        Integration::query()->create(['name' => Dropbox::class, 'api_key' => $res->access_token, 'api_type' => 'file']);
 
         return redirect('/integrations');
     }
@@ -51,7 +51,7 @@ class CallbackController extends Controller
             return redirect()->route('integrations.index');
         }
 
-        Integration::create(['name' => GoogleDrive::class, 'api_key' => $res['refresh_token'], 'api_type' => 'file']);
+        Integration::query()->create(['name' => GoogleDrive::class, 'api_key' => $res['refresh_token'], 'api_type' => 'file']);
 
         return redirect('/integrations');
     }

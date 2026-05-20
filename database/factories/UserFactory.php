@@ -57,7 +57,7 @@ class UserFactory extends Factory
                 'display_name' => ucfirst($roleName),
             ];
 
-            $role = Role::firstOrCreate(
+            $role = Role::query()->firstOrCreate(
                 ['name' => $data['name']],
                 [
                     'display_name' => $data['display_name'],

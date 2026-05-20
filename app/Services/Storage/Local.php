@@ -3,6 +3,7 @@
 namespace App\Services\Storage;
 
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
+use Illuminate\Support\Facades\Storage;
 
 class Local implements FilesystemIntegration
 {
@@ -31,7 +32,11 @@ class Local implements FilesystemIntegration
             return 'fake file content';
         }
 
-        // TODO: Implement actual view() method for production
+        if ( ! $file || ! isset($file->path) || ! Storage::exists($file->path)) {
+            return;
+        }
+
+        return Storage::get($file->path);
     }
 
     public function download($file)
@@ -41,7 +46,11 @@ class Local implements FilesystemIntegration
             return 'fake file content';
         }
 
-        // TODO: Implement actual download() method for production
+        if ( ! $file || ! isset($file->path) || ! Storage::exists($file->path)) {
+            return;
+        }
+
+        return Storage::get($file->path);
     }
 
     public function revokeAccess()

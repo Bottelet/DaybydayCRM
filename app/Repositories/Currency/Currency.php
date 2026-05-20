@@ -81,6 +81,16 @@ class Currency
             'symbolPlacement'   => 'before',
             'vatPercentage'     => 2000,
         ],
+        'GBP' => [
+            'title'             => 'British Pound',
+            'code'              => 'GBP',
+            'symbol'            => '£',
+            'precision'         => 2,
+            'thousandSeparator' => ',',
+            'decimalSeparator'  => '.',
+            'symbolPlacement'   => 'before',
+            'vatPercentage'     => 2000,
+        ],
     ];
 
     public function __construct($code)

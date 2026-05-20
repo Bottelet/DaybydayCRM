@@ -17,7 +17,7 @@ class Status extends Model
      */
     public static function isValidForType(int $statusId, string $sourceType): bool
     {
-        return self::where('id', $statusId)
+        return self::query()->where('id', $statusId)
             ->where('source_type', $sourceType)
             ->exists();
     }

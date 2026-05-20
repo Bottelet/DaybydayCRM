@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Absence\StoreAbsenceAction;
 use App\Enums\AbsenceReason;
 use App\Models\Absence;
 use App\Models\User;
+use App\Services\AbsenceService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Throwable;
 use Yajra\DataTables\DataTables;
 
 class AbsenceController extends Controller
@@ -19,7 +19,7 @@ class AbsenceController extends Controller
 
             return redirect()->back();
         }
-        $absences = Absence::select(['external_id', 'reason', 'start_at', 'end_at', 'user_id'])->with('user');
+        $absences = Absence::query()->select(['external_id', 'reason', 'start_at', 'end_at', 'user_id'])->with('user');
 
         return DataTables::of($absences)
             ->editColumn('user_id', function ($absences) {
@@ -67,35 +67,33 @@ class AbsenceController extends Controller
             ->withUsers($users);
     }
 
-    public function store(Request $request, StoreAbsenceAction $storeAbsenceAction)
+    public function store(Request $request, AbsenceService $absenceService)
     {
-        $medical_certificate = null;
-        $user                = auth()->user();
+        try {
+            $result = $absenceService->storeAbsence($request);
+        } catch (Throwable $exception) {
+            report($exception);
 
-        if ($request->user_external_id && auth()->user()->can('absence-manage')) {
-            $user = User::whereExternalId($request->user_external_id)->first();
-            if ( ! $user) {
-                Session::flash('flash_message_warning', __('Could not find user'));
+            return $this->failureResponse(
+                $request,
+                __('Absence could not be registered. Please try again.'),
+                'absence'
+            );
+        }
 
-                return redirect()->back();
+        if ($result['error']) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $result['error']], 400);
             }
-        }
-        if ($request->medical_certificate == true) {
-            $medical_certificate = true;
-        } elseif ($request->medical_certificate == false) {
-            $medical_certificate = false;
+            session()->flash('flash_message_warning', __($result['error']));
+
+            return redirect()->back();
         }
 
-        $storeAbsenceAction->execute(
-            user: $user,
-            reason: $request->reason,
-            startDate: $request->start_date,
-            endDate: $request->end_date,
-            medicalCertificate: $medical_certificate,
-            comment: $request->comment
-        );
-
-        Session::flash('flash_message', __('Absence registered'));
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Absence registered'], 200);
+        }
+        session()->flash('flash_message', __('Absence registered'));
 
         return redirect()->back();
     }
@@ -103,7 +101,7 @@ class AbsenceController extends Controller
     public function destroy(Absence $absence)
     {
         if ( ! auth()->user()->can('absence-manage')) {
-            Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+            session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
 
             return redirect()->back();
         }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\InvoiceStatus;
 use App\Enums\PaymentSource;
 use App\Http\Requests\Invoice\AddInvoiceLine;
-use App\Models\Integration;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
 use App\Models\Product;
@@ -13,7 +12,10 @@ use App\Models\Setting;
 use App\Repositories\Currency\Currency;
 use App\Repositories\Money\MoneyConverter;
 use App\Repositories\Tax\Tax;
+use App\Services\Billing\BillingIntegrationRegistry;
+use App\Services\Billing\NullBillingAdapter;
 use App\Services\Invoice\InvoiceCalculator;
+use App\Services\Invoice\InvoiceService;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
 use Exception;
@@ -28,6 +30,11 @@ class InvoicesController extends Controller
     protected $clients;
 
     protected $invoices;
+
+    public function __construct(
+        private BillingIntegrationRegistry $billing,
+        private InvoiceService $invoiceService,
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -52,15 +59,13 @@ class InvoicesController extends Controller
             return redirect()->route('clients.index');
         }
 
-        $apiConnected    = false;
+        $api = $this->billing->driver();
+
+        $apiConnected    = ! ($api instanceof NullBillingAdapter);
         $invoiceContacts = [];
         $primaryContact  = null;
 
-        $api = Integration::initBillingIntegration();
-
-        if ($api) {
-            $apiConnected = true;
-
+        if ($apiConnected) {
             $invoiceContacts = $api->getContacts();
             if (empty($invoiceContacts)) {
                 $apiConnected = false;
@@ -110,10 +115,10 @@ class InvoicesController extends Controller
             return redirect()->route('invoices.show', $external_id);
         }
 
-        $result = $invoice->invoice($request->invoiceContact);
+        $result = $this->invoiceService->submitToBilling($invoice, $request->invoiceContact);
         if ($request->sendMail && $request->invoiceContact) {
-            $attachPdf = $request->attachPdf ? true : false;
-            $invoice->sendMail($request->subject, $request->message, $request->recipientMail, $attachPdf);
+            $attachPdf = (bool) $request->attachPdf;
+            $this->invoiceService->sendByEmail($invoice, $request->subject, $request->message, $request->recipientMail, $attachPdf);
         }
 
         $invoice->sent_at        = Carbon::now();
@@ -154,7 +159,7 @@ class InvoicesController extends Controller
             $product = Product::whereExternalId($request->product)->first()->id;
         }
 
-        InvoiceLine::create([
+        InvoiceLine::query()->create([
             'external_id' => Uuid::uuid4()->toString(),
             'title'       => $request->title,
             'comment'     => $request->comment,
@@ -214,7 +219,7 @@ class InvoicesController extends Controller
     public function moneyFormat()
     {
         $formats                  = [];
-        $currency                 = app(Currency::class, ['code' => Setting::select('currency')->first()->currency]);
+        $currency                 = app(Currency::class, ['code' => Setting::query()->select('currency')->first()->currency]);
         $formats                  = array_merge($formats, $currency->toArray());
         $formats['vatPercentage'] = app(Tax::class)->multipleVatRate();
         $formats['vatRate']       = app(Tax::class)->vatRate();

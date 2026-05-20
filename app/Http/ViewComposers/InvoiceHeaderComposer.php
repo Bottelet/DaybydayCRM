@@ -3,7 +3,7 @@
 namespace App\Http\ViewComposers;
 
 use App\Models\Invoice;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 class InvoiceHeaderComposer
 {
@@ -14,10 +14,20 @@ class InvoiceHeaderComposer
      */
     public function compose(View $view)
     {
-        $invoices = Invoice::findOrFail($view->getData()['invoice']['id']);
+        $data = $view->getData();
 
-        $client       = $invoices->client;
-        $contact_info = $client->contacts()->first();
+        $invoice = $data['invoice'] ?? null;
+
+        if ($invoice instanceof Invoice) {
+            $invoiceModel = $invoice;
+        } elseif (is_array($invoice) && isset($invoice['id'])) {
+            $invoiceModel = Invoice::find($invoice['id']);
+        } else {
+            $invoiceModel = null;
+        }
+
+        $client       = $invoiceModel?->client;
+        $contact_info = $client?->contacts()->first();
 
         $view->with('client', $client);
         $view->with('contact_info', $contact_info);

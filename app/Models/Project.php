@@ -58,7 +58,7 @@ class Project extends Model implements Commentable
      */
     public static function findByExternalId(string $externalId)
     {
-        return static::where('external_id', $externalId)->first();
+        return static::query()->where('external_id', $externalId)->first();
     }
 
     // getRouteKeyName() is provided by HasExternalId trait

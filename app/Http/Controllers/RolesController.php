@@ -7,8 +7,9 @@ use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Models\Integration;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Services\Role\RoleService;
 use Illuminate\Support\Facades\Session;
-use Ramsey\Uuid\Uuid;
+use Throwable;
 use Yajra\Datatables\Datatables;
 
 class RolesController extends Controller
@@ -16,7 +17,7 @@ class RolesController extends Controller
     /**
      * RolesController constructor.
      */
-    public function __construct()
+    public function __construct(private RoleService $roleService)
     {
         $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'update']]);
         $this->middleware('is.demo', ['except' => ['index', 'create', 'show', 'indexData']]);
@@ -29,7 +30,7 @@ class RolesController extends Controller
      */
     public function indexData()
     {
-        $roles = Role::select(['id', 'name', 'external_id', 'display_name']);
+        $roles = Role::query()->select(['id', 'name', 'external_id', 'display_name']);
 
         return Datatables::of($roles)
             ->addColumn('namelink', function ($roles) {
@@ -101,14 +102,18 @@ class RolesController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        $roleName        = $request->name;
-        $roleDescription = $request->description;
-        Role::create([
-            'external_id'  => Uuid::uuid4()->toString(),
-            'name'         => mb_strtolower($roleName),
-            'display_name' => ucfirst($roleName),
-            'description'  => $roleDescription,
-        ]);
+        try {
+            $this->roleService->create($request->validated());
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $this->failureResponse(
+                $request,
+                __('Role could not be created. Please try again.'),
+                'role'
+            );
+        }
+
         session()->flash('flash_message', __('Role created'));
 
         return view('roles.index');
@@ -119,20 +124,15 @@ class RolesController extends Controller
      */
     public function destroy($external_id)
     {
-        $role = Role::where('external_id', $external_id)->first();
-        if ( ! $role->users->isEmpty()) {
+        $role = Role::query()->where('external_id', $external_id)->firstOrFail();
+
+        if ( ! $this->roleService->destroy($role)) {
             Session::flash('flash_message_warning', __("Can't delete role with users, please remove users"));
 
             return redirect()->route('roles.index');
         }
-        if ($role->name !== Role::ADMIN_ROLE && $role->name !== Role::OWNER_ROLE) {
-            $role->delete();
-        } else {
-            session()->flash('flash_message_warning', __('Can not delete role'));
 
-            return redirect()->route('roles.index');
-        }
-        session()->flash('flash_message', __('Role deleted'));
+        Session::flash('flash_message', __('Role deleted'));
 
         return redirect()->route('roles.index');
     }
@@ -142,22 +142,8 @@ class RolesController extends Controller
      */
     public function update(UpdateRoleRequest $request, $external_id)
     {
-        $allowed_permissions = [];
-
-        if ($request->validated()['permissions'] != null) {
-            foreach ($request->validated()['permissions'] as $permissionId => $permission) {
-                if ($permission === '1') {
-                    $allowed_permissions[] = (int) $permissionId;
-                }
-            }
-        } else {
-            $allowed_permissions = [];
-        }
-
         $role = Role::whereExternalId($external_id)->firstOrFail();
-
-        $role->permissions()->sync($allowed_permissions);
-        $role->save();
+        $this->roleService->syncPermissions($role, $request->validated('permissions'));
         Session::flash('flash_message', __('Role is updated'));
 
         return redirect()->back();
