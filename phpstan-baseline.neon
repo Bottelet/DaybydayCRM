@@ -91,9 +91,9 @@ parameters:
 			path: app/Http/Controllers/PaymentsController.php
 
 		-
-			message: '#^Class Yajra\\DataTables\\DataTables referenced with incorrect case\: Yajra\\Datatables\\Datatables\.$#'
-			identifier: class.nameCase
-			count: 2
+			message: '#^Call to static method of\(\) on an unknown class Yajra\\Datatables\\Datatables\.$#'
+			identifier: class.notFound
+			count: 1
 			path: app/Http/Controllers/RolesController.php
 
 		-
@@ -145,28 +145,10 @@ parameters:
 			path: app/Services/Activity/ActivityLogger.php
 
 		-
-			message: '#^Instantiated class App\\Services\\Storage\\Google_Service_Drive not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Services/Storage/GoogleDrive.php
-
-		-
 			message: '#^Method App\\Services\\Storage\\GoogleDrive\:\:revokeAccess\(\) should return bool but return statement is missing\.$#'
 			identifier: return.missing
 			count: 1
 			path: app/Services/Storage/GoogleDrive.php
-
-		-
-			message: '#^Result of method App\\Zizaco\\Entrust\\EntrustRole\:\:attachPermissions\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Zizaco/Entrust/EntrustRole.php
-
-		-
-			message: '#^Result of method App\\Zizaco\\Entrust\\EntrustRole\:\:detachPermissions\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Zizaco/Entrust/EntrustRole.php
 
 		-
 			message: '#^Instantiated class App\\Zizaco\\Entrust\\MigrationCommand not found\.$#'

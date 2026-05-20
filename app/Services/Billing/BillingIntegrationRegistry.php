@@ -34,7 +34,7 @@ class BillingIntegrationRegistry
 
         $integration = Integration::whereApiType('billing')->first();
 
-        if (! $integration) {
+        if ( ! $integration) {
             return $this->resolved = new NullBillingAdapter();
         }
 

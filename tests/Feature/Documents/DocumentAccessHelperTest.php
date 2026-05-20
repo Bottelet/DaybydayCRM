@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controllers\Document;
+namespace Tests\Feature\Documents;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;

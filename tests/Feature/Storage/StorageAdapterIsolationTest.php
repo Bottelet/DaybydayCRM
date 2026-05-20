@@ -84,7 +84,7 @@ class StorageAdapterIsolationTest extends AbstractTestCase
     public function it_returns_403_before_storage_initialises_for_an_unauthorized_upload()
     {
         /* Arrange */
-        $user   = \App\Models\User::factory()->create(); // no permissions
+        $user = \App\Models\User::factory()->create(); // no permissions
         $this->actingAs($user);
         $client = Client::factory()->create();
 

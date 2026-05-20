@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Controllers\Document;
+namespace Tests\Feature\Documents;
 
 use App\Enums\PermissionName;
 use App\Models\Client;
