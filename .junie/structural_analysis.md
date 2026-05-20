@@ -1,18 +1,26 @@
-# Structural Code Analysis
+# Structural Analysis
 
-Refer to **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** for a detailed structural analysis.
+This is the short structural map for quick orientation. See `.github/ARCHITECTURE.md` for deeper detail.
 
-## Commit Linting Requirement
-- Every commit must be linted before push/PR.
-- Run: `git ls-files '*.php' | xargs -n1 php -l`
-- CI also enforces this via the `php-lint` workflow.
+## High-level layout
+- `app/Http` — controllers, middleware, requests, and view composers
+- `app/Services` — workflow and orchestration logic
+- `app/Actions` — focused single-purpose operations
+- `app/Repositories` — adapters, formatting, currency/tax helpers, and integration boundaries
+- `app/Models` / `app/Observers` / `app/Traits` — domain state and shared behavior
+- `database/factories|seeders|migrations` — test and environment data setup
+- `tests/Feature` / `tests/Unit` / `tests/e2e` — layered test coverage
 
-## Core Weaknesses
-1. **Database Schema:** Mandatory fields (UUIDs, IP addresses) often lack DB-level defaults, relying on application-level boot methods.
-2. **Infrastructure:** Heavy reliance on `db:seed` in tests leads to slow execution and duplicate entry errors.
-3. **Brittle Logic:** Date/Time comparisons and relationship assumptions frequently cause test failures.
-4. **Technical Debt:** Outdated routing syntax and closure-based factories.
-5. **Percentage Storage:** Inconsistent handling of percentage values (stored as int × 100, requires division by 10000).
-6. **Response Handling:** Controllers lack consistent JSON vs web response differentiation.
-7. **Type Safety:** Status `source_type` mixes string literals and class names, causing validation failures.
-8. **Null Safety:** Trait methods don't consistently check for null before accessing optional properties.
+## Key structural realities
+- The codebase is in an active controller-to-service transition.
+- Entrust-based permissions still exist, so permission cache behavior matters.
+- Storage integrations use adapter-style abstractions and now include safer fallback/null behavior.
+- Demo, dummy, and test seeders have been reorganized and should be treated as evolving infrastructure.
+- Some legacy conventions remain, so always check whether a helper, service, or request already exists before adding new code.
+
+## Common hotspots
+- large legacy controllers
+- permission-sensitive middleware and tests
+- storage integrations and authentication
+- status handling and response branching
+- seeded data assumptions inside tests

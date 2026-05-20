@@ -1,15 +1,28 @@
-# Fundamental Architectural Analysis
+# Fundamental Analysis
 
-Refer to **[.github/ARCHITECTURE.md](../.github/ARCHITECTURE.md)** for the full analysis.
+Use this file as a fast summary; the authoritative detail lives in `AGENTS.md` and `.github/ARCHITECTURE.md`.
 
-## Commit Linting Requirement
-- Every commit must be linted before push/PR.
-- Run: `git ls-files '*.php' | xargs -n1 php -l`
-- CI also enforces this via the `php-lint` workflow.
+## System identity
+DaybydayCRM is a modular Laravel CRM handling sales, delivery, billing, documents, appointments, absences, permissions, and integrations.
 
-## Core Issues
-1. **Infrastructure:** Legacy factories and inconsistent UUID generation across models.
-2. **Logic Leaks:** Business logic scattered across controllers instead of Services/Actions.
-3. **Authorization:** Aging Entrust implementation and missing policy consistency.
-4. **Technical Debt:** Vue 2 EOL and legacy Webpack/Mix asset pipeline.
-5. **Testing Strategy:** Slow execution due to heavy setup and lack of true isolation.
+## Core architectural direction
+- thin controllers
+- services and actions for business logic
+- FormRequests for validation and normalization
+- traits and observers for repeated model behavior
+- adapters/registries for external integrations
+- strong separation between web and JSON response flows
+
+## Current branch themes
+- large-controller refactors
+- stronger validation boundaries
+- improved permission tooling and cache handling
+- storage hardening, especially Dropbox-related flows
+- broader Feature and Unit test coverage
+- contributor/agent documentation cleanup
+
+## Files to read next
+- `README.md`
+- `CHANGELOG.md`
+- `AGENTS.md`
+- `.github/ARCHITECTURE.md`
