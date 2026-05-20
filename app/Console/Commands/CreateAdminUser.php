@@ -8,8 +8,8 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CreateAdminUser extends Command
 {
@@ -46,8 +46,8 @@ class CreateAdminUser extends Command
         $this->newLine();
 
         // Resolve missing options interactively
-        $name = $this->option('name') ?: $this->ask('What is the admin name?');
-        $email = $this->option('email') ?: $this->ask('What is the admin email?');
+        $name     = $this->option('name') ?: $this->ask('What is the admin name?');
+        $email    = $this->option('email') ?: $this->ask('What is the admin email?');
         $password = $this->option('password') ?: $this->secret('What is the admin password?');
 
         // Validate inputs
@@ -72,14 +72,14 @@ class CreateAdminUser extends Command
         $department = Department::where('name', 'Management')->first();
         if ($department && ! $user->department()->where('department_id', $department->id)->exists()) {
             $user->department()->attach($department->id);
-            $this->line("   ✓ Attached user to Management department");
+            $this->line('   ✓ Attached user to Management department');
         }
 
         // Attach owner role
         $role = Role::where('name', 'owner')->first();
         if ($role && ! $user->roles()->where('role_id', $role->id)->exists()) {
             $user->roles()->attach($role->id);
-            $this->line("   ✓ Attached owner role");
+            $this->line('   ✓ Attached owner role');
         }
 
         $this->newLine();
@@ -96,8 +96,8 @@ class CreateAdminUser extends Command
         $validator = Validator::make(
             ['name' => $name, 'email' => $email, 'password' => $password],
             [
-                'name' => 'required|string|min:2',
-                'email' => 'required|email',
+                'name'     => 'required|string|min:2',
+                'email'    => 'required|email',
                 'password' => 'required|string|min:8',
             ]
         );
@@ -125,14 +125,14 @@ class CreateAdminUser extends Command
         $setting = Setting::first();
         if ( ! $setting) {
             $setting = Setting::create([
-                'client_number' => 10000,
+                'client_number'  => 10000,
                 'invoice_number' => 10000,
-                'country' => 'US',
-                'company' => 'Media',
-                'max_users' => 50,
-                'vat' => 0,
-                'currency' => 'USD',
-                'language' => 'en',
+                'country'        => 'US',
+                'company'        => 'Media',
+                'max_users'      => 50,
+                'vat'            => 0,
+                'currency'       => 'USD',
+                'language'       => 'en',
             ]);
             $this->line('   + Created default settings');
         } else {
@@ -144,8 +144,8 @@ class CreateAdminUser extends Command
             ['name' => 'owner'],
             [
                 'display_name' => 'Owner',
-                'description' => 'Full system owner',
-                'external_id' => (string) Str::uuid(),
+                'description'  => 'Full system owner',
+                'external_id'  => (string) Str::uuid(),
             ]
         );
         if ($role->wasRecentlyCreated) {
@@ -174,13 +174,11 @@ class CreateAdminUser extends Command
     private function createAdminUser(string $name, string $email, string $password): User
     {
         return User::create([
-            'name' => $name,
-            'email' => $email,
-            'password' => Hash::make($password),
+            'name'        => $name,
+            'email'       => $email,
+            'password'    => Hash::make($password),
             'external_id' => (string) Str::uuid(),
-            'language' => 'en',
+            'language'    => 'en',
         ]);
     }
 }
-
-

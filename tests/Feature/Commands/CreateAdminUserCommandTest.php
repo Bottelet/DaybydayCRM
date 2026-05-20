@@ -29,8 +29,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $email = 'admin@example.com';
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Admin User',
-            '--email' => $email,
+            '--name'     => 'Admin User',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -53,8 +53,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->assertCount(0, Department::all());
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test Admin',
-            '--email' => 'admin@example.com',
+            '--name'     => 'Test Admin',
+            '--email'    => 'admin@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -71,13 +71,13 @@ class CreateAdminUserCommandTest extends AbstractTestCase
     {
         $this->artisan('migrate:fresh')->run();
 
-        $email = 'admin@example.com';
-        $name = 'John Doe';
+        $email    = 'admin@example.com';
+        $name     = 'John Doe';
         $password = 'TestP@ss123';
 
         $this->artisan('user:create-admin', [
-            '--name' => $name,
-            '--email' => $email,
+            '--name'     => $name,
+            '--email'    => $email,
             '--password' => $password,
         ])->assertExitCode(0);
 
@@ -104,8 +104,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $email = 'newadmin@example.com';
 
         $this->artisan('user:create-admin', [
-            '--name' => 'New Admin',
-            '--email' => $email,
+            '--name'     => 'New Admin',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -121,21 +121,21 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->artisan('migrate:fresh --seed')->run();
 
         // Count records before
-        $settingsCountBefore = Setting::count();
-        $roleCountBefore = Role::count();
+        $settingsCountBefore   = Setting::count();
+        $roleCountBefore       = Role::count();
         $departmentCountBefore = Department::count();
 
         // Create first admin
         $this->artisan('user:create-admin', [
-            '--name' => 'First Admin',
-            '--email' => 'first@example.com',
+            '--name'     => 'First Admin',
+            '--email'    => 'first@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
         // Create second admin
         $this->artisan('user:create-admin', [
-            '--name' => 'Second Admin',
-            '--email' => 'second@example.com',
+            '--name'     => 'Second Admin',
+            '--email'    => 'second@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -154,19 +154,19 @@ class CreateAdminUserCommandTest extends AbstractTestCase
 
         // First run
         $this->artisan('user:create-admin', [
-            '--name' => 'Admin One',
-            '--email' => 'admin1@example.com',
+            '--name'     => 'Admin One',
+            '--email'    => 'admin1@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
-        $settingsCount = Setting::count();
-        $roleCount = Role::count();
+        $settingsCount   = Setting::count();
+        $roleCount       = Role::count();
         $departmentCount = Department::count();
 
         // Second run
         $this->artisan('user:create-admin', [
-            '--name' => 'Admin Two',
-            '--email' => 'admin2@example.com',
+            '--name'     => 'Admin Two',
+            '--email'    => 'admin2@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -197,8 +197,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
 
         // Attempt to create admin with same email
         $this->artisan('user:create-admin', [
-            '--name' => 'Another User',
-            '--email' => $email,
+            '--name'     => 'Another User',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(1)
             ->expectsOutput("❌ User with email '{$email}' already exists.");
@@ -212,8 +212,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->artisan('migrate:fresh')->run();
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test User',
-            '--email' => 'not-an-email',
+            '--name'     => 'Test User',
+            '--email'    => 'not-an-email',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(1)
             ->expectsOutput('❌ Validation failed:');
@@ -227,8 +227,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->artisan('migrate:fresh')->run();
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test User',
-            '--email' => 'user@example.com',
+            '--name'     => 'Test User',
+            '--email'    => 'user@example.com',
             '--password' => 'short',
         ])->assertExitCode(1)
             ->expectsOutput('❌ Validation failed:');
@@ -242,8 +242,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->artisan('migrate:fresh')->run();
 
         $this->artisan('user:create-admin', [
-            '--name' => 'A',
-            '--email' => 'user@example.com',
+            '--name'     => 'A',
+            '--email'    => 'user@example.com',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(1)
             ->expectsOutput('❌ Validation failed:');
@@ -260,8 +260,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
 
         // Attempt with invalid email
         $this->artisan('user:create-admin', [
-            '--name' => 'Test User',
-            '--email' => 'invalid-email',
+            '--name'     => 'Test User',
+            '--email'    => 'invalid-email',
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(1);
 
@@ -280,16 +280,16 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         User::factory()->create(['email' => $email]);
 
         $userCountBefore = User::count();
-        $managementDept = Department::where('name', 'Management')->first();
-        $ownerRole = Role::where('name', 'owner')->first();
+        $managementDept  = Department::where('name', 'Management')->first();
+        $ownerRole       = Role::where('name', 'owner')->first();
 
         $managementLinks = $managementDept ? $managementDept->users()->count() : 0;
-        $ownerRoleLinks = $ownerRole ? $ownerRole->users()->count() : 0;
+        $ownerRoleLinks  = $ownerRole ? $ownerRole->users()->count() : 0;
 
         // Attempt to create user with existing email
         $this->artisan('user:create-admin', [
-            '--name' => 'Another User',
-            '--email' => $email,
+            '--name'     => 'Another User',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(1);
 
@@ -313,12 +313,12 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $email = 'admin@example.com';
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test Admin',
-            '--email' => $email,
+            '--name'     => 'Test Admin',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
-        $user = User::where('email', $email)->first();
+        $user       = User::where('email', $email)->first();
         $management = Department::where('name', 'Management')->first();
 
         $this->assertNotNull($management);
@@ -335,12 +335,12 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $email = 'admin@example.com';
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test Admin',
-            '--email' => $email,
+            '--name'     => 'Test Admin',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
-        $user = User::where('email', $email)->first();
+        $user      = User::where('email', $email)->first();
         $ownerRole = Role::where('name', 'owner')->first();
 
         $this->assertNotNull($ownerRole);
@@ -357,8 +357,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $email = 'admin@example.com';
 
         $this->artisan('user:create-admin', [
-            '--name' => 'Test Admin',
-            '--email' => $email,
+            '--name'     => 'Test Admin',
+            '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
         ])->assertExitCode(0);
 
@@ -386,13 +386,13 @@ class CreateAdminUserCommandTest extends AbstractTestCase
     {
         $this->artisan('migrate:fresh')->run();
 
-        $email = 'admin@example.com';
-        $name = 'Admin User';
+        $email    = 'admin@example.com';
+        $name     = 'Admin User';
         $password = 'SecureP@ssw0rd';
 
         $output = $this->artisan('user:create-admin', [
-            '--name' => $name,
-            '--email' => $email,
+            '--name'     => $name,
+            '--email'    => $email,
             '--password' => $password,
         ])->run();
 
@@ -412,8 +412,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
     {
         $this->artisan('migrate:fresh')->run();
 
-        $email = 'interactive@example.com';
-        $name = 'Interactive User';
+        $email    = 'interactive@example.com';
+        $name     = 'Interactive User';
         $password = 'InteractiveP@ss123';
 
         $this->artisan('user:create-admin')
@@ -435,12 +435,12 @@ class CreateAdminUserCommandTest extends AbstractTestCase
     {
         $this->artisan('migrate:fresh')->run();
 
-        $email = 'mixed@example.com';
-        $name = 'Mixed User';
+        $email    = 'mixed@example.com';
+        $name     = 'Mixed User';
         $password = 'MixedP@ss123';
 
         $this->artisan('user:create-admin', [
-            '--name' => $name,
+            '--name'  => $name,
             '--email' => $email,
         ])
             ->expectsQuestion('What is the admin password?', $password)
@@ -461,13 +461,13 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         // Non-interactive run
         $this->artisan('migrate:fresh')->run();
 
-        $email1 = 'test1@example.com';
-        $name1 = 'Test User One';
+        $email1    = 'test1@example.com';
+        $name1     = 'Test User One';
         $password1 = 'TestP@ssw0rd123';
 
         $this->artisan('user:create-admin', [
-            '--name' => $name1,
-            '--email' => $email1,
+            '--name'     => $name1,
+            '--email'    => $email1,
             '--password' => $password1,
         ])->assertExitCode(0);
 
@@ -476,8 +476,8 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         // Reset and do interactive run with same values
         $this->artisan('migrate:fresh')->run();
 
-        $email2 = 'test2@example.com';
-        $name2 = 'Test User Two';
+        $email2    = 'test2@example.com';
+        $name2     = 'Test User Two';
         $password2 = 'TestP@ssw0rd123';
 
         $this->artisan('user:create-admin')
@@ -506,4 +506,3 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->assertTrue($user2->department()->where('department_id', $management->id)->exists());
     }
 }
-
