@@ -51,7 +51,7 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_unauthenticated_returns_json_for_json_request()
+    public function it_returns_json_for_unauthenticated_json_request()
     {
         /* Arrange */
 
@@ -65,7 +65,7 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_unauthenticated_redirects_to_login_for_web_request()
+    public function it_redirects_unauthenticated_web_request_to_login()
     {
         /* Arrange */
         auth()->logout();

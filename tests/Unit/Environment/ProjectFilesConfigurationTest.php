@@ -4,7 +4,6 @@ namespace Tests\Unit\Environment;
 
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Tests\AbstractTestCase;
 
 #[Group('project-files-configuration')]
@@ -615,7 +614,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         $vars    = [];
 
         foreach ($lines as $line) {
-            $line = trim($line);
+            $line = mb_trim($line);
 
             if ($line === '' || str_starts_with($line, '#')) {
                 continue;
@@ -623,8 +622,8 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
 
             if (str_contains($line, '=')) {
                 [$key, $value] = explode('=', $line, 2);
-                $key           = trim($key);
-                $value         = trim($value, " \t\"'");
+                $key           = mb_trim($key);
+                $value         = mb_trim($value, " \t\"'");
                 $vars[$key]    = $value;
             }
         }

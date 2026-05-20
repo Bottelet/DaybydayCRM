@@ -84,9 +84,9 @@ class CanNotAccessTest extends AbstractTestCase
     {
         /* Arrange */
         $user = User::factory()->create();
-        $role = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $role = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $user->attachRole($role);
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'client-delete']);
+        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'client-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->actingAs($user);
@@ -105,9 +105,9 @@ class CanNotAccessTest extends AbstractTestCase
     {
         /* Arrange */
         $authUser = User::factory()->create();
-        $role     = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $role     = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-delete']);
+        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'user-delete']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->actingAs($authUser);
@@ -126,9 +126,9 @@ class CanNotAccessTest extends AbstractTestCase
     {
         /* Arrange */
         $authUser = User::factory()->create();
-        $role     = Role::firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $role     = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
         $authUser->attachRole($role);
-        $permission = \App\Models\Permission::firstOrCreate(['name' => 'user-update']);
+        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'user-update']);
         $role->attachPermission($permission);
         \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
         $this->actingAs($authUser);

@@ -13,7 +13,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_app_environment_is_testing(): void
+    public function it_verifies_app_environment_is_testing(): void
     {
         /* Arrange */
 
@@ -25,7 +25,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_cache_store_is_configured_as_array_in_test_environment(): void
+    public function it_verifies_cache_store_is_configured_as_array_in_test_environment(): void
     {
         /* Arrange */
 
@@ -37,7 +37,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_cache_store_env_var_is_set_to_array(): void
+    public function it_verifies_cache_store_env_var_is_set_to_array(): void
     {
         /* Arrange */
 
@@ -49,7 +49,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_session_driver_is_configured_in_test_environment(): void
+    public function it_verifies_session_driver_is_configured_in_test_environment(): void
     {
         /* Arrange */
         $validDrivers = ['array', 'file', 'cookie', 'database', 'redis', 'apc', 'memcached'];
@@ -67,7 +67,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_queue_connection_is_sync_in_test_environment(): void
+    public function it_verifies_queue_connection_is_sync_in_test_environment(): void
     {
         /* Arrange */
 
@@ -79,7 +79,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_mail_mailer_does_not_send_real_emails_in_test_environment(): void
+    public function it_verifies_mail_mailer_does_not_send_real_emails_in_test_environment(): void
     {
         /* Arrange */
         $validMailers = ['array', 'log'];
@@ -96,7 +96,7 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_debug_mode_is_enabled_in_test_environment(): void
+    public function it_verifies_debug_mode_is_enabled_in_test_environment(): void
     {
         /* Arrange */
 
@@ -108,7 +108,19 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_cache_driver_env_var_is_not_set_in_test_environment(): void
+    public function it_verifies_storage_force_local_defaults_to_true(): void
+    {
+        /* Arrange */
+
+        /* Act */
+        $forceLocal = config('storage.force_local');
+
+        /* Assert */
+        $this->assertTrue($forceLocal);
+    }
+
+    #[Test]
+    public function it_verifies_cache_driver_env_var_is_not_set_in_test_environment(): void
     {
         /* Arrange */
 

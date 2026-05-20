@@ -66,7 +66,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_payment_factory_creates_payment_with_invoice()
+    public function it_creates_payment_with_invoice_via_factory()
     {
         /* Arrange */
 

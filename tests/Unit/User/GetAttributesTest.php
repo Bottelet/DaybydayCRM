@@ -23,7 +23,7 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function get_name_and_department()
+    public function it_gets_name_and_department()
     {
         /* Arrange */
         $department = Department::factory()->create([
@@ -43,7 +43,7 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function get_name_and_department_with_eager_loading()
+    public function it_gets_name_and_department_with_eager_loading()
     {
         /* Arrange */
         $department = Department::factory()->create([
@@ -64,7 +64,7 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function get_default_avatar_when_none_is_set()
+    public function it_gets_default_avatar_when_none_is_set()
     {
         /* Arrange */
         $this->user = User::factory()->create([
@@ -80,7 +80,7 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function get_path_when_image_is_set()
+    public function it_gets_path_when_image_is_set()
     {
         /* Arrange */
         $this->user = User::factory()->create([

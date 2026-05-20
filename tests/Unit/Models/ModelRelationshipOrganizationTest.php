@@ -63,15 +63,15 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $client = new Client();
 
         /* Act & Assert */
-        $this->assertTrue(method_exists($client, 'appointments'), 'appointments() should exist on Client');
-        $this->assertTrue(method_exists($client, 'contacts'), 'contacts() should exist on Client');
-        $this->assertTrue(method_exists($client, 'documents'), 'documents() should exist on Client');
-        $this->assertTrue(method_exists($client, 'invoices'), 'invoices() should exist on Client');
-        $this->assertTrue(method_exists($client, 'leads'), 'leads() should exist on Client');
-        $this->assertTrue(method_exists($client, 'primaryContact'), 'primaryContact() should exist on Client');
-        $this->assertTrue(method_exists($client, 'projects'), 'projects() should exist on Client');
-        $this->assertTrue(method_exists($client, 'tasks'), 'tasks() should exist on Client');
-        $this->assertTrue(method_exists($client, 'user'), 'user() should exist on Client');
+        $this->assertTrue(method_exists($client, 'appointments'), 'appointments() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'contacts'), 'contacts() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'documents'), 'documents() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'invoices'), 'invoices() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'leads'), 'leads() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'primaryContact'), 'primaryContact() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'projects'), 'projects() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'tasks'), 'tasks() should exist on Clients');
+        $this->assertTrue(method_exists($client, 'user'), 'user() should exist on Clients');
     }
 
     #[Test]
@@ -107,7 +107,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_invoice_line_all_relationship_methods_exist_after_reorganization()
+    public function it_verifies_all_invoice_line_relationship_methods_exist_after_reorganization()
     {
         /* Arrange */
         $invoiceLine = new InvoiceLine();
@@ -118,7 +118,7 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_invoice_line_invoice_returns_belongs_to_relationship()
+    public function it_returns_belongs_to_relationship_for_invoice_line_invoice()
     {
         /* Arrange */
         $invoice     = Invoice::factory()->create(['client_id' => $this->client->id]);
@@ -141,18 +141,18 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $lead = new Lead();
 
         /* Act & Assert */
-        $this->assertTrue(method_exists($lead, 'activity'), 'activity() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'appointments'), 'appointments() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'client'), 'client() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'comments'), 'comments() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'creator'), 'creator() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'documents'), 'documents() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'invoice'), 'invoice() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'notes'), 'notes() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'offers'), 'offers() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'projects'), 'projects() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'status'), 'status() should exist on Lead');
-        $this->assertTrue(method_exists($lead, 'user'), 'user() should exist on Lead');
+        $this->assertTrue(method_exists($lead, 'activity'), 'activity() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'appointments'), 'appointments() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'client'), 'client() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'comments'), 'comments() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'creator'), 'creator() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'documents'), 'documents() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'invoice'), 'invoice() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'notes'), 'notes() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'offers'), 'offers() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'projects'), 'projects() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'status'), 'status() should exist on Leads');
+        $this->assertTrue(method_exists($lead, 'user'), 'user() should exist on Leads');
     }
 
     #[Test]
@@ -209,12 +209,12 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $offer = new Offer();
 
         /* Act & Assert */
-        $this->assertTrue(method_exists($offer, 'invoice'), 'invoice() should exist on Offer');
-        $this->assertTrue(method_exists($offer, 'invoiceLines'), 'invoiceLines() should exist on Offer');
-        $this->assertTrue(method_exists($offer, 'lead'), 'lead() should exist on Offer');
-        $this->assertTrue(method_exists($offer, 'lines'), 'lines() should exist on Offer');
-        $this->assertTrue(method_exists($offer, 'source'), 'source() should exist on Offer');
-        $this->assertTrue(method_exists($offer, 'status'), 'status() should exist on Offer');
+        $this->assertTrue(method_exists($offer, 'invoice'), 'invoice() should exist on Offers');
+        $this->assertTrue(method_exists($offer, 'invoiceLines'), 'invoiceLines() should exist on Offers');
+        $this->assertTrue(method_exists($offer, 'lead'), 'lead() should exist on Offers');
+        $this->assertTrue(method_exists($offer, 'lines'), 'lines() should exist on Offers');
+        $this->assertTrue(method_exists($offer, 'source'), 'source() should exist on Offers');
+        $this->assertTrue(method_exists($offer, 'status'), 'status() should exist on Offers');
     }
 
     #[Test]
@@ -275,16 +275,16 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $project = new Project();
 
         /* Act & Assert */
-        $this->assertTrue(method_exists($project, 'activity'), 'activity() should exist on Project');
-        $this->assertTrue(method_exists($project, 'assignee'), 'assignee() should exist on Project');
-        $this->assertTrue(method_exists($project, 'client'), 'client() should exist on Project');
-        $this->assertTrue(method_exists($project, 'comments'), 'comments() should exist on Project');
-        $this->assertTrue(method_exists($project, 'creator'), 'creator() should exist on Project');
-        $this->assertTrue(method_exists($project, 'documents'), 'documents() should exist on Project');
-        $this->assertTrue(method_exists($project, 'lead'), 'lead() should exist on Project');
-        $this->assertTrue(method_exists($project, 'status'), 'status() should exist on Project');
-        $this->assertTrue(method_exists($project, 'tasks'), 'tasks() should exist on Project');
-        $this->assertTrue(method_exists($project, 'user'), 'user() should exist on Project');
+        $this->assertTrue(method_exists($project, 'activity'), 'activity() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'assignee'), 'assignee() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'client'), 'client() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'comments'), 'comments() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'creator'), 'creator() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'documents'), 'documents() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'lead'), 'lead() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'status'), 'status() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'tasks'), 'tasks() should exist on Projects');
+        $this->assertTrue(method_exists($project, 'user'), 'user() should exist on Projects');
     }
 
     #[Test]
@@ -440,16 +440,16 @@ class ModelRelationshipOrganizationTest extends AbstractTestCase
         $task = new Task();
 
         /* Act & Assert */
-        $this->assertTrue(method_exists($task, 'activity'), 'activity() should exist on Task');
-        $this->assertTrue(method_exists($task, 'appointments'), 'appointments() should exist on Task');
-        $this->assertTrue(method_exists($task, 'client'), 'client() should exist on Task');
-        $this->assertTrue(method_exists($task, 'comments'), 'comments() should exist on Task');
-        $this->assertTrue(method_exists($task, 'creator'), 'creator() should exist on Task');
-        $this->assertTrue(method_exists($task, 'documents'), 'documents() should exist on Task');
-        $this->assertTrue(method_exists($task, 'invoice'), 'invoice() should exist on Task');
-        $this->assertTrue(method_exists($task, 'project'), 'project() should exist on Task');
-        $this->assertTrue(method_exists($task, 'status'), 'status() should exist on Task');
-        $this->assertTrue(method_exists($task, 'user'), 'user() should exist on Task');
+        $this->assertTrue(method_exists($task, 'activity'), 'activity() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'appointments'), 'appointments() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'client'), 'client() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'comments'), 'comments() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'creator'), 'creator() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'documents'), 'documents() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'invoice'), 'invoice() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'project'), 'project() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'status'), 'status() should exist on Tasks');
+        $this->assertTrue(method_exists($task, 'user'), 'user() should exist on Tasks');
     }
 
     #[Test]

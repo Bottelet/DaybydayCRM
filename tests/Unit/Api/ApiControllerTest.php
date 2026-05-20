@@ -220,7 +220,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_controller_extends_illuminate_routing_controller()
+    public function it_verifies_controller_extends_illuminate_routing_controller()
     {
         /* Arrange */
 
@@ -246,7 +246,7 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_controller_does_not_depend_on_dingo_api()
+    public function it_verifies_controller_does_not_depend_on_dingo_api()
     {
         /* Arrange */
 

@@ -117,7 +117,7 @@ class RoleRepositoryTest extends AbstractTestCase
         /* Act */
         $roles        = $this->repository->listAllRoles();
         $displayNames = $roles->toArray();
-        $ownerRole    = Role::where('name', 'owner')->first();
+        $ownerRole    = Role::query()->where('name', 'owner')->first();
 
         /* Assert */
         if ($ownerRole) {

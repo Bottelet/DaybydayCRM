@@ -104,7 +104,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_vacation_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_vacation_factory_method()
     {
         /* Arrange */
 
@@ -118,7 +118,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_vacation_day_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_vacation_day_factory_method()
     {
         /* Arrange */
 
@@ -131,7 +131,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_sick_leave_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_sick_leave_factory_method()
     {
         /* Arrange */
 
@@ -145,7 +145,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_time_off_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_time_off_factory_method()
     {
         /* Arrange */
 
@@ -158,7 +158,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_time_off_in_lieu_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_time_off_in_lieu_factory_method()
     {
         /* Arrange */
 
@@ -172,7 +172,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_personal_leave_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_personal_leave_factory_method()
     {
         /* Arrange */
 
@@ -186,7 +186,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_flextime_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_flextime_factory_method()
     {
         /* Arrange */
 
@@ -200,7 +200,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_other_factory_method_returns_correct_reason()
+    public function it_returns_correct_reason_from_other_factory_method()
     {
         /* Arrange */
 
@@ -240,7 +240,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_time_off_in_lieu_shares_reason_string_with_time_off()
+    public function it_verifies_time_off_in_lieu_shares_reason_string_with_time_off()
     {
         /* Arrange */
 

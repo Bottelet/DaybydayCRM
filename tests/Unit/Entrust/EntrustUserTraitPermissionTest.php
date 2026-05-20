@@ -19,7 +19,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         /* Arrange */
         $user       = User::factory()->create();
         $role       = Role::factory()->create();
-        $permission = Permission::firstOrCreate(['name' => 'client-create']);
+        $permission = Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $role->attachPermission($permission);
@@ -34,7 +34,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
     {
         /* Arrange */
         $user = User::factory()->create();
-        Permission::firstOrCreate(['name' => 'client-create']);
+        Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $hasPermission = $user->can('client-create');
@@ -50,7 +50,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         $user       = User::factory()->create();
         $role1      = Role::factory()->create();
         $role2      = Role::factory()->create();
-        $permission = Permission::firstOrCreate(['name' => 'client-create']);
+        $permission = Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $role2->attachPermission($permission);
@@ -68,7 +68,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         $user       = User::factory()->create();
         $role1      = Role::factory()->create();
         $role2      = Role::factory()->create();
-        $permission = Permission::firstOrCreate(['name' => 'client-create']);
+        $permission = Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $role1->attachPermission($permission);
@@ -100,7 +100,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         /* Arrange */
         $user       = User::factory()->create();
         $role       = Role::factory()->create();
-        $permission = Permission::firstOrCreate(['name' => 'client-create']);
+        $permission = Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $role->attachPermission($permission);
@@ -116,8 +116,8 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         /* Arrange */
         $user  = User::factory()->create();
         $role  = Role::factory()->create();
-        $perm1 = Permission::firstOrCreate(['name' => 'client-create']);
-        $perm2 = Permission::firstOrCreate(['name' => 'client-edit']);
+        $perm1 = Permission::query()->firstOrCreate(['name' => 'client-create']);
+        $perm2 = Permission::query()->firstOrCreate(['name' => 'client-edit']);
 
         /* Act */
         $role->attachPermission($perm1);
@@ -133,8 +133,8 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         /* Arrange */
         $user  = User::factory()->create();
         $role  = Role::factory()->create();
-        $perm1 = Permission::firstOrCreate(['name' => 'client-create']);
-        $perm2 = Permission::firstOrCreate(['name' => 'client-edit']);
+        $perm1 = Permission::query()->firstOrCreate(['name' => 'client-create']);
+        $perm2 = Permission::query()->firstOrCreate(['name' => 'client-edit']);
 
         /* Act */
         $role->attachPermission($perm1);
@@ -151,7 +151,7 @@ class EntrustUserTraitPermissionTest extends AbstractTestCase
         /* Arrange */
         $user  = User::factory()->create();
         $role  = Role::factory()->create();
-        $perm1 = Permission::firstOrCreate(['name' => 'client-create']);
+        $perm1 = Permission::query()->firstOrCreate(['name' => 'client-create']);
 
         /* Act */
         $role->attachPermission($perm1);

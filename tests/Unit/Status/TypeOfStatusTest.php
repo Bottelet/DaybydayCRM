@@ -22,7 +22,7 @@ class TypeOfStatusTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function type_of_status_scopes_correctly_filter_by_source_type()
+    public function it_type_of_status_scopes_correctly_filter_by_source_type()
     {
         /* Arrange */
         Status::factory()->create([

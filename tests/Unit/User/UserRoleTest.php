@@ -19,7 +19,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_factory_state_with_role_attaches_specified_role()
+    public function it_attaches_specified_role_with_factory_state()
     {
         /* Arrange */
 
@@ -33,7 +33,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_factory_state_with_role_supports_different_roles()
+    public function it_supports_different_roles_with_factory_state()
     {
         /* Arrange */
 

@@ -30,7 +30,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         parent::setUp();
         $this->user = User::factory()->create();
-        $this->role = Role::firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
+        $this->role = Role::query()->firstOrCreate(['name' => 'owner'], ['display_name' => 'Owner']);
     }
 
     #[Test]
@@ -38,7 +38,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act */
         $user->attachRole($adminRole);
@@ -52,7 +52,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act */
         $user->attachRole($adminRole->id);
@@ -66,7 +66,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act */
         $user->attachRole(['id' => $adminRole->id]);
@@ -95,7 +95,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act */
         $user->attachRole($adminRole);
@@ -111,7 +111,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act & Assert */
         $this->assertFalse($user->hasRole('administrator'), 'User should not have role before attaching');
@@ -142,7 +142,7 @@ class EntrustUserTraitTest extends AbstractTestCase
     {
         /* Arrange */
         $user      = User::factory()->create();
-        $adminRole = Role::firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
+        $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
 
         /* Act */
         $user->attachRole($adminRole);
