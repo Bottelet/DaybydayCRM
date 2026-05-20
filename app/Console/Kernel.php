@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\ClearEntrustCacheCommand;
+use App\Console\Commands\CreateAdminUser;
 use App\Console\Commands\DiagnosePermissionsCommand;
 use App\Console\Commands\UpgradeCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
         UpgradeCommand::class,
         ClearEntrustCacheCommand::class,
         DiagnosePermissionsCommand::class,
+        CreateAdminUser::class,
     ];
 
     /**

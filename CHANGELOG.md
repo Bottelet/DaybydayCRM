@@ -16,6 +16,7 @@ This changelog is focused on the work currently represented by the active PR bra
 ### Added
 - New service-layer coverage across multiple domains, including Absence, Appointment, Comment, Department, Invoice, InvoiceLine, Lead, Offer, Payment, Project, Role, Task, and user update workflows.
 - New operational Artisan commands:
+  - `user:create-admin` for interactive or scripted admin user creation with automatic dependency provisioning
   - `entrust:clear` for permission cache cleanup
   - `entrust:diagnose` for permission troubleshooting
   - `upgrade` for upgrade-related workflows
@@ -29,6 +30,7 @@ This changelog is focused on the work currently represented by the active PR bra
   - command behavior
   - controller performance-sensitive paths
   - refactored payment and role/service flows
+  - admin user creation (fresh and seeded database scenarios, error handling, relationship attachments, interactive modes)
 
 ### Changed
 - Reworked large controllers to delegate more business logic into `app/Services/*` classes.
@@ -62,6 +64,8 @@ This changelog is focused on the work currently represented by the active PR bra
 - Clarified project-level agent guidance in `AGENTS.md`, `.github/copilot-instructions.md`, and `.junie/*.md`.
 - Preserved Makefile-based workflows for host and Docker development.
 - Kept PHP syntax linting as the minimum required commit-time validation.
+- Added interactive-mode `user:create-admin` command for simplified local development and testing setup (works with fresh or seeded databases).
+- Enabled scripted admin user creation for automation and deployment workflows (Ansible-friendly syntax).
 
 ### Notes for Upgraders
 - Review new and refactored service classes before extending controller behavior.

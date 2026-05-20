@@ -85,6 +85,13 @@ composer dev
 - `make dseed` — seed demo and dummy data inside Docker
 - `git ls-files '*.php' | xargs -n1 php -l` — minimum required PHP syntax lint before push/PR
 
+### Setup Commands
+- `php artisan user:create-admin` — create an admin user interactively (safe on fresh or seeded databases)
+- `php artisan user:create-admin --name="Admin" --email="admin@example.com" --password="SecureP@ss123"` — non-interactive admin creation (Ansible-friendly)
+- `php artisan daybyday:upgrade` — safely upgrade DaybydayCRM permissions, roles, and verify the system
+- `php artisan entrust:diagnose` — diagnose permission and role chain issues
+- `php artisan entrust:clear` — clear permission and role cache
+
 ### Repository guide
 - `AGENTS.md` — contributor and AI-agent workflow guide
 - `.github/ARCHITECTURE.md` — architecture and technical debt notes
