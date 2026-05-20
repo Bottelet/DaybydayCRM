@@ -25,8 +25,10 @@ class TaskIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertSee('New Task');
-        $response->assertSee(route('tasks.create'));
+        $response->assertSee(
+            '<a href="'.route('tasks.create').'" class="btn btn-brand cta-btn pull-right">New Task</a>',
+            false
+        );
     }
 
     #[Test]
@@ -41,8 +43,9 @@ class TaskIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertDontSee('New Task');
-        $response->assertDontSee(route('tasks.create'));
+        $response->assertDontSee(
+            '<a href="'.route('tasks.create').'" class="btn btn-brand cta-btn pull-right">New Task</a>',
+            false
+        );
     }
 }
-

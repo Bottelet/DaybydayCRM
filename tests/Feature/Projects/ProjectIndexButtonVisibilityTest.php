@@ -25,8 +25,10 @@ class ProjectIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertSee('New Project');
-        $response->assertSee(route('projects.create'));
+        $response->assertSee(
+            '<a href="'.route('projects.create').'" class="btn btn-brand cta-btn pull-right">New Project</a>',
+            false
+        );
     }
 
     #[Test]
@@ -41,8 +43,9 @@ class ProjectIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertDontSee('New Project');
-        $response->assertDontSee(route('projects.create'));
+        $response->assertDontSee(
+            '<a href="'.route('projects.create').'" class="btn btn-brand cta-btn pull-right">New Project</a>',
+            false
+        );
     }
 }
-

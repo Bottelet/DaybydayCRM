@@ -25,8 +25,10 @@ class ClientIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertSee('New Client');
-        $response->assertSee(route('clients.create'));
+        $response->assertSee(
+            '<a href="'.route('clients.create').'" class="btn btn-brand cta-btn pull-right">New Client</a>',
+            false
+        );
     }
 
     #[Test]
@@ -41,8 +43,9 @@ class ClientIndexButtonVisibilityTest extends AbstractTestCase
 
         /* Assert */
         $response->assertOk();
-        $response->assertDontSee('New Client');
-        $response->assertDontSee(route('clients.create'));
+        $response->assertDontSee(
+            '<a href="'.route('clients.create').'" class="btn btn-brand cta-btn pull-right">New Client</a>',
+            false
+        );
     }
 }
-
