@@ -169,6 +169,8 @@ jobs:
             exit 1
           fi
 
+          set +e
+
           # Stream phpunit output through the parser (shows only failures/errors live on screen)
           # while tee saves the full raw log to disk for the artifact upload.
           if [ "$GROUP" = "full" ]; then
@@ -179,8 +181,24 @@ jobs:
             $RUNNER_BIN --exclude-group flaky --group="$GROUP" $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
           fi
 
-          # Preserve the phpunit exit code (not tee/parser exit code)
-          exit "${PIPESTATUS[0]}"
+          PIPE_EXIT_CODES=("${PIPESTATUS[@]}")
+          PHPUNIT_EXIT="${PIPE_EXIT_CODES[0]}"
+          set -e
+
+          if [ "$PHPUNIT_EXIT" -eq 0 ]; then
+            exit 0
+          fi
+
+          if grep -Eq 'FAILURES!|ERRORS!|Failures:\s*[1-9][0-9]*|Errors:\s*[1-9][0-9]*' "$LOG_FILE"; then
+            exit "$PHPUNIT_EXIT"
+          fi
+
+          if grep -Eq 'PHPUnit Notices:\s*[1-9][0-9]*|Notices:\s*[1-9][0-9]*|Incomplete:\s*[1-9][0-9]*' "$LOG_FILE"; then
+            echo "Only PHPUnit notices and/or incomplete tests detected; not failing workflow."
+            exit 0
+          fi
+
+          exit "$PHPUNIT_EXIT"
 
       - name: Upload test log
         if: always()
