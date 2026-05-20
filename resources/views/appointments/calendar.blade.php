@@ -2,11 +2,12 @@
 <html>
 <head>
   <title>DaybydayCRM</title>
-  <link rel="stylesheet" href="{{ mix('css/vendor.css') }}">
-  <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-  <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-  <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="{{ mix('css/vendor.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ URL::asset('css/font-awesome.min.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ URL::asset('css/picker.classic.css') }}" type="text/css">
   <link rel="stylesheet" href="{{ mix('css/bootstrap-select.min.css') }}">
+  <link rel="shortcut icon" href="{{{ asset('images/favicon.png') }}}">
 </head>
 <body>
 <div id="wrapper">
