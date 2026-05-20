@@ -13,12 +13,12 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
 use ReflectionClass;
 use RuntimeException;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
 #[Group('storage')]
 #[Group('dropbox')]
 #[Group('authentication')]
-class DropboxAuthenticatorTest extends TestCase
+class DropboxAuthenticatorTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
