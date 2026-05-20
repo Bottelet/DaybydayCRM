@@ -28,7 +28,7 @@ class CreateAdminUserCommandTest extends AbstractTestCase
 
         $email = 'admin@example.com';
 
-        $this->artisan('user:create-admin', [
+        $this->artisan('daybyday:create-admin', [
             '--name'     => 'Admin User',
             '--email'    => $email,
             '--password' => 'SecureP@ssw0rd',
@@ -52,7 +52,7 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $this->assertCount(0, Role::all());
         $this->assertCount(0, Department::all());
 
-        $this->artisan('user:create-admin', [
+        $this->artisan('daybyday:create-admin', [
             '--name'     => 'Test Admin',
             '--email'    => 'admin@example.com',
             '--password' => 'SecureP@ssw0rd',
@@ -75,7 +75,7 @@ class CreateAdminUserCommandTest extends AbstractTestCase
         $name     = 'John Doe';
         $password = 'TestP@ss123';
 
-        $this->artisan('user:create-admin', [
+        $this->artisan('daybyday:create-admin', [
             '--name'     => $name,
             '--email'    => $email,
             '--password' => $password,
