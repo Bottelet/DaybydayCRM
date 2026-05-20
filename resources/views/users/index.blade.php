@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All users') }}
+    @if(Entrust::can(\App\Enums\PermissionName::USER_CREATE->value))
+        <a href="{{ route('users.create') }}" class="btn btn-brand cta-btn pull-right">@lang('New User')</a>
+    @endif
 @stop
 
 @section('content')

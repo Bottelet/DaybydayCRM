@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All tasks')}}
+    @if(Entrust::can(\App\Enums\PermissionName::TASK_CREATE->value))
+        <a href="{{ route('tasks.create') }}" class="btn btn-brand cta-btn pull-right">@lang('New Task')</a>
+    @endif
 @stop
 
 @section('content')

@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{ __('All projects')}}
+    @if(Entrust::can(\App\Enums\PermissionName::PROJECT_CREATE->value))
+        <a href="{{ route('projects.create') }}" class="btn btn-brand cta-btn pull-right">@lang('New Project')</a>
+    @endif
 @stop
 
 @section('content')

@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @section('heading')
     {{__('All Leads')}}
+    @if(Entrust::can(\App\Enums\PermissionName::LEAD_CREATE->value))
+        <a href="{{ route('leads.create') }}" class="btn btn-brand cta-btn pull-right">@lang('New Lead')</a>
+    @endif
 @stop
 
 @section('content')
