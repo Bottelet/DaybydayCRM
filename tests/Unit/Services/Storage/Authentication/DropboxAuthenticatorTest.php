@@ -183,11 +183,12 @@ class DropboxAuthenticatorTest extends AbstractTestCase
 
         // Act
         $authUrl = $authenticator->authUrl();
+        $query   = parse_url($authUrl, PHP_URL_QUERY);
+        parse_str($query, $params);
 
         // Assert
-        $this->assertStringContainsString('redirect_uri=', $authUrl);
-        // Verify it's URL encoded
-        $this->assertStringContainsString('dropbox.callback', urldecode($authUrl));
+        $this->assertArrayHasKey('redirect_uri', $params);
+        $this->assertEquals(route('dropbox.callback'), $params['redirect_uri']);
     }
 
     #[Test]

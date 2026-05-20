@@ -93,13 +93,13 @@ class Dropbox implements FilesystemIntegration
 
     public function view($file)
     {
+        if ( ! $file || ! isset($file->path)) {
+            return;
+        }
+
         // In testing/local environments, return fake file content
         if (config('app.env') === 'testing' || config('app.env') === 'local') {
             return 'fake file content';
-        }
-
-        if ( ! $file || ! isset($file->path)) {
-            return;
         }
 
         try {
@@ -113,13 +113,13 @@ class Dropbox implements FilesystemIntegration
 
     public function download($file)
     {
+        if ( ! $file || ! isset($file->path)) {
+            return;
+        }
+
         // In testing/local environments, return fake file content
         if (config('app.env') === 'testing' || config('app.env') === 'local') {
             return 'fake file content';
-        }
-
-        if ( ! $file || ! isset($file->path)) {
-            return;
         }
 
         try {

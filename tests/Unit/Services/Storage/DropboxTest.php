@@ -334,16 +334,12 @@ class DropboxTest extends AbstractTestCase
         /* Arrange */
         Integration::query()->delete();
 
-        // Create a new instance in app that will throw error on DB query
-        // We'll mock the query exception
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
+        /* Assert */
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Dropbox integration is not configured');
 
         /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->isEnabled();
-
-        /* Assert */
-        $this->assertFalse($result);
+        new Dropbox();
     }
 
     #[Test]
