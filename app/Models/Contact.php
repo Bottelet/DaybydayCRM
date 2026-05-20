@@ -23,6 +23,10 @@ class Contact extends Model
         'is_primary',
     ];
 
+    protected $casts = [
+        'is_primary' => 'boolean',
+    ];
+
     # region Relationships
 
     public function client()

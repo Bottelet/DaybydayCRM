@@ -225,4 +225,3 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertSame($client->id, $view->getShared('client')->id);
     }
 }
-

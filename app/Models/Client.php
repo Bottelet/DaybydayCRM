@@ -48,7 +48,7 @@ class Client extends Model
 
     public static function whereExternalId($external_id)
     {
-        return self::where('external_id', $external_id)->first();
+        return self::query()->where('external_id', $external_id)->first();
     }
 
     public function updateAssignee(User $user)
@@ -79,6 +79,11 @@ class Client extends Model
     public function documents()
     {
         return $this->morphMany(Document::class, 'source');
+    }
+
+    public function industry()
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id');
     }
 
     public function invoices()
@@ -122,7 +127,7 @@ class Client extends Model
 
     public function getAssignedUserAttribute()
     {
-        return User::findOrFail($this->user_id);
+        return User::query()->findOrFail($this->user_id);
     }
 
     public function getSearchableFields(): array

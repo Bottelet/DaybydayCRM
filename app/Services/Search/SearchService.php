@@ -22,8 +22,9 @@ class SearchService
         }
 
         if (null === $this->elasticsearch) {
-            $builder             = ClientBuilder::create()->setHosts($formattedHosts);
-            $this->elasticsearch = $builder->build();
+            $this->elasticsearch = ClientBuilder::create()
+                ->setHosts($formattedHosts)
+                ->build();
         }
 
         return $this->elasticsearch;

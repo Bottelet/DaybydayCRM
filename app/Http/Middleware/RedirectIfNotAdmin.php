@@ -23,7 +23,7 @@ class RedirectIfNotAdmin
 
         // For JSON/API requests, return 403 instead of redirecting
         if ($request->expectsJson()) {
-            abort(403, __('Only Allowed for admins'));
+            abort(403);
         }
 
         session()->flash('flash_message_warning', __('Only Allowed for admins'));

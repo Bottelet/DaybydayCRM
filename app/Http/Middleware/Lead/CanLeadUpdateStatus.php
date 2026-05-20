@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Lead;
 
+use App\Enums\PermissionName;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,15 @@ class CanLeadUpdateStatus
      */
     public function handle($request, Closure $next)
     {
-        if ( ! auth()->user()->can('lead-update-status')) {
-            session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
+        $user    = auth()->user();
+        $message = __("You don't have the right permission for this action");
+
+        if ( ! $user?->can(PermissionName::LEAD_UPDATE_STATUS->value)) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 403);
+            }
+
+            session()->flash('flash_message_warning', $message);
 
             return redirect()->back();
         }

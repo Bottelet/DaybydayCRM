@@ -32,6 +32,7 @@ class UpdateTaskDeadlineRequest extends FormRequest
         return [
             'deadline_date' => 'required|date',
             'deadline_time' => 'nullable|string',
+            'deadline'      => 'sometimes|string',
         ];
     }
 

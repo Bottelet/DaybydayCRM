@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Department\StoreDepartmentRequest;
 use App\Models\Department;
+use App\Services\Department\DepartmentService;
+use Exception;
 use Illuminate\Support\Facades\Session;
-use Ramsey\Uuid\Uuid;
 use Yajra\DataTables\Facades\DataTables;
 
 class DepartmentsController extends Controller
@@ -30,7 +31,7 @@ class DepartmentsController extends Controller
      */
     public function indexData()
     {
-        $departments = Department::select(['external_id', 'name', 'description']);
+        $departments = Department::query()->select(['external_id', 'name', 'description']);
 
         return Datatables::of($departments)
             ->editColumn('name', function ($departments) {
@@ -60,13 +61,9 @@ class DepartmentsController extends Controller
     /**
      * @return mixed
      */
-    public function store(StoreDepartmentRequest $request)
+    public function store(StoreDepartmentRequest $request, DepartmentService $service)
     {
-        Department::create([
-            'external_id' => Uuid::uuid4(),
-            'name'        => $request->name,
-            'description' => $request->description,
-        ]);
+        $service->store($request->validated());
         Session::flash('flash_message', __('Successfully created new department'));
 
         return redirect()->route('departments.index');
@@ -75,16 +72,15 @@ class DepartmentsController extends Controller
     /**
      * @return mixed
      */
-    public function destroy($external_id)
+    public function destroy($external_id, DepartmentService $service)
     {
-        $department = Department::whereExternalId($external_id)->first();
-
-        if ( ! $department->users->isEmpty()) {
-            Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
+        try {
+            $service->destroy($external_id);
+        } catch (Exception $e) {
+            Session::flash('flash_message_warning', $e->getMessage());
 
             return redirect()->route('departments.index');
         }
-        $department->delete();
 
         return redirect()->route('departments.index');
     }

@@ -31,8 +31,8 @@ class FakeView implements View
     }
 
     /**
-     * @param  array<string, mixed>|string  $key
-     * @param  mixed                        $value
+     * @param array<string, mixed>|string $key
+     * @param mixed                       $value
      */
     public function with($key, $value = null): static
     {
@@ -79,7 +79,7 @@ class FakeView implements View
     /** Assert that the given key was shared. */
     public function assertShared(string $key): void
     {
-        if (! array_key_exists($key, $this->shared)) {
+        if ( ! array_key_exists($key, $this->shared)) {
             throw new \PHPUnit\Framework\AssertionFailedError(
                 "FakeView: key [{$key}] was not shared via with()."
             );

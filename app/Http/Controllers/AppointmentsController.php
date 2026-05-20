@@ -6,6 +6,7 @@ use App\Http\Requests\Appointment\UpdateAppointmentCalendarRequest;
 use App\Models\Appointment;
 use App\Models\User;
 use Carbon\Carbon;
+use Throwable;
 
 class AppointmentsController extends Controller
 {
@@ -30,12 +31,37 @@ class AppointmentsController extends Controller
 
     public function update(UpdateAppointmentCalendarRequest $request, Appointment $appointment)
     {
-        // Parse the timestamps directly - they're already in the correct format
-        // Don't convert timezone as that would shift the time
-        $appointment->start_at = Carbon::parse($request->start);
-        $appointment->end_at   = Carbon::parse($request->end);
-        $appointment->user()->associate(User::where('external_id', $request->group)->first());
-        $appointment->save();
+        try {
+            // Parse the timestamps directly - they're already in the correct format
+            // Don't convert timezone as that would shift the time
+            $appointment->start_at = Carbon::parse($request->start);
+            $appointment->end_at   = Carbon::parse($request->end);
+            $assignee              = User::query()->where('external_id', $request->group)->first();
+
+            if ( ! $assignee) {
+                $message = __('Selected assignee was not found.');
+
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'message' => __('The given data was invalid.'),
+                        'errors'  => ['group' => [$message]],
+                    ], 400);
+                }
+
+                return redirect()->back()->withInput()->withErrors(['group' => $message]);
+            }
+
+            $appointment->user()->associate($assignee);
+            $appointment->save();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $this->failureResponse(
+                $request,
+                __('Appointment could not be updated. Please try again.'),
+                'appointment'
+            );
+        }
 
         return response($appointment);
     }

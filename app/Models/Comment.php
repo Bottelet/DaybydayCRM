@@ -19,6 +19,16 @@ class Comment extends Model
 
     protected $hidden = ['remember_token'];
 
+    public function getCommentableIdAttribute(): ?int
+    {
+        return $this->source_id;
+    }
+
+    public function getCommentableTypeAttribute(): ?string
+    {
+        return $this->source_type;
+    }
+
     # region Relationships
 
     public function commentable()

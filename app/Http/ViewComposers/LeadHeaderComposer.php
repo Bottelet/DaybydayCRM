@@ -3,7 +3,7 @@
 namespace App\Http\ViewComposers;
 
 use App\Models\Lead;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 class LeadHeaderComposer
 {
@@ -14,15 +14,21 @@ class LeadHeaderComposer
      */
     public function compose(View $view)
     {
-        $lead = Lead::findOrFail($view->getData()['lead']['id']);
-        /**
-         * [User assigned the task].
-         *
-         * @var contact
-         */
-        $contact      = $lead->user;
-        $client       = $lead->client;
-        $contact_info = $client->contacts()->first();
+        $data = $view->getData();
+
+        $lead = $data['lead'] ?? null;
+
+        if ($lead instanceof Lead) {
+            $leadModel = $lead;
+        } elseif (is_array($lead) && isset($lead['id'])) {
+            $leadModel = Lead::find($lead['id']);
+        } else {
+            $leadModel = null;
+        }
+
+        $contact      = $leadModel?->user;
+        $client       = $leadModel?->client;
+        $contact_info = $client?->contacts()->first();
 
         $view->with('contact', $contact);
         $view->with('contact_info', $contact_info);

@@ -57,14 +57,26 @@ class PaymentRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
+        $mergedData = [];
+
         if ($this->has('amount')) {
             // Normalize currency: replace comma with dot for decimal separator
             // Remove any spaces that might be present
             $normalizedAmount = str_replace([',', ' '], ['.', ''], $this->amount);
 
-            $this->merge([
-                'amount' => $normalizedAmount,
-            ]);
+            $mergedData['amount'] = $normalizedAmount;
+        }
+
+        if ($this->has('source') && is_string($this->source)) {
+            $normalizedSource     = mb_strtolower(mb_trim($this->source));
+            $mergedData['source'] = match ($normalizedSource) {
+                'card', 'check' => PaymentSource::bank()->getSource(),
+                default         => $this->source,
+            };
+        }
+
+        if ($mergedData !== []) {
+            $this->merge($mergedData);
         }
     }
 }

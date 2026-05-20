@@ -8,39 +8,24 @@ use Ramsey\Uuid\Uuid;
 
 class RolesTablesSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    private array $roles = [
+        ['name' => 'owner',         'display_name' => 'Owner',         'description' => 'Full system owner'],
+        ['name' => 'administrator', 'display_name' => 'Administrator', 'description' => 'System administrator'],
+        ['name' => 'manager',       'display_name' => 'Manager',       'description' => 'Department manager'],
+        ['name' => 'employee',      'display_name' => 'Employee',      'description' => 'Regular employee'],
+    ];
+
+    public function run(): void
     {
-        $super_adminRole               = new Role();
-        $super_adminRole->display_name = 'Owner';
-        $super_adminRole->external_id  = Uuid::uuid4();
-        $super_adminRole->name         = 'owner';
-        $super_adminRole->description  = 'Owner';
-        $super_adminRole->save();
-
-        $adminRole               = new Role();
-        $adminRole->display_name = 'Administrator';
-        $adminRole->external_id  = Uuid::uuid4();
-        $adminRole->name         = 'administrator';
-        $adminRole->description  = 'System Administrator';
-        $adminRole->save();
-
-        $editorRole               = new Role();
-        $editorRole->display_name = 'Manager';
-        $editorRole->external_id  = Uuid::uuid4();
-        $editorRole->name         = 'manager';
-        $editorRole->description  = 'System Manager';
-        $editorRole->save();
-
-        $employeeRole               = new Role();
-        $employeeRole->display_name = 'Employee';
-        $employeeRole->external_id  = Uuid::uuid4();
-        $employeeRole->name         = 'employee';
-        $employeeRole->description  = 'Employee';
-        $employeeRole->save();
+        foreach ($this->roles as $def) {
+            Role::query()->firstOrCreate(
+                ['name' => $def['name']],
+                [
+                    'external_id'  => Uuid::uuid4()->toString(),
+                    'display_name' => $def['display_name'],
+                    'description'  => $def['description'],
+                ]
+            );
+        }
     }
 }

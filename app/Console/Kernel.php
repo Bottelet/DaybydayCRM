@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ClearEntrustCacheCommand;
+use App\Console\Commands\DiagnosePermissionsCommand;
+use App\Console\Commands\UpgradeCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,8 +16,10 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\Inspire::class,
         Commands\Test::class,
+        UpgradeCommand::class,
+        ClearEntrustCacheCommand::class,
+        DiagnosePermissionsCommand::class,
     ];
 
     /**

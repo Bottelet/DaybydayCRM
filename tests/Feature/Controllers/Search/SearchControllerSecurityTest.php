@@ -23,9 +23,9 @@ class SearchControllerSecurityTest extends AbstractTestCase
         parent::setUp();
 
         Client::factory()->create(['company_name' => 'Test Company']);
-        Task::factory()->create(['title' => 'Test Task']);
-        Project::factory()->create(['title' => 'Test Project']);
-        Lead::factory()->create(['title' => 'Test Lead']);
+        Task::factory()->create(['title' => 'Test Tasks']);
+        Project::factory()->create(['title' => 'Test Projects']);
+        Lead::factory()->create(['title' => 'Test Leads']);
         User::factory()->create(['name' => 'Test User']);
     }
 

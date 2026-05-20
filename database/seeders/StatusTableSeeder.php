@@ -11,116 +11,34 @@ use Ramsey\Uuid\Uuid;
 
 class StatusTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    private array $statuses = [
+        // Tasks
+        [Task::class,    'Open',           '#2FA599'],
+        [Task::class,    'In-progress',    '#2FA55E'],
+        [Task::class,    'Pending',        '#EFAC57'],
+        [Task::class,    'Waiting client', '#60C0DC'],
+        [Task::class,    'Blocked',        '#E6733E'],
+        [Task::class,    'Closed',         '#D75453'],
+        // Leads
+        [Lead::class,    'Open',           '#2FA599'],
+        [Lead::class,    'Pending',        '#EFAC57'],
+        [Lead::class,    'Waiting client', '#60C0DC'],
+        [Lead::class,    'Closed',         '#D75453'],
+        // Projects
+        [Project::class, 'Open',           '#2FA599'],
+        [Project::class, 'In-progress',    '#3CA3BA'],
+        [Project::class, 'Blocked',        '#60C0DC'],
+        [Project::class, 'Cancelled',      '#821414'],
+        [Project::class, 'Completed',      '#D75453'],
+    ];
+
+    public function run(): void
     {
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Open';
-        $status->source_type = Task::class;
-        $status->color       = '#2FA599';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'In-progress';
-        $status->source_type = Task::class;
-        $status->color       = '#2FA55E';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Pending';
-        $status->source_type = Task::class;
-        $status->color       = '#EFAC57';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Waiting client';
-        $status->source_type = Task::class;
-        $status->color       = '#60C0DC';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Blocked';
-        $status->source_type = Task::class;
-        $status->color       = '#E6733E';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Closed';
-        $status->source_type = Task::class;
-        $status->color       = '#D75453';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Open';
-        $status->source_type = Lead::class;
-        $status->color       = '#2FA599';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Pending';
-        $status->source_type = Lead::class;
-        $status->color       = '#EFAC57';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Waiting client';
-        $status->source_type = Lead::class;
-        $status->color       = '#60C0DC';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Closed';
-        $status->source_type = Lead::class;
-        $status->color       = '#D75453';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Open';
-        $status->source_type = Project::class;
-        $status->color       = '#2FA599';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'In-progress';
-        $status->source_type = Project::class;
-        $status->color       = '#3CA3BA';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Blocked';
-        $status->source_type = Project::class;
-        $status->color       = '#60C0DC';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Cancelled';
-        $status->source_type = Project::class;
-        $status->color       = '#821414';
-        $status->save();
-
-        $status              = new Status();
-        $status->external_id = Uuid::uuid4();
-        $status->title       = 'Completed';
-        $status->source_type = Project::class;
-        $status->color       = '#D75453';
-        $status->save();
+        foreach ($this->statuses as [$type, $title, $color]) {
+            Status::query()->firstOrCreate(
+                ['source_type' => $type, 'title' => $title],
+                ['external_id' => Uuid::uuid4()->toString(), 'color' => $color]
+            );
+        }
     }
 }

@@ -109,24 +109,24 @@ class ProjectServiceTest extends AbstractTestCase
         $assignee = User::factory()->create();
         $client   = Client::factory()->create();
         $project  = Project::factory()->create([
-            'client_id'         => $client->id,
-            'user_assigned_id'  => $assignee->id,
+            'client_id'        => $client->id,
+            'user_assigned_id' => $assignee->id,
         ]);
         $taskUser = User::factory()->create();
 
         Task::factory()->create([
-            'project_id'        => $project->id,
-            'client_id'         => $project->client_id,
-            'user_assigned_id'  => $taskUser->id,
-            'user_created_id'   => $assignee->id,
+            'project_id'       => $project->id,
+            'client_id'        => $project->client_id,
+            'user_assigned_id' => $taskUser->id,
+            'user_created_id'  => $assignee->id,
         ]);
 
         $removedAssignee = User::factory()->create();
         Task::factory()->create([
-            'project_id'        => $project->id,
-            'client_id'         => $project->client_id,
-            'user_assigned_id'  => $removedAssignee->id,
-            'user_created_id'   => $assignee->id,
+            'project_id'       => $project->id,
+            'client_id'        => $project->client_id,
+            'user_assigned_id' => $removedAssignee->id,
+            'user_created_id'  => $assignee->id,
         ]);
         // Simulate a task pointing to a removed assignee (dangling FK on user relation lookup).
         $removedAssignee->delete();
@@ -142,19 +142,19 @@ class ProjectServiceTest extends AbstractTestCase
     #[Test]
     public function it_prepares_unique_collaborators_when_assignee_and_task_user_are_same(): void
     {
-        $service  = $this->app->make(ProjectService::class);
-        $user     = User::factory()->create();
-        $client   = Client::factory()->create();
-        $project  = Project::factory()->create([
-            'client_id'         => $client->id,
-            'user_assigned_id'  => $user->id,
+        $service = $this->app->make(ProjectService::class);
+        $user    = User::factory()->create();
+        $client  = Client::factory()->create();
+        $project = Project::factory()->create([
+            'client_id'        => $client->id,
+            'user_assigned_id' => $user->id,
         ]);
 
         Task::factory()->create([
-            'project_id'        => $project->id,
-            'client_id'         => $project->client_id,
-            'user_assigned_id'  => $user->id,
-            'user_created_id'   => $user->id,
+            'project_id'       => $project->id,
+            'client_id'        => $project->client_id,
+            'user_assigned_id' => $user->id,
+            'user_created_id'  => $user->id,
         ]);
 
         $prepared = $service->prepareShowCollaboratorsAndTasks($project);

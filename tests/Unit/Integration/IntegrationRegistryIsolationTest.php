@@ -72,7 +72,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         /* Act */
         app(BillingIntegrationRegistry::class)->reset();
         $registry = app(BillingIntegrationRegistry::class);
-         $driver   = $registry->driver();
+        $driver   = $registry->driver();
         $driver   = $registry->driver();
 
         /* Assert */
@@ -161,7 +161,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
 
         /* Act */
         $registry = app(StorageAdapterRegistry::class);
-         $driver   = $registry->driver();
+        $driver   = $registry->driver();
         $driver   = $registry->driver();
 
         /* Assert – testing env always uses local */

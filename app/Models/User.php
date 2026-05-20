@@ -16,33 +16,14 @@ use Laravel\Cashier\Billable;
 class User extends Authenticatable
 {
     use Billable;
+    use EntrustUserTrait, SoftDeletes {
+        SoftDeletes::restore as private softDeletesRestore;
+        EntrustUserTrait::restore insteadof SoftDeletes;
+    }
     use HasExternalId;
     use HasFactory;
     use Notifiable;
     use SearchableTrait;
-    use SoftDeletes, EntrustUserTrait {
-        SoftDeletes::restore as private softDeletesRestore;
-        EntrustUserTrait::restore insteadof SoftDeletes;
-    }
-
-    /**
-     * Restore a soft-deleted model instance.
-     * This overrides the EntrustUserTrait restore to properly call SoftDeletes restore.
-     *
-     * @return bool|null
-     */
-    public function restore()
-    {
-        $result = $this->softDeletesRestore();
-
-        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
-            Cache::tags(
-                \Illuminate\Support\Facades\Config::get('entrust.role_user_table')
-            )->flush();
-        }
-
-        return $result;
-    }
 
     protected $searchableFields = ['name', 'email'];
 
@@ -80,6 +61,25 @@ class User extends Authenticatable
     protected $appends = ['avatar'];
 
     protected $primaryKey = 'id';
+
+    /**
+     * Restore a soft-deleted model instance.
+     * This overrides the EntrustUserTrait restore to properly call SoftDeletes restore.
+     *
+     * @return bool|null
+     */
+    public function restore()
+    {
+        $result = $this->softDeletesRestore();
+
+        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+            Cache::tags(
+                \Illuminate\Support\Facades\Config::get('entrust.role_user_table')
+            )->flush();
+        }
+
+        return $result;
+    }
 
     # region Relationships
 

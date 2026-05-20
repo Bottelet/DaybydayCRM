@@ -45,7 +45,7 @@ trait Statusable
      */
     public function setStatus(string $statusTitle): bool
     {
-        $status = Status::where('title', $statusTitle)->first();
+        $status = Status::query()->where('title', $statusTitle)->first();
 
         if ($status) {
             $this->status_id = $status->id;

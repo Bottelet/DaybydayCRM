@@ -2,6 +2,7 @@
 
 use App\Providers\AppServiceProvider;
 use App\Providers\EventServiceProvider;
+use App\Providers\IntegrationServiceProvider;
 use App\Providers\RouteServiceProvider;
 use App\Providers\IntegrationServiceProvider;
 use App\Providers\ViewComposerServiceProvider;

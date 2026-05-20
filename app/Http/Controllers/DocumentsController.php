@@ -8,7 +8,7 @@ use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use App\Services\Storage\GetStorageProvider;
+use App\Services\Storage\StorageAdapterRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
@@ -20,7 +20,7 @@ class DocumentsController extends Controller
      */
     private const ASSIGNABLE_TYPES = [Task::class, Project::class, Lead::class];
 
-    public function __construct()
+    public function __construct(private StorageAdapterRegistry $storage)
     {
         $this->middleware('filesystem.is.enabled');
     }
@@ -50,7 +50,7 @@ class DocumentsController extends Controller
             return redirect()->back();
         }
 
-        $fileSystem = GetStorageProvider::getStorage();
+        $fileSystem = $this->storage->driver();
         $file       = $fileSystem->view($document);
 
         if ( ! $file) {
@@ -90,7 +90,7 @@ class DocumentsController extends Controller
             return redirect()->back();
         }
 
-        $fileSystem = GetStorageProvider::getStorage();
+        $fileSystem = $this->storage->driver();
         $file       = $fileSystem->download($document);
 
         if ( ! $file) {
@@ -113,6 +113,9 @@ class DocumentsController extends Controller
     public function upload(Request $request, $external_id)
     {
         if ( ! auth()->user()->can('document-upload')) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => __('You do not have permission to upload a document')], 403);
+            }
             session()->flash('flash_message_warning', __('You do not have permission to upload a document'));
 
             return redirect()->route('tasks.show', $external_id);
@@ -134,7 +137,7 @@ class DocumentsController extends Controller
         }
 
         $client_folder = $client->external_id;
-        $fileSystem    = GetStorageProvider::getStorage();
+        $fileSystem    = $this->storage->driver();
         $fileData      = $fileSystem->upload($client_folder, $filename, $file);
         $input         = array_replace(
             $request->all(),
@@ -150,7 +153,7 @@ class DocumentsController extends Controller
                 'integration_type'  => get_class($fileSystem),
             ]
         );
-        Document::create($input);
+        Document::query()->create($input);
         Session::flash('flash_message', __('File successfully uploaded'));
     }
 
@@ -192,10 +195,10 @@ class DocumentsController extends Controller
                 }
 
                 $folder     = $external_id;
-                $fileSystem = GetStorageProvider::getStorage();
+                $fileSystem = $this->storage->driver();
                 $fileData   = $fileSystem->upload($folder, $filename, $file);
 
-                Document::create([
+                Document::query()->create([
                     'external_id'       => Uuid::uuid4()->toString(),
                     'path'              => $fileData['file_path'],
                     'size'              => $totaltsize,
@@ -252,11 +255,11 @@ class DocumentsController extends Controller
 
                 $folder = $external_id;
 
-                $fileSystem = GetStorageProvider::getStorage();
+                $fileSystem = $this->storage->driver();
 
                 $fileData = $fileSystem->upload($folder, $filename, $file);
 
-                Document::create([
+                Document::query()->create([
                     'external_id'       => Uuid::uuid4()->toString(),
                     'path'              => $fileData['file_path'],
                     'size'              => $totaltsize,

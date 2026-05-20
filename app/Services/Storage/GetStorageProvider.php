@@ -20,7 +20,7 @@ class GetStorageProvider
     ];
 
     /**
-     * @deprecated Inject StorageAdapterRegistry instead.
+     * @deprecated inject StorageAdapterRegistry instead
      */
     public static function getStorage(): FilesystemIntegration
     {

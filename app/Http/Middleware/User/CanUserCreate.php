@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\User;
 
+use App\Enums\PermissionName;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -16,8 +17,15 @@ class CanUserCreate
      */
     public function handle($request, Closure $next)
     {
-        if ( ! auth()->user()->can('user-create')) {
-            session()->flash('flash_message_warning', __("You don't have permission to create a user"));
+        $user    = auth()->user();
+        $message = __("You don't have permission to create a user");
+
+        if ( ! $user?->can(PermissionName::USER_CREATE->value)) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 403);
+            }
+
+            session()->flash('flash_message_warning', $message);
 
             return redirect()->route('users.index');
         }
