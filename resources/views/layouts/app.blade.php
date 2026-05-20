@@ -13,7 +13,7 @@
 
     <!-- Styles -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    {{-- <link href="{{ mix('css/app.css') }}" rel="stylesheet"> --}}
+    @vite(['resources/assets/sass/app.scss'])
 
     <style>
         body {
@@ -26,8 +26,8 @@
             margin-right: 6px;
         }
         /* enable absolute positioning */
-        .inner-addon { 
-            position: relative; 
+        .inner-addon {
+            position: relative;
         }
 
         /* style icon */
@@ -48,7 +48,7 @@
         .right-addon input { padding-right: 30px; }
         .btn-primary:hover {
             border-color: #145a96;
-        } 
+        }
         .tablet {
             box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
             background-color: #ffffff;
@@ -70,6 +70,6 @@
         <!-- JavaScripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-{{-- <script src="{{ mix('js/app.js') }}"></script> --}}
+@vite(['resources/assets/js/app.js'])
 </body>
 </html>

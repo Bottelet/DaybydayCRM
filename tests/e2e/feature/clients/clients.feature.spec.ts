@@ -29,6 +29,17 @@ test.describe('Clients feature behavior', () => {
     await DomainAssertions.expectValidationError(response, 'name');
   });
 
+  test('create form validation alert is rendered at top of page content', async ({ page }) => {
+    await page.goto(`${PLAYWRIGHT_BASE_URL}/clients/create`);
+    await page.locator('#submitClient').click();
+
+    const errorAlert = page.locator('.col-lg-12 > .alert.alert-danger').first();
+    await expect(errorAlert).toBeVisible();
+
+    const firstChildClassName = await page.locator('.col-lg-12 > :first-child').evaluate((element) => element.className);
+    expect(firstChildClassName).toContain('alert');
+  });
+
   test('update workflow persists new company_name', async ({ page, request }) => {
     const companyName = `PW Client Update ${Date.now()}`;
     const { response } = await ClientActions.create(page, request, companyName);

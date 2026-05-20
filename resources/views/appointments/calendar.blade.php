@@ -13,6 +13,10 @@
   <calendar></calendar>
 </div>
 <script>
+  var DayByDay = {
+    csrfToken: "{{csrf_token()}}",
+    baseUrl: "{{url('/')}}"
+  }
   window.trans = <?php
   // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
   try {

@@ -10,7 +10,7 @@
     <div class="col-lg-12">
         <div class="project-board-ui">
             <nav class="navbar board text-black ">
-                @if(!$project->isClosed())
+                @if(!$project->isClosed() && $client)
                 <a href="{{route('client.project.task.create', [$client->external_id, $project->external_id])}}" class="btn btn-md btn-brand" style="margin:1em;">@lang('New task')</a>
             @endif
         </nav>

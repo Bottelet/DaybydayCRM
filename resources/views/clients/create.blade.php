@@ -66,7 +66,7 @@
 <hr>
     <form action="{{ url('/clients/create/cvrapi') }}" method="POST">
         @csrf
-        @if($country->getCode() == "DK")
+        @if($country && $country->getCode() == "DK")
         <div class="col-sm-3">
             <p style="font-size:1.2em; font-weight:300;">VAT</p>
         </div>

@@ -1,4 +1,5 @@
 <div class="col-md-6">
+@isset($client)
     <div class="panel panel-primary contact-header-box">
         <div class="panel-body">
            @if(\Route::getCurrentRoute()->getName() != "clients.show")
@@ -11,6 +12,7 @@
             <p class="client-company-text" title="{{ __('Company name') }}">{{$client->company_name}} <span aria-hidden="true" data-toggle="tooltip" title="{{ __('Client number') }}" data-placement="top" style="font-size:10px;"> | {{$client->client_number}}</span> 
 
             </p>
+@isset($contact_info)
             <!--Client info leftside-->
             <div class="contactleft">
                 <p class="client-name-text"  aria-hidden="true" data-toggle="tooltip"
@@ -37,7 +39,7 @@
                     </p>
             @endif
             </div>
-
+@endisset
             <!--Client info leftside END-->
             <!--Client info rightside-->
             <div class="contactright">
@@ -72,4 +74,5 @@
             </div>
         </div>
     </div>
+@endisset
 </div>

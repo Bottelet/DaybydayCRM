@@ -29,6 +29,17 @@ test.describe('Roles feature behavior', () => {
     await DomainAssertions.expectValidationError(response, 'name');
   });
 
+  test('create form validation alert is rendered at top of page content', async ({ page }) => {
+    await page.goto(`${PLAYWRIGHT_BASE_URL}/roles/create`);
+    await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
+
+    const errorAlert = page.locator('.col-lg-12 > .alert.alert-danger').first();
+    await expect(errorAlert).toBeVisible();
+
+    const firstChildClassName = await page.locator('.col-lg-12 > :first-child').evaluate((element) => element.className);
+    expect(firstChildClassName).toContain('alert');
+  });
+
   test('update workflow on malformed id returns not found', async ({ page, request }) => {
     const response = await request.patch(`${PLAYWRIGHT_BASE_URL}/roles/update/${malformedId}`, {
       failOnStatusCode: false,

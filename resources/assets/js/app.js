@@ -1,13 +1,18 @@
+/**
+ * jQuery is loaded as a classic blocking script in master.blade.php (public/js/jquery.min.js)
+ * before this module executes, so window.$ and window.jQuery are already globally available.
+ * We also import it here to ensure bootstrap-sass and inline jQuery code work correctly.
+ * Both versions point to the same window.jQuery global.
+ */
 import $ from 'jquery';
-window.$ = window.jQuery = $;
 
-/**n_xxx
+/**
  * First we will load all of this project's JavaScript dependencies which
  * include Vue and Vue Resource. This gives a great starting point for
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import './bootstrap';
 import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
@@ -71,7 +76,9 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-    $('.dropdown-toggle').dropdown();
+    // Bootstrap's data-api automatically initializes dropdowns via data-toggle="dropdown"
+    // so we don't need to call .dropdown() explicitly
+
     $('.dropdown-toggle').click(function (e) {
         var href = $(this).attr('href');
         if (href && href !== '#' && !href.startsWith('#')) {
@@ -92,7 +99,13 @@ $(document).ready(function () {
     $(".list-group-item[data-toggle='collapse']").click(function (e) {
         var target = $(this).attr('data-target') || $(this).attr('href');
         if (target && target.startsWith('#')) {
-            $(target).collapse('toggle');
+            // Collapse may not be available if Bootstrap JS isn't loaded, so wrap in try-catch
+            try {
+                $(target).collapse('toggle');
+            } catch (err) {
+                // Bootstrap JS not available, but collapse may work via data-api
+                console.warn('Collapse unavailable:', err.message);
+            }
         }
     });
 });
@@ -126,7 +139,7 @@ $(document).ready(function () {
         $('#view-offer').modal('show');
     });
 
-    
+
 });
 
 

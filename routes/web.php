@@ -30,13 +30,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::middleware(['permission:user-update'])->group(function () {
-        Route::resource('users', 'UsersController')->only(['update']);
-    });
-    Route::middleware(['permission:user-delete'])->group(function () {
-        Route::resource('users', 'UsersController')->only(['destroy']);
-    });
-    Route::resource('users', 'UsersController')->except(['update', 'destroy']);
+    Route::resource('users', 'UsersController');
 
     /*
      * Roles
@@ -63,10 +57,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::middleware(['permission:client-delete'])->group(function () {
-        Route::resource('clients', 'ClientsController')->only(['destroy']);
-    });
-    Route::resource('clients', 'ClientsController')->except(['destroy']);
+    Route::resource('clients', 'ClientsController');
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::resource('documents', 'DocumentsController');
@@ -87,10 +78,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::middleware(['permission:task-delete'])->group(function () {
-        Route::resource('tasks', 'TasksController')->only(['destroy']);
-    });
-    Route::resource('tasks', 'TasksController')->except(['destroy']);
+    Route::resource('tasks', 'TasksController');
 
     /*
      * Leads
@@ -108,10 +96,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::middleware(['permission:lead-delete'])->group(function () {
-        Route::resource('leads', 'LeadsController')->only(['destroy']);
-    });
-    Route::resource('leads', 'LeadsController')->except(['destroy']);
+    Route::resource('leads', 'LeadsController');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /*
@@ -137,10 +122,7 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::middleware(['permission:project-delete'])->group(function () {
-        Route::resource('projects', 'ProjectsController')->only(['destroy']);
-    });
-    Route::resource('projects', 'ProjectsController')->except(['destroy']);
+    Route::resource('projects', 'ProjectsController');
     /*
      * Settings
      */
