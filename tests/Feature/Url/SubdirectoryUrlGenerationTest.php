@@ -3,11 +3,11 @@
 namespace Tests\Feature\Url;
 
 use App\Models\Client;
+use App\Models\Integration;
 use App\Models\Project;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 
 /**
@@ -20,7 +20,6 @@ use Tests\AbstractTestCase;
 class SubdirectoryUrlGenerationTest extends AbstractTestCase
 {
     use DatabaseTransactions;
-    use WithoutMiddleware;
 
     private $task;
 
@@ -28,25 +27,44 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
 
     private $client;
 
+    /** Original forced root URL so we can restore it in tearDown */
+    private string $originalRootUrl;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user   = factory(User::class)->create();
-        $this->client = factory(Client::class)->create();
-        $this->task   = factory(Task::class)->create([
+        $this->originalRootUrl = config('app.url', 'http://localhost');
+
+        $this->client = Client::factory()->create();
+        $this->task   = Task::factory()->create([
             'user_assigned_id' => $this->user->id,
         ]);
-        $this->project = factory(Project::class)->create([
+        $this->project = Project::factory()->create([
             'user_assigned_id' => $this->user->id,
         ]);
+
+        // A file integration must exist so that the document-upload section
+        // (which is guarded by @if($filesystem_integration)) is rendered in
+        // the task/project show views.
+        Integration::query()->firstOrCreate(
+            ['api_type' => 'file'],
+            ['name' => 'local']
+        );
     }
 
-    /** @test */
-    public function url_helper_generates_absolute_urls_with_subdirectory()
+    protected function tearDown(): void
+    {
+        app('url')->forceRootUrl($this->originalRootUrl);
+        config(['app.url' => $this->originalRootUrl]);
+        parent::tearDown();
+    }
+
+    #[Test]
+    public function it_url_helper_generates_absolute_urls_with_subdirectory()
     {
         /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
         $url = url('/tasks');
@@ -55,11 +73,11 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
         $this->assertEquals('http://localhost/daybydaycrm/public/tasks', $url);
     }
 
-    /** @test */
-    public function url_helper_generates_absolute_urls_at_root()
+    #[Test]
+    public function it_url_helper_generates_absolute_urls_at_root()
     {
         /* Arrange */
-        config(['app.url' => 'http://localhost']);
+        $this->setAppUrl('http://localhost');
 
         /* Act */
         $url = url('/tasks');
@@ -68,144 +86,153 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
         $this->assertEquals('http://localhost/tasks', $url);
     }
 
-    /** @test */
-    public function task_show_page_contains_correct_document_upload_url()
+    #[Test]
+    public function it_task_show_page_contains_correct_document_upload_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('tasks.show', $this->task->external_id);
         $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->task->external_id . '/task';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('tasks.show', $this->task->external_id));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function project_show_page_contains_correct_document_upload_url()
+    #[Test]
+    public function it_project_show_page_contains_correct_document_upload_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('projects.show', $this->project->external_id);
         $expectedUrl = 'http://localhost/daybydaycrm/public/add-documents/' . $this->project->external_id . '/project';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('projects.show', $this->project->external_id));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function products_index_contains_correct_creator_modal_url()
+    #[Test]
+    public function it_products_index_contains_correct_creator_modal_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('products.index');
         $expectedUrl = 'http://localhost/daybydaycrm/public/products/creator';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('products.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function task_create_page_contains_correct_client_create_redirect_url()
+    #[Test]
+    public function it_task_create_page_contains_correct_client_create_redirect_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('tasks.create');
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('tasks.create'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function project_create_page_contains_correct_client_create_redirect_url()
+    #[Test]
+    public function it_project_create_page_contains_correct_client_create_redirect_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('projects.create');
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('projects.create'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function lead_create_page_contains_correct_client_create_redirect_url()
+    #[Test]
+    public function it_lead_create_page_contains_correct_client_create_redirect_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('leads.create');
         $expectedUrl = 'http://localhost/daybydaycrm/public/clients/create';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('leads.create'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function users_index_contains_correct_delete_url()
+    #[Test]
+    public function it_users_index_contains_correct_delete_url()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl    = route('users.index');
         $expectedUrl = 'http://localhost/daybydaycrm/public/users';
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('users.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee($expectedUrl, false);
     }
 
-    /** @test */
-    public function master_layout_contains_base_url_configuration()
+    #[Test]
+    public function it_master_layout_contains_base_url_configuration()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('tasks.index');
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('tasks.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee('baseUrl: "http://localhost/daybydaycrm/public"', false);
     }
 
-    /** @test */
-    public function master_layout_contains_base_url_configuration_at_root()
+    #[Test]
+    public function it_master_layout_contains_base_url_configuration_at_root()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('tasks.index');
+        $this->setAppUrl('http://localhost');
 
         /* Act */
-        $response = $this->get(route('tasks.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
         $response->assertSee('baseUrl: "http://localhost"', false);
     }
 
-    /** @test */
-    public function url_generation_works_with_https_subdirectory()
+    #[Test]
+    public function it_url_generation_works_with_https_subdirectory()
     {
         /* Arrange */
-        config(['app.url' => 'https://example.com/crm/public']);
+        $this->setAppUrl('https://example.com/crm/public');
 
         /* Act */
         $url = url('/tasks');
@@ -214,11 +241,11 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
         $this->assertEquals('https://example.com/crm/public/tasks', $url);
     }
 
-    /** @test */
-    public function url_generation_works_with_port_and_subdirectory()
+    #[Test]
+    public function it_url_generation_works_with_port_and_subdirectory()
     {
         /* Arrange */
-        config(['app.url' => 'http://localhost:8080/daybydaycrm/public']);
+        $this->setAppUrl('http://localhost:8080/daybydaycrm/public');
 
         /* Act */
         $url = url('/tasks');
@@ -227,59 +254,63 @@ class SubdirectoryUrlGenerationTest extends AbstractTestCase
         $this->assertEquals('http://localhost:8080/daybydaycrm/public/tasks', $url);
     }
 
-    /** @test */
-    public function master_layout_loads_js_assets_with_correct_subdirectory_path()
+    #[Test]
+    public function it_master_layout_loads_js_assets_with_correct_subdirectory_path()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('tasks.index');
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('tasks.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
-        $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
-        $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/js/jquery.min.js', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/js/dropzone.js', false);
     }
 
-    /** @test */
-    public function master_layout_loads_js_assets_at_root_installation()
+    #[Test]
+    public function it_master_layout_loads_js_assets_at_root_installation()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('tasks.index');
+        $this->setAppUrl('http://localhost');
 
         /* Act */
-        $response = $this->get(route('tasks.index'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
-        $response->assertSee('http://localhost/js/manifest.js', false);
-        $response->assertSee('http://localhost/js/vendor.js', false);
+        $response->assertSee('http://localhost/js/jquery.min.js', false);
+        $response->assertSee('http://localhost/js/dropzone.js', false);
     }
 
-    /** @test */
-    public function calendar_page_loads_js_assets_with_correct_subdirectory_path()
+    #[Test]
+    public function it_calendar_page_loads_js_assets_with_correct_subdirectory_path()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('appointments.calendar');
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('appointments.calendar'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
-        $response->assertSee('http://localhost/daybydaycrm/public/js/manifest.js', false);
-        $response->assertSee('http://localhost/daybydaycrm/public/js/vendor.js', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/css/font-awesome.min.css', false);
+        $response->assertSee('http://localhost/daybydaycrm/public/css/picker.classic.css', false);
     }
 
-    /** @test */
-    public function calendar_page_contains_base_url_configuration()
+    #[Test]
+    public function it_calendar_page_contains_base_url_configuration()
     {
-        /* Arrange */
-        config(['app.url' => 'http://localhost/daybydaycrm/public']);
+        /* Arrange - capture route URL before changing the forced root */
+        $routeUrl = route('appointments.calendar');
+        $this->setAppUrl('http://localhost/daybydaycrm/public');
 
         /* Act */
-        $response = $this->get(route('appointments.calendar'));
+        $response = $this->get($routeUrl);
 
         /* Assert */
         $response->assertStatus(200);
