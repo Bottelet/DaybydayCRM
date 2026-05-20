@@ -374,6 +374,19 @@ class CreateAdminUserCommandTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_fails_gracefully_when_required_inputs_are_missing_in_non_interactive_mode(): void
+    {
+        /* Act & Assert */
+        $this->artisan('daybyday:create-admin', [
+            '--no-interaction' => true,
+        ])->assertExitCode(1)
+            ->expectsOutput('❌ Validation failed:');
+
+        /* Assert */
+        $this->assertCount(0, User::all());
+    }
+
+    #[Test]
     public function it_runs_successfully_in_interactive_mode(): void
     {
         /* Arrange */
