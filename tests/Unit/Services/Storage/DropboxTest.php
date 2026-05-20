@@ -11,11 +11,11 @@ use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;
 use Spatie\Dropbox\Client as DropboxClient;
 use stdClass;
-use Tests\TestCase;
+use Tests\AbstractTestCase;
 
 #[Group('storage')]
 #[Group('dropbox')]
-class DropboxTest extends TestCase
+class DropboxTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
