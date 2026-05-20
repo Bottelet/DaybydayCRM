@@ -16,8 +16,6 @@ use Illuminate\Support\Str;
 
 class CreateAdminUser extends Command
 {
-    private const DEFAULT_LANGUAGE = 'en';
-
     protected $signature = 'daybyday:create-admin {--name=} {--email=} {--password=}';
 
     protected $description = 'Create an admin user with all required dependencies (settings, owner role, management department). Safe to run on both fresh and seeded databases.';
