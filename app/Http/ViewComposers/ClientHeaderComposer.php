@@ -2,27 +2,29 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\View\View;
 use App\Models\Client;
+use Illuminate\View\View;
 
 class ClientHeaderComposer
 {
     /**
      * Bind data to the view.
      *
-     * @param  View  $view
      * @return void
      */
     public function compose(View $view)
     {
-        $clients = Client::findOrFail($view->getData()['client']['id']);
+        // Re-use the already eager-loaded client from the view data to prevent N+1 queries.
+        // getClientWithRelations() in ClientsController pre-loads 'user' and 'primaryContact'.
+        $client = $view->getData()['client'];
 
-        $contact_info = $clients->contacts()->first();
-        /**
-         * [User assigned the client]
-         * @var contact
-         */
-        $contact = $clients->user;
+        $contact_info = $client->relationLoaded('primaryContact')
+            ? $client->primaryContact
+            : $client->contacts->first();
+
+        $contact = $client->relationLoaded('user')
+            ? $client->user
+            : $client->user()->first();
 
         $view->with('contact', $contact)->with('contact_info', $contact_info);
     }

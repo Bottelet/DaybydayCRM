@@ -1,57 +1,98 @@
 <?php
+
 namespace Tests\Unit\User;
 
 use App\Models\Department;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Client;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
+use Config;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
 
-class GetAttributesTest extends TestCase
+class GetAttributesTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
-    protected $client;
+    protected $user;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $department = factory(Department::class)->create([
-            'name' => 'Tiger'
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_name_and_department()
+    {
+        /* Arrange */
+        $department = Department::factory()->create([
+            'name' => 'Tiger',
         ]);
-        $this->user = factory(User::class)->create([
-            'name' => 'Eye of the'
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
         ]);
         $this->user->department()->sync([$department->id]);
+
+        /* Act */
+        $nameAndDepartment = $this->user->name_and_department;
+
+        /* Assert */
+        $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
     }
 
-    /** @test */
-    public function getNameAndDepartment()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_name_and_department_with_eager_loading()
     {
-        $this->assertEquals("Eye of the (Tiger)", $this->user->name_and_department);
+        /* Arrange */
+        $department = Department::factory()->create([
+            'name' => 'Tiger',
+        ]);
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
+        ]);
+        $this->user->department()->sync([$department->id]);
+
+        /* Act */
+        $userWithEagerLoading = User::whereName($this->user->name)->with('department')->first();
+        $nameAndDepartment    = $userWithEagerLoading->name_and_department_eager_loading;
+
+        /* Assert */
+        $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
     }
 
-    /** @test */
-    public function getNameAndDepartmentWithEagerLoading()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_default_avatar_when_none_is_set()
     {
-        $userWithEasgerLoading = User::whereName($this->user->name)->with('department')->first();
-        $this->assertEquals("Eye of the (Tiger)", $userWithEasgerLoading->name_and_department_eager_loading);
+        /* Arrange */
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
+        ]);
+
+        /* Act */
+        $avatar = $this->user->avatar;
+
+        /* Assert */
+        $this->assertEquals('/images/default_avatar.jpg', $avatar);
     }
 
-    /** @test */
-    public function getDefaultAvatarWhenNoneIsSet()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_path_when_image_is_set()
     {
-        $this->assertEquals('/images/default_avatar.jpg', $this->user->avatar);
-    }
+        /* Arrange */
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
+        ]);
+        Config::set('filesystems.default', 'local');
+        $this->user->image_path = 'tiger.jpg';
 
-    /** @test */
-    public function getPathWhenImageIsSet()
-    {
-        //Default is S3, but same logic for local driver
-        \Config::set('filesystems.default', "local");
-        $this->user->image_path = "tiger.jpg";
+        /* Act */
+        $avatar = $this->user->avatar;
 
-        $this->assertEquals('/storage/tiger.jpg', $this->user->avatar);
+        /* Assert */
+        $this->assertEquals('/storage/tiger.jpg', $avatar);
     }
 }

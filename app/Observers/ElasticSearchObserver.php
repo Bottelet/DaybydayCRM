@@ -2,9 +2,7 @@
 
 namespace App\Observers;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
-use Aws\Credentials\CredentialProvider;
+use Elastic\Elasticsearch\ClientBuilder;
 
 class ElasticSearchObserver
 {
@@ -12,10 +10,21 @@ class ElasticSearchObserver
 
     public function __construct()
     {
-        $host = config('elasticsearch.hosts');
-        $provider = CredentialProvider::defaultProvider();
-        if (is_null($this->elasticsearch)) {
-            $builder = ClientBuilder::create()->setHosts($host);
+        // Disable Elasticsearch integration in testing environment
+        if (app()->environment('testing')) {
+            $this->elasticsearch = null;
+
+            return;
+        }
+        $hosts          = config('elasticsearch.hosts');
+        $formattedHosts = [];
+        foreach ($hosts as $host) {
+            $scheme           = $host['scheme'] ?? 'http';
+            $formattedHosts[] = $scheme . '://' . (($host['user'] ?? null) ? $host['user'] . ':' . $host['pass'] . '@' : '') . $host['host'] . ':' . $host['port'];
+        }
+
+        if (null === $this->elasticsearch) {
+            $builder             = ClientBuilder::create()->setHosts($formattedHosts);
             $this->elasticsearch = $builder->build();
         }
     }
@@ -25,9 +34,9 @@ class ElasticSearchObserver
         return;
         $this->elasticsearch->index([
             'index' => $model->getSearchIndex(),
-            'type' => $model->getSearchType(),
-            'id' => $model->id,
-            'body' => $model->toSearchArray(),
+            'type'  => $model->getSearchType(),
+            'id'    => $model->id,
+            'body'  => $model->toSearchArray(),
         ]);
     }
 
@@ -36,8 +45,8 @@ class ElasticSearchObserver
         return;
         $this->elasticsearch->delete([
             'index' => $model->getSearchIndex(),
-            'type' => $model->getSearchType(),
-            'id' => $model->id,
+            'type'  => $model->getSearchType(),
+            'id'    => $model->id,
         ]);
     }
 }

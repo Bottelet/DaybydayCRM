@@ -1,15 +1,22 @@
-/**n_xxx
+/**
+ * jQuery is loaded as a classic blocking script in master.blade.php (public/js/jquery.min.js)
+ * before this module executes, so window.$ and window.jQuery are already globally available.
+ * We also import it here to ensure bootstrap-sass and inline jQuery code work correctly.
+ * Both versions point to the same window.jQuery global.
+ */
+import $ from 'jquery';
+
+/**
  * First we will load all of this project's JavaScript dependencies which
  * include Vue and Vue Resource. This gives a great starting point for
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import './bootstrap';
 import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
 import calendar from './components/Calendar.vue';
-import createAppointment from './components/AppointmentCreate.vue';
 import message from './components/Message.vue';
 import search from './components/Search.vue';
 import dynamictable from './components/DynamicTable.vue';
@@ -17,9 +24,8 @@ import invoiceLineModal from './components/InvoiceLineModal.vue';
 import passportclients from './components/passport/Clients.vue';
 import passportauthorizedclients from './components/passport/AuthorizedClients.vue';
 import passportpersonalaccesstokens from './components/passport/PersonalAccessTokens.vue';
-import 'element-ui/lib/theme-default/index.css';
+import 'element-ui/lib/theme-chalk/index.css';
 import VueCurrencyFilter from 'vue-currency-filter'
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -46,58 +52,66 @@ $("#collapse1").click(function () {
 });
 
 //Sidebar menu
-$("#menu-toggle").click(function (e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-    $(".sidebar-brand").toggleClass("shownone");
-});
-
 $(document).ready(function () {
-    $('.dropdown-toggle').dropdown();
-    $(".list-group-item").click(function () {
-        if ($('.list-group-item').hasClass('collapsed')) {
-            $(this).find('.sidebar-arrow').toggleClass("arrow-up").toggleClass("arrow-down");
-        } else {
-            $(this).find('.sidebar-arrow').toggleClass("arrow-down").toggleClass("arrow-up");
+    // Desktop Nav Collapse
+    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function () {
+        $("#wrapper").toggleClass("myNavmenu-icons");
+        $("#myNavmenu .panel .list-group-item").addClass("collapsed");
+        $("#myNavmenu .collapse").removeClass("in");
+        $('#myNavmenu i.sidebar-arrow').removeClass("arrow-down").addClass("arrow-side");
+    });
+
+    // Mobile Nav Toggle
+    $('body').on('click', '#mobile-toggle', function (e) {
+        e.stopPropagation();
+        $("#wrapper").toggleClass("big-menu");
+    });
+
+    // Close mobile menu when clicking outside
+    $(document).click(function (e) {
+        if (!$(e.target).closest('#myNavmenu, #mobile-toggle').length) {
+            $("#wrapper").removeClass("big-menu");
         }
     });
 });
 
-
 $(document).ready(function () {
-    $('body').on('click', '.menu-txt-toggle', function () {
-        $("body #wrapper").toggleClass("myNavmenu-icons");
-        $("#myNavmenu .panel .list-group-item").addClass("collapsed");
-        $("#myNavmenu .collapse").removeClass("in");
-        $('#myNavmenu i.ion-chevron-up').removeClass("arrow-down").addClass("arrow-up");
-    });
-    $('body').on('click', '#myNavmenu .list-group-item', function () {
-        $("body #wrapper").removeClass("myNavmenu-icons");
-    });
+    // Bootstrap's data-api automatically initializes dropdowns via data-toggle="dropdown"
+    // so we don't need to call .dropdown() explicitly
 
-    $("html").click(function (evt) {
-        var target = $(evt.target);
-        if (target.hasClass("mobile-toggle")) {
-            //if($('body #wrapper').hasClass('myNavmenu-icons')) {  } else {
-            setTimeout(function () {
-                $("body #wrapper").toggleClass("big-menu");
-            }, 0);
-        } else {
+    $('.dropdown-toggle').click(function (e) {
+        var href = $(this).attr('href');
+        if (href && href !== '#' && !href.startsWith('#')) {
+            var $parent = $(this).closest('.dropdown');
+            if ($parent.length === 0) {
+                $parent = $(this).parent();
+            }
 
-            if (target.id == "myNavmenu")
-                return;
-            //For descendants of #myNavmenu being clicked, remove this check if you do not want to put constraint on descendants.
-            if ($(target).closest('#myNavmenu').length)
-                return;
-            if ($(target).closest('#mobile-toggle').length) {
-                //Do processing of click event here for every element except with id #myNavmenu
-                $("body #wrapper").toggleClass("big-menu");
+            if (!$parent.hasClass('open')) {
+                // If the dropdown is not open, let Bootstrap handle opening it.
+                return true;
             } else {
-                $("body #wrapper").removeClass("big-menu");
+                // If it's already open, then navigate.
+                window.location.href = href;
             }
         }
     });
+    $(".list-group-item[data-toggle='collapse']").click(function (e) {
+        var target = $(this).attr('data-target') || $(this).attr('href');
+        if (target && target.startsWith('#')) {
+            // Collapse may not be available if Bootstrap JS isn't loaded, so wrap in try-catch
+            try {
+                $(target).collapse('toggle');
+            } catch (err) {
+                // Bootstrap JS not available, but collapse may work via data-api
+                console.warn('Collapse unavailable:', err.message);
+            }
+        }
+    });
+});
 
+
+$(document).ready(function () {
     $('.view-offer-btn, #view-original-offer').on('click', function (e) {
         var offerExternalId = $(this).data('offer-external_id')
         var vuecomp = Vue.extend(invoiceLineModal);
@@ -125,7 +139,7 @@ $(document).ready(function () {
         $('#view-offer').modal('show');
     });
 
-    
+
 });
 
 
@@ -160,7 +174,6 @@ var app = new Vue({
         search,
         dynamictable,
         calendar,
-        createAppointment,
         invoiceLineModal
     },
     //Used for global accessibilty to reload page on events

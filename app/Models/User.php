@@ -1,28 +1,31 @@
 <?php
+
 namespace App\Models;
 
-use Fenos\Notifynder\Notifable;
-use Illuminate\Notifications\Notifiable;
-use Cache;
-use App\Models\Client;
+use App\Traits\HasExternalId;
+use App\Traits\SearchableTrait;
 use App\Zizaco\Entrust\Traits\EntrustUserTrait;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\Setting;
-use App\Api\v1\Models\Token;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Cashier\Billable;
-use Carbon\Carbon;
 
 class User extends Authenticatable
 {
-    use Notifiable, EntrustUserTrait,  SoftDeletes, Billable;
-
-    public function restore()
-    {
-        $this->restoreA();
-        $this->restoreB();
+    use Billable;
+    use EntrustUserTrait, SoftDeletes {
+        SoftDeletes::restore as private softDeletesRestore;
+        EntrustUserTrait::restore insteadof SoftDeletes;
     }
+    use HasExternalId;
+    use HasFactory;
+    use Notifiable;
+    use SearchableTrait;
+
+    protected $searchableFields = ['name', 'email'];
 
     /**
      * The database table used by the model.
@@ -54,18 +57,40 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = ['id', 'password', 'password_confirmation', 'remember_token', 'image_path'];
+
     protected $appends = ['avatar'];
 
     protected $primaryKey = 'id';
 
-    public function tasks()
+    /**
+     * Restore a soft-deleted model instance.
+     * This overrides the EntrustUserTrait restore to properly call SoftDeletes restore.
+     *
+     * @return bool|null
+     */
+    public function restore()
     {
-        return $this->hasMany(Task::class, 'user_assigned_id', 'id');
+        $result = $this->softDeletesRestore();
+
+        if (Cache::getStore() instanceof \Illuminate\Cache\TaggableStore) {
+            Cache::tags(
+                \Illuminate\Support\Facades\Config::get('entrust.role_user_table')
+            )->flush();
+        }
+
+        return $result;
     }
 
-    public function leads()
+    # region Relationships
+
+    public function absences()
     {
-        return $this->hasMany(Lead::class, 'user_assigned_id', 'id');
+        return $this->hasMany(Absence::class);
+    }
+
+    public function appointments()
+    {
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function clients()
@@ -78,40 +103,47 @@ class User extends Authenticatable
         return $this->belongsToMany(Department::class);
     }
 
+    public function integrations()
+    {
+        return $this->hasMany(Integration::class);
+    }
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class, 'user_assigned_id', 'id');
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'user_assigned_id', 'id');
+    }
+
     public function userRole()
     {
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
     }
 
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class);
-    }
+    # endregion
 
-    public function absences()
-    {
-        return $this->hasMany(Absence::class);
-    }
-
-    public function tokens()
+    /*public function tokens()
     {
         return $this->hasMany(Token::class, 'user_id', 'id');
-    }
+    }*/
 
-    public function canChangePasswordOn(User $user)
+    public function canChangePasswordOn(self $user)
     {
-        if($this->id === $user->id || ( $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE)) {
-            return true;
-        }
-
-        return false;
+        return (bool) ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE));
     }
 
     public function canChangeRole()
     {
         return $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE;
     }
-
 
     public function isOnline()
     {
@@ -120,14 +152,13 @@ class User extends Authenticatable
 
     public function getNameAndDepartmentAttribute()
     {
-        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
         return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
     }
 
-
     public function getNameAndDepartmentEagerLoadingAttribute()
     {
-        //dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
+        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
         return $this->name . ' ' . '(' . $this->relations['department'][0]->name . ')';
     }
 
@@ -161,13 +192,14 @@ class User extends Authenticatable
     public function getAvatarattribute()
     {
         $image_path = $this->image_path ? Storage::url($this->image_path) : '/images/default_avatar.jpg';
+
         return $image_path;
     }
 
     public function totalOpenAndClosedLeads()
     {
         $groups = $this->leads()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
-        $keys = collect();
+        $keys   = collect();
         $counts = collect();
         foreach ($groups as $groupKey => $group) {
             $keys->push($groupKey);
@@ -179,12 +211,13 @@ class User extends Authenticatable
 
     /**
      * @param $external_id
+     *
      * @return mixed
      */
     public function totalOpenAndClosedTasks()
     {
         $groups = $this->tasks()->with('status')->get()->sortBy('status.title')->groupBy('status.title');
-        $keys = collect();
+        $keys   = collect();
         $counts = collect();
         foreach ($groups as $groupKey => $group) {
             $keys->push($groupKey);
@@ -192,5 +225,15 @@ class User extends Authenticatable
         }
 
         return collect(['keys' => $keys, 'counts' => $counts]);
+    }
+
+    public function displayValue()
+    {
+        return $this->name;
+    }
+
+    public function getSearchableFields(): array
+    {
+        return $this->searchableFields;
     }
 }

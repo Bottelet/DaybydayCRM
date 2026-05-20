@@ -1,14 +1,26 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Enums\RoleType;
+use App\Traits\HasExternalId;
 use App\Zizaco\Entrust\EntrustRole;
-use App\Models\Permission;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Role extends EntrustRole
 {
-    const OWNER_ROLE = "owner";
-    const ADMIN_ROLE = "administrator";
+    use HasExternalId;
+    use HasFactory;
+
+    /**
+     * @deprecated Use RoleType::OWNER->value instead
+     */
+    public const OWNER_ROLE = 'owner';
+
+    /**
+     * @deprecated Use RoleType::ADMINISTRATOR->value instead
+     */
+    public const ADMIN_ROLE = 'administrator';
 
     protected $fillable = [
         'name',
@@ -17,18 +29,24 @@ class Role extends EntrustRole
         'external_id',
     ];
 
-    public function userRole()
-    {
-        return $this->hasMany(Role::class, 'user_id', 'id');
-    }
+    # region Relationships
 
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'permission_role', 'role_id', 'permission_id');
     }
 
+    public function userRole()
+    {
+        return $this->hasMany(RoleUser::class, 'role_id', 'id');
+    }
+
+    # endregion
+
     public function canBeDeleted()
     {
-        return $this->name !== Role::ADMIN_ROLE && $this->name !== Role::OWNER_ROLE;
+        $roleType = RoleType::fromString($this->name);
+
+        return $roleType ? $roleType->canBeDeleted() : true;
     }
 }

@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Models;
 
-use App\Observers\ElasticSearchObserver;
+use App\Enums\TaskStatus;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon;
-
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -16,9 +17,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Task extends Model implements Commentable
 {
-    use  SearchableTrait, SoftDeletes, DeadlineTrait;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
-    const TASK_STATUS_CLOSED = "closed";
+    /**
+     * @deprecated Use TaskStatus::CLOSED->value instead
+     */
+    public const TASK_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
 
@@ -32,40 +40,49 @@ class Task extends Model implements Commentable
         'client_id',
         'deadline',
         'project_id',
+        'invoice_id',
     ];
-    protected $dates = ['deadline'];
+
+    protected $casts = [
+        'deadline'   => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
 
     public static function boot()
     {
         parent::boot();
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        //}
+        // HasExternalId trait handles external_id generation
     }
 
-    public function getRouteKeyName()
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
     {
-        return 'external_id';
+        return static::query()->where('external_id', $externalId)->first();
     }
+
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
     {
         return $this->title;
     }
 
-    public function user()
+    # region Relationships
+
+    public function activity()
     {
-        return $this->belongsTo(User::class, 'user_assigned_id');
+        return $this->morphMany(Activity::class, 'source');
     }
 
-    public function invoice()
+    public function appointments()
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function client()
@@ -73,17 +90,44 @@ class Task extends Model implements Commentable
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'user_created_id');
-    }
-
     public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_assigned_id');
+    }
+
+    # endregion
+
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'task', 'external_id' => $this->external_id]);
     }
@@ -93,58 +137,41 @@ class Task extends Model implements Commentable
         return route('tasks.show', [$this->external_id]);
     }
 
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
-
-    public function appointments()
-    {
-        return $this->morphMany(Appointment::class, 'source');
-    }
-
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
-    }
-
     public function getAssignedUserAttribute()
     {
-        return User::findOrFail($this->user_assigned_id);
+        // Use the loaded relationship if available to prevent N+1 queries
+        if ($this->relationLoaded('user')) {
+            return $this->user;
+        }
+
+        return $this->user_assigned_id
+            ? User::query()->find($this->user_assigned_id)
+            : null;
     }
 
     public function getCreatorUserAttribute()
     {
-        return User::findOrFail($this->user_assigned_id);
-    }
-
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'source');
-    }
-
-    public function documents()
-    {
-        return $this->morphMany(Document::class, 'source');
+        return $this->user_created_id
+            ? User::query()->find($this->user_created_id)
+            : null;
     }
 
     public function canUpdateInvoice()
     {
-        //If there is no invoice, it should be possible, because it also creates
-        if (!$this->invoice) {
+        // If there is no invoice, it should be possible, because it also creates
+        if ( ! $this->invoice) {
             return true;
         }
+
         return $this->invoice->canUpdateInvoice();
     }
 
     public function isClosed()
     {
-        return $this->status == self::TASK_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && TaskStatus::isClosed($this->status->title);
     }
 
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

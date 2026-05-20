@@ -3,22 +3,24 @@
 namespace Tests\Browser;
 
 use App\Models\Client;
-use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Status;
-use Tests\DuskTestCase;
-use Laravel\Dusk\Browser;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\User;
+use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\DuskTestCase;
 
 class ProjectTest extends DuskTestCase
 {
-    public function testUserCanSeeTasksOnProjectIndexAndGoToTheProjectWithLink()
+    #[Test]
+    public function it_user_can_see_tasks_on_project_index_and_go_to_the_project_with_link()
     {
-        $project = factory(Project::class)->create([
-            'status_id' => Status::typeOfProject()->where('title', 'open')->first()->id
+        /* Arrange */
+        $project = Project::factory()->create([
+            'status_id' => Status::typeOfProject()->where('title', 'open')->first()->id,
         ]);
-        
+
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($project) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/')
@@ -30,78 +32,95 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-    public function testICanCreateANewLead()
+    #[Test]
+    public function it_i_can_create_a_new_lead()
     {
-        $client = factory(Client::class)->create();
+        /* Arrange */
+        $client  = Client::factory()->create();
         $contact = $client->primary_contact;
-        $user = factory(User::class)->create();
+        $user    = User::factory()->create();
 
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user, $client, $contact) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/create')
-                ->type('title', "This is a test project title")
-                ->type(".note-editable", "This is a short comment about the lead")
+                ->type('title', 'This is a test project title')
+                ->type('.note-editable', 'This is a short comment about the lead')
                 ->select('user_assigned_id', $user->id)
                 ->select('client_external_id', $client->external_id)
-                ->press("Create project")
+                ->press('Create project')
                 ->waitForText($user->name)
                 ->assertSee($user->name)
                 ->assertSee($contact->name)
-                ->assertSee("This is a test project title");
+                ->assertSee('This is a test project title');
         });
     }
 
-    public function testCanCreateNewTaskFromProject()
+    #[Test]
+    public function it_can_create_new_task_from_project()
     {
-        $project = factory(Project::class)->create();
+        /* Arrange */
+        $project = Project::factory()->create();
 
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($project) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/'. $project->external_id)
-                ->assertSeeLink("New task")
-                ->click("#page-content-wrapper > div > div > div > div:nth-child(3) > div > div > nav > a")
-                ->assertPathIs("/tasks/create/" . $project->client->external_id . '/' . $project->external_id);
+                ->visit('/projects/' . $project->external_id)
+                ->assertSeeLink('New task')
+                ->click('#page-content-wrapper > div > div > div > div:nth-child(3) > div > div > nav > a')
+                ->assertPathIs('/tasks/create/' . $project->client->external_id . '/' . $project->external_id);
         });
     }
 
     /**
-     * Test i can comment on a project
+     * Test i can comment on a project.
      */
-    public function testICanAddANewCommentOnAProject()
+    #[Test]
+    public function it_i_can_add_a_new_comment_on_a_project()
     {
-        $project = factory(Project::class)->create();
+        /* Arrange */
+        $project = Project::factory()->create();
+
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($project) {
             $browser->driver->executeScript('window.scrollTo(0, 600)');
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/' . $project->external_id)
-                ->type('.note-editable', "This is a test comment")
-                ->press("Add Comment")
-                ->assertSee("This is a test comment")
-                ->assertSee("Comment by: Admin");
+                ->type('.note-editable', 'This is a test comment')
+                ->press('Add Comment')
+                ->assertSee('This is a test comment')
+                ->assertSee('Comment by: Admin');
         });
     }
 
     /**
-     * Test i can close a open project
+     * Test i can close a open project.
      */
-    public function testICanChangeStatusOnAOpenProject()
+    #[Test]
+    public function it_i_can_change_status_on_a_open_project()
     {
-        $project = factory(Project::class)->create();
+        /* Arrange */
+        $project = Project::factory()->create();
+
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($project) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/' . $project->external_id)
                 ->assertSee($project->status->title)
                 ->click('#status-text')
-                ->clickLink("Pending")
-                ->assertSee("Pending");
+                ->clickLink('Pending')
+                ->assertSee('Pending');
         });
     }
 
-    public function testICanAssignANewUserToProject()
+    #[Test]
+    public function it_i_can_assign_a_new_user_to_project()
     {
-        $project = factory(Project::class)->create();
-        $user = factory(User::class)->create();
+        /* Arrange */
+        $project = Project::factory()->create();
+        $user    = User::factory()->create();
 
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($project, $user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/' . $project->external_id)
@@ -112,23 +131,22 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-
     /**
-     * Test i can create a new task
+     * Test i can create a new task.
      */
-    public function testICanGoToCreateNewClientInDropdownIfNoClientsExistsFromProject()
+    #[Test]
+    public function it_i_can_go_to_create_new_client_in_dropdown_if_no_clients_exists_from_project()
     {
-        Client::query()->forceDelete();
-        
-        $user = factory(User::class)->create();
+        /* Arrange */
+        $user = User::factory()->create();
 
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/projects/create')
                 ->select('user_assigned_id', $user->id)
-                ->select('client_external_id', "new_client")
+                ->select('client_external_id', 'new_client')
                 ->assertPathIs('/clients/create');
         });
     }
-
 }

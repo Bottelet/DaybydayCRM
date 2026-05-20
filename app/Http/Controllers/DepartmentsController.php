@@ -1,16 +1,16 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Ramsey\Uuid\Uuid;
-use Session;
-use App\Http\Requests;
-use App\Models\Department;
 use App\Http\Requests\Department\StoreDepartmentRequest;
-use Datatables;
+use App\Models\Department;
+use App\Services\Department\DepartmentService;
+use Exception;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 class DepartmentsController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
@@ -31,7 +31,8 @@ class DepartmentsController extends Controller
      */
     public function indexData()
     {
-        $departments = Department::select(['external_id', 'name', 'description']);
+        $departments = Department::query()->select(['external_id', 'name', 'description']);
+
         return Datatables::of($departments)
             ->editColumn('name', function ($departments) {
                 return $departments->name;
@@ -58,33 +59,29 @@ class DepartmentsController extends Controller
     }
 
     /**
-     * @param StoreDepartmentRequest $request
      * @return mixed
      */
-    public function store(StoreDepartmentRequest $request)
+    public function store(StoreDepartmentRequest $request, DepartmentService $service)
     {
-        Department::create([
-            'external_id' => Uuid::uuid4(),
-            'name' => $request->name,
-            'description' => $request->description
-        ]);
+        $service->store($request->validated());
         Session::flash('flash_message', __('Successfully created new department'));
+
         return redirect()->route('departments.index');
     }
 
     /**
-     * @param $external_id
      * @return mixed
      */
-    public function destroy($external_id)
+    public function destroy($external_id, DepartmentService $service)
     {
-        $department = Department::whereExternalId($external_id)->first();
+        try {
+            $service->destroy($external_id);
+        } catch (Exception $e) {
+            Session::flash('flash_message_warning', $e->getMessage());
 
-        if (!$department->users->isEmpty()) {
-            Session::flash('flash_message_warning', __("Can't delete department with users, please remove users"));
             return redirect()->route('departments.index');
         }
-        $department->delete();
+
         return redirect()->route('departments.index');
     }
 }

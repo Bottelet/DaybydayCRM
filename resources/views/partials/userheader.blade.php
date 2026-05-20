@@ -1,4 +1,5 @@
 <div class="col-md-6">
+@if(($contact ?? null) !== null)
     <div class="panel panel-primary contact-header-box">
         <div class="panel-body">
             @if(\Route::getCurrentRoute()->getName() != "users.show")
@@ -65,8 +66,8 @@
                 @endif
             </div>
         </div>
-
     </div>
+@endif
 </div>
 
 @if($changeUser == true)

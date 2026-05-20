@@ -1,21 +1,18 @@
 @extends('layouts.master')
 
 @section('content')
-    {!! Form::open([
-            'route' => 'roles.store',
-            ]) !!}
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <div class="form-group">
-        {!! Form::label('name', __('Name'), ['class' => 'control-label']) !!}
-        {!! Form::text('name', null,['class' => 'form-control']) !!}
-    </div>
+    <form action="{{ route('roles.store') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="name" class="control-label">{{ __('Name') }}</label>
+            <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+        </div>
 
-    <div class="form-group">
-        {!! Form::label('description', __('Description'), ['class' => 'control-label']) !!}
-        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
-    </div>
-    {!! Form::submit( __('Add new Role'), ['class' => 'btn btn-md btn-brand']) !!}
-
-    {!! Form::close() !!}
+        <div class="form-group">
+            <label for="description" class="control-label">{{ __('Description') }}</label>
+            <textarea name="description" class="form-control">{{ old('description') }}</textarea>
+        </div>
+        <input type="submit" value="{{ __('Add new Role') }}" class="btn btn-md btn-brand">
+    </form>
 
 @endsection

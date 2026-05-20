@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Client;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClientRequest extends FormRequest
@@ -13,7 +14,13 @@ class StoreClientRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('client-create');
+        $user = auth()->user();
+
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->can(PermissionName::CLIENT_CREATE->value);
     }
 
     /**
@@ -24,18 +31,18 @@ class StoreClientRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'company_name' => 'required',
-            'vat' => 'max:12',
-            'email' => 'required',
-            'address' => '',
-            'zipcode' => 'max:6',
-            'city' => '',
-            'primary_number' => 'max:10',
+            'name'             => 'required',
+            'company_name'     => 'required',
+            'vat'              => 'max:12',
+            'email'            => 'required',
+            'address'          => '',
+            'zipcode'          => 'max:6',
+            'city'             => '',
+            'primary_number'   => 'max:10',
             'secondary_number' => 'max:10',
-            'industry_id' => 'required',
-            'company_type' => '',
-            'user_id' => 'required'
+            'industry_id'      => 'required',
+            'company_type'     => '',
+            'user_id'          => 'required',
         ];
     }
 }

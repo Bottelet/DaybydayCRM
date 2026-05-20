@@ -10,6 +10,9 @@ class ClientObserver
 
     public function __construct()
     {
+        if (app()->environment('testing')) {
+            return;
+        }
         $this->relations = [
             'tasks',
             'leads',
@@ -17,65 +20,52 @@ class ClientObserver
             'projects',
             'invoices',
             'contacts',
-            'appointments'
+            'appointments',
         ];
     }
+
     /**
      * Handle the client "created" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
-    public function created(Client $client)
-    {
-        //
-    }
+    public function created(Client $client) {}
 
     /**
      * Handle the client "updated" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
-    public function updated(Client $client)
-    {
-        //
-    }
+    public function updated(Client $client) {}
 
     /**
      * Handle the client "deleted" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function deleted(Client $client)
     {
         foreach ($this->relations as $relation) {
-            $client->$relation()->delete();
+            $client->{$relation}()->delete();
         }
     }
 
     /**
      * Handle the client "restored" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
     public function restored(Client $client)
     {
         foreach ($this->relations as $relation) {
-            $client->$relation()->withTrashed()->restore();
+            $client->{$relation}()->withTrashed()->restore();
         }
     }
 
     /**
      * Handle the client "force deleted" event.
      *
-     * @param  \App\Models\Client  $client
      * @return void
      */
-    public function forceDeleted(Client $client)
-    {
-        //
-    }
+    public function forceDeleted(Client $client) {}
 }

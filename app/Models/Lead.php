@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Models;
 
-use App\Observers\ElasticSearchObserver;
+use App\Enums\LeadStatus;
 use App\Services\Comment\Commentable;
 use App\Traits\DeadlineTrait;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,20 +16,27 @@ use Ramsey\Uuid\Uuid;
 /**
  * @property string title
  * @property string external_id
- * @property integer user_assigned_id
+ * @property int user_assigned_id
  * @property Status status
  * @property Client client
- * @property integer invoice_id
- * @property integer status_id
+ * @property int invoice_id
+ * @property int status_id
  * @property Invoice invoice
  */
 class Lead extends Model implements Commentable
 {
-    use SearchableTrait, SoftDeletes, DeadlineTrait;
+    use DeadlineTrait;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
+
+    /**
+     * @deprecated Use LeadStatus::CLOSED->value instead
+     */
+    public const LEAD_STATUS_CLOSED = 'closed';
 
     protected $searchableFields = ['title'];
-
-    const LEAD_STATUS_CLOSED = "closed";
 
     protected $fillable = [
         'external_id',
@@ -41,41 +50,47 @@ class Lead extends Model implements Commentable
         'deadline',
         'invoice_id',
     ];
-    protected $dates = ['deadline'];
+
+    protected $casts = [
+        'deadline'   => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     protected $hidden = ['remember_token'];
-
 
     public static function boot()
     {
         parent::boot();
-
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        //}
+        // HasExternalId trait handles external_id generation
     }
 
-    public function getRouteKeyName()
+    /**
+     * Find a model by external_id (UUID).
+     *
+     * @return static|null
+     */
+    public static function findByExternalId(string $externalId)
     {
-        return 'external_id';
+        return static::query()->where('external_id', $externalId)->first();
     }
+
+    // getRouteKeyName() is provided by HasExternalId trait
 
     public function displayValue()
     {
         return $this->title;
     }
 
-    public function user()
+    # region Relationships
+
+    public function activity()
     {
-        return $this->belongsTo(User::class, 'user_assigned_id');
+        return $this->morphMany(Activity::class, 'source');
     }
 
-    public function creator()
+    public function appointments()
     {
-        return $this->belongsTo(User::class, 'user_created_id');
+        return $this->morphMany(Appointment::class, 'source');
     }
 
     public function client()
@@ -88,7 +103,49 @@ class Lead extends Model implements Commentable
         return $this->morphMany(Comment::class, 'source');
     }
 
-    public function getCreateCommentEndpoint(): String
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_created_id');
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function invoice()
+    {
+        return $this->morphMany(Invoice::class, 'source');
+    }
+
+    public function notes()
+    {
+        return $this->comments();
+    }
+
+    public function offers()
+    {
+        return $this->morphMany(Offer::class, 'source');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'lead_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_assigned_id');
+    }
+
+    # endregion
+
+    public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'lead', 'external_id' => $this->external_id]);
     }
@@ -98,61 +155,40 @@ class Lead extends Model implements Commentable
         return route('leads.show', [$this->external_id]);
     }
 
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'source');
-    }
-    
-    public function appointments()
-    {
-        return $this->morphMany(Appointment::class, 'source');
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
-
     public function getAssignedUserAttribute()
     {
-        return User::findOrFail($this->user_assigned_id);
+        // Use the loaded relationship if available to prevent N+1 queries
+        if ($this->relationLoaded('user')) {
+            return $this->user;
+        }
+
+        return User::query()->find($this->user_assigned_id);
     }
 
     public function isClosed()
     {
-        return $this->status == self::LEAD_STATUS_CLOSED;
+        // Check if status relationship exists and compare title
+        return $this->status && LeadStatus::isClosed($this->status->title);
     }
-    
-    public function invoice()
-    {
-        return $this->morphMany(Invoice::class, 'source');
-    }
-    /**
-     * @return array
-     */
+
     public function getSearchableFields(): array
     {
         return $this->searchableFields;
     }
 
-    public function offers()
-    {
-        return $this->morphMany(Offer::class, 'source');
-    }
-
     public function convertToOrder()
     {
-        if(!$this->canConvertToOrder()) {
+        if ( ! $this->canConvertToOrder()) {
             return false;
         }
-        $invoice = Invoice::create([
-            'status' => 'draft',
-            'client_id' => $this->client->id,
-            'external_id' =>  Uuid::uuid4()->toString()
+        $invoice = Invoice::query()->create([
+            'status'      => 'draft',
+            'client_id'   => $this->client->id,
+            'external_id' => Uuid::uuid4()->toString(),
         ]);
 
         $this->invoice_id = $invoice->id;
-        $this->status_id = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->first()->id;
         $this->save();
 
         return $invoice;
@@ -160,9 +196,6 @@ class Lead extends Model implements Commentable
 
     public function canConvertToOrder()
     {
-        if($this->invoice) {
-            return false;
-        }
-        return true;
+        return ! ($this->invoice);
     }
 }

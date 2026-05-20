@@ -2,23 +2,31 @@
 
 namespace App\Http\Middleware\Task;
 
+use App\Enums\PermissionName;
 use Closure;
-use App\Models\Setting;
-use App\Models\Task;
+use Illuminate\Http\Request;
 
 class CanTaskUpdateStatus
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param Request $request
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if (!auth()->user()->can('task-update-status')) {
-            Session()->flash('flash_message_warning', __("You don't have the right permission for this action"));
+        $user    = auth()->user();
+        $message = __("You don't have the right permission for this action");
+
+        if ( ! $user?->can(PermissionName::TASK_UPDATE_STATUS->value)) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 403);
+            }
+
+            session()->flash('flash_message_warning', $message);
+
             return redirect()->back();
         }
 

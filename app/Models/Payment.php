@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use App\Repositories\Money\Money;
-
+use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property Integer amount
+ * @property int amount
  */
 class Payment extends Model
 {
-    use  SoftDeletes;
+    use HasExternalId;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'external_id',
@@ -25,25 +28,24 @@ class Payment extends Model
         'invoice_id',
     ];
 
-    protected $dates = ['payment_date'];
+    protected $casts = [
+        'payment_date' => 'date',
+        'deleted_at'   => 'datetime',
+    ];
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    // getRouteKeyName() is provided by HasExternalId trait
 
-    public function getPriceAttribute()
-    {
-        return app(Money::class, ['amount' => $this->amount]);
-    }
+    # region Relationships
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    # endregion
+
+    public function getPriceAttribute()
+    {
+        return app(Money::class, ['amount' => $this->amount]);
     }
 }

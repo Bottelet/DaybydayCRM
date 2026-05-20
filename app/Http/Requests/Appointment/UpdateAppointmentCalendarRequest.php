@@ -13,7 +13,8 @@ class UpdateAppointmentCalendarRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can("appointment-edit");
+        // debug: dd(auth()->user()->can('appointment-edit'));
+        return auth()->user()->can('appointment-edit');
     }
 
     /**
@@ -24,10 +25,10 @@ class UpdateAppointmentCalendarRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'required',
+            'id'    => 'required',
             'start' => ['required', 'date'],
-            'end' => ['required', 'date'],
-            'group' => 'required'
+            'end'   => ['required', 'date'],
+            'group' => ['required', 'exists:users,external_id'],
         ];
     }
 }

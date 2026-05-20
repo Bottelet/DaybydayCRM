@@ -2,16 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Status extends Model
 {
-    public function tasks()
+    use HasFactory;
+
+    /**
+     * Check if a status ID is valid for a specific type.
+     *
+     * @param string $sourceType The fully qualified class name (e.g., Task::class, Lead::class, Project::class)
+     */
+    public static function isValidForType(int $statusId, string $sourceType): bool
     {
-        return $this->hasMany(Task::class);
+        return self::query()->where('id', $statusId)
+            ->where('source_type', $sourceType)
+            ->exists();
     }
+
+    # region Relationships
 
     public function leads()
     {
@@ -22,6 +33,13 @@ class Status extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    # endregion
 
     public function scopeTypeOfTask(Builder $query)
     {

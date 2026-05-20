@@ -1,19 +1,21 @@
-<?php namespace App\Zizaco\Entrust\Contracts;
+<?php
+
+namespace App\Zizaco\Entrust\Contracts;
+
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
-
 interface EntrustRoleInterface
 {
     /**
      * Many-to-Many relations with the user model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function users();
 
@@ -21,7 +23,7 @@ interface EntrustRoleInterface
      * Many-to-Many relations with the permission model.
      * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return BelongsToMany
      */
     public function perms();
 
@@ -35,12 +37,12 @@ interface EntrustRoleInterface
     public function savePermissions($inputPermissions);
 
     /**
-    * Attach permission to current role.
-    *
-    * @param object|array $permission
-    *
-    * @return void
-    */
+     * Attach permission to current role.
+     *
+     * @param object|array $permission
+     *
+     * @return void
+     */
     public function attachPermission($permission);
 
     /**
@@ -62,7 +64,7 @@ interface EntrustRoleInterface
     public function attachPermissions($permissions);
 
     /**
-     * Detach multiple permissions from current role
+     * Detach multiple permissions from current role.
      *
      * @param mixed $permissions
      *

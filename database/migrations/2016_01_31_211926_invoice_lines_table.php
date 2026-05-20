@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class InvoiceLinesTable extends Migration
 {
@@ -12,11 +12,11 @@ class InvoiceLinesTable extends Migration
      */
     public function up()
     {
-        Schema::create('invoice_lines', function (Blueprint $table) {
+        Schema::create('invoice_lines', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('title');
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->integer('price');
             $table->integer('invoice_id')->unsigned();
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');

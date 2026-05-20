@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateDepartmentTable extends Migration
 {
@@ -12,7 +12,7 @@ class CreateDepartmentTable extends Migration
      */
     public function up()
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('departments', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('name');

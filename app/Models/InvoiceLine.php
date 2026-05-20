@@ -1,13 +1,18 @@
 <?php
+
 namespace App\Models;
 
 use App\Repositories\Money\Money;
 use App\Repositories\Money\MoneyConverter;
+use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class InvoiceLine extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -23,13 +28,24 @@ class InvoiceLine extends Model
     ];
 
     /**
-     * Get the route key for the model.
+     * Bootstrap the model and its traits.
+     * HasExternalId trait automatically generates a UUID for external_id if not provided.
      *
-     * @return string
+     * @return void
      */
-    public function getRouteKeyName()
+    public static function boot()
     {
-        return 'external_id';
+        parent::boot();
+        // HasExternalId trait handles external_id generation
+    }
+
+    // getRouteKeyName() is provided by HasExternalId trait
+
+    # region Relationships
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
     }
 
     public function tasks()
@@ -37,10 +53,7 @@ class InvoiceLine extends Model
         return $this->belongsTo(Task::class);
     }
 
-    public function invoice()
-    {
-        return $this->belongsTo(Invoice::class);
-    }
+    # endregion
 
     public function task()
     {
@@ -56,16 +69,18 @@ class InvoiceLine extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    
+
     public function getTotalValueConvertedAttribute()
     {
         $money = new Money($this->quantity * $this->price);
+
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
-    
+
     public function getPriceConvertedAttribute()
     {
         $money = new Money($this->price);
+
         return app(MoneyConverter::class, ['money' => $money])->format();
     }
 }

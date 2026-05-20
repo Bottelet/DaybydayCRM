@@ -1,27 +1,19 @@
-<?php namespace App\Zizaco\Entrust\Traits;
+<?php
 
-/**
+namespace App\Zizaco\Entrust\Traits;
+
+/*
  * This file is part of Entrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
  */
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Config;
 
 trait EntrustPermissionTrait
 {
-    /**
-     * Many-to-Many relations with role model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function roles()
-    {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'), Config::get('entrust.permission_foreign_key'), Config::get('entrust.role_foreign_key'));
-    }
-
     /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete
@@ -34,11 +26,21 @@ trait EntrustPermissionTrait
         parent::boot();
 
         static::deleting(function ($permission) {
-            if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
+            if ( ! method_exists(Config::get('entrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }
 
             return true;
         });
+    }
+
+    /**
+     * Many-to-Many relations with role model.
+     *
+     * @return BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.permission_role_table'), Config::get('entrust.permission_foreign_key'), Config::get('entrust.role_foreign_key'));
     }
 }

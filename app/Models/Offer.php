@@ -3,26 +3,35 @@
 namespace App\Models;
 
 use App\Enums\OfferStatus;
+use App\Traits\HasExternalId;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Offer extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'sent_at',
         'status',
+        'status_id',
         'due_at',
         'client_id',
         'source_id',
         'source_type',
-        'status',
-        'external_id'
+        'external_id',
     ];
 
-    public function getRouteKeyName()
+    // getRouteKeyName() is provided by HasExternalId trait
+
+    # region Relationships
+
+    public function invoice()
     {
-        return 'external_id';
+        return $this->hasOne(Invoice::class);
     }
 
     public function invoiceLines()
@@ -30,10 +39,27 @@ class Offer extends Model
         return $this->hasMany(InvoiceLine::class);
     }
 
-    public function invoice()
+    public function lead()
     {
-        return $this->hasOne(Invoice::class);
+        return $this->source();
     }
+
+    public function lines()
+    {
+        return $this->invoiceLines();
+    }
+
+    public function source()
+    {
+        return $this->morphTo();
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    # endregion
 
     public function setAsWon()
     {

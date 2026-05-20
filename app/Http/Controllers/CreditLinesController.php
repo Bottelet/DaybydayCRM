@@ -4,82 +4,56 @@ namespace App\Http\Controllers;
 
 use App\Models\CreditLine;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CreditLinesController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function index()
-    {
-        //
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function store(Request $request)
-    {
-        //
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CreditLine  $creditLines
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function show(CreditLine $creditLines)
-    {
-        //
-    }
+    public function show(CreditLine $creditLines) {}
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\CreditLine  $creditLines
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function edit(CreditLine $creditLines)
-    {
-        //
-    }
+    public function edit(CreditLine $creditLines) {}
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CreditLine  $creditLines
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function update(Request $request, CreditLine $creditLines)
-    {
-        //
-    }
+    public function update(Request $request, CreditLine $creditLines) {}
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CreditLine  $creditLines
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
-    public function destroy(CreditLine $creditLines)
-    {
-        //
-    }
+    public function destroy(CreditLine $creditLines) {}
 }

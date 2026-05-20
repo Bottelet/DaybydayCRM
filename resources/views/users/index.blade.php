@@ -191,7 +191,7 @@
        tasks_user = $("#user_tasks").val();
        clients_user = $("#user_clients").val();
         $.ajax({
-            url: "/users/" + external_id,
+            url: '{{url('/users')}}' + "/" + external_id,
             type: 'DELETE',
                 headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

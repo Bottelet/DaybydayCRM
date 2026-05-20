@@ -4,25 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Enums\AbsenceReason;
 use App\Models\Absence;
-use App\Models\Client;
 use App\Models\User;
-
-use Carbon\Carbon;
+use App\Services\AbsenceService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Ramsey\Uuid\Uuid;
+use Throwable;
 use Yajra\DataTables\DataTables;
 
 class AbsenceController extends Controller
 {
     public function indexData()
     {
-        if (!auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
+
             return redirect()->back();
         }
-        $absences = Absence::select(['external_id', 'reason', 'start_at', 'end_at', 'user_id'])->with('user');
-        return Datatables::of($absences)
+        $absences = Absence::query()->select(['external_id', 'reason', 'start_at', 'end_at', 'user_id'])->with('user');
+
+        return DataTables::of($absences)
             ->editColumn('user_id', function ($absences) {
                 return $absences->user->name;
             })
@@ -44,65 +43,70 @@ class AbsenceController extends Controller
             ->rawColumns(['delete'])
             ->make(true);
     }
+
     public function index()
     {
-        if (!auth()->user()->can('absence-view')) {
+        if ( ! auth()->user()->can('absence-view')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this page'));
+
             return redirect()->back();
         }
+
         return view('absence.index');
     }
 
     public function create()
     {
         $users = null;
-        if (request()->management === "true" && auth()->user()->can('absence-manage')) {
+        if (request()->management === 'true' && auth()->user()->can('absence-manage')) {
             $users = User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'external_id');
         }
+
         return view('absence.create')
             ->withReasons(AbsenceReason::values())
             ->withUsers($users);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, AbsenceService $absenceService)
     {
-        $medical_certificate = null;
-        $user = auth()->user();
-        if ($request->user_external_id && auth()->user()->can('absence-manage')) {
-            $user = User::whereExternalId($request->user_external_id)->first();
-            if (!$user) {
-                Session::flash('flash_message_warning', __('Could not find user'));
-                return redirect()->back();
+        try {
+            $result = $absenceService->storeAbsence($request);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return $this->failureResponse(
+                $request,
+                __('Absence could not be registered. Please try again.'),
+                'absence'
+            );
+        }
+
+        if ($result['error']) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => $result['error']], 400);
             }
-        }
-        if ($request->medical_certificate == true) {
-            $medical_certificate = true;
-        } elseif ($request->medical_certificate == false) {
-            $medical_certificate = false;
+            session()->flash('flash_message_warning', __($result['error']));
+
+            return redirect()->back();
         }
 
-        Absence::create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'reason' => $request->reason,
-            'user_id' => $user->id,
-            'start_at' => Carbon::parse($request->start_date)->startOfDay(),
-            'end_at' => Carbon::parse($request->end_date)->endOfDay(),
-            'medical_certificate' => $medical_certificate,
-            'comment' => clean($request->comment),
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Absence registered'], 200);
+        }
+        session()->flash('flash_message', __('Absence registered'));
 
-        Session::flash('flash_message', __('Absence registered'));
         return redirect()->back();
     }
 
     public function destroy(Absence $absence)
     {
-        if (!auth()->user()->can('absence-manage')) {
-            Session::flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+        if ( ! auth()->user()->can('absence-manage')) {
+            session()->flash('flash_message_warning', __('You do not have sufficient privileges for this action'));
+
             return redirect()->back();
         }
         $absence->delete();
 
-        return response("OK");
+        return response('OK');
     }
 }

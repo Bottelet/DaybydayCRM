@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCommentsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -13,10 +12,10 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('comments', static function (Blueprint $table) {
             $table->increments('id');
-            $table->string('external_id');
-            $table->text('description');
+            $table->string('external_id')->default('');
+            $table->text('description')->nullable();
             $table->morphs('source');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');

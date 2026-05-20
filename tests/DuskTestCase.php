@@ -2,17 +2,18 @@
 
 namespace Tests;
 
-use App\Models\User;
-use App\Models\Role;
-use App\Models\Department;
 use App\Models\Client;
-use App\Models\Task;
-use App\Models\Lead;
 use App\Models\Contact;
+use App\Models\Department;
+use App\Models\Lead;
+use App\Models\Role;
+use App\Models\Task;
+use App\Models\User;
+use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
-use Laravel\Dusk\TestCase as BaseTestCase;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Laravel\Dusk\TestCase as BaseTestCase;
 
 abstract class DuskTestCase extends BaseTestCase
 {
@@ -22,6 +23,7 @@ abstract class DuskTestCase extends BaseTestCase
      * Prepare for Dusk test execution.
      *
      * @beforeClass
+     *
      * @return void
      */
     public static function prepare()
@@ -31,15 +33,15 @@ abstract class DuskTestCase extends BaseTestCase
 
     public function createUserWithRelations($attributes = [])
     {
-        $user = factory(User::class)->create($attributes);
-        
+        $user = User::factory()->create($attributes);
+
         $role = Role::whereName('factory')->first();
-        if (!$role) {
-            $role = factory(Role::class)->create();
+        if ( ! $role) {
+            $role = Role::factory()->create();
         }
         $department = Department::whereName('factory')->first();
-        if (!$department) {
-            $department = factory(Department::class)->create();
+        if ( ! $department) {
+            $department = Department::factory()->create();
         }
 
         $user->department()->attach($department->id);
@@ -52,50 +54,48 @@ abstract class DuskTestCase extends BaseTestCase
     {
         $client = false;
 
-        if (!array_has($attributes, 'user_id')) {
-            $client = factory(Client::class)->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
+        if ( ! array_has($attributes, 'user_id')) {
+            $client = Client::factory()->create(array_merge($attributes, ['user_id' => User::whereEmail('admin@admin.com')->first()->id]));
         }
 
-        if (!$client) {
-            $client = factory(Client::class)->create($attributes);
+        if ( ! $client) {
+            $client = Client::factory()->create($attributes);
         }
 
-        if (!array_has($attributes, 'contact_id')) {
-            $contact = factory(Contact::class)->create(['client_id' => $client->id]);
+        if ( ! array_has($attributes, 'contact_id')) {
+            $contact = Contact::factory()->create(['client_id' => $client->id]);
         }
-
 
         return ['client' => $client, 'contact' => $contact];
     }
 
     public function createTaskWithRelations($attributes = [])
     {
-        if (!array_has($attributes, 'client_id')) {
-            throw new \Exception("Client id is required");
+        if ( ! array_has($attributes, 'client_id')) {
+            throw new Exception('Clients id is required');
         }
-        if (!array_has($attributes, 'user_assigned_id') && !array_has($attributes, 'user_created_id')) {
-            $user_id = User::whereEmail('admin@admin.com')->first()->id;
+        if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
+            $user_id    = User::whereEmail('admin@admin.com')->first()->id;
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
-        
-        $task = factory(Task::class)->create($attributes);
+
+        $task = Task::factory()->create($attributes);
 
         return $task;
     }
 
     public function createLeadWithRelations($attributes = [])
     {
-        if (!array_has($attributes, 'client_id')) {
-            throw new \Exception("Client id is required");
+        if ( ! array_has($attributes, 'client_id')) {
+            throw new Exception('Clients id is required');
         }
 
-        if (!array_has($attributes, 'user_assigned_id') && !array_has($attributes, 'user_created_id')) {
-            $user_id = User::whereEmail('admin@admin.com')->first()->id;
+        if ( ! array_has($attributes, 'user_assigned_id') && ! array_has($attributes, 'user_created_id')) {
+            $user_id    = User::whereEmail('admin@admin.com')->first()->id;
             $attributes = array_merge($attributes, ['user_assigned_id' => $user_id, 'user_created_id' => $user_id]);
         }
 
-        $lead = factory(Lead::class)->create($attributes);
-        
+        $lead = Lead::factory()->create($attributes);
 
         return $lead;
     }
@@ -103,11 +103,11 @@ abstract class DuskTestCase extends BaseTestCase
     /**
      * Create the RemoteWebDriver instance.
      *
-     * @return \Facebook\WebDriver\Remote\RemoteWebDriver
+     * @return RemoteWebDriver
      */
     protected function driver()
     {
-        $options = (new ChromeOptions)->addArguments([
+        $options = (new ChromeOptions())->addArguments([
             '--disable-gpu',
             '--headless',
             '--window-size=1920,1920',

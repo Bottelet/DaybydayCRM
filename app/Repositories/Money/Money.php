@@ -1,5 +1,6 @@
 <?php
-namespace  App\Repositories\Money;
+
+namespace App\Repositories\Money;
 
 use App\Models\Setting;
 use App\Repositories\Currency\Currency;
@@ -10,6 +11,7 @@ class Money
      * @var int
      */
     private $amount;
+
     /**
      * @var Currency
      */
@@ -17,10 +19,12 @@ class Money
 
     public function __construct($amount = 0)
     {
-        $currency = Setting::select('currency')->first()->currency;
-        $this->amount = $amount;
+        $setting        = Setting::select('currency')->first();
+        $currency       = $setting ? $setting->currency : 'USD';
+        $this->amount   = (int) $amount;
         $this->currency = new Currency($currency);
     }
+
     /**
      * @return mixed
      */

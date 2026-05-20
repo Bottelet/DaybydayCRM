@@ -12,65 +12,52 @@ class InvoiceObserver
     {
         $this->relations = [
             'invoiceLines',
-            'payments'
+            'payments',
         ];
     }
 
     /**
      * Handle the task "created" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
-    public function created(Invoice $task)
-    {
-        //
-    }
+    public function created(Invoice $task) {}
 
     /**
      * Handle the task "updated" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
-    public function updated(Invoice $task)
-    {
-    }
+    public function updated(Invoice $task) {}
 
     /**
      * Handle the task "deleted" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function deleted(Invoice $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->delete();
+            $task->{$relation}()->delete();
         }
     }
 
     /**
      * Handle the task "restored" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
     public function restored(Invoice $task)
     {
         foreach ($this->relations as $relation) {
-            $task->$relation()->withTrashed()->restore();
+            $task->{$relation}()->withTrashed()->restore();
         }
     }
 
     /**
      * Handle the task "force deleted" event.
      *
-     * @param  \App\Models\Invoice  $task
      * @return void
      */
-    public function forceDeleted(Invoice $task)
-    {
-        //
-    }
+    public function forceDeleted(Invoice $task) {}
 }

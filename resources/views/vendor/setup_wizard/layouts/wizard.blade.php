@@ -16,10 +16,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-10 col-md-push-1 col-lg-8 col-lg-push-2">
-            {!! Form::open([
-                'route' => ['setup_wizard.submit', $currentStep->getSlug()],
-                'files' => true,
-            ]) !!}
+            <form action="{{ route('setup_wizard.submit', $currentStep->getSlug()) }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
             <div class="sw-wizard">
                 <div class="sw-step-header">
@@ -47,7 +45,7 @@
                 </div>
             </div>
 
-            {!! Form::close() !!}
+            </form>
         </div>
     </div>
 </div>

@@ -3,8 +3,9 @@
 namespace Tests\Browser;
 
 use App\Models\User;
-use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
 {
@@ -13,11 +14,15 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
-    public function testExample()
+    #[Test]
+    public function it_example()
     {
-        $user = factory(User::class)->create([
-            'password' => bcrypt("secretpassword")
+        /* Arrange */
+        $user = User::factory()->create([
+            'password' => bcrypt('secretpassword'),
         ]);
+
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)
@@ -33,11 +38,15 @@ class LoginTest extends DuskTestCase
      *
      * @return void
      */
-    public function testUserCanLoginSuccessfully()
+    #[Test]
+    public function it_user_can_login_successfully()
     {
-        $user = factory(User::class)->create([
-            'password' => bcrypt("secretpassword")
+        /* Arrange */
+        $user = User::factory()->create([
+            'password' => bcrypt('secretpassword'),
         ]);
+
+        /* Act & Assert */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)

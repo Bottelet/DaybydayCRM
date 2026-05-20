@@ -2,11 +2,11 @@
 <html>
 <head>
   <title>DaybydayCRM</title>
-  <link rel="stylesheet" href="{{ asset(elixir('css/vendor.css')) }}">
-  <link rel="stylesheet" href="{{ asset(elixir('css/app.css')) }}">
-  <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
-  <link href="{{ URL::asset('css/picker.classic.css') }}" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="{{ asset(elixir('css/bootstrap-select.min.css')) }}">
+  <link rel="stylesheet" href="{{ mix('css/vendor.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ mix('css/app.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ URL::asset('css/font-awesome.min.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ URL::asset('css/picker.classic.css') }}" type="text/css">
+  <link rel="stylesheet" href="{{ mix('css/bootstrap-select.min.css') }}">
   <link rel="shortcut icon" href="{{{ asset('images/favicon.png') }}}">
 </head>
 <body>
@@ -14,6 +14,10 @@
   <calendar></calendar>
 </div>
 <script>
+  var DayByDay = {
+    csrfToken: "{{csrf_token()}}",
+    baseUrl: "{{url('/')}}"
+  }
   window.trans = <?php
   // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
   try {
@@ -30,10 +34,9 @@
   echo json_encode($trans);
   ?>;
 </script>
-<script src="/js/manifest.js"></script>
-<script src="/js/vendor.js"></script>
-<script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
-<script type="text/javascript" src="{{ URL::asset('js/picker.js') }}"></script>
+<script src="{{ mix('js/manifest.js') }}"></script>
+<script src="{{ mix('js/vendor.js') }}"></script>
+<script type="text/javascript" src="{{ mix('js/app.js') }}"></script>
 
 </body>
 </html>

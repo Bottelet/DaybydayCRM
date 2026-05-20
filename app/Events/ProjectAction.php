@@ -2,40 +2,39 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Project;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Queue\SerializesModels;
 
 class ProjectAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $project;
+
     private $action;
 
-    use InteractsWithSockets, SerializesModels;
+    /**
+     * Create a new event instance.
+     * projectAction constructor.
+     */
+    public function __construct(Project $project, $action)
+    {
+        $this->project = $project;
+        $this->action  = $action;
+    }
 
     public function getProject()
     {
         return $this->project;
     }
+
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Create a new event instance.
-     * projectAction constructor.
-     * @param project $project
-     * @param $action
-     */
-    public function __construct(Project $project, $action)
-    {
-        $this->project = $project;
-        $this->action = $action;
     }
 
     /**

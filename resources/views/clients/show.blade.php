@@ -42,13 +42,6 @@
                 <div class="tablet__head">
                     <span class="tablet__head-label">
                         <h3 class="tablet__head-title">{{ __('Recent appointments') }}</h3>
-                        <span>
-                            <create-appointment
-                                    v-on:created-appointment="reload()"
-                                    client-external-id="{{$client->external_id}}"
-                                    button-style="font-size:22px; background-color:transparent; color:#242939;  margin-right:0em; margin-left:2.8em; margin-top:0.2em; border-radius:10%;">
-                            </create-appointment>
-                        </span>
                     </span>
                 </div>
                 <div class="tablet__body">

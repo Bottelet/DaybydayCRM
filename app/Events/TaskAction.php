@@ -2,40 +2,39 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Models\Task;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Queue\SerializesModels;
 
 class TaskAction
 {
+    use InteractsWithSockets;
+    use SerializesModels;
+
     private $task;
+
     private $action;
 
-    use InteractsWithSockets, SerializesModels;
+    /**
+     * Create a new event instance.
+     * TaskAction constructor.
+     */
+    public function __construct(Task $task, $action)
+    {
+        $this->task   = $task;
+        $this->action = $action;
+    }
 
     public function getTask()
     {
         return $this->task;
     }
+
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Create a new event instance.
-     * TaskAction constructor.
-     * @param Task $task
-     * @param $action
-     */
-    public function __construct(Task $task, $action)
-    {
-        $this->task = $task;
-        $this->action = $action;
     }
 
     /**

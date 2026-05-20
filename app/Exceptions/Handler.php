@@ -1,9 +1,18 @@
 <?php
+
 namespace App\Exceptions;
 
-use Throwable;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -13,19 +22,21 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        \Illuminate\Auth\AuthenticationException::class,
-        \Illuminate\Auth\Access\AuthorizationException::class,
-        \Symfony\Component\HttpKernel\Exception\HttpException::class,
-        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
-        \Illuminate\Session\TokenMismatchException::class,
-        \Illuminate\Validation\ValidationException::class,
+        AuthenticationException::class,
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        TokenMismatchException::class,
+        ValidationException::class,
     ];
+
     /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param Exception $exception
+     *
      * @return void
      */
     public function report(Throwable $exception)
@@ -36,29 +47,43 @@ class Handler extends ExceptionHandler
 
         parent::report($exception);
     }
+
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response
+     * @param Request   $request
+     * @param Exception $exception
+     *
+     * @return Response
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof HttpException
+            && $exception->getStatusCode() === 403
+            && $request->expectsJson()
+        ) {
+            return response()->json(
+                ['message' => $exception->getMessage() ?: 'This action is unauthorized.'],
+                403
+            );
+        }
+
         return parent::render($request, $exception);
     }
+
     /**
      * Convert an authentication exception into an unauthenticated response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     *
+     * @return Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
+
         return redirect()->guest('login');
     }
 }

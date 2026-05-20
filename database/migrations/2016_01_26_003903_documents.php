@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class Documents extends Migration
 {
@@ -12,7 +12,7 @@ class Documents extends Migration
      */
     public function up()
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('documents', static function (Blueprint $table) {
             $table->increments('id');
             $table->string('external_id');
             $table->string('size');
@@ -20,7 +20,7 @@ class Documents extends Migration
             $table->string('original_filename');
             $table->string('mime');
             $table->string('integration_id')->nullable();
-            $table->string('integration_type');
+            $table->string('integration_type')->nullable();
             $table->morphs('source');
             $table->softDeletes();
             $table->timestamps();

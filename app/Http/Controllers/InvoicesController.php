@@ -2,44 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use View;
-use App\Billy;
-use Datatables;
-use Carbon\Carbon;
-use App\Models\Lead;
-use App\Models\Task;
-use Ramsey\Uuid\Uuid;
-use App\Http\Requests;
-use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\Payment;
-use App\Models\Setting;
-use App\Models\Integration;
-use App\Models\InvoiceLine;
 use App\Enums\InvoiceStatus;
-use App\Enums\OfferStatus;
 use App\Enums\PaymentSource;
-use Illuminate\Http\Request;
-use App\Repositories\Tax\Tax;
-use App\Repositories\Money\Money;
+use App\Http\Requests\Invoice\AddInvoiceLine;
+use App\Models\Invoice;
+use App\Models\InvoiceLine;
+use App\Models\Product;
+use App\Models\Setting;
 use App\Repositories\Currency\Currency;
 use App\Repositories\Money\MoneyConverter;
+use App\Repositories\Tax\Tax;
+use App\Services\Billing\BillingIntegrationRegistry;
+use App\Services\Billing\NullBillingAdapter;
 use App\Services\Invoice\InvoiceCalculator;
-use App\Http\Requests\Invoice\AddInvoiceLine;
-use App\Models\Offer;
-use App\Models\Product;
+use App\Services\Invoice\InvoiceService;
 use App\Services\InvoiceNumber\InvoiceNumberService;
-use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Session;
+use Ramsey\Uuid\Uuid;
+use Yajra\DataTables\Facades\DataTables;
 
 class InvoicesController extends Controller
 {
     protected $clients;
+
     protected $invoices;
+
+    public function __construct(
+        private BillingIntegrationRegistry $billing,
+        private InvoiceService $invoiceService,
+    ) {}
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -49,25 +49,23 @@ class InvoicesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Invoice $invoice
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Invoice $invoice)
     {
-        if (!auth()->user()->can('invoice-see')) {
+        if ( ! auth()->user()->can('invoice-see')) {
             session()->flash('flash_message_warning', __('You do not have permission to view this invoice'));
+
             return redirect()->route('clients.index');
         }
-        
-        $apiConnected = false;
+
+        $api = $this->billing->driver();
+
+        $apiConnected    = ! ($api instanceof NullBillingAdapter);
         $invoiceContacts = [];
-        $primaryContact = null;
+        $primaryContact  = null;
 
-        $api = Integration::initBillingIntegration();
-
-        if ($api) {
-            $apiConnected = true;
-
+        if ($apiConnected) {
             $invoiceContacts = $api->getContacts();
             if (empty($invoiceContacts)) {
                 $apiConnected = false;
@@ -77,11 +75,11 @@ class InvoicesController extends Controller
         }
 
         $invoiceCalculator = new InvoiceCalculator($invoice);
-        $totalPrice = $invoiceCalculator->getTotalPrice();
-        $subPrice = $invoiceCalculator->getSubTotal();
-        $vatPrice = $invoiceCalculator->getVatTotal();
-        $amountDue = $invoiceCalculator->getAmountDue();
-        
+        $totalPrice        = $invoiceCalculator->getTotalPrice();
+        $subPrice          = $invoiceCalculator->getSubTotal();
+        $vatPrice          = $invoiceCalculator->getVatTotal();
+        $amountDue         = $invoiceCalculator->getAmountDue();
+
         return view('invoices.show')
             ->withInvoice($invoice)
             ->withApiconnected($apiConnected)
@@ -97,90 +95,92 @@ class InvoicesController extends Controller
             ->withCompanyName(Setting::first()->company);
     }
 
-
     /**
-     * Update the sent status
-     * @param Request $request
-     * @param $external_id
+     * Update the sent status.
+     *
      * @return mixed
      */
     public function updateSentStatus(Request $request, $external_id)
     {
-        if (!auth()->user()->can('invoice-send')) {
+        if ( ! auth()->user()->can('invoice-send')) {
             session()->flash('flash_message_warning', __('You do not have permission to send an invoice'));
+
             return redirect()->route('invoices.show', $external_id);
         }
         /** @var Invoice $invoice */
         $invoice = $this->findByExternalId($external_id);
         if ($invoice->isSent()) {
             session()->flash('flash_message_warning', __('Invoice already sent'));
+
             return redirect()->route('invoices.show', $external_id);
         }
 
-        $result = $invoice->invoice($request->invoiceContact);
+        $result = $this->invoiceService->submitToBilling($invoice, $request->invoiceContact);
         if ($request->sendMail && $request->invoiceContact) {
-            $attachPdf = $request->attachPdf ? true : false;
-            $invoice->sendMail($request->subject, $request->message, $request->recipientMail, $attachPdf);
+            $attachPdf = (bool) $request->attachPdf;
+            $this->invoiceService->sendByEmail($invoice, $request->subject, $request->message, $request->recipientMail, $attachPdf);
         }
 
-        $invoice->sent_at =  Carbon::now();
-        $invoice->status  =  InvoiceStatus::unpaid()->getStatus();
-        $invoice->due_at  =  $result["due_at"];
-        $invoice->invoice_number = app(InvoiceNumberService::class)->setInvoiceNumber($result["invoice_number"]);
+        $invoice->sent_at        = Carbon::now();
+        $invoice->status         = InvoiceStatus::unpaid()->getStatus();
+        $invoice->due_at         = $result['due_at'];
+        $invoice->invoice_number = app(InvoiceNumberService::class)->setInvoiceNumber($result['invoice_number']);
         $invoice->save();
 
         return redirect()->back();
     }
 
     /**
-     * Add new invoice line
-     * @param $external_id
-     * @param AddInvoiceLine $request
+     * Add new invoice line.
+     *
      * @return mixed
-     * @throws \Exception
+     *
+     * @throws Exception
      */
     public function newItem($external_id, AddInvoiceLine $request)
     {
-        if (!auth()->user()->can('modify-invoice-lines')) {
+        if ( ! auth()->user()->can('modify-invoice-lines')) {
             session()->flash('flash_message_warning', __('You do not have permission to modify invoice lines'));
+
             return redirect()->route('invoices.show', $external_id);
         }
         $invoice = $this->findByExternalId($external_id);
 
-        if (!$invoice->canUpdateInvoice()) {
+        if ( ! $invoice->canUpdateInvoice()) {
             Session::flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
+
             return redirect()->back();
         }
 
         $product = null;
-        if($request->product_id) {
+        if ($request->product_id) {
             $product = $request->product_id;
-        } elseif($request->product) {
+        } elseif ($request->product) {
             $product = Product::whereExternalId($request->product)->first()->id;
         }
 
-        InvoiceLine::create([
-                'external_id' => Uuid::uuid4()->toString(),
-                'title' => $request->title,
-                'comment' => $request->comment,
-                'quantity' => $request->quantity,
-                'type' => $request->type,
-                'price' => $request->price * 100,
-                'invoice_id' => $invoice->id,
-                'product_id' => $product
-            ]);
+        InvoiceLine::query()->create([
+            'external_id' => Uuid::uuid4()->toString(),
+            'title'       => $request->title,
+            'comment'     => $request->comment,
+            'quantity'    => $request->quantity,
+            'type'        => $request->type,
+            'price'       => $request->price * 100,
+            'invoice_id'  => $invoice->id,
+            'product_id'  => $product,
+        ]);
 
         return redirect()->back();
     }
-    
+
     public function newItems($external_id, Request $request)
     {
-        foreach($request->all() as $invoiceLine) {
+        foreach ($request->all() as $invoiceLine) {
             $invoiceLine = new AddInvoiceLine($invoiceLine);
             $this->newItem($external_id, $invoiceLine);
         }
     }
-    
+
     public function findByExternalId($external_id)
     {
         return Invoice::whereExternalId($external_id)->first();
@@ -204,7 +204,7 @@ class InvoicesController extends Controller
                 return __($payments->payment_source);
             })
             ->editColumn('description', function ($payments) {
-                return substr($payments->description, 0, 80);
+                return mb_substr($payments->description, 0, 80);
             })
             ->addColumn('delete', '
                 <form action="{{ route(\'payment.destroy\', $external_id) }}" method="POST">
@@ -218,19 +218,19 @@ class InvoicesController extends Controller
 
     public function moneyFormat()
     {
-        $formats = [];
-        $currency = app(Currency::class, ["code" => Setting::select("currency")->first()->currency]);
-        $formats = array_merge($formats, $currency->toArray());
+        $formats                  = [];
+        $currency                 = app(Currency::class, ['code' => Setting::query()->select('currency')->first()->currency]);
+        $formats                  = array_merge($formats, $currency->toArray());
         $formats['vatPercentage'] = app(Tax::class)->multipleVatRate();
-        $formats['vatRate'] = app(Tax::class)->vatRate();
-        
+        $formats['vatRate']       = app(Tax::class)->vatRate();
+
         return $formats;
     }
 
     public function overdue()
     {
         $invoices = Invoice::pastDueAt()->get();
-        
+
         return view('invoices.overdue')->withInvoices($invoices);
     }
 }

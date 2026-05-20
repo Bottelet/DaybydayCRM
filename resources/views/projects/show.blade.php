@@ -10,7 +10,7 @@
     <div class="col-lg-12">
         <div class="project-board-ui">
             <nav class="navbar board text-black ">
-                @if(!$project->isClosed())
+                @if(!$project->isClosed() && $client)
                 <a href="{{route('client.project.task.create', [$client->external_id, $project->external_id])}}" class="btn btn-md btn-brand" style="margin:1em;">@lang('New task')</a>
             @endif
         </nav>
@@ -192,25 +192,21 @@
 
                 <div class="modal-body">
 
-                    {!! Form::model($project, [
-                      'method' => 'PATCH',
-                      'route' => ['project.update.deadline', $project->external_id],
-                      ]) !!}
-                    {!! Form::label('deadline_date', __('Change deadline'), ['class' => 'control-label']) !!}
-                    {!! Form::date('deadline_date', \Carbon\Carbon::now()->addDays(7), ['class' => 'form-control']) !!}
-                    {!! Form::text('deadline_time', '15:00', ['class' => 'form-control', 'onkeydown' => 'return isNumberKey(this)', 'onchange' => 'validateHhMm(this)', 'id' => 'deadline_time']) !!}
+                    <form action="{{ route('project.update.deadline', $project->external_id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <label for="deadline_date" class="control-label">{{ __('Change deadline') }}</label>
+                        <input type="date" name="deadline_date" class="form-control" value="{{ old('deadline_date', \Carbon\Carbon::now()->addDays(7)->format('Y-m-d')) }}">
+                        <input type="text" name="deadline_time" class="form-control" value="{{ old('deadline_time', '15:00') }}" onkeydown="return isNumberKey(this)" onchange="validateHhMm(this)" id="deadline_time">
 
-
-
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default col-lg-6"
-                                data-dismiss="modal">{{ __('Close') }}</button>
-                        <div class="col-lg-6">
-                            {!! Form::submit( __('Update deadline'), ['class' => 'btn btn-success form-control closebtn']) !!}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default col-lg-6"
+                                    data-dismiss="modal">{{ __('Close') }}</button>
+                            <div class="col-lg-6">
+                                <input type="submit" value="{{ __('Update deadline') }}" class="btn btn-success form-control closebtn">
+                            </div>
                         </div>
-                        {!! Form::close() !!}
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -248,7 +244,7 @@ $( ".sortable" ).sortable({
 });
     @if(Entrust::can('project-upload-files') && $filesystem_integration)
     $('#add-files').on('click', function () {
-        $('#add-files-modal .modal-content').load('/add-documents/{{$project->external_id}}' + '/project');
+        $('#add-files-modal .modal-content').load('{{url('/add-documents/'.$project->external_id.'/project')}}');
         $('#add-files-modal').modal('show');
     });
     @endif

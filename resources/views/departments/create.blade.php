@@ -4,21 +4,18 @@
 @stop
 
 @section('content')
-    {!! Form::open([
-            'route' => 'departments.store',
-            ]) !!}
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <div class="form-group">
-        {!! Form::label('Name', __('Department name') . ':', ['class' => 'control-label thin-weight']) !!}
-        {!! Form::text('name', null,['class' => 'form-control']) !!}
-    </div>
+    <form action="{{ route('departments.store') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="name" class="control-label thin-weight">{{ __('Department name') }}:</label>
+            <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+        </div>
 
-    <div class="form-group">
-        {!! Form::label( __('Description'),  __('Department description') . ':', ['class' => 'control-label thin-weight']) !!}
-        {!! Form::textarea('description', null, ['class' => 'form-control']) !!}
-    </div>
-    {!! Form::submit(__("Create Department"), ['class' => 'btn btn-md btn-brand']) !!}
-
-    {!! Form::close() !!}
+        <div class="form-group">
+            <label for="description" class="control-label thin-weight">{{ __('Department description') }}:</label>
+            <textarea name="description" class="form-control">{{ old('description') }}</textarea>
+        </div>
+        <input type="submit" value="{{ __('Create Department') }}" class="btn btn-md btn-brand">
+    </form>
 
 @endsection

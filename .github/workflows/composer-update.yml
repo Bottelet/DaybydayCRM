@@ -1,0 +1,93 @@
+name: composer-update
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_group:
+        description: 'Which tests to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - smoke
+          - crud
+          - api
+          - custom
+      custom_group_name:
+        description: 'Custom PHPUnit group name (only used if "custom" selected above)'
+        required: false
+        type: string
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [8.2, 8.3, 8.4]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -ppassword --silent; then
+              echo "MySQL ready!"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Prepare .env
+        run: |
+          cp .env.ci .env.testing
+          cp .env.ci .env
+
+      - name: Install Composer dependencies
+        run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Create test DBs for parallel
+        run: |
+          for i in {1..8}; do
+            mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test_$i CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+          done
+
+      - name: Run migrations
+        run: php artisan migrate --seed
+
+      - name: Run tests (selected group/suite)
+        run: |
+          if [ "${{ github.event.inputs.test_group }}" = "full" ]; then
+            ./vendor/bin/phpunit --testdox
+          elif [ "${{ github.event.inputs.test_group }}" = "custom" ]; then
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="${{ github.event.inputs.custom_group_name }}" --testdox
+          else
+            vendor/bin/paratest --processes=8 --runner=WrapperRunner --group="${{ github.event.inputs.test_group }}" --testdox
+          fi

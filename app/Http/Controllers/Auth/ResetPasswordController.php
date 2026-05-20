@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class ResetPasswordController extends Controller
 {
+    use ResetsPasswords;
+
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -17,13 +19,10 @@ class ResetPasswordController extends Controller
     | explore this trait and override any methods you wish to tweak.
     |
     */
-    public $redirectTo = "dashboard";
-
-    use ResetsPasswords;
+    public $redirectTo = 'dashboard';
 
     /**
      * Create a new controller instance.
-     *
      */
     public function __construct()
     {

@@ -1,0 +1,79 @@
+<?php
+
+namespace Tests\Unit\Exceptions;
+
+use App\Exceptions\Handler;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\Test;
+use ReflectionClass;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Tests\AbstractTestCase;
+
+class HandlerTest extends AbstractTestCase
+{
+    use RefreshDatabase;
+
+    #[Test]
+    public function it_handler_class_extends_laravel_exception_handler()
+    {
+        /* Arrange */
+
+        /* Act */
+        $handler = app(Handler::class);
+
+        /* Assert */
+        $this->assertInstanceOf(ExceptionHandler::class, $handler);
+    }
+
+    #[Test]
+    public function it_handler_dont_report_list_contains_expected_exceptions()
+    {
+        /* Arrange */
+        $handler    = new Handler(app());
+        $reflection = new ReflectionClass($handler);
+        $property   = $reflection->getProperty('dontReport');
+        $property->setAccessible(true);
+
+        /* Act */
+        $dontReport = $property->getValue($handler);
+
+        /* Assert */
+        $this->assertContains(AuthenticationException::class, $dontReport);
+        $this->assertContains(AuthorizationException::class, $dontReport);
+        $this->assertContains(ValidationException::class, $dontReport);
+        $this->assertContains(ModelNotFoundException::class, $dontReport);
+        $this->assertContains(HttpException::class, $dontReport);
+    }
+
+    #[Test]
+    public function it_returns_json_for_unauthenticated_json_request()
+    {
+        /* Arrange */
+
+        /* Act */
+        $response = $this->withHeaders(['Accept' => 'application/json'])
+            ->getJson('/api/users');
+
+        /* Assert */
+        $response->assertStatus(401);
+        $response->assertJson(['error' => 'Unauthenticated.']);
+    }
+
+    #[Test]
+    public function it_redirects_unauthenticated_web_request_to_login()
+    {
+        /* Arrange */
+        auth()->logout();
+
+        /* Act */
+        $response = $this->get('/dashboard');
+
+        /* Assert */
+        $response->assertRedirect();
+    }
+}

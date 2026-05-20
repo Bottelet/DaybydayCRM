@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasExternalId;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Appointment extends Model
 {
+    use HasExternalId;
+    use HasFactory;
     use SoftDeletes;
+
     protected $fillable = [
         'user_id',
         'source_id',
@@ -22,17 +27,19 @@ class Appointment extends Model
         'client_id',
     ];
 
-    protected $dates = ['start_at', 'end_at'];
+    protected $casts = [
+        'start_at'   => 'datetime',
+        'end_at'     => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     protected $hidden = ['id', 'user_id', 'source_type', 'source_id', 'client_id'];
 
-    public function getRouteKeyName()
-    {
-        return 'external_id';
-    }
+    # region Relationships
 
-    protected function serializeDate(DateTimeInterface $date)
+    public function client()
     {
-        return $date->format('Y-m-d H:i:s');
+        return $this->belongsTo(Client::class);
     }
 
     public function user()
@@ -40,8 +47,18 @@ class Appointment extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function client()
+    protected static function boot()
     {
-        return $this->belongsTo(Client::class);
+        parent::boot();
+        // HasExternalId trait handles external_id generation
     }
+
+    // getRouteKeyName() is provided by HasExternalId trait
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d\TH:i:s.000000\Z');
+    }
+
+    # endregion
 }

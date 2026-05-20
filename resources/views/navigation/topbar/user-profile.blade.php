@@ -1,7 +1,7 @@
 <div class="topbar-user__wrapper">
     <ul class="nav navbar-nav navbar-right">
-        <li class="">
-            <a href="#" class="dropdown-toggle topbar-user__head" data-toggle="dropdown">
+        <li class="dropdown">
+            <a href="{{route('users.show', auth()->user()->external_id)}}" class="dropdown-toggle topbar-user__head" data-toggle="dropdown">
                 <span>@lang('Hi'),</span>
                 <span class="topbar-user__name">{{ auth()->user()->name }}</span>
                 <img src="{{ auth()->user()->avatar }}" class="topbar-user__image">
@@ -55,7 +55,7 @@
                     </li>
                     <li class="topbar-user__list">
                         <a href="{{url('/logout')}}" class="btn btn-outline-metal btn-hover-brand btn-upper btn-font-dark btn-sm btn-bold" style="margin-top: 15px;
-    margin-left: 20px;">{{ __('Sign Out') }}</a>
+    margin-left: 20px;">{{ __('Sign Out') }} (please make post request, please)</a>
                     </li>
                 </ul>
             </ul>

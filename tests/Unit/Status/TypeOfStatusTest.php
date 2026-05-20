@@ -1,4 +1,5 @@
 <?php
+
 namespace Tests\Unit\Status;
 
 use App\Models\Lead;
@@ -6,41 +7,48 @@ use App\Models\Project;
 use App\Models\Status;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\Client;
-use App\Models\User;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
 
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
-
-class TypeOfStatusTest extends TestCase
+class TypeOfStatusTest extends AbstractTestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
-    private $task;
-
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        factory(Status::class)->create([
-            "source_type" => Task::class,
-            "title" => "Hello"
-        ]);
-        factory(Status::class)->create([
-            "source_type" => Lead::class,
-            "title" => "Hello"
-        ]);
-
-        factory(Status::class)->create([
-            "source_type" => Project::class,
-            "title" => "Hello"
-        ]);
     }
 
-    /** @test */
-    public function happyPath()
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_type_of_status_scopes_correctly_filter_by_source_type()
     {
-        $this->assertNotNull(Status::typeOfTask()->get()->where('title', "Hello"));
-        $this->assertNotNull(Status::typeOfLead()->get()->where('title', "Hello"));
-        $this->assertNotNull(Status::typeOfProject()->get()->where('title', "Hello"));
+        /* Arrange */
+        Status::factory()->create([
+            'source_type' => Task::class,
+            'title'       => 'Hello',
+        ]);
+        Status::factory()->create([
+            'source_type' => Lead::class,
+            'title'       => 'Hello',
+        ]);
+        Status::factory()->create([
+            'source_type' => Project::class,
+            'title'       => 'Hello',
+        ]);
+
+        /* Act */
+        $taskStatuses    = Status::typeOfTask()->get()->where('title', 'Hello');
+        $leadStatuses    = Status::typeOfLead()->get()->where('title', 'Hello');
+        $projectStatuses = Status::typeOfProject()->get()->where('title', 'Hello');
+
+        /* Assert */
+        $this->assertCount(1, $taskStatuses);
+        $this->assertCount(1, $leadStatuses);
+        $this->assertCount(1, $projectStatuses);
+        $this->assertEquals(Task::class, $taskStatuses->first()->source_type);
+        $this->assertEquals(Lead::class, $leadStatuses->first()->source_type);
+        $this->assertEquals(Project::class, $projectStatuses->first()->source_type);
     }
 }

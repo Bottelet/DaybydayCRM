@@ -2,26 +2,22 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Auth;
-use Lang;
 use App\Models\Client;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ClientActionNotification extends Notification
 {
     use Queueable;
 
     private $client;
+
     private $action;
 
     /**
      * Create a new notification instance.
      * ClientActionNotification constructor.
-     * @param $client
-     * @param $action
      */
     public function __construct($client, $action)
     {
@@ -32,7 +28,8 @@ class ClientActionNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -43,8 +40,9 @@ class ClientActionNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param mixed $notifiable
+     *
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
@@ -57,7 +55,8 @@ class ClientActionNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)
@@ -70,8 +69,8 @@ class ClientActionNotification extends Notification
                 break;
             case 'updated_assign':
                 $text = __(':username assigned :company to you', [
-                    'company' => $this->client->company_name,
-                    'username' => Auth()->user()->name
+                    'company'  => $this->client->company_name,
+                    'username' => Auth()->user()->name,
                 ]);
                 break;
             default:
@@ -79,13 +78,13 @@ class ClientActionNotification extends Notification
         }
 
         return [
-            'assigned_user' => $notifiable->id, //Assigned user ID
-            'created_user' => auth()->user()->id,
-            'message' => $text,
-            'type' => Client::class,
-            'type_id' =>  $this->client->id,
-            'url' =>  url('clients/' . $this->client->external_id),
-            'action' => $this->action
+            'assigned_user' => $notifiable->id, // Assigned user ID
+            'created_user'  => auth()->user()->id,
+            'message'       => $text,
+            'type'          => Client::class,
+            'type_id'       => $this->client->id,
+            'url'           => url('clients/' . $this->client->external_id),
+            'action'        => $this->action,
         ];
     }
 }

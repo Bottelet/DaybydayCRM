@@ -1,11 +1,13 @@
 <?php
+
 namespace App\Models;
 
+use App\Events\ClientAction;
 use App\Http\Controllers\ClientsController;
-use App\Observers\ElasticSearchObserver;
+use App\Traits\HasExternalId;
 use App\Traits\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -16,7 +18,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Client extends Model
 {
-    use  SearchableTrait, SoftDeletes;
+    use HasExternalId;
+    use HasFactory;
+    use SearchableTrait;
+    use SoftDeletes;
 
     protected $searchableFields = ['company_name', 'vat', 'address'];
 
@@ -39,12 +44,11 @@ class Client extends Model
     public static function boot()
     {
         parent::boot();
-        // This makes it easy to toggle the search feature flag
-        // on and off. This is going to prove useful later on
-        // when deploy the new search engine to a live app.
-        //if (config('services.search.enabled')) {
-        static::observe(ElasticSearchObserver::class);
-        //}
+    }
+
+    public static function whereExternalId($external_id)
+    {
+        return self::query()->where('external_id', $external_id)->first();
     }
 
     public function updateAssignee(User $user)
@@ -52,7 +56,7 @@ class Client extends Model
         $this->user_id = $user->id;
         $this->save();
 
-        event(new \App\Events\ClientAction($this, ClientsController::UPDATED_ASSIGN));
+        event(new ClientAction($this, ClientsController::UPDATED_ASSIGN));
     }
 
     public function displayValue()
@@ -60,15 +64,31 @@ class Client extends Model
         return $this->company_name;
     }
 
-    public function user()
+    # region Relationships
+
+    public function appointments()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->hasMany(Appointment::class);
     }
 
-    public function tasks()
+    public function contacts()
     {
-        return $this->hasMany(Task::class, 'client_id', 'id')
-            ->orderBy('created_at', 'desc');
+        return $this->hasMany(Contact::class);
+    }
+
+    public function documents()
+    {
+        return $this->morphMany(Document::class, 'source');
+    }
+
+    public function industry()
+    {
+        return $this->belongsTo(Industry::class, 'industry_id', 'id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function leads()
@@ -77,9 +97,9 @@ class Client extends Model
             ->orderBy('created_at', 'desc');
     }
 
-    public function documents()
+    public function primaryContact()
     {
-        return $this->morphMany(Document::class, 'source');
+        return $this->hasOne(Contact::class)->whereIsPrimary(true);
     }
 
     public function projects()
@@ -87,44 +107,29 @@ class Client extends Model
         return $this->hasMany(Project::class);
     }
 
-    public function invoices()
+    public function tasks()
     {
-        return $this->hasMany(Invoice::class);
+        return $this->hasMany(Task::class, 'client_id', 'id')
+            ->orderBy('created_at', 'desc');
     }
 
-    public function contacts()
+    public function user()
     {
-        return $this->hasMany(Contact::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class);
-    }
+    # endregion
 
-    public function primaryContact()
-    {
-        return $this->hasOne(Contact::class)->whereIsPrimary(true);
-    }
-
-    public function getprimaryContactAttribute()
+    public function getPrimaryContactAttribute()
     {
         return $this->hasMany(Contact::class)->whereIsPrimary(true)->first();
     }
 
     public function getAssignedUserAttribute()
     {
-        return User::findOrFail($this->user_id);
+        return User::query()->findOrFail($this->user_id);
     }
 
-    public static function whereExternalId($external_id)
-    {
-        return self::where('external_id', $external_id)->first();
-    }
-
-    /**
-     * @return array
-     */
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

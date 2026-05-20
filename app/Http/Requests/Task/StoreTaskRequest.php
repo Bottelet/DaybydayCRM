@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Task;
 
+use App\Enums\PermissionName;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTaskRequest extends FormRequest
@@ -13,7 +14,9 @@ class StoreTaskRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->can('task-create');
+        $user = auth()->user();
+
+        return $user ? $user->can(PermissionName::TASK_CREATE->value) : false;
     }
 
     /**
@@ -24,13 +27,13 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'description' => 'required',
-            'status_id' => 'required',
-            'user_assigned_id' => 'required',
-            'user_created_id' => '',
+            'title'              => 'required',
+            'description'        => 'required',
+            'status_id'          => 'required',
+            'user_assigned_id'   => 'required',
+            'user_created_id'    => '',
             'client_external_id' => 'required',
-            'deadline' => ''
+            'deadline'           => '',
         ];
     }
 }

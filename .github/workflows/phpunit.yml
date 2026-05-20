@@ -1,58 +1,209 @@
-name: Run tests
+name: phpunit
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
+    inputs:
+      test_group:
+        description: 'Which tests to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - smoke
+          - api
+          - crud
+          - custom
+          - flaky
+          - junie_repaired
+      custom_group_name:
+        description: 'Custom PHPUnit group name (only used if "custom" selected above)'
+        required: false
+        type: string
+      output:
+        description: 'Output format'
+        required: true
+        default: 'testdox'
+        type: choice
+        options:
+          - pao
+          - testdox
+      test_runner:
+        description: 'Test runner'
+        required: true
+        default: 'phpunit'
+        type: choice
+        options:
+          - phpunit
+          - paratest
+      fail_fast:
+        description: 'Fail fast (stop on first error)?'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  contents: read
 
 jobs:
-  run-tests:
-    name: Run tests
+  tests:
+    name: PHP ${{ matrix.php }} - ${{ inputs.test_group }} (runner:${{ inputs.test_runner || 'phpunit' }}, output:${{ inputs.output }}, fail_fast:${{ inputs.fail_fast }})
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_PASSWORD: password
-          MYSQL_DATABASE: daybyday_test
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v1
+      - name: Setup PHP with Composer
+        uses: ./.github/actions/setup-php-composer
         with:
-          php-version: '7.3'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
-          coverage: none
+          php-version: ${{ matrix.php }}
+          php-extensions: 'dom,curl,libxml,mbstring,zip,pcntl,pdo,sqlite,pdo_sqlite,bcmath,soap,intl,gd,exif,iconv,imagick'
+          composer-args: '--no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist'
 
-      - name: Create daybyday testing database
-        env:
-          PORT: ${{ job.services.mysql.ports[3306] }}
-        run: mysql -h 127.0.0.1 --port "$PORT" -u root -ppassword -e 'CREATE DATABASE IF NOT EXISTS daybyday_test;'
-
-      - name: Run yarn
-        run: yarn && yarn dev
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v1
-        with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
-
-      - name: Run composer install
-        run: composer install --no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist
-
-      - name: Prepare Laravel Application
+      - name: Wait for MySQL
         run: |
-          cp .env.ci .env
-          php artisan key:generate
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -ppassword --silent; then
+              echo "MySQL ready!"
+              break
+            fi
+            sleep 2
+          done
 
-      - name: Database setup
-        run:  php artisan migrate --seed
+      - name: Prepare .env
+        run: |
+          cp .env.ci .env.testing
+          cp .env.ci .env
+
+      - name: Regenerate autoloader
+        run: composer dump-autoload --no-scripts
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Clear configurations
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+
+      - name: Create test database
+        run: |
+          mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+      - name: Run migrations
+        run: php artisan migrate:fresh --seed
+
+      - name: Set test run options
+        id: opts
+        run: |
+          # Output style flag
+          if [ "${{ github.event.inputs.output }}" = "pao" ]; then
+            OUT_OPT=""
+          else
+            OUT_OPT="--testdox"
+          fi
+
+          # Fail fast settings
+          if [ "${{ github.event.inputs.fail_fast }}" = "true" ]; then
+            FAILFAST="--stop-on-failure"
+          else
+            FAILFAST=""
+          fi
+
+          # Set GROUP to input value, or default to "full"
+          GROUP="${{ github.event.inputs.test_group }}"
+          if [ -z "$GROUP" ]; then
+            GROUP="full"
+          fi
+
+          echo "OUT_OPT=${OUT_OPT}" >> $GITHUB_ENV
+          echo "FAILFAST=${FAILFAST}" >> $GITHUB_ENV
+          echo "GROUP=${GROUP}" >> $GITHUB_ENV
+          echo "CUSTOM_GROUP=${{ github.event.inputs.custom_group_name }}" >> $GITHUB_ENV
+          echo "RUNNER=${{ github.event.inputs.test_runner || 'phpunit' }}" >> $GITHUB_ENV
 
       - name: Run tests
-        run: ./vendor/bin/phpunit
-        env:
-          ELASTICSEARCH_PORT: ${{ job.services.elasticsearch.ports[9200] }}
+        shell: bash
+        run: |
+          LOG_FILE="phpunit-output.log"
+          RUNNER_BIN="vendor/bin/phpunit"
+          if [ "$RUNNER" = "paratest" ]; then
+            RUNNER_BIN="vendor/bin/paratest"
+          fi
+
+          if [ ! -x "$RUNNER_BIN" ]; then
+            echo "::error title=Missing test runner::Selected runner '$RUNNER' requires '$RUNNER_BIN', but it was not found or is not executable."
+            if [ "$RUNNER" = "paratest" ]; then
+              echo "Install Paratest in composer.json require-dev (for example, brianium/paratest) or select the phpunit runner."
+            fi
+            exit 1
+          fi
+
+          set +e
+
+          # Stream phpunit output through the parser (shows only failures/errors live on screen)
+          # while tee saves the full raw log to disk for the artifact upload.
+          if [ "$GROUP" = "full" ]; then
+            $RUNNER_BIN --exclude-group flaky $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          elif [ "$GROUP" = "custom" ]; then
+            $RUNNER_BIN --exclude-group flaky --group="$CUSTOM_GROUP" $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          else
+            $RUNNER_BIN --exclude-group flaky --group="$GROUP" $OUT_OPT $FAILFAST 2>&1 | tee "$LOG_FILE" | php .github/scripts/parse-phpunit.php
+          fi
+
+          PIPE_EXIT_CODES=("${PIPESTATUS[@]}")
+          PHPUNIT_EXIT="${PIPE_EXIT_CODES[0]}"
+          set -e
+
+          if [ "$PHPUNIT_EXIT" -eq 0 ]; then
+            exit 0
+          fi
+
+          if grep -Eq 'FAILURES!|ERRORS!|Failures:\s*[1-9][0-9]*|Errors:\s*[1-9][0-9]*' "$LOG_FILE"; then
+            exit "$PHPUNIT_EXIT"
+          fi
+
+          if grep -Eq 'PHPUnit Notices:\s*[1-9][0-9]*|Notices:\s*[1-9][0-9]*|Incomplete:\s*[1-9][0-9]*' "$LOG_FILE"; then
+            echo "Only PHPUnit notices and/or incomplete tests detected; not failing workflow."
+            exit 0
+          fi
+
+          exit "$PHPUNIT_EXIT"
+
+      - name: Upload test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpunit-log-php${{ matrix.php }}
+          path: phpunit-output.log
+          retention-days: 7

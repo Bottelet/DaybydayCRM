@@ -4,9 +4,6 @@
             <ul class="time-dropwdown">
                 <li class="float-left"><a href="/dashboard"><button class="btn btn-clean back-button"><i class="fa fa-chevron-circle-left"></i></button></a></li>
                 <li class="float-left" style="float:right">
-                    <create-appointment v-on:created-appointment="createNewAppointment"></create-appointment>
-                </li>
-                <li class="float-left" style="float:right">
                     <div class="dropdown">
                         <button class="btn btn-brand dropdown-toggle toggle-design" type="button" data-toggle="dropdown">
                             <span v-if="scale=='fourteen_days'">{{trans('14 days')}}</span>
@@ -47,7 +44,6 @@
     import { Timeline } from 'vis-timeline/standalone';
     import moment from 'moment';
     import Message from './Message.vue'
-    import CreateAppointment from './AppointmentCreate.vue'
 
     export default {
         data() {
@@ -303,17 +299,6 @@
                 }
                 this.timeline.setOptions(this.options);
             },
-            createNewAppointment(event) {
-                var appointment = {};
-                appointment.id = event.data.external_id;
-                appointment.group = event.data.user_external_id;
-                appointment.content = "<span style='font-size:9px; margin:0; padding: 0 0 0 0'>" + event.data.start_at + "</span> <p style='margin:0; padding: 0; line-height: 0.8;'>" + this.sanitizeHTML(event.data.title) + "</p>";
-                appointment.start = event.data.start_at;
-                appointment.end = event.data.end_at;
-                appointment.style = "background-color:" + event.data.color;
-                this.items.push(appointment);
-                this.timeline.setItems(this.items);
-            },
             sanitizeHTML(text) {
                 var element = document.createElement('div');
                 element.innerText = text;
@@ -321,8 +306,7 @@
             }
         },
         components: {
-            message: Message,
-            createAppointment: CreateAppointment
+            message: Message
         }
     }
 </script>

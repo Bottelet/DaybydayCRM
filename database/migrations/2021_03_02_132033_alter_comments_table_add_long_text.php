@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class AlterCommentsTableAddLongText extends Migration
 {
@@ -13,7 +11,7 @@ class AlterCommentsTableAddLongText extends Migration
      */
     public function up()
     {
-        \DB::statement('ALTER TABLE `comments` MODIFY `description` LONGTEXT');
+        DB::statement('ALTER TABLE `comments` MODIFY `description` LONGTEXT');
     }
 
     /**
@@ -21,8 +19,5 @@ class AlterCommentsTableAddLongText extends Migration
      *
      * @return void
      */
-    public function down()
-    {
-        //
-    }
+    public function down() {}
 }

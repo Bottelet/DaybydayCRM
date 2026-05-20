@@ -38,12 +38,13 @@
 
 @endforeach
 <br/>
-    {!! Form::open(array('url' => $subject->getCreateCommentEndpoint())) !!}
-    <div class="form-group">
-        {!! Form::textarea('description', null, ['class' => 'form-control', 'id' => 'comment-field']) !!}
-        {!! Form::submit( __('Add Comment') , ['class' => 'btn btn-brand btn-md btn-upper movedown']) !!}
-    </div>
-    {!! Form::close() !!}
+    <form action="{{ $subject->getCreateCommentEndpoint() }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <textarea name="description" class="form-control" id="comment-field">{{ old('description') }}</textarea>
+            <input type="submit" value="{{ __('Add Comment') }}" class="btn btn-brand btn-md btn-upper movedown">
+        </div>
+    </form>
 
 @push('scripts')
     <script>

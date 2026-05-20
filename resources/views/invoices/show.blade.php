@@ -211,10 +211,8 @@
                 {{ __('Are you sure?') }}
                     </h4>
                     <p>{{ __('Once a invoice has been send, no new invoice lines can be added') }}</p>
-                 {!! Form::open([
-                    'method' => 'post',
-                    'route' => ['invoice.sent', $invoice->external_id],
-                    ]) !!}
+                 <form action="{{ route('invoice.sent', $invoice->external_id) }}" method="POST">
+                     @csrf
                     @if($apiconnected)
                     <p>{{ __('We have found this contact from your billing integration, do you wish for us to create the invoice in your your billing system as well?, than please choose a contact below') }}</p>
                     <select name="invoiceContact"
@@ -249,7 +247,7 @@
                     <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact->name, "company" => $companyName, "price" => $finalPrice])</textarea>
                 </div>
                 <input type="submit" value="{{__('Send invoice')}}" class="btn btn-md btn-brand btn-full-width closebtn" id="close-invoice">
-            {!! Form::close() !!}
+            </form>
             </div>
 
         </div>

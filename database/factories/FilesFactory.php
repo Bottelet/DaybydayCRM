@@ -1,12 +1,16 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\Payment;
-use Faker\Generator as Faker;
+use App\Models\File;
 
-$factory->define(App\Models\File::class, function (Faker $faker) {
-    return [
-        //
-    ];
-});
+class FilesFactory extends \Illuminate\Database\Eloquent\Factories\Factory
+{
+    protected $model = File::class;
+
+    public function definition()
+    {
+        return [
+        ];
+    }
+}

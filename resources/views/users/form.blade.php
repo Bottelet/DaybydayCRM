@@ -104,8 +104,8 @@
 <div class="col-sm-9">
 @if(auth()->user()->canChangeRole())
     <div class="form-group col-sm-8">
-        <label for="roles" class="control-label thin-weight">@lang('Assign role')</label>
-        <select name="roles" id="" class="form-control">
+        <label for="role" class="control-label thin-weight">@lang('Assign role')</label>
+        <select name="role" id="" class="form-control">
         @foreach($roles as $key => $role)
                 <option {{ isset($user) && optional($user->userRole)->role_id === $key ? "selected" : "" }} value="{{$key}}">{{$role}}</option>
         @endforeach
@@ -113,8 +113,8 @@
     </div>
 @endif
     <div class="form-group col-sm-8">
-        <label for="departments" class="control-label thin-weight">@lang('Assign department')</label>
-        <select name="departments" id="" class="form-control">
+        <label for="department" class="control-label thin-weight">@lang('Assign department')</label>
+        <select name="department" id="" class="form-control">
             @foreach($departments as $key => $department)
                 <option {{ isset($user) && $user->department->first()->id === $key ? "selected" : "" }} value="{{$key}}">{{$department}}</option>
             @endforeach

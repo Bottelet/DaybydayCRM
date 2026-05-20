@@ -13,7 +13,7 @@ class AddCascadingForAppointments extends Migration
      */
     public function up()
     {
-        Schema::table('appointments', function (Blueprint $table) {
+        Schema::table('appointments', static function (Blueprint $table) {
             $table->dropForeign('appointments_client_id_foreign');
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
@@ -24,8 +24,5 @@ class AddCascadingForAppointments extends Migration
      *
      * @return void
      */
-    public function down()
-    {
-        //
-    }
+    public function down() {}
 }
