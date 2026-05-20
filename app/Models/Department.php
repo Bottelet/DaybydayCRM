@@ -11,6 +11,8 @@ class Department extends Model
     use HasExternalId;
     use HasFactory;
 
+    public const MANAGEMENT = 'Management';
+
     protected $fillable
         = [
             'name',
