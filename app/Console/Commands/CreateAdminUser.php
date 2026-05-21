@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class CreateAdminUser extends Command
 {
-    protected const DEFAULT_LANGUAGE = 'en';
+    public const DEFAULT_LANGUAGE = 'en';
 
     protected $signature = 'daybyday:create-admin {--name=} {--email=} {--password=}';
 
