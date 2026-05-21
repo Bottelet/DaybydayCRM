@@ -50,10 +50,11 @@ class CreateAdminUser extends Command
         $this->info('🔧 Creating admin user...');
         $this->newLine();
 
-        // Resolve missing options interactively
-        $name     = $this->option('name') ?: $this->ask('What is the admin name?');
-        $email    = $this->option('email') ?: $this->ask('What is the admin email?');
-        $password = $this->option('password') ?: $this->secret('What is the admin password?');
+        // Resolve missing options interactively (skip prompts in non-interactive mode)
+        $interactive = $this->input->isInteractive();
+        $name        = $this->option('name') ?: ($interactive ? $this->ask('What is the admin name?') : null);
+        $email       = $this->option('email') ?: ($interactive ? $this->ask('What is the admin email?') : null);
+        $password    = $this->option('password') ?: ($interactive ? $this->secret('What is the admin password?') : null);
 
         // Validate inputs (accept ?string to handle null from ask()/secret() gracefully)
         if ( ! $this->validateInputs($name, $email, $password)) {
