@@ -147,9 +147,11 @@ async function createLead(page, request, title = uniqueValue('PW Lead')) {
   if (!location) {
     throw new Error(`Lead creation did not return a redirect location. Received status ${response.status()}.`);
   }
-  const leadExternalId = new URL(location || '/leads', BASE_URL).pathname.split('/').filter(Boolean).pop();
+  const leadPath = new URL(location, BASE_URL).pathname;
+  const leadSegments = leadPath.split('/').filter(Boolean);
+  const leadExternalId = leadSegments.length > 1 ? leadSegments[leadSegments.length - 1] : null;
   if (!leadExternalId || leadExternalId === 'leads') {
-    throw new Error(`Unable to determine lead external id from location: ${location}`);
+    throw new Error(`Unable to determine lead external id from redirect path: ${leadPath}`);
   }
   return { response, title, leadExternalId };
 }
@@ -344,7 +346,7 @@ async function createOffer(page, request) {
   const { body } = await html(request, `/leads/${leadExternalId}`);
   const offerExternalId = body.match(/data-offer-external_id="([^"]+)"/)?.[1];
   if (!offerExternalId) {
-    throw new Error('Offer external id not found on lead page');
+    throw new Error(`Offer external id not found on lead page for lead ${leadExternalId}`);
   }
 
   return { response, leadExternalId, offerExternalId };
@@ -366,7 +368,7 @@ async function createInvoice(page, request) {
   const { body } = await html(request, `/leads/${leadExternalId}`);
   const invoiceExternalId = body.match(/\/invoices\/([a-f0-9-]+)/i)?.[1];
   if (!invoiceExternalId) {
-    throw new Error('Invoice external id not found on lead page');
+    throw new Error(`Invoice external id not found on lead page for lead ${leadExternalId}`);
   }
 
   const sentResponse = await request.post(`${BASE_URL}/invoices/sentinvoice/${invoiceExternalId}`, {
@@ -421,7 +423,7 @@ async function uploadClientDocument(page, request, clientExternalId) {
   const { body } = await html(request, `/clients/${clientExternalId}`);
   const documentExternalId = body.match(/\/document\/([a-f0-9-]+)/i)?.[1];
   if (!documentExternalId) {
-    throw new Error('Document external id not found on client page');
+    throw new Error(`Document external id not found on client page for client ${clientExternalId}`);
   }
 
   return { uploadResponse, documentExternalId };
