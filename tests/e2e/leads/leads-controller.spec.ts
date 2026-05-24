@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { TEST_USERS, SEED_CLIENT_NAME, SEED_LEAD_TITLES } from '../../playwright/fixtures/users';
 import { LeadsPage } from '../../pages/LeadsPage';
 import { LoginPage } from '../../pages/LoginPage';
 
