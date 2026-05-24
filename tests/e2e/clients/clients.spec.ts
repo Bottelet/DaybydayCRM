@@ -1,4 +1,4 @@
-import { test, expect } from '../helpers/fixtures';
+import { test, expect } from '@playwright/test';
 import { PLAYWRIGHT_BASE_URL } from '../helpers/config';
 
 test.describe('Clients module', () => {
