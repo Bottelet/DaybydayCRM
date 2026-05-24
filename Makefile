@@ -96,8 +96,8 @@ e2e-test:
 
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 e2e-test-one:
-	@test -n "$(E2E_SPEC)" || (echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js [E2E_ARGS='--project=chromium']" && exit 1)
-	npm run test:e2e:one -- $(E2E_SPEC) $(E2E_ARGS)
+	@test -n "$(E2E_SPEC)" || (echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'" && exit 1)
+	npm run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS)
 
 e2e-list:
 	npm run test:e2e:list

@@ -81,7 +81,7 @@ return redirect()->back();
 - Use package scripts for local execution:
   - `npm run test:e2e`
   - `npm run test:e2e:list`
-  - `npm run test:e2e:one -- tests/e2e/auth/auth.spec.js`
+  - `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js`
 - Use Make targets when you want the same workflow through the repository task runner:
   - `make e2e-install`
   - `make e2e-test`

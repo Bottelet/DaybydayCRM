@@ -22,7 +22,7 @@ Start with `AGENTS.md`, then use the focused documents below as needed:
 - Playwright e2e coverage in `tests/e2e` is organized as one plain-route spec per phenomenon.
 - Run Playwright e2e checks with:
   - `npm run test:e2e`
-  - `npm run test:e2e:one -- tests/e2e/auth/auth.spec.js`
+  - `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js`
   - `make e2e-test`
   - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js`
 - Minimum required lint before push/PR:
