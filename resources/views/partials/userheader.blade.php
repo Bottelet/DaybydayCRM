@@ -42,14 +42,17 @@
                 @endif
             @endif
                 <p class="department-text">
-                    {{$contact->department()->first()->name}}
+                    @php
+                        $department = $contact->department->first();
+                    @endphp
+                    {{ $department->name ?? null }}
                 </p>
-                <!--MAIL-->
+                {{--MAIL--}}
                 @if($contact->email)
                     <p class="contact-paragraph">
                         <a href="mailto:{{ $contact->email }}">{{ $contact->email }}</a>
                     </p>
-                    <!--Work Phone-->
+                    {{--Work Phone--}}
                 @endif
                 @if($contact->primary_number)
                     <p class="contact-paragraph">
@@ -60,7 +63,7 @@
                             /
                     @endif
                     @if($contact->secondary_number)
-                        <!--Personal Phone-->
+                        {{--Personal Phone--}}
                             <a href="tel:{{ $contact->secondary_number }}">{{ $contact->secondary_number }}</a>
                     </p>
                 @endif
