@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::resource('clients', 'ClientsController');
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
-    Route::resource('documents', 'DocumentsController');
+    //Route::resource('documents', 'DocumentsController');
 
     /*
      * Tasks
