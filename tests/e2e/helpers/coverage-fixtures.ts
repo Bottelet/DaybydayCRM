@@ -86,8 +86,18 @@ export async function createInvoiceFixture(page: Page, request: APIRequestContex
   });
 
   expect(wonResponse.status()).toBe(302);
-  const leadHtml = await html(request, `/leads/${leadExternalId}`);
-  const invoiceExternalId = firstMatch(leadHtml, /\/invoices\/([^"]+)/, 'invoice external id');
+  const interimLeadHtml = await html(request, `/leads/${leadExternalId}`);
+  const invoiceExternalId = firstMatch(interimLeadHtml, /\/invoices\/([^"]+)/, 'invoice external id');
+
+  const sentResponse = await request.post(`${PLAYWRIGHT_BASE_URL}/invoices/sentinvoice/${invoiceExternalId}`, {
+    failOnStatusCode: false,
+    headers: {
+      'X-CSRF-TOKEN': await fetchCsrfToken(page),
+    },
+    form: {},
+    maxRedirects: 0,
+  });
+  expect(sentResponse.status()).toBe(302);
 
   return { leadExternalId, offerExternalId, invoiceExternalId };
 }
@@ -139,7 +149,7 @@ export async function firstAppointment(request: APIRequestContext) {
 }
 
 export async function calendarUsers(request: APIRequestContext) {
-  const response = await request.get(`${PLAYWRIGHT_BASE_URL}/users`, {
+  const response = await request.get(`${PLAYWRIGHT_BASE_URL}/users/users`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -154,7 +164,7 @@ export async function createClientDocumentFixture(page: Page, request: APIReques
   const payload = (await response.json()) as { client: { external_id: string } };
   const clientExternalId = payload.client.external_id;
 
-  const uploadResponse = await request.post(`${PLAYWRIGHT_BASE_URL}/upload/${clientExternalId}`, {
+  const uploadResponse = await request.post(`${PLAYWRIGHT_BASE_URL}/clients/upload/${clientExternalId}`, {
     failOnStatusCode: false,
     headers: {
       'X-CSRF-TOKEN': await fetchCsrfToken(page),

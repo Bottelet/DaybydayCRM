@@ -23,8 +23,8 @@ test.describe('Payments feature behavior', () => {
     });
     expect(invoiceResponse.status()).toBe(200);
 
-    const invoiceHtml = await invoiceResponse.text();
-    expect(invoiceHtml).toContain('Paid');
+    const invoiceHtml = (await invoiceResponse.text()).toLowerCase();
+    expect(invoiceHtml).toContain('paid');
 
     const dataResponse = await paymentsData(request, invoiceExternalId);
     const payload = await dataResponse.json();

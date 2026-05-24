@@ -3,6 +3,7 @@ import { nonAdminTest } from '../../helpers/fixtures';
 import { createAdminSession } from '../../helpers/session-context';
 import { createLeadFixture } from '../../helpers/coverage-fixtures';
 import { PLAYWRIGHT_BASE_URL } from '../../helpers/config';
+import { fetchCsrfToken } from '../../helpers/csrf';
 
 nonAdminTest.describe('Authorization coverage', () => {
   nonAdminTest('denies client creation', async ({ page, request }) => {
@@ -11,6 +12,7 @@ nonAdminTest.describe('Authorization coverage', () => {
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -18,12 +20,13 @@ nonAdminTest.describe('Authorization coverage', () => {
     expect(response.status()).toBe(403);
   });
 
-  nonAdminTest('denies lead creation', async ({ request }) => {
+  nonAdminTest('denies lead creation', async ({ page, request }) => {
     const response = await request.post(`${PLAYWRIGHT_BASE_URL}/leads`, {
       failOnStatusCode: false,
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -31,12 +34,13 @@ nonAdminTest.describe('Authorization coverage', () => {
     expect(response.status()).toBe(403);
   });
 
-  nonAdminTest('denies project creation', async ({ request }) => {
+  nonAdminTest('denies project creation', async ({ page, request }) => {
     const response = await request.post(`${PLAYWRIGHT_BASE_URL}/projects`, {
       failOnStatusCode: false,
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -44,12 +48,13 @@ nonAdminTest.describe('Authorization coverage', () => {
     expect(response.status()).toBe(403);
   });
 
-  nonAdminTest('denies task creation', async ({ request }) => {
+  nonAdminTest('denies task creation', async ({ page, request }) => {
     const response = await request.post(`${PLAYWRIGHT_BASE_URL}/tasks`, {
       failOnStatusCode: false,
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -57,12 +62,13 @@ nonAdminTest.describe('Authorization coverage', () => {
     expect(response.status()).toBe(403);
   });
 
-  nonAdminTest('denies role creation', async ({ request }) => {
+  nonAdminTest('denies role creation', async ({ page, request }) => {
     const response = await request.post(`${PLAYWRIGHT_BASE_URL}/roles`, {
       failOnStatusCode: false,
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -70,12 +76,13 @@ nonAdminTest.describe('Authorization coverage', () => {
     expect(response.status()).toBe(403);
   });
 
-  nonAdminTest('denies user creation', async ({ request }) => {
+  nonAdminTest('denies user creation', async ({ page, request }) => {
     const response = await request.post(`${PLAYWRIGHT_BASE_URL}/users`, {
       failOnStatusCode: false,
       headers: {
         Accept: 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
       },
       form: {},
     });
@@ -93,6 +100,7 @@ nonAdminTest.describe('Authorization coverage', () => {
         headers: {
           Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': await fetchCsrfToken(page),
         },
         data: [
           {

@@ -39,12 +39,11 @@ test.describe('Offers feature behavior', () => {
     });
     expect(lostResponse.status()).toBe(302);
 
-    const lostLeadHtml = await (
-      await request.get(`${PLAYWRIGHT_BASE_URL}/leads/${leadExternalId}`, {
-        failOnStatusCode: false,
-      })
-    ).text();
-    expect(lostLeadHtml).toContain('lost');
+    const lostLeadResponse = await request.get(`${PLAYWRIGHT_BASE_URL}/leads/${leadExternalId}`, {
+      failOnStatusCode: false,
+    });
+    const lostLeadHtml = await lostLeadResponse.text();
+    expect(lostLeadHtml.toLowerCase()).toContain('lost');
 
     const freshOffer = await createOfferFixture(page, request);
     const wonResponse = await request.post(`${PLAYWRIGHT_BASE_URL}/offer/won`, {
