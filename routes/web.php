@@ -84,7 +84,7 @@ Route::group(['middleware' => ['auth']], static function () {
      * Leads
      */
     Route::group(['prefix' => 'leads'], static function () {
-        Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
+        //Route::get('/all-leads-data', 'LeadsController@allLeads')->name('leads.all');
         Route::get('/data', 'LeadsController@leadsJson')->name('leads.data');
         Route::patch('/updateassign/{external_id}', 'LeadsController@updateAssign')->name('leads.updateAssign');
         Route::post('/updateassign/{external_id}', 'LeadsController@updateAssign');

@@ -79,7 +79,7 @@
         </div>
     </div>
     @endif
-@else 
+@else
 <div class="col-sm-3">
         <label for="name" class="base-input-label">@lang('Security')</label>
     </div>
@@ -115,9 +115,11 @@
     <div class="form-group col-sm-8">
         <label for="department" class="control-label thin-weight">@lang('Assign department')</label>
         <select name="department" id="" class="form-control">
-            @foreach($departments as $key => $department)
-                <option {{ isset($user) && $user->department->first()->id === $key ? "selected" : "" }} value="{{$key}}">{{$department}}</option>
-            @endforeach
+            @forelse($departments as $key => $department)
+                <option {{ isset($user) && $user->department?->first()?->id === $key ? "selected" : "" }} value="{{$key}}">{{$department}}</option>
+            @empty
+                <option value="">@lang('No departments available')</option>
+            @endforelse
         </select>
     </div>
 </div>
