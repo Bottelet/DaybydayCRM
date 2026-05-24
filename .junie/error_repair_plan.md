@@ -11,7 +11,7 @@ Use this as the short debugging checklist. Refer to `.github/TESTING.md`, `.gith
 
 ## Playwright shortcuts
 - Run the whole e2e suite with `npm run test:e2e` or `make e2e-test`.
-- Run one spec with `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js` or `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js`.
+- Run one spec with `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js` (spec path required after `--`) or `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js`.
 
 ## Frequent failure signatures
 - `SQLSTATE 1364` — missing required factory/model data or missing `HasExternalId`

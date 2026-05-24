@@ -17,7 +17,7 @@ make test
 make test-filter f=SomeTest
 make paratest
 npm run test:e2e
-npm run test:e2e:file -- tests/e2e/auth/auth.spec.js
+npm run test:e2e:file -- tests/e2e/auth/auth.spec.js  # requires the spec path after --
 make e2e-test
 make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 ```
