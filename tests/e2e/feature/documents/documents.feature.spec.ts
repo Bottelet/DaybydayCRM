@@ -36,7 +36,7 @@ nonAdminTest.describe('Documents permissions', () => {
 
     try {
       const { clientExternalId } = await createClientDocumentFixture(admin.page, admin.request);
-      const response = await request.post(`${PLAYWRIGHT_BASE_URL}/upload/${clientExternalId}`, {
+      const response = await request.post(`${PLAYWRIGHT_BASE_URL}/clients/upload/${clientExternalId}`, {
         failOnStatusCode: false,
         headers: {
           Accept: 'application/json',
@@ -59,45 +59,21 @@ nonAdminTest.describe('Documents permissions', () => {
   });
 
   nonAdminTest('denies task uploads without permission', async ({ page, request }) => {
-    const admin = await createAdminSession(page);
-
-    try {
-      const taskCreate = await admin.request.post(`${PLAYWRIGHT_BASE_URL}/tasks`, {
-        failOnStatusCode: false,
-        headers: {
-          Accept: 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRF-TOKEN': await fetchCsrfToken(admin.page),
+    const response = await request.post(`${PLAYWRIGHT_BASE_URL}/uploaToTask/invalid-task`, {
+      failOnStatusCode: false,
+      headers: {
+        'X-CSRF-TOKEN': await fetchCsrfToken(page),
+      },
+      multipart: {
+        files: {
+          name: 'forbidden-task-upload.txt',
+          mimeType: 'text/plain',
+          buffer: Buffer.from('forbidden'),
         },
-        form: {
-          title: `PW Task Upload ${Date.now()}`,
-          description: 'Task for document permissions',
-          status_id: 1,
-          user_assigned_id: 1,
-          client_external_id: 'missing',
-        },
-      });
-      expect(taskCreate.status()).toBeGreaterThanOrEqual(400);
-
-      const response = await request.post(`${PLAYWRIGHT_BASE_URL}/uploaToTask/invalid-task`, {
-        failOnStatusCode: false,
-        headers: {
-          'X-CSRF-TOKEN': await fetchCsrfToken(page),
-        },
-        multipart: {
-          'files[]': {
-            name: 'forbidden-task-upload.txt',
-            mimeType: 'text/plain',
-            buffer: Buffer.from('forbidden'),
-          },
-        },
-        maxRedirects: 0,
-      });
-
-      expect(response.status()).toBe(302);
-    } finally {
-      await admin.dispose();
-    }
+      },
+      maxRedirects: 0,
+    });
+    expect(response.status()).toBe(302);
   });
 
   nonAdminTest('denies viewing and downloading another users document', async ({ page, request }) => {

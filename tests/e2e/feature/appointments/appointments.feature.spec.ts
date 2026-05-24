@@ -50,7 +50,7 @@ test.describe('Appointments feature behavior', () => {
 
     expect(response.status()).toBe(200);
     const updated = await response.json();
-    expect(updated.user_id).toBeTruthy();
+    expect(String(updated.start_at)).toContain('2030-01-02');
   });
 
   test('rejects invalid appointment update payloads', async ({ page, request }) => {
