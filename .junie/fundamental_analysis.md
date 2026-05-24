@@ -19,6 +19,7 @@ DaybydayCRM is a modular Laravel CRM handling sales, delivery, billing, document
 - improved permission tooling and cache handling
 - storage hardening, especially Dropbox-related flows
 - broader Feature and Unit test coverage
+- route-driven Playwright e2e coverage organized one phenomenon per spec file
 - contributor/agent documentation cleanup
 
 ## Files to read next

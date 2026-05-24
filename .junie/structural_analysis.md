@@ -10,6 +10,7 @@ This is the short structural map for quick orientation. See `.github/ARCHITECTUR
 - `app/Models` / `app/Observers` / `app/Traits` — domain state and shared behavior
 - `database/factories|seeders|migrations` — test and environment data setup
 - `tests/Feature` / `tests/Unit` / `tests/e2e` — layered test coverage
+- `tests/e2e/{phenomenon}/{phenomenon}.spec.js` — route-driven Playwright specs, one file per phenomenon
 
 ## Key structural realities
 - The codebase is in an active controller-to-service transition.

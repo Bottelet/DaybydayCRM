@@ -14,6 +14,10 @@
 # Primary Targets:
 #   dtest      Run PHPUnit tests inside Docker (optionally filter by name)
 #   dfail      Run all tests, stop on first failure
+#   e2e-install Install frontend deps for Playwright and download Chromium
+#   e2e-test   Run the Playwright e2e suite
+#   e2e-test-one Run a single Playwright spec file
+#   e2e-list   List discovered Playwright tests
 #   dsh        Open a shell in the workspace container
 #   dmfs       Fresh migrate and seed database inside Docker
 #   dseed      Fresh migrate and seed with demo + dummy data inside Docker
@@ -40,6 +44,8 @@
 # --- Configuration ---
 CONTAINER_NAME := workspace
 DOCKER_USER    := ivpldock
+E2E_SPEC       ?=
+E2E_ARGS       ?=
 # Dynamic container lookup for Laradock-style naming
 DOCKER_EXEC    := docker exec -t --user=$(DOCKER_USER) $$(docker ps -aqf "name=$(CONTAINER_NAME)")
 
@@ -80,6 +86,21 @@ yarn-setup:
 	yarn install && yarn run build
 
 setup: install mfs yarn-setup
+
+e2e-install:
+	npm install --legacy-peer-deps
+	npm run e2e:install
+
+e2e-test:
+	npm run test:e2e -- $(E2E_ARGS)
+
+# Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
+e2e-test-one:
+	@test -n "$(E2E_SPEC)" || (echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js [E2E_ARGS='--project=chromium']" && exit 1)
+	npm run test:e2e:one -- $(E2E_SPEC) $(E2E_ARGS)
+
+e2e-list:
+	npm run test:e2e:list
 
 clear:
 	php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear
@@ -134,6 +155,10 @@ help:
 	@echo "  make setup           : Install composer/yarn and migrate"
 	@echo "  make seed            : Fresh migrate + demo + dummy seed"
 	@echo "  make test-fail       : Run phpunit until failure"
+	@echo "  make e2e-install     : Install npm deps for Playwright and download Chromium"
+	@echo "  make e2e-test        : Run all Playwright e2e tests (pass E2E_ARGS='--project=chromium')"
+	@echo "  make e2e-test-one    : Run one Playwright spec (set E2E_SPEC=tests/e2e/auth/auth.spec.js)"
+	@echo "  make e2e-list        : List discovered Playwright tests"
 	@echo "  make paratest        : Run tests in parallel"
 	@echo "======================================================================"
 

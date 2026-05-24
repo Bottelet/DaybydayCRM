@@ -9,6 +9,10 @@ Use this as the short debugging checklist. Refer to `.github/TESTING.md`, `.gith
 4. Add or update isolated coverage.
 5. Re-run the failing test and the minimum required lint.
 
+## Playwright shortcuts
+- Run the whole e2e suite with `npm run test:e2e` or `make e2e-test`.
+- Run one spec with `npm run test:e2e:one -- tests/e2e/auth/auth.spec.js` or `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js`.
+
 ## Frequent failure signatures
 - `SQLSTATE 1364` — missing required factory/model data or missing `HasExternalId`
 - `SQLSTATE 1062` — stale permission/role setup or duplicate seeded relationships

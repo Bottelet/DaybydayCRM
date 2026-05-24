@@ -76,6 +76,18 @@ return redirect()->back();
 - Put controller HTTP tests in `tests/Feature/*`.
 - Rebind/reload users after role or permission changes before asserting authorization.
 
+### Playwright e2e workflow
+- `tests/e2e` now uses one plain-route Playwright spec per phenomenon, for example `tests/e2e/auth/auth.spec.js`.
+- Use package scripts for local execution:
+  - `npm run test:e2e`
+  - `npm run test:e2e:list`
+  - `npm run test:e2e:one -- tests/e2e/auth/auth.spec.js`
+- Use Make targets when you want the same workflow through the repository task runner:
+  - `make e2e-install`
+  - `make e2e-test`
+  - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js`
+- The repository `Makefile` still keeps `make test` for PHPUnit, so use the explicit `e2e-*` targets for Playwright runs.
+
 ### Base classes
 - `tests/AbstractTestCase.php` is the preferred base for new Feature/controller tests.
 - `tests/TestCase.php` remains in use for some legacy or unit coverage.

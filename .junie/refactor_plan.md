@@ -23,3 +23,4 @@ This is the short-form refactor plan. The full roadmap lives in `.github/ROADMAP
 - do not rely on shared seeded state in new tests
 - do not introduce new hard-coded status strings when helpers already exist
 - do not skip JSON-vs-web response handling in mixed endpoints
+- keep Playwright e2e specs in the one-file-per-phenomenon layout and route-driven style

@@ -16,7 +16,15 @@ git ls-files '*.php' | xargs -n1 php -l
 make test
 make test-filter f=SomeTest
 make paratest
+npm run test:e2e
+npm run test:e2e:one -- tests/e2e/auth/auth.spec.js
+make e2e-test
+make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 ```
+
+## Playwright note
+- `tests/e2e` uses one plain-route spec per phenomenon such as `tests/e2e/auth/auth.spec.js`.
+- Keep `make test` for PHPUnit and use `e2e-*` Make targets for Playwright work.
 
 ## Watch for these failures
 - permission cache stale after role/permission updates
