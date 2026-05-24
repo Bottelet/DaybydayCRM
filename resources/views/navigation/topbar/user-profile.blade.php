@@ -17,7 +17,11 @@
                                 {{ auth()->user()->name }}
                             </div>
                             <div class="topbar-user__card__info">
-                                {{ auth()->user()->department->first()->name }}
+                                @php
+                                    $authUser = auth()->user();
+                                    $department = $authUser?->department->first();
+                                @endphp
+                                {{ $department->name ?? null }}
                             </div>
                         </div>
                     </div>

@@ -158,8 +158,15 @@ class User extends Authenticatable
 
     public function getNameAndDepartmentEagerLoadingAttribute()
     {
-        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name . ' ' . '(' . $this->relations['department'][0]->name . ')';
+        $department = $this->relationLoaded('department')
+            ? $this->getRelation('department')->first()
+            : $this->department()->first();
+
+        if (!$department) {
+            return $this->name;
+        }
+
+        return $this->name . ' ' . '(' . $department->name . ')';
     }
 
     public function moveTasks($user_id)
