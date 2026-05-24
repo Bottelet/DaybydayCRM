@@ -30,7 +30,7 @@ test('deleting a lead removes it from the lead data response', async ({ page }) 
     failOnStatusCode: false,
     headers: {
       Accept: 'application/json',
-      'X-CSRF-TOKEN': await require('../helpers/plain-e2e').jsonHeaders(page).then((headers) => headers['X-CSRF-TOKEN']),
+      'X-CSRF-TOKEN': (await jsonHeaders(page))['X-CSRF-TOKEN'],
     },
   });
   const dataResponse = await leadData(request, title);

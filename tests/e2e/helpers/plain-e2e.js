@@ -10,7 +10,7 @@ function uniqueValue(prefix) {
 }
 
 function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 async function loginAsAdmin(page) {
@@ -60,7 +60,7 @@ async function html(request, path) {
 }
 
 function optionValues(markup, fieldName) {
-  const selectPattern = new RegExp(`<select[^>]*name=["']${escapeRegExp(fieldName)}["'][^>]*>([\s\S]*?)</select>`, 'i');
+  const selectPattern = new RegExp(`<select[^>]*name=["']${escapeRegExp(fieldName)}["'][^>]*>([\\s\\S]*?)</select>`, 'i');
   const section = markup.match(selectPattern)?.[1] ?? '';
   const values = [];
 

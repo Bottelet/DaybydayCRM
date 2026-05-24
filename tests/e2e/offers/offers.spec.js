@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, createOffer } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, createOffer, jsonHeaders } = require('../helpers/plain-e2e');
 
 test('marking an offer as lost leaves a lost state on the owning lead page', async ({ page }) => {
   /* Arrange */
@@ -11,7 +11,7 @@ test('marking an offer as lost leaves a lost state on the owning lead page', asy
   const response = await request.post(`${BASE_URL}/offer/lost`, {
     failOnStatusCode: false,
     headers: {
-      'X-CSRF-TOKEN': await require('../helpers/plain-e2e').jsonHeaders(page).then((headers) => headers['X-CSRF-TOKEN']),
+      'X-CSRF-TOKEN': (await jsonHeaders(page))['X-CSRF-TOKEN'],
     },
     form: {
       offer_external_id: offerExternalId,
@@ -38,7 +38,7 @@ test('marking an offer as won adds an invoice link to the owning lead page', asy
   const response = await request.post(`${BASE_URL}/offer/won`, {
     failOnStatusCode: false,
     headers: {
-      'X-CSRF-TOKEN': await require('../helpers/plain-e2e').jsonHeaders(page).then((headers) => headers['X-CSRF-TOKEN']),
+      'X-CSRF-TOKEN': (await jsonHeaders(page))['X-CSRF-TOKEN'],
     },
     form: {
       offer_external_id: offerExternalId,
