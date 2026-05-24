@@ -64,6 +64,23 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    public function it_gets_name_without_department_with_eager_loading()
+    {
+        /* Arrange */
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
+        ]);
+
+        /* Act */
+        $userWithEagerLoading = User::whereName($this->user->name)->with('department')->first();
+        $nameAndDepartment    = $userWithEagerLoading->name_and_department_eager_loading;
+
+        /* Assert */
+        $this->assertEquals('Eye of the', $nameAndDepartment);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
     public function it_gets_default_avatar_when_none_is_set()
     {
         /* Arrange */
