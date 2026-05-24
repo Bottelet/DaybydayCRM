@@ -24,7 +24,12 @@ async function loginAsAdmin(page) {
 }
 
 async function fetchCsrfToken(page) {
-  let token = await page.locator('meta[name="csrf-token"]').first().getAttribute('content').catch(() => null);
+  let token = null;
+  try {
+    token = await page.locator('meta[name="csrf-token"]').first().getAttribute('content');
+  } catch {
+    token = null;
+  }
   if (token) {
     return token;
   }
@@ -139,7 +144,13 @@ async function createLead(page, request, title = uniqueValue('PW Lead')) {
   });
 
   const location = response.headers()['location'] ?? '';
+  if (!location) {
+    throw new Error(`Lead creation did not return a redirect location. Received status ${response.status()}.`);
+  }
   const leadExternalId = new URL(location || '/leads', BASE_URL).pathname.split('/').filter(Boolean).pop();
+  if (!leadExternalId || leadExternalId === 'leads') {
+    throw new Error(`Unable to determine lead external id from location: ${location}`);
+  }
   return { response, title, leadExternalId };
 }
 
