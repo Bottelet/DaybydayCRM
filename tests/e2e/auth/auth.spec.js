@@ -1,31 +1,31 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin } = require('../helpers/plain-e2e');
 
-test('guests trying to open the dashboard land on the login form', async ({ page }) => {
-  /* Arrange */
+test('unauthenticated users who request the dashboard are redirected to the login form', async ({ page }) => {
+  /* Arrange – navigate without a session */
   await page.goto(`${BASE_URL}/dashboard`);
 
-  /* Act */
-  const loginButton = page.getByRole('button', { name: /log ?in|sign ?in/i });
-
   /* Assert */
-  await expect(page).toHaveURL(/login/);
-  await expect(loginButton).toBeVisible();
+  await expect(page, 'Dashboard should not be accessible without authentication').toHaveURL(/login/);
+  await expect(
+    page.getByRole('button', { name: /log ?in|sign ?in/i }),
+    'Login button should be visible on the redirect page'
+  ).toBeVisible();
 });
 
-test('admin login reaches the authenticated dashboard shell', async ({ page }) => {
+test('admin credentials unlock the authenticated dashboard shell', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
 
-  /* Act */
-  const clientsLink = page.locator('a[href*="/clients"]').first();
-
   /* Assert */
-  await expect(page).not.toHaveURL(/login/);
-  await expect(clientsLink).toBeVisible();
+  await expect(page, 'After login the user should leave the login page').not.toHaveURL(/login/);
+  await expect(
+    page.locator('a[href*="/clients"]').first(),
+    'Clients navigation link should be visible in the authenticated shell'
+  ).toBeVisible();
 });
 
-test('login rejects missing required credentials with explicit validation errors', async ({ page }) => {
+test('submitting the login form without credentials returns field-level validation errors', async ({ page }) => {
   /* Arrange */
   const request = page.context().request;
 
@@ -41,13 +41,36 @@ test('login rejects missing required credentials with explicit validation errors
   const payload = await response.json();
 
   /* Assert */
-  expect(response.status()).toBe(422);
-  expect(payload.errors).toBeTruthy();
-  expect(Object.keys(payload.errors)).toContain('email');
-  expect(Object.keys(payload.errors)).toContain('password');
+  expect(response.status(), 'Empty login submission should return 422').toBe(422);
+  expect(payload.errors, 'Response must contain field-level validation errors').toBeTruthy();
+  expect(Object.keys(payload.errors), 'The email field error must be present').toContain('email');
+  expect(Object.keys(payload.errors), 'The password field error must be present').toContain('password');
 });
 
-test('authenticated users can log out and are redirected back to login', async ({ page }) => {
+test('wrong credentials are rejected and do not produce an authenticated session', async ({ page }) => {
+  /* Arrange */
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/login`, {
+    failOnStatusCode: false,
+    headers: {
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    form: {
+      email: 'wrong@example.com',
+      password: 'wrongpassword',
+    },
+  });
+  const payload = await response.json();
+
+  /* Assert – the server must refuse invalid credentials, not grant access */
+  expect(response.status(), 'Wrong credentials should return 422').toBe(422);
+  expect(payload.errors, 'A credential error must be returned').toBeTruthy();
+});
+
+test('an authenticated user who visits /logout is redirected back to the login page', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
 
@@ -55,5 +78,5 @@ test('authenticated users can log out and are redirected back to login', async (
   await page.goto(`${BASE_URL}/logout`);
 
   /* Assert */
-  await expect(page).toHaveURL(/login/);
+  await expect(page, 'Logout should destroy the session and redirect to login').toHaveURL(/login/);
 });

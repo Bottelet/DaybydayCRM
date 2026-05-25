@@ -92,15 +92,15 @@ e2e-install:
 	yarn run e2e:install
 
 e2e-test:
-	npm run test:e2e -- $(E2E_ARGS)
+	yarn run test:e2e -- $(E2E_ARGS)
 
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 e2e-test-one:
 	@test -n "$(E2E_SPEC)" || (echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'" && exit 1)
-	npm run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS)
+	yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS)
 
 e2e-list:
-	npm run test:e2e:list
+	yarn run test:e2e:list
 
 clear:
 	php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear

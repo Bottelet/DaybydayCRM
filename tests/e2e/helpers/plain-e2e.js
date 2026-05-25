@@ -340,7 +340,12 @@ async function createAbsence(page, request) {
 }
 
 async function absenceData(request, search = '') {
-  return request.get(`${BASE_URL}/absences/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  // Fetch a generous page size so tests can scan all records without pagination issues.
+  // Note: DataTables server-side search on the absences endpoint filters the raw user_id
+  // integer column – not the transformed display name – so searching by user name will not
+  // narrow results server-side.  Callers that need to locate a specific row should filter
+  // client-side on the returned data array instead.
+  return request.get(`${BASE_URL}/absences/data?draw=1&start=0&length=100&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -483,6 +488,7 @@ module.exports = {
   loginAsAdmin,
   jsonHeaders,
   uniqueValue,
+  html,
   createAbsence,
   absenceData,
   createClient,

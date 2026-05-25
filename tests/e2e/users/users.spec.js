@@ -1,24 +1,27 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, createUser, userData, jsonHeaders, expectValidationError, uniqueValue } = require('../helpers/plain-e2e');
 
-test('user creation appears in the users datatable payload', async ({ page }) => {
+test('creating a user registers the account in the users datatable payload', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
-  const { response, name, email } = await createUser(page, request);
 
   /* Act */
+  const { response, name, email } = await createUser(page, request);
   const dataResponse = await userData(request, name);
   const dataPayload = await dataResponse.json();
 
   /* Assert */
-  expect(response.status()).toBe(302);
-  expect(dataResponse.status()).toBe(200);
+  expect(response.status(), 'User creation should return a 302 redirect').toBe(302);
+  expect(dataResponse.status(), 'Users data table should return 200').toBe(200);
   const rows = dataPayload.data || [];
-  expect(rows.some(row => row.name === name && row.email === email)).toBe(true);
+  expect(
+    rows.some(row => row.name === name && row.email === email),
+    `Newly created user "${name}" with email "${email}" should appear in the data table`
+  ).toBe(true);
 });
 
-test('user validation reports the missing name field', async ({ page }) => {
+test('submitting a user form without required fields returns a name field validation error', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -34,22 +37,26 @@ test('user validation reports the missing name field', async ({ page }) => {
   await expectValidationError(response, 'name');
 });
 
-test('user updates persist changed user details in the datatable payload', async ({ page }) => {
+test('updating a user display name persists the change in the users datatable payload', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
   const { name, email } = await createUser(page, request, uniqueValue('PW User Update'));
+
+  /* Locate the created user row to get the external_id */
   const createdDataResponse = await userData(request, name);
   const createdDataPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdDataPayload?.data) ? createdDataPayload.data : [];
   const createdRow = createdRows.find(row => row.name === name && row.email === email);
-  expect(createdRow).toBeTruthy();
-  const userExternalId = createdRow.external_id;
-  expect(userExternalId).toBeTruthy();
+  const userExternalId = createdRow?.external_id;
+  expect(userExternalId, 'Created user must have an external_id for update').toBeTruthy();
+
+  /* Fetch edit page data to obtain role and department IDs */
   const editResponse = await request.get(`${BASE_URL}/users/${userExternalId}/edit`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
+  expect(editResponse.status(), 'User edit endpoint should return 200').toBe(200);
   const editPayload = await editResponse.json();
   const updatedName = uniqueValue('PW User Updated');
 
@@ -60,20 +67,20 @@ test('user updates persist changed user details in the datatable payload', async
     form: {
       name: updatedName,
       email,
-      role: Number(Object.keys(editPayload.roles || {})[0]),
-      department: Number(Object.keys(editPayload.departments || {})[0]),
+      role: Number(Object.keys(editPayload.roles ?? {})[0]),
+      department: Number(Object.keys(editPayload.departments ?? {})[0]),
     },
   });
   const dataResponse = await userData(request, updatedName);
   const dataPayload = await dataResponse.json();
 
   /* Assert */
-  expect(createdDataResponse.status()).toBe(200);
-  expect(userExternalId).toBeTruthy();
-  expect(editResponse.status()).toBe(200);
-  expect(updateResponse.status()).toBe(302);
-  expect(updateResponse.headers()['location'] ?? '').not.toContain('/login');
-  expect(dataResponse.status()).toBe(200);
+  expect(updateResponse.status(), 'User update should return a 302 redirect').toBe(302);
+  expect(updateResponse.headers()['location'] ?? '', 'Redirect must not point to login').not.toContain('/login');
+  expect(dataResponse.status(), 'Users data table should return 200 after update').toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
-  expect(rows.some(row => row.name === updatedName && row.email === email)).toBe(true);
+  expect(
+    rows.some(row => row.name === updatedName && row.email === email),
+    `Updated user "${updatedName}" should appear in the data table with the original email`
+  ).toBe(true);
 });

@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, createClient, uploadClientDocument } = require('../helpers/plain-e2e');
 
-test('uploaded client documents can be opened inline with the stored file content', async ({ page }) => {
+test('an uploaded client document can be opened inline and returns the original file content', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -16,13 +16,16 @@ test('uploaded client documents can be opened inline with the stored file conten
   const body = await response.text();
 
   /* Assert */
-  expect(uploadResponse.status()).toBe(200);
-  expect(response.status()).toBe(200);
-  expect(response.headers()['content-disposition'] ?? '').toContain('inline');
-  expect(body).toContain('playwright client document');
+  expect(uploadResponse.status(), 'Document upload should return 200').toBe(200);
+  expect(response.status(), 'Document view endpoint should return 200').toBe(200);
+  expect(
+    response.headers()['content-disposition'] ?? '',
+    'Inline view should set content-disposition to inline'
+  ).toContain('inline');
+  expect(body, 'Response body should contain the uploaded file content').toContain('playwright client document');
 });
 
-test('uploaded client documents can be downloaded as attachments', async ({ page }) => {
+test('an uploaded client document can be downloaded with an attachment disposition', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -37,12 +40,15 @@ test('uploaded client documents can be downloaded as attachments', async ({ page
   const body = await response.text();
 
   /* Assert */
-  expect(response.status()).toBe(200);
-  expect(response.headers()['content-disposition'] ?? '').toContain('attachment');
-  expect(body).toContain('playwright client document');
+  expect(response.status(), 'Document download endpoint should return 200').toBe(200);
+  expect(
+    response.headers()['content-disposition'] ?? '',
+    'Download should set content-disposition to attachment'
+  ).toContain('attachment');
+  expect(body, 'Downloaded file body should contain the original content').toContain('playwright client document');
 });
 
-test('document upload modal route returns a renderable response for clients', async ({ page }) => {
+test('the document upload modal route renders a file input for clients', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -56,21 +62,22 @@ test('document upload modal route returns a renderable response for clients', as
   const body = await response.text();
 
   /* Assert */
-  expect(response.status()).toBe(200);
-  expect(body.toLowerCase()).toContain('file');
+  expect(response.status(), 'Document upload modal route should return 200').toBe(200);
+  expect(body.toLowerCase(), 'Modal response should contain a file input field').toContain('file');
 });
 
-test('viewing an unknown document id returns a 404 response', async ({ page }) => {
+test('requesting a document with an unknown external_id returns a 404 response', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
+  const nonExistentId = '00000000-0000-0000-0000-000000000000';
 
   /* Act */
-  const response = await request.get(`${BASE_URL}/document/00000000-0000-0000-0000-000000000000`, {
+  const response = await request.get(`${BASE_URL}/document/${nonExistentId}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
   });
 
-  /* Assert */
-  expect(response.status()).toBe(404);
+  /* Assert – the server must not silently return 200 for a missing document */
+  expect(response.status(), 'Non-existent document external_id should return 404').toBe(404);
 });

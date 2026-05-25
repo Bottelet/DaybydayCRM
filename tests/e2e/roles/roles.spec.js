@@ -1,24 +1,27 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, createRole, roleData, jsonHeaders, expectValidationError, uniqueValue } = require('../helpers/plain-e2e');
 
-test('role creation appears in the roles datatable payload', async ({ page }) => {
+test('creating a role registers it in the roles datatable payload', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
-  const { response, name } = await createRole(page, request);
 
   /* Act */
+  const { response, name } = await createRole(page, request);
   const dataResponse = await roleData(request, name);
   const dataPayload = await dataResponse.json();
 
   /* Assert */
-  expect(response.status()).toBe(200);
-  expect(dataResponse.status()).toBe(200);
+  expect(response.status(), 'Role creation should return 200').toBe(200);
+  expect(dataResponse.status(), 'Roles data table should return 200').toBe(200);
   const rows = dataPayload.data || [];
-  expect(rows.some(row => row.name === name)).toBe(true);
+  expect(
+    rows.some(row => row.name === name),
+    `Newly created role "${name}" should appear by exact name in the data table`
+  ).toBe(true);
 });
 
-test('role validation reports the missing name field', async ({ page }) => {
+test('submitting a role form without required fields returns a name field validation error', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -34,7 +37,7 @@ test('role validation reports the missing name field', async ({ page }) => {
   await expectValidationError(response, 'name');
 });
 
-test('role updates return a success message and reflect in the datatable payload', async ({ page }) => {
+test('updating a role name persists the change and shows the success message', async ({ page }) => {
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -43,12 +46,12 @@ test('role updates return a success message and reflect in the datatable payload
   const createdDataPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdDataPayload?.data) ? createdDataPayload.data : [];
   const createdRow = createdRows.find(row => row.name === name);
-  expect(createdRow).toBeTruthy();
-  const roleExternalId = createdRow.external_id;
+  expect(createdRow?.external_id, 'Created role must have an external_id for update').toBeTruthy();
   const updatedName = uniqueValue('pw_role_updated');
 
   /* Act */
-  const updateResponse = await request.patch(`${BASE_URL}/roles/update/${roleExternalId}`, {
+  const updateResponse = await request.patch(`${BASE_URL}/roles/update/${createdRow.external_id}`, {
+    failOnStatusCode: false,
     headers: await jsonHeaders(page),
     form: {
       name: updatedName,
@@ -60,11 +63,16 @@ test('role updates return a success message and reflect in the datatable payload
   const dataPayload = await dataResponse.json();
 
   /* Assert */
-  expect(createdDataResponse.status()).toBe(200);
-  expect(createdRow?.external_id).toBeTruthy();
-  expect(updateResponse.status()).toBe(200);
-  expect(String(updatePayload.message || '').toLowerCase()).toContain('updated');
-  expect(dataResponse.status()).toBe(200);
+  expect(createdDataResponse.status(), 'Role data table lookup should return 200').toBe(200);
+  expect(updateResponse.status(), 'Role update should return 200').toBe(200);
+  expect(
+    String(updatePayload.message ?? '').toLowerCase(),
+    'Response body should confirm the update with an "updated" message'
+  ).toContain('updated');
+  expect(dataResponse.status(), 'Roles data table should return 200 after update').toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
-  expect(rows.some(row => row.name === updatedName)).toBe(true);
+  expect(
+    rows.some(row => row.name === updatedName),
+    `Updated role "${updatedName}" should appear in the data table`
+  ).toBe(true);
 });
