@@ -103,8 +103,10 @@ e2e-test:
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true
 e2e-test-one:
+e2e-test-one:
 	`@test` -n "$(E2E_SPEC)" || { echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'"; exit 1; }
 	`@if` [ "$(STOP_ON_FAILURE)" = "true" ]; then \
+		yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
 		yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
 	else \
 		yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS); \
