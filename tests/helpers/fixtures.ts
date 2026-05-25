@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { loginAsSeededAdmin } from './admin-auth';
-import { registerAndLoginNewUser } from './user-auth';
+import { registerAndLoginNewUser } from '../e2e/helpers/user-auth';
 
 export const test = base.extend({
   page: async ({ page }, use) => {
