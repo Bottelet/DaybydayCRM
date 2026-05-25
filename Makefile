@@ -17,6 +17,7 @@
 #   e2e-install Install frontend deps for Playwright and download Chromium
 #   e2e-test   Run the Playwright e2e suite
 #   e2e-test-one Run a single Playwright spec file
+#   e2e-fail   Run Playwright tests, stop on first failure
 #   e2e-list   List discovered Playwright tests
 #   dsh        Open a shell in the workspace container
 #   dmfs       Fresh migrate and seed database inside Docker
@@ -99,6 +100,10 @@ e2e-test-one:
 	@test -n "$(E2E_SPEC)" || (echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'" && exit 1)
 	yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS)
 
+# Run Playwright tests, stop on first failure: make e2e-fail
+e2e-fail:
+	yarn run test:e2e:stop-on-failure -- $(E2E_ARGS)
+
 e2e-list:
 	yarn run test:e2e:list
 
@@ -158,6 +163,7 @@ help:
 	@echo "  make e2e-install     : Install npm deps for Playwright and download Chromium"
 	@echo "  make e2e-test        : Run all Playwright e2e tests (pass E2E_ARGS='--project=chromium')"
 	@echo "  make e2e-test-one    : Run one Playwright spec (set E2E_SPEC=tests/e2e/auth/auth.spec.js)"
+	@echo "  make e2e-fail        : Run Playwright tests, stop on first failure"
 	@echo "  make e2e-list        : List discovered Playwright tests"
 	@echo "  make paratest        : Run tests in parallel"
 	@echo "======================================================================"

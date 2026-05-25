@@ -11,15 +11,32 @@ For the complete rules, use `.github/TESTING.md` and `AGENTS.md`.
 - Refresh users after changing roles or permissions.
 
 ## Practical commands
+
+### PHPUnit
 ```bash
 git ls-files '*.php' | xargs -n1 php -l
 make test
 make test-filter f=SomeTest
+make test-fail
 make paratest
-npm run test:e2e
-npm run test:e2e:file -- tests/e2e/auth/auth.spec.js  # requires the spec path after --
-make e2e-test
-make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
+```
+
+### Playwright e2e
+```bash
+# Installation
+make e2e-install
+
+# Running tests
+npm run test:e2e                                          # run all tests
+npm run test:e2e:file -- tests/e2e/auth/auth.spec.js    # run single spec (requires path after --)
+npm run test:e2e:stop-on-failure                         # stop on first failure
+npm run test:e2e:list                                    # list all tests
+
+# Via Make
+make e2e-test                                            # run all tests
+make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js  # run single spec
+make e2e-fail                                            # stop on first failure
+make e2e-list                                            # list all tests
 ```
 
 ## Playwright note

@@ -77,12 +77,28 @@ composer dev
 ```
 
 ### Useful commands
-- `make clear` — clear Laravel caches
+
+#### PHPUnit testing
 - `make test` — run PHPUnit with stop-on-failure behavior
 - `make test-filter f=SomeTest` — run a filtered PHPUnit subset
+- `make test-fail` — run PHPUnit, stop on first failure
 - `make paratest` — run tests in parallel
+
+#### Playwright e2e testing
+- `make e2e-install` — install Playwright and browser dependencies
+- `make e2e-test` — run all Playwright e2e tests
+- `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js` — run a single spec file
+- `make e2e-fail` — run Playwright tests, stop on first failure
+- `make e2e-list` — list all discovered Playwright tests
+- `npm run test:e2e` — run e2e tests directly via npm
+- `npm run test:e2e:stop-on-failure` — run e2e tests, stop on first failure
+
+#### Database and maintenance
+- `make clear` — clear Laravel caches
 - `make dmfs` — fresh migrate/seed inside Docker
 - `make dseed` — seed demo and dummy data inside Docker
+
+#### Code quality
 - `git ls-files '*.php' | xargs -n1 php -l` — minimum required PHP syntax lint before push/PR
 
 ### Repository guide

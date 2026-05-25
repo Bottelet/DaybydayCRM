@@ -10,6 +10,8 @@
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "test:e2e:file": "playwright test",
+    "test:e2e:stop-on-error": "playwright test --max-failures=1",
+    "test:e2e:stop-on-failure": "playwright test --max-failures=1",
     "e2e:install": "playwright install chromium"
   },
   "devDependencies": {

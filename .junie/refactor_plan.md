@@ -3,24 +3,26 @@
 This is the short-form refactor plan. The full roadmap lives in `.github/ROADMAP.md`.
 
 ## Completed or actively addressed on this branch
-- controller-to-service extraction across multiple domains
-- broader FormRequest adoption
-- stronger storage/authentication abstractions
-- expanded Feature coverage and test isolation work
-- seed/demo/test data cleanup
-- contributor and agent documentation refresh
+- **Controller-to-service extraction** — business logic moved from controllers to `app/Services/*` and `app/Actions/*`
+- **FormRequest adoption** — validation and normalization moved to dedicated request classes
+- **Storage/authentication abstractions** — stronger adapter patterns for external integrations
+- **Feature test expansion** — broader HTTP/controller coverage with strict isolation
+- **Seed/demo/test data cleanup** — deterministic test fixtures and factory-driven setup
+- **Documentation refresh** — contributor and agent guides professionalized
+- **Playwright e2e suite** — route-driven specs with stop-on-failure support and automatic failure capture
 
 ## Next priorities
-1. Continue extracting remaining large controllers.
-2. Keep replacing inline validation with FormRequests.
-3. Reduce legacy Entrust complexity where safe.
-4. Continue migrating fixed-value domain constants toward enums and helper methods.
-5. Keep test infrastructure deterministic and isolated.
-6. Document any workflow or architecture change as part of the same PR.
+1. **Continue extracting remaining large controllers** — identify fat controllers and extract business logic
+2. **Replace inline validation with FormRequests** — move validation rules out of controllers
+3. **Reduce legacy Entrust complexity** — simplify permission checks where safe
+4. **Migrate fixed-value constants to enums** — replace hard-coded strings with typed enums and helpers
+5. **Keep test infrastructure deterministic** — avoid shared state, use factories, normalize dates
+6. **Document workflow changes** — update docs in the same PR as architecture changes
 
 ## Refactor guardrails
-- do not move business logic back into controllers
-- do not rely on shared seeded state in new tests
-- do not introduce new hard-coded status strings when helpers already exist
-- do not skip JSON-vs-web response handling in mixed endpoints
-- keep Playwright e2e specs in the one-file-per-phenomenon layout and route-driven style
+- **Do not** move business logic back into controllers
+- **Do not** rely on shared seeded state in new tests
+- **Do not** introduce new hard-coded status strings when helpers already exist
+- **Do not** skip JSON-vs-web response handling in mixed endpoints
+- **Do not** break the one-file-per-phenomenon Playwright e2e layout
+- **Always** validate changes with `git ls-files '*.php' | xargs -n1 php -l` before pushing
