@@ -60,6 +60,7 @@ test('updating a client contact name is reflected on the client detail page', as
   /* Act */
   const updateResponse = await request.patch(`${BASE_URL}/clients/${clientExternalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       name: updatedContactName,
@@ -101,6 +102,7 @@ test('assigning a new user to a client redirects back without hitting the login 
   /* Act */
   const updateResponse = await request.patch(`${BASE_URL}/clients/updateassign/${clientExternalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       user_external_id: assignee.external_id,

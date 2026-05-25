@@ -32,6 +32,7 @@ test('updating a project status redirects to the project page, not to login', as
   /* Act */
   const response = await request.patch(`${BASE_URL}/projects/updatestatus/${externalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       status_id: statusId,
@@ -73,6 +74,7 @@ test('reassigning a project to a new user redirects back without triggering a lo
   /* Act */
   const response = await request.patch(`${BASE_URL}/projects/updateassign/${externalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       user_assigned_id: newAssignee.external_id,

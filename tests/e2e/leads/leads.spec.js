@@ -76,6 +76,7 @@ test('updating a lead status redirects back to the lead without triggering a log
   /* Act */
   const response = await request.patch(`${BASE_URL}/leads/updatestatus/${leadExternalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       status_id: statusId,
@@ -98,6 +99,7 @@ test('reassigning a lead to a new user redirects back without triggering a login
   /* Act */
   const response = await request.patch(`${BASE_URL}/leads/updateassign/${leadExternalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       user_assigned_id: newAssignee.external_id,

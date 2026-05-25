@@ -63,6 +63,7 @@ test('updating a user display name persists the change in the users datatable pa
   /* Act */
   const updateResponse = await request.patch(`${BASE_URL}/users/${userExternalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       name: updatedName,

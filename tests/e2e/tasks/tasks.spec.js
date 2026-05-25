@@ -75,6 +75,7 @@ test('reassigning a task to a new user redirects back without triggering a login
   /* Act */
   const response = await request.patch(`${BASE_URL}/tasks/updateassign/${externalId}`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       user_assigned_id: newAssignee.external_id,
