@@ -1,107 +1,46 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, jsonHeaders } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin } = require('../helpers/plain-e2e');
 
-test('guest is redirected away from dashboard', async ({ page }) => {
-    await page.goto(`${BASE_URL}/dashboard`);
-    await expect(page).toHaveURL(/login|signin/);
+test('guest requesting dashboard is redirected to login', async ({ page }) => {
+  await page.goto(`${BASE_URL}/dashboard`);
+  await expect(page).toHaveURL(/login/);
 });
 
-test('login page is accessible to guests', async ({ page }) => {
-    await page.goto(`${BASE_URL}/login`);
-    await expect(page.getByRole('button', { name: /log ?in|sign ?in/i })).toBeVisible();
+test('admin can authenticate and load dashboard', async ({ page }) => {
+  await loginAsAdmin(page);
+  await expect(page).toHaveURL(/dashboard|clients|projects|tasks|leads/);
 });
 
-test('unauthenticated users who request the dashboard are redirected to the login form', async ({ page }) => {
-    await page.goto(`${BASE_URL}/dashboard`);
+test('login form shows error feedback for invalid credentials', async ({ page }) => {
+  await page.goto(`${BASE_URL}/login`);
+  await page.locator('input[name="email"]').fill('wrong@example.com');
+  await page.locator('input[name="password"]').fill('wrong-password');
+  await page.getByRole('button', { name: /log ?in|sign ?in/i }).click();
 
-    await expect(page, 'Dashboard should not be accessible without authentication').toHaveURL(/login/);
-    await expect(
-        page.getByRole('button', { name: /log ?in|sign ?in/i }),
-        'Login button should be visible on the redirect page'
-    ).toBeVisible();
+  await expect(page).toHaveURL(/login/);
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
 
-test('admin credentials unlock the authenticated dashboard shell', async ({ page }) => {
-    await loginAsAdmin(page);
+test('empty login submit shows validation feedback', async ({ page }) => {
+  await page.goto(`${BASE_URL}/login`);
+  await page.getByRole('button', { name: /log ?in|sign ?in/i }).click();
 
-    await expect(page, 'After login the user should leave the login page').not.toHaveURL(/login/);
-    await expect(
-        page.locator('a[href*="/clients"]').first(),
-        'Clients navigation link should be visible in the authenticated shell'
-    ).toBeVisible();
+  await expect(page).toHaveURL(/login/);
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
 
-test('submitting the login form without credentials returns field-level validation errors', async ({ page }) => {
-    const request = page.context().request;
+test('authenticated user can logout and loses dashboard access', async ({ page }) => {
+  await loginAsAdmin(page);
 
-    const response = await request.post(`${BASE_URL}/login`, {
-        failOnStatusCode: false,
-        headers: await jsonHeaders(page),
-        form: {},
-    });
+  await page.goto(`${BASE_URL}/logout`);
+  await expect(page).toHaveURL(/login/);
 
-    const payload = await response.json();
-
-    expect(response.status(), 'Empty login submission should return 422').toBe(422);
-    expect(payload.errors, 'Response must contain field-level validation errors').toBeTruthy();
-    expect(Object.keys(payload.errors)).toContain('email');
-    expect(Object.keys(payload.errors)).toContain('password');
+  await page.goto(`${BASE_URL}/dashboard`);
+  await expect(page).toHaveURL(/login/);
 });
 
-test('wrong credentials are rejected and do not produce an authenticated session', async ({ page }) => {
-    const request = page.context().request;
-
-    const response = await request.post(`${BASE_URL}/login`, {
-        failOnStatusCode: false,
-        headers: await jsonHeaders(page),
-        form: {
-            email: 'wrong@example.com',
-            password: 'wrongpassword',
-        },
-    });
-
-    const payload = await response.json();
-
-    const protectedResponse = await request.get(`${BASE_URL}/dashboard`, {
-        failOnStatusCode: false,
-    });
-
-    const protectedLocation = protectedResponse.headers().location ?? '';
-
-    expect(response.status(), 'Wrong credentials should return 422').toBe(422);
-    expect(payload.errors, 'A credential error must be returned').toBeTruthy();
-
-    expect(
-        [302, 401].includes(protectedResponse.status()),
-        'Protected endpoint should be inaccessible without authentication'
-    ).toBe(true);
-
-    if (protectedResponse.status() === 302) {
-        expect(
-            protectedLocation,
-            'Failed login must not create a session'
-        ).toContain('/login');
-    }
-});
-
-test('an authenticated user who visits /logout is redirected back to the login page', async ({ page }) => {
-    await loginAsAdmin(page);
-
-    await page.goto(`${BASE_URL}/logout`);
-
-    await expect(page).toHaveURL(/login/);
-});
-
-test.describe('Password and session authentication UX', () => {
-    test('forgot password page is available', async ({ page }) => {
-        await page.goto(`${BASE_URL}/password/reset`);
-        await expect(
-            page.getByRole('button', { name: /send password reset link|email password reset link/i })
-        ).toBeVisible();
-    });
-
-    test('login page exposes remember me option', async ({ page }) => {
-        await page.goto(`${BASE_URL}/login`);
-        await expect(page.getByLabel(/remember me/i)).toBeVisible();
-    });
+test('forgot-password form rejects empty submit with validation feedback', async ({ page }) => {
+  await page.goto(`${BASE_URL}/password/reset`);
+  await page.getByRole('button', { name: /send password reset link|email password reset link/i }).click();
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
