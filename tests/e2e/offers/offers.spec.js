@@ -67,9 +67,9 @@ test('offer lines can be updated and are returned by the offer invoice-line json
   /* Act */
   const updateResponse = await request.post(`${BASE_URL}/offer/${offerExternalId}/update`, {
     failOnStatusCode: false,
+    headers: await jsonHeaders(page),
     data: [
       {
-        title: updatedTitle,
         type: 'hours',
         price: 75,
         quantity: 2,
@@ -100,9 +100,9 @@ test('offer line updates reject missing required line fields', async ({ page }) 
   /* Act */
   const response = await request.post(`${BASE_URL}/offer/${offerExternalId}/update`, {
     failOnStatusCode: false,
+    headers: await jsonHeaders(page),
     data: [
       {
-        title: '',
         type: 'hours',
         price: 20,
         quantity: 1,

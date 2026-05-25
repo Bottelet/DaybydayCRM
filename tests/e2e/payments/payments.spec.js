@@ -50,9 +50,11 @@ test('payments can be deleted through the payment destroy endpoint', async ({ pa
   const createdPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdPayload?.data) ? createdPayload.data : [];
   const createdRow = createdRows.find(row => String(row.description || '').includes(description));
+  expect(createdRow).toBeTruthy();
+  const paymentExternalId = createdRow.external_id;
 
   /* Act */
-  const deleteResponse = await request.delete(`${BASE_URL}/payment/${createdRow.external_id}`, {
+  const deleteResponse = await request.delete(`${BASE_URL}/payment/${paymentExternalId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
   });

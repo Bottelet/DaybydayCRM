@@ -43,11 +43,12 @@ test('role updates return a success message and reflect in the datatable payload
   const createdDataPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdDataPayload?.data) ? createdDataPayload.data : [];
   const createdRow = createdRows.find(row => row.name === name);
+  expect(createdRow).toBeTruthy();
+  const roleExternalId = createdRow.external_id;
   const updatedName = uniqueValue('pw_role_updated');
 
   /* Act */
-  const updateResponse = await request.patch(`${BASE_URL}/roles/update/${createdRow.external_id}`, {
-    failOnStatusCode: false,
+  const updateResponse = await request.patch(`${BASE_URL}/roles/update/${roleExternalId}`, {
     headers: await jsonHeaders(page),
     form: {
       name: updatedName,

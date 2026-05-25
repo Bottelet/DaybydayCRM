@@ -7,12 +7,13 @@ test.beforeEach(async ({ page }) => {
   savedSettings = null;
   await loginAsAdmin(page);
   const request = page.context().request;
-  const getResponse = await request.get(`${BASE_URL}/settings/overall`, {
+  const getResponse = await request.get(`${BASE_URL}/settings`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
   });
   if (getResponse.status() === 200) {
-    savedSettings = await getResponse.json();
+    const payload = await getResponse.json();
+    savedSettings = payload.settings ?? null;
   }
 });
 

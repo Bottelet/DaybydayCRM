@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import laravel from 'laravel-vite-plugin'
-import { copyFileSync, mkdirSync, existsSync, readdirSync } from 'fs'
+import { copyFileSync, mkdirSync, existsSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({

@@ -88,8 +88,8 @@ yarn-setup:
 setup: install mfs yarn-setup
 
 e2e-install:
-	npm install --legacy-peer-deps
-	npm run e2e:install
+	yarn install --frozen-lockfile
+	yarn run e2e:install
 
 e2e-test:
 	npm run test:e2e -- $(E2E_ARGS)

@@ -63,9 +63,11 @@ test('absence deletion removes the created absence from the data feed', async ({
   const createdDataPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdDataPayload?.data) ? createdDataPayload.data : [];
   const createdRow = createdRows[0];
+  expect(createdRow).toBeTruthy();
+  const absenceExternalId = createdRow.external_id;
 
   /* Act */
-  const deleteResponse = await request.delete(`${BASE_URL}/absences/${createdRow.external_id}`, {
+  const deleteResponse = await request.delete(`${BASE_URL}/absences/${absenceExternalId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
   });

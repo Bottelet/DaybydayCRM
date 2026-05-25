@@ -43,7 +43,9 @@ test('user updates persist changed user details in the datatable payload', async
   const createdDataPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdDataPayload?.data) ? createdDataPayload.data : [];
   const createdRow = createdRows.find(row => row.name === name && row.email === email);
-  const userExternalId = createdRow?.external_id;
+  expect(createdRow).toBeTruthy();
+  const userExternalId = createdRow.external_id;
+  expect(userExternalId).toBeTruthy();
   const editResponse = await request.get(`${BASE_URL}/users/${userExternalId}/edit`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
