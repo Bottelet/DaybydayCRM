@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, createTask, taskData, jsonHeaders, uniqueValue } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, createTask, taskData, jsonHeaders, uniqueValue, expectValidationError } = require('../helpers/plain-e2e');
 
 test('task creation appears in the searchable task datatable payload', async ({ page }) => {
   /* Arrange */
@@ -39,4 +39,20 @@ test('task status updates return the controller message payload', async ({ page 
   /* Assert */
   expect(response.status()).toBe(200);
   expect(payloadResponse.message).toContain('Task status is updated');
+});
+
+test('task validation reports the missing required title field', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/tasks`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {},
+  });
+
+  /* Assert */
+  await expectValidationError(response, 'title');
 });

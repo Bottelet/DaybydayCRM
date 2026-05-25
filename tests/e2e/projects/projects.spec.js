@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, createProject, projectData, jsonHeaders, uniqueValue } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, createProject, projectData, jsonHeaders, uniqueValue, expectValidationError } = require('../helpers/plain-e2e');
 
 test('project creation appears in the searchable project data response', async ({ page }) => {
   /* Arrange */
@@ -40,4 +40,20 @@ test('project status updates return a redirect instead of a fake ok-only asserti
   const location = response.headers()['location'] ?? '';
   expect(location).toContain(`/projects/${externalId}`);
   expect(location).not.toContain('/login');
+});
+
+test('project validation returns a required-field error when title is missing', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/projects`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {},
+  });
+
+  /* Assert */
+  await expectValidationError(response, 'title');
 });

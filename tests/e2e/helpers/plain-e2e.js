@@ -172,7 +172,7 @@ async function createLead(page, request, title = uniqueValue('PW Lead')) {
   if (!leadExternalId || leadExternalId === 'leads') {
     throw new Error(`Unable to determine lead external id from redirect path: ${leadPath}`);
   }
-  return { response, title, leadExternalId };
+  return { response, title, statusId, leadExternalId };
 }
 
 async function leadData(request, search = '') {

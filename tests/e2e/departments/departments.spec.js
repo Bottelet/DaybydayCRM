@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { loginAsAdmin, createDepartment, departmentData, BASE_URL } = require('../helpers/plain-e2e');
+const { loginAsAdmin, createDepartment, departmentData, BASE_URL, jsonHeaders, expectValidationError } = require('../helpers/plain-e2e');
 
 test('department creation shows the new department in the datatable payload', async ({ page }) => {
   /* Arrange */
@@ -28,4 +28,20 @@ test('guests are redirected away from the department creator', async ({ page }) 
   /* Assert */
   await expect(page).toHaveURL(/login/);
   await expect(loginButton).toBeVisible();
+});
+
+test('department validation reports the missing required name field', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/departments`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {},
+  });
+
+  /* Assert */
+  await expectValidationError(response, 'name');
 });

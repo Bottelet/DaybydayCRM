@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, firstAppointment, usersCollection, jsonHeaders } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, firstAppointment, usersCollection, jsonHeaders, expectValidationError } = require('../helpers/plain-e2e');
 
 test('appointment calendar data returns concrete appointment details', async ({ page }) => {
   /* Arrange */
@@ -49,4 +49,26 @@ test('appointment updates return the changed schedule in the response body', asy
   expect(String(payload.start_at)).toContain('2030-01-02');
   expect(String(payload.end_at)).toContain('2030-01-02');
   expect(payload.user_id).toBeTruthy();
+});
+
+test('appointment updates validate that a required assignee is provided', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const appointment = await firstAppointment(request);
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/appointments/update/${appointment.external_id}`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {
+      id: appointment.external_id,
+      start: '2030-01-02T09:00:00.000Z',
+      end: '2030-01-02T10:00:00.000Z',
+      group: '',
+    },
+  });
+
+  /* Assert */
+  await expectValidationError(response, 'group');
 });

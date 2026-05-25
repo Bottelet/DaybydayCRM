@@ -56,3 +56,62 @@ test('marking an offer as won adds an invoice link to the owning lead page', asy
   expect(leadResponse.status()).toBe(200);
   expect(leadHtml).toContain('/invoices/');
 });
+
+test('offer lines can be updated and are returned by the offer invoice-line json endpoint', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { response: createResponse, offerExternalId } = await createOffer(page, request);
+  const updatedTitle = `Playwright Updated Offer ${Date.now()}`;
+
+  /* Act */
+  const updateResponse = await request.post(`${BASE_URL}/offer/${offerExternalId}/update`, {
+    failOnStatusCode: false,
+    data: [
+      {
+        title: updatedTitle,
+        type: 'hours',
+        price: 75,
+        quantity: 2,
+        comment: 'updated line',
+      },
+    ],
+  });
+  const linesResponse = await request.get(`${BASE_URL}/offer/${offerExternalId}/invoice-lines/json`, {
+    failOnStatusCode: false,
+    headers: { Accept: 'application/json' },
+  });
+  const lines = await linesResponse.json();
+
+  /* Assert */
+  expect(createResponse.status()).toBe(200);
+  expect(updateResponse.status()).toBe(200);
+  expect(linesResponse.status()).toBe(200);
+  expect(Array.isArray(lines)).toBe(true);
+  expect(lines.some(line => line.title === updatedTitle)).toBe(true);
+});
+
+test('offer line updates reject missing required line fields', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { offerExternalId } = await createOffer(page, request);
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/offer/${offerExternalId}/update`, {
+    failOnStatusCode: false,
+    data: [
+      {
+        title: '',
+        type: 'hours',
+        price: 20,
+        quantity: 1,
+      },
+    ],
+  });
+  const body = await response.text();
+
+  /* Assert */
+  expect(response.status()).toBe(422);
+  expect(body.toLowerCase()).toContain('missing fields');
+});

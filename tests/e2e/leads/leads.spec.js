@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, createLead, leadData, jsonHeaders, uniqueValue } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, createLead, leadData, jsonHeaders, uniqueValue, expectValidationError } = require('../helpers/plain-e2e');
 
 test('lead creation appears in the searchable lead data response', async ({ page }) => {
   /* Arrange */
@@ -43,4 +43,40 @@ test('deleting a lead removes it from the lead data response', async ({ page }) 
   expect(deleteResponse.status()).toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
   expect(JSON.stringify(rows)).not.toContain(title);
+});
+
+test('lead validation reports a missing required title field', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/leads`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {},
+  });
+
+  /* Assert */
+  await expectValidationError(response, 'title');
+});
+
+test('lead status updates return a redirect for an existing lead', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { leadExternalId, statusId } = await createLead(page, request, uniqueValue('PW Lead Status'));
+
+  /* Act */
+  const response = await request.patch(`${BASE_URL}/leads/updatestatus/${leadExternalId}`, {
+    failOnStatusCode: false,
+    headers: await jsonHeaders(page),
+    form: {
+      status_id: statusId,
+    },
+  });
+
+  /* Assert */
+  expect(response.status()).toBe(302);
+  expect(response.headers()['location'] ?? '').not.toContain('/login');
 });

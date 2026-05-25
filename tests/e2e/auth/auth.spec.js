@@ -24,3 +24,36 @@ test('admin login reaches the authenticated dashboard shell', async ({ page }) =
   await expect(page).not.toHaveURL(/login/);
   await expect(clientsLink).toBeVisible();
 });
+
+test('login rejects missing required credentials with explicit validation errors', async ({ page }) => {
+  /* Arrange */
+  const request = page.context().request;
+
+  /* Act */
+  const response = await request.post(`${BASE_URL}/login`, {
+    failOnStatusCode: false,
+    headers: {
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    form: {},
+  });
+  const payload = await response.json();
+
+  /* Assert */
+  expect(response.status()).toBe(422);
+  expect(payload.errors).toBeTruthy();
+  expect(Object.keys(payload.errors)).toContain('email');
+  expect(Object.keys(payload.errors)).toContain('password');
+});
+
+test('authenticated users can log out and are redirected back to login', async ({ page }) => {
+  /* Arrange */
+  await loginAsAdmin(page);
+
+  /* Act */
+  await page.goto(`${BASE_URL}/logout`);
+
+  /* Assert */
+  await expect(page).toHaveURL(/login/);
+});
