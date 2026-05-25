@@ -50,6 +50,7 @@ test('deleting a payment removes it from the invoice payment feed', async ({ pag
 
   /* Locate the created payment row */
   const createdDataResponse = await paymentsData(request, invoiceExternalId);
+  expect(createdDataResponse.status(), 'Payments feed should return 200 after creation').toBe(200);
   const createdPayload = await createdDataResponse.json();
   const createdRows = Array.isArray(createdPayload?.data) ? createdPayload.data : [];
   const createdRow = createdRows.find(row => String(row.description ?? '').includes(description));

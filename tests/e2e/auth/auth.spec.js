@@ -65,9 +65,19 @@ test('wrong credentials are rejected and do not produce an authenticated session
   });
   const payload = await response.json();
 
+  /* Verify no authenticated session was created by attempting to access a protected endpoint */
+  const protectedResponse = await request.get(`${BASE_URL}/dashboard`, {
+    failOnStatusCode: false,
+    maxRedirects: 0,
+  });
+
   /* Assert – the server must refuse invalid credentials, not grant access */
   expect(response.status(), 'Wrong credentials should return 422').toBe(422);
   expect(payload.errors, 'A credential error must be returned').toBeTruthy();
+  expect(
+    [302, 401].includes(protectedResponse.status()),
+    'Protected endpoint should be inaccessible without authentication (redirect or 401)'
+  ).toBe(true);
 });
 
 test('an authenticated user who visits /logout is redirected back to the login page', async ({ page }) => {

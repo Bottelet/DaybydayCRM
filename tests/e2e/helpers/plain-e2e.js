@@ -15,8 +15,8 @@ function escapeRegExp(value) {
 
 async function loginAsAdmin(page) {
   await page.goto(`${BASE_URL}/login`);
-  await page.getByLabel(/email/i).fill(ADMIN_EMAIL);
-  await page.getByLabel(/password/i).fill(ADMIN_PASSWORD);
+  await page.locator('input[name="email"]').fill(ADMIN_EMAIL);
+  await page.locator('input[name="password"]').fill(ADMIN_PASSWORD);
   await Promise.all([
     page.waitForURL((url) => !url.pathname.endsWith('/login')),
     page.getByRole('button', { name: /log ?in|sign ?in/i }).click(),
@@ -336,7 +336,10 @@ async function createAbsence(page, request) {
     },
   });
 
-  return { response, reason };
+  const payload = response.status() === 200 ? await parseJsonOrThrow(response, 'createAbsence') : {};
+  const externalId = payload.external_id ?? null;
+
+  return { response, reason, externalId };
 }
 
 async function absenceData(request, search = '') {

@@ -1,32 +1,37 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, jsonHeaders, expectValidationError } = require('../helpers/plain-e2e');
 
-let savedSettings = null;
+test.describe.serial('Settings tests', () => {
+  let savedSettings = null;
 
-test.beforeEach(async ({ page }) => {
-  savedSettings = null;
-  await loginAsAdmin(page);
-  const request = page.context().request;
-  const getResponse = await request.get(`${BASE_URL}/settings`, {
-    failOnStatusCode: false,
-    headers: await jsonHeaders(page),
-  });
-  if (getResponse.status() === 200) {
-    const payload = await getResponse.json();
-    savedSettings = payload.settings ?? null;
-  }
-});
-
-test.afterEach(async ({ page }) => {
-  if (savedSettings) {
+  test.beforeEach(async ({ page }) => {
+    savedSettings = null;
+    await loginAsAdmin(page);
     const request = page.context().request;
-    await request.patch(`${BASE_URL}/settings/overall`, {
+    const getResponse = await request.get(`${BASE_URL}/settings`, {
       failOnStatusCode: false,
       headers: await jsonHeaders(page),
-      data: savedSettings,
     });
-  }
-});
+    if (getResponse.status() === 200) {
+      const payload = await getResponse.json();
+      savedSettings = payload.settings ?? null;
+    }
+  });
+
+  test.afterEach(async ({ page }) => {
+    if (savedSettings) {
+      const request = page.context().request;
+      const restoreResponse = await request.patch(`${BASE_URL}/settings/overall`, {
+        failOnStatusCode: false,
+        headers: await jsonHeaders(page),
+        data: savedSettings,
+      });
+      expect(
+        restoreResponse.ok(),
+        `Settings restoration failed with status ${restoreResponse.status()} - leaked settings may affect subsequent tests`
+      ).toBe(true);
+    }
+  });
 
 test('settings updates return the success message from the controller', async ({ page }) => {
   /* Arrange */
@@ -73,4 +78,6 @@ test('settings validation reports invalid currency values', async ({ page }) => 
 
   /* Assert */
   await expectValidationError(response, 'currency');
+});
+
 });

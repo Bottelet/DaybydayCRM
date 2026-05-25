@@ -7,7 +7,7 @@ test('registering an absence creates a record visible in the management feed', a
   const request = page.context().request;
 
   /* Act */
-  const { response } = await createAbsence(page, request);
+  const { response, externalId: createdExternalId } = await createAbsence(page, request);
   const dataResponse = await absenceData(request);
   const dataPayload = await dataResponse.json();
 
@@ -16,7 +16,11 @@ test('registering an absence creates a record visible in the management feed', a
   expect(dataResponse.status(), 'Absence data feed should return 200').toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
   expect(rows.length, 'At least one absence should be visible in the feed after creation').toBeGreaterThan(0);
-  expect(rows[0]).toHaveProperty('external_id');
+  expect(createdExternalId, 'Created absence must have an external_id').toBeTruthy();
+  expect(
+    rows.some(row => row.external_id === createdExternalId),
+    `The created absence with external_id ${createdExternalId} should appear in the feed`
+  ).toBe(true);
 });
 
 test('an admin with absence-manage permission can register an absence for another user', async ({ page }) => {
@@ -64,19 +68,21 @@ test('deleting an absence removes it permanently from the management feed', asyn
   /* Arrange */
   await loginAsAdmin(page);
   const request = page.context().request;
-  const { response: createResponse } = await createAbsence(page, request);
+  const { response: createResponse, externalId: createdExternalId } = await createAbsence(page, request);
   expect(createResponse.status(), 'Absence creation must succeed before delete test').toBe(200);
+  expect(createdExternalId, 'Created absence must have an external_id for deletion').toBeTruthy();
 
-  /* Fetch the full list and take the most-recently created row as deletion target */
+  /* Verify the created absence appears in the feed before deletion */
   const allBeforeResponse = await absenceData(request);
   const allBeforePayload = await allBeforeResponse.json();
   const rowsBefore = Array.isArray(allBeforePayload?.data) ? allBeforePayload.data : [];
-  expect(rowsBefore.length, 'Feed must contain at least one absence to delete').toBeGreaterThan(0);
-  const targetRow = rowsBefore[0];
-  const absenceExternalId = targetRow.external_id;
+  expect(
+    rowsBefore.some(row => row.external_id === createdExternalId),
+    `Created absence ${createdExternalId} should appear in the feed before deletion`
+  ).toBe(true);
 
   /* Act */
-  const deleteResponse = await request.delete(`${BASE_URL}/absences/${absenceExternalId}`, {
+  const deleteResponse = await request.delete(`${BASE_URL}/absences/${createdExternalId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
   });
@@ -88,8 +94,8 @@ test('deleting an absence removes it permanently from the management feed', asyn
   expect(allAfterResponse.status(), 'Absence feed after delete should return 200').toBe(200);
   const rowsAfter = Array.isArray(allAfterPayload?.data) ? allAfterPayload.data : [];
   expect(
-    rowsAfter.some(row => row.external_id === absenceExternalId),
-    `Deleted absence ${absenceExternalId} should no longer appear in the feed`
+    rowsAfter.some(row => row.external_id === createdExternalId),
+    `Deleted absence ${createdExternalId} should no longer appear in the feed`
   ).toBe(false);
 });
 
