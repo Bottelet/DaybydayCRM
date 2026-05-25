@@ -18,6 +18,7 @@ test('adding a payment shows the payment details in the invoice payment feed', a
   expect(createResponse.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
+  expect(rows.length).toBeGreaterThan(0);
   expect(rows.some(row => String(row.description || '').includes('Playwright payment detail'))).toBe(true);
 });
 

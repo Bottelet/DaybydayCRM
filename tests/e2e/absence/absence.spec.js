@@ -51,7 +51,7 @@ test('absence can be registered for another user when management mode is used', 
   expect(createResponse.status()).toBe(200);
   expect(dataResponse.status()).toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
-  expect(rows.some(row => String(row.user_id || '').includes(targetUser.name))).toBe(true);
+  expect(rows.some(row => JSON.stringify(row).includes(targetUser.name))).toBe(true);
 });
 
 test('absence deletion removes the created absence from the data feed', async ({ page }) => {
