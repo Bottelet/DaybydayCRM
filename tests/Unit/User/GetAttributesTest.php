@@ -70,6 +70,7 @@ class GetAttributesTest extends AbstractTestCase
         $this->user = User::factory()->create([
             'name' => 'Eye of the',
         ]);
+        $this->user->department()->detach();
 
         /* Act */
         $userWithEagerLoading = User::whereName($this->user->name)->with('department')->first();
