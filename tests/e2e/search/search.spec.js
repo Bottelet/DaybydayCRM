@@ -19,6 +19,7 @@ test('search returns client hit structure for a newly created company', async ({
   expect(Array.isArray(payload.hits.hits)).toBe(true);
   expect(payload.hits.hits.length).toBeGreaterThan(0);
   expect(JSON.stringify(payload)).toContain(companyName);
+  expect(JSON.stringify(payload)).toContain('/clients/');
 });
 
 test('search rejects unsupported type with explicit 400 error', async ({ page }) => {
@@ -62,4 +63,3 @@ test('search accepts supported domain types', async ({ page }) => {
     expect(response.status(), `Expected ${type} search to be accepted`).toBe(200);
   }
 });
-

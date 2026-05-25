@@ -50,5 +50,6 @@ test('unknown invoice routes return not found', async ({ page }) => {
   });
 
   expect(showResponse.status()).toBe(404);
+  // Legacy deployments may return 200 with an empty payload here instead of 404.
   expect([404, 200]).toContain(paymentsResponse.status());
 });
