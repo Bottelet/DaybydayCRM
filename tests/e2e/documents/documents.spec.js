@@ -1,5 +1,9 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, createClient, uploadClientDocument } = require('../helpers/plain-e2e');
+const {createAdminSession} = require("../helpers/session-context");
+const {nonAdminTest} = require("../../helpers/fixtures");
+const {PLAYWRIGHT_BASE_URL} = require("../../helpers/config");
+const {createClientDocumentFixture} = require("../helpers/coverage-fixtures");
 
 test('an uploaded client document can be opened inline and returns the original file content', async ({ page }) => {
   /* Arrange */
@@ -80,4 +84,96 @@ test('requesting a document with an unknown external_id returns a 404 response',
 
   /* Assert – the server must not silently return 200 for a missing document */
   expect(response.status(), 'Non-existent document external_id should return 404').toBe(404);
+});
+
+test('uploads, views, and downloads a client document', async ({ page, request }) => {
+    const { documentExternalId } = await createClientDocumentFixture(page, request);
+
+    const viewResponse = await request.get(`${PLAYWRIGHT_BASE_URL}/document/${documentExternalId}`, {
+        failOnStatusCode: false,
+    });
+    expect(viewResponse.status()).toBe(200);
+    expect(viewResponse.headers()['content-disposition'] ?? '').toContain('inline');
+
+    const downloadResponse = await request.get(`${PLAYWRIGHT_BASE_URL}/document/download/${documentExternalId}`, {
+        failOnStatusCode: false,
+    });
+    expect(downloadResponse.status()).toBe(200);
+    expect(downloadResponse.headers()['content-disposition'] ?? '').toContain('attachment');
+});
+
+test('returns 404 for unknown documents', async ({ request }) => {
+    const response = await request.get(`${PLAYWRIGHT_BASE_URL}/document/00000000-0000-0000-0000-000000000000`, {
+        failOnStatusCode: false,
+    });
+
+    expect(response.status()).toBe(404);
+});
+
+nonAdminTest.describe('Documents permissions', () => {
+    nonAdminTest('denies client uploads without permission', async ({ page, request }) => {
+        const admin = await createAdminSession(page);
+
+        try {
+            const { clientExternalId } = await createClientDocumentFixture(admin.page, admin.request);
+            const response = await request.post(`${PLAYWRIGHT_BASE_URL}/clients/upload/${clientExternalId}`, {
+                failOnStatusCode: false,
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': await fetchCsrfToken(page),
+                },
+                multipart: {
+                    file: {
+                        name: 'forbidden-client-upload.txt',
+                        mimeType: 'text/plain',
+                        buffer: Buffer.from('forbidden'),
+                    },
+                },
+                maxRedirects: 0,
+            });
+
+            expect(response.status()).toBe(403);
+        } finally {
+            await admin.dispose();
+        }
+    });
+
+    nonAdminTest('denies task uploads without permission', async ({ page, request }) => {
+        const response = await request.post(`${PLAYWRIGHT_BASE_URL}/uploaToTask/invalid-task`, {
+            failOnStatusCode: false,
+            headers: {
+                'X-CSRF-TOKEN': await fetchCsrfToken(page),
+            },
+            multipart: {
+                files: {
+                    name: 'forbidden-task-upload.txt',
+                    mimeType: 'text/plain',
+                    buffer: Buffer.from('forbidden'),
+                },
+            },
+            maxRedirects: 0,
+        });
+        expect(response.status()).toBe(302);
+    });
+
+    nonAdminTest('denies viewing and downloading another users document', async ({ page, request }) => {
+        const admin = await createAdminSession(page);
+
+        try {
+            const { documentExternalId } = await createClientDocumentFixture(admin.page, admin.request);
+            const viewResponse = await request.get(`${PLAYWRIGHT_BASE_URL}/document/${documentExternalId}`, {
+                failOnStatusCode: false,
+                maxRedirects: 0,
+            });
+            expect(viewResponse.status()).toBe(302);
+
+            const downloadResponse = await request.get(`${PLAYWRIGHT_BASE_URL}/document/download/${documentExternalId}`, {
+                failOnStatusCode: false,
+                maxRedirects: 0,
+            });
+            expect(downloadResponse.status()).toBe(302);
+        } finally {
+            await admin.dispose();
+        }
+    });
 });

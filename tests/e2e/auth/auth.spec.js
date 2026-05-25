@@ -1,5 +1,13 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin, jsonHeaders } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, jsonHeaders } = require('../helpers/plain-e2e');test('guest is redirected away from dashboard', async ({ page }) => {
+    await page.goto(`${PLAYWRIGHT_BASE_URL}/dashboard`);
+    await expect(page).toHaveURL(/login|signin/);
+});
+
+test('login page is accessible to guests', async ({ page }) => {
+    await page.goto(`${PLAYWRIGHT_BASE_URL}/login`);
+    await expect(page.getByRole('button', { name: /log ?in|sign ?in/i })).toBeVisible();
+});
 test('unauthenticated users who request the dashboard are redirected to the login form', async ({ page }) => {
   /* Arrange – navigate without a session */
   await page.goto(`${BASE_URL}/dashboard`);
@@ -90,4 +98,16 @@ test('an authenticated user who visits /logout is redirected back to the login p
 
   /* Assert */
   await expect(page, 'Logout should destroy the session and redirect to login').toHaveURL(/login/);
+});
+
+test.describe('Password and session authentication UX', () => {
+    test('forgot password page is available', async ({ page }) => {
+        await page.goto(`${PLAYWRIGHT_BASE_URL}/password/reset`);
+        await expect(page.getByRole('button', { name: /send password reset link|email password reset link/i })).toBeVisible();
+    });
+
+    test('login page exposes remember me option', async ({ page }) => {
+        await page.goto(`${PLAYWRIGHT_BASE_URL}/login`);
+        await expect(page.getByLabel(/remember me/i)).toBeVisible();
+    });
 });

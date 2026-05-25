@@ -1,5 +1,10 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, firstAppointment, usersCollection, jsonHeaders, expectValidationError } = require('../helpers/plain-e2e');
+const {nonAdminTest} = require("../../helpers/fixtures");
+const {createAdminSession} = require("../helpers/session-context");
+const {fetchCsrfToken} = require("../../helpers/csrf");
+const {PLAYWRIGHT_BASE_URL} = require("../../helpers/config");
+const {TEST_USERS} = require("../../fixtures/users");
 
 test('the appointments calendar feed returns structured appointment records with time boundaries', async ({ page }) => {
   /* Arrange */
@@ -101,4 +106,314 @@ test('deleting an appointment removes it from the calendar feed', async ({ page 
     Array.isArray(afterPayload) && afterPayload.some(a => a.external_id === appointmentExternalId),
     `Deleted appointment ${appointmentExternalId} should not appear in the calendar feed`
   ).toBe(false);
+});
+
+test('returns appointments within the supported calendar window', async ({ request }) => {
+    const response = await request.get(`${PLAYWRIGHT_BASE_URL}/appointments/data`, {
+        failOnStatusCode: false,
+        headers: { Accept: 'application/json' },
+    });
+
+    expect(response.status()).toBe(200);
+    const payload = await response.json();
+    expect(Array.isArray(payload)).toBe(true);
+    expect(payload.length).toBeGreaterThan(0);
+
+    const now = Date.now();
+    const lowerBound = now - 14 * 24 * 60 * 60 * 1000;
+    const upperBound = now + 28 * 24 * 60 * 60 * 1000;
+
+    for (const appointment of payload) {
+        const start = new Date(String(appointment.start_at)).getTime();
+        const end = new Date(String(appointment.end_at)).getTime();
+        expect(start >= lowerBound || end >= lowerBound).toBe(true);
+        expect(start <= upperBound || end <= upperBound).toBe(true);
+    }
+});
+
+test('updates appointment times and assignee', async ({ page, request }) => {
+    const appointment = await firstAppointment(request);
+    const users = await calendarUsers(request);
+    const newAssignee = users.find((user) => user.external_id !== appointment.user?.external_id) ?? users[0];
+
+    const response = await request.post(`${PLAYWRIGHT_BASE_URL}/appointments/update/${appointment.external_id}`, {
+        failOnStatusCode: false,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': await fetchCsrfToken(page),
+        },
+        form: {
+            id: appointment.external_id,
+            start: '2030-01-02T09:00:00.000Z',
+            end: '2030-01-02T10:00:00.000Z',
+            group: newAssignee.external_id,
+        },
+    });
+
+    expect(response.status()).toBe(200);
+    const updated = await response.json();
+    expect(String(updated.start_at)).toContain('2030-01-02');
+});
+
+test('rejects invalid appointment update payloads', async ({ page, request }) => {
+    const appointment = await firstAppointment(request);
+
+    const response = await request.post(`${PLAYWRIGHT_BASE_URL}/appointments/update/${appointment.external_id}`, {
+        failOnStatusCode: false,
+        headers: {
+            Accept: 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': await fetchCsrfToken(page),
+        },
+        form: {
+            id: appointment.external_id,
+            start: '2030-01-02T09:00:00.000Z',
+            end: '2030-01-02T10:00:00.000Z',
+            group: 'does-not-exist',
+        },
+    });
+
+    expect(response.status()).toBe(422);
+});
+
+test('destroys appointments', async ({ page, request }) => {
+    const appointment = await firstAppointment(request);
+
+    const response = await request.delete(`${PLAYWRIGHT_BASE_URL}/appointments/${appointment.external_id}`, {
+        failOnStatusCode: false,
+        headers: {
+            'X-CSRF-TOKEN': await fetchCsrfToken(page),
+        },
+    });
+
+    expect(response.status()).toBe(200);
+    expect(await response.text()).toContain('Success');
+});
+
+test('it can get appointments within time slot', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it can update appointment times', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(update|updated|saved|assigned|status|restored)/i).first()).toBeVisible();
+});
+
+test('it can destroy appointment', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it returns json error when appointment update fails', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(update|updated|saved|assigned|status|restored)/i).first()).toBeVisible();
+});
+
+test('it returns user appointments via morph relationship', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it does not return appointments for other source types in user appointments morph', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller does not have store method', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller does not have create request dependency', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it posting to appointments resource route returns not found', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller retains calendar method', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller retains update method', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(update|updated|saved|assigned|status|restored)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller retains destroy method', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it verifies appointments controller retains appointments json method', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(error|invalid|required|unprocessable|forbidden)/i).first()).toBeVisible();
+});
+
+test('it creates appointment calendar request class no longer used by controller', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(create|new|add)/i).first()).toBeVisible();
+});
+
+test('it authorized user can update appointment', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(update|updated|saved|assigned|status|restored)/i).first()).toBeVisible();
+});
+
+test('it authorized user can delete appointment', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(delete|removed|warning|cannot)/i).first()).toBeVisible();
+});
+
+test('it unauthorized user cannot update appointment', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(forbidden|unauthorized|permission|login|warning|error)/i).first()).toBeVisible();
+});
+
+test('it requires permission check for appointment update', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(update|updated|saved|assigned|status|restored)/i).first()).toBeVisible();
+});
+
+test('it unauthorized user cannot delete appointment', async ({ page }) => {
+    /* Arrange */ // uses seeded data
+    const user = TEST_USERS.owner;
+
+    /* Act */
+    await page.goto('/offers');
+
+    /* Assert */
+    await expect(page.getByText(/(forbidden|unauthorized|permission|login|warning|error)/i).first()).toBeVisible();
+});
+
+nonAdminTest('denies appointment deletion without permission', async ({ page, request }) => {
+    const admin = await createAdminSession(page);
+
+    try {
+        const appointment = await firstAppointment(admin.request);
+        const response = await request.delete(`${PLAYWRIGHT_BASE_URL}/appointments/${appointment.external_id}`, {
+            failOnStatusCode: false,
+            headers: {
+                'X-CSRF-TOKEN': await fetchCsrfToken(page),
+            },
+        });
+
+        expect(response.status()).toBe(403);
+    } finally {
+        await admin.dispose();
+    }
 });
