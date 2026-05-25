@@ -70,6 +70,7 @@ test('wrong credentials are rejected and do not produce an authenticated session
     failOnStatusCode: false,
     maxRedirects: 0,
   });
+  const protectedLocation = protectedResponse.headers().location ?? '';
 
   /* Assert – the server must refuse invalid credentials, not grant access */
   expect(response.status(), 'Wrong credentials should return 422').toBe(422);
@@ -78,6 +79,12 @@ test('wrong credentials are rejected and do not produce an authenticated session
     [302, 401].includes(protectedResponse.status()),
     'Protected endpoint should be inaccessible without authentication (redirect or 401)'
   ).toBe(true);
+  if (protectedResponse.status() === 302) {
+    expect(
+      protectedLocation,
+      'Failed login must not create a session; protected routes should redirect back to login'
+    ).toContain('/login');
+  }
 });
 
 test('an authenticated user who visits /logout is redirected back to the login page', async ({ page }) => {
