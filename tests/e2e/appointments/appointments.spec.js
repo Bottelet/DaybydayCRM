@@ -1,6 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { loginAsAdmin, firstAppointment, usersCollection, jsonHeaders } = require('../helpers/plain-e2e');
-const { BASE_URL } = require('../helpers/plain-e2e');
+const { BASE_URL, loginAsAdmin, firstAppointment, usersCollection, jsonHeaders } = require('../helpers/plain-e2e');
 
 test('appointment calendar data returns concrete appointment details', async ({ page }) => {
   /* Arrange */

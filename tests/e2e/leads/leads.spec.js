@@ -36,10 +36,12 @@ test('deleting a lead removes it from the lead data response', async ({ page }) 
     },
   });
   const dataResponse = await leadData(request, title);
+  const dataResponse = await leadData(request, title);
+  expect(dataResponse.status()).toBe(200);
   const dataPayload = await dataResponse.json();
 
   /* Assert */
   expect(deleteResponse.status()).toBe(200);
-  const rows = dataPayload.data || [];
-  expect(rows.some(row => row.title === title)).toBe(false);
+  const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
+  expect(JSON.stringify(rows)).not.toContain(title);
 });
