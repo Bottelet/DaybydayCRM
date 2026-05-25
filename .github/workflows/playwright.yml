@@ -114,6 +114,17 @@ jobs:
             exit 1
           fi
 
+      - name: Build frontend assets
+        run: |
+          if [ -f yarn.lock ]; then
+            yarn build
+          elif [ -f package-lock.json ]; then
+            npm run build
+          else
+            echo "No lockfile found (expected yarn.lock or package-lock.json)." >&2
+            exit 1
+          fi
+
       - name: Restore Playwright browsers cache
         id: playwright-cache
         uses: actions/cache@v4
