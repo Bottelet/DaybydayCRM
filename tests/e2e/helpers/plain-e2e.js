@@ -380,6 +380,7 @@ async function createInvoice(page, request) {
     },
     maxRedirects: 0,
   });
+  expect(winResponse.status()).toBe(302);
 
   const { body } = await html(request, `/leads/${leadExternalId}`);
   const invoiceExternalId = body.match(/\/invoices\/([a-f0-9-]+)/i)?.[1];
@@ -395,6 +396,7 @@ async function createInvoice(page, request) {
     form: {},
     maxRedirects: 0,
   });
+  expect(sentResponse.status()).toBe(302);
 
   return { winResponse, sentResponse, invoiceExternalId };
 }
