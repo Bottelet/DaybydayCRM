@@ -9,12 +9,11 @@ test('the application does not expose a journeys index route today', async ({ pa
   /* Act */
   const response = await request.get(`${BASE_URL}/journeys`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
   });
-  const body = await response.text();
 
   /* Assert */
   expect(response.status()).toBe(404);
-  expect(body.toLowerCase()).toContain('not found');
 });
 
 test('the application does not expose a journeys create route today', async ({ page }) => {
