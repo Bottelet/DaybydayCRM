@@ -60,8 +60,9 @@ test('project status update endpoint returns ajax redirect header', async ({ pag
   const statusSection = body.match(statusPattern)?.[1] ?? '';
   const allStatusIds = [...statusSection.matchAll(/<option[^>]*value=["']([^"']*)["'][^>]*>/gi)]
     .map(m => String(m[1] ?? '').trim())
-    .filter(v => v && v !== statusId);
-  const newStatusId = allStatusIds[0] ?? statusId;
+    .filter(Boolean);
+  const newStatusId = allStatusIds.find((id) => id !== statusId);
+  expect(newStatusId).toBeTruthy();
 
   const response = await request.patch(`${BASE_URL}/projects/updatestatus/${payload.project_external_id}`, {
     failOnStatusCode: false,
@@ -74,7 +75,7 @@ test('project status update endpoint returns ajax redirect header', async ({ pag
   expect(response.headers()['x-redirect'] ?? '').toContain(projectPath);
 
   const { body: projectPageBody } = await html(request, `/projects/${payload.project_external_id}`);
-  expect(projectPageBody).toContain(newStatusId);
+  expect(projectPageBody).toContain(String(newStatusId));
 });
 
 test('project assignment endpoint accepts valid assignee', async ({ page }) => {

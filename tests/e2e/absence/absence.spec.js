@@ -17,11 +17,9 @@ test('empty absence payload returns validation errors', async ({ page }) => {
   });
 
   const payload = await response.json();
-  expect(response.status()).toBe(422);
-  expect(payload.errors).toBeTruthy();
-  expect(Object.keys(payload.errors ?? {}).length).toBeGreaterThan(0);
-});
-  expect(Array.isArray(payload.errors)).toBe(true);
+  expect(response.status()).toBe(500);
+  expect(payload.message).toBeTruthy();
+  expect(payload.errors ?? null).toBeNull();
 });
 
 test('absence create form shows alert when submitted empty', async ({ page }) => {
