@@ -66,12 +66,8 @@ test('task status update endpoint redirects to task detail', async ({ page }) =>
 });
 
 test('task assignment endpoint accepts valid assignee', async ({ page }) => {
-  await loginAsAdmin(page);
-  const request = page.context().request;
-  const { payload } = await createTask(page, request, uniqueValue('PW Task Assign'));
-  const users = await usersCollection(request);
   expect(users.length).toBeGreaterThan(0);
-  expect(users[0].external_id).toBeTruthy();
+  expect(users[0]?.external_id).toBeTruthy();
 
   const response = await request.patch(`${BASE_URL}/tasks/updateassign/${payload.task_external_id}`, {
     failOnStatusCode: false,
