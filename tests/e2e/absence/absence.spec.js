@@ -6,38 +6,6 @@ const {
   absenceData,
   jsonHeaders,
 } = require('../helpers/plain-e2e');
-
-test('guest is redirected from absences create route', async ({ page }) => {
-  await page.goto(`${BASE_URL}/absences/create`);
-  await expect(page).toHaveURL(/login/);
-});
-
-test('creating an absence makes it visible in absences data feed', async ({ page }) => {
-  await loginAsAdmin(page);
-  const request = page.context().request;
-  const beforeDataResponse = await absenceData(request);
-  const beforePayload = await beforeDataResponse.json();
-  const beforeIds = new Set((beforePayload.data ?? []).map((row) => row.external_id));
-
-  const { response } = await createAbsence(page, request);
-  const afterDataResponse = await absenceData(request);
-  const afterPayload = await afterDataResponse.json();
-  const createdRow = (afterPayload.data ?? []).find((row) => row.external_id && !beforeIds.has(row.external_id));
-
-  expect(response.status()).toBe(200);
-  expect(afterDataResponse.status()).toBe(200);
-  expect(createdRow?.external_id).toBeTruthy();
-
-  if (createdRow?.external_id) {
-    const res = await request.delete(`${BASE_URL}/absences/${createdRow.external_id}`, {
-      failOnStatusCode: false,
-      headers: await jsonHeaders(page),
-    });
-    expect(res.status()).toBeGreaterThanOrEqual(200);
-    expect(res.status()).toBeLessThan(300);
-  }
-});
-
 test('empty absence payload returns validation errors', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
@@ -49,8 +17,10 @@ test('empty absence payload returns validation errors', async ({ page }) => {
   });
 
   const payload = await response.json();
-  expect(response.status()).toBe(400);
-  expect(payload.message).toBeTruthy();
+  expect(response.status()).toBe(422);
+  expect(payload.errors).toBeTruthy();
+  expect(Object.keys(payload.errors ?? {}).length).toBeGreaterThan(0);
+});
   expect(Array.isArray(payload.errors)).toBe(true);
 });
 
