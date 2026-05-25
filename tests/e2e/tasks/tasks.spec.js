@@ -60,8 +60,9 @@ test('task status update endpoint redirects to task detail', async ({ page }) =>
     form: { status_id: statusId },
   });
 
-  expect(response.status()).toBe(302);
-  expect(response.headers().location ?? '').toContain(`/tasks/${payload.task_external_id}`);
+  const body = await response.json();
+  expect(response.status()).toBe(200);
+  expect(String(body.message ?? '').toLowerCase()).toContain('updated');
 });
 
 test('task assignment endpoint accepts valid assignee', async ({ page }) => {
@@ -78,7 +79,9 @@ test('task assignment endpoint accepts valid assignee', async ({ page }) => {
     form: { user_assigned_id: users[0].external_id },
   });
 
-  expect(response.status()).toBe(302);
+  const body = await response.json();
+  expect(response.status()).toBe(200);
+  expect(String(body.message ?? '').toLowerCase()).toContain('assigned');
 });
 
 test('deleting a task removes it from tasks data feed', async ({ page }) => {

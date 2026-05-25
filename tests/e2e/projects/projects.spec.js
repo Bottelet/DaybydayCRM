@@ -48,20 +48,21 @@ test('project create form shows alert when submitted empty', async ({ page }) =>
   await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
 
-test('project status update endpoint redirects to project detail', async ({ page }) => {
+test('project status update endpoint returns ajax redirect header', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
   const { payload, statusId } = await createProject(page, request, uniqueValue('PW Project Status'));
+  const projectPath = `${BASE_URL}/projects/${payload.project_external_id}`;
 
   const response = await request.patch(`${BASE_URL}/projects/updatestatus/${payload.project_external_id}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
-    headers: await jsonHeaders(page),
+    headers: await jsonHeaders(page, { Referer: projectPath }),
     form: { status_id: statusId },
   });
 
   expect(response.status()).toBe(302);
-  expect(response.headers().location ?? '').toContain(`/projects/${payload.project_external_id}`);
+  expect(response.headers()['x-redirect'] ?? '').toContain(projectPath);
 });
 
 test('project assignment endpoint accepts valid assignee', async ({ page }) => {

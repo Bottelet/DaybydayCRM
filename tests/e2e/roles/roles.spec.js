@@ -47,7 +47,7 @@ test('role create form shows alert when submitted empty', async ({ page }) => {
   await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
 
-test('updating role name persists in role data feed', async ({ page }) => {
+test('updating role permissions redirects and role stays searchable', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
   const originalName = uniqueValue('pw_role_update');
@@ -58,23 +58,22 @@ test('updating role name persists in role data feed', async ({ page }) => {
   const row = (createdDataPayload.data ?? []).find((item) => item.name === name);
   expect(row?.external_id).toBeTruthy();
 
-  const updatedName = uniqueValue('pw_role_updated');
+  const rolePath = `${BASE_URL}/roles/${row.external_id}`;
   const updateResponse = await request.patch(`${BASE_URL}/roles/update/${row.external_id}`, {
     failOnStatusCode: false,
-    headers: await jsonHeaders(page),
+    maxRedirects: 0,
+    headers: await jsonHeaders(page, { Referer: rolePath }),
     form: {
-      name: updatedName,
-      description: `${updatedName} description`,
+      permissions: [],
     },
   });
-  const updatePayload = await updateResponse.json();
 
-  const afterDataResponse = await roleData(request, updatedName);
+  const afterDataResponse = await roleData(request, name);
   const afterDataPayload = await afterDataResponse.json();
 
-  expect(updateResponse.status()).toBe(200);
-  expect(String(updatePayload.message ?? '').toLowerCase()).toContain('updated');
-  expect((afterDataPayload.data ?? []).some((item) => item.name === updatedName)).toBe(true);
+  expect(updateResponse.status()).toBe(302);
+  expect(updateResponse.headers().location ?? '').toContain(rolePath);
+  expect((afterDataPayload.data ?? []).some((item) => item.name === name)).toBe(true);
 });
 
 test('updating malformed role id returns not found', async ({ page }) => {

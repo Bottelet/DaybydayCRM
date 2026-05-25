@@ -66,16 +66,17 @@ test('lead status update endpoint accepts a valid status transition', async ({ p
   }
   expect(allStatuses.length).toBeGreaterThan(1);
   const newStatusId = allStatuses.find((id) => id !== statusId) ?? allStatuses[1];
+  const leadPath = `${BASE_URL}/leads/${leadExternalId}`;
 
   const response = await request.patch(`${BASE_URL}/leads/updatestatus/${leadExternalId}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
-    headers: await jsonHeaders(page),
+    headers: await jsonHeaders(page, { Referer: leadPath }),
     form: { status_id: newStatusId },
   });
 
   expect(response.status()).toBe(302);
-  expect(response.headers().location ?? '').toContain(`/leads/${leadExternalId}`);
+  expect(response.headers().location ?? '').toContain(leadPath);
 });
 
 test('lead assignment endpoint accepts a valid assignee', async ({ page }) => {
