@@ -85,7 +85,7 @@ test('updating a user name persists in users data feed', async ({ page }) => {
   expect((dataPayload.data ?? []).some((row) => row.name === updatedName && row.email === email)).toBe(true);
 });
 
-test('malformed user update and delete ids return not found', async ({ page }) => {
+test('malformed user update id returns not found', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
@@ -95,11 +95,17 @@ test('malformed user update and delete ids return not found', async ({ page }) =
     form: { name: 'Invalid Update', email: 'invalid@example.com' },
   });
 
+  expect(updateResponse.status()).toBe(404);
+});
+
+test('malformed user delete id returns not found', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
   const deleteResponse = await request.delete(`${BASE_URL}/users/${malformedId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
   });
 
-  expect(updateResponse.status()).toBe(404);
   expect(deleteResponse.status()).toBe(404);
 });

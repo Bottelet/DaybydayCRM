@@ -87,7 +87,7 @@ test.describe.serial('Settings behavior', () => {
     await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
   });
 
-  test('settings support endpoints are reachable for authenticated users', async ({ page }) => {
+  test('settings business-hours endpoint reachable', async ({ page }) => {
     const request = page.context().request;
 
     const businessHours = await request.get(`${BASE_URL}/settings/business-hours`, {
@@ -95,12 +95,17 @@ test.describe.serial('Settings behavior', () => {
       headers: { Accept: 'application/json' },
     });
 
+    expect(businessHours.status()).toBe(200);
+  });
+
+  test('settings date-formats endpoint reachable', async ({ page }) => {
+    const request = page.context().request;
+
     const dateFormats = await request.get(`${BASE_URL}/settings/date-formats`, {
       failOnStatusCode: false,
       headers: { Accept: 'application/json' },
     });
 
-    expect(businessHours.status()).toBe(200);
     expect(dateFormats.status()).toBe(200);
   });
 });

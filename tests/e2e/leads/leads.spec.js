@@ -8,6 +8,7 @@ const {
   expectValidationError,
   uniqueValue,
   usersCollection,
+  html,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from leads create route', async ({ page }) => {
@@ -45,7 +46,7 @@ test('lead create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/leads/create`);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
-  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
+  await expect(page.locator('form >> .alert.alert-danger:visible, form >> .invalid-feedback:visible')).toBeVisible();
 });
 
 test('lead status update endpoint accepts a valid status transition', async ({ page }) => {
@@ -53,11 +54,24 @@ test('lead status update endpoint accepts a valid status transition', async ({ p
   const request = page.context().request;
   const { leadExternalId, statusId } = await createLead(page, request, uniqueValue('PW Lead Status'));
 
+  const { body } = await html(request, '/leads/create');
+  const statusPattern = /<select[^>]*name=["']status_id["'][^>]*>([\s\S]*?)<\/select>/i;
+  const statusSection = body.match(statusPattern)?.[1] ?? '';
+  const allStatuses = [];
+  for (const match of statusSection.matchAll(/<option[^>]*value=["']([^"']*)["'][^>]*>/gi)) {
+    const value = String(match[1] ?? '').trim();
+    if (value) {
+      allStatuses.push(value);
+    }
+  }
+  expect(allStatuses.length).toBeGreaterThan(1);
+  const newStatusId = allStatuses.find((id) => id !== statusId) ?? allStatuses[1];
+
   const response = await request.patch(`${BASE_URL}/leads/updatestatus/${leadExternalId}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
     headers: await jsonHeaders(page),
-    form: { status_id: statusId },
+    form: { status_id: newStatusId },
   });
 
   expect(response.status()).toBe(302);

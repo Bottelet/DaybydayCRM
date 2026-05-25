@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue2'
 import laravel from 'laravel-vite-plugin'
-import { copyFileSync, mkdirSync, existsSync } from 'fs'
+import { copyFileSync, mkdirSync, existsSync, readdirSync } from 'fs'
 import { resolve } from 'path'
 
 export default defineConfig({
@@ -49,8 +49,7 @@ export default defineConfig({
                 const destDir = resolve('public/fonts/bootstrap')
                 try {
                     mkdirSync(destDir, { recursive: true })
-                    const fs = require('fs')
-                    const files = fs.readdirSync(srcDir)
+                    const files = readdirSync(srcDir)
                     files.forEach(file => {
                         copyFileSync(
                             resolve(srcDir, file),

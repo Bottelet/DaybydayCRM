@@ -37,6 +37,7 @@ test('appointment update persists new times and assignee', async ({ page }) => {
 
   const appointment = await firstAppointment(request);
   const users = await usersCollection(request);
+  expect(users.length).toBeGreaterThan(0);
   const assignee = users.find((user) => user.external_id !== appointment.user?.external_id) ?? users[0];
 
   const response = await request.post(`${BASE_URL}/appointments/update/${appointment.external_id}`, {
