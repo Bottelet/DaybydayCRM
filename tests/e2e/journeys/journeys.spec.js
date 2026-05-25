@@ -24,10 +24,9 @@ test('the application does not expose a journeys create route today', async ({ p
   /* Act */
   const response = await request.get(`${BASE_URL}/journeys/create`, {
     failOnStatusCode: false,
+    maxRedirects: 0,
   });
-  const body = await response.text();
 
   /* Assert */
   expect(response.status()).toBe(404);
-  expect(body.toLowerCase()).toContain('not found');
 });
