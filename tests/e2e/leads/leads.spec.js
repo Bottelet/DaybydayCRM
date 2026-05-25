@@ -15,7 +15,9 @@ test('lead creation appears in the searchable lead data response', async ({ page
   /* Assert */
   expect(response.status()).toBe(302);
   expect(response.headers()['location'] ?? '').toContain('/leads/');
-  expect(JSON.stringify(dataPayload)).toContain(title);
+  expect(dataResponse.status()).toBe(200);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.title === title)).toBe(true);
 });
 
 test('deleting a lead removes it from the lead data response', async ({ page }) => {
@@ -38,5 +40,6 @@ test('deleting a lead removes it from the lead data response', async ({ page }) 
 
   /* Assert */
   expect(deleteResponse.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).not.toContain(title);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.title === title)).toBe(false);
 });

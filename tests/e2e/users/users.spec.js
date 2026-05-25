@@ -13,8 +13,9 @@ test('user creation appears in the users datatable payload', async ({ page }) =>
 
   /* Assert */
   expect(response.status()).toBe(302);
-  expect(JSON.stringify(dataPayload)).toContain(name);
-  expect(JSON.stringify(dataPayload)).toContain(email);
+  expect(dataResponse.status()).toBe(200);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.name === name && row.email === email)).toBe(true);
 });
 
 test('user validation reports the missing name field', async ({ page }) => {

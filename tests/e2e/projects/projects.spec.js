@@ -14,7 +14,9 @@ test('project creation appears in the searchable project data response', async (
 
   /* Assert */
   expect(response.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).toContain(title);
+  expect(dataResponse.status()).toBe(200);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.title === title)).toBe(true);
 });
 
 test('project status updates return a redirect instead of a fake ok-only assertion', async ({ page }) => {
@@ -35,5 +37,6 @@ test('project status updates return a redirect instead of a fake ok-only asserti
 
   /* Assert */
   expect(response.status()).toBe(302);
-  expect(response.headers()['location'] ?? '').toBeTruthy();
+  const location = response.headers()['location'] ?? '';
+  expect(location).toContain(`/projects/${externalId}`);
 });

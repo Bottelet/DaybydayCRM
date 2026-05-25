@@ -14,7 +14,9 @@ test('task creation appears in the searchable task datatable payload', async ({ 
 
   /* Assert */
   expect(response.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).toContain(title);
+  expect(dataResponse.status()).toBe(200);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.title === title)).toBe(true);
 });
 
 test('task status updates return the controller message payload', async ({ page }) => {

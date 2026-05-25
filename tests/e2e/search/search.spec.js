@@ -17,6 +17,9 @@ test('search returns structured hits for a freshly created client', async ({ pag
 
   /* Assert */
   expect(response.status()).toBe(200);
+  expect(payload).toBeDefined();
+  expect(payload.hits).toBeDefined();
+  expect(Array.isArray(payload.hits.hits)).toBe(true);
   expect(payload.hits.hits.length).toBeGreaterThan(0);
   expect(JSON.stringify(payload)).toContain(companyName);
   expect(JSON.stringify(payload)).toContain('/clients/');

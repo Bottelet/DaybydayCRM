@@ -49,5 +49,5 @@ test('appointment updates return the changed schedule in the response body', asy
   expect(response.status()).toBe(200);
   expect(String(payload.start_at)).toContain('2030-01-02');
   expect(String(payload.end_at)).toContain('2030-01-02');
-  expect(payload.user_id ?? appointment.user_id).toBeTruthy();
+  expect(payload.user_id).toBeTruthy();
 });

@@ -109,10 +109,26 @@ async function createClient(page, request, companyName = uniqueValue('PW Client'
     },
   });
 
+  const status = response.status();
+  const contentType = response.headers()['content-type'] || '';
+  let payload;
+
+  try {
+    if (contentType.includes('application/json')) {
+      payload = await response.json();
+    } else {
+      const text = await response.text();
+      payload = { status, contentType, body: text, raw: text };
+    }
+  } catch (error) {
+    const text = await response.text();
+    payload = { status, contentType, body: text, raw: text, parseError: error.message };
+  }
+
   return {
     response,
     companyName,
-    payload: await response.json(),
+    payload,
   };
 }
 

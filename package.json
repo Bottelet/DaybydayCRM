@@ -15,7 +15,7 @@
   "devDependencies": {
     "@playwright/test": "1.54.2",
     "@vitejs/plugin-vue2": "^2.2.0",
-    "laravel-vite-plugin": "^0.8.1",
+    "laravel-vite-plugin": "^1.0.0",
     "sass": "^1.99.0",
     "sass-loader": "^16.0.8",
     "style-loader": "^4.0.0",

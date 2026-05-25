@@ -15,7 +15,8 @@ test('client creation shows up in the searchable clients data table', async ({ p
   /* Assert */
   expect(response.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).toContain(companyName);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => JSON.stringify(row).includes(companyName))).toBe(true);
 });
 
 test('client validation returns a field error instead of a generic success page', async ({ page }) => {

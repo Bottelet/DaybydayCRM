@@ -13,7 +13,9 @@ test('role creation appears in the roles datatable payload', async ({ page }) =>
 
   /* Assert */
   expect(response.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).toContain(name);
+  expect(dataResponse.status()).toBe(200);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.name === name)).toBe(true);
 });
 
 test('role validation reports the missing name field', async ({ page }) => {

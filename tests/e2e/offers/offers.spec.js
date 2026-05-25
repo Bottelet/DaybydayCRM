@@ -25,6 +25,7 @@ test('marking an offer as lost leaves a lost state on the owning lead page', asy
 
   /* Assert */
   expect(response.status()).toBe(302);
+  expect(leadResponse.status()).toBe(200);
   expect(leadHtml.toLowerCase()).toContain('lost');
 });
 
@@ -52,5 +53,6 @@ test('marking an offer as won adds an invoice link to the owning lead page', asy
 
   /* Assert */
   expect(response.status()).toBe(302);
+  expect(leadResponse.status()).toBe(200);
   expect(leadHtml).toContain('/invoices/');
 });

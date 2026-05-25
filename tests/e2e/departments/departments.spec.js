@@ -14,7 +14,8 @@ test('department creation shows the new department in the datatable payload', as
   /* Assert */
   expect(response.status()).toBe(302);
   expect(dataResponse.status()).toBe(200);
-  expect(JSON.stringify(dataPayload)).toContain(name);
+  const rows = dataPayload.data || [];
+  expect(rows.some(row => row.name === name)).toBe(true);
 });
 
 test('guests are redirected away from the department creator', async ({ page }) => {
