@@ -46,7 +46,7 @@ test('lead create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/leads/create`);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
-  await expect(page.locator('form >> .alert.alert-danger:visible, form >> .invalid-feedback:visible')).toBeVisible();
+  await expect(page.locator('form .alert.alert-danger:visible, form .invalid-feedback:visible')).toBeVisible();
 });
 
 test('lead status update endpoint accepts a valid status transition', async ({ page }) => {
@@ -77,6 +77,17 @@ test('lead status update endpoint accepts a valid status transition', async ({ p
 
   expect(response.status()).toBe(302);
   expect(response.headers().location ?? '').toContain(leadPath);
+
+  const { body: leadBody } = await html(request, `/leads/${leadExternalId}`);
+  const leadStatusSection = leadBody.match(statusPattern)?.[1] ?? '';
+  let selectedStatusId = null;
+  for (const match of leadStatusSection.matchAll(/<option[^>]*value=["']([^"']*)["'][^>]*>/gi)) {
+    if (String(match[0]).toLowerCase().includes('selected')) {
+      selectedStatusId = String(match[1] ?? '').trim();
+      break;
+    }
+  }
+  expect(selectedStatusId).toBe(String(newStatusId));
 });
 
 test('lead assignment endpoint accepts a valid assignee', async ({ page }) => {
