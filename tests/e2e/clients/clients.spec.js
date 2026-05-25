@@ -61,7 +61,8 @@ test('client assignee updates are reflected in the clients data table', async ({
   expect(updateResponse.headers()['location'] ?? '').not.toContain('/login');
   expect(dataResponse.status()).toBe(200);
   const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
-  const createdClientRow = rows.find(row => JSON.stringify(row).includes(companyName));
+  const createdClientRow = rows.find(row => row.company_name === companyName || String(row.namelink || '').includes(companyName));
   expect(createdClientRow).toBeTruthy();
-  expect(JSON.stringify(createdClientRow)).toContain(assignee.name);
+  const assigneeValue = String(createdClientRow.assigned ?? createdClientRow.user_id ?? '');
+  expect(assigneeValue).toContain(assignee.name);
 });
