@@ -19,6 +19,16 @@ Start with `AGENTS.md`, then use the focused documents below as needed:
 - Tests must be self-contained and factory-driven.
 - Normalize dates before assertions.
 - Refresh users after changing roles or permissions.
+- Playwright e2e coverage in `tests/e2e` is organized as one plain-route spec per phenomenon.
+- Run Playwright e2e checks with:
+  - `npm run test:e2e` — run all e2e tests
+  - `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js` — run a single spec (requires the spec path after `--`)
+  - `npm run test:e2e:stop-on-failure` — run tests, stop on first failure
+  - `make e2e-test` — run all e2e tests via Make
+  - `make e2e-test STOP_ON_FAILURE=true` — run all tests, stop on first failure
+  - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js` — run a single spec via Make
+  - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true` — run single spec, stop on failure
+  - `make e2e-fail` — run tests, stop on first failure via Make
 - Minimum required lint before push/PR:
   ```bash
   git ls-files '*.php' | xargs -n1 php -l

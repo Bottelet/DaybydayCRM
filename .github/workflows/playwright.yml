@@ -1,15 +1,37 @@
 name: Playwright Tests
 
 on:
-  push:
-    branches:
-      - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
   workflow_dispatch:
+    inputs:
+      test_scope:
+        description: 'Which Playwright tests to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - single-spec
+      spec_path:
+        description: 'Single Playwright spec path (used when "single-spec" is selected)'
+        required: false
+        type: string
+      project:
+        description: 'Playwright project'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - chromium
+          - firefox
+      stop_on_failure:
+        description: 'Stop on first failure'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
 
 concurrency:
   group: playwright-${{ github.workflow }}-${{ github.ref }}
@@ -17,6 +39,7 @@ concurrency:
 
 jobs:
   test:
+    name: Playwright (${{ github.event.inputs.test_scope || 'full' }}, project:${{ github.event.inputs.project || 'all' }}, fail_fast:${{ github.event.inputs.stop_on_failure || 'false' }})
     timeout-minutes: 60
     runs-on: ubuntu-latest
     permissions:
@@ -128,7 +151,37 @@ jobs:
       - name: Run Playwright tests
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8000
-        run: npx playwright test
+          TEST_SCOPE: ${{ github.event.inputs.test_scope }}
+          SPEC_PATH: ${{ github.event.inputs.spec_path }}
+          PROJECT_NAME: ${{ github.event.inputs.project }}
+          STOP_ON_FAILURE: ${{ github.event.inputs.stop_on_failure }}
+        run: |
+          SCOPE="${TEST_SCOPE:-full}"
+          PROJECT="${PROJECT_NAME:-all}"
+          FAIL_FAST="${STOP_ON_FAILURE:-false}"
+
+          CMD=(npx playwright test)
+
+          if [ "$SCOPE" = "single-spec" ]; then
+            if [ -z "$SPEC_PATH" ]; then
+              echo "::error title=Missing spec path::Provide spec_path when test_scope is single-spec."
+              exit 1
+            fi
+            CMD+=("$SPEC_PATH")
+          fi
+
+          if [ "$PROJECT" != "all" ]; then
+            CMD+=("--project=$PROJECT")
+          fi
+
+          if [ "$FAIL_FAST" = "true" ]; then
+            CMD+=("--max-failures=1")
+          fi
+
+          printf 'Running command:'
+          printf ' %q' "${CMD[@]}"
+          printf '\n'
+          "${CMD[@]}"
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}

@@ -7,8 +7,8 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : 4,
   reporter: process.env.CI
-    ? [['blob'], ['json', { outputFile: 'storage/logs/e2e-results.json' }], ['./tests/e2e/helpers/e2e-file-logger.ts']]
-    : [['html'], ['list'], ['./tests/e2e/helpers/e2e-file-logger.ts']],
+    ? [['blob'], ['json', { outputFile: 'storage/logs/e2e-results.json' }], ['./tests/helpers/e2e-file-logger.ts']]
+    : [['html'], ['list'], ['./tests/helpers/e2e-file-logger.ts']],
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost',
     trace: process.env.CI ? 'on-first-retry' : 'on',

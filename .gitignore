@@ -72,3 +72,5 @@ storage/debugbar/
 
 # === Custom Exclusions ===
 # (Add any project-specific ignores below)
+blob-report/
+package-lock.json
