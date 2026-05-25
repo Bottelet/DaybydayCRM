@@ -44,7 +44,7 @@ test('role create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/roles/create`);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
-  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
+  await expect(page.locator('form .alert.alert-danger:visible, form .invalid-feedback:visible').first()).toBeVisible();
 });
 
 test('updating role permissions redirects and role stays searchable', async ({ page }) => {

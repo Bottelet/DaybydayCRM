@@ -29,10 +29,12 @@ test('creating an absence makes it visible in absences data feed', async ({ page
   expect(createdRow?.external_id).toBeTruthy();
 
   if (createdRow?.external_id) {
-    await request.delete(`${BASE_URL}/absences/${createdRow.external_id}`, {
+    const res = await request.delete(`${BASE_URL}/absences/${createdRow.external_id}`, {
       failOnStatusCode: false,
       headers: await jsonHeaders(page),
     });
+    expect(res.status()).toBeGreaterThanOrEqual(200);
+    expect(res.status()).toBeLessThan(300);
   }
 });
 
@@ -47,8 +49,9 @@ test('empty absence payload returns validation errors', async ({ page }) => {
   });
 
   const payload = await response.json();
-  expect(response.status()).toBe(500);
+  expect(response.status()).toBe(400);
   expect(payload.message).toBeTruthy();
+  expect(Array.isArray(payload.errors)).toBe(true);
 });
 
 test('absence create form shows alert when submitted empty', async ({ page }) => {

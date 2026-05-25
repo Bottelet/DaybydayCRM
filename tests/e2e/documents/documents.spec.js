@@ -50,7 +50,7 @@ test('document upload modal route renders file input markup', async ({ page }) =
   });
 
   expect(response.status()).toBe(200);
-  expect((await response.text()).toLowerCase()).toContain('file');
+  expect((await response.text()).toLowerCase()).toContain('<input type="file"');
 });
 
 test('unknown document id returns not found', async ({ page }) => {

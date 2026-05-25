@@ -50,16 +50,18 @@ test('search type matching is case-insensitive', async ({ page }) => {
   expect(payload).toHaveProperty('hits');
 });
 
-test('search accepts supported domain types', async ({ page }) => {
-  await loginAsAdmin(page);
-  const request = page.context().request;
+const supportedTypes = ['client', 'clients', 'task', 'project', 'lead', 'user'];
 
-  for (const type of ['client', 'clients', 'task', 'project', 'lead', 'user']) {
+for (const type of supportedTypes) {
+  test(`search accepts supported domain type: ${type}`, async ({ page }) => {
+    await loginAsAdmin(page);
+    const request = page.context().request;
+
     const response = await request.get(`${BASE_URL}/search/Test/${type}`, {
       failOnStatusCode: false,
       headers: { Accept: 'application/json' },
     });
 
-    expect(response.status(), `Expected ${type} search to be accepted`).toBe(200);
-  }
-});
+    expect(response.status()).toBe(200);
+  });
+}
