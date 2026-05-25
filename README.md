@@ -87,7 +87,9 @@ composer dev
 #### Playwright e2e testing
 - `make e2e-install` — install Playwright and browser dependencies
 - `make e2e-test` — run all Playwright e2e tests
+- `make e2e-test STOP_ON_FAILURE=true` — run all tests, stop on first failure
 - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js` — run a single spec file
+- `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true` — run single spec, stop on failure
 - `make e2e-fail` — run Playwright tests, stop on first failure
 - `make e2e-list` — list all discovered Playwright tests
 - `npm run test:e2e` — run e2e tests directly via npm

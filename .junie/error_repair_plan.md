@@ -23,14 +23,16 @@ make paratest                      # run in parallel
 # Run all tests
 npm run test:e2e                   # via npm
 make e2e-test                      # via Make
+make e2e-test STOP_ON_FAILURE=true # via Make, stop on first failure
 
 # Run single spec
 npm run test:e2e:file -- tests/e2e/auth/auth.spec.js  # via npm (path after -- required)
 make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js  # via Make
+make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true  # via Make, stop on failure
 
 # Stop on first failure
 npm run test:e2e:stop-on-failure   # via npm
-make e2e-fail                      # via Make
+make e2e-fail                      # via Make (alternative)
 
 # List all tests
 npm run test:e2e:list              # via npm

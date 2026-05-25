@@ -10,6 +10,12 @@ on:
       - main
       - master
   workflow_dispatch:
+    inputs:
+      stop_on_failure:
+        description: 'Stop on first failure'
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: playwright-${{ github.workflow }}-${{ github.ref }}
@@ -117,7 +123,12 @@ jobs:
       - name: Run Playwright tests
         env:
           PLAYWRIGHT_BASE_URL: http://127.0.0.1:8000
-        run: npx playwright test
+        run: |
+          if [ "${{ github.event.inputs.stop_on_failure }}" = "true" ]; then
+            npx playwright test --max-failures=1
+          else
+            npx playwright test
+          fi
 
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}

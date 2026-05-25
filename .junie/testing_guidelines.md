@@ -34,8 +34,10 @@ npm run test:e2e:list                                    # list all tests
 
 # Via Make
 make e2e-test                                            # run all tests
+make e2e-test STOP_ON_FAILURE=true                       # run all tests, stop on first failure
 make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js  # run single spec
-make e2e-fail                                            # stop on first failure
+make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true  # run single spec, stop on failure
+make e2e-fail                                            # stop on first failure (alternative)
 make e2e-list                                            # list all tests
 ```
 
