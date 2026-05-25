@@ -33,6 +33,8 @@ test('an admin with absence-manage permission can register an absence for anothe
   });
   expect(usersResponse.status(), 'Users collection endpoint should return 200').toBe(200);
   const users = await usersResponse.json();
+  expect(Array.isArray(users), 'Users endpoint should return an array').toBe(true);
+  expect(users.length, 'Managed absence test requires at least one user').toBeGreaterThan(0);
   const targetUser = users[0];
 
   /* Act – register absence for target user as admin */

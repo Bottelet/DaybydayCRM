@@ -32,8 +32,8 @@ test('rescheduling an appointment stores the new start and end times in the resp
   const request = page.context().request;
   const appointment = await firstAppointment(request);
   const users = await usersCollection(request);
+  expect(users.length, 'Reschedule test requires at least one assignable user').toBeGreaterThan(0);
   const assignee = users.find((user) => user.external_id !== appointment.user?.external_id) ?? users[0];
-
   /* Act */
   const response = await request.post(`${BASE_URL}/appointments/update/${appointment.external_id}`, {
     failOnStatusCode: false,

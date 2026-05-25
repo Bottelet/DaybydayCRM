@@ -94,8 +94,8 @@ test('reassigning a lead to a new user redirects back without triggering a login
   const request = page.context().request;
   const { leadExternalId } = await createLead(page, request, uniqueValue('PW Lead Assign'));
   const users = await usersCollection(request);
+  expect(users.length, 'Lead reassignment test requires at least one user').toBeGreaterThan(0);
   const newAssignee = users[0];
-
   /* Act */
   const response = await request.patch(`${BASE_URL}/leads/updateassign/${leadExternalId}`, {
     failOnStatusCode: false,

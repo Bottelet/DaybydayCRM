@@ -53,10 +53,11 @@ test('updating a client contact name is reflected on the client detail page', as
   /* Fetch current client edit data to obtain IDs needed for update */
   const { body: editHtml } = await html(request, `/clients/${clientExternalId}/edit`);
   const industryIdMatch = editHtml.match(/name="industry_id"[^>]*>[\s\S]*?<option[^>]*value="(\d+)"/);
-  const industryId = industryIdMatch ? industryIdMatch[1] : '1';
+  expect(industryIdMatch?.[1], 'Edit form must expose an industry option').toBeTruthy();
+  const industryId = industryIdMatch[1];
   const userIdMatch = editHtml.match(/name="user_id"[^>]*>[\s\S]*?<option[^>]*value="(\d+)"/);
-  const userId = userIdMatch ? userIdMatch[1] : '1';
-
+  expect(userIdMatch?.[1], 'Edit form must expose a user option').toBeTruthy();
+  const userId = userIdMatch[1];
   /* Act */
   const updateResponse = await request.patch(`${BASE_URL}/clients/${clientExternalId}`, {
     failOnStatusCode: false,
@@ -97,6 +98,7 @@ test('assigning a new user to a client redirects back without hitting the login 
   const { payload } = await createClient(page, request, companyName);
   const clientExternalId = payload.client.external_id;
   const users = await usersCollection(request);
+  expect(users.length, 'Client assignment test requires at least one user').toBeGreaterThan(0);
   const assignee = users[0];
 
   /* Act */

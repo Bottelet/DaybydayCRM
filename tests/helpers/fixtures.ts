@@ -1,7 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { PLAYWRIGHT_BASE_URL, TEST_USER_PASSWORD } from './config';
 import { loginAsSeededAdmin } from './admin-auth';
-import { registerAndLoginNewUser } from './user-auth';
 
 export const test = base.extend({
   page: async ({ page }, use) => {
@@ -51,7 +50,6 @@ export const nonAdminTest = base.extend({
 
     await page.goto(`${PLAYWRIGHT_BASE_URL}/dashboard`);
     await expect(page).toHaveURL(/dashboard/);
-    await registerAndLoginNewUser(page);
     await use(page);
   },
 });

@@ -1,6 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const { BASE_URL, loginAsAdmin } = require('../helpers/plain-e2e');
-
+const { BASE_URL, loginAsAdmin, jsonHeaders } = require('../helpers/plain-e2e');
 test('unauthenticated users who request the dashboard are redirected to the login form', async ({ page }) => {
   /* Arrange – navigate without a session */
   await page.goto(`${BASE_URL}/dashboard`);
@@ -32,11 +31,9 @@ test('submitting the login form without credentials returns field-level validati
   /* Act */
   const response = await request.post(`${BASE_URL}/login`, {
     failOnStatusCode: false,
-    headers: {
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers: await jsonHeaders(page),
     form: {},
+  });
   });
   const payload = await response.json();
 
@@ -54,10 +51,7 @@ test('wrong credentials are rejected and do not produce an authenticated session
   /* Act */
   const response = await request.post(`${BASE_URL}/login`, {
     failOnStatusCode: false,
-    headers: {
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers: await jsonHeaders(page),
     form: {
       email: 'wrong@example.com',
       password: 'wrongpassword',
