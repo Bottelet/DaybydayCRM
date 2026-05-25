@@ -283,6 +283,10 @@ async function createUser(page, request, name = uniqueValue('PW User')) {
       email,
       password: DEFAULT_PASSWORD,
       password_confirmation: DEFAULT_PASSWORD,
+      // Backend expects plural keys on create (see StoreUserRequest/UsersController@store).
+      roles: roleId,
+      departments: departmentId,
+      // Also send the singular keys used by the HTML form so either implementation works.
       role: roleId,
       department: departmentId,
     },
