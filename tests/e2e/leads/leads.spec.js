@@ -16,7 +16,7 @@ test('lead creation appears in the searchable lead data response', async ({ page
   expect(response.status()).toBe(302);
   expect(response.headers()['location'] ?? '').toContain('/leads/');
   expect(dataResponse.status()).toBe(200);
-  const rows = dataPayload.data || [];
+  const rows = Array.isArray(dataPayload?.data) ? dataPayload.data : [];
   expect(rows.some(row => row.title === title)).toBe(true);
 });
 
@@ -35,7 +35,6 @@ test('deleting a lead removes it from the lead data response', async ({ page }) 
       'X-CSRF-TOKEN': (await jsonHeaders(page))['X-CSRF-TOKEN'],
     },
   });
-  const dataResponse = await leadData(request, title);
   const dataResponse = await leadData(request, title);
   expect(dataResponse.status()).toBe(200);
   const dataPayload = await dataResponse.json();

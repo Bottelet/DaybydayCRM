@@ -4,6 +4,7 @@ const { BASE_URL, loginAsAdmin, jsonHeaders, expectValidationError } = require('
 let savedSettings = null;
 
 test.beforeEach(async ({ page }) => {
+  savedSettings = null;
   await loginAsAdmin(page);
   const request = page.context().request;
   const getResponse = await request.get(`${BASE_URL}/settings/overall`, {

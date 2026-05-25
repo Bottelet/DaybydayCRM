@@ -64,6 +64,25 @@ async function html(request, path) {
   };
 }
 
+async function parseJsonOrThrow(response, context) {
+  const contentType = response.headers()['content-type'] ?? '';
+  const rawBody = await response.text();
+
+  if (!contentType.toLowerCase().includes('application/json')) {
+    throw new Error(
+      `${context} expected JSON but got status ${response.status()} and content-type "${contentType}". Body preview: ${rawBody.slice(0, 200)}`
+    );
+  }
+
+  try {
+    return JSON.parse(rawBody);
+  } catch (error) {
+    throw new Error(
+      `${context} returned invalid JSON with status ${response.status()} and content-type "${contentType}". Body preview: ${rawBody.slice(0, 200)}`
+    );
+  }
+}
+
 function optionValues(markup, fieldName) {
   const selectPattern = new RegExp(`<select[^>]*name=["']${escapeRegExp(fieldName)}["'][^>]*>([\\s\\S]*?)</select>`, 'i');
   const section = markup.match(selectPattern)?.[1] ?? '';
@@ -109,26 +128,10 @@ async function createClient(page, request, companyName = uniqueValue('PW Client'
     },
   });
 
-  const status = response.status();
-  const contentType = response.headers()['content-type'] || '';
-  let payload;
-
-  try {
-    if (contentType.includes('application/json')) {
-      payload = await response.json();
-    } else {
-      const text = await response.text();
-      payload = { status, contentType, body: text, raw: text };
-    }
-  } catch (error) {
-    const text = await response.text();
-    payload = { status, contentType, body: text, raw: text, parseError: error.message };
-  }
-
   return {
     response,
     companyName,
-    payload,
+    payload: await parseJsonOrThrow(response, 'createClient'),
   };
 }
 
@@ -201,7 +204,7 @@ async function createProject(page, request, title = uniqueValue('PW Project')) {
     response,
     title,
     statusId,
-    payload: await response.json(),
+    payload: await parseJsonOrThrow(response, 'createProject'),
   };
 }
 
@@ -234,7 +237,7 @@ async function createTask(page, request, title = uniqueValue('PW Task')) {
     response,
     title,
     statusId,
-    payload: await response.json(),
+    payload: await parseJsonOrThrow(response, 'createTask'),
   };
 }
 
