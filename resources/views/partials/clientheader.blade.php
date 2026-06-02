@@ -9,7 +9,7 @@
                     color:#61788b;
                     "></i></a>
             @endif
-            <p class="client-company-text" title="{{ __('Company name') }}">{{$client->company_name}} <span aria-hidden="true" data-toggle="tooltip" title="{{ __('Client number') }}" data-placement="top" style="font-size:10px;"> | {{$client->client_number}}</span> 
+            <p class="client-company-text" title="{{ __('Company name') }}">{{$client->company_name}} <span aria-hidden="true" data-toggle="tooltip" title="{{ __('Client number') }}" data-placement="top" style="font-size:10px;"> | {{$client->client_number}}</span>
 
             </p>
 @isset($contact_info)
@@ -60,10 +60,14 @@
                     <p class="contact-paragraph" aria-hidden="true" data-toggle="tooltip"
                         title="{{ __('Vat') }}" data-placement="left">{{$client->vat}}</p>
             @endif
-            @if($client->industry != "")
+            @php
+                // Resolve related industry name safely (avoid rendering the whole model as JSON)
+                $industryName = optional($client->industry)->name;
+            @endphp
+            @if(!empty($industryName))
                 <!--Industry-->
                     <p class="contact-paragraph" aria-hidden="true" data-toggle="tooltip"
-                       title="{{ __('Industry') }}" data-placement="left">{{$client->industry}}</p>
+                       title="{{ __('Industry') }}" data-placement="left">{{$industryName}}</p>
             @endif
             @if($client->company_type!= "")
                 <!--Company Type-->

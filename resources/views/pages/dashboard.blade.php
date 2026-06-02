@@ -1,6 +1,25 @@
 @extends('layouts.master')
 
 @section('content')
+@push('styles')
+    <style>
+        /* Improve contrast and visibility for the tour dismiss (end) control */
+        .popover.tour .popover-navigation .btn[data-role="end"],
+        .popover.tour .popover-navigation .btn.btn-contrast {
+            background-color: #c62828; /* deep red for strong contrast */
+            border-color: #8e1b1b;
+            color: #fff;
+            font-weight: 600;
+        }
+        .popover.tour .popover-navigation .btn[data-role="end"]:hover,
+        .popover.tour .popover-navigation .btn.btn-contrast:hover {
+            background-color: #b71c1c;
+            border-color: #7f1515;
+            color: #fff;
+        }
+        .popover.tour .popover-title { font-weight: 600; }
+    </style>
+@endpush
 @push('scripts')
     <script>
         $(document).ready(function () {
@@ -22,17 +41,35 @@
             });
         });
         $(document).ready(function () {
-            if(!getCookie("step_dashboard") && "{{$settings->company}}") {
+            var TOUR_COOKIE = 'dashboard_tour_dismissed';
+            // Only start the tour if the company exists and neither the legacy nor the new dismissal cookie is set
+            if(!getCookie(TOUR_COOKIE) && !getCookie("step_dashboard") && "{{$settings->company}}") {
                 $("#clients").addClass("in");
                 // Instance the tour
                 var tour = new Tour({
                     storage: false,
                     backdrop: true,
+                    // Provide a high-contrast template and clear dismiss action
+                    template: ''+
+                        '<div class="popover tour" role="dialog">'+
+                        '  <div class="arrow"></div>'+
+                        '  <h3 class="popover-title"></h3>'+
+                        '  <div class="popover-content"></div>'+
+                        '  <div class="popover-navigation">'+
+                        '    <button class="btn btn-default" data-role="prev">{{ trans("Prev") }}</button>'+
+                        '    <button class="btn btn-primary" data-role="next">{{ trans("Next") }}</button>'+
+                        '    <button class="btn btn-danger btn-contrast" data-role="end">{{ trans("Don\'t show again") }}</button>'+
+                        '  </div>'+
+                        '</div>',
+                    onEnd: function () {
+                        // Persist dismissal so the tour stays off
+                        setCookie(TOUR_COOKIE, '1', 3650);
+                    },
                     steps: [
                         {
                             element: ".col-lg-12",
                             title: "{{trans("Dashboard")}}",
-                            content: "{{trans("This is your dashboard, which you can use to get a fast and nice overview, of all your tasks, leads, etc.")}}",
+                            content: "{{trans("This is your dashboard, which you can use to get a quick overview of all your tasks, leads, etc.")}}",
                             placement: 'top'
                         },
                         {
@@ -61,12 +98,11 @@
                 tour.init();
 
                 tour.start();
-                setCookie("step_dashboard", true, 1000)
             }
-            function setCookie(key, value, expiry) {
+            function setCookie(key, value, days) {
                 var expires = new Date();
-                expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 2000));
-                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+                expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+                document.cookie = key + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
             }
 
             function getCookie(key) {
