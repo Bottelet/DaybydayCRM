@@ -34,6 +34,7 @@ Start with `AGENTS.md`, then use `.github/ARCHITECTURE.md`, `.github/TESTING.md`
 - Mixed web/API endpoints must branch on `$request->expectsJson()`.
 
 ## Response pattern
+
 ```php
 if ($request->expectsJson()) {
     return response()->json(['message' => 'Success'], 200);
@@ -43,6 +44,7 @@ return redirect()->back();
 ```
 
 ## Pre-push checklist
+
 ```bash
 git ls-files '*.php' | xargs -n1 php -l   # syntax check
 make test                                   # PHPUnit
