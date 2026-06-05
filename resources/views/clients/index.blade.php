@@ -64,6 +64,7 @@
         });
 
     });
+    @if(!config('app.tour_disabled'))
     $(document).ready(function () {
         if(!getCookie("step_client_index")) {
             var canCreateTask = '{{ auth()->user()->can('task-create') }}';
@@ -71,48 +72,66 @@
 
             $("#projects").addClass("in");
             $("#tasks").addClass("in");
-            // Instance the tour
+
+            var TOUR_TEMPLATE = ''+
+                '<div class="popover tour" role="dialog">'+
+                '  <div class="arrow"></div>'+
+                '  <button type="button" data-role="end" aria-label="{{ trans("Close tour") }}" '+
+                '    style="position:absolute;top:6px;right:10px;background:none;border:none;'+
+                '           font-size:22px;line-height:1;cursor:pointer;color:#555;z-index:1;" '+
+                '    title="{{ trans("Close tour") }}">&#215;</button>'+
+                '  <h3 class="popover-title"></h3>'+
+                '  <div class="popover-content"></div>'+
+                '  <div class="popover-navigation" style="padding:8px 14px 10px;display:flex;gap:6px;align-items:center;">'+
+                '    <button class="btn btn-sm btn-default" data-role="prev">&#8592; {{ trans("Prev") }}</button>'+
+                '    <button class="btn btn-sm btn-primary" data-role="next">{{ trans("Next") }} &#8594;</button>'+
+                '    <button class="btn btn-sm btn-danger" data-role="end" style="margin-left:auto;">&#10005; {{ trans("Don\'t show again") }}</button>'+
+                '  </div>'+
+                '</div>';
+
             var tour = new Tour({
                 storage: false,
                 backdrop: true,
+                template: TOUR_TEMPLATE,
+                onEnd: function () {
+                    setCookie("step_client_index", '1', 3650);
+                },
             });
             tour.addStep({
                 element: "#clients-table",
                 title: "{{trans("Client overview")}}",
                 content: "{{trans("All your active clients will be shown here")}}",
                 placement: 'top'
-            })
+            });
             if(canCreateTask) {
-                tour.addStep( {
+                tour.addStep({
                     element: "#newTask",
                     title: "{{trans("Create task")}}",
                     content: "{{trans("Same as with clients you can create a new task. Tasks has a primary user assigned, and a client, it can also be related to a project")}}"
-                })
+                });
             }
             if (canCreateProject) {
                 tour.addStep({
                     element: "#newProject",
                     title: "{{trans("Create project")}}",
-                    content: "{{trans("Projects are used to keep track of tasks that might be related to a bigger assignment for the client. And gives the possibility of multiple people working various tasks and keep track of the tasks.")}}",
-                })
+                    content: "{{trans("Projects are used to keep track of tasks that might be related to a bigger assignment for the client. And gives the possibility of multiple people working various tasks and keep track of the tasks.")}}"
+                });
             }
-            // Initialize the tour
-            tour.init();
 
+            tour.init();
             tour.start();
-            setCookie("step_client_index", true, 1000)
         }
         function setCookie(key, value, expiry) {
             var expires = new Date();
-            expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 2000));
-            document.cookie = key + '=' + value + ';expires=' + expires.toUTCString();
+            expires.setTime(expires.getTime() + (expiry * 24 * 60 * 60 * 1000));
+            document.cookie = key + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
         }
-
         function getCookie(key) {
             var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
             return keyValue ? keyValue[2] : null;
         }
     });
+    @endif
 </script>
 @endpush
 

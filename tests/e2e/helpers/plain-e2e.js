@@ -25,9 +25,13 @@ async function loginAsAdmin(page) {
 }
 
 /**
- * Dismiss the Bootstrap tour overlay if it is currently visible.
- * Must be called after page navigation whenever tests interact with page elements,
- * because the tour backdrop blocks clicks on the real UI.
+ * Safety-net: dismiss the Bootstrap tour overlay if it is visible.
+ *
+ * The global setup (playwright.config.ts → globalSetup) pre-sets the tour
+ * dismissal cookies for every browser context, so under normal test runs the
+ * tour will never appear and this function is a no-op. It stays here as a
+ * fallback for environments where cookies are cleared between steps, or where
+ * TOUR_DISABLED=true is not set on the server.
  */
 async function dismissTourIfVisible(page) {
   try {

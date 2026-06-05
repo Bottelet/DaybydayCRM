@@ -40,29 +40,30 @@
                 });
             });
         });
+        @if(!config('app.tour_disabled'))
         $(document).ready(function () {
             var TOUR_COOKIE = 'dashboard_tour_dismissed';
-            // Only start the tour if the company exists and neither the legacy nor the new dismissal cookie is set
             if(!getCookie(TOUR_COOKIE) && !getCookie("step_dashboard") && "{{$settings->company}}") {
                 $("#clients").addClass("in");
-                // Instance the tour
                 var tour = new Tour({
                     storage: false,
                     backdrop: true,
-                    // Provide a high-contrast template and clear dismiss action
                     template: ''+
                         '<div class="popover tour" role="dialog">'+
                         '  <div class="arrow"></div>'+
+                        '  <button type="button" data-role="end" aria-label="{{ trans("Close tour") }}" '+
+                        '    style="position:absolute;top:6px;right:10px;background:none;border:none;'+
+                        '           font-size:22px;line-height:1;cursor:pointer;color:#555;z-index:1;" '+
+                        '    title="{{ trans("Close tour") }}">&#215;</button>'+
                         '  <h3 class="popover-title"></h3>'+
                         '  <div class="popover-content"></div>'+
-                        '  <div class="popover-navigation">'+
-                        '    <button class="btn btn-default" data-role="prev">{{ trans("Prev") }}</button>'+
-                        '    <button class="btn btn-primary" data-role="next">{{ trans("Next") }}</button>'+
-                        '    <button class="btn btn-danger btn-contrast" data-role="end">{{ trans("Don\'t show again") }}</button>'+
+                        '  <div class="popover-navigation" style="padding:8px 14px 10px;display:flex;gap:6px;align-items:center;">'+
+                        '    <button class="btn btn-sm btn-default" data-role="prev">&#8592; {{ trans("Prev") }}</button>'+
+                        '    <button class="btn btn-sm btn-primary" data-role="next">{{ trans("Next") }} &#8594;</button>'+
+                        '    <button class="btn btn-sm btn-danger" data-role="end" style="margin-left:auto;">&#10005; {{ trans("Don\'t show again") }}</button>'+
                         '  </div>'+
                         '</div>',
                     onEnd: function () {
-                        // Persist dismissal so the tour stays off
                         setCookie(TOUR_COOKIE, '1', 3650);
                     },
                     steps: [
@@ -88,15 +89,11 @@
                             title: "{{trans("Create New Client")}}",
                             content: "{{trans("Let's take our first step, by creating a new client")}}"
                         },
-                        {
-                            path: '/clients/create'
-                        }
-                    ])
+                        { path: '/clients/create' }
+                    ]);
                 }
 
-                // Initialize the tour
                 tour.init();
-
                 tour.start();
             }
             function setCookie(key, value, days) {
@@ -104,12 +101,12 @@
                 expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
                 document.cookie = key + '=' + value + ';expires=' + expires.toUTCString() + ';path=/';
             }
-
             function getCookie(key) {
                 var keyValue = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)');
                 return keyValue ? keyValue[2] : null;
             }
         });
+        @endif
     </script>
 @endpush
         <!-- Small boxes (Stat box) -->

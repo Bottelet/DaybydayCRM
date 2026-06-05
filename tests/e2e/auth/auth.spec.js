@@ -26,21 +26,33 @@ test('dashboard is interactive after login with no blocking overlays', async ({ 
   await expect(page.locator('.small-box').first()).toBeVisible();
 });
 
-test('bootstrap tour can be dismissed and stays dismissed after reload', async ({ page }) => {
+test('bootstrap tour close button dismisses tour and cookie persists across reload', async ({ browser }) => {
+  // Use a fresh context with NO pre-set cookies so the tour actually fires.
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
   await loginAsAdmin(page);
+  await page.waitForLoadState('networkidle');
 
   const tour = page.locator('.popover.tour');
   const tourVisible = await tour.isVisible({ timeout: 3000 }).catch(() => false);
 
-  if (tourVisible) {
-    await page.locator('.popover.tour [data-role="end"]').click();
-    await expect(tour).not.toBeVisible();
-
-    // Reload — tour must not reappear because dismissal cookie was set
-    await page.reload();
-    await page.waitForLoadState('networkidle');
-    await expect(tour).not.toBeVisible();
+  if (!tourVisible) {
+    // Tour is disabled server-side (TOUR_DISABLED=true) — nothing to test here.
+    await context.close();
+    return;
   }
+
+  // Close via the × button
+  await page.locator('.popover.tour [data-role="end"]').first().click();
+  await expect(tour).not.toBeVisible();
+
+  // Reload — tour must not reappear because the dismissal cookie was set
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+  await expect(tour).not.toBeVisible();
+
+  await context.close();
 });
 
 test('login form shows error feedback for invalid credentials', async ({ page }) => {

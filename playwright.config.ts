@@ -1,7 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as path from 'path';
+
+// Path where global-setup.js writes the pre-dismissed tour cookie state.
+// Every browser context starts with these cookies so the Bootstrap tour
+// never fires — equivalent to a global beforeEach that sets the cookies.
+const noTourStatePath = path.join(__dirname, 'tests/e2e/setup/no-tour-state.json');
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // Runs tests/e2e/setup/global-setup.js once before any worker starts.
+  // It generates no-tour-state.json for the current PLAYWRIGHT_BASE_URL host.
+  globalSetup: './tests/e2e/setup/global-setup.js',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -14,6 +23,10 @@ export default defineConfig({
     trace: process.env.CI ? 'on-first-retry' : 'on',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    // Pre-load tour dismissal cookies into every browser context.
+    // This is the global beforeEach equivalent: the Bootstrap tour will
+    // never show, so no backdrop can block UI interactions.
+    storageState: noTourStatePath,
   },
   timeout: 30 * 1000,
   expect: {

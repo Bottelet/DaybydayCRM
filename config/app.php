@@ -109,6 +109,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'tour_disabled' => (bool) env('TOUR_DISABLED', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

@@ -21,10 +21,11 @@ Start with `AGENTS.md`, then use `.github/ARCHITECTURE.md`, `.github/TESTING.md`
 - **`withPermissions()` is variadic** — you can call `withPermissions(PermissionName::A, PermissionName::B)` or pass an array.
 
 ### Playwright e2e test rules
-- **`dismissTourIfVisible(page)` is mandatory** after every `page.goto()` before interacting with any page element. The Bootstrap tour backdrop blocks all clicks and is always active in fresh Playwright sessions. Import from `tests/e2e/helpers/plain-e2e.js`.
+- **The Bootstrap tour is globally pre-dismissed** via `globalSetup` + `use.storageState` in `playwright.config.ts`. Do NOT remove `globalSetup` or `storageState` from the config — doing so will cause the tour backdrop to block UI interactions in every browser-navigation test.
+- **`dismissTourIfVisible(page)`** (from `tests/e2e/helpers/plain-e2e.js`) remains available as a safety net for edge cases — call it before interacting with any page element if you navigate in a fresh context.
 - **`loginAsAdmin` already calls `waitForLoadState('networkidle')`** — do not remove this line.
 - **After state-changing requests, verify persistence** via a follow-up data fetch — never assert only on HTTP status.
-- **Browser-driven tests** (using `page.goto()` + form/button interactions) must always call `dismissTourIfVisible` before touching any element.
+- **To disable tours server-side**: set `TOUR_DISABLED=true` in your `.env`. This wraps the tour JS in a Blade `@if(!config('app.tour_disabled'))` guard on the dashboard, clients/index, and clients/create pages.
 
 ## Architecture
 - Prefer `app/Services/*` for multi-step workflows, `app/Actions/*` for single-purpose operations.
