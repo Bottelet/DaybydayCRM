@@ -21,6 +21,24 @@ async function loginAsAdmin(page) {
     page.waitForURL((url) => !url.pathname.endsWith('/login')),
     page.getByRole('button', { name: /log ?in|sign ?in/i }).click(),
   ]);
+  await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Dismiss the Bootstrap tour overlay if it is currently visible.
+ * Must be called after page navigation whenever tests interact with page elements,
+ * because the tour backdrop blocks clicks on the real UI.
+ */
+async function dismissTourIfVisible(page) {
+  try {
+    const endBtn = page.locator('.popover.tour [data-role="end"]');
+    if (await endBtn.isVisible({ timeout: 2000 })) {
+      await endBtn.click();
+      await page.waitForSelector('.popover.tour', { state: 'detached', timeout: 3000 }).catch(() => {});
+    }
+  } catch {
+    // Tour not present — continue
+  }
 }
 
 async function fetchCsrfToken(page) {
@@ -493,6 +511,7 @@ async function expectValidationError(response, field) {
 module.exports = {
   BASE_URL,
   loginAsAdmin,
+  dismissTourIfVisible,
   jsonHeaders,
   uniqueValue,
   html,

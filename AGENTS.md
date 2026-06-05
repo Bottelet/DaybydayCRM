@@ -75,6 +75,18 @@ return redirect()->back();
 - Normalize Carbon/date values before comparing them.
 - Put controller HTTP tests in `tests/Feature/*`.
 - Rebind/reload users after role or permission changes before asserting authorization.
+- **Never use `withoutMiddleware()` in feature tests** — it bypasses the authorization layer you are supposed to be testing. Set up proper permissions with `withPermissions()` instead.
+- **Never hardcode email addresses** in test fixtures. Always use `'email' => 'user_' . uniqid() . '@test.com'` to prevent collisions in parallel runs.
+- **Always assert on content, not just status codes.** `assertSessionHas('flash_message')` is weak — assert the exact message: `assertSessionHas('flash_message', __('...'))`
+- **Every controller must have minimum 7 PHPUnit tests**: index, show (valid id), show (invalid id → 404), create/store (valid), create/store (invalid), update (valid), delete + unauthorized access.
+- **Guard all optional relationships before access.** If `primaryContact` can be null, null-check it before calling `->toArray()` or any method on it.
+
+### Playwright e2e rules (mandatory)
+- **Always call `dismissTourIfVisible(page)` after any browser navigation** before interacting with page elements. The Bootstrap tour uses a backdrop that blocks clicks on the real UI. Import it from `tests/e2e/helpers/plain-e2e.js`.
+- **Always call `page.waitForLoadState('networkidle')` after login** to let JavaScript finish executing before interacting with the page.
+- **Never assert only on HTTP status codes.** After a state-changing request (assign, update, delete), verify the change persisted via a follow-up data fetch.
+- **Browser-driven tests (using `page.goto()` or form clicks) must dismiss the tour** before interacting with any element.
+- **Add a tour-dismissal test** in `tests/e2e/auth/auth.spec.js` if the tour behavior changes.
 
 ### Playwright e2e workflow
 - `tests/e2e` now uses one plain-route Playwright spec per phenomenon, for example `tests/e2e/auth/auth.spec.js`.
@@ -110,7 +122,7 @@ git ls-files '*.php' | xargs -n1 php -l
 If a model uses a relationship-backed status, compare the related property, not the relation object.
 
 ### Null relationship access
-Guard optional relationships and optional date fields before accessing methods or properties.
+Guard optional relationships and optional date fields before accessing methods or properties. Every `->method()` call on a potentially-null relationship must have a null-check. Example: `$contact = $client->primaryContact; $merged = $contact ? array_merge($contact->toArray(), $client->toArray()) : $client->toArray();`
 
 ### Cached roles and permissions in tests
 After attaching permissions or roles, refresh the user and re-authenticate so Entrust checks use fresh data.
@@ -123,6 +135,21 @@ Storage services should be deterministic in testing and local fallback scenarios
 
 ### Project closed-status casing
 Project closed-state checks must use the project status helper logic rather than direct string equality because legacy data casing differs.
+
+### Bootstrap tour blocking Playwright tests
+The dashboard, client index, and client create pages show a Bootstrap tour for first-time visitors. Playwright runs always start with fresh cookies, so the tour will always show. Call `dismissTourIfVisible(page)` from `tests/e2e/helpers/plain-e2e.js` after any `page.goto()` before interacting with page elements.
+
+### Controllers as utility hubs (SRP violation)
+Controllers must NOT expose public methods that are simply proxies to service methods (e.g. `getInvoices()`, `findByExternalId()`) or act as repositories (e.g. `listAllClients()`, `getAllClientsCount()`). These belong in the service layer. Public-only-because-it-was-called-from-another-controller is not a valid reason.
+
+### `Client::all()->count()` memory waste
+Never use `Model::all()->count()`. Use `Model::count()` which issues a single `COUNT(*)` query.
+
+### DRY in DataTable columns
+Repeated date-formatting and status-badge closures in DataTable methods must be extracted to private helper methods on the controller. The pattern is `$this->formatDateColumn('column_name')`.
+
+### Middleware vs inline permission checks
+Authorization must use the middleware registered in `__construct()`, not inline `auth()->user()->can()` checks inside action methods. Add the method name to the `['only' => [...]]` array in the constructor.
 
 ## Current modernization themes
 The current branch includes work in these areas:

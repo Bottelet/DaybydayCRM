@@ -44,7 +44,7 @@ class ClientsController extends Controller
     public function __construct(private ClientService $clientService)
     {
         $this->middleware('client.create', ['only' => ['create']]);
-        $this->middleware('client.update', ['only' => ['edit']]);
+        $this->middleware('client.update', ['only' => ['edit', 'updateAssign']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);
         $this->middleware('is.demo', ['only' => ['destroy']]);
     }
@@ -89,20 +89,10 @@ class ClientsController extends Controller
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
-            ->editColumn('created_at', function ($tasks) {
-                return $tasks->created_at ? with(new Carbon($tasks->created_at))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('deadline', function ($tasks) {
-                return $tasks->deadline ? with(new Carbon($tasks->deadline))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('status_id', function ($tasks) {
-                return '<span class="label label-success" style="background-color:' . $tasks->status->color . '"> ' . $tasks->status->title . '</span>';
-            })
-            ->editColumn('assigned', function ($tasks) {
-                return $tasks->assigned_user->name;
-            })
+            ->editColumn('created_at', $this->formatDateColumn('created_at'))
+            ->editColumn('deadline', $this->formatDateColumn('deadline'))
+            ->editColumn('status_id', $this->statusBadgeColumn())
+            ->editColumn('assigned', fn ($task) => $task->assigned_user->name)
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
@@ -114,20 +104,10 @@ class ClientsController extends Controller
 
         return Datatables::of($projects)
             ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
-            ->editColumn('created_at', function ($projects) {
-                return $projects->created_at ? with(new Carbon($projects->created_at))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('deadline', function ($projects) {
-                return $projects->deadline ? with(new Carbon($projects->deadline))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('status_id', function ($projects) {
-                return '<span class="label label-success" style="background-color:' . $projects->status->color . '"> ' . $projects->status->title . '</span>';
-            })
-            ->editColumn('assigned', function ($projects) {
-                return $projects->assignee->name;
-            })
+            ->editColumn('created_at', $this->formatDateColumn('created_at'))
+            ->editColumn('deadline', $this->formatDateColumn('deadline'))
+            ->editColumn('status_id', $this->statusBadgeColumn())
+            ->editColumn('assigned', fn ($project) => $project->assignee->name)
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
@@ -139,21 +119,10 @@ class ClientsController extends Controller
 
         return Datatables::of($leads)
             ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
-            ->editColumn('created_at', function ($leads) {
-                return $leads->created_at ? with(new Carbon($leads->created_at))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('deadline', function ($leads) {
-                return $leads->deadline ? with(new Carbon($leads->deadline))
-                    ->format(carbonDate()) : '';
-            })
-            ->editColumn('status_id', function ($leads) {
-                return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> '
-                    . $leads->status->title . '</span>';
-            })
-            ->editColumn('assigned', function ($leads) {
-                return $leads->assigned_user->name;
-            })
+            ->editColumn('created_at', $this->formatDateColumn('created_at'))
+            ->editColumn('deadline', $this->formatDateColumn('deadline'))
+            ->editColumn('status_id', $this->statusBadgeColumn())
+            ->editColumn('assigned', fn ($lead) => $lead->assigned_user->name)
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
@@ -298,7 +267,8 @@ class ClientsController extends Controller
     {
         $client  = $this->clientService->findByExternalId($external_id);
         $contact = $client->primaryContact;
-        $client  = (object) array_merge($contact->toArray(), $client->toArray());
+        $merged  = $contact ? array_merge($contact->toArray(), $client->toArray()) : $client->toArray();
+        $client  = (object) $merged;
 
         return view('clients.edit')
             ->withClient($client)
@@ -360,12 +330,6 @@ class ClientsController extends Controller
      */
     public function updateAssign($external_id, Request $request)
     {
-        if ( ! auth()->user()->can('client-update')) {
-            session()->flash('flash_message_warning', __('Not authorized'));
-
-            return back();
-        }
-
         $userExternalId = $request->user_external_id ?: $request->user_assigned_id;
         $user           = User::query()->where('external_id', $userExternalId)->first();
         if ( ! $user && is_numeric($userExternalId)) {
@@ -379,40 +343,20 @@ class ClientsController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getInvoices($client)
-    {
-        return $this->clientService->getInvoices($client);
-    }
-
-    public function findByExternalId($external_id)
-    {
-        return $this->clientService->findByExternalId($external_id);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function listAllClients()
-    {
-        return Client::query()->pluck('company_name', 'id');
-    }
-
-    /**
-     * @return int
-     */
-    public function getAllClientsCount()
-    {
-        return Client::all()->count();
-    }
-
-    /**
-     * @return mixed
-     */
-    public function listAllIndustries()
+    private function listAllIndustries(): \Illuminate\Support\Collection
     {
         return Industry::query()->pluck('name', 'id');
+    }
+
+    private function formatDateColumn(string $column): \Closure
+    {
+        return fn ($model) => $model->{$column}
+            ? with(new Carbon($model->{$column}))->format(carbonDate())
+            : '';
+    }
+
+    private function statusBadgeColumn(): \Closure
+    {
+        return fn ($model) => '<span class="label label-success" style="background-color:' . $model->status->color . '"> ' . $model->status->title . '</span>';
     }
 }

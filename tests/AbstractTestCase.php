@@ -44,11 +44,15 @@ abstract class AbstractTestCase extends BaseTestCase
     }
 
     /**
-     * Optimized for Entrust/Laravel 12 Bridge.
+     * Grant one or more permissions to the current test user.
+     * Accepts a single PermissionName, an array, or variadic args:
+     *   withPermissions(PermissionName::CLIENT_VIEW)
+     *   withPermissions(PermissionName::CLIENT_VIEW, PermissionName::TASK_VIEW)
+     *   withPermissions([PermissionName::CLIENT_VIEW, PermissionName::TASK_VIEW])
      */
-    public function withPermissions(array|PermissionName $permissions): self
+    public function withPermissions(array|PermissionName $permissions, PermissionName ...$extra): self
     {
-        $permissions = is_array($permissions) ? $permissions : [$permissions];
+        $permissions = is_array($permissions) ? $permissions : [$permissions, ...$extra];
 
         // 1. Ensure the user has a role to attach permissions to
         $role = $this->user->roles()->first() ?? Role::query()->firstOrCreate(['name' => 'owner']);

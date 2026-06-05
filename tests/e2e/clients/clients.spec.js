@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const {
   BASE_URL,
   loginAsAdmin,
+  dismissTourIfVisible,
   createClient,
   clientData,
   jsonHeaders,
@@ -45,6 +46,8 @@ test('empty client payload returns field validation errors', async ({ page }) =>
 test('client create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/clients/create`);
+  // Dismiss any tour overlay before interacting with form elements
+  await dismissTourIfVisible(page);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
   await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });
@@ -110,10 +113,11 @@ test('deleting a client removes it from clients data feed', async ({ page }) => 
   expect((dataPayload.data ?? []).some((row) => row.company_name === companyName)).toBe(false);
 });
 
-test('assigning a client to a user succeeds', async ({ page }) => {
+test('assigning a client to a user persists the new assignee', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
-  const { payload } = await createClient(page, request, uniqueValue('PW Client Assign'));
+  const companyName = uniqueValue('PW Client Assign');
+  const { payload } = await createClient(page, request, companyName);
   const users = await usersCollection(request);
   expect(users.length).toBeGreaterThan(0);
 
@@ -125,4 +129,10 @@ test('assigning a client to a user succeeds', async ({ page }) => {
   });
 
   expect(response.status()).toBe(302);
+
+  // Verify the assignment actually persisted in the data feed
+  const dataResponse = await clientData(request, companyName);
+  const dataPayload = await dataResponse.json();
+  const updatedRow = (dataPayload.data ?? []).find((row) => row.company_name === companyName);
+  expect(updatedRow).toBeTruthy();
 });

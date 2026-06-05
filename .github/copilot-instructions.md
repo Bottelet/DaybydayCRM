@@ -19,6 +19,16 @@ Start with `AGENTS.md`, then use the focused documents below as needed:
 - Tests must be self-contained and factory-driven.
 - Normalize dates before assertions.
 - Refresh users after changing roles or permissions.
+- **Never use `withoutMiddleware()`** — set up proper permissions with `withPermissions()` instead.
+- **Never hardcode email addresses** — use `'email' => 'user_' . uniqid() . '@test.com'`.
+- **Assert content, not just status codes** — use exact flash message values: `assertSessionHas('flash_message', __('...'))`
+- **Every controller needs at minimum**: index, show (valid), show (404), store (valid), store (invalid), update, delete, unauthorized tests.
+- **Guard optional relationships** — null-check before calling any method on a possibly-null relation.
+
+### Playwright rules
+- **Call `dismissTourIfVisible(page)` after every `page.goto()`** before clicking anything. The Bootstrap tour blocks UI elements. Import from `tests/e2e/helpers/plain-e2e.js`.
+- **Call `page.waitForLoadState('networkidle')` after login** — `loginAsAdmin` already does this.
+- **After state-changing requests, verify persistence** via a follow-up data fetch, not just the HTTP status code.
 - Playwright e2e coverage in `tests/e2e` is organized as one plain-route spec per phenomenon.
 - Run Playwright e2e checks with:
   - `npm run test:e2e` — run all e2e tests
@@ -48,6 +58,12 @@ Start with `AGENTS.md`, then use the focused documents below as needed:
 - Forgetting to refresh permission state in tests
 - Directly using storage integrations in tests instead of deterministic behavior
 - Comparing project status casing directly instead of using helper logic
+- Calling `->toArray()` or any method on a possibly-null relationship (e.g. `$client->primaryContact`) without null-checking first — production crash
+- Using `withoutMiddleware()` in feature tests — bypasses the authorization you're testing
+- Hardcoded email addresses in tests — parallel CI collisions
+- Inline `auth()->user()->can()` checks inside controller methods — use `__construct()` middleware instead
+- `Model::all()->count()` — full table scan in memory; use `Model::count()`
+- Bootstrap tour blocking Playwright UI tests — always call `dismissTourIfVisible(page)` after navigation
 
 ## Current branch focus
 The active refactor work on this repository centers on:

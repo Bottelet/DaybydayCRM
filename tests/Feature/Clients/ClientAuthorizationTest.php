@@ -113,7 +113,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         /* Act */
         $response = $this->post(route('clients.store'), [
             'name'             => 'James Test',
-            'email'            => 'james@test.com',
+            'email'            => 'james_' . uniqid() . '@test.com',
             'primary_number'   => '2342342342',
             'secondary_number' => '423423432',
             'vat'              => '12312334',
