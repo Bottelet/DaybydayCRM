@@ -17,12 +17,13 @@ class AbsenceFactory extends Factory
     public function definition()
     {
         $reasons = array_keys(AbsenceReason::values());
+        $startAt = $this->faker->dateTimeBetween('-1 month', '+1 month');
 
         return [
             'external_id' => Uuid::uuid4()->toString(),
             'reason'      => $reasons[array_rand($reasons)],
-            'start_at'    => now(),
-            'end_at'      => now()->addDays(3),
+            'start_at'    => $startAt,
+            'end_at'      => $this->faker->dateTimeBetween($startAt, $startAt->format('Y-m-d H:i:s') . ' +1 month'),
             'user_id'     => User::factory(),
         ];
     }
