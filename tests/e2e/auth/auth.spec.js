@@ -32,7 +32,6 @@ test('bootstrap tour close button dismisses tour and cookie persists across relo
   const page = await context.newPage();
 
   await loginAsAdmin(page);
-  await page.waitForLoadState('networkidle');
 
   const tour = page.locator('.popover.tour');
   const tourVisible = await tour.isVisible({ timeout: 3000 }).catch(() => false);
