@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'users'], static function () {
         Route::get('/data', 'UsersController@anyData')->name('users.data');
         Route::get('/taskdata/{id}', 'UsersController@taskData')->name('users.taskdata');
+        Route::get('/projectdata/{id}', 'UsersController@projectData')->name('users.projectdata');
         Route::get('/leaddata/{id}', 'UsersController@leadData')->name('users.leaddata');
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
         Route::get('/users', 'UsersController@users')->name('users.users');

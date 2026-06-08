@@ -7,6 +7,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Client;
 use App\Models\Department;
 use App\Models\Lead;
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\Status;

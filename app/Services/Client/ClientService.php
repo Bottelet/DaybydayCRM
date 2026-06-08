@@ -92,6 +92,7 @@ class ClientService
         return $client->tasks()
             ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
             ->leftJoin('users', 'tasks.user_assigned_id', '=', 'users.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
             ->with([
                 'status',        // Task status for color/title
                 'user',          // User assigned to task (fixes N+1 on assigned_user->name)
@@ -107,10 +108,8 @@ class ClientService
                 'tasks.status_id',
                 'statuses.title as status_title',
                 'users.name as user_name',
-            ])
-            ->orderBy('tasks.deadline', 'desc')
-            ->orderBy('status_title', 'asc')
-            ->orderBy('user_name', 'asc');
+                'clients.company_name as client_name',
+            ]);
     }
 
     /**
@@ -140,10 +139,7 @@ class ClientService
                 'projects.status_id',
                 'statuses.title as status_title',
                 'users.name as user_name',
-            ])
-            ->orderBy('projects.deadline', 'desc')
-            ->orderBy('status_title', 'asc')
-            ->orderBy('user_name', 'asc');
+            ]);
     }
 
     /**
@@ -173,10 +169,7 @@ class ClientService
                 'leads.status_id',
                 'statuses.title as status_title',
                 'users.name as user_name',
-            ])
-            ->orderBy('leads.deadline', 'desc')
-            ->orderBy('status_title', 'asc')
-            ->orderBy('user_name', 'asc');
+            ]);
     }
 
     /**

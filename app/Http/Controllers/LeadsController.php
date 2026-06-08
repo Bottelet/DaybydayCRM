@@ -68,7 +68,7 @@ class LeadsController extends Controller
             ->orderBy('leads.deadline', 'desc')
             ->orderBy('statuses.title', 'asc')
             ->orderBy('clients.company_name', 'asc')
-            ->orderBy('leads.title', 'asc');
+            ->orderBy('users.name', 'asc');
 
         return DataTables::of($leads)
             ->addColumn('titlelink', function ($lead) {

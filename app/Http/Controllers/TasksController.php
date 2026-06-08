@@ -84,10 +84,11 @@ class TasksController extends Controller
         )
             ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
             ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'tasks.user_assigned_id', '=', 'users.id')
             ->orderBy('tasks.deadline', 'desc')
             ->orderBy('statuses.title', 'asc')
             ->orderBy('clients.company_name', 'asc')
-            ->orderBy('tasks.title', 'asc');
+            ->orderBy('users.name', 'asc');
 
         return DataTables::of($tasks)
             ->filterColumn('client', function ($query, $keyword) {

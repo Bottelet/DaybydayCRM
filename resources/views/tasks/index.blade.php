@@ -37,11 +37,11 @@
             <h4 class="modal-title">@lang('Deletion of ') <span id="deletion-title"></span></h4>
             </div>
             <div class="modal-body">
-   
+
             @method('delete')
             @csrf
             <label style="font-weight: 300; color:#333; font-size:14px;">
-                <input type="checkbox" name="delete_invoice"> @lang('Delete invoice') 
+                <input type="checkbox" name="delete_invoice"> @lang('Delete invoice')
             </label>
             <p>
             @lang('If the invoice is not deleted it will be attached to the client, without a reference to the task').
@@ -52,7 +52,7 @@
             <p>
             @lang('Once deleted, it is not possible to restore it. Are you sure?')
             </p>
-            
+
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang('Cancel')</button>
@@ -104,7 +104,7 @@
                     {data: 'deadline', name: 'deadline'},
                     {data: 'created_at', name: 'created_at'},
                     {data: 'user_assigned_id', name: 'user_assigned_id'},
-                    {data: 'status_id', name: 'status.title', orderable: false},
+                    {data: 'status_id', name: 'status.title', orderable: true},
                     {data: 'view', name: 'view', orderable: false, searchable: false, class: 'table-actions'},
                 ]
             });
@@ -122,7 +122,7 @@
             var target = e.relatedTarget;
             var id = $(target).data('id');
             var title = $(target).data('title');
-      
+
             $("#deletion-title").text(title);
             $('#deletion-form').attr('action', id)
 
