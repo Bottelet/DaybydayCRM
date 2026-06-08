@@ -246,7 +246,7 @@ class ClientsController extends Controller
 
         return view('clients.show')
             ->withClient($client)
-            ->withCompanyname(Setting::first()->company)
+            ->withCompanyname(Setting::first()?->company ?? 'Daybyday')
             ->withInvoices($this->clientService->getInvoices($client))
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->with('filesystem_integration', $filesystemIntegration)

@@ -188,7 +188,7 @@ class Lead extends Model implements Commentable
         ]);
 
         $this->invoice_id = $invoice->id;
-        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->firstOrFail()->id;
         $this->save();
 
         return $invoice;
