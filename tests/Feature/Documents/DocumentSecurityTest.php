@@ -48,6 +48,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('postJson')]
     public function it_authorized_user_can_upload_file_to_task()
     {
         /* Arrange */
@@ -61,7 +62,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
+        $response = $this->postJson(route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
@@ -81,7 +82,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.task.upload', $this->task->external_id), [
+        $response = $this->post(route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
@@ -95,6 +96,7 @@ class DocumentSecurityTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('postJson')]
     public function it_authorized_user_can_upload_file_to_project()
     {
         /* Arrange */
@@ -108,7 +110,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
+        $response = $this->postJson(route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
@@ -128,7 +130,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.project.upload', $this->project->external_id), [
+        $response = $this->post(route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 
@@ -155,7 +157,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.task.upload', 'nonexistent-uuid'), [
+        $response = $this->post(route('document.task.upload', 'nonexistent-uuid'), [
             'files' => [$file],
         ]);
 
@@ -178,7 +180,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->json('POST', route('document.project.upload', 'nonexistent-uuid'), [
+        $response = $this->post(route('document.project.upload', 'nonexistent-uuid'), [
             'files' => [$file],
         ]);
 

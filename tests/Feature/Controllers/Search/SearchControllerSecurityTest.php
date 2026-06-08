@@ -35,7 +35,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/client');
+        $response = $this->getJson('/search/Test/client');
 
         /* Assert */
         $response->assertStatus(200)
@@ -48,7 +48,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/clients');
+        $response = $this->getJson('/search/Test/clients');
 
         /* Assert */
         $response->assertStatus(200)
@@ -61,7 +61,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/task');
+        $response = $this->getJson('/search/Test/task');
 
         /* Assert */
         $response->assertStatus(200)
@@ -74,7 +74,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/project');
+        $response = $this->getJson('/search/Test/project');
 
         /* Assert */
         $response->assertStatus(200)
@@ -87,7 +87,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/lead');
+        $response = $this->getJson('/search/Test/lead');
 
         /* Assert */
         $response->assertStatus(200)
@@ -100,7 +100,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/user');
+        $response = $this->getJson('/search/Test/user');
 
         /* Assert */
         $response->assertStatus(200)
@@ -113,7 +113,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/InvalidType');
+        $response = $this->getJson('/search/Test/InvalidType');
 
         /* Assert */
         $response->assertStatus(400)
@@ -126,7 +126,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/Setting');
+        $response = $this->getJson('/search/Test/Setting');
 
         /* Assert */
         $response->assertStatus(400)
@@ -139,7 +139,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/CLIENT');
+        $response = $this->getJson('/search/Test/CLIENT');
 
         /* Assert */
         $response->assertStatus(200)
@@ -152,7 +152,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/..%2F..%2FUser');
+        $response = $this->getJson('/search/Test/..%2F..%2FUser');
 
         /* Assert */
         $response->assertStatus(404);
@@ -164,7 +164,7 @@ class SearchControllerSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', '/search/Test/App%5CModels%5CUser');
+        $response = $this->getJson('/search/Test/App%5CModels%5CUser');
 
         /* Assert */
         $response->assertStatus(400)

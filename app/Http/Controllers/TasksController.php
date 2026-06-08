@@ -81,9 +81,37 @@ class TasksController extends Controller
                     return (new Task())->qualifyColumn($field);
                 })
                 ->all()
-        );
+        )
+            ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
+            ->orderBy('tasks.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('tasks.title', 'asc');
 
         return DataTables::of($tasks)
+            ->filterColumn('client', function ($query, $keyword) {
+                $query->whereHas('client', function ($q) use ($keyword) {
+                    $q->where('company_name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('user_assigned_id', function ($query, $keyword) {
+                $query->whereHas('user', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('status.title', function ($query, $keyword) {
+                if (str_starts_with($keyword, '^') && str_ends_with($keyword, '$')) {
+                    $cleanKeyword = substr($keyword, 1, -1);
+                    $query->whereHas('status', function ($q) use ($cleanKeyword) {
+                        $q->where('title', '=', $cleanKeyword);
+                    });
+                } else {
+                    $query->whereHas('status', function ($q) use ($keyword) {
+                        $q->where('title', 'like', "%{$keyword}%");
+                    });
+                }
+            })
             ->addColumn('titlelink', function ($task) {
                 return '<a href="' . route('tasks.show', [$task->external_id]) . '">' . $task->title . '</a>';
             })
@@ -128,7 +156,7 @@ class TasksController extends Controller
 
         return view('tasks.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withClients(Client::query()->pluck('company_name', 'external_id'))
+            ->withClients(Client::query()->pluck('company_name', 'external_id')->sortBy('company_name'))
             ->withClient($client)
             ->withProjects($projects ?: null)
             ->withProject($project ?: null)
@@ -164,7 +192,12 @@ class TasksController extends Controller
         }
 
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
+        if ($request->expectsJson()) {
+            return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
+        }
+
+        session()->flash('flash_message', __('Task created'));
+        return redirect()->route('tasks.index');
     }
 
     public function destroy(Task $task, Request $request)

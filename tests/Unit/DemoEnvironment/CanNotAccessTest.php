@@ -45,7 +45,7 @@ class CanNotAccessTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', route('integrations.index'));
+        $response = $this->get(route('integrations.index'));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());

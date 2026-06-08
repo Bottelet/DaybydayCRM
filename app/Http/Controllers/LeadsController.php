@@ -54,13 +54,21 @@ class LeadsController extends Controller
      */
     public function leadsJson()
     {
-        $leads = Lead::with(['user', 'client', 'status'])->select(
-            collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
-                ->map(function ($field) {
-                    return (new Lead())->qualifyColumn($field);
-                })
-                ->all()
-        );
+        $leads = Lead::with(['user', 'client', 'status'])
+            ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'leads.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'leads.user_assigned_id', '=', 'users.id')
+            ->select(
+                collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
+                    ->map(function ($field) {
+                        return (new Lead())->qualifyColumn($field);
+                    })
+                    ->all()
+            )
+            ->orderBy('leads.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('leads.title', 'asc');
 
         return DataTables::of($leads)
             ->addColumn('titlelink', function ($lead) {
@@ -141,8 +149,12 @@ class LeadsController extends Controller
         }
 
         event(new LeadAction($lead, self::CREATED));
-        session()->flash('flash_message', __('Lead successfully added'));
 
+        if ($request->expectsJson()) {
+            return response()->json(['lead_external_id' => $lead->external_id], 201);
+        }
+
+        session()->flash('flash_message', __('Lead successfully added'));
         return redirect()->route('leads.show', $lead->external_id);
     }
 

@@ -79,7 +79,7 @@ class ClientPerformanceTest extends AbstractTestCase
         DB::enableQueryLog();
         DB::flushQueryLog();
 
-        $response = $this->actingAs($this->user)->json('GET', route('clients.data'));
+        $response = $this->actingAs($this->user)->getJson(route('clients.data'));
 
         $queryCount = count(DB::getQueryLog());
 
@@ -171,7 +171,7 @@ class ClientPerformanceTest extends AbstractTestCase
         DB::flushQueryLog();
         DB::enableQueryLog();
 
-        $response = $this->actingAs($this->user)->json('GET', route('clients.taskDataTable', $client->external_id));
+        $response = $this->actingAs($this->user)->getJson(route('clients.taskDataTable', $client->external_id));
 
         $queryCount = count(DB::getQueryLog());
 
@@ -218,7 +218,7 @@ class ClientPerformanceTest extends AbstractTestCase
         DB::flushQueryLog();
         DB::enableQueryLog();
 
-        $response = $this->actingAs($this->user)->json('GET', route('clients.projectDataTable', $client->external_id));
+        $response = $this->actingAs($this->user)->getJson(route('clients.projectDataTable', $client->external_id));
 
         $queryCount = count(DB::getQueryLog());
 
@@ -265,7 +265,7 @@ class ClientPerformanceTest extends AbstractTestCase
         DB::flushQueryLog();
         DB::enableQueryLog();
 
-        $response = $this->actingAs($this->user)->json('GET', route('clients.leadDataTable', $client->external_id));
+        $response = $this->actingAs($this->user)->getJson(route('clients.leadDataTable', $client->external_id));
 
         $queryCount = count(DB::getQueryLog());
 
@@ -310,7 +310,7 @@ class ClientPerformanceTest extends AbstractTestCase
         DB::flushQueryLog();
         DB::enableQueryLog();
 
-        $response = $this->actingAs($this->user)->json('GET', route('clients.data'));
+        $response = $this->actingAs($this->user)->getJson(route('clients.data'));
 
         $queryCount = count(DB::getQueryLog());
 

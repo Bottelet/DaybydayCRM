@@ -152,11 +152,12 @@ $(window).on('resize', function () {
     }
 });
 
-$('.search-select')
-    .dropdown({
-        direction: 'upward'
-    })
-;
+if (typeof $.fn.dropdown === 'function') {
+    $('.search-select')
+        .dropdown({
+            direction: 'upward'
+        });
+}
 
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);

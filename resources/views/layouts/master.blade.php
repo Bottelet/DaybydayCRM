@@ -211,6 +211,8 @@
     classic jQuery with all plugins available.
 --}}
 <script src="{{ URL::asset('js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap-select.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>

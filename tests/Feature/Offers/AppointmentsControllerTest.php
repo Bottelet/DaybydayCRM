@@ -80,7 +80,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $correctAppointment = null;
 
         /* Act */
-        $r = $this->json('GET', '/appointments/data');
+        $r = $this->getJson('/appointments/data');
 
         /* Assert */
         foreach ($r->json() as $appointment) {

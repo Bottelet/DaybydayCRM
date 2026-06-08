@@ -41,6 +41,10 @@ class CommentController extends Controller
             'user_id'     => auth()->user()->id,
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Comment successfully added')], 201);
+        }
+
         Session::flash('flash_message', __('Comment successfully added'));
 
         return redirect()->back();

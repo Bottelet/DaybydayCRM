@@ -72,16 +72,20 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('#start_time').pickatime({
-                format:'{{frontendTime()}}',
-                formatSubmit: 'HH:i',
-                hiddenName: true
-            })
-            $('#end_time').pickatime({
-                format:'{{frontendTime()}}',
-                formatSubmit: 'HH:i',
-                hiddenName: true
-            })
+            if ($('#start_time').length) {
+                $('#start_time').pickatime({
+                    format:'{{frontendTime()}}',
+                    formatSubmit: 'HH:i',
+                    hiddenName: true
+                })
+            }
+            if ($('#end_time').length) {
+                $('#end_time').pickatime({
+                    format:'{{frontendTime()}}',
+                    formatSubmit: 'HH:i',
+                    hiddenName: true
+                })
+            }
         });
     </script>
 @endpush

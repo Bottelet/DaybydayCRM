@@ -61,9 +61,17 @@ class ProjectsController extends Controller
 
     public function indexData()
     {
-        $projects = Project::with(['assignee', 'status', 'client'])->select(
-            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
-        )->get();
+        $projects = Project::with(['assignee', 'status', 'client'])
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'projects.user_assigned_id', '=', 'users.id')
+            ->select(
+                ['projects.external_id', 'projects.title', 'projects.created_at', 'projects.deadline', 'projects.user_assigned_id', 'projects.status_id', 'projects.client_id']
+            )
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('projects.title', 'asc');
 
         return Datatables::of($projects)
             ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
@@ -159,7 +167,12 @@ class ProjectsController extends Controller
         }
 
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['project_external_id' => $project->external_id]);
+        if ($request->expectsJson()) {
+            return response()->json(['project_external_id' => $project->external_id]);
+        }
+
+        session()->flash('flash_message', __('Project created'));
+        return redirect()->route('projects.index');
     }
 
     /**

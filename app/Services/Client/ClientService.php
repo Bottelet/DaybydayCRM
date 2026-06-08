@@ -87,24 +87,30 @@ class ClientService
      *
      * @return Collection
      */
-    public function getTasksWithRelations(Client $client): Collection
+    public function getTasksWithRelations(Client $client)
     {
         return $client->tasks()
+            ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
+            ->leftJoin('users', 'tasks.user_assigned_id', '=', 'users.id')
             ->with([
                 'status',        // Task status for color/title
                 'user',          // User assigned to task (fixes N+1 on assigned_user->name)
             ])
             ->select([
-                'id',
-                'external_id',
-                'title',
-                'created_at',
-                'deadline',
-                'user_assigned_id',
-                'client_id',
-                'status_id',
+                'tasks.id',
+                'tasks.external_id',
+                'tasks.title',
+                'tasks.created_at',
+                'tasks.deadline',
+                'tasks.user_assigned_id',
+                'tasks.client_id',
+                'tasks.status_id',
+                'statuses.title as status_title',
+                'users.name as user_name',
             ])
-            ->get();
+            ->orderBy('tasks.deadline', 'desc')
+            ->orderBy('status_title', 'asc')
+            ->orderBy('user_name', 'asc');
     }
 
     /**
@@ -114,24 +120,30 @@ class ClientService
      *
      * @return Collection
      */
-    public function getProjectsWithRelations(Client $client): Collection
+    public function getProjectsWithRelations(Client $client)
     {
         return $client->projects()
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('users', 'projects.user_assigned_id', '=', 'users.id')
             ->with([
                 'status',        // Project status for color/title
                 'assignee',      // User assigned to project (fixes N+1 on assignee->name)
             ])
             ->select([
-                'id',
-                'external_id',
-                'title',
-                'created_at',
-                'deadline',
-                'user_assigned_id',
-                'client_id',
-                'status_id',
+                'projects.id',
+                'projects.external_id',
+                'projects.title',
+                'projects.created_at',
+                'projects.deadline',
+                'projects.user_assigned_id',
+                'projects.client_id',
+                'projects.status_id',
+                'statuses.title as status_title',
+                'users.name as user_name',
             ])
-            ->get();
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('status_title', 'asc')
+            ->orderBy('user_name', 'asc');
     }
 
     /**
@@ -141,24 +153,30 @@ class ClientService
      *
      * @return Collection
      */
-    public function getLeadsWithRelations(Client $client): Collection
+    public function getLeadsWithRelations(Client $client)
     {
         return $client->leads()
+            ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
+            ->leftJoin('users', 'leads.user_assigned_id', '=', 'users.id')
             ->with([
                 'status',        // Lead status for color/title
                 'user',          // User assigned to lead (fixes N+1 on assigned_user->name)
             ])
             ->select([
-                'id',
-                'external_id',
-                'title',
-                'created_at',
-                'deadline',
-                'user_assigned_id',
-                'client_id',
-                'status_id',
+                'leads.id',
+                'leads.external_id',
+                'leads.title',
+                'leads.created_at',
+                'leads.deadline',
+                'leads.user_assigned_id',
+                'leads.client_id',
+                'leads.status_id',
+                'statuses.title as status_title',
+                'users.name as user_name',
             ])
-            ->get();
+            ->orderBy('leads.deadline', 'desc')
+            ->orderBy('status_title', 'asc')
+            ->orderBy('user_name', 'asc');
     }
 
     /**

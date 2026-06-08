@@ -35,7 +35,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', route('settings.index'));
+        $response = $this->getJson(route('settings.index'));
 
         /* Assert */
         $response->assertStatus(200);
@@ -51,7 +51,7 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->json('GET', route('settings.index'));
+        $response = $this->getJson(route('settings.index'));
 
         /* Assert */
         $response->assertStatus(403);

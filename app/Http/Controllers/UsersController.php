@@ -96,10 +96,18 @@ class UsersController extends Controller
      */
     public function taskData($id)
     {
-        $tasks = Task::with(['status', 'client.primaryContact'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )
-            ->where('user_assigned_id', $id)->get();
+        $tasks = Task::with(['status', 'client.primaryContact'])
+            ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
+            ->select(
+                ['tasks.id', 'tasks.external_id', 'tasks.title', 'tasks.created_at', 'tasks.deadline', 'tasks.user_assigned_id', 'tasks.client_id', 'tasks.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('tasks.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('tasks.title', 'asc')
+            ->get();
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
@@ -128,10 +136,18 @@ class UsersController extends Controller
      */
     public function leadData($id)
     {
-        $leads = Lead::with(['status', 'client.primaryContact'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )
-            ->where('user_assigned_id', $id)->get();
+        $leads = Lead::with(['status', 'client.primaryContact'])
+            ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'leads.client_id', '=', 'clients.id')
+            ->select(
+                ['leads.id', 'leads.external_id', 'leads.title', 'leads.created_at', 'leads.deadline', 'leads.user_assigned_id', 'leads.client_id', 'leads.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('leads.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('leads.title', 'asc')
+            ->get();
 
         return Datatables::of($leads)
             ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')

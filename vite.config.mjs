@@ -83,7 +83,11 @@ export default defineConfig({
         manifest: true,
         outDir: 'public/build',
         rollupOptions: {
+            external: ['jquery'],
             output: {
+                globals: {
+                    jquery: '$'
+                },
                 entryFileNames: 'assets/[name]-[hash].js',
                 chunkFileNames: 'assets/[name]-[hash].js',
                 assetFileNames: 'assets/[name]-[hash][extname]',

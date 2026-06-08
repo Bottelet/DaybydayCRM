@@ -15,7 +15,7 @@
             </div>
             <div class="form-group col-lg-12 removeleft" >
                 <label for="source" class="thin-weight">@lang('Description')</label>
-                <textarea name="description" id="description" class="form-control">{{optional($product)->description}}</textarea>
+                <textarea rows="5" name="description" id="description" class="form-control">{{optional($product)->description}}</textarea>
             </div>
         </div>
         <div class="col-lg-6">
@@ -58,11 +58,13 @@
 @push('scripts')
     <script>
 
-        $('#payment_date').pickadate({
-            hiddenName:true,
-            format: "{{frontendDate()}}",
-            formatSubmit: 'yyyy/mm/dd',
-            closeOnClear: false,
-        });
+        if ($('#payment_date').length) {
+            $('#payment_date').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                closeOnClear: false,
+            });
+        }
     </script>
 @endpush

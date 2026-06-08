@@ -32,7 +32,23 @@ class ProjectsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    #[Group('junie_repaired')]
+    public function it_can_create_project_via_form()
+    {
+        /* Arrange */
+        $this->withPermissions(['project-create']);
+        $status = Status::factory()->create(['source_type' => Project::class]);
+
+        /* Act */
+        $response = $this->from(route('projects.create'))
+            ->post(route('projects.store'), $this->validProjectPayload($status->id));
+
+        /* Assert */
+        $response->assertRedirect(route('projects.index'));
+        $response->assertSessionHas('flash_message', __('Project created'));
+        $this->assertCount(1, Project::all());
+    }
+
+    #[Test]
     public function it_can_create_project()
     {
         /* Arrange */

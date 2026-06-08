@@ -46,7 +46,7 @@
                                         <button class="btn btn-info edit-offer-btn" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-pencil"></span></button>
                                     @endif
                                 @endif
-                      
+
                                 @if($offer->getInvoice()->invoice)
                                 <button class="btn view-offer-btn" data-offer-external_id="{{$offer->getInvoice()->external_id}}"><span class="fa fa-eye"></span></button>
                                 <a href="{{route('invoices.show', $offer->getInvoice()->invoice->external_id)}}">
@@ -73,7 +73,7 @@
     <div class="modal fade" id="view-offer" tabindex="-1" role="dialog" aria-hidden="true"
          style="display:none;">
         <div class="modal-dialog modal-lg view-offer-inner" style="background:white;">
-            
+
         </div>
     </div>
     <div class="row">
@@ -138,7 +138,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="deadline" class="control-label thin-weight">@lang('Change deadline')</label>
-                            <input type="text" id="deadline" name="deadline" data-value="{{$lead->deadline}}" class="form-control">
+                            <input type="text" id="deadline" name="deadline" data-value="{{$lead->deadline ? $lead->deadline->format('Y/m/d') : ''}}" class="form-control">
                             <input type="text" name="contact_time" value="{{$lead->deadline->format(carbonTime())}}" class="form-control" id="contact_time">
                         </div>
                         <div class="modal-footer">
@@ -214,31 +214,35 @@
 @stop
 @push('scripts')
     <script>
-        $(document).ready(function () {      
+        $(document).ready(function () {
             $('#ModalWonOffer').on('show.bs.modal', function(e) {
                 var offerExternalId = $(e.relatedTarget).data('offer-external_id');
                 $(e.currentTarget).find('input[name="offer_external_id"]').val(offerExternalId);
-            }); 
+            });
             $('#ModalLostOffer').on('show.bs.modal', function(e) {
                 var offerExternalId = $(e.relatedTarget).data('offer-external_id');
                 $(e.currentTarget).find('input[name="offer_external_id"]').val(offerExternalId);
-            }); 
+            });
             $('#create-offer-btn').on('click', function () {
                 $('#create-offer').modal('show');
             });
 
             $('[data-toggle="tooltip"]').tooltip();
-            $('#deadline').pickadate({
-                hiddenName:true,
-                format: '{{frontendDate()}}',
-                formatSubmit: 'yyyy/mm/dd',
-                closeOnClear: false,
-            });
-            $('#contact_time').pickatime({
-                format:'{{frontendTime()}}',
-                formatSubmit: 'HH:i',
-                hiddenName: true
-            })
+            if ($('#deadline').length) {
+                $('#deadline').pickadate({
+                    hiddenName:true,
+                    format: '{{frontendDate()}}',
+                    formatSubmit: 'yyyy/mm/dd',
+                    closeOnClear: false,
+                });
+            }
+            if ($('#contact_time').length) {
+                $('#contact_time').pickatime({
+                    format:'{{frontendTime()}}',
+                    formatSubmit: 'HH:i',
+                    hiddenName: true
+                })
+            }
         });
 
     </script>

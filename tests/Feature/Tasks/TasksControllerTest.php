@@ -37,7 +37,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->withPermissions(['task-create']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('POST', route('tasks.store'), [
+        $response = $this->withoutMiddleware()->post(route('tasks.store'), [
             'title'              => 'Tasks test',
             'description'        => 'This is a description',
             'status_id'          => Status::factory()->create(['source_type' => Task::class])->id,
@@ -48,11 +48,32 @@ class TasksControllerTest extends AbstractTestCase
         ]);
 
         /* Assert */
-        $response->assertOk();
-        $tasks = Task::where('user_assigned_id', $this->user->id);
+        $response->assertRedirect(route('tasks.index'));
+        $this->assertCount(1, Task::all());
+    }
 
-        $this->assertCount(1, $tasks->get());
-        $this->assertEquals($response->getData()->task_external_id, $tasks->first()->external_id);
+    #[Test]
+    public function it_can_create_task_via_form()
+    {
+        /* Arrange */
+        $this->withPermissions(['task-create']);
+        $status = Status::factory()->create(['source_type' => Task::class]);
+
+        /* Act */
+        $response = $this->from(route('tasks.create'))
+            ->post(route('tasks.store'), [
+                'title'              => 'Tasks test',
+                'description'        => 'This is a description',
+                'status_id'          => $status->id,
+                'user_assigned_id'   => $this->user->id,
+                'client_external_id' => $this->client->external_id,
+                'deadline'           => '2020-01-01',
+            ]);
+
+        /* Assert */
+        $response->assertRedirect(route('tasks.index'));
+        $response->assertSessionHas('flash_message', __('Task created'));
+        $this->assertCount(1, Task::all());
     }
 
     #[Test]
@@ -73,6 +94,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('postJson')]
     public function it_returns_json_error_when_task_creation_throws_exception()
     {
         /* Arrange */
@@ -81,7 +103,7 @@ class TasksControllerTest extends AbstractTestCase
         $status = Status::factory()->create(['source_type' => Task::class]);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('POST', route('tasks.store'), $this->validTaskPayload($status->id));
+        $response = $this->withoutMiddleware()->postJson(route('tasks.store'), $this->validTaskPayload($status->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -91,6 +113,7 @@ class TasksControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('postJson')]
     public function it_can_add_project_on_task()
     {
         /* Arrange */
@@ -102,7 +125,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->assertNull($task->project_id);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('POST', route('tasks.update.project', $task->external_id), [
+        $response = $this->withoutMiddleware()->postJson(route('tasks.update.project', $task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 
@@ -180,7 +203,7 @@ class TasksControllerTest extends AbstractTestCase
         Task::factory()->create();
 
         /* Act */
-        $error = $this->json('GET', route('tasks.data'))
+        $error = $this->getJson(route('tasks.data'))
             ->assertSuccessful()
             ->json('error');
 

@@ -42,7 +42,7 @@ hr {
   border: 0;
   clear:both;
   display:block;
-  width: 100%;               
+  width: 100%;
   background-color:#d9d9d9;
   height: 1px;
 }
@@ -80,8 +80,9 @@ body {
      height: 40px;
 
 }
-.form-control[disabled] {
-  background-color: #424242;
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #eee;
+    opacity: 1;
 }
 
 .navbar-toggle {
@@ -207,7 +208,7 @@ body {
 .action-link {
      background:none!important;
      color:inherit;
-     border:none; 
+     border:none;
      padding:0!important;
      font: inherit;
      cursor: pointer;
@@ -228,14 +229,14 @@ body {
     text-decoration: underline;
 }
 .white-box {
-  min-height:130px; 
-  background-color:#fff; 
-  padding:1.5em; 
-  margin:1em; 
+  min-height:130px;
+  background-color:#fff;
+  padding:1.5em;
+  margin:1em;
   box-shadow:0px 2px 4px rgba(0,0,0,0.18);
 }
 .calm-header {
-  font-size:1.2em; 
+  font-size:1.2em;
   font-weight:300;
 }
 
