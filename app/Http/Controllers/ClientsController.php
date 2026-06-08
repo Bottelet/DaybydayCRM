@@ -268,6 +268,21 @@ class ClientsController extends Controller
         $client  = $this->clientService->findByExternalId($external_id);
         $contact = $client->primaryContact;
         $merged  = $contact ? array_merge($contact->toArray(), $client->toArray()) : $client->toArray();
+        $defaults = [
+            'name'             => '',
+            'email'            => '',
+            'primary_number'   => '',
+            'secondary_number' => '',
+            'vat'              => '',
+            'company_name'     => '',
+            'address'          => '',
+            'zipcode'          => '',
+            'city'             => '',
+            'company_type'     => '',
+            'industry_id'      => '',
+            'user_id'          => '',
+        ];
+        $merged = array_merge($defaults, $merged);
         $client  = (object) $merged;
 
         return view('clients.edit')

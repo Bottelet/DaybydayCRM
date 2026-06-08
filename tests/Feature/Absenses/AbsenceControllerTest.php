@@ -46,7 +46,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $user = User::factory()->create();
 
         /* Act */
-        $response = $this->post(route('absence.store'), [
+        $response = $this->from(route('absence.create'))->post(route('absence.store'), [
             'reason'              => 'Sick',
             'user_external_id'    => $user->external_id,
             'start_date'          => '2020-01-01',
