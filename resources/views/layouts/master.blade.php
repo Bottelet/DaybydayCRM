@@ -222,8 +222,8 @@
 <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/summernote.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery-ui-sortable.min.js') }}"></script>
-@if(file_exists(public_path('build/manifest.json')))
-    @vite(['resources/assets/js/app.js'])
+@if(file_exists(public_path('js/app.js')))
+    <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 @endif
 @if(App::getLocale() === "dk")
 <script>
@@ -260,6 +260,21 @@
         echo "{}";
     }
     ?>;
+</script>
+<script>
+    $(document).ready(function() {
+        // Ensure dropdown is available on the jQuery instance used by the page
+        if (!$.fn.dropdown && window.jQuery && window.jQuery.fn.dropdown) {
+            $.fn.dropdown = window.jQuery.fn.dropdown;
+        }
+
+        if (!$.fn.dropdown) {
+            $.fn.dropdown = function() {
+                console.warn('dropdown() was called but is not defined');
+                return this;
+            };
+        }
+    });
 </script>
 </body>
 

@@ -3,6 +3,7 @@
 namespace Database\Seeders\Concerns;
 
 use App\Enums\OfferStatus;
+use App\Enums\AbsenceReason;
 use App\Models\Absence;
 use App\Models\Appointment;
 use App\Models\Client;
@@ -89,7 +90,7 @@ trait WorldBuilder
             $last = $users->last();
             Absence::query()->firstOrCreate(
                 ['user_id' => $last->id, 'start_at' => now()->subDays(2)->toDateString()],
-                ['end_at' => now()->addDays(1)->toDateString(), 'reason' => 'Vacation']
+                ['end_at' => now()->addDays(1)->toDateString(), 'reason' => AbsenceReason::vacation()->getReason()]
             );
         }
 

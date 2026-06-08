@@ -89,11 +89,32 @@ class UsersController extends Controller
             ->make(true);
     }
 
-    /**
-     * Json for Data tables.
-     *
-     * @return mixed
-     */
+    public function projectData($id)
+    {
+        $projects = Project::with(['status', 'client.primaryContact'])
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->select(
+                ['projects.id', 'projects.external_id', 'projects.title', 'projects.created_at', 'projects.deadline', 'projects.user_assigned_id', 'projects.client_id', 'projects.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('projects.title', 'asc');
+
+        return Datatables::of($projects)
+            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('client_id', function ($project) {
+                return $project->client ? $project->client->company_name : '';
+            })
+            ->addColumn('status_id', function ($project) {
+                return $project->status ? $project->status->title : '';
+            })
+            ->rawColumns(['titlelink', 'status_id'])
+            ->make(true);
+    }
+
     public function taskData($id)
     {
         $tasks = Task::with(['status', 'client.primaryContact'])
@@ -106,8 +127,7 @@ class UsersController extends Controller
             ->orderBy('tasks.deadline', 'desc')
             ->orderBy('statuses.title', 'asc')
             ->orderBy('clients.company_name', 'asc')
-            ->orderBy('tasks.title', 'asc')
-            ->get();
+            ->orderBy('tasks.title', 'asc');
 
         return Datatables::of($tasks)
             ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
@@ -123,17 +143,12 @@ class UsersController extends Controller
                 return '<span class="label label-success" style="background-color:' . $tasks->status->color . '"> ' . $tasks->status->title . '</span>';
             })
             ->editColumn('client_id', function ($tasks) {
-                return $tasks->client->primaryContact->name;
+                return $tasks->client ? $tasks->client->company_name : '';
             })
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
 
-    /**
-     * Json for Data tables.
-     *
-     * @return mixed
-     */
     public function leadData($id)
     {
         $leads = Lead::with(['status', 'client.primaryContact'])
@@ -146,8 +161,7 @@ class UsersController extends Controller
             ->orderBy('leads.deadline', 'desc')
             ->orderBy('statuses.title', 'asc')
             ->orderBy('clients.company_name', 'asc')
-            ->orderBy('leads.title', 'asc')
-            ->get();
+            ->orderBy('leads.title', 'asc');
 
         return Datatables::of($leads)
             ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
@@ -163,8 +177,8 @@ class UsersController extends Controller
                 return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> '
                     . $leads->status->title . '</span>';
             })
-            ->editColumn('client_id', function ($tasks) {
-                return $tasks->client->primaryContact->name;
+            ->editColumn('client_id', function ($leads) {
+                return $leads->client ? $leads->client->company_name : '';
             })
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
@@ -270,7 +284,8 @@ class UsersController extends Controller
             ->with('task_statistics', $user->totalOpenAndClosedTasks($external_id))
             ->with('lead_statistics', $user->totalOpenAndClosedLeads($external_id))
             ->with('lead_statuses', Status::typeOfLead()->get())
-            ->with('task_statuses', Status::typeOfTask()->get());
+            ->with('task_statuses', Status::typeOfTask()->get())
+            ->with('project_statuses', Status::typeOfProject()->get());
     }
 
     /**

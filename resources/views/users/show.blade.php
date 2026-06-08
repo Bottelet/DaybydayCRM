@@ -15,6 +15,7 @@
         <table class="table table-hover" id="tasks-table">
         <h3>{{ __('Tasks assigned') }}</h3>
             <thead>
+            <tr>
                     <th>{{ __('Title') }}</th>
                     <th>{{ __('Client') }}</th>
                     <th>{{ __('Created at') }}</th>
@@ -29,6 +30,28 @@
                         </select>
                     </th>
                 </tr>
+            </thead>
+        </table>
+    </el-tab-pane>
+    <el-tab-pane label="{{ __('Projects') }}" name="projects">
+        <table class="table table-hover" id="projects-table">
+            <h3>{{ __('Projects assigned') }}</h3>
+            <thead>
+            <tr>
+                <th>{{ __('Title') }}</th>
+                <th>{{ __('Client') }}</th>
+                <th>{{ __('Created at') }}</th>
+                <th>{{ __('Deadline') }}</th>
+                <th>
+                    <select name="status_id" id="status-project" class="table-status-input">
+                        <option value="" disabled selected>{{ __('Status') }}</option>
+                        @foreach($project_statuses as $project_status)
+                            <option value="{{$project_status->title}}">{{$project_status->title}}</option>
+                        @endforeach
+                        <option value="all">All</option>
+                    </select>
+                </th>
+            </tr>
             </thead>
         </table>
     </el-tab-pane>
@@ -96,7 +119,7 @@
   <!--<passportPersonalAccessTokens></passportPersonalAccessTokens>-->
   </div>
 
-   @stop 
+   @stop
 @push('scripts')
         <script>
         $('#pagination a').on('click', function (e) {
@@ -137,8 +160,40 @@
                 } else {
                     table.columns(4).search( selected ? '^'+selected+'$' : '', true, false ).draw();
                 }
-              });  
+              });
 
+          });
+            $(function () {
+              var table = $('#projects-table').DataTable({
+                  processing: true,
+                  serverSide: true,
+                  autoWidth: false,
+                  ajax: '{!! route('users.projectdata', ['id' => $user->id]) !!}',
+                  language: {
+                      url: '{{ asset('lang/' . (in_array(\Lang::locale(), ['dk', 'en']) ? \Lang::locale() : 'en') . '/datatable.json') }}'
+                  },
+                  drawCallback: function(){
+                      var length_select = $(".dataTables_length");
+                      var select = $(".dataTables_length").find("select");
+                      select.addClass("tablet__select");
+                  },
+                  columns: [
+                      {data: 'titlelink', name: 'title'},
+                      {data: 'client_id', name: 'Client', orderable: false, searchable: false},
+                      {data: 'created_at', name: 'created_at'},
+                      {data: 'deadline', name: 'deadline'},
+                      {data: 'status_id', name: 'status.title', orderable: false},
+                  ]
+              });
+
+              $('#status-project').change(function() {
+                  selected = $("#status-project option:selected").val();
+                  if(selected == "all") {
+                       table.columns(4).search( '' ).draw();
+                  } else {
+                      table.columns(4).search( selected ? '^'+selected+'$' : '', true, false ).draw();
+                  }
+              });
           });
             $(function () {
                 $('#clients-table').DataTable({
@@ -195,7 +250,7 @@
                 } else {
                     table.columns(4).search( selected ? '^'+selected+'$' : '', true, false ).draw();
                 }
-              });  
+              });
           });
         </script>
 @endpush

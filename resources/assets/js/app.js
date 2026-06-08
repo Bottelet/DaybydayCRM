@@ -54,11 +54,20 @@ $("#collapse1").click(function () {
 //Sidebar menu
 $(document).ready(function () {
     // Desktop Nav Collapse
-    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function () {
+    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         $("#wrapper").toggleClass("myNavmenu-icons");
         $("#myNavmenu .panel .list-group-item").addClass("collapsed");
         $("#myNavmenu .collapse").removeClass("in");
         $('#myNavmenu i.sidebar-arrow').removeClass("arrow-down").addClass("arrow-side");
+    });
+
+    // Close desktop sidebar when clicking content
+    $('#page-content-wrapper').click(function (e) {
+        if ($("#wrapper").hasClass("myNavmenu-icons")) {
+            $("#wrapper").removeClass("myNavmenu-icons");
+        }
     });
 
     // Mobile Nav Toggle
