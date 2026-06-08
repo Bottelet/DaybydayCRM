@@ -18,7 +18,16 @@ const path = require('path');
 
 async function globalSetup() {
   const baseUrl = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost';
-  const { hostname } = new URL(baseUrl);
+  let hostname;
+  try {
+    hostname = new URL(baseUrl).hostname;
+  } catch (error) {
+    throw new Error(
+      `[global-setup] Invalid PLAYWRIGHT_BASE_URL="${baseUrl}". ` +
+      `Must be a valid URL (e.g., http://localhost or http://localhost:8000). ` +
+      `Original error: ${error.message}`
+    );
+  }
 
   const farFuture = Math.floor(Date.now() / 1000) + 10 * 365 * 24 * 3600;
 
