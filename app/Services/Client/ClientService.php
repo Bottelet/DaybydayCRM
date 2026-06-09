@@ -85,7 +85,7 @@ class ClientService
      *
      * @param Client $client
      *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getTasksWithRelations(Client $client)
     {
@@ -117,7 +117,7 @@ class ClientService
      *
      * @param Client $client
      *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getProjectsWithRelations(Client $client)
     {
@@ -147,7 +147,7 @@ class ClientService
      *
      * @param Client $client
      *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getLeadsWithRelations(Client $client)
     {

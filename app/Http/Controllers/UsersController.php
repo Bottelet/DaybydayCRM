@@ -92,7 +92,9 @@ class UsersController extends Controller
 
     public function projectData($id)
     {
-        $projects = Project::with(['status', 'client.primaryContact'])
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $projects = Project::with(['status', 'client'])
             ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
             ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
             ->select(
@@ -118,7 +120,9 @@ class UsersController extends Controller
 
     public function taskData($id)
     {
-        $tasks = Task::with(['status', 'client.primaryContact'])
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $tasks = Task::with(['status', 'client'])
             ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
             ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
             ->select(
@@ -152,7 +156,9 @@ class UsersController extends Controller
 
     public function leadData($id)
     {
-        $leads = Lead::with(['status', 'client.primaryContact'])
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $leads = Lead::with(['status', 'client'])
             ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
             ->leftJoin('clients', 'leads.client_id', '=', 'clients.id')
             ->select(
@@ -192,6 +198,8 @@ class UsersController extends Controller
      */
     public function clientData($id)
     {
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
         $clients = Client::query()->select(['external_id', 'company_name', 'vat', 'address'])->where('user_id', $id);
 
         return Datatables::of($clients)

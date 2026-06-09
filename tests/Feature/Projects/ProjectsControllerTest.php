@@ -45,7 +45,7 @@ class ProjectsControllerTest extends AbstractTestCase
         /* Assert */
         $response->assertRedirect(route('projects.index'));
         $response->assertSessionHas('flash_message', __('Project created'));
-        $this->assertCount(1, Project::all());
+        $this->assertDatabaseCount('projects', 1);
     }
 
     #[Test]
@@ -55,7 +55,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-create']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('POST', route('projects.store'), [
+        $response = $this->postJson(route('projects.store'), [
             'title'              => 'Projects test',
             'description'        => 'This is a description',
             'status_id'          => Status::factory()->create(['source_type' => Project::class])->id,
@@ -97,7 +97,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $status = Status::factory()->create(['source_type' => Project::class]);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('POST', route('projects.store'), $this->validProjectPayload($status->id));
+        $response = $this->postJson(route('projects.store'), $this->validProjectPayload($status->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -115,7 +115,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['can-assign-new-user-to-project']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('project.update.assignee', $project->external_id), [
+        $response = $this->patchJson(route('project.update.assignee', $project->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 
@@ -135,7 +135,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-update-status']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('project.update.status', $project->external_id), [
+        $response = $this->patchJson(route('project.update.status', $project->external_id), [
             'status_id' => $status->id,
         ]);
 
@@ -154,7 +154,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-update-deadline']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('project.update.deadline', $project->external_id), [
+        $response = $this->patchJson(route('project.update.deadline', $project->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);

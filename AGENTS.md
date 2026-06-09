@@ -107,25 +107,6 @@ return redirect()->back();
 - Playwright config includes automatic screenshot and video capture on failure.
 - Test logs are written to `storage/logs/e2e-*.json` and `storage/logs/e2e-*.log`.
 
-### Playwright e2e workflow
-- `tests/e2e` now uses one plain-route Playwright spec per phenomenon, for example `tests/e2e/auth/auth.spec.js`.
-- Use package scripts for local execution:
-  - `npm run test:e2e` — run all e2e tests
-  - `npm run test:e2e:list` — list all discovered tests
-  - `npm run test:e2e:file -- tests/e2e/auth/auth.spec.js` — run a single spec (file path after `--` is required)
-  - `npm run test:e2e:stop-on-failure` — run tests, stop on first failure
-- Use Make targets when you want the same workflow through the repository task runner:
-  - `make e2e-install` — install Playwright and browser dependencies
-  - `make e2e-test` — run all e2e tests
-  - `make e2e-test STOP_ON_FAILURE=true` — run all tests, stop on first failure
-  - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js` — run a single spec
-  - `make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true` — run single spec, stop on failure
-  - `make e2e-fail` — run tests, stop on first failure (alternative to STOP_ON_FAILURE=true)
-  - `make e2e-list` — list all discovered tests
-- The repository `Makefile` keeps `make test` for PHPUnit; use explicit `e2e-*` targets for Playwright runs.
-- Playwright config includes automatic screenshot and video capture on failure.
-- Test logs are written to `storage/logs/e2e-*.json` and `storage/logs/e2e-*.log`.
-
 ### Base classes
 - `tests/AbstractTestCase.php` is the preferred base for new Feature/controller tests.
 - `tests/TestCase.php` remains in use for some legacy or unit coverage.

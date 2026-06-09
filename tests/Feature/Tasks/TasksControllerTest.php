@@ -37,7 +37,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->withPermissions(['task-create']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->post(route('tasks.store'), [
+        $response = $this->post(route('tasks.store'), [
             'title'              => 'Tasks test',
             'description'        => 'This is a description',
             'status_id'          => Status::factory()->create(['source_type' => Task::class])->id,
@@ -144,7 +144,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->assertNotEquals($task->user_assigned_id, $this->user->id);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('task.update.assignee', $task->external_id), [
+        $response = $this->patchJson(route('task.update.assignee', $task->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 
@@ -165,7 +165,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->withPermissions(['task-update-status']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('task.update.status', $task->external_id), [
+        $response = $this->patchJson(route('task.update.status', $task->external_id), [
             'status_id' => $status->id,
         ]);
 
@@ -183,7 +183,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->withPermissions(['task-update-deadline']);
 
         /* Act */
-        $response = $this->withoutMiddleware()->json('PATCH', route('task.update.deadline', $task->external_id), [
+        $response = $this->patchJson(route('task.update.deadline', $task->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);
