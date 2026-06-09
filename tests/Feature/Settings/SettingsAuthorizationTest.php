@@ -81,7 +81,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->adminUser);
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'company'        => 'Test Company',
             'vat'            => 25,
             'currency'       => 'USD',
@@ -107,7 +107,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $originalCompany = $this->setting->company;
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'company'        => 'Malicious Company',
             'vat'            => 25,
             'currency'       => 'USD',
@@ -131,7 +131,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->adminUser);
 
         /* Act */
-        $response = $this->json('POST', route('settings.updateFirstStep'), [
+        $response = $this->postJson(route('settings.updateFirstStep'), [
             'company_name' => 'New Company',
             'country'      => 'GB',
             'start_time'   => '08:00',
@@ -152,7 +152,7 @@ class SettingsAuthorizationTest extends AbstractTestCase
         $originalCompany = $this->setting->company;
 
         /* Act */
-        $response = $this->json('POST', route('settings.updateFirstStep'), [
+        $response = $this->postJson(route('settings.updateFirstStep'), [
             'company_name' => 'Malicious Company',
             'country'      => 'GB',
             'start_time'   => '08:00',

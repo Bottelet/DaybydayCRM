@@ -47,7 +47,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'company'        => 'My Company',
             'country'        => 'GB',
             'language'       => 'en',
@@ -80,7 +80,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'company'        => 'My Company',
             'invoice_number' => 10000,
             // client_number intentionally missing
@@ -98,7 +98,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'company'       => 'My Company',
             'client_number' => 10000,
             // invoice_number intentionally missing
@@ -116,7 +116,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 'abc',
             'invoice_number' => 10000,
         ]);
@@ -133,7 +133,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'language'       => 'xx', // not in allowed list
@@ -151,7 +151,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'currency'       => 'INVALID',
@@ -169,7 +169,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'vat'            => 101, // over 100%
@@ -187,7 +187,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'vat'            => -5,
@@ -205,7 +205,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'start_time'     => 'not-a-time',
@@ -223,7 +223,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act – 'GBR' is 3 chars, fails size:2 rule */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'country'        => 'GBR',
@@ -241,7 +241,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act – 'G' is 1 char, fails size:2 rule */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'country'        => 'G',
@@ -259,7 +259,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act – min:1 rule */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 0,
             'invoice_number' => 10000,
         ]);
@@ -276,7 +276,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act – date_format:H:i rejects free-form strings */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'end_time'       => 'not-valid',
@@ -294,7 +294,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->asAdmin();
 
         /* Act – date_format:H:i rejects semantically invalid hours/minutes */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
             'start_time'     => '29:99',
@@ -315,7 +315,7 @@ class SettingsValidationTest extends AbstractTestCase
         $this->actingAs($nonAdmin);
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patchJson(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
         ]);
@@ -334,7 +334,7 @@ class SettingsValidationTest extends AbstractTestCase
         $before = Setting::first();
 
         /* Act */
-        $this->json('PATCH', route('settings.updateOverall'), [
+        $this->patchJson(route('settings.updateOverall'), [
             'company'        => 'Determinism Test Co',
             'country'        => 'US',
             'language'       => 'en',

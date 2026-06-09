@@ -57,7 +57,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->json('DELETE', route('leads.destroy', $this->lead->external_id));
+        $response = $this->deleteJson(route('leads.destroy', $this->lead->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -77,7 +77,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $originalDescription = $this->lead->description;
 
         /* Act */
-        $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
+        $response = $this->patchJson(route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',
@@ -111,7 +111,7 @@ class LeadAuthorizationTest extends AbstractTestCase
         $originalDescription = $this->lead->description;
 
         /* Act */
-        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+        $response = $this->patchJson(route('lead.update.status', $this->lead->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',

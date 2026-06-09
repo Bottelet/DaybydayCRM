@@ -38,7 +38,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $this->withPermissions(PermissionName::PROJECT_DELETE);
 
         /* Act */
-        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        $response = $this->deleteJson(route('projects.destroy', $this->project->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -52,7 +52,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
+        $response = $this->deleteJson(route('projects.destroy', $this->project->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -67,7 +67,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $newUser = User::factory()->create();
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
+        $response = $this->patchJson(route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -85,7 +85,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $originalAssignee = $this->project->user_assigned_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
+        $response = $this->patchJson(route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -108,7 +108,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $originalDescription = $this->project->description;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',

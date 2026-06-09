@@ -72,7 +72,7 @@ class LeadSecurityTest extends AbstractTestCase
         $this->actingAs($this->unauthorizedUser);
 
         /* Act */
-        $response = $this->json('DELETE', '/leads/' . $this->lead->external_id . '/json');
+        $response = $this->deleteJson('/leads/' . $this->lead->external_id . '/json');
 
         /* Assert */
         $response->assertStatus(403);
@@ -90,7 +90,7 @@ class LeadSecurityTest extends AbstractTestCase
         $originalTitle  = $this->lead->title;
 
         /* Act */
-        $response = $this->json('PATCH', route('leads.updateAssign', $this->lead->external_id), [
+        $response = $this->patchJson(route('leads.updateAssign', $this->lead->external_id), [
             'user_assigned_id' => $newUser->id,
             'status_id'        => 999,
             'title'            => 'Hacked Title',
@@ -116,7 +116,7 @@ class LeadSecurityTest extends AbstractTestCase
         $originalAssignee = $this->lead->user_assigned_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+        $response = $this->patchJson(route('lead.update.status', $this->lead->external_id), [
             'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id,
             'title'            => 'Hacked Title',
@@ -142,7 +142,7 @@ class LeadSecurityTest extends AbstractTestCase
         $originalStatus = $this->lead->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+        $response = $this->patchJson(route('lead.update.status', $this->lead->external_id), [
             'status_id' => $taskStatus->id,
         ]);
 
@@ -164,7 +164,7 @@ class LeadSecurityTest extends AbstractTestCase
         $originalStatus = $this->lead->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('lead.update.status', $this->lead->external_id), [
+        $response = $this->patchJson(route('lead.update.status', $this->lead->external_id), [
             'status_id' => 999999,
         ]);
 

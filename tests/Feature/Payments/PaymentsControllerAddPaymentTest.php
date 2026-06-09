@@ -55,7 +55,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -75,7 +75,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50.234,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -95,7 +95,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => '50,234',
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -115,7 +115,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $invoiceStatus = $this->invoice->status;
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -135,7 +135,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $invoiceStatus = $this->invoice->status;
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 'a string',
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -154,7 +154,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $invoiceStatus = $this->invoice->status;
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 5000,
             'payment_date' => '2020-01-01',
             'source'       => 'invalid_source',
@@ -173,7 +173,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $invoiceStatus = $this->invoice->status;
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 5000,
             'payment_date' => '2020-15-15',
             'source'       => 'bank',
@@ -192,7 +192,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => -50,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -213,7 +213,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => '-5000,234',
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -233,7 +233,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $isEmpty = $this->invoice->payments->isEmpty();
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => -5000.234,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',
@@ -253,7 +253,7 @@ class PaymentsControllerAddPaymentTest extends AbstractTestCase
         $invoiceStatus = $this->invoice->status;
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 0,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',

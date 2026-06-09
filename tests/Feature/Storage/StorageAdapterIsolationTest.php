@@ -69,8 +69,7 @@ class StorageAdapterIsolationTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json(
-            'POST',
+        $response = $this->postJson(
             route('document.upload', $client->external_id),
             []
         );
@@ -89,8 +88,7 @@ class StorageAdapterIsolationTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json(
-            'POST',
+        $response = $this->postJson(
             route('document.upload', $client->external_id),
             []
         );

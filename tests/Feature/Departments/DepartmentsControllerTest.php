@@ -30,7 +30,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     {
         /* Arrange */
         /* Act */
-        $response = $this->json('POST', route('departments.store'), [
+        $response = $this->postJson(route('departments.store'), [
             'name'        => 'Test Department',
             'description' => 'This is a test department',
         ]);
@@ -48,7 +48,7 @@ class DepartmentsControllerTest extends AbstractTestCase
 
         /* Act */
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
-        $this->json('DELETE', route('departments.destroy', $department->external_id));
+        $this->deleteJson(route('departments.destroy', $department->external_id));
 
         /* Assert */
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
@@ -63,7 +63,7 @@ class DepartmentsControllerTest extends AbstractTestCase
 
         /* Act */
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
-        $this->json('DELETE', route('departments.destroy', $department->external_id));
+        $this->deleteJson(route('departments.destroy', $department->external_id));
 
         /* Assert */
         $this->assertNotNull(Session::get('flash_message_warning'));

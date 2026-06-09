@@ -48,7 +48,7 @@ class PaymentsControllerTest extends AbstractTestCase
         $paymentId = $this->payment->id;
 
         /* Act */
-        $this->json('delete', route('payment.destroy', $this->payment->external_id));
+        $this->deleteJson(route('payment.destroy', $this->payment->external_id));
 
         /* Assert */
         $this->assertNull(Payment::find($paymentId));
@@ -64,7 +64,7 @@ class PaymentsControllerTest extends AbstractTestCase
         $payment = Payment::factory()->create();
 
         /* Act */
-        $response = $this->json('delete', route('payment.destroy', $payment->external_id));
+        $response = $this->deleteJson(route('payment.destroy', $payment->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -79,7 +79,7 @@ class PaymentsControllerTest extends AbstractTestCase
         $this->actingAs(User::factory()->create());
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 5000,
             'payment_date' => '2020-01-01',
             'source'       => 'bank',

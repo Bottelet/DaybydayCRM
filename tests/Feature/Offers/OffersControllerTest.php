@@ -56,7 +56,7 @@ class OffersControllerTest extends AbstractTestCase
     {
         /* Arrange */
         /* Act */
-        $this->json('POST', route('create.offer', $this->lead->external_id), [
+        $this->postJson(route('create.offer', $this->lead->external_id), [
             [
                 'title'    => 'test line',
                 'price'    => 1000,
@@ -84,7 +84,7 @@ class OffersControllerTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json('POST', route('create.offer', $client->external_id), [
+        $response = $this->postJson(route('create.offer', $client->external_id), [
             [
                 'title'    => 'client offer line',
                 'price'    => 1000,
@@ -152,7 +152,7 @@ class OffersControllerTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json('POST', route('create.offer', $client->external_id), [
+        $response = $this->postJson(route('create.offer', $client->external_id), [
             [
                 'title'    => 'line with bad product',
                 'price'    => 1000,
@@ -176,7 +176,7 @@ class OffersControllerTest extends AbstractTestCase
         $this->assertCount(0, $this->offer->invoiceLines);
 
         /* Act */
-        $this->json('POST', route('offer.update', $this->offer->external_id), [
+        $this->postJson(route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'test line',
                 'price'    => 1000,
@@ -216,7 +216,7 @@ class OffersControllerTest extends AbstractTestCase
         $offer = Offer::factory()->create();
 
         /* Act */
-        $this->json('POST', route('offer.won'), [
+        $this->postJson(route('offer.won'), [
             'offer_external_id' => $offer->external_id,
         ]);
 
@@ -234,7 +234,7 @@ class OffersControllerTest extends AbstractTestCase
         $offer = Offer::factory()->create();
 
         /* Act */
-        $this->json('POST', route('offer.lost'), [
+        $this->postJson(route('offer.lost'), [
             'offer_external_id' => $offer->external_id,
         ]);
 

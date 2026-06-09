@@ -69,7 +69,7 @@ class UserSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::USER_UPDATE);
 
         /* Act */
-        $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
+        $response = $this->patchJson(route('users.update', $this->targetUser->external_id), [
             'name'       => 'Updated Name',
             'email'      => $this->targetUser->email,
             'department' => $this->targetUser->department()->first()->id,
@@ -92,7 +92,7 @@ class UserSecurityTest extends AbstractTestCase
         $originalName = $this->targetUser->name;
 
         /* Act */
-        $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
+        $response = $this->patchJson(route('users.update', $this->targetUser->external_id), [
             'name'       => 'Hacked Name',
             'email'      => $this->targetUser->email,
             'department' => $this->targetUser->department()->first()->id,
@@ -114,7 +114,7 @@ class UserSecurityTest extends AbstractTestCase
         $originalPassword = $this->targetUser->password;
 
         /* Act */
-        $response = $this->json('PATCH', route('users.update', $this->targetUser->external_id), [
+        $response = $this->patchJson(route('users.update', $this->targetUser->external_id), [
             'name'       => $this->targetUser->name,
             'email'      => $this->targetUser->email,
             'password'   => 'newpassword123',

@@ -69,7 +69,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
         $this->assertNotNull(InvoiceLine::query()->where('external_id', $this->invoiceLine->external_id)->first());
 
         /* Act */
-        $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
+        $r = $this->deleteJson(route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
         /* Assert */
         $r->assertStatus(302);
@@ -85,7 +85,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
         $this->assertNotNull(InvoiceLine::query()->where('external_id', $this->invoiceLine->external_id)->first());
 
         /* Act */
-        $response = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
+        $response = $this->deleteJson(route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
         /* Assert */
         $response->assertStatus(403);

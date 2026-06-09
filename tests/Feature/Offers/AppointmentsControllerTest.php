@@ -113,7 +113,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $newAssignee = User::factory()->create();
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->json('POST', route('appointments.update', $appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->postJson(route('appointments.update', $appointment->external_id), [
             'id'     => $appointment->id,
             'start'  => Carbon::now()->addDay()->toISOString(),
             'end'    => Carbon::now()->addDay()->addHour()->toISOString(),
@@ -144,7 +144,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $appointmentExternalId = $appointment->external_id;
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->json('DELETE', route('appointments.destroy', $appointmentExternalId), [
+        $response = $this->withSession(['_token' => csrf_token()])->deleteJson(route('appointments.destroy', $appointmentExternalId), [
             '_token' => csrf_token(),
         ]);
 
@@ -169,7 +169,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->json('POST', route('appointments.update', $appointment->external_id), [
+        $response = $this->postJson(route('appointments.update', $appointment->external_id), [
             'id'    => $appointment->id,
             'start' => Carbon::now()->addDay()->toISOString(),
             'end'   => Carbon::now()->addDay()->addHour()->toISOString(),

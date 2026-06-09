@@ -213,7 +213,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_201_json_when_payment_is_added()
     {
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -232,7 +232,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         $unsent = Invoice::factory()->create(['sent_at' => null]);
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $unsent->external_id), [
+        $response = $this->postJson(route('payment.add', $unsent->external_id), [
             'amount'       => 50,
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -247,7 +247,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_422_when_payment_amount_is_zero()
     {
         /* Act – PaymentRequest has not_in:0 rule */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 0,
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -263,7 +263,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_422_when_payment_date_is_missing()
     {
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount' => 50,
             'source' => 'bank',
             // payment_date intentionally missing
@@ -279,7 +279,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_422_when_payment_source_is_invalid()
     {
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2024-01-15',
             'source'       => 'invalid_source',
@@ -295,7 +295,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_accepts_comma_decimal_notation_for_payment_amount()
     {
         /* Act – prepareForValidation normalises "50,00" to "50.00" */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => '50,00',
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -320,7 +320,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->json('DELETE', route('payment.destroy', $payment->external_id));
+        $response = $this->deleteJson(route('payment.destroy', $payment->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -341,7 +341,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         $this->actingAs($noPerms);
 
         /* Act */
-        $response = $this->json('DELETE', route('payment.destroy', $payment->external_id));
+        $response = $this->deleteJson(route('payment.destroy', $payment->external_id));
 
         /* Assert – 403 before any infrastructure code runs; record still exists */
         $response->assertStatus(403);
@@ -356,7 +356,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         $this->actingAs($noPerms);
 
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->postJson(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
