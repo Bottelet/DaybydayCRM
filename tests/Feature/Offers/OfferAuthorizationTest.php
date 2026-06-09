@@ -109,7 +109,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $newLead = Lead::factory()->create();
 
         /* Act */
-        $response = $this->postJson(route('create.offer', $newLead->external_id), [
+        $response = $this->post(route('create.offer', $newLead->external_id), [
             [
                 'title'    => 'Test Item',
                 'type'     => 'hours',
@@ -133,7 +133,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $newLead = Lead::factory()->create();
 
         /* Act */
-        $response = $this->postJson(route('create.offer', $newLead->external_id), [
+        $response = $this->post(route('create.offer', $newLead->external_id), [
             [
                 'title'    => 'Test Item',
                 'type'     => 'hours',
@@ -158,7 +158,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         /* Act */
-        $response = $this->postJson(route('offer.update', $this->offer->external_id), [
+        $response = $this->post(route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'Updated Item',
                 'type'     => 'hours',
@@ -179,7 +179,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->postJson(route('offer.update', $this->offer->external_id), [
+        $response = $this->post(route('offer.update', $this->offer->external_id), [
             [
                 'title'    => 'Updated Item',
                 'type'     => 'hours',
@@ -203,7 +203,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         /* Act */
-        $response = $this->postJson(route('offer.won'), [
+        $response = $this->post(route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -220,7 +220,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->postJson(route('offer.won'), [
+        $response = $this->post(route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -239,7 +239,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         /* Act */
-        $response = $this->postJson(route('offer.lost'), [
+        $response = $this->post(route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -255,7 +255,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->postJson(route('offer.lost'), [
+        $response = $this->post(route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 

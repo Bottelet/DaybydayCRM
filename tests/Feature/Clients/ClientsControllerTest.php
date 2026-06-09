@@ -149,7 +149,7 @@ class ClientsControllerTest extends AbstractTestCase
         $user     = User::factory()->create();
 
         /* Act */
-        $response = $this->postJson(route('clients.store'), [
+        $response = $this->post(route('clients.store'), [
             'name'             => 'James Test',
             'email'            => 'james_' . uniqid() . '@test.com',
             'primary_number'   => '2342342342',
@@ -205,7 +205,7 @@ class ClientsControllerTest extends AbstractTestCase
         $this->bindFailingClientService();
 
         /* Act */
-        $response = $this->postJson(route('clients.store'), $this->validClientPayload($industry->id, $user->id));
+        $response = $this->post(route('clients.store'), $this->validClientPayload($industry->id, $user->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -224,7 +224,7 @@ class ClientsControllerTest extends AbstractTestCase
 
         /* Act */
         $this->assertNotNull(Client::where('external_id', $client->external_id)->first());
-        $r = $this->deleteJson(route('clients.destroy', $client->external_id));
+        $r = $this->delete(route('clients.destroy', $client->external_id));
 
         /* Assert */
         $this->assertSoftDeleted($client);
@@ -254,7 +254,7 @@ class ClientsControllerTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->patchJson(route('clients.update', $client->external_id), [
+        $response = $this->patch(route('clients.update', $client->external_id), [
             'name'             => 'Mads',
             'email'            => 'mads_' . uniqid() . '@test.com',
             'primary_number'   => '2342342342',
@@ -293,7 +293,7 @@ class ClientsControllerTest extends AbstractTestCase
         $targetUser  = User::factory()->create();
 
         /* Act */
-        $r = $this->postJson('/clients/updateassign/' . $client->external_id, [
+        $r = $this->post('/clients/updateassign/' . $client->external_id, [
             'user_external_id' => $targetUser->external_id,
         ]);
 
@@ -319,7 +319,7 @@ class ClientsControllerTest extends AbstractTestCase
         $client->contacts()->forceDelete();
 
         /* Act */
-        $response = $this->patchJson(route('clients.update', $client->external_id), [
+        $response = $this->patch(route('clients.update', $client->external_id), [
             'name'             => 'No Contact Name',
             'email'            => 'noprimary_' . uniqid() . '@test.com',
             'primary_number'   => '1234567890',
@@ -352,7 +352,7 @@ class ClientsControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         /* Act */
-        $response = $this->postJson('/clients/updateassign/' . $client->external_id, [
+        $response = $this->post('/clients/updateassign/' . $client->external_id, [
             'user_external_id' => $this->user->external_id,
         ]);
 

@@ -90,7 +90,7 @@ class RoleControllerTest extends AbstractTestCase
         $this->bindFailingRoleService();
 
         /* Act */
-        $response = $this->postJson(route('roles.store'), [
+        $response = $this->post(route('roles.store'), [
             'name'        => 'qa-role',
             'description' => 'QA role',
         ]);

@@ -132,7 +132,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $this->bindFailingAbsenceService();
 
         /* Act */
-        $response = $this->postJson(route('absence.store'), [
+        $response = $this->post(route('absence.store'), [
             'reason'     => 'Sick',
             'start_date' => '2020-01-01',
             'end_date'   => '2020-01-02',

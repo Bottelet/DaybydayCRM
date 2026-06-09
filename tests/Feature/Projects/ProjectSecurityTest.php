@@ -37,7 +37,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::PROJECT_DELETE);
 
         /* Act */
-        $response = $this->deleteJson(route('projects.destroy', $this->project->external_id));
+        $response = $this->delete(route('projects.destroy', $this->project->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -51,7 +51,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->actingAs($this->unauthorizedUser);
 
         /* Act */
-        $response = $this->deleteJson(route('projects.destroy', $this->project->external_id));
+        $response = $this->delete(route('projects.destroy', $this->project->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -68,7 +68,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $originalAssignee = $this->project->user_assigned_id;
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id,
             'title'            => 'Hacked Title',
@@ -88,7 +88,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::PROJECT_UPDATE_STATUS);
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
@@ -106,7 +106,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $newStatus = Status::factory()->create(['source_type' => Project::class]);
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'statusExternalId' => $newStatus->external_id,
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
@@ -125,7 +125,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $originalStatus = $this->project->status_id;
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'status_id' => $leadStatus->id,
         ]);
         $this->project->refresh();
@@ -145,7 +145,7 @@ class ProjectSecurityTest extends AbstractTestCase
         $originalStatus = $this->project->status_id;
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'status_id' => 999999,
         ]);
         $this->project->refresh();

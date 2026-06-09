@@ -55,7 +55,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-create']);
 
         /* Act */
-        $response = $this->postJson(route('projects.store'), [
+        $response = $this->post(route('projects.store'), [
             'title'              => 'Projects test',
             'description'        => 'This is a description',
             'status_id'          => Status::factory()->create(['source_type' => Project::class])->id,
@@ -97,7 +97,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $status = Status::factory()->create(['source_type' => Project::class]);
 
         /* Act */
-        $response = $this->postJson(route('projects.store'), $this->validProjectPayload($status->id));
+        $response = $this->post(route('projects.store'), $this->validProjectPayload($status->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -115,7 +115,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['can-assign-new-user-to-project']);
 
         /* Act */
-        $response = $this->patchJson(route('project.update.assignee', $project->external_id), [
+        $response = $this->patch(route('project.update.assignee', $project->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 
@@ -135,7 +135,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-update-status']);
 
         /* Act */
-        $response = $this->patchJson(route('project.update.status', $project->external_id), [
+        $response = $this->patch(route('project.update.status', $project->external_id), [
             'status_id' => $status->id,
         ]);
 
@@ -154,7 +154,7 @@ class ProjectsControllerTest extends AbstractTestCase
         $this->withPermissions(['project-update-deadline']);
 
         /* Act */
-        $response = $this->patchJson(route('project.update.deadline', $project->external_id), [
+        $response = $this->patch(route('project.update.deadline', $project->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);

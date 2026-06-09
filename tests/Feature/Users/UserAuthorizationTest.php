@@ -32,7 +32,7 @@ class UserAuthorizationTest extends AbstractTestCase
         $this->withPermissions(PermissionName::USER_DELETE);
 
         /* Act */
-        $response = $this->deleteJson(route('users.destroy', $this->targetUser->external_id));
+        $response = $this->delete(route('users.destroy', $this->targetUser->external_id));
 
         /* Assert */
         $response->assertStatus(302);
@@ -46,7 +46,7 @@ class UserAuthorizationTest extends AbstractTestCase
         $this->actingAs(User::factory()->create());
 
         /* Act */
-        $response = $this->deleteJson(route('users.destroy', $this->targetUser->external_id));
+        $response = $this->delete(route('users.destroy', $this->targetUser->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -61,7 +61,7 @@ class UserAuthorizationTest extends AbstractTestCase
         $ownerUser = User::factory()->withRole('owner')->create();
 
         /* Act */
-        $response = $this->deleteJson(route('users.destroy', $ownerUser->external_id));
+        $response = $this->delete(route('users.destroy', $ownerUser->external_id));
 
         /* Assert */
         $response->assertStatus(302);

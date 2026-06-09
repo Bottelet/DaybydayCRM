@@ -62,7 +62,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->postJson(route('document.task.upload', $this->task->external_id), [
+        $response = $this->post(route('document.task.upload', $this->task->external_id), [
             'files' => [$file],
         ]);
 
@@ -110,7 +110,7 @@ class DocumentSecurityTest extends AbstractTestCase
         $file = UploadedFile::fake()->create('document.pdf', 100);
 
         /* Act */
-        $response = $this->postJson(route('document.project.upload', $this->project->external_id), [
+        $response = $this->post(route('document.project.upload', $this->project->external_id), [
             'files' => [$file],
         ]);
 

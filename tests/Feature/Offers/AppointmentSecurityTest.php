@@ -57,7 +57,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $expectedEnd   = Carbon::now()->addDay()->addHour();
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->postJson(route('appointments.update', $this->appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->post(route('appointments.update', $this->appointment->external_id), [
             'id'     => $this->appointment->id,
             'start'  => $expectedStart->toISOString(),
             'end'    => $expectedEnd->toISOString(),
@@ -82,7 +82,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::APPOINTMENT_DELETE);
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->deleteJson(route('appointments.destroy', $this->appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->delete(route('appointments.destroy', $this->appointment->external_id), [
             '_token' => csrf_token(),
         ]);
 
@@ -98,7 +98,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->actingAs($this->unauthorizedUser);
 
         /* Act */
-        $response = $this->postJson(route('appointments.update', $this->appointment->external_id), [
+        $response = $this->post(route('appointments.update', $this->appointment->external_id), [
             'start' => Carbon::now()->addDay()->toISOString(),
             'end'   => Carbon::now()->addDay()->addHour()->toISOString(),
             'group' => $this->user->external_id,
@@ -117,7 +117,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->postJson(route('appointments.update', $this->appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->post(route('appointments.update', $this->appointment->external_id), [
             'id'     => $this->appointment->id,
             'start'  => Carbon::now()->addDay()->toISOString(),
             'end'    => Carbon::now()->addDay()->addHour()->toISOString(),
@@ -136,7 +136,7 @@ class AppointmentSecurityTest extends AbstractTestCase
         $this->actingAs($this->unauthorizedUser);
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->deleteJson(route('appointments.destroy', $this->appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->delete(route('appointments.destroy', $this->appointment->external_id), [
             '_token' => csrf_token(),
         ]);
 

@@ -46,7 +46,7 @@ class LeadsControllerTest extends AbstractTestCase
         $this->client = Client::factory()->create();
 
         /* Act */
-        $response = $this->withoutMiddleware()->postJson(route('leads.store'), [
+        $response = $this->withoutMiddleware()->post(route('leads.store'), [
             'title'              => 'Leads test',
             'description'        => 'This is a description',
             'status_id'          => Status::factory()->create(['source_type' => Lead::class])->id,
@@ -87,7 +87,7 @@ class LeadsControllerTest extends AbstractTestCase
         $status = Status::factory()->create(['source_type' => Lead::class]);
 
         /* Act */
-        $response = $this->postJson(route('leads.store'), $this->validLeadPayload($status->id));
+        $response = $this->post(route('leads.store'), $this->validLeadPayload($status->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -104,7 +104,7 @@ class LeadsControllerTest extends AbstractTestCase
         $this->assertNotEquals($lead->user_assigned_id, $this->user->id);
 
         /* Act */
-        $response = $this->withoutMiddleware()->patchJson(route('leads.updateAssign', $lead->external_id), [
+        $response = $this->withoutMiddleware()->patch(route('leads.updateAssign', $lead->external_id), [
             'user_assigned_id' => $this->user->id,
         ]);
 
@@ -122,7 +122,7 @@ class LeadsControllerTest extends AbstractTestCase
         $this->assertNotEquals($lead->status_id, $status->id);
 
         /* Act */
-        $response = $this->withoutMiddleware()->patchJson(route('lead.update.status', $lead->external_id), [
+        $response = $this->withoutMiddleware()->patch(route('lead.update.status', $lead->external_id), [
             'status_id' => $status->id,
         ]);
 
@@ -143,7 +143,7 @@ class LeadsControllerTest extends AbstractTestCase
         Cache::tags('role_user')->flush();
 
         /* Act */
-        $response = $this->withoutMiddleware()->patchJson(route('lead.update.deadline', $lead->external_id), [
+        $response = $this->withoutMiddleware()->patch(route('lead.update.deadline', $lead->external_id), [
             'deadline_date' => '2020-08-06',
             'deadline_time' => '00:00',
         ]);
@@ -159,7 +159,7 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         /* Act */
-        $response = $this->withoutMiddleware()->patchJson(route('lead.followup', $lead->external_id), [
+        $response = $this->withoutMiddleware()->patch(route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-06-15',
             'contact_time' => '10:30',
         ]);
@@ -187,7 +187,7 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         /* Act */
-        $this->withoutMiddleware()->patchJson(route('lead.followup', $lead->external_id), [
+        $this->withoutMiddleware()->patch(route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-12-31',
             'contact_time' => '23:59',
         ]);
@@ -207,7 +207,7 @@ class LeadsControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         /* Act */
-        $this->withoutMiddleware()->patchJson(route('lead.followup', $lead->external_id), [
+        $this->withoutMiddleware()->patch(route('lead.followup', $lead->external_id), [
             'deadline'     => '2025-03-20',
             'contact_time' => '09:00',
         ]);

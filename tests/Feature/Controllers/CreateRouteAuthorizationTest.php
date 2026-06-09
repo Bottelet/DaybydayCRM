@@ -130,7 +130,7 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('clients.create'))
+        $this->get(route('clients.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a client")]);
     }
@@ -140,7 +140,7 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('tasks.create'))
+        $this->get(route('tasks.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a task")]);
     }
@@ -150,7 +150,7 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('leads.create'))
+        $this->get(route('leads.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a lead")]);
     }
@@ -160,7 +160,7 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('users.create'))
+        $this->get(route('users.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a user")]);
     }

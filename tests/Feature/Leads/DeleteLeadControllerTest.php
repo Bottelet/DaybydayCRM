@@ -46,7 +46,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
         $lead = Lead::factory()->create();
 
         /* Act */
-        $response = $this->deleteJson(route('leads.destroy', $lead->external_id));
+        $response = $this->delete(route('leads.destroy', $lead->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -66,7 +66,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->deleteJson(route('leads.destroy', $lead->external_id), [
+        $response = $this->delete(route('leads.destroy', $lead->external_id), [
             'delete_offers' => 'on',
         ]);
 
@@ -89,7 +89,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->deleteJson(route('leads.destroy', $lead->external_id));
+        $response = $this->delete(route('leads.destroy', $lead->external_id));
         $offer->refresh();
 
         /* Assert */
@@ -107,7 +107,7 @@ class DeleteLeadControllerTest extends AbstractTestCase
         $lead->offers()->forceDelete();
 
         /* Act */
-        $response = $this->deleteJson(route('leads.destroy', $lead->external_id), [
+        $response = $this->delete(route('leads.destroy', $lead->external_id), [
             'delete_offers' => 'on',
         ]);
 

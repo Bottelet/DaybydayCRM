@@ -35,7 +35,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $this->withPermissions(PermissionName::TASK_DELETE);
 
         /* Act */
-        $response = $this->deleteJson(route('tasks.destroy', $this->task->external_id));
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -49,7 +49,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $this->actingAs(User::factory()->create());
 
         /* Act */
-        $response = $this->deleteJson(route('tasks.destroy', $this->task->external_id));
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -64,7 +64,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         /* Act */
-        $response = $this->patchJson(route('tasks.updateProject', $this->task->external_id), [
+        $response = $this->patch(route('tasks.updateProject', $this->task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 
@@ -81,7 +81,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $project = Project::factory()->create(['client_id' => $this->task->client_id]);
 
         /* Act */
-        $response = $this->patchJson(route('tasks.updateProject', $this->task->external_id), [
+        $response = $this->patch(route('tasks.updateProject', $this->task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 
@@ -104,7 +104,7 @@ class TaskAuthorizationTest extends AbstractTestCase
         $originalDescription = $this->task->description;
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',

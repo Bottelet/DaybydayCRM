@@ -44,7 +44,7 @@ class TaskSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::TASK_DELETE);
 
         /* Act */
-        $response = $this->deleteJson(route('tasks.destroy', $this->task->external_id));
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id));
 
         /* Assert */
         $response->assertStatus(200);
@@ -58,7 +58,7 @@ class TaskSecurityTest extends AbstractTestCase
         $this->actingAs($this->unauthorizedUser);
 
         /* Act */
-        $response = $this->deleteJson(route('tasks.destroy', $this->task->external_id));
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -75,7 +75,7 @@ class TaskSecurityTest extends AbstractTestCase
         $originalAssignee = $this->task->user_assigned_id;
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id'        => $newStatus->id,
             'user_assigned_id' => $this->user->id,
             'title'            => 'Hacked Title',
@@ -96,7 +96,7 @@ class TaskSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::TASK_UPDATE_STATUS);
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
@@ -114,7 +114,7 @@ class TaskSecurityTest extends AbstractTestCase
         $newStatus = Status::factory()->create(['source_type' => Task::class]);
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'statusExternalId' => $newStatus->external_id,
         ], ['X-Requested-With' => 'XMLHttpRequest']);
 
@@ -133,7 +133,7 @@ class TaskSecurityTest extends AbstractTestCase
         $originalStatus = $this->task->status_id;
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id' => $leadStatus->id,
         ]);
 
@@ -154,7 +154,7 @@ class TaskSecurityTest extends AbstractTestCase
         $originalStatus = $this->task->status_id;
 
         /* Act */
-        $response = $this->patchJson(route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id' => 999999,
         ]);
 

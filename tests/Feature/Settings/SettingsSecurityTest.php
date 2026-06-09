@@ -35,7 +35,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->getJson(route('settings.index'));
+        $response = $this->get(route('settings.index'));
 
         /* Assert */
         $response->assertStatus(200);
@@ -51,7 +51,7 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->getJson(route('settings.index'));
+        $response = $this->get(route('settings.index'));
 
         /* Assert */
         $response->assertStatus(403);
@@ -66,7 +66,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->patchJson(route('settings.updateOverall'), [
+        $response = $this->patch(route('settings.updateOverall'), [
             'company'        => 'Test Company',
             'country'        => 'GB',
             'language'       => 'en',
@@ -96,7 +96,7 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->patchJson(route('settings.updateOverall'), [
+        $response = $this->patch(route('settings.updateOverall'), [
             'company'        => 'Hacked Company',
             'country'        => 'GB',
             'language'       => 'en',
@@ -120,7 +120,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->postJson(route('settings.updateFirstStep'), [
+        $response = $this->post(route('settings.updateFirstStep'), [
             'company_name' => 'Test Company',
             'country'      => 'GB',
             'start_time'   => '09:00',
@@ -142,7 +142,7 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->postJson(route('settings.updateFirstStep'), [
+        $response = $this->post(route('settings.updateFirstStep'), [
             'company_name' => 'Hacked Company',
             'country'      => 'GB',
             'start_time'   => '09:00',

@@ -154,7 +154,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $this->actingAs($this->unrelated);
 
         /* Act */
-        $response = $this->getJson(route('document.view', $document->external_id));
+        $response = $this->get(route('document.view', $document->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -186,7 +186,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $this->actingAs($this->unrelated);
 
         /* Act */
-        $response = $this->getJson(route('document.download', $document->external_id));
+        $response = $this->get(route('document.download', $document->external_id));
 
         /* Assert */
         $response->assertStatus(403);
@@ -203,7 +203,7 @@ class DocumentAccessHelperTest extends AbstractTestCase
         $this->actingAs($this->unrelated);
 
         /* Act */
-        $response = $this->getJson(route('document.view', $document->external_id));
+        $response = $this->get(route('document.view', $document->external_id));
 
         /* Assert – unauthorized user gets 403, not a storage error */
         $response->assertStatus(403);

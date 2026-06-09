@@ -80,7 +80,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $correctAppointment = null;
 
         /* Act */
-        $r = $this->getJson('/appointments/data');
+        $r = $this->get('/appointments/data');
 
         /* Assert */
         foreach ($r->json() as $appointment) {
@@ -113,7 +113,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $newAssignee = User::factory()->create();
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->postJson(route('appointments.update', $appointment->external_id), [
+        $response = $this->withSession(['_token' => csrf_token()])->post(route('appointments.update', $appointment->external_id), [
             'id'     => $appointment->id,
             'start'  => Carbon::now()->addDay()->toISOString(),
             'end'    => Carbon::now()->addDay()->addHour()->toISOString(),
@@ -144,7 +144,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         $appointmentExternalId = $appointment->external_id;
 
         /* Act */
-        $response = $this->withSession(['_token' => csrf_token()])->deleteJson(route('appointments.destroy', $appointmentExternalId), [
+        $response = $this->withSession(['_token' => csrf_token()])->delete(route('appointments.destroy', $appointmentExternalId), [
             '_token' => csrf_token(),
         ]);
 
@@ -169,7 +169,7 @@ class AppointmentsControllerTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $response = $this->postJson(route('appointments.update', $appointment->external_id), [
+        $response = $this->post(route('appointments.update', $appointment->external_id), [
             'id'    => $appointment->id,
             'start' => Carbon::now()->addDay()->toISOString(),
             'end'   => Carbon::now()->addDay()->addHour()->toISOString(),

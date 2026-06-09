@@ -32,7 +32,7 @@ class CanNotAccessTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->patchJson(route('settings.updateOverall', []));
+        $response = $this->patch(route('settings.updateOverall', []));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -58,7 +58,7 @@ class CanNotAccessTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->postJson(route('integrations.store'));
+        $response = $this->post(route('integrations.store'));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -72,7 +72,7 @@ class CanNotAccessTest extends AbstractTestCase
         $role = Role::factory()->create();
 
         /* Act */
-        $response = $this->deleteJson(route('roles.destroy', $role->external_id));
+        $response = $this->delete(route('roles.destroy', $role->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -93,7 +93,7 @@ class CanNotAccessTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->deleteJson(route('clients.destroy', $client->external_id));
+        $response = $this->delete(route('clients.destroy', $client->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -114,7 +114,7 @@ class CanNotAccessTest extends AbstractTestCase
         $user = User::factory()->create();
 
         /* Act */
-        $response = $this->deleteJson(route('users.destroy', $user->external_id));
+        $response = $this->delete(route('users.destroy', $user->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -135,7 +135,7 @@ class CanNotAccessTest extends AbstractTestCase
         $user = User::factory()->create();
 
         /* Act */
-        $response = $this->patchJson(route('users.update', $user->external_id));
+        $response = $this->patch(route('users.update', $user->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -149,7 +149,7 @@ class CanNotAccessTest extends AbstractTestCase
         $department = Department::factory()->create();
 
         /* Act */
-        $response = $this->deleteJson(route('departments.destroy', $department->external_id));
+        $response = $this->delete(route('departments.destroy', $department->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());

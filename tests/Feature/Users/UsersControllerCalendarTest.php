@@ -52,7 +52,7 @@ class UsersControllerCalendarTest extends AbstractTestCase
         $correctUser = null;
 
         /* Act */
-        $r = $this->getJson('/users/calendar-users/');
+        $r = $this->get('/users/calendar-users/');
         foreach ($r->json() as $user) {
             if ($user['external_id'] == $this->user->external_id) {
                 $correctUser = $user;

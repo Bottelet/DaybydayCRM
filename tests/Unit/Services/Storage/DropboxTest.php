@@ -307,9 +307,9 @@ class DropboxTest extends AbstractTestCase
         $result  = $dropbox->upload($folder, $filename, $filePath);
 
         // Clean up
-
+        unlink($filePath);
 
         /* Assert */
         $this->assertEquals($expectedPath, $result['file_path']);
-    }
+
 }

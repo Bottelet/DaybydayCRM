@@ -57,7 +57,7 @@ class HandlerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->getJson('/api/users');
+            ->get('/api/users');
 
         /* Assert */
         $response->assertStatus(401);
