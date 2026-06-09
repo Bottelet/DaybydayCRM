@@ -103,7 +103,7 @@ class TasksControllerTest extends AbstractTestCase
         $status = Status::factory()->create(['source_type' => Task::class]);
 
         /* Act */
-        $response = $this->withoutMiddleware()->postJson(route('tasks.store'), $this->validTaskPayload($status->id));
+        $response = $this->postJson(route('tasks.store'), $this->validTaskPayload($status->id));
 
         /* Assert */
         $response->assertStatus(500);
@@ -125,7 +125,7 @@ class TasksControllerTest extends AbstractTestCase
         $this->assertNull($task->project_id);
 
         /* Act */
-        $response = $this->withoutMiddleware()->postJson(route('tasks.update.project', $task->external_id), [
+        $response = $this->postJson(route('tasks.update.project', $task->external_id), [
             'project_external_id' => $project->external_id,
         ]);
 

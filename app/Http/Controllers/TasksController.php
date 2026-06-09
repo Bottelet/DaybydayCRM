@@ -157,7 +157,7 @@ class TasksController extends Controller
 
         return view('tasks.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withClients(Client::query()->pluck('company_name', 'external_id')->sortBy('company_name'))
+            ->withClients(Client::query()->orderBy('company_name')->pluck('company_name', 'external_id'))
             ->withClient($client)
             ->withProjects($projects ?: null)
             ->withProject($project ?: null)
