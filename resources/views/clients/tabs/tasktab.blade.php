@@ -1,20 +1,21 @@
 <table class="table table-hover" id="tasks-table">
     <h3>{{ __('Tasks assigned') }}</h3>
     <thead>
-    <th>{{ __('Title') }}</th>
-    <th>{{ __('Assigned') }}</th>
-    <th>{{ __('Created at') }}</th>
-    <th>{{ __('Deadline') }}</th>
-    <th>
-        <select name="status_id" id="status-task" class="table-status-input">
-            <option value="" disabled selected>{{ __('Status') }}</option>
-            @foreach($task_statuses as $task_status)
-                <option value="{{$task_status->title}}">{{$task_status->title}}</option>
-            @endforeach
-            <option value="all">All</option>
-        </select>
-    </th>
-    <th><a href="{{route('client.task.create', $client->external_id)}}" class="btn btn-md btn-brand float-right">@lang('New task')</a></th>
+    <tr>
+        <th>{{ __('Title') }}</th>
+        <th>{{ __('Assigned') }}</th>
+        <th>{{ __('Created at') }}</th>
+        <th>{{ __('Deadline') }}</th>
+        <th>
+            <select name="status_id" id="status-task" class="table-status-input">
+                <option value="" disabled selected>{{ __('Status') }}</option>
+                @foreach($task_statuses as $task_status)
+                    <option value="{{$task_status->title}}">{{$task_status->title}}</option>
+                @endforeach
+                <option value="all">All</option>
+            </select>
+        </th>
+        <th><a href="{{route('client.task.create', $client->external_id)}}" class="btn btn-md btn-brand float-right">@lang('New task')</a></th>
     </tr>
     </thead>
 </table>

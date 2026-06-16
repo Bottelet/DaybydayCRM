@@ -202,7 +202,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="deadline_date" class="control-label thin-weight">@lang('Change deadline')</label>
-                                <input type="text" id="deadline_date" name="deadline_date" data-value="{{now()->addDays(3)}}" class="form-control">
+                                <input type="text" id="deadline_date" name="deadline_date" data-value="{{now()->addDays(3)->format('Y/m/d')}}" class="form-control">
                             </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
@@ -228,12 +228,14 @@
 @push('scripts')
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#deadline_date').pickadate({
-                hiddenName:true,
-                format: "{{frontendDate()}}",
-                formatSubmit: 'yyyy/mm/dd',
-                closeOnClear: false,
-            });
+            if ($('#deadline_date').length) {
+                $('#deadline_date').pickadate({
+                    hiddenName:true,
+                    format: "{{frontendDate()}}",
+                    formatSubmit: 'yyyy/mm/dd',
+                    closeOnClear: false,
+                });
+            }
 
             @if(Entrust::can('task-upload-files') && $filesystem_integration)
             $('#add-files').on('click', function () {

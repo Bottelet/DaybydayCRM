@@ -1,11 +1,24 @@
-<!-- DESKTOP NAV --->
+{{-- DESKTOP NAV --}}
 <button type="button" id="menu-toggle" class="navbar-toggle menu-txt-toggle" style="">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
 </button>
+<script>
+    (function() {
+        var toggle = document.getElementById('menu-toggle');
+        if (toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var wrapper = document.getElementById('wrapper');
+                if (wrapper) wrapper.classList.toggle('myNavmenu-icons');
+            });
+        }
+    })();
+</script>
 
-<!-- MOBILE NAV -->
+{{-- MOBILE NAV --}}
 <button type="button" id="mobile-toggle" class="mobile-toggle mobile-nav" data-toggle="offcanvas"
         data-target="#myNavmenu">
     <span class="icon-bar"></span>

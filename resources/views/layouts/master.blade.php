@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Daybyday CRM</title>
     <link href="{{ URL::asset('css/jasny-bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/bootstrap-select.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/dropzone.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/jquery.atwho.min.css') }}" rel="stylesheet" type="text/css">
@@ -195,7 +196,17 @@
                     @if(Session::has('flash_message'))
                         <message message="{{ Session::get('flash_message') }}" type="success"></message>
                     @endif
-                    <h1 class="global-heading">@yield('heading')</h1>
+                    <div class="row" style="margin-bottom: 20px; margin-top: 20px;">
+                        <div class="col-md-9">
+                            <h1 class="global-heading" style="margin: 0;">@yield('heading')</h1>
+                        </div>
+                        <div class="col-md-3">
+                            @yield('actions')
+                        </div>
+                    </div>
+                    <div class="row" style="display: none;">
+                        @yield('alerts')
+                    </div>
                     @yield('content')
                 </div>
             </div>
@@ -211,6 +222,8 @@
     classic jQuery with all plugins available.
 --}}
 <script src="{{ URL::asset('js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap-select.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
@@ -220,8 +233,8 @@
 <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/summernote.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery-ui-sortable.min.js') }}"></script>
-@if(file_exists(public_path('build/manifest.json')))
-    @vite(['resources/assets/js/app.js'])
+@if(file_exists(public_path('js/app.js')))
+    <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 @endif
 @if(App::getLocale() === "dk")
 <script>
@@ -258,6 +271,21 @@
         echo "{}";
     }
     ?>;
+</script>
+<script>
+    $(document).ready(function() {
+        // Ensure dropdown is available on the jQuery instance used by the page
+        if (!$.fn.dropdown && window.jQuery && window.jQuery.fn.dropdown) {
+            $.fn.dropdown = window.jQuery.fn.dropdown;
+        }
+
+        if (!$.fn.dropdown) {
+            $.fn.dropdown = function() {
+                console.warn('dropdown() was called but is not defined');
+                return this;
+            };
+        }
+    });
 </script>
 </body>
 

@@ -3,6 +3,12 @@
     {{ __('All clients') }}
 @stop
 
+@section('actions')
+    @if(Entrust::can('client-create'))
+        <a href="{{ route('clients.create') }}" class="btn btn-brand">@lang('Create Client')</a>
+    @endif
+@stop
+
 @section('content')
     <table class="table table-hover" id="clients-table">
         <thead>
