@@ -51,17 +51,7 @@ class Project extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::query()->where('external_id', $externalId)->first();
-    }
-
-    // getRouteKeyName() is provided by HasExternalId trait
+    // findByExternalId() and whereExternalId() are provided by HasExternalId trait
 
     public function displayValue()
     {

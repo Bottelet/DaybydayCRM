@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
@@ -21,6 +22,11 @@ class Setting extends Model
         'start_time',
         'end_time',
     ];
+
+    public static function cached(): ?self
+    {
+        return Cache::remember('app_settings', 3600, fn () => static::first());
+    }
 
     # region Relationships
 

@@ -46,10 +46,7 @@ class Client extends Model
         parent::boot();
     }
 
-    public static function whereExternalId($external_id)
-    {
-        return self::query()->where('external_id', $external_id)->first();
-    }
+    // findByExternalId() and whereExternalId() are provided by HasExternalId trait
 
     public function updateAssignee(User $user)
     {
@@ -94,7 +91,7 @@ class Client extends Model
     public function leads()
     {
         return $this->hasMany(Lead::class, 'client_id', 'id')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('leads.created_at', 'desc');
     }
 
     public function primaryContact()
@@ -110,7 +107,7 @@ class Client extends Model
     public function tasks()
     {
         return $this->hasMany(Task::class, 'client_id', 'id')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('tasks.created_at', 'desc');
     }
 
     public function user()
