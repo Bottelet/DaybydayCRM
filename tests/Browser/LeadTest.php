@@ -62,55 +62,6 @@ class LeadTest extends DuskTestCase
     }
 
     /**
-     * Test i can assign a new user to the lead, and see the correct user info after new user is assigned.
-     */
-    #[Test]
-    public function it_i_can_assign_a_new_user_to_lead()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $lead   = Lead::factory()->create([
-            'client_id' => $client->id,
-        ]);
-        $user = User::factory()->create();
-
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($lead, $user) {
-            $browser->driver->executeScript('window.scrollTo(0, 500)');
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/leads/' . $lead->external_id)
-                ->click('#assignee-user')
-                ->clickLink($user->name)
-                ->waitForText($user->name)
-                ->assertSee($user->email);
-        });
-    }
-
-    /**
-     * Test i can close a open lead.
-     */
-    #[Test]
-    public function it_i_can_change_lead_status()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $lead   = Lead::factory()->create([
-            'client_id' => $client->id,
-            'status_id' => Status::typeOfLead()->first()->id,
-        ]);
-
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($lead) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/leads/' . $lead->external_id)
-                ->assertSee($lead->status->title)
-                ->click('#status-text')
-                ->clickLink('Pending')
-                ->assertSee('Pending');
-        });
-    }
-
-    /**
      * Test i can comment on a lead.
      */
     #[Test]
@@ -161,6 +112,31 @@ class LeadTest extends DuskTestCase
     }
 
     /**
+     * Test i can assign a new user to the lead, and see the correct user info after new user is assigned.
+     */
+    #[Test]
+    public function it_i_can_assign_a_new_user_to_lead()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $lead   = Lead::factory()->create([
+            'client_id' => $client->id,
+        ]);
+        $user = User::factory()->create();
+
+        /* Act & Assert */
+        $this->browse(function (Browser $browser) use ($lead, $user) {
+            $browser->driver->executeScript('window.scrollTo(0, 500)');
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->visit('/leads/' . $lead->external_id)
+                ->click('#assignee-user')
+                ->clickLink($user->name)
+                ->waitForText($user->name)
+                ->assertSee($user->email);
+        });
+    }
+
+    /**
      * Test i can create a new task.
      */
     #[Test]
@@ -178,6 +154,30 @@ class LeadTest extends DuskTestCase
                 ->select('user_assigned_id', $user->id)
                 ->select('client_external_id', 'new_client')
                 ->assertPathIs('/clients/create');
+        });
+    }
+
+    /**
+     * Test i can close a open lead.
+     */
+    #[Test]
+    public function it_i_can_change_lead_status()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $lead   = Lead::factory()->create([
+            'client_id' => $client->id,
+            'status_id' => Status::typeOfLead()->first()->id,
+        ]);
+
+        /* Act & Assert */
+        $this->browse(function (Browser $browser) use ($lead) {
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->visit('/leads/' . $lead->external_id)
+                ->assertSee($lead->status->title)
+                ->click('#status-text')
+                ->clickLink('Pending')
+                ->assertSee('Pending');
         });
     }
 }

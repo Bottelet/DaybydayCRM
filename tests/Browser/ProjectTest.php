@@ -93,26 +93,6 @@ class ProjectTest extends DuskTestCase
         });
     }
 
-    /**
-     * Test i can close a open project.
-     */
-    #[Test]
-    public function it_i_can_change_status_on_a_open_project()
-    {
-        /* Arrange */
-        $project = Project::factory()->create();
-
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($project) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/projects/' . $project->external_id)
-                ->assertSee($project->status->title)
-                ->click('#status-text')
-                ->clickLink('Pending')
-                ->assertSee('Pending');
-        });
-    }
-
     #[Test]
     public function it_i_can_assign_a_new_user_to_project()
     {
@@ -147,6 +127,26 @@ class ProjectTest extends DuskTestCase
                 ->select('user_assigned_id', $user->id)
                 ->select('client_external_id', 'new_client')
                 ->assertPathIs('/clients/create');
+        });
+    }
+
+    /**
+     * Test i can close a open project.
+     */
+    #[Test]
+    public function it_i_can_change_status_on_a_open_project()
+    {
+        /* Arrange */
+        $project = Project::factory()->create();
+
+        /* Act & Assert */
+        $this->browse(function (Browser $browser) use ($project) {
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first())
+                ->visit('/projects/' . $project->external_id)
+                ->assertSee($project->status->title)
+                ->click('#status-text')
+                ->clickLink('Pending')
+                ->assertSee('Pending');
         });
     }
 }

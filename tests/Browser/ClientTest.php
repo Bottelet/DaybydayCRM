@@ -96,29 +96,6 @@ class ClientTest extends DuskTestCase
     }
 
     /**
-     * Test i can assign a new user to client, and see the correct user info after new user is assigned.
-     */
-    #[Test]
-    public function it_i_can_assign_a_new_user_to_customer()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $user   = User::factory()->create();
-
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($client, $user) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first());
-            $browser->visit('/clients/' . $client->external_id);
-            $browser->assertDontSee($user->email);
-            $browser->assertDontSee($user->name);
-            $browser->click('#assignee-user');
-            $browser->clickLink($user->name, 'span');
-            $browser->seeLink($user->email);
-            $browser->assertSee($user->name);
-        });
-    }
-
-    /**
      * Test i can create a new customer.
      */
     #[Test]
@@ -144,6 +121,29 @@ class ClientTest extends DuskTestCase
                 ->select('industry_id')
                 ->press('Create New Client')
                 ->assertSee('Client successfully added');
+        });
+    }
+
+    /**
+     * Test i can assign a new user to client, and see the correct user info after new user is assigned.
+     */
+    #[Test]
+    public function it_i_can_assign_a_new_user_to_customer()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $user   = User::factory()->create();
+
+        /* Act & Assert */
+        $this->browse(function (Browser $browser) use ($client, $user) {
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first());
+            $browser->visit('/clients/' . $client->external_id);
+            $browser->assertDontSee($user->email);
+            $browser->assertDontSee($user->name);
+            $browser->click('#assignee-user');
+            $browser->clickLink($user->name, 'span');
+            $browser->seeLink($user->email);
+            $browser->assertSee($user->name);
         });
     }
 

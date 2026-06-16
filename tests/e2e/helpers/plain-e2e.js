@@ -21,6 +21,28 @@ async function loginAsAdmin(page) {
     page.waitForURL((url) => !url.pathname.endsWith('/login')),
     page.getByRole('button', { name: /log ?in|sign ?in/i }).click(),
   ]);
+  await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Safety-net: dismiss the Bootstrap tour overlay if it is visible.
+ *
+ * The global setup (playwright.config.ts → globalSetup) pre-sets the tour
+ * dismissal cookies for every browser context, so under normal test runs the
+ * tour will never appear and this function is a no-op. It stays here as a
+ * fallback for environments where cookies are cleared between steps, or where
+ * TOUR_DISABLED=true is not set on the server.
+ */
+async function dismissTourIfVisible(page) {
+  try {
+    const endBtn = page.locator('.popover.tour [data-role="end"]');
+    if (await endBtn.isVisible({ timeout: 2000 })) {
+      await endBtn.click();
+      await page.waitForSelector('.popover.tour', { state: 'detached', timeout: 3000 }).catch(() => {});
+    }
+  } catch {
+    // Tour not present — continue
+  }
 }
 
 async function fetchCsrfToken(page) {
@@ -493,6 +515,7 @@ async function expectValidationError(response, field) {
 module.exports = {
   BASE_URL,
   loginAsAdmin,
+  dismissTourIfVisible,
   jsonHeaders,
   uniqueValue,
   html,
