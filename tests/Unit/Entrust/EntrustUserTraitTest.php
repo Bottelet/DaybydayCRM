@@ -34,6 +34,22 @@ class EntrustUserTraitTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_attach_role_does_not_create_duplicate_role_assignment()
+    {
+        /* Arrange */
+        $this->user->attachRole($this->role);
+        $countBefore = $this->user->roles()->where('roles.id', $this->role->id)->count();
+
+        /* Act */
+        $this->user->attachRole($this->role);
+        $countAfter = $this->user->roles()->where('roles.id', $this->role->id)->count();
+
+        /* Assert */
+        $this->assertEquals(1, $countBefore, 'User should have exactly 1 role assignment before second attach');
+        $this->assertEquals(1, $countAfter, 'Duplicate attach should not create a second role_user entry');
+    }
+
+    #[Test]
     public function it_attach_role_accepts_role_object()
     {
         /* Arrange */
@@ -119,22 +135,6 @@ class EntrustUserTraitTest extends AbstractTestCase
         $user->attachRole($adminRole);
 
         $this->assertTrue($user->hasRole('administrator'), 'User should have role after attaching');
-    }
-
-    #[Test]
-    public function it_attach_role_does_not_create_duplicate_role_assignment()
-    {
-        /* Arrange */
-        $this->user->attachRole($this->role);
-        $countBefore = $this->user->roles()->where('roles.id', $this->role->id)->count();
-
-        /* Act */
-        $this->user->attachRole($this->role);
-        $countAfter = $this->user->roles()->where('roles.id', $this->role->id)->count();
-
-        /* Assert */
-        $this->assertEquals(1, $countBefore, 'User should have exactly 1 role assignment before second attach');
-        $this->assertEquals(1, $countAfter, 'Duplicate attach should not create a second role_user entry');
     }
 
     #[Test]

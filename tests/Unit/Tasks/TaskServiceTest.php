@@ -45,6 +45,17 @@ class TaskServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_updates_task_deadline(): void
+    {
+        $service = new TaskService();
+        $task    = Task::factory()->create();
+
+        $service->updateDeadline($task, '2026-02-03 13:00:00');
+
+        $this->assertSame('2026-02-03', $task->fresh()->deadline->format('Y-m-d'));
+    }
+
+    #[Test]
     public function it_assigns_user_to_task(): void
     {
         $service = new TaskService();
@@ -54,16 +65,5 @@ class TaskServiceTest extends AbstractTestCase
         $service->assign($task, $user->id);
 
         $this->assertSame($user->id, $task->fresh()->user_assigned_id);
-    }
-
-    #[Test]
-    public function it_updates_task_deadline(): void
-    {
-        $service = new TaskService();
-        $task    = Task::factory()->create();
-
-        $service->updateDeadline($task, '2026-02-03 13:00:00');
-
-        $this->assertSame('2026-02-03', $task->fresh()->deadline->format('Y-m-d'));
     }
 }

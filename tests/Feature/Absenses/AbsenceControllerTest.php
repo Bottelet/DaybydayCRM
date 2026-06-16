@@ -46,7 +46,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $user = User::factory()->create();
 
         /* Act */
-        $response = $this->json('POST', route('absence.store'), [
+        $response = $this->from(route('absence.create'))->post(route('absence.store'), [
             'reason'              => 'Sick',
             'user_external_id'    => $user->external_id,
             'start_date'          => '2020-01-01',
@@ -56,29 +56,9 @@ class AbsenceControllerTest extends AbstractTestCase
         ]);
 
         /* Assert */
-        $response->assertStatus(200);
+        $response->assertRedirect(route('absence.index')); // Assuming redirect
         $absences = $user->fresh()->absences;
         $this->assertCount(1, $absences);
-    }
-
-    #[Test]
-    #[Group('junie_repaired')]
-    public function it_creates_absence_for_authenticated_user_when_user_external_id_not_provided()
-    {
-        /* Arrange */
-
-        /* Act */
-        $response = $this->json('POST', route('absence.store'), [
-            'reason'              => 'Sick',
-            'start_date'          => '2020-01-01',
-            'end_date'            => '2020-01-02',
-            'medical_certificate' => null,
-            'comment'             => 'Sick kid',
-        ]);
-
-        /* Assert */
-        $response->assertStatus(200);
-        $this->assertCount(1, $this->user->fresh()->absences);
     }
 
     #[Test]
@@ -91,7 +71,7 @@ class AbsenceControllerTest extends AbstractTestCase
         $absentUser = User::factory()->create();
 
         /* Act */
-        $response = $this->json('POST', route('absence.store'), [
+        $response = $this->post(route('absence.store'), [
             'reason'              => 'Sick',
             'user_external_id'    => $absentUser->external_id,
             'start_date'          => '2020-01-01',
@@ -101,8 +81,28 @@ class AbsenceControllerTest extends AbstractTestCase
         ]);
 
         /* Assert */
-        $response->assertStatus(200);
+        $response->assertRedirect(route('absence.index'));
         $this->assertCount(0, $absentUser->fresh()->absences);
+        $this->assertCount(1, $this->user->fresh()->absences);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_creates_absence_for_authenticated_user_when_user_external_id_not_provided()
+    {
+        /* Arrange */
+
+        /* Act */
+        $response = $this->post(route('absence.store'), [
+            'reason'              => 'Sick',
+            'start_date'          => '2020-01-01',
+            'end_date'            => '2020-01-02',
+            'medical_certificate' => null,
+            'comment'             => 'Sick kid',
+        ]);
+
+        /* Assert */
+        $response->assertRedirect(route('absence.index'));
         $this->assertCount(1, $this->user->fresh()->absences);
     }
 
@@ -125,13 +125,14 @@ class AbsenceControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    #[Group('postJson')]
     public function it_returns_json_error_when_absence_creation_throws_exception()
     {
         /* Arrange */
         $this->bindFailingAbsenceService();
 
         /* Act */
-        $response = $this->json('POST', route('absence.store'), [
+        $response = $this->postJson(route('absence.store'), [
             'reason'     => 'Sick',
             'start_date' => '2020-01-01',
             'end_date'   => '2020-01-02',

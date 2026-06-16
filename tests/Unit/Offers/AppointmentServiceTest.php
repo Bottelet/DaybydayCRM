@@ -73,48 +73,6 @@ class AppointmentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_reassigns_to_user()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-        $newUser     = User::factory()->create();
-
-        /* Act */
-        $result = $this->service->reassignToUser($appointment, $newUser);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
-    }
-
-    #[Test]
-    public function it_reassigns_by_external_id()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-        $newUser     = User::factory()->create();
-
-        /* Act */
-        $result = $this->service->reassignToUserByExternalId($appointment, $newUser->external_id);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_nonexistent_user()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-
-        /* Act & Assert */
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("User with external ID 'nonexistent-id' not found");
-        $this->service->reassignToUserByExternalId($appointment, 'nonexistent-id');
-    }
-
-    #[Test]
     public function it_deletes_appointment()
     {
         /* Arrange */
@@ -159,6 +117,48 @@ class AppointmentServiceTest extends AbstractTestCase
 
         /* Assert */
         $this->assertCount(2, $appointments);
+    }
+
+    #[Test]
+    public function it_reassigns_to_user()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+        $newUser     = User::factory()->create();
+
+        /* Act */
+        $result = $this->service->reassignToUser($appointment, $newUser);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
+    }
+
+    #[Test]
+    public function it_reassigns_by_external_id()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+        $newUser     = User::factory()->create();
+
+        /* Act */
+        $result = $this->service->reassignToUserByExternalId($appointment, $newUser->external_id);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_nonexistent_user()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+
+        /* Act & Assert */
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("User with external ID 'nonexistent-id' not found");
+        $this->service->reassignToUserByExternalId($appointment, 'nonexistent-id');
     }
 
     #[Test]

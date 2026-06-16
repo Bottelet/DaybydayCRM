@@ -32,34 +32,6 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_project_delete_permission_can_delete_project()
-    {
-        /* Arrange */
-        $this->withPermissions(PermissionName::PROJECT_DELETE);
-
-        /* Act */
-        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
-
-        /* Assert */
-        $response->assertStatus(200);
-        $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
-    }
-
-    #[Test]
-    public function it_user_without_project_delete_permission_cannot_delete_project()
-    {
-        /* Arrange */
-        $this->actingAs($this->userWithoutPermission);
-
-        /* Act */
-        $response = $this->json('DELETE', route('projects.destroy', $this->project->external_id));
-
-        /* Assert */
-        $response->assertStatus(403);
-        $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
-    }
-
-    #[Test]
     public function it_user_with_assign_permission_can_update_project_assignment()
     {
         /* Arrange */
@@ -67,7 +39,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $newUser = User::factory()->create();
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
+        $response = $this->patch(route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
@@ -85,12 +57,13 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $originalAssignee = $this->project->user_assigned_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.assignee', $this->project->external_id), [
+        $response = $this->patch(route('project.update.assignee', $this->project->external_id), [
             'user_assigned_id' => $newUser->id,
         ]);
 
-        /* Assert */
-        $response->assertStatus(403);
+        /* Assert — web route redirects back when user lacks permission */
+        $response->assertRedirect();
+        $response->assertSessionHas('flash_message_warning');
         $this->assertEquals($originalAssignee, $this->project->refresh()->user_assigned_id);
     }
 
@@ -108,7 +81,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $originalDescription = $this->project->description;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'status_id'        => $newStatus->id,
             'title'            => 'Malicious Title Change',
             'description'      => 'Malicious Description Change',
@@ -122,5 +95,33 @@ class ProjectAuthorizationTest extends AbstractTestCase
         $this->assertEquals($originalTitle, $this->project->title);
         $this->assertEquals($originalDescription, $this->project->description);
         $this->assertNotEquals(999, $this->project->user_assigned_id);
+    }
+
+    #[Test]
+    public function it_user_with_project_delete_permission_can_delete_project()
+    {
+        /* Arrange */
+        $this->withPermissions(PermissionName::PROJECT_DELETE);
+
+        /* Act */
+        $response = $this->delete(route('projects.destroy', $this->project->external_id));
+
+        /* Assert — web route redirects back on successful delete */
+        $response->assertRedirect();
+        $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
+    }
+
+    #[Test]
+    public function it_user_without_project_delete_permission_cannot_delete_project()
+    {
+        /* Arrange */
+        $this->actingAs($this->userWithoutPermission);
+
+        /* Act */
+        $response = $this->delete(route('projects.destroy', $this->project->external_id));
+
+        /* Assert */
+        $response->assertStatus(403);
+        $this->assertDatabaseHas('projects', ['id' => $this->project->id, 'deleted_at' => null]);
     }
 }

@@ -32,6 +32,21 @@ class AbsenceServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_delete_absence_deletes_absence_record()
+    {
+        /* Arrange */
+        $absence   = Absence::factory()->create();
+        $absenceId = $absence->id;
+
+        /* Act */
+        $result = $this->service->deleteAbsence($absence);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertDatabaseMissing('absences', ['id' => $absenceId]);
+    }
+
+    #[Test]
     public function it_store_absence_creates_absence_for_current_user_when_no_user_specified()
     {
         /* Arrange */
@@ -354,21 +369,6 @@ class AbsenceServiceTest extends AbstractTestCase
         $absence = \App\Models\Absence::where('user_id', $user->id)->first();
         $this->assertNotNull($absence);
         $this->assertStringContainsString($comment, strip_tags($absence->comment));
-    }
-
-    #[Test]
-    public function it_delete_absence_deletes_absence_record()
-    {
-        /* Arrange */
-        $absence   = Absence::factory()->create();
-        $absenceId = $absence->id;
-
-        /* Act */
-        $result = $this->service->deleteAbsence($absence);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertDatabaseMissing('absences', ['id' => $absenceId]);
     }
 
     #[Test]

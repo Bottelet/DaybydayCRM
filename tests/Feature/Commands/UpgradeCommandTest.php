@@ -16,14 +16,37 @@ class UpgradeCommandTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_command_executes_successfully()
+    public function it_command_does_not_delete_existing_permissions()
     {
         /* Arrange */
         Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
         Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
 
+        $existingPerm   = Permission::factory()->create(['name' => 'existing-perm']);
+        $existingPermId = $existingPerm->id;
+
         /* Act */
-        $this->artisan('daybyday:upgrade')->assertExitCode(0);
+        $this->artisan('daybyday:upgrade');
+
+        /* Assert */
+        $this->assertTrue(Permission::where('id', $existingPermId)->exists());
+    }
+
+    #[Test]
+    public function it_command_does_not_delete_existing_role_assignments()
+    {
+        /* Arrange */
+        $owner = Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
+        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
+
+        $customPerm = Permission::factory()->create(['name' => 'custom-permission']);
+        $owner->perms()->attach($customPerm->id);
+
+        /* Act */
+        $this->artisan('daybyday:upgrade');
+
+        /* Assert */
+        $this->assertTrue($owner->perms()->where('id', $customPerm->id)->exists());
     }
 
     #[Test]
@@ -41,6 +64,44 @@ class UpgradeCommandTest extends AbstractTestCase
         $this->assertTrue(Permission::where('name', 'client-view')->exists());
         $this->assertTrue(Permission::where('name', 'lead-view')->exists());
         $this->assertTrue(Permission::where('name', 'project-update')->exists());
+    }
+
+    #[Test]
+    public function it_all_critical_permissions_are_created()
+    {
+        /* Arrange */
+        Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
+        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
+
+        $criticalPerms = [
+            'user-view', 'client-view', 'client-create', 'client-update', 'client-delete',
+            'lead-view', 'lead-create', 'lead-update-status', 'lead-delete',
+            'task-create', 'task-delete', 'task-update-status', 'project-create', 'project-update',
+            'payment-create', 'payment-update', 'payment-delete', 'document-view', 'document-upload',
+            'invoice-see', 'invoice-send', 'offer-create', 'product-create', 'absence-manage',
+        ];
+
+        /* Act */
+        $this->artisan('daybyday:upgrade');
+
+        /* Assert */
+        foreach ($criticalPerms as $perm) {
+            $this->assertTrue(
+                Permission::where('name', $perm)->exists(),
+                "Permission '{$perm}' should exist"
+            );
+        }
+    }
+
+    #[Test]
+    public function it_command_executes_successfully()
+    {
+        /* Arrange */
+        Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
+        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
+
+        /* Act */
+        $this->artisan('daybyday:upgrade')->assertExitCode(0);
     }
 
     #[Test]
@@ -93,40 +154,6 @@ class UpgradeCommandTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals($firstRun, $secondRun);
-    }
-
-    #[Test]
-    public function it_command_does_not_delete_existing_permissions()
-    {
-        /* Arrange */
-        Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
-        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
-
-        $existingPerm   = Permission::factory()->create(['name' => 'existing-perm']);
-        $existingPermId = $existingPerm->id;
-
-        /* Act */
-        $this->artisan('daybyday:upgrade');
-
-        /* Assert */
-        $this->assertTrue(Permission::where('id', $existingPermId)->exists());
-    }
-
-    #[Test]
-    public function it_command_does_not_delete_existing_role_assignments()
-    {
-        /* Arrange */
-        $owner = Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
-        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
-
-        $customPerm = Permission::factory()->create(['name' => 'custom-permission']);
-        $owner->perms()->attach($customPerm->id);
-
-        /* Act */
-        $this->artisan('daybyday:upgrade');
-
-        /* Assert */
-        $this->assertTrue($owner->perms()->where('id', $customPerm->id)->exists());
     }
 
     #[Test]
@@ -193,33 +220,6 @@ class UpgradeCommandTest extends AbstractTestCase
         $totalPermCount = Permission::count();
         $this->assertEquals($totalPermCount, $adminPermCount);
         $this->assertGreaterThanOrEqual(61, $adminPermCount);
-    }
-
-    #[Test]
-    public function it_all_critical_permissions_are_created()
-    {
-        /* Arrange */
-        Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
-        Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
-
-        $criticalPerms = [
-            'user-view', 'client-view', 'client-create', 'client-update', 'client-delete',
-            'lead-view', 'lead-create', 'lead-update-status', 'lead-delete',
-            'task-create', 'task-delete', 'task-update-status', 'project-create', 'project-update',
-            'payment-create', 'payment-update', 'payment-delete', 'document-view', 'document-upload',
-            'invoice-see', 'invoice-send', 'offer-create', 'product-create', 'absence-manage',
-        ];
-
-        /* Act */
-        $this->artisan('daybyday:upgrade');
-
-        /* Assert */
-        foreach ($criticalPerms as $perm) {
-            $this->assertTrue(
-                Permission::where('name', $perm)->exists(),
-                "Permission '{$perm}' should exist"
-            );
-        }
     }
 
     #[Test]

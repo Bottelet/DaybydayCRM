@@ -81,6 +81,67 @@ class CommentServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_updates_comment()
+    {
+        /* Arrange */
+        $comment        = Comment::factory()->create(['description' => 'Original']);
+        $newDescription = 'Updated description';
+
+        /* Act */
+        $result = $this->service->updateComment($comment, $newDescription);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $fresh = $comment->fresh();
+        $this->assertStringContainsString($newDescription, strip_tags($fresh->description));
+    }
+
+    #[Test]
+    public function it_updates_comment_with_sanitized_html()
+    {
+        /* Arrange */
+        $comment        = Comment::factory()->create();
+        $newDescription = '<img src=x onerror=alert("xss")>Safe text';
+
+        /* Act */
+        $result = $this->service->updateComment($comment, $newDescription);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $fresh = $comment->fresh();
+        $this->assertStringNotContainsString('onerror', $fresh->description);
+        $this->assertStringContainsString('Safe text', $fresh->description);
+    }
+
+    #[Test]
+    public function it_deletes_comment()
+    {
+        /* Arrange */
+        $comment   = Comment::factory()->create();
+        $commentId = $comment->id;
+
+        /* Act */
+        $result = $this->service->deleteComment($comment);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('comments', ['id' => $commentId]);
+    }
+
+    #[Test]
+    public function it_gets_supported_types()
+    {
+        /* Arrange & Act */
+        $types = $this->service->getSupportedTypes();
+
+        /* Assert */
+        $this->assertCount(3, $types);
+        $this->assertContains('task', $types);
+        $this->assertContains('lead', $types);
+        $this->assertContains('project', $types);
+    }
+
+    #[Test]
     public function it_sanitizes_html_in_description()
     {
         /* Arrange */
@@ -122,19 +183,6 @@ class CommentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_supported_types()
-    {
-        /* Arrange & Act */
-        $types = $this->service->getSupportedTypes();
-
-        /* Assert */
-        $this->assertCount(3, $types);
-        $this->assertContains('task', $types);
-        $this->assertContains('lead', $types);
-        $this->assertContains('project', $types);
-    }
-
-    #[Test]
     public function it_checks_type_is_supported()
     {
         /* Arrange, Act & Assert */
@@ -142,53 +190,5 @@ class CommentServiceTest extends AbstractTestCase
         $this->assertTrue($this->service->isTypeSupported('lead'));
         $this->assertTrue($this->service->isTypeSupported('project'));
         $this->assertFalse($this->service->isTypeSupported('invalid'));
-    }
-
-    #[Test]
-    public function it_deletes_comment()
-    {
-        /* Arrange */
-        $comment   = Comment::factory()->create();
-        $commentId = $comment->id;
-
-        /* Act */
-        $result = $this->service->deleteComment($comment);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('comments', ['id' => $commentId]);
-    }
-
-    #[Test]
-    public function it_updates_comment()
-    {
-        /* Arrange */
-        $comment        = Comment::factory()->create(['description' => 'Original']);
-        $newDescription = 'Updated description';
-
-        /* Act */
-        $result = $this->service->updateComment($comment, $newDescription);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $fresh = $comment->fresh();
-        $this->assertStringContainsString($newDescription, strip_tags($fresh->description));
-    }
-
-    #[Test]
-    public function it_updates_comment_with_sanitized_html()
-    {
-        /* Arrange */
-        $comment        = Comment::factory()->create();
-        $newDescription = '<img src=x onerror=alert("xss")>Safe text';
-
-        /* Act */
-        $result = $this->service->updateComment($comment, $newDescription);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $fresh = $comment->fresh();
-        $this->assertStringNotContainsString('onerror', $fresh->description);
-        $this->assertStringContainsString('Safe text', $fresh->description);
     }
 }

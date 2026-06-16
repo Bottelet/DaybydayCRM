@@ -13,7 +13,7 @@ use RuntimeException;
 use Tests\AbstractTestCase;
 
 #[CoversClass(RolesController::class)]
-class RoleControllerTest extends AbstractTestCase
+class RoleTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
@@ -90,10 +90,10 @@ class RoleControllerTest extends AbstractTestCase
         $this->bindFailingRoleService();
 
         /* Act */
-        $response = $this->json('POST', route('roles.store'), [
+        $response = $this->post(route('roles.store'), [
             'name'        => 'qa-role',
             'description' => 'QA role',
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(500);

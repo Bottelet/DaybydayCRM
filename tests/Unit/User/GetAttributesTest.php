@@ -23,26 +23,6 @@ class GetAttributesTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function it_gets_name_and_department()
-    {
-        /* Arrange */
-        $department = Department::factory()->create([
-            'name' => 'Tiger',
-        ]);
-        $this->user = User::factory()->create([
-            'name' => 'Eye of the',
-        ]);
-        $this->user->department()->sync([$department->id]);
-
-        /* Act */
-        $nameAndDepartment = $this->user->name_and_department;
-
-        /* Assert */
-        $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
-    }
-
-    #[Test]
-    #[Group('junie_repaired')]
     public function it_gets_name_and_department_with_eager_loading()
     {
         /* Arrange */
@@ -78,6 +58,26 @@ class GetAttributesTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('Eye of the', $nameAndDepartment);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_name_and_department()
+    {
+        /* Arrange */
+        $department = Department::factory()->create([
+            'name' => 'Tiger',
+        ]);
+        $this->user = User::factory()->create([
+            'name' => 'Eye of the',
+        ]);
+        $this->user->department()->sync([$department->id]);
+
+        /* Act */
+        $nameAndDepartment = $this->user->name_and_department;
+
+        /* Assert */
+        $this->assertEquals('Eye of the (Tiger)', $nameAndDepartment);
     }
 
     #[Test]

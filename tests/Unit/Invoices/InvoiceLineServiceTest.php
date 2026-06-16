@@ -66,18 +66,6 @@ class InvoiceLineServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_throws_exception_for_sent_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => now()]);
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add lines to a sent invoice');
-        $this->service->createLine($invoice, 'Title', 'service', 1, 100);
-    }
-
-    #[Test]
     public function it_creates_line_from_product_external_id()
     {
         /* Arrange */
@@ -105,6 +93,71 @@ class InvoiceLineServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_updates_line_in_draft_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => null]);
+        $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id, 'quantity' => 1]);
+
+        $updateData = ['quantity' => 5, 'price' => 150.00];
+
+        /* Act */
+        $result = $this->service->updateLine($line, $updateData);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $fresh = $line->fresh();
+        $this->assertEquals(5, $fresh->quantity);
+        $this->assertEquals(15000, $fresh->price);
+    }
+
+    #[Test]
+    public function it_deletes_line_from_draft_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => null]);
+        $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
+        $lineId  = $line->id;
+
+        /* Act */
+        $result = $this->service->deleteLine($line);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('invoice_lines', ['id' => $lineId]);
+    }
+
+    #[Test]
+    public function it_gets_all_lines_for_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create();
+        InvoiceLine::factory()->count(3)->create(['invoice_id' => $invoice->id]);
+        InvoiceLine::factory()->create(); // Different invoice
+
+        /* Act */
+        $lines = $this->service->getLinesForInvoice($invoice);
+
+        /* Assert */
+        $this->assertCount(3, $lines);
+        foreach ($lines as $line) {
+            $this->assertEquals($invoice->id, $line->invoice_id);
+        }
+    }
+
+    #[Test]
+    public function it_throws_exception_for_sent_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => now()]);
+
+        /* Act & Assert */
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot add lines to a sent invoice');
+        $this->service->createLine($invoice, 'Title', 'service', 1, 100);
+    }
+
+    #[Test]
     public function it_handles_nonexistent_product_external_id()
     {
         /* Arrange */
@@ -126,22 +179,6 @@ class InvoiceLineServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_line_from_draft_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => null]);
-        $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
-        $lineId  = $line->id;
-
-        /* Act */
-        $result = $this->service->deleteLine($line);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('invoice_lines', ['id' => $lineId]);
-    }
-
-    #[Test]
     public function it_throws_exception_when_deleting_from_sent_invoice()
     {
         /* Arrange */
@@ -152,25 +189,6 @@ class InvoiceLineServiceTest extends AbstractTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot delete lines from a sent invoice');
         $this->service->deleteLine($line);
-    }
-
-    #[Test]
-    public function it_updates_line_in_draft_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => null]);
-        $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id, 'quantity' => 1]);
-
-        $updateData = ['quantity' => 5, 'price' => 150.00];
-
-        /* Act */
-        $result = $this->service->updateLine($line, $updateData);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $fresh = $line->fresh();
-        $this->assertEquals(5, $fresh->quantity);
-        $this->assertEquals(15000, $fresh->price);
     }
 
     #[Test]
@@ -208,24 +226,6 @@ class InvoiceLineServiceTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNull($found);
-    }
-
-    #[Test]
-    public function it_gets_all_lines_for_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create();
-        InvoiceLine::factory()->count(3)->create(['invoice_id' => $invoice->id]);
-        InvoiceLine::factory()->create(); // Different invoice
-
-        /* Act */
-        $lines = $this->service->getLinesForInvoice($invoice);
-
-        /* Assert */
-        $this->assertCount(3, $lines);
-        foreach ($lines as $line) {
-            $this->assertEquals($invoice->id, $line->invoice_id);
-        }
     }
 
     #[Test]

@@ -13,18 +13,6 @@ class EnvironmentConfigurationTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_verifies_app_environment_is_testing(): void
-    {
-        /* Arrange */
-
-        /* Act */
-        $environment = $this->app->environment();
-
-        /* Assert */
-        $this->assertEquals('testing', $environment);
-    }
-
-    #[Test]
     public function it_verifies_cache_store_is_configured_as_array_in_test_environment(): void
     {
         /* Arrange */
@@ -46,6 +34,18 @@ class EnvironmentConfigurationTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('array', $cacheStore);
+    }
+
+    #[Test]
+    public function it_verifies_app_environment_is_testing(): void
+    {
+        /* Arrange */
+
+        /* Act */
+        $environment = $this->app->environment();
+
+        /* Assert */
+        $this->assertEquals('testing', $environment);
     }
 
     #[Test]

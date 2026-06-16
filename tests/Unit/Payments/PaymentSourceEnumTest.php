@@ -25,15 +25,28 @@ class PaymentSourceEnumTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function it_returns_instance_of_payment_source_when_getting_source()
+    public function it_gets_display_value_from_source()
     {
         /* Arrange */
 
         /* Act */
-        $result = PaymentSource::fromSource($this->paymentSource);
+        $displayValue = PaymentSource::fromSource($this->paymentSource)->getDisplayValue();
 
         /* Assert */
-        $this->assertInstanceOf(PaymentSource::class, $result);
+        $this->assertEquals('Bank', $displayValue);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_gets_source_from_display_value()
+    {
+        /* Arrange */
+
+        /* Act */
+        $source = PaymentSource::fromDisplayValue('Intercompany');
+
+        /* Assert */
+        $this->assertEquals(PaymentSource::interCompany()->getSource(), $source);
     }
 
     #[Test]
@@ -52,41 +65,13 @@ class PaymentSourceEnumTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
-    public function it_gets_display_value_from_source()
+    public function it_throws_exception_if_display_value_is_not_known()
     {
         /* Arrange */
 
-        /* Act */
-        $displayValue = PaymentSource::fromSource($this->paymentSource)->getDisplayValue();
-
-        /* Assert */
-        $this->assertEquals('Bank', $displayValue);
-    }
-
-    #[Test]
-    #[Group('junie_repaired')]
-    public function it_returns_correct_source_in_instance()
-    {
-        /* Arrange */
-
-        /* Act */
-        $source = PaymentSource::cash()->getSource();
-
-        /* Assert */
-        $this->assertEquals('cash', $source);
-    }
-
-    #[Test]
-    #[Group('junie_repaired')]
-    public function it_gets_source_from_display_value()
-    {
-        /* Arrange */
-
-        /* Act */
-        $source = PaymentSource::fromDisplayValue('Intercompany');
-
-        /* Assert */
-        $this->assertEquals(PaymentSource::interCompany()->getSource(), $source);
+        /* Act & Assert */
+        $this->expectException(Exception::class);
+        PaymentSource::fromDisplayValue('None existing display value');
     }
 
     #[Test]
@@ -105,6 +90,32 @@ class PaymentSourceEnumTest extends AbstractTestCase
 
     #[Test]
     #[Group('junie_repaired')]
+    public function it_returns_instance_of_payment_source_when_getting_source()
+    {
+        /* Arrange */
+
+        /* Act */
+        $result = PaymentSource::fromSource($this->paymentSource);
+
+        /* Assert */
+        $this->assertInstanceOf(PaymentSource::class, $result);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
+    public function it_returns_correct_source_in_instance()
+    {
+        /* Arrange */
+
+        /* Act */
+        $source = PaymentSource::cash()->getSource();
+
+        /* Assert */
+        $this->assertEquals('cash', $source);
+    }
+
+    #[Test]
+    #[Group('junie_repaired')]
     public function it_throws_exception_if_source_is_not_known()
     {
         /* Arrange */
@@ -112,16 +123,5 @@ class PaymentSourceEnumTest extends AbstractTestCase
         /* Act & Assert */
         $this->expectException(Exception::class);
         PaymentSource::fromSource('None existing source');
-    }
-
-    #[Test]
-    #[Group('junie_repaired')]
-    public function it_throws_exception_if_display_value_is_not_known()
-    {
-        /* Arrange */
-
-        /* Act & Assert */
-        $this->expectException(Exception::class);
-        PaymentSource::fromDisplayValue('None existing display value');
     }
 }

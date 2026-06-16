@@ -126,41 +126,41 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     // ─────────────────────────────────────────────
 
     #[Test]
-    public function json_request_without_client_create_permission_gets_403()
+    public function it_returns_403_for_json_request_without_client_create_permission(): void
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('clients.create'))
+        $this->getJsonRequest(route('clients.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a client")]);
     }
 
     #[Test]
-    public function json_request_without_task_create_permission_gets_403()
+    public function it_returns_403_for_json_request_without_task_create_permission(): void
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('tasks.create'))
+        $this->getJsonRequest(route('tasks.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a task")]);
     }
 
     #[Test]
-    public function json_request_without_lead_create_permission_gets_403()
+    public function it_returns_403_for_json_request_without_lead_create_permission(): void
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('leads.create'))
+        $this->getJsonRequest(route('leads.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a lead")]);
     }
 
     #[Test]
-    public function json_request_without_user_create_permission_gets_403()
+    public function it_returns_403_for_json_request_without_user_create_permission(): void
     {
         $this->actingAs(User::factory()->create());
 
-        $this->getJson(route('users.create'))
+        $this->getJsonRequest(route('users.create'))
             ->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a user")]);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Payments;
+namespace Tests\Unit\Payments;
 
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
@@ -45,6 +45,8 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     {
         parent::setUp();
         Carbon::setTestNow('2024-01-15 12:00:00');
+        // All requests in this test expect JSON — controllers check expectsJson() to decide response format
+        $this->defaultHeaders['Accept'] = 'application/json';
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         \App\Models\Setting::factory()->create(['vat' => 0]);
 
@@ -70,21 +72,6 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     // ─── PaymentService unit-ish ─────────────────────────────────────────────
 
     #[Test]
-    public function it_uses_null_billing_adapter_when_no_integration_is_configured()
-    {
-        /* Arrange */
-        \App\Models\Integration::whereApiType('billing')->delete();
-        $registry = app(BillingIntegrationRegistry::class);
-        $registry->reset();
-
-        /* Act */
-        $driver = $registry->driver();
-
-        /* Assert */
-        $this->assertInstanceOf(NullBillingAdapter::class, $driver);
-    }
-
-    #[Test]
     public function it_creates_a_payment_record()
     {
         /* Arrange */
@@ -106,6 +93,143 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'amount'         => 5000, // in cents
             'payment_source' => 'bank',
         ]);
+    }
+
+    #[Test]
+    public function it_returns_201_json_when_payment_is_added()
+    {
+        /* Act */
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
+            'amount'       => 50,
+            'payment_date' => '2024-01-15',
+            'source'       => 'bank',
+        ]);
+
+        /* Assert */
+        $response->assertStatus(201);
+        $response->assertJsonFragment(['message' => __('Payment successfully added')]);
+        $this->assertDatabaseCount('payments', 1);
+    }
+
+    #[Test]
+    public function it_throws_when_adding_payment_to_an_unsent_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => null]);
+
+        /* Act & Assert */
+        $this->expectException(RuntimeException::class);
+        $this->paymentService->addPayment($invoice, 50.00, '2024-01-15', 'bank');
+    }
+
+    #[Test]
+    public function it_returns_422_when_payment_is_added_to_unsent_invoice()
+    {
+        /* Arrange */
+        $unsent = Invoice::factory()->create(['sent_at' => null]);
+
+        /* Act */
+        $response = $this->post(route('payment.add', $unsent->external_id), [
+            'amount'       => 50,
+            'payment_date' => '2024-01-15',
+            'source'       => 'bank',
+        ]);
+
+        /* Assert */
+        $response->assertStatus(422);
+        $this->assertDatabaseCount('payments', 0);
+    }
+
+    #[Test]
+    public function it_returns_403_when_adding_payment_without_permission()
+    {
+        /* Arrange */
+        $noPerms = \App\Models\User::factory()->create();
+        $this->actingAs($noPerms);
+
+        /* Act */
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
+            'amount'       => 50,
+            'payment_date' => '2024-01-15',
+            'source'       => 'bank',
+        ]);
+
+        /* Assert */
+        $response->assertStatus(403);
+        $this->assertDatabaseCount('payments', 0);
+    }
+
+    #[Test]
+    public function it_deletes_payment_when_no_billing_adapter_is_configured()
+    {
+        /* Arrange */
+        \App\Models\Integration::whereApiType('billing')->delete();
+        app(BillingIntegrationRegistry::class)->reset();
+
+        $payment = Payment::factory()->create([
+            'invoice_id'     => $this->invoice->id,
+            'amount'         => 1000,
+            'payment_source' => 'cash',
+        ]);
+
+        /* Act – should not throw */
+        $result = $this->paymentService->deletePayment($payment);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
+    }
+
+    #[Test]
+    public function it_soft_deletes_the_payment_record()
+    {
+        /* Arrange */
+        $payment = Payment::factory()->create([
+            'invoice_id'     => $this->invoice->id,
+            'amount'         => 1000,
+            'payment_source' => 'bank',
+        ]);
+
+        /* Act */
+        $result = $this->paymentService->deletePayment($payment);
+
+        /* Assert – soft delete, not hard delete (assertSoftDeleted confirms record exists with non-null deleted_at) */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
+    }
+
+    #[Test]
+    public function it_returns_200_json_when_payment_is_deleted()
+    {
+        /* Arrange */
+        $payment = Payment::factory()->create([
+            'invoice_id'     => $this->invoice->id,
+            'amount'         => 1000,
+            'payment_source' => 'bank',
+        ]);
+
+        /* Act */
+        $response = $this->delete(route('payment.destroy', $payment->external_id));
+
+        /* Assert */
+        $response->assertStatus(200);
+        $response->assertJsonFragment(['message' => __('Payment successfully deleted')]);
+        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
+    }
+
+    #[Test]
+    public function it_uses_null_billing_adapter_when_no_integration_is_configured()
+    {
+        /* Arrange */
+        \App\Models\Integration::whereApiType('billing')->delete();
+        $registry = app(BillingIntegrationRegistry::class);
+        $registry->reset();
+
+        /* Act */
+        $driver = $registry->driver();
+
+        /* Assert */
+        $this->assertInstanceOf(NullBillingAdapter::class, $driver);
     }
 
     #[Test]
@@ -145,17 +269,6 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_throws_when_adding_payment_to_an_unsent_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => null]);
-
-        /* Act & Assert */
-        $this->expectException(RuntimeException::class);
-        $this->paymentService->addPayment($invoice, 50.00, '2024-01-15', 'bank');
-    }
-
-    #[Test]
     public function it_throws_when_the_payment_source_is_invalid()
     {
         /* Act & Assert */
@@ -169,85 +282,10 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_soft_deletes_the_payment_record()
-    {
-        /* Arrange */
-        $payment = Payment::factory()->create([
-            'invoice_id'     => $this->invoice->id,
-            'amount'         => 1000,
-            'payment_source' => 'bank',
-        ]);
-
-        /* Act */
-        $result = $this->paymentService->deletePayment($payment);
-
-        /* Assert – soft delete, not hard delete (assertSoftDeleted confirms record exists with non-null deleted_at) */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
-    }
-
-    #[Test]
-    public function it_deletes_payment_when_no_billing_adapter_is_configured()
-    {
-        /* Arrange */
-        \App\Models\Integration::whereApiType('billing')->delete();
-        app(BillingIntegrationRegistry::class)->reset();
-
-        $payment = Payment::factory()->create([
-            'invoice_id'     => $this->invoice->id,
-            'amount'         => 1000,
-            'payment_source' => 'cash',
-        ]);
-
-        /* Act – should not throw */
-        $result = $this->paymentService->deletePayment($payment);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
-    }
-
-    // ─── Controller HTTP layer ───────────────────────────────────────────────
-
-    #[Test]
-    public function it_returns_201_json_when_payment_is_added()
-    {
-        /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount'       => 50,
-            'payment_date' => '2024-01-15',
-            'source'       => 'bank',
-        ]);
-
-        /* Assert */
-        $response->assertStatus(201);
-        $response->assertJsonFragment(['message' => __('Payment successfully added')]);
-        $this->assertDatabaseCount('payments', 1);
-    }
-
-    #[Test]
-    public function it_returns_422_when_payment_is_added_to_unsent_invoice()
-    {
-        /* Arrange */
-        $unsent = Invoice::factory()->create(['sent_at' => null]);
-
-        /* Act */
-        $response = $this->json('POST', route('payment.add', $unsent->external_id), [
-            'amount'       => 50,
-            'payment_date' => '2024-01-15',
-            'source'       => 'bank',
-        ]);
-
-        /* Assert */
-        $response->assertStatus(422);
-        $this->assertDatabaseCount('payments', 0);
-    }
-
-    #[Test]
     public function it_returns_422_when_payment_amount_is_zero()
     {
         /* Act – PaymentRequest has not_in:0 rule */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => 0,
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -263,7 +301,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_422_when_payment_date_is_missing()
     {
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount' => 50,
             'source' => 'bank',
             // payment_date intentionally missing
@@ -279,7 +317,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_returns_422_when_payment_source_is_invalid()
     {
         /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
             'payment_date' => '2024-01-15',
             'source'       => 'invalid_source',
@@ -295,7 +333,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     public function it_accepts_comma_decimal_notation_for_payment_amount()
     {
         /* Act – prepareForValidation normalises "50,00" to "50.00" */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
+        $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => '50,00',
             'payment_date' => '2024-01-15',
             'source'       => 'bank',
@@ -307,25 +345,6 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'invoice_id' => $this->invoice->id,
             'amount'     => 5000, // stored in cents
         ]);
-    }
-
-    #[Test]
-    public function it_returns_200_json_when_payment_is_deleted()
-    {
-        /* Arrange */
-        $payment = Payment::factory()->create([
-            'invoice_id'     => $this->invoice->id,
-            'amount'         => 1000,
-            'payment_source' => 'bank',
-        ]);
-
-        /* Act */
-        $response = $this->json('DELETE', route('payment.destroy', $payment->external_id));
-
-        /* Assert */
-        $response->assertStatus(200);
-        $response->assertJsonFragment(['message' => __('Payment successfully deleted')]);
-        $this->assertSoftDeleted('payments', ['id' => $payment->id]);
     }
 
     #[Test]
@@ -341,29 +360,10 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         $this->actingAs($noPerms);
 
         /* Act */
-        $response = $this->json('DELETE', route('payment.destroy', $payment->external_id));
+        $response = $this->delete(route('payment.destroy', $payment->external_id));
 
         /* Assert – 403 before any infrastructure code runs; record still exists */
         $response->assertStatus(403);
         $this->assertDatabaseHas('payments', ['id' => $payment->id, 'deleted_at' => null]);
-    }
-
-    #[Test]
-    public function it_returns_403_when_adding_payment_without_permission()
-    {
-        /* Arrange */
-        $noPerms = \App\Models\User::factory()->create();
-        $this->actingAs($noPerms);
-
-        /* Act */
-        $response = $this->json('POST', route('payment.add', $this->invoice->external_id), [
-            'amount'       => 50,
-            'payment_date' => '2024-01-15',
-            'source'       => 'bank',
-        ]);
-
-        /* Assert */
-        $response->assertStatus(403);
-        $this->assertDatabaseCount('payments', 0);
     }
 }

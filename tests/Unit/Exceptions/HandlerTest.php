@@ -19,18 +19,6 @@ class HandlerTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_handler_class_extends_laravel_exception_handler()
-    {
-        /* Arrange */
-
-        /* Act */
-        $handler = app(Handler::class);
-
-        /* Assert */
-        $this->assertInstanceOf(ExceptionHandler::class, $handler);
-    }
-
-    #[Test]
     public function it_handler_dont_report_list_contains_expected_exceptions()
     {
         /* Arrange */
@@ -51,13 +39,25 @@ class HandlerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_handler_class_extends_laravel_exception_handler()
+    {
+        /* Arrange */
+
+        /* Act */
+        $handler = app(Handler::class);
+
+        /* Assert */
+        $this->assertInstanceOf(ExceptionHandler::class, $handler);
+    }
+
+    #[Test]
     public function it_returns_json_for_unauthenticated_json_request()
     {
         /* Arrange */
 
         /* Act */
         $response = $this->withHeaders(['Accept' => 'application/json'])
-            ->getJson('/api/users');
+            ->get('/api/users');
 
         /* Assert */
         $response->assertStatus(401);

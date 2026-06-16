@@ -2,14 +2,18 @@
 
 namespace Tests\Feature\Departments;
 
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\DepartmentsController;
 use App\Models\Department;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 
-class DepartmentsControllerTest extends AbstractTestCase
+#[CoversClass(DepartmentsController::class)]
+class DepartmentsTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
@@ -26,11 +30,11 @@ class DepartmentsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_can_create_department()
+    public function it_can_create_department(): void
     {
         /* Arrange */
         /* Act */
-        $response = $this->json('POST', route('departments.store'), [
+        $response = $this->post(route('departments.store'), [
             'name'        => 'Test Department',
             'description' => 'This is a test department',
         ]);
@@ -41,21 +45,21 @@ class DepartmentsControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_can_delete_department()
+    public function it_can_delete_department(): void
     {
         /* Arrange */
         $department = Department::factory()->create();
 
         /* Act */
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
-        $this->json('DELETE', route('departments.destroy', $department->external_id));
+        $this->delete(route('departments.destroy', $department->external_id));
 
         /* Assert */
         $this->assertNull(Department::where('external_id', $department->external_id)->first());
     }
 
     #[Test]
-    public function it_cant_delete_department_if_user_is_associated()
+    public function it_cannot_delete_department_if_user_is_associated(): void
     {
         /* Arrange */
         $department = Department::factory()->create();
@@ -63,7 +67,7 @@ class DepartmentsControllerTest extends AbstractTestCase
 
         /* Act */
         $this->assertNotNull(Department::where('external_id', $department->external_id)->first());
-        $this->json('DELETE', route('departments.destroy', $department->external_id));
+        $this->delete(route('departments.destroy', $department->external_id));
 
         /* Assert */
         $this->assertNotNull(Session::get('flash_message_warning'));

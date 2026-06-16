@@ -9,12 +9,14 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 abstract class AbstractTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    protected static $schemaIsUpToDate = false; // <-- add this (for this process)
+    /** @deprecated — kept for BC, but no longer used for schema checks */
+    protected static $schemaIsUpToDate = false;
 
     protected $user;
 
@@ -25,22 +27,30 @@ abstract class AbstractTestCase extends BaseTestCase
         // Reset Faker's unique state to avoid collisions with seeded data
         fake()->unique(true);
 
-        if ( ! static::$schemaIsUpToDate) {
+        // Skip migrate:fresh when RefreshDatabase is used — that trait handles migrations itself
+        // and calling migrate:fresh inside a transaction (which RefreshDatabase starts) fails on SQLite.
+        $usesRefreshDatabase = in_array(
+            \Illuminate\Foundation\Testing\RefreshDatabase::class,
+            array_keys((function () { return class_uses_recursive($this); })->call($this))
+        );
+
+        if ( ! $usesRefreshDatabase && ! Schema::hasTable('users')) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
-            static::$schemaIsUpToDate = true;
         }
 
-        // Use a guaranteed unique email for the test user
-        $uniqueEmail = 'testuser_' . uniqid('', true) . '@example.org';
-        $this->user  = User::factory()->create([
-            'email' => $uniqueEmail,
-            'name'  => 'Admin',
-        ]);
+        // Only create user and run auth setup if the DB is available
+        if (Schema::hasTable('users')) {
+            $uniqueEmail = 'user_' . uniqid() . '@test.com';
+            $this->user  = User::factory()->create([
+                'email' => $uniqueEmail,
+                'name'  => 'Admin',
+            ]);
 
-        // Standardize: Every user starts as an owner to minimize boilerplate 403s
-        $this->asOwner();
+            // Standardize: Every user starts as an owner to minimize boilerplate 403s
+            $this->asOwner();
 
-        $this->actingAs($this->user);
+            $this->actingAs($this->user);
+        }
     }
 
     /**
@@ -135,5 +145,10 @@ abstract class AbstractTestCase extends BaseTestCase
         if ($scheme = parse_url($url, PHP_URL_SCHEME)) {
             app('url')->forceScheme($scheme);
         }
+    }
+
+    protected function getJsonRequest(string $url)
+    {
+        return $this->get($url, ['Accept' => 'application/json']);
     }
 }

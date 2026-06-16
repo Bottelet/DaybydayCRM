@@ -28,21 +28,6 @@ class ClientActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_constructor_stores_client_and_action()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $action = 'created';
-
-        /* Act */
-        $event = new ClientAction($client, $action);
-
-        /* Assert */
-        $this->assertEquals($client->id, $event->getClient()->id);
-        $this->assertEquals($action, $event->getAction());
-    }
-
-    #[Test]
     public function it_gets_client_returns_client_model()
     {
         /* Arrange */
@@ -66,6 +51,21 @@ class ClientActionTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('deleted', $event->getAction());
+    }
+
+    #[Test]
+    public function it_constructor_stores_client_and_action()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $action = 'created';
+
+        /* Act */
+        $event = new ClientAction($client, $action);
+
+        /* Assert */
+        $this->assertEquals($client->id, $event->getClient()->id);
+        $this->assertEquals($action, $event->getAction());
     }
 
     #[Test]

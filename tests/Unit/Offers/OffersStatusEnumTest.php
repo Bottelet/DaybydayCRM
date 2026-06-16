@@ -23,15 +23,27 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_getting_source_returns_instance_of_offer_status()
+    public function it_gets_display_value_from_status()
     {
         /* Arrange */
 
         /* Act */
-        $result = OfferStatus::fromStatus($this->offerStatus);
+        $displayValue = OfferStatus::fromStatus($this->offerStatus)->getDisplayValue();
 
         /* Assert */
-        $this->assertInstanceOf(OfferStatus::class, $result);
+        $this->assertEquals('Won', $displayValue);
+    }
+
+    #[Test]
+    public function it_gets_status_from_display_value()
+    {
+        /* Arrange */
+
+        /* Act */
+        $status = OfferStatus::fromDisplayValue('Won');
+
+        /* Assert */
+        $this->assertEquals(OfferStatus::won()->getStatus(), $status);
     }
 
     #[Test]
@@ -49,15 +61,25 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_display_value_from_status()
+    public function it_throws_exception_if_display_value_is_not_known()
+    {
+        /* Arrange */
+
+        /* Act & Assert */
+        $this->expectException(Exception::class);
+        OfferStatus::fromDisplayValue('None existing display value');
+    }
+
+    #[Test]
+    public function it_getting_source_returns_instance_of_offer_status()
     {
         /* Arrange */
 
         /* Act */
-        $displayValue = OfferStatus::fromStatus($this->offerStatus)->getDisplayValue();
+        $result = OfferStatus::fromStatus($this->offerStatus);
 
         /* Assert */
-        $this->assertEquals('Won', $displayValue);
+        $this->assertInstanceOf(OfferStatus::class, $result);
     }
 
     #[Test]
@@ -73,18 +95,6 @@ class OffersStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_status_from_display_value()
-    {
-        /* Arrange */
-
-        /* Act */
-        $status = OfferStatus::fromDisplayValue('Won');
-
-        /* Assert */
-        $this->assertEquals(OfferStatus::won()->getStatus(), $status);
-    }
-
-    #[Test]
     public function it_throws_exception_if_source_is_not_known()
     {
         /* Arrange */
@@ -92,15 +102,5 @@ class OffersStatusEnumTest extends AbstractTestCase
         /* Act & Assert */
         $this->expectException(Exception::class);
         OfferStatus::fromStatus('None existing source');
-    }
-
-    #[Test]
-    public function it_throws_exception_if_display_value_is_not_known()
-    {
-        /* Arrange */
-
-        /* Act & Assert */
-        $this->expectException(Exception::class);
-        OfferStatus::fromDisplayValue('None existing display value');
     }
 }

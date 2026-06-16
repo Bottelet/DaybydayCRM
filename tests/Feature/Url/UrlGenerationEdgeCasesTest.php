@@ -44,6 +44,19 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_url_helper_works_with_ipv4_address()
+    {
+        /* Arrange */
+        $this->setAppUrl('http://192.168.1.1/crm');
+
+        /* Act */
+        $url = url('/tasks');
+
+        /* Assert */
+        $this->assertEquals('http://192.168.1.1/crm/tasks', $url);
+    }
+
+    #[Test]
     public function it_url_helper_handles_multiple_subdirectory_levels()
     {
         /* Arrange */
@@ -94,19 +107,6 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('http://localhost/daybydaycrm/public/tasks', $url);
-    }
-
-    #[Test]
-    public function it_url_helper_works_with_ipv4_address()
-    {
-        /* Arrange */
-        $this->setAppUrl('http://192.168.1.1/crm');
-
-        /* Act */
-        $url = url('/tasks');
-
-        /* Assert */
-        $this->assertEquals('http://192.168.1.1/crm/tasks', $url);
     }
 
     #[Test]

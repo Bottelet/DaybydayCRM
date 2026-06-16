@@ -19,6 +19,43 @@ class ProjectServiceTest extends AbstractTestCase
     use RefreshDatabase;
 
     #[Test]
+    public function it_filters_out_tasks_without_assignees_from_show_data(): void
+    {
+        $service  = $this->app->make(ProjectService::class);
+        $assignee = User::factory()->create();
+        $client   = Client::factory()->create();
+        $project  = Project::factory()->create([
+            'client_id'        => $client->id,
+            'user_assigned_id' => $assignee->id,
+        ]);
+        $taskUser = User::factory()->create();
+
+        Task::factory()->create([
+            'project_id'       => $project->id,
+            'client_id'        => $project->client_id,
+            'user_assigned_id' => $taskUser->id,
+            'user_created_id'  => $assignee->id,
+        ]);
+
+        $removedAssignee = User::factory()->create();
+        Task::factory()->create([
+            'project_id'       => $project->id,
+            'client_id'        => $project->client_id,
+            'user_assigned_id' => $removedAssignee->id,
+            'user_created_id'  => $assignee->id,
+        ]);
+        // Simulate a task pointing to a removed assignee (dangling FK on user relation lookup).
+        $removedAssignee->delete();
+
+        $prepared = $service->prepareShowCollaboratorsAndTasks($project);
+
+        $this->assertCount(1, $prepared['tasks'], 'Only tasks with an assigned user should be kept.');
+        $this->assertNotNull($prepared['tasks']->first()->user, 'The remaining task should have a loaded assignee.');
+        $this->assertFalse($prepared['collaborators']->pluck('id')->contains($removedAssignee->id), 'Removed assignees should not be included as collaborators.');
+        $this->assertCount(2, $prepared['collaborators'], 'Collaborators should include project assignee and task assignee.');
+    }
+
+    #[Test]
     public function it_creates_project_with_valid_data(): void
     {
         $service = $this->app->make(ProjectService::class);
@@ -42,6 +79,17 @@ class ProjectServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_updates_project_deadline(): void
+    {
+        $service = $this->app->make(ProjectService::class);
+        $project = Project::factory()->create();
+
+        $service->updateDeadline($project, '2026-03-01');
+
+        $this->assertSame('2026-03-01', $project->fresh()->deadline->format('Y-m-d'));
+    }
+
+    #[Test]
     public function it_assigns_user_to_project(): void
     {
         $service = $this->app->make(ProjectService::class);
@@ -51,17 +99,6 @@ class ProjectServiceTest extends AbstractTestCase
         $service->assign($project, $user->id);
 
         $this->assertSame($user->id, $project->fresh()->user_assigned_id);
-    }
-
-    #[Test]
-    public function it_updates_project_deadline(): void
-    {
-        $service = $this->app->make(ProjectService::class);
-        $project = Project::factory()->create();
-
-        $service->updateDeadline($project, '2026-03-01');
-
-        $this->assertSame('2026-03-01', $project->fresh()->deadline->format('Y-m-d'));
     }
 
     #[Test]
@@ -100,43 +137,6 @@ class ProjectServiceTest extends AbstractTestCase
         ], $user->id);
 
         $this->assertNull($result);
-    }
-
-    #[Test]
-    public function it_filters_out_tasks_without_assignees_from_show_data(): void
-    {
-        $service  = $this->app->make(ProjectService::class);
-        $assignee = User::factory()->create();
-        $client   = Client::factory()->create();
-        $project  = Project::factory()->create([
-            'client_id'        => $client->id,
-            'user_assigned_id' => $assignee->id,
-        ]);
-        $taskUser = User::factory()->create();
-
-        Task::factory()->create([
-            'project_id'       => $project->id,
-            'client_id'        => $project->client_id,
-            'user_assigned_id' => $taskUser->id,
-            'user_created_id'  => $assignee->id,
-        ]);
-
-        $removedAssignee = User::factory()->create();
-        Task::factory()->create([
-            'project_id'       => $project->id,
-            'client_id'        => $project->client_id,
-            'user_assigned_id' => $removedAssignee->id,
-            'user_created_id'  => $assignee->id,
-        ]);
-        // Simulate a task pointing to a removed assignee (dangling FK on user relation lookup).
-        $removedAssignee->delete();
-
-        $prepared = $service->prepareShowCollaboratorsAndTasks($project);
-
-        $this->assertCount(1, $prepared['tasks'], 'Only tasks with an assigned user should be kept.');
-        $this->assertNotNull($prepared['tasks']->first()->user, 'The remaining task should have a loaded assignee.');
-        $this->assertFalse($prepared['collaborators']->pluck('id')->contains($removedAssignee->id), 'Removed assignees should not be included as collaborators.');
-        $this->assertCount(2, $prepared['collaborators'], 'Collaborators should include project assignee and task assignee.');
     }
 
     #[Test]

@@ -72,25 +72,6 @@ class ClientCreatePermissionCacheTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_allows_user_to_check_permissions_across_multiple_requests()
-    {
-        $user = $this->user;
-
-        // First request - check permission
-        $this->assertTrue($user->can(PermissionName::CLIENT_CREATE->value));
-
-        // Create a fresh user instance (simulate new request)
-        $freshUser = User::find($user->id);
-
-        // Should still work with cached permissions
-        $this->assertTrue($freshUser->can(PermissionName::CLIENT_CREATE->value));
-
-        // And once more
-        $anotherFreshUser = User::find($user->id);
-        $this->assertTrue($anotherFreshUser->can(PermissionName::CLIENT_CREATE->value));
-    }
-
-    #[Test]
     public function it_allows_task_create_route_to_work_consistently()
     {
         // Same test for tasks to ensure the bug fix works across all create routes
@@ -130,5 +111,24 @@ class ClientCreatePermissionCacheTest extends AbstractTestCase
 
         $response3 = $this->get(route('users.create'));
         $response3->assertStatus(200);
+    }
+
+    #[Test]
+    public function it_allows_user_to_check_permissions_across_multiple_requests()
+    {
+        $user = $this->user;
+
+        // First request - check permission
+        $this->assertTrue($user->can(PermissionName::CLIENT_CREATE->value));
+
+        // Create a fresh user instance (simulate new request)
+        $freshUser = User::find($user->id);
+
+        // Should still work with cached permissions
+        $this->assertTrue($freshUser->can(PermissionName::CLIENT_CREATE->value));
+
+        // And once more
+        $anotherFreshUser = User::find($user->id);
+        $this->assertTrue($anotherFreshUser->can(PermissionName::CLIENT_CREATE->value));
     }
 }

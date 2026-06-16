@@ -26,6 +26,19 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_from_code_returns_correct_display_value()
+    {
+        /* Arrange */
+        $countryCode = 'DK';
+
+        /* Act */
+        $country = Country::fromCode($countryCode);
+
+        /* Assert */
+        $this->assertEquals('Denmark', $country->getDisplayValue());
+    }
+
+    #[Test]
     public function it_from_code_returns_correct_country_instance()
     {
         /* Arrange */
@@ -37,19 +50,6 @@ class CountryTest extends AbstractTestCase
         /* Assert */
         $this->assertInstanceOf(Country::class, $country);
         $this->assertEquals('DK', $country->getCode());
-    }
-
-    #[Test]
-    public function it_from_code_returns_correct_display_value()
-    {
-        /* Arrange */
-        $countryCode = 'DK';
-
-        /* Act */
-        $country = Country::fromCode($countryCode);
-
-        /* Assert */
-        $this->assertEquals('Denmark', $country->getDisplayValue());
     }
 
     #[Test]

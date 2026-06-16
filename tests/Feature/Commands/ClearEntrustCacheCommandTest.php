@@ -13,6 +13,30 @@ use Tests\AbstractTestCase;
 class ClearEntrustCacheCommandTest extends AbstractTestCase
 {
     #[Test]
+    public function it_command_displays_success_message()
+    {
+        /* Arrange */
+
+        /* Act */
+        $this->artisan('entrust:cache-clear')
+            ->assertExitCode(0);
+
+        /* Assert - command doesn't error */
+    }
+
+    #[Test]
+    public function it_command_with_verbose_option_shows_details()
+    {
+        /* Arrange */
+
+        /* Act */
+        $this->artisan('entrust:cache-clear', ['--verbose' => true])
+            ->assertExitCode(0);
+
+        /* Assert - command doesn't error */
+    }
+
+    #[Test]
     public function it_command_executes_successfully()
     {
         /* Arrange */
@@ -76,30 +100,6 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
 
         /* Assert - Entrust tagged cache is cleared */
         $this->assertNull(Cache::tags($tag)->get('test_key_entrust'));
-    }
-
-    #[Test]
-    public function it_command_displays_success_message()
-    {
-        /* Arrange */
-
-        /* Act */
-        $this->artisan('entrust:cache-clear')
-            ->assertExitCode(0);
-
-        /* Assert - command doesn't error */
-    }
-
-    #[Test]
-    public function it_command_with_verbose_option_shows_details()
-    {
-        /* Arrange */
-
-        /* Act */
-        $this->artisan('entrust:cache-clear', ['--verbose' => true])
-            ->assertExitCode(0);
-
-        /* Assert - command doesn't error */
     }
 
     #[Test]

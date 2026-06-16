@@ -35,15 +35,28 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_getting_status_returns_instance_of_invoice_status()
+    public function it_gets_display_value_from_status()
     {
         /* Arrange */
 
         /* Act */
-        $result = InvoiceStatus::fromStatus($this->paidStatus);
+        $displayValue = InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue();
 
         /* Assert */
-        $this->assertInstanceOf(InvoiceStatus::class, $result);
+        $this->assertEquals('Paid', $displayValue);
+    }
+
+    #[Test]
+    public function it_gets_status_from_display_value()
+    {
+        /* Arrange */
+        $displayValue = 'Partially paid';
+
+        /* Act */
+        $status = InvoiceStatus::fromDisplayValue($displayValue);
+
+        /* Assert */
+        $this->assertEquals(InvoiceStatus::partialPaid()->getStatus(), $status);
     }
 
     #[Test]
@@ -58,43 +71,6 @@ class InvoiceStatusEnumTest extends AbstractTestCase
         /* Assert */
         $this->assertTrue(property_exists($status, 'status'));
         $this->assertTrue(property_exists($status, 'displayValue'));
-    }
-
-    #[Test]
-    public function it_gets_display_value_from_status()
-    {
-        /* Arrange */
-
-        /* Act */
-        $displayValue = InvoiceStatus::fromStatus($this->paidStatus)->getDisplayValue();
-
-        /* Assert */
-        $this->assertEquals('Paid', $displayValue);
-    }
-
-    #[Test]
-    public function it_status_returns_correct_status_in_instance()
-    {
-        /* Arrange */
-
-        /* Act */
-        $status = InvoiceStatus::draft()->getStatus();
-
-        /* Assert */
-        $this->assertEquals('draft', $status);
-    }
-
-    #[Test]
-    public function it_gets_status_from_display_value()
-    {
-        /* Arrange */
-        $displayValue = 'Partially paid';
-
-        /* Act */
-        $status = InvoiceStatus::fromDisplayValue($displayValue);
-
-        /* Assert */
-        $this->assertEquals(InvoiceStatus::partialPaid()->getStatus(), $status);
     }
 
     #[Test]
@@ -117,6 +93,32 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_throws_exception_if_display_value_is_not_known()
+    {
+        /* Arrange */
+        $invalidDisplayValue = 'None existing display value';
+
+        /* Assert */
+        $this->expectException(Exception::class);
+
+        /* Act */
+        InvoiceStatus::fromDisplayValue($invalidDisplayValue);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_null_display_value()
+    {
+        /* Arrange */
+        $nullDisplayValue = null;
+
+        /* Assert */
+        $this->expectException(Exception::class);
+
+        /* Act */
+        InvoiceStatus::fromDisplayValue($nullDisplayValue);
+    }
+
+    #[Test]
     public function it_gets_all_valid_statuses()
     {
         /* Arrange */
@@ -136,6 +138,30 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_getting_status_returns_instance_of_invoice_status()
+    {
+        /* Arrange */
+
+        /* Act */
+        $result = InvoiceStatus::fromStatus($this->paidStatus);
+
+        /* Assert */
+        $this->assertInstanceOf(InvoiceStatus::class, $result);
+    }
+
+    #[Test]
+    public function it_status_returns_correct_status_in_instance()
+    {
+        /* Arrange */
+
+        /* Act */
+        $status = InvoiceStatus::draft()->getStatus();
+
+        /* Assert */
+        $this->assertEquals('draft', $status);
+    }
+
+    #[Test]
     public function it_throws_exception_if_status_is_not_known()
     {
         /* Arrange */
@@ -149,19 +175,6 @@ class InvoiceStatusEnumTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_throws_exception_if_display_value_is_not_known()
-    {
-        /* Arrange */
-        $invalidDisplayValue = 'None existing display value';
-
-        /* Assert */
-        $this->expectException(Exception::class);
-
-        /* Act */
-        InvoiceStatus::fromDisplayValue($invalidDisplayValue);
-    }
-
-    #[Test]
     public function it_throws_exception_for_empty_status()
     {
         /* Arrange */
@@ -172,18 +185,5 @@ class InvoiceStatusEnumTest extends AbstractTestCase
 
         /* Act */
         InvoiceStatus::fromStatus($emptyStatus);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_null_display_value()
-    {
-        /* Arrange */
-        $nullDisplayValue = null;
-
-        /* Assert */
-        $this->expectException(Exception::class);
-
-        /* Act */
-        InvoiceStatus::fromDisplayValue($nullDisplayValue);
     }
 }

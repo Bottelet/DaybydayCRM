@@ -74,6 +74,19 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_creates_status_saves_to_the_invoice_model()
+    {
+        /* Arrange */
+        $this->assertNotEquals('partial_paid', $this->invoice->status);
+
+        /* Act */
+        app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->createStatus();
+
+        /* Assert */
+        $this->assertEquals('partial_paid', $this->invoice->refresh()->status);
+    }
+
+    #[Test]
     #[Group('flaky')]
     public function it_correctly_identifies_paid_status()
     {
@@ -202,19 +215,6 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
 
         /* Act & Assert */
         $this->assertEquals('overpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
-    }
-
-    #[Test]
-    public function it_creates_status_saves_to_the_invoice_model()
-    {
-        /* Arrange */
-        $this->assertNotEquals('partial_paid', $this->invoice->status);
-
-        /* Act */
-        app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->createStatus();
-
-        /* Assert */
-        $this->assertEquals('partial_paid', $this->invoice->refresh()->status);
     }
 
     #[Test]

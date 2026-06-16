@@ -62,6 +62,39 @@ class PaymentServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_deletes_payment()
+    {
+        /* Arrange */
+        $payment   = Payment::factory()->create();
+        $paymentId = $payment->id;
+
+        /* Act */
+        $result = $this->service->deletePayment($payment);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('payments', ['id' => $paymentId]);
+    }
+
+    #[Test]
+    public function it_gets_payments_for_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create();
+        Payment::factory()->count(3)->create(['invoice_id' => $invoice->id]);
+        Payment::factory()->create(); // Different invoice
+
+        /* Act */
+        $payments = $this->service->getPaymentsForInvoice($invoice);
+
+        /* Assert */
+        $this->assertCount(3, $payments);
+        foreach ($payments as $payment) {
+            $this->assertEquals($invoice->id, $payment->invoice_id);
+        }
+    }
+
+    #[Test]
     public function it_converts_amount_to_cents()
     {
         /* Arrange */
@@ -113,21 +146,6 @@ class PaymentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_payment()
-    {
-        /* Arrange */
-        $payment   = Payment::factory()->create();
-        $paymentId = $payment->id;
-
-        /* Act */
-        $result = $this->service->deletePayment($payment);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('payments', ['id' => $paymentId]);
-    }
-
-    #[Test]
     public function it_finds_payment_by_external_id()
     {
         /* Arrange */
@@ -149,24 +167,6 @@ class PaymentServiceTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNull($found);
-    }
-
-    #[Test]
-    public function it_gets_payments_for_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create();
-        Payment::factory()->count(3)->create(['invoice_id' => $invoice->id]);
-        Payment::factory()->create(); // Different invoice
-
-        /* Act */
-        $payments = $this->service->getPaymentsForInvoice($invoice);
-
-        /* Assert */
-        $this->assertCount(3, $payments);
-        foreach ($payments as $payment) {
-            $this->assertEquals($invoice->id, $payment->invoice_id);
-        }
     }
 
     #[Test]

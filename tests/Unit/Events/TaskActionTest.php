@@ -28,21 +28,6 @@ class TaskActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_constructor_stores_task_and_action()
-    {
-        /* Arrange */
-        $task   = Task::factory()->create();
-        $action = 'created';
-
-        /* Act */
-        $event = new TaskAction($task, $action);
-
-        /* Assert */
-        $this->assertEquals($task->id, $event->getTask()->id);
-        $this->assertEquals($action, $event->getAction());
-    }
-
-    #[Test]
     public function it_gets_task_returns_task_model()
     {
         /* Arrange */
@@ -66,6 +51,21 @@ class TaskActionTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('deleted', $event->getAction());
+    }
+
+    #[Test]
+    public function it_constructor_stores_task_and_action()
+    {
+        /* Arrange */
+        $task   = Task::factory()->create();
+        $action = 'created';
+
+        /* Act */
+        $event = new TaskAction($task, $action);
+
+        /* Assert */
+        $this->assertEquals($task->id, $event->getTask()->id);
+        $this->assertEquals($action, $event->getAction());
     }
 
     #[Test]

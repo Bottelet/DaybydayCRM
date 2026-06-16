@@ -83,6 +83,66 @@ class OfferServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_adds_invoice_lines_with_default_quantity()
+    {
+        /* Arrange */
+        $lead  = Lead::factory()->create();
+        $lines = [
+            [
+                'title'    => 'Service',
+                'type'     => 'service',
+                'price'    => 100.00,
+                'quantity' => 0, // Should default to 1
+            ],
+        ];
+
+        /* Act */
+        $offer = $this->service->createOfferWithLines($lead, $lines);
+
+        /* Assert */
+        $this->assertEquals(1, $offer->invoiceLines->first()->quantity);
+    }
+
+    #[Test]
+    public function it_updates_invoice_lines()
+    {
+        /* Arrange */
+        $offer = Offer::factory()->create();
+        InvoiceLine::factory()->count(2)->create(['offer_id' => $offer->id]);
+
+        $newLines = [
+            [
+                'title'    => 'Updated',
+                'type'     => 'service',
+                'price'    => 500.00,
+                'quantity' => 1,
+            ],
+        ];
+
+        /* Act */
+        $this->service->updateInvoiceLinesFor($offer, $newLines);
+
+        /* Assert */
+        $this->assertCount(1, $offer->fresh()->invoiceLines);
+        $this->assertEquals('Updated', $offer->fresh()->invoiceLines->first()->title);
+    }
+
+    #[Test]
+    public function it_deletes_offer()
+    {
+        /* Arrange */
+        $offer   = Offer::factory()->create();
+        $offerId = $offer->id;
+
+        /* Act */
+        $result = $this->service->deleteOffer($offer);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('offers', ['id' => $offerId]);
+    }
+
+    #[Test]
     public function it_converts_price_to_cents()
     {
         /* Arrange */
@@ -119,30 +179,6 @@ class OfferServiceTest extends AbstractTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing required invoice line fields');
         $this->service->createOfferWithLines($lead, $lines);
-    }
-
-    #[Test]
-    public function it_updates_invoice_lines()
-    {
-        /* Arrange */
-        $offer = Offer::factory()->create();
-        InvoiceLine::factory()->count(2)->create(['offer_id' => $offer->id]);
-
-        $newLines = [
-            [
-                'title'    => 'Updated',
-                'type'     => 'service',
-                'price'    => 500.00,
-                'quantity' => 1,
-            ],
-        ];
-
-        /* Act */
-        $this->service->updateInvoiceLinesFor($offer, $newLines);
-
-        /* Assert */
-        $this->assertCount(1, $offer->fresh()->invoiceLines);
-        $this->assertEquals('Updated', $offer->fresh()->invoiceLines->first()->title);
     }
 
     #[Test]
@@ -198,41 +234,5 @@ class OfferServiceTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNull($found);
-    }
-
-    #[Test]
-    public function it_deletes_offer()
-    {
-        /* Arrange */
-        $offer   = Offer::factory()->create();
-        $offerId = $offer->id;
-
-        /* Act */
-        $result = $this->service->deleteOffer($offer);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('offers', ['id' => $offerId]);
-    }
-
-    #[Test]
-    public function it_adds_invoice_lines_with_default_quantity()
-    {
-        /* Arrange */
-        $lead  = Lead::factory()->create();
-        $lines = [
-            [
-                'title'    => 'Service',
-                'type'     => 'service',
-                'price'    => 100.00,
-                'quantity' => 0, // Should default to 1
-            ],
-        ];
-
-        /* Act */
-        $offer = $this->service->createOfferWithLines($lead, $lines);
-
-        /* Assert */
-        $this->assertEquals(1, $offer->invoiceLines->first()->quantity);
     }
 }

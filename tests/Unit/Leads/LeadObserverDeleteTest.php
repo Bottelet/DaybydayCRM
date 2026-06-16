@@ -34,41 +34,6 @@ class LeadObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_leads_soft_deletes()
-    {
-        /* Arrange */
-
-        /* Act */
-        $this->lead->delete();
-
-        /* Assert */
-        $this->assertSoftDeleted($this->lead);
-    }
-
-    #[Test]
-    public function it_deletes_lead_soft_deletes_relations()
-    {
-        /* Arrange */
-
-        /* Act */
-        $this->assertNotEmpty($this->lead->comments);
-        $this->assertNotEmpty($this->lead->activity);
-        $this->assertNotEmpty($this->lead->appointments);
-
-        $this->lead->delete();
-        $this->lead->refresh();
-
-        /* Assert */
-        $this->assertEmpty($this->lead->comments);
-        $this->assertEmpty($this->lead->activity);
-        $this->assertEmpty($this->lead->appointments);
-
-        $this->assertSoftDeleted($this->lead->comments()->withTrashed()->first());
-        $this->assertSoftDeleted($this->lead->activity()->withTrashed()->first());
-        $this->assertSoftDeleted($this->lead->appointments()->withTrashed()->first());
-    }
-
-    #[Test]
     public function it_force_delete_removes_lead_from_database()
     {
         /* Arrange */
@@ -106,6 +71,41 @@ class LeadObserverDeleteTest extends AbstractTestCase
         $this->assertDatabaseMissing('appointments', [
             'id' => $appointmentId,
         ]);
+    }
+
+    #[Test]
+    public function it_deletes_leads_soft_deletes()
+    {
+        /* Arrange */
+
+        /* Act */
+        $this->lead->delete();
+
+        /* Assert */
+        $this->assertSoftDeleted($this->lead);
+    }
+
+    #[Test]
+    public function it_deletes_lead_soft_deletes_relations()
+    {
+        /* Arrange */
+
+        /* Act */
+        $this->assertNotEmpty($this->lead->comments);
+        $this->assertNotEmpty($this->lead->activity);
+        $this->assertNotEmpty($this->lead->appointments);
+
+        $this->lead->delete();
+        $this->lead->refresh();
+
+        /* Assert */
+        $this->assertEmpty($this->lead->comments);
+        $this->assertEmpty($this->lead->activity);
+        $this->assertEmpty($this->lead->appointments);
+
+        $this->assertSoftDeleted($this->lead->comments()->withTrashed()->first());
+        $this->assertSoftDeleted($this->lead->activity()->withTrashed()->first());
+        $this->assertSoftDeleted($this->lead->appointments()->withTrashed()->first());
     }
 
     #[Test]

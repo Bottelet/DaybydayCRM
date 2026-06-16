@@ -2,12 +2,16 @@
 
 namespace Tests\Feature\Integrations;
 
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\IntegrationsController;
 use App\Models\Integration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 
-class IntegrationsControllerTest extends AbstractTestCase
+#[CoversClass(IntegrationsController::class)]
+class IntegrationsTest extends AbstractTestCase
 {
     use RefreshDatabase;
 

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Invoices;
 
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\InvoiceLinesController;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Invoice;
 use App\Models\InvoiceLine;
@@ -11,10 +13,12 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\AbstractTestCase;
 
-class InvoiceLinesControllerTest extends AbstractTestCase
+#[CoversClass(InvoiceLinesController::class)]
+class InvoiceLinesTest extends AbstractTestCase
 {
     use RefreshDatabase;
 
@@ -33,7 +37,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_happy_path()
+    public function it_happy_path(): void
     {
         /* Arrange */
         $permission = Permission::query()->firstOrCreate(
@@ -69,7 +73,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
         $this->assertNotNull(InvoiceLine::query()->where('external_id', $this->invoiceLine->external_id)->first());
 
         /* Act */
-        $r = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
+        $r = $this->delete(route('invoiceLine.destroy', $this->invoiceLine->external_id));
 
         /* Assert */
         $r->assertStatus(302);
@@ -77,7 +81,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_cant_delete_without_permission()
+    public function it_cannot_delete_without_permission(): void
     {
         /* Arrange */
         $user = User::factory()->create();
@@ -85,7 +89,7 @@ class InvoiceLinesControllerTest extends AbstractTestCase
         $this->assertNotNull(InvoiceLine::query()->where('external_id', $this->invoiceLine->external_id)->first());
 
         /* Act */
-        $response = $this->json('delete', route('invoiceLine.destroy', $this->invoiceLine->external_id));
+        $response = $this->delete(route('invoiceLine.destroy', $this->invoiceLine->external_id), [], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(403);
