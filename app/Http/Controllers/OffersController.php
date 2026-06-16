@@ -42,13 +42,14 @@ class OffersController extends Controller
                 return response('missing fields', 422);
             }
 
+            $product     = isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first() : null;
             $invoiceLine = InvoiceLine::make([
                 'title'      => $line['title'],
                 'type'       => $line['type'],
                 'quantity'   => $line['quantity'] ?: 1,
                 'comment'    => $line['comment'] ?? null,
                 'price'      => $line['price'] * 100,
-                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+                'product_id' => $product?->id,
             ]);
             $offer->invoiceLines()->save($invoiceLine);
         }

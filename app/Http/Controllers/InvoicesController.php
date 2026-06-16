@@ -21,7 +21,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Session;
 use Ramsey\Uuid\Uuid;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -34,7 +33,9 @@ class InvoicesController extends Controller
     public function __construct(
         private BillingIntegrationRegistry $billing,
         private InvoiceService $invoiceService,
-    ) {}
+    ) {
+        $this->middleware('permission:invoice-see', ['only' => ['index', 'show']]);
+    }
 
     /**
      * Display a listing of the resource.
@@ -53,12 +54,6 @@ class InvoicesController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        if ( ! auth()->user()->can('invoice-see')) {
-            session()->flash('flash_message_warning', __('You do not have permission to view this invoice'));
-
-            return redirect()->route('clients.index');
-        }
-
         $api = $this->billing->driver();
 
         $apiConnected    = ! ($api instanceof NullBillingAdapter);
@@ -92,7 +87,7 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDue($amountDue)
             ->withSource($invoice->source)
-            ->withCompanyName(Setting::first()->company);
+            ->withCompanyName(Setting::cached()->company);
     }
 
     /**
@@ -147,7 +142,7 @@ class InvoicesController extends Controller
         $invoice = $this->findByExternalId($external_id);
 
         if ( ! $invoice->canUpdateInvoice()) {
-            Session::flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
+            session()->flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
 
             return redirect()->back();
         }
@@ -175,10 +170,16 @@ class InvoicesController extends Controller
 
     public function newItems($external_id, Request $request)
     {
+        if ( ! auth()->user()->can('modify-invoice-lines')) {
+            return response()->json(['message' => __('You do not have permission to modify invoice lines')], 403);
+        }
+
         foreach ($request->all() as $invoiceLine) {
             $invoiceLine = new AddInvoiceLine($invoiceLine);
             $this->newItem($external_id, $invoiceLine);
         }
+
+        return response()->json(['message' => 'Invoice lines updated'], 200);
     }
 
     public function findByExternalId($external_id)

@@ -54,13 +54,21 @@ class LeadsController extends Controller
      */
     public function leadsJson()
     {
-        $leads = Lead::with(['user', 'client', 'status'])->select(
-            collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
-                ->map(function ($field) {
-                    return (new Lead())->qualifyColumn($field);
-                })
-                ->all()
-        );
+        $leads = Lead::with(['user', 'client', 'status'])
+            ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'leads.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'leads.user_assigned_id', '=', 'users.id')
+            ->select(
+                collect(['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id'])
+                    ->map(function ($field) {
+                        return (new Lead())->qualifyColumn($field);
+                    })
+                    ->all()
+            )
+            ->orderBy('leads.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('users.name', 'asc');
 
         return DataTables::of($leads)
             ->addColumn('titlelink', function ($lead) {
@@ -110,7 +118,7 @@ class LeadsController extends Controller
      */
     public function create($client_external_id = null)
     {
-        $client = Client::whereExternalId($client_external_id);
+        $client = Client::whereExternalId($client_external_id)->first();
 
         return view('leads.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
@@ -141,6 +149,11 @@ class LeadsController extends Controller
         }
 
         event(new LeadAction($lead, self::CREATED));
+
+        if ($request->expectsJson()) {
+            return response()->json(['lead_external_id' => $lead->external_id], 201);
+        }
+
         session()->flash('flash_message', __('Lead successfully added'));
 
         return redirect()->route('leads.show', $lead->external_id);
@@ -271,7 +284,7 @@ class LeadsController extends Controller
             ->withLead($lead)
             ->withOffers($offers)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withCompanyname(Setting::first()->company)
+            ->withCompanyname(Setting::cached()?->company)
             ->withStatuses(Status::typeOfLead()->pluck('title', 'id'));
     }
 
@@ -302,6 +315,10 @@ class LeadsController extends Controller
 
     public function convertToOrder(Lead $lead)
     {
+        if ( ! auth()->user()->can(PermissionName::LEAD_UPDATE->value)) {
+            abort(403);
+        }
+
         $invoice = $lead->convertToOrder();
 
         return $invoice->external_id;

@@ -21,7 +21,8 @@ class CanClientCreate
         $message = __("You don't have permission to create a client");
 
         if ( ! $user?->can(PermissionName::CLIENT_CREATE->value)) {
-            if ($request->expectsJson()) {
+            \Log::info('Expects Json: ' . ($request->expectsJson() ? 'yes' : 'no') . ' Header: ' . $request->header('Accept'));
+            if ($request->expectsJson() || $request->header('Accept') === 'application/json') {
                 return response()->json(['message' => $message], 403);
             }
 

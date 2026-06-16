@@ -18,6 +18,7 @@ use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
@@ -61,12 +62,22 @@ class ProjectsController extends Controller
 
     public function indexData()
     {
-        $projects = Project::with(['assignee', 'status', 'client'])->select(
-            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
-        )->get();
+        $projects = Project::with(['assignee', 'status', 'client'])
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'projects.user_assigned_id', '=', 'users.id')
+            ->select(
+                ['projects.external_id', 'projects.title', 'projects.created_at', 'projects.deadline', 'projects.user_assigned_id', 'projects.status_id', 'projects.client_id']
+            )
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('users.name', 'asc');
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($projects) {
+                return '<a href="' . route('projects.show', [$projects->external_id]) . '">' . e($projects->title) . '</a>';
+            })
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;
             })
@@ -159,7 +170,13 @@ class ProjectsController extends Controller
         }
 
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['project_external_id' => $project->external_id]);
+        if ($request->expectsJson()) {
+            return response()->json(['project_external_id' => $project->external_id]);
+        }
+
+        session()->flash('flash_message', __('Project created'));
+
+        return redirect()->route('projects.index');
     }
 
     /**
@@ -309,13 +326,13 @@ class ProjectsController extends Controller
 
     private function upload($image, $project)
     {
-        if ( ! auth()->user()->can('task-upload-files')) {
+        if ( ! auth()->user()->can('project-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload images'));
 
             return redirect()->route('tasks.show', $project->external_id);
         }
         $file        = $image;
-        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
         $size       = $file->getSize();

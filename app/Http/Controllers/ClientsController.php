@@ -43,6 +43,11 @@ class ClientsController extends Controller
 
     public function __construct(private ClientService $clientService)
     {
+        $this->middleware(function ($request, $next) {
+            abort_unless(auth()->check() && auth()->user()->can('client-view'), 403);
+
+            return $next($request);
+        }, ['only' => ['index', 'show']]);
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);
@@ -277,7 +282,7 @@ class ClientsController extends Controller
 
         return view('clients.show')
             ->withClient($client)
-            ->withCompanyname(Setting::first()->company)
+            ->withCompanyname(Setting::first()?->company ?? 'Daybyday')
             ->withInvoices($this->clientService->getInvoices($client))
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
             ->with('filesystem_integration', $filesystemIntegration)

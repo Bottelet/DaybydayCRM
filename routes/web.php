@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'users'], static function () {
         Route::get('/data', 'UsersController@anyData')->name('users.data');
         Route::get('/taskdata/{id}', 'UsersController@taskData')->name('users.taskdata');
+        Route::get('/projectdata/{id}', 'UsersController@projectData')->name('users.projectdata');
         Route::get('/leaddata/{id}', 'UsersController@leadData')->name('users.leaddata');
         Route::get('/clientdata/{id}', 'UsersController@clientData')->name('users.clientdata');
         Route::get('/users', 'UsersController@users')->name('users.users');
@@ -209,8 +210,8 @@ Route::group(['middleware' => ['auth']], static function () {
      * Documents
      */
     Route::get('/add-documents/{external_id}/{type}', 'DocumentsController@uploadFilesModalView');
-    Route::post('/uploaToTask/{external_id}', 'DocumentsController@uploadToTask')->name('document.task.upload');
-    Route::post('/uploaToProject/{external_id}', 'DocumentsController@uploadToProject')->name('document.project.upload');
+    Route::post('/uploadToTask/{external_id}', 'DocumentsController@uploadToTask')->name('document.task.upload');
+    Route::post('/uploadToProject/{external_id}', 'DocumentsController@uploadToProject')->name('document.project.upload');
     Route::get('/search/{query}/{type?}', 'SearchController@search')->name('search');
 
     /*
