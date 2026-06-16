@@ -33,7 +33,7 @@ class SettingsController extends Controller
      */
     public function index(Request $request)
     {
-        $setting = Setting::first();
+        $setting = Setting::cached();
         if ( ! $setting) {
             $setting = Setting::query()->create([
                 'company'        => 'Default Company',
@@ -73,7 +73,7 @@ class SettingsController extends Controller
     {
         $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
         $end_time   = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
-        $settings   = Setting::first();
+        $settings   = Setting::cached();
         if ( ! $settings) {
             $settings = Setting::query()->create([
                 'company'        => 'Default Company',

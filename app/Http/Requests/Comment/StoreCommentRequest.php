@@ -21,6 +21,14 @@ class StoreCommentRequest extends FormRequest
      *
      * @return array
      */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'type'        => $this->route('type'),
+            'external_id' => $this->route('external_id'),
+        ]);
+    }
+
     public function rules()
     {
         return [

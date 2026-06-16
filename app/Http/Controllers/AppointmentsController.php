@@ -10,14 +10,15 @@ use Throwable;
 
 class AppointmentsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:calendar-view', ['only' => ['calendar']]);
+        $this->middleware('permission:appointment-edit', ['only' => ['update']]);
+        $this->middleware('permission:appointment-delete', ['only' => ['destroy']]);
+    }
+
     public function calendar()
     {
-        if ( ! auth()->user()->can('calendar-view')) {
-            session()->flash('flash_message_warning', __('You do not have permission to view this page'));
-
-            return redirect()->back();
-        }
-
         return view('appointments.calendar');
     }
 
@@ -68,10 +69,6 @@ class AppointmentsController extends Controller
 
     public function destroy(Appointment $appointment)
     {
-        if ( ! auth()->user()->can('appointment-delete')) {
-            return response('Access denied', 403);
-        }
-
         $deleted = $appointment->delete();
         if ($deleted) {
             return response('Success');

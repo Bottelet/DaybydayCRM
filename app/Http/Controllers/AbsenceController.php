@@ -95,7 +95,7 @@ class AbsenceController extends Controller
         }
         session()->flash('flash_message', __('Absence registered'));
 
-        return redirect()->back();
+        return redirect()->route('absence.index');
     }
 
     public function destroy(Absence $absence)

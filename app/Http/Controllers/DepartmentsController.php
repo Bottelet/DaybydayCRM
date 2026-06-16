@@ -63,7 +63,15 @@ class DepartmentsController extends Controller
      */
     public function store(StoreDepartmentRequest $request, DepartmentService $service)
     {
-        $service->store($request->validated());
+        $department = $service->store($request->validated());
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'department_external_id' => $department->external_id,
+                'message'                => __('Successfully created new department'),
+            ], 201);
+        }
+
         Session::flash('flash_message', __('Successfully created new department'));
 
         return redirect()->route('departments.index');

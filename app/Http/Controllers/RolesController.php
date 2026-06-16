@@ -10,7 +10,7 @@ use App\Models\Role;
 use App\Services\Role\RoleService;
 use Illuminate\Support\Facades\Session;
 use Throwable;
-use Yajra\Datatables\Datatables;
+use Yajra\DataTables\DataTables;
 
 class RolesController extends Controller
 {
@@ -114,9 +114,13 @@ class RolesController extends Controller
             );
         }
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Role created')], 201);
+        }
+
         session()->flash('flash_message', __('Role created'));
 
-        return view('roles.index');
+        return redirect()->route('roles.index');
     }
 
     /**
