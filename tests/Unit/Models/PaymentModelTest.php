@@ -122,15 +122,17 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_payment_invoice_method_exists_on_model()
+    public function it_verifies_invoice_relationship_method_exists_on_payment_model()
     {
         /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
 
-        /* Act & Assert */
+        /* Act */
         $this->assertTrue(method_exists($payment, 'invoice'));
+
+        /* Assert */
     }
 
     #[Test]

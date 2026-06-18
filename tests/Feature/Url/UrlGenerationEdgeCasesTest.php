@@ -216,9 +216,9 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_base_url_config_is_available_in_javascript_context()
+    public function it_makes_base_url_config_available_in_javascript_context()
     {
-        /* Arrange - capture route URL before changing the forced root */
+        /* Arrange */
         $tasksUrl = route('tasks.index');
         $this->setAppUrl('http://localhost/crm/public');
 
@@ -233,7 +233,7 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_javascript_url_construction_matches_php_url_helper()
+    public function it_generates_javascript_url_matching_php_url_helper()
     {
         /* Arrange */
         $this->setAppUrl('http://localhost/crm/public');
@@ -241,7 +241,9 @@ class UrlGenerationEdgeCasesTest extends AbstractTestCase
         $jsBaseUrl = config('app.url');
         $jsUrl     = $jsBaseUrl . '/products/creator';
 
-        /* Act and Assert */
+        /* Act */
+
+        /* Assert */
         $this->assertEquals($phpUrl, $jsUrl);
     }
 

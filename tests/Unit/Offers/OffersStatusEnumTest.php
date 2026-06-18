@@ -64,10 +64,12 @@ class OffersStatusEnumTest extends AbstractTestCase
     public function it_throws_exception_if_display_value_is_not_known()
     {
         /* Arrange */
-
-        /* Act & Assert */
         $this->expectException(Exception::class);
+
+        /* Act */
         OfferStatus::fromDisplayValue('None existing display value');
+
+        /* Assert */
     }
 
     #[Test]
@@ -98,9 +100,11 @@ class OffersStatusEnumTest extends AbstractTestCase
     public function it_throws_exception_if_source_is_not_known()
     {
         /* Arrange */
-
-        /* Act & Assert */
         $this->expectException(Exception::class);
+
+        /* Act */
         OfferStatus::fromStatus('None existing source');
+
+        /* Assert */
     }
 }

@@ -34,8 +34,12 @@ class LeadsIndexAndShowTest extends AbstractTestCase
     #[Test]
     public function it_can_view_leads_index()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('leads.index'));
 
+        /* Assert */
         $response->assertStatus(200);
         $response->assertViewIs('leads.index');
     }
@@ -43,8 +47,12 @@ class LeadsIndexAndShowTest extends AbstractTestCase
     #[Test]
     public function it_can_view_lead_show_page()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('leads.show', $this->lead->external_id));
 
+        /* Assert */
         $response->assertStatus(200);
         $response->assertViewIs('leads.show');
     }
@@ -52,16 +60,24 @@ class LeadsIndexAndShowTest extends AbstractTestCase
     #[Test]
     public function it_returns_404_for_nonexistent_lead()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('leads.show', 'nonexistent-external-id'));
 
+        /* Assert */
         $response->assertStatus(404);
     }
 
     #[Test]
     public function it_returns_leads_json_datatables_response()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('leads.data'), ['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest']);
 
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonStructure(['data', 'recordsTotal', 'recordsFiltered']);
     }
@@ -69,10 +85,13 @@ class LeadsIndexAndShowTest extends AbstractTestCase
     #[Test]
     public function it_can_delete_lead_via_json()
     {
+        /* Arrange */
         $this->withPermissions(PermissionName::LEAD_DELETE);
 
+        /* Act */
         $response = $this->delete(route('leads.destroy.json', $this->lead), [], ['Accept' => 'application/json']);
 
+        /* Assert */
         $response->assertStatus(200);
         $this->assertSoftDeleted('leads', ['id' => $this->lead->id]);
     }

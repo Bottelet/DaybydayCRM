@@ -165,12 +165,14 @@ class ActivityModelRelationshipsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_activity_all_relationship_methods_exist()
+    public function it_verifies_all_activity_relationship_methods_exist()
     {
         /* Arrange */
         $activity = new Activity();
 
-        /* Act & Assert */
+        /* Act */
+
+        /* Assert */
         $this->assertTrue(method_exists($activity, 'causer'), 'causer() relationship method should exist');
         $this->assertTrue(method_exists($activity, 'source'), 'source() relationship method should exist');
         $this->assertTrue(method_exists($activity, 'task'), 'task() relationship method should exist');

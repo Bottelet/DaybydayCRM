@@ -48,28 +48,48 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_allows_owner_to_access_client_create_page()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('clients.create'));
+
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_owner_to_access_task_create_page()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('tasks.create'));
+
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_owner_to_access_lead_create_page()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('leads.create'));
+
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_owner_to_access_user_create_page()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get(route('users.create'));
+
+        /* Assert */
         $response->assertStatus(200);
     }
 
@@ -80,10 +100,13 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_redirects_user_without_client_create_permission()
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
+        /* Act */
         $response = $this->get(route('clients.create'));
 
+        /* Assert */
         $response->assertRedirect(route('clients.index'));
         $response->assertSessionHas('flash_message_warning');
     }
@@ -91,10 +114,13 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_redirects_user_without_task_create_permission()
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
+        /* Act */
         $response = $this->get(route('tasks.create'));
 
+        /* Assert */
         $response->assertRedirect(route('tasks.index'));
         $response->assertSessionHas('flash_message_warning');
     }
@@ -102,10 +128,13 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_redirects_user_without_lead_create_permission()
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
+        /* Act */
         $response = $this->get(route('leads.create'));
 
+        /* Assert */
         $response->assertRedirect(route('leads.index'));
         $response->assertSessionHas('flash_message_warning');
     }
@@ -113,10 +142,13 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_redirects_user_without_user_create_permission()
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
+        /* Act */
         $response = $this->get(route('users.create'));
 
+        /* Assert */
         $response->assertRedirect(route('users.index'));
         $response->assertSessionHas('flash_message_warning');
     }
@@ -128,40 +160,56 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_returns_403_for_json_request_without_client_create_permission(): void
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
-        $this->getJsonRequest(route('clients.create'))
-            ->assertForbidden()
+        /* Act */
+        $response = $this->getJsonRequest(route('clients.create'));
+
+        /* Assert */
+        $response->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a client")]);
     }
 
     #[Test]
     public function it_returns_403_for_json_request_without_task_create_permission(): void
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
-        $this->getJsonRequest(route('tasks.create'))
-            ->assertForbidden()
+        /* Act */
+        $response = $this->getJsonRequest(route('tasks.create'));
+
+        /* Assert */
+        $response->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a task")]);
     }
 
     #[Test]
     public function it_returns_403_for_json_request_without_lead_create_permission(): void
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
-        $this->getJsonRequest(route('leads.create'))
-            ->assertForbidden()
+        /* Act */
+        $response = $this->getJsonRequest(route('leads.create'));
+
+        /* Assert */
+        $response->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a lead")]);
     }
 
     #[Test]
     public function it_returns_403_for_json_request_without_user_create_permission(): void
     {
+        /* Arrange */
         $this->actingAs(User::factory()->create());
 
-        $this->getJsonRequest(route('users.create'))
-            ->assertForbidden()
+        /* Act */
+        $response = $this->getJsonRequest(route('users.create'));
+
+        /* Assert */
+        $response->assertForbidden()
             ->assertJsonFragment(['message' => __("You don't have permission to create a user")]);
     }
 
@@ -172,40 +220,52 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[Test]
     public function it_allows_user_with_only_client_create_permission_to_access_client_create()
     {
+        /* Arrange */
         $this->withPermissions([PermissionName::CLIENT_CREATE]);
 
+        /* Act */
         $response = $this->get(route('clients.create'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_user_with_only_task_create_permission_to_access_task_create()
     {
+        /* Arrange */
         $this->withPermissions([PermissionName::TASK_CREATE]);
 
+        /* Act */
         $response = $this->get(route('tasks.create'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_user_with_only_lead_create_permission_to_access_lead_create()
     {
+        /* Arrange */
         $this->withPermissions([PermissionName::LEAD_CREATE]);
 
+        /* Act */
         $response = $this->get(route('leads.create'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
     #[Test]
     public function it_allows_user_with_only_user_create_permission_to_access_user_create()
     {
+        /* Arrange */
         $this->withPermissions([PermissionName::USER_CREATE]);
 
+        /* Act */
         $response = $this->get(route('users.create'));
 
+        /* Assert */
         $response->assertStatus(200);
     }
 
@@ -217,11 +277,13 @@ class CreateRouteAuthorizationTest extends AbstractTestCase
     #[DataProvider('createRoutes')]
     public function it_redirects_unauthenticated_user_to_login(string $routeName)
     {
-        // Explicitly log out so there is no authenticated user
+        /* Arrange */
         auth()->logout();
 
+        /* Act */
         $response = $this->get(route($routeName));
 
+        /* Assert */
         $response->assertRedirect(route('login'));
     }
 }

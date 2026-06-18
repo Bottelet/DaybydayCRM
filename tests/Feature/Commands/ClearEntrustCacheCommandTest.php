@@ -13,7 +13,7 @@ use Tests\AbstractTestCase;
 class ClearEntrustCacheCommandTest extends AbstractTestCase
 {
     #[Test]
-    public function it_command_displays_success_message()
+    public function it_displays_success_message()
     {
         /* Arrange */
 
@@ -21,11 +21,11 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
         $this->artisan('entrust:cache-clear')
             ->assertExitCode(0);
 
-        /* Assert - command doesn't error */
+        /* Assert */
     }
 
     #[Test]
-    public function it_command_with_verbose_option_shows_details()
+    public function it_shows_details_with_verbose_option()
     {
         /* Arrange */
 
@@ -33,17 +33,19 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
         $this->artisan('entrust:cache-clear', ['--verbose' => true])
             ->assertExitCode(0);
 
-        /* Assert - command doesn't error */
+        /* Assert */
     }
 
     #[Test]
-    public function it_command_executes_successfully()
+    public function it_executes_successfully()
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
         $this->artisan('entrust:cache-clear')
             ->assertExitCode(0);
+
+        /* Assert */
     }
 
     #[Test]
@@ -85,7 +87,7 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_command_clears_general_cache()
+    public function it_clears_general_cache()
     {
         /* Arrange */
         if ( ! Cache::getStore() instanceof TaggableStore) {
@@ -98,20 +100,22 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
         /* Act */
         $this->artisan('entrust:cache-clear');
 
-        /* Assert - Entrust tagged cache is cleared */
+        /* Assert */
         $this->assertNull(Cache::tags($tag)->get('test_key_entrust'));
     }
 
     #[Test]
-    public function it_command_is_idempotent_safe_to_run_multiple_times()
+    public function it_is_idempotent_and_safe_to_run_multiple_times()
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
         for ($i = 0; $i < 3; $i++) {
             $this->artisan('entrust:cache-clear')
                 ->assertExitCode(0);
         }
+
+        /* Assert */
     }
 
     #[Test]
@@ -135,12 +139,14 @@ class ClearEntrustCacheCommandTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_command_returns_success_exit_code()
+    public function it_returns_success_exit_code()
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
         $this->artisan('entrust:cache-clear')
             ->assertExitCode(0);
+
+        /* Assert */
     }
 }

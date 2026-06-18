@@ -280,7 +280,7 @@ class LeadsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_lead_delete_permission_can_delete_lead()
+    public function it_deletes_lead_when_user_has_permission()
     {
         /* Arrange */
         $this->user = $this->userWithPermission;
@@ -295,7 +295,7 @@ class LeadsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_lead_delete_permission_cannot_delete_lead()
+    public function it_rejects_lead_deletion_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);

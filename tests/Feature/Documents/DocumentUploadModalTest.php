@@ -26,8 +26,12 @@ class DocumentUploadModalTest extends AbstractTestCase
     #[Test]
     public function it_can_open_upload_files_modal_for_task()
     {
+        /* Arrange */
+
+        /* Act */
         $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
 
+        /* Assert */
         $response->assertStatus(200);
     }
 }

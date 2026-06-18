@@ -12,7 +12,7 @@ class IntegrationServiceTest extends AbstractTestCase
     #[Test]
     public function it_creates_integration_when_no_matching_api_type_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $service = app(IntegrationService::class);
         $payload = [
             'api_type'      => 'billing',
@@ -22,10 +22,10 @@ class IntegrationServiceTest extends AbstractTestCase
             'api_key'       => 'key-123',
         ];
 
-        // Act
+        /* Act */
         $integration = $service->storeOrUpdateByApiType($payload);
 
-        // Assert
+        /* Assert */
         $this->assertInstanceOf(Integration::class, $integration);
         $this->assertDatabaseHas('integrations', [
             'id'        => $integration->id,
@@ -38,7 +38,7 @@ class IntegrationServiceTest extends AbstractTestCase
     #[Test]
     public function it_updates_existing_integration_by_api_type(): void
     {
-        // Arrange
+        /* Arrange */
         $existing = Integration::query()->create([
             'api_type'      => 'file',
             'name'          => 'Dropbox',
@@ -56,10 +56,10 @@ class IntegrationServiceTest extends AbstractTestCase
             'api_key'       => 'new-key',
         ];
 
-        // Act
+        /* Act */
         $integration = $service->storeOrUpdateByApiType($payload);
 
-        // Assert
+        /* Assert */
         $this->assertSame($existing->id, $integration->id);
         $this->assertDatabaseHas('integrations', [
             'id'        => $existing->id,

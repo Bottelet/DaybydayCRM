@@ -29,7 +29,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_update_project_permission_can_update_task_project()
+    public function it_updates_task_project_when_user_has_permission()
     {
         /* Arrange */
         $this->withPermissions(PermissionName::TASK_UPDATE_LINKED_PROJECT);
@@ -46,7 +46,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_update_project_permission_cannot_update_task_project()
+    public function it_rejects_task_project_update_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs(User::factory()->create());
@@ -94,7 +94,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_task_delete_permission_can_delete_task()
+    public function it_deletes_task_when_user_has_permission()
     {
         /* Arrange */
         $this->withPermissions(PermissionName::TASK_DELETE);
@@ -108,7 +108,7 @@ class TaskAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_task_delete_permission_cannot_delete_task()
+    public function it_rejects_task_deletion_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs(User::factory()->create());

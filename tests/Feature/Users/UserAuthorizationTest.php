@@ -26,7 +26,7 @@ class UserAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_user_delete_permission_can_delete_user()
+    public function it_deletes_user_when_actor_has_permission()
     {
         /* Arrange */
         $this->withPermissions(PermissionName::USER_DELETE);
@@ -40,7 +40,7 @@ class UserAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_user_delete_permission_cannot_delete_user()
+    public function it_rejects_user_deletion_when_actor_lacks_permission()
     {
         /* Arrange */
         $this->actingAs(User::factory()->create());

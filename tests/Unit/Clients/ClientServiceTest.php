@@ -428,10 +428,12 @@ class ClientServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $nonExistentId = 'non-existent-uuid';
-
-        /* Act & Assert */
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+        /* Act */
         $this->clientService->findByExternalId($nonExistentId);
+
+        /* Assert */
     }
 
     #[Test]

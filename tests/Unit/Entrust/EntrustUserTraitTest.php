@@ -128,12 +128,12 @@ class EntrustUserTraitTest extends AbstractTestCase
         /* Arrange */
         $user      = User::factory()->create();
         $adminRole = Role::query()->firstOrCreate(['name' => 'administrator'], ['display_name' => 'Administrator']);
-
-        /* Act & Assert */
         $this->assertFalse($user->hasRole('administrator'), 'User should not have role before attaching');
 
+        /* Act */
         $user->attachRole($adminRole);
 
+        /* Assert */
         $this->assertTrue($user->hasRole('administrator'), 'User should have role after attaching');
     }
 
@@ -174,10 +174,12 @@ class EntrustUserTraitTest extends AbstractTestCase
         $user = User::factory()->create();
         $role = Role::factory()->create();
 
-        /* Act & Assert */
+        /* Act */
         try {
             $user->attachRole($role);
             $user->attachRole($role);
+
+            /* Assert */
             $this->assertTrue(true, 'No exception was thrown for duplicate attach');
         } catch (Exception $e) {
             $this->fail('attachRole threw an exception on duplicate: ' . $e->getMessage());

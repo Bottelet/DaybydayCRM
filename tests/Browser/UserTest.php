@@ -15,12 +15,12 @@ class UserTest extends DuskTestCase
      * Test user can access user thorugh index page.
      */
     #[Test]
-    public function it_user_can_see_users_on_user_index_and_go_to_the_user_with_link()
+    public function it_shows_users_on_index_page_with_navigation_links()
     {
         /* Arrange */
         $user = User::factory()->create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users')
@@ -30,18 +30,20 @@ class UserTest extends DuskTestCase
                 ->assertPathIs('/users/' . $user->external_id)
                 ->waitForText($user->name);
         });
+
+        /* Assert */
     }
 
     /**
      * Test user can see all the correct info on user page.
      */
     #[Test]
-    public function it_i_can_see_all_the_correct_information_on_user_info_page()
+    public function it_can_see_all_the_correct_information_on_user_info_page()
     {
         /* Arrange */
         $user = User::factory()->create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/' . $user->external_id)
@@ -49,19 +51,21 @@ class UserTest extends DuskTestCase
                 ->assertSee($user->primary_number)
                 ->assertSee($user->secondary_number);
         });
+
+        /* Assert */
     }
 
     /**
      * Test i can create a new User.
      */
     #[Test]
-    public function it_i_can_create_a_new_user()
+    public function it_can_create_a_new_user()
     {
         /* Arrange */
         Setting::whereId(1)->update(['max_users' => 10000000]);
         $faker = Faker::create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/users/create')
@@ -78,5 +82,7 @@ class UserTest extends DuskTestCase
                 ->press('Create user')
                 ->assertSee('User successfully added');
         });
+
+        /* Assert */
     }
 }

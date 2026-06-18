@@ -18,7 +18,7 @@ class IntegrationsTest extends AbstractTestCase
     #[Test]
     public function it_persists_only_validated_fields_and_returns_ok_when_storing(): void
     {
-        // Arrange
+        /* Arrange */
         $payload = [
             'api_type'      => 'billing',
             'name'          => 'Xero',
@@ -28,10 +28,10 @@ class IntegrationsTest extends AbstractTestCase
             'is_admin'      => true,
         ];
 
-        // Act
+        /* Act */
         $response = $this->post(route('integrations.store'), $payload);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $this->assertDatabaseHas('integrations', [
             'api_type'  => 'billing',

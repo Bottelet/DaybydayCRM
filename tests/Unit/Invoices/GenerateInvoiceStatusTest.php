@@ -172,14 +172,16 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         $this->invoice->sent_at = null;
         $this->invoice->save();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertEquals('draft', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         /* Arrange */
         $this->invoice->sent_at = Carbon::now();
         $this->invoice->save();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertEquals('unpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         /* Arrange */
@@ -191,7 +193,8 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
         ]);
         $this->invoice->refresh();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertEquals('partial_paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         /* Arrange */
@@ -202,7 +205,8 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
             'payment_source' => 'test',
         ]);
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertEquals('paid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
 
         /* Arrange */
@@ -213,7 +217,8 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
             'payment_source' => 'test',
         ]);
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertEquals('overpaid', app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->getStatus());
     }
 
@@ -221,28 +226,35 @@ class GenerateInvoiceStatusTest extends AbstractTestCase
     #[Group('flaky')]
     public function it_identifies_partial_paid_only_when_payment_is_between_zero_and_invoice_amount()
     {
-        /* Arrange & Assert */
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
         $this->assertTrue($this->generateInvoiceStatus->isPartialPaid());
 
         /* Arrange */
         $this->payment->amount = 5000;
         $this->payment->save();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
 
         /* Arrange */
         $this->payment->amount = 6000;
         $this->payment->save();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
 
         /* Arrange */
         $this->payment->amount = -2000;
         $this->payment->save();
 
-        /* Act & Assert */
+        /* Act */
+        /* Assert */
         $this->assertFalse(app(GenerateInvoiceStatus::class, ['invoice' => $this->invoice])->isPartialPaid());
     }
 

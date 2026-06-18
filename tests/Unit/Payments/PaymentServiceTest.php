@@ -113,11 +113,13 @@ class PaymentServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => null]);
-
-        /* Act & Assert */
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot add payment to unsent invoice');
+
+        /* Act */
         $this->service->addPayment($invoice, 100, '2024-01-15', 'cash');
+
+        /* Assert */
     }
 
     #[Test]
@@ -125,10 +127,12 @@ class PaymentServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => now()]);
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         $this->service->addPayment($invoice, 100, '2024-01-15', 'invalid_source');
+
+        /* Assert */
     }
 
     #[Test]
@@ -154,7 +158,7 @@ class PaymentServiceTest extends AbstractTestCase
         /* Act */
         $found = $this->service->findByExternalId($payment->external_id);
 
-        /* Assert*/
+        /* Assert */
         $this->assertNotNull($found);
         $this->assertEquals($payment->id, $found->id);
     }
@@ -162,6 +166,8 @@ class PaymentServiceTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_nonexistent_payment()
     {
+        /* Arrange */
+
         /* Act */
         $found = $this->service->findByExternalId('nonexistent-id');
 

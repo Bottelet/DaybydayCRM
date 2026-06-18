@@ -21,12 +21,14 @@ class TaskServiceTest extends AbstractTestCase
     #[Test]
     public function it_creates_task_with_valid_data(): void
     {
+        /* Arrange */
         $service = new TaskService();
         $user    = User::factory()->create();
         $client  = Client::factory()->create();
         $project = Project::factory()->create(['client_id' => $client->id]);
         $status  = Status::factory()->create(['source_type' => Task::class]);
 
+        /* Act */
         $task = $service->create([
             'title'               => 'T',
             'description'         => 'D',
@@ -37,6 +39,7 @@ class TaskServiceTest extends AbstractTestCase
             'project_external_id' => $project->external_id,
         ], $user->id);
 
+        /* Assert */
         $this->assertNotNull($task);
         $this->assertSame('T', $task->title);
         $this->assertSame($client->id, $task->client_id);
@@ -47,23 +50,29 @@ class TaskServiceTest extends AbstractTestCase
     #[Test]
     public function it_updates_task_deadline(): void
     {
+        /* Arrange */
         $service = new TaskService();
         $task    = Task::factory()->create();
 
+        /* Act */
         $service->updateDeadline($task, '2026-02-03 13:00:00');
 
+        /* Assert */
         $this->assertSame('2026-02-03', $task->fresh()->deadline->format('Y-m-d'));
     }
 
     #[Test]
     public function it_assigns_user_to_task(): void
     {
+        /* Arrange */
         $service = new TaskService();
         $user    = User::factory()->create();
         $task    = Task::factory()->create();
 
+        /* Act */
         $service->assign($task, $user->id);
 
+        /* Assert */
         $this->assertSame($user->id, $task->fresh()->user_assigned_id);
     }
 }

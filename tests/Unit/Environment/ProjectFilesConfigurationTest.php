@@ -261,7 +261,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_env_testing_contains_required_database_keys(): void
+    public function it_verifies_env_testing_contains_required_database_keys(): void
     {
         /* Arrange */
         $vars       = $this->parseEnvFile('.env.testing');
@@ -269,7 +269,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
 
         /* Act */
 
-        /* Assert — DB_CONNECTION and DB_DATABASE are always required */
+        /* Assert */
         $this->assertArrayHasKey('DB_CONNECTION', $vars, '.env.testing is missing DB_CONNECTION');
         $this->assertArrayHasKey('DB_DATABASE', $vars, '.env.testing is missing DB_DATABASE');
 

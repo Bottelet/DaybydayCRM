@@ -68,10 +68,12 @@ class PaymentSourceEnumTest extends AbstractTestCase
     public function it_throws_exception_if_display_value_is_not_known()
     {
         /* Arrange */
-
-        /* Act & Assert */
         $this->expectException(Exception::class);
+
+        /* Act */
         PaymentSource::fromDisplayValue('None existing display value');
+
+        /* Assert */
     }
 
     #[Test]
@@ -119,9 +121,11 @@ class PaymentSourceEnumTest extends AbstractTestCase
     public function it_throws_exception_if_source_is_not_known()
     {
         /* Arrange */
-
-        /* Act & Assert */
         $this->expectException(Exception::class);
+
+        /* Act */
         PaymentSource::fromSource('None existing source');
+
+        /* Assert */
     }
 }

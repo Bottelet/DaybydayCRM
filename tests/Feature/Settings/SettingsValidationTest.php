@@ -63,7 +63,7 @@ class SettingsValidationTest extends AbstractTestCase
 
         $after = Setting::first();
 
-        /* Assert – submitted values are stored, not silently replaced by defaults */
+        /* Assert */
         $this->assertEquals('Determinism Test Co', $after->company);
         $this->assertEquals('US', $after->country);
         $this->assertEquals('en', $after->language);
@@ -269,7 +269,7 @@ class SettingsValidationTest extends AbstractTestCase
         /* Arrange */
         $this->asAdmin();
 
-        /* Act – 'GBR' is 3 chars, fails size:2 rule */
+        /* Act */
         $response = $this->patch(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
@@ -287,7 +287,7 @@ class SettingsValidationTest extends AbstractTestCase
         /* Arrange */
         $this->asAdmin();
 
-        /* Act – 'G' is 1 char, fails size:2 rule */
+        /* Act */
         $response = $this->patch(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
@@ -305,7 +305,7 @@ class SettingsValidationTest extends AbstractTestCase
         /* Arrange */
         $this->asAdmin();
 
-        /* Act – min:1 rule */
+        /* Act */
         $response = $this->patch(route('settings.updateOverall'), [
             'client_number'  => 0,
             'invoice_number' => 10000,
@@ -322,7 +322,7 @@ class SettingsValidationTest extends AbstractTestCase
         /* Arrange */
         $this->asAdmin();
 
-        /* Act – date_format:H:i rejects free-form strings */
+        /* Act */
         $response = $this->patch(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,
@@ -340,7 +340,7 @@ class SettingsValidationTest extends AbstractTestCase
         /* Arrange */
         $this->asAdmin();
 
-        /* Act – date_format:H:i rejects semantically invalid hours/minutes */
+        /* Act */
         $response = $this->patch(route('settings.updateOverall'), [
             'client_number'  => 10000,
             'invoice_number' => 10000,

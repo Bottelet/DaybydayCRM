@@ -15,14 +15,14 @@ class LoginTest extends DuskTestCase
      * @return void
      */
     #[Test]
-    public function it_example()
+    public function it_loads_the_login_page()
     {
         /* Arrange */
         $user = User::factory()->create([
             'password' => bcrypt('secretpassword'),
         ]);
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)
@@ -31,6 +31,8 @@ class LoginTest extends DuskTestCase
                 ->assertPathIs('/login')
                 ->assertSee('These credentials do not match our records.');
         });
+
+        /* Assert */
     }
 
     /**
@@ -39,14 +41,14 @@ class LoginTest extends DuskTestCase
      * @return void
      */
     #[Test]
-    public function it_user_can_login_successfully()
+    public function it_logs_in_successfully()
     {
         /* Arrange */
         $user = User::factory()->create([
             'password' => bcrypt('secretpassword'),
         ]);
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($user) {
             $browser->visit('/login')
                 ->type('email', $user->email)
@@ -54,5 +56,7 @@ class LoginTest extends DuskTestCase
                 ->press('Login')
                 ->assertPathIs('/dashboard');
         });
+
+        /* Assert */
     }
 }

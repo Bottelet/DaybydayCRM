@@ -32,7 +32,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_assign_permission_can_update_project_assignment()
+    public function it_updates_project_assignment_when_user_has_permission()
     {
         /* Arrange */
         $this->withPermissions(PermissionName::PROJECT_ASSIGN);
@@ -49,7 +49,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_assign_permission_cannot_update_project_assignment()
+    public function it_rejects_project_assignment_update_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -61,7 +61,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
             'user_assigned_id' => $newUser->id,
         ]);
 
-        /* Assert — web route redirects back when user lacks permission */
+        /* Assert */
         $response->assertRedirect();
         $response->assertSessionHas('flash_message_warning');
         $this->assertEquals($originalAssignee, $this->project->refresh()->user_assigned_id);
@@ -98,7 +98,7 @@ class ProjectAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_project_delete_permission_can_delete_project()
+    public function it_deletes_project_when_user_has_permission()
     {
         /* Arrange */
         $this->withPermissions(PermissionName::PROJECT_DELETE);
@@ -106,13 +106,13 @@ class ProjectAuthorizationTest extends AbstractTestCase
         /* Act */
         $response = $this->delete(route('projects.destroy', $this->project->external_id));
 
-        /* Assert — web route redirects back on successful delete */
+        /* Assert */
         $response->assertRedirect();
         $this->assertSoftDeleted('projects', ['id' => $this->project->id]);
     }
 
     #[Test]
-    public function it_user_without_project_delete_permission_cannot_delete_project()
+    public function it_rejects_project_deletion_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);

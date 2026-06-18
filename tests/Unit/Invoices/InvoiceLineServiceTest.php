@@ -150,11 +150,13 @@ class InvoiceLineServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => now()]);
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot add lines to a sent invoice');
+
+        /* Act */
         $this->service->createLine($invoice, 'Title', 'service', 1, 100);
+
+        /* Assert */
     }
 
     #[Test]
@@ -184,11 +186,13 @@ class InvoiceLineServiceTest extends AbstractTestCase
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => now()]);
         $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot delete lines from a sent invoice');
+
+        /* Act */
         $this->service->deleteLine($line);
+
+        /* Assert */
     }
 
     #[Test]
@@ -197,11 +201,13 @@ class InvoiceLineServiceTest extends AbstractTestCase
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => now()]);
         $line    = InvoiceLine::factory()->create(['invoice_id' => $invoice->id]);
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot update lines on a sent invoice');
+
+        /* Act */
         $this->service->updateLine($line, ['quantity' => 10]);
+
+        /* Assert */
     }
 
     #[Test]
@@ -221,6 +227,8 @@ class InvoiceLineServiceTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_nonexistent_line()
     {
+        /* Arrange */
+
         /* Act */
         $found = $this->service->findByExternalId('nonexistent-id');
 

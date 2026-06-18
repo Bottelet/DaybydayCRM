@@ -174,11 +174,13 @@ class OfferServiceTest extends AbstractTestCase
                 // Missing type, price, quantity
             ],
         ];
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing required invoice line fields');
+
+        /* Act */
         $this->service->createOfferWithLines($lead, $lines);
+
+        /* Assert */
     }
 
     #[Test]
@@ -229,6 +231,8 @@ class OfferServiceTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_nonexistent_offer()
     {
+        /* Arrange */
+
         /* Act */
         $found = $this->service->findByExternalId('nonexistent-id');
 

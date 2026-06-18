@@ -165,7 +165,7 @@ class DocumentsTest extends AbstractTestCase
         /* Act */
         $response = $this->get(route('document.view', $document->external_id));
 
-        /* Assert – creator must get a 200, not a redirect or error */
+        /* Assert */
         $response->assertStatus(200);
     }
 
@@ -559,7 +559,7 @@ class DocumentsTest extends AbstractTestCase
     #[Test]
     public function it_authorization_is_checked_before_storage_access_on_view()
     {
-        /* Arrange – no storage configured but still expect auth to run first */
+        /* Arrange */
         \App\Models\Integration::whereApiType('file')->delete();
         app(\App\Services\Storage\StorageAdapterRegistry::class)->reset();
 
@@ -569,7 +569,7 @@ class DocumentsTest extends AbstractTestCase
         /* Act */
         $response = $this->get(route('document.view', $document->external_id), ['Accept' => 'application/json']);
 
-        /* Assert – unauthorized user gets 403, not a storage error */
+        /* Assert */
         $response->assertStatus(403);
     }
 
@@ -629,10 +629,10 @@ class DocumentsTest extends AbstractTestCase
         $document = $this->createUnownedDocument();
         $this->actingAs($this->unrelated);
 
-        /* Act – download uses the same canAccessDocument gate as view */
+        /* Act */
         $response = $this->get(route('document.download', $document->external_id));
 
-        /* Assert – redirected with warning (no 403, same pattern as view) */
+        /* Assert */
         $response->assertStatus(302);
         $this->assertTrue(
             session()->has('flash_message_warning'),
@@ -655,7 +655,7 @@ class DocumentsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_task_upload_permission_can_upload_files_to_task()
+    public function it_allows_file_upload_to_task_with_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithTaskUploadPermission);
@@ -671,7 +671,7 @@ class DocumentsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_task_upload_permission_cannot_upload_files_to_task()
+    public function it_forbids_file_upload_to_task_without_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -687,7 +687,7 @@ class DocumentsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_project_upload_permission_can_upload_files_to_project()
+    public function it_allows_file_upload_to_project_with_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithProjectUploadPermission);
@@ -703,7 +703,7 @@ class DocumentsTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_project_upload_permission_cannot_upload_files_to_project()
+    public function it_forbids_file_upload_to_project_without_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);

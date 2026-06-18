@@ -154,11 +154,13 @@ class AppointmentServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $appointment = Appointment::factory()->create();
-
-        /* Act & Assert */
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("User with external ID 'nonexistent-id' not found");
+
+        /* Act */
         $this->service->reassignToUserByExternalId($appointment, 'nonexistent-id');
+
+        /* Assert */
     }
 
     #[Test]
@@ -178,6 +180,8 @@ class AppointmentServiceTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_nonexistent_appointment()
     {
+        /* Arrange */
+
         /* Act */
         $found = $this->service->findById(99999);
 
@@ -196,7 +200,9 @@ class AppointmentServiceTest extends AbstractTestCase
             'end_at'   => Carbon::parse('2024-01-15 10:00'),
         ]);
 
-        /* Act & Assert */
+        /* Act */
+
+        /* Assert */
         $this->assertTrue($this->service->hasAppointmentAtTime(
             $user,
             Carbon::parse('2024-01-15 09:30')

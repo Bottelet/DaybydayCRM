@@ -56,6 +56,8 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_view_with_null_file()
     {
+        /* Arrange */
+
         /* Act */
         $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->view(null);
@@ -67,6 +69,8 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_false_for_delete_with_null_file()
     {
+        /* Arrange */
+
         /* Act */
         $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->delete(null);
@@ -167,6 +171,8 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_download_with_null_file()
     {
+        /* Arrange */
+
         /* Act */
         $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->download(null);
@@ -266,6 +272,8 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_get_with_null_file()
     {
+        /* Arrange */
+
         /* Act */
         $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->get(null);
@@ -277,6 +285,8 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_is_enabled_when_integration_exists()
     {
+        /* Arrange */
+
         /* Act */
         $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->isEnabled();
@@ -288,7 +298,7 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_is_disabled_when_integration_does_not_exist()
     {
-        /* Arrange – create the instance while integration exists, then remove it */
+        /* Arrange */
         $dropbox = new Dropbox($this->mockClient);
         Integration::query()->delete();
 

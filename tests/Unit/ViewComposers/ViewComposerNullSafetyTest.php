@@ -47,16 +47,18 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
     #[Test]
     public function it_handles_missing_task_in_view_data()
     {
-        /* Arrange – no 'tasks' key at all */
+        /* Arrange */
         $view = new FakeView([]);
 
-        /* Act – must not throw */
+        /* Act */
         (new TaskHeaderComposer())->compose($view);
 
         /* Assert all three keys are pushed, all null */
         $this->assertNull($view->getShared('contact'));
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
     }
 
     #[Test]
@@ -72,6 +74,8 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertNull($view->getShared('contact'));
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
     }
 
     #[Test]
@@ -86,6 +90,8 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         /* Assert both keys present and null */
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
     }
 
     #[Test]
@@ -98,13 +104,15 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         ]);
         $view = new FakeView(['tasks' => $task]);
 
-        /* Act – must not throw */
+        /* Act */
         (new TaskHeaderComposer())->compose($view);
 
         /* Assert exact shared values */
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
         $view->assertShared('contact'); // key must be present even when null
+
+        /* Assert */
     }
 
     #[Test]
@@ -148,6 +156,8 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertArrayHasKey('contact_info', $shared);
         $this->assertSame($this->user->id, $shared['contact']->id);
         $this->assertSame($client->id, $shared['client']->id);
+
+        /* Assert */
     }
 
     #[Test]

@@ -104,7 +104,7 @@ class UserSecurityTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_update_prevents_password_change_without_permission()
+    public function it_prevents_password_change_without_permission()
     {
         /* Arrange */
         $manager    = User::factory()->withRole('manager')->create();

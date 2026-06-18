@@ -86,7 +86,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'Test payment'
         );
 
-        /* Assert – database state */
+        /* Assert */
         $this->assertInstanceOf(Payment::class, $payment);
         $this->assertDatabaseHas('payments', [
             'invoice_id'     => $this->invoice->id,
@@ -98,6 +98,8 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     #[Test]
     public function it_returns_201_json_when_payment_is_added()
     {
+        /* Arrange */
+
         /* Act */
         $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
@@ -116,10 +118,12 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     {
         /* Arrange */
         $invoice = Invoice::factory()->create(['sent_at' => null]);
-
-        /* Act & Assert */
         $this->expectException(RuntimeException::class);
+
+        /* Act */
         $this->paymentService->addPayment($invoice, 50.00, '2024-01-15', 'bank');
+
+        /* Assert */
     }
 
     #[Test]
@@ -172,7 +176,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'payment_source' => 'cash',
         ]);
 
-        /* Act – should not throw */
+        /* Act */
         $result = $this->paymentService->deletePayment($payment);
 
         /* Assert */
@@ -193,7 +197,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         /* Act */
         $result = $this->paymentService->deletePayment($payment);
 
-        /* Assert – soft delete, not hard delete (assertSoftDeleted confirms record exists with non-null deleted_at) */
+        /* Assert */
         $this->assertTrue($result);
         $this->assertSoftDeleted('payments', ['id' => $payment->id]);
     }
@@ -235,10 +239,10 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     #[Test]
     public function it_marks_invoice_as_paid_after_full_payment()
     {
-        /* Arrange – invoice has one line of price=5000, qty=1 → total 5000 cents */
+        /* Arrange */
         $this->assertDatabaseHas('invoices', ['id' => $this->invoice->id, 'status' => 'unpaid']);
 
-        /* Act – pay the exact total (50.00 = 5000 cents) */
+        /* Act */
         $this->paymentService->addPayment(
             $this->invoice,
             50.00,
@@ -246,7 +250,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'bank'
         );
 
-        /* Assert – invoice status side-effect persisted to DB */
+        /* Assert */
         $this->assertDatabaseHas('invoices', ['id' => $this->invoice->id, 'status' => 'paid']);
     }
 
@@ -256,7 +260,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         /* Arrange */
         $this->assertDatabaseHas('invoices', ['id' => $this->invoice->id, 'status' => 'unpaid']);
 
-        /* Act – pay less than the total */
+        /* Act */
         $this->paymentService->addPayment(
             $this->invoice,
             10.00, // only 1000 cents out of 5000
@@ -264,27 +268,33 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
             'cash'
         );
 
-        /* Assert – status becomes partial */
+        /* Assert */
         $this->assertDatabaseHas('invoices', ['id' => $this->invoice->id, 'status' => 'partial_paid']);
     }
 
     #[Test]
     public function it_throws_when_the_payment_source_is_invalid()
     {
-        /* Act & Assert */
+        /* Arrange */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         $this->paymentService->addPayment(
             $this->invoice,
             50.00,
             '2024-01-15',
             'not_a_real_source'
         );
+
+        /* Assert */
     }
 
     #[Test]
     public function it_returns_422_when_payment_amount_is_zero()
     {
-        /* Act – PaymentRequest has not_in:0 rule */
+        /* Arrange */
+
+        /* Act */
         $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => 0,
             'payment_date' => '2024-01-15',
@@ -300,6 +310,8 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     #[Test]
     public function it_returns_422_when_payment_date_is_missing()
     {
+        /* Arrange */
+
         /* Act */
         $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount' => 50,
@@ -316,6 +328,8 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     #[Test]
     public function it_returns_422_when_payment_source_is_invalid()
     {
+        /* Arrange */
+
         /* Act */
         $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => 50,
@@ -332,7 +346,9 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
     #[Test]
     public function it_accepts_comma_decimal_notation_for_payment_amount()
     {
-        /* Act – prepareForValidation normalises "50,00" to "50.00" */
+        /* Arrange */
+
+        /* Act */
         $response = $this->post(route('payment.add', $this->invoice->external_id), [
             'amount'       => '50,00',
             'payment_date' => '2024-01-15',
@@ -362,7 +378,7 @@ class PaymentServiceRefactoredTest extends AbstractTestCase
         /* Act */
         $response = $this->delete(route('payment.destroy', $payment->external_id));
 
-        /* Assert – 403 before any infrastructure code runs; record still exists */
+        /* Assert */
         $response->assertStatus(403);
         $this->assertDatabaseHas('payments', ['id' => $payment->id, 'deleted_at' => null]);
     }

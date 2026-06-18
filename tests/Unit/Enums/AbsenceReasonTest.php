@@ -85,10 +85,12 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $invalidDisplayValue = 'None existing display value';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromDisplayValue($invalidDisplayValue);
+
+        /* Assert */
     }
 
     #[Test]
@@ -96,10 +98,12 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $wrongCase = 'vacation';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromDisplayValue($wrongCase);
+
+        /* Assert */
     }
 
     #[Test]
@@ -107,10 +111,12 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $partialMatch = 'Vacatio';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromDisplayValue($partialMatch);
+
+        /* Assert */
     }
 
     #[Test]
@@ -305,10 +311,12 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $invalidReason = 'non_existing_reason';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromStatus($invalidReason);
+
+        /* Assert */
     }
 
     #[Test]
@@ -316,9 +324,11 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $wrongCase = 'Vacation';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromStatus($wrongCase);
+
+        /* Assert */
     }
 }

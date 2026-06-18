@@ -240,9 +240,12 @@ class AppointmentsTest extends AbstractTestCase
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
+        $hasUpdate = method_exists(AppointmentsController::class, 'update');
+
+        /* Assert */
         $this->assertTrue(
-            method_exists(AppointmentsController::class, 'update'),
+            $hasUpdate,
             'AppointmentsController::update() should still exist'
         );
     }
@@ -309,9 +312,12 @@ class AppointmentsTest extends AbstractTestCase
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
+        $hasDestroy = method_exists(AppointmentsController::class, 'destroy');
+
+        /* Assert */
         $this->assertTrue(
-            method_exists(AppointmentsController::class, 'destroy'),
+            $hasDestroy,
             'AppointmentsController::destroy() should still exist'
         );
     }
@@ -323,20 +329,25 @@ class AppointmentsTest extends AbstractTestCase
         $reflector = new ReflectionClass(AppointmentsController::class);
         $methods   = $reflector->getMethods(ReflectionMethod::IS_PUBLIC);
 
-        /* Act & Assert */
+        /* Act */
+        $usedTypes = [];
         foreach ($methods as $method) {
             $params = $method->getParameters();
             foreach ($params as $param) {
                 $type = $param->getType();
                 if ($type && ! $type->isBuiltin()) {
-                    $typeName = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
-                    $this->assertNotEquals(
-                        CreateAppointmentCalendarRequest::class,
-                        $typeName,
-                        'CreateAppointmentCalendarRequest should not be used in any controller method'
-                    );
+                    $usedTypes[] = $type instanceof ReflectionNamedType ? $type->getName() : (string) $type;
                 }
             }
+        }
+
+        /* Assert */
+        foreach ($usedTypes as $typeName) {
+            $this->assertNotEquals(
+                CreateAppointmentCalendarRequest::class,
+                $typeName,
+                'CreateAppointmentCalendarRequest should not be used in any controller method'
+            );
         }
     }
 
@@ -345,9 +356,12 @@ class AppointmentsTest extends AbstractTestCase
     {
         /* Arrange */
 
-        /* Act & Assert */
+        /* Act */
+        $hasStore = method_exists(AppointmentsController::class, 'store');
+
+        /* Assert */
         $this->assertFalse(
-            method_exists(AppointmentsController::class, 'store'),
+            $hasStore,
             'AppointmentsController::store() should have been removed'
         );
     }

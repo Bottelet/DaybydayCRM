@@ -94,7 +94,7 @@ class UpgradeCommandTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_command_executes_successfully()
+    public function it_executes_successfully()
     {
         /* Arrange */
         Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
@@ -102,6 +102,8 @@ class UpgradeCommandTest extends AbstractTestCase
 
         /* Act */
         $this->artisan('daybyday:upgrade')->assertExitCode(0);
+
+        /* Assert */
     }
 
     #[Test]
@@ -157,12 +159,14 @@ class UpgradeCommandTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_command_handles_missing_roles_gracefully()
+    public function it_handles_missing_roles_gracefully()
     {
         /* Arrange */
 
         /* Act */
         $this->artisan('daybyday:upgrade')->assertExitCode(0);
+
+        /* Assert */
     }
 
     #[Test]

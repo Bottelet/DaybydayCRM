@@ -21,6 +21,7 @@ class ProjectServiceTest extends AbstractTestCase
     #[Test]
     public function it_filters_out_tasks_without_assignees_from_show_data(): void
     {
+        /* Arrange */
         $service  = $this->app->make(ProjectService::class);
         $assignee = User::factory()->create();
         $client   = Client::factory()->create();
@@ -47,8 +48,10 @@ class ProjectServiceTest extends AbstractTestCase
         // Simulate a task pointing to a removed assignee (dangling FK on user relation lookup).
         $removedAssignee->delete();
 
+        /* Act */
         $prepared = $service->prepareShowCollaboratorsAndTasks($project);
 
+        /* Assert */
         $this->assertCount(1, $prepared['tasks'], 'Only tasks with an assigned user should be kept.');
         $this->assertNotNull($prepared['tasks']->first()->user, 'The remaining task should have a loaded assignee.');
         $this->assertFalse($prepared['collaborators']->pluck('id')->contains($removedAssignee->id), 'Removed assignees should not be included as collaborators.');
@@ -58,11 +61,13 @@ class ProjectServiceTest extends AbstractTestCase
     #[Test]
     public function it_creates_project_with_valid_data(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $user    = User::factory()->create();
         $client  = Client::factory()->create();
         $status  = Status::factory()->create(['source_type' => Project::class]);
 
+        /* Act */
         $project = $service->create([
             'title'              => 'P',
             'description'        => 'D',
@@ -72,6 +77,7 @@ class ProjectServiceTest extends AbstractTestCase
             'client_external_id' => $client->external_id,
         ], $user->id);
 
+        /* Assert */
         $this->assertNotNull($project);
         $this->assertSame('P', $project->title);
         $this->assertSame($client->id, $project->client_id);
@@ -81,33 +87,41 @@ class ProjectServiceTest extends AbstractTestCase
     #[Test]
     public function it_updates_project_deadline(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $project = Project::factory()->create();
 
+        /* Act */
         $service->updateDeadline($project, '2026-03-01');
 
+        /* Assert */
         $this->assertSame('2026-03-01', $project->fresh()->deadline->format('Y-m-d'));
     }
 
     #[Test]
     public function it_assigns_user_to_project(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $user    = User::factory()->create();
         $project = Project::factory()->create();
 
+        /* Act */
         $service->assign($project, $user->id);
 
+        /* Assert */
         $this->assertSame($user->id, $project->fresh()->user_assigned_id);
     }
 
     #[Test]
     public function it_returns_null_when_client_external_id_missing(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $user    = User::factory()->create();
         $status  = Status::factory()->create(['source_type' => Project::class]);
 
+        /* Act */
         $result = $service->create([
             'client_external_id' => 'missing',
             'title'              => 'x',
@@ -117,16 +131,19 @@ class ProjectServiceTest extends AbstractTestCase
             'status_id'          => $status->id,
         ], $user->id);
 
+        /* Assert */
         $this->assertNull($result);
     }
 
     #[Test]
     public function it_returns_null_when_client_not_found(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $user    = User::factory()->create();
         $status  = Status::factory()->create(['source_type' => Project::class]);
 
+        /* Act */
         $result = $service->create([
             'client_external_id' => 'nonexistent-external-id',
             'title'              => 'x',
@@ -136,12 +153,14 @@ class ProjectServiceTest extends AbstractTestCase
             'status_id'          => $status->id,
         ], $user->id);
 
+        /* Assert */
         $this->assertNull($result);
     }
 
     #[Test]
     public function it_prepares_unique_collaborators_when_assignee_and_task_user_are_same(): void
     {
+        /* Arrange */
         $service = $this->app->make(ProjectService::class);
         $user    = User::factory()->create();
         $client  = Client::factory()->create();
@@ -157,8 +176,10 @@ class ProjectServiceTest extends AbstractTestCase
             'user_created_id'  => $user->id,
         ]);
 
+        /* Act */
         $prepared = $service->prepareShowCollaboratorsAndTasks($project);
 
+        /* Assert */
         $this->assertCount(1, $prepared['collaborators']);
         $this->assertSame($user->id, $prepared['collaborators']->first()->id);
     }

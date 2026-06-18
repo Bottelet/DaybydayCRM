@@ -22,19 +22,19 @@ class UserServiceTest extends AbstractTestCase
     #[Test]
     public function it_removes_password_fields_when_actor_cannot_change_password(): void
     {
-        // Arrange
+        /* Arrange */
         $service          = new UserUpdateService();
         $unauthorizedUser = User::factory()->withRole(RoleType::USER->value)->create();
         $targetUser       = User::factory()->withRole(RoleType::USER->value)->create();
 
-        // Act
+        /* Act */
         $payload = $service->prepareValidatedInput($unauthorizedUser, $targetUser, [
             'name'                  => 'Updated',
             'password'              => 'secret123',
             'password_confirmation' => 'secret123',
         ], null);
 
-        // Assert
+        /* Assert */
         $this->assertArrayHasKey('name', $payload);
         $this->assertArrayNotHasKey('password', $payload);
         $this->assertArrayNotHasKey('password_confirmation', $payload);
@@ -43,25 +43,25 @@ class UserServiceTest extends AbstractTestCase
     #[Test]
     public function it_hashes_password_when_actor_can_change_password(): void
     {
-        // Arrange
+        /* Arrange */
         $service        = new UserUpdateService();
         $authorizedUser = User::factory()->withRole(RoleType::OWNER->value)->create();
         $targetUser     = User::factory()->withRole(RoleType::USER->value)->create();
 
-        // Act
+        /* Act */
         $payload = $service->prepareValidatedInput($authorizedUser, $targetUser, [
             'password'              => 'secret123',
             'password_confirmation' => 'secret123',
         ], null);
 
-        // Assert
+        /* Assert */
         $this->assertTrue(Hash::check('secret123', $payload['password']));
     }
 
     #[Test]
     public function it_prevents_changing_last_owner_role(): void
     {
-        // Arrange
+        /* Arrange */
         $service = new UserUpdateService();
 
         // Clear ALL existing owner role assignments to ensure test isolation
@@ -77,10 +77,10 @@ class UserServiceTest extends AbstractTestCase
         $newRole    = Role::factory()->create(['name' => RoleType::USER->value, 'display_name' => 'User']);
         $department = Department::factory()->create();
 
-        // Act
+        /* Act */
         $result = $service->syncRoleAndDepartment($owner, $owner, $newRole->id, $department->id);
 
-        // Assert
+        /* Assert */
         $this->assertFalse($result);
         $freshOwnerRole = $owner->fresh()->roles->first();
         $this->assertNotNull($freshOwnerRole);

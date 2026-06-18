@@ -195,7 +195,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_offer_create_permission_can_create_offer()
+    public function it_creates_offer_when_user_has_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithCreatePermission);
@@ -222,7 +222,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_offer_create_permission_cannot_create_offer()
+    public function it_rejects_offer_creation_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -246,7 +246,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_offer_edit_permission_can_update_offer()
+    public function it_updates_offer_when_user_has_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithEditPermission);
@@ -270,7 +270,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_offer_edit_permission_cannot_update_offer()
+    public function it_rejects_offer_update_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -291,7 +291,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_offer_edit_permission_can_mark_offer_as_won()
+    public function it_marks_offer_as_won_when_user_has_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithEditPermission);
@@ -311,7 +311,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_offer_edit_permission_cannot_mark_offer_as_won()
+    public function it_rejects_marking_offer_as_won_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);
@@ -327,7 +327,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_with_offer_edit_permission_can_mark_offer_as_lost()
+    public function it_marks_offer_as_lost_when_user_has_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithEditPermission);
@@ -346,7 +346,7 @@ class OffersTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_without_offer_edit_permission_cannot_mark_offer_as_lost()
+    public function it_rejects_marking_offer_as_lost_when_user_lacks_permission()
     {
         /* Arrange */
         $this->actingAs($this->userWithoutPermission);

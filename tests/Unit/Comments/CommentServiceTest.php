@@ -131,7 +131,9 @@ class CommentServiceTest extends AbstractTestCase
     #[Test]
     public function it_gets_supported_types()
     {
-        /* Arrange & Act */
+        /* Arrange */
+
+        /* Act */
         $types = $this->service->getSupportedTypes();
 
         /* Assert */
@@ -163,11 +165,13 @@ class CommentServiceTest extends AbstractTestCase
         /* Arrange */
         $task = Task::factory()->create();
         $user = User::factory()->create();
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported comment type: invalid');
+
+        /* Act */
         $this->service->createComment('invalid', $task->external_id, 'Comments', $user->id);
+
+        /* Assert */
     }
 
     #[Test]
@@ -175,17 +179,23 @@ class CommentServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $user = User::factory()->create();
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find task with external ID');
+
+        /* Act */
         $this->service->createComment('task', 'nonexistent-id', 'Comments', $user->id);
+
+        /* Assert */
     }
 
     #[Test]
     public function it_checks_type_is_supported()
     {
-        /* Arrange, Act & Assert */
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
         $this->assertTrue($this->service->isTypeSupported('task'));
         $this->assertTrue($this->service->isTypeSupported('lead'));
         $this->assertTrue($this->service->isTypeSupported('project'));

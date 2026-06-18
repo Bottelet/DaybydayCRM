@@ -63,7 +63,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_role_relationship_is_accessible_when_using_factory_state()
+    public function it_accesses_role_relationship_when_using_factory_state()
     {
         /* Arrange */
 

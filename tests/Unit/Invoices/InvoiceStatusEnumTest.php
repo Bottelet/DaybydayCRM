@@ -85,7 +85,9 @@ class InvoiceStatusEnumTest extends AbstractTestCase
             InvoiceStatus::overpaid(),
         ];
 
-        /* Act & Assert */
+        /* Act */
+
+        /* Assert */
         foreach ($statuses as $status) {
             $this->assertNotEmpty($status->getDisplayValue());
             $this->assertNotEmpty($status->getStatus());
