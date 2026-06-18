@@ -6,7 +6,7 @@ const {
   absenceData,
   jsonHeaders,
 } = require('../helpers/plain-e2e');
-test('empty absence payload returns an error response', async ({ page }) => {
+test('empty absence payload returns 422 with validation errors', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
@@ -16,12 +16,12 @@ test('empty absence payload returns an error response', async ({ page }) => {
     form: {},
   });
 
-  // The absence controller has no FormRequest — it throws on missing required fields.
-  // Accept either a proper 422 validation response or the current 500, so this test
-  // does not break if the controller is later hardened to return 422.
-  expect(response.status()).toBeGreaterThanOrEqual(400);
+  expect(response.status()).toBe(422);
   const payload = await response.json();
-  expect(payload.message ?? payload.error).toBeTruthy();
+  expect(payload.errors).toBeTruthy();
+  expect(Object.keys(payload.errors)).toContain('reason');
+  expect(Object.keys(payload.errors)).toContain('start_date');
+  expect(Object.keys(payload.errors)).toContain('end_date');
 });
 
 test('absence create form shows alert when submitted empty', async ({ page }) => {

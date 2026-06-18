@@ -6,6 +6,7 @@ use App\Enums\ProjectStatus;
 use App\Events\TaskAction;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskAssignRequest;
+use App\Http\Requests\Task\UpdateTaskStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -262,47 +263,10 @@ class TasksController extends Controller
      * If Auth and user_id allow complete else redirect back if all allowed excute
      * else stmt
      */
-    public function updateStatus($external_id, Request $request)
+    public function updateStatus($external_id, UpdateTaskStatusRequest $request)
     {
-        if ( ! auth()->user()->can('task-update-status')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task status'));
-
-            return redirect()->route('tasks.show', $external_id);
-        }
-        $input = $request->only(['status_id', 'statusExternalId']);
-        // Accept status_id or statusExternalId (AJAX)
-        if (isset($input['statusExternalId'])) {
-            $status = Status::whereExternalId($input['statusExternalId'])->first();
-            if ( ! $status) {
-                if ($request->expectsJson()) {
-                    return response()->json(['error' => 'Invalid status external id'], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status external id'));
-
-                return redirect()->back();
-            }
-            $input['status_id'] = $status->id;
-        }
-        if ( ! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Invalid status id'], 400);
-            }
-            session()->flash('flash_message_warning', __('Invalid status id'));
-
-            return redirect()->back();
-        }
-        // Validate that the status_id belongs to task statuses
-        $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
-        if ( ! $validStatus) {
-            session()->flash('flash_message_warning', __('Invalid status for task'));
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Invalid status for task'], 400);
-            }
-
-            return redirect()->back();
-        }
         $task            = $this->findByExternalId($external_id);
-        $task->status_id = $input['status_id'];
+        $task->status_id = $request->validated('status_id');
         $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Task status is updated'));

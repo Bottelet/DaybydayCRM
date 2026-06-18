@@ -7,6 +7,7 @@ use App\Events\ProjectAction;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectAssignRequest;
 use App\Http\Requests\Project\UpdateProjectDeadlineRequest;
+use App\Http\Requests\Project\UpdateProjectStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -224,51 +225,15 @@ class ProjectsController extends Controller
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
     }
 
-    public function updateStatus($external_id, Request $request)
+    public function updateStatus($external_id, UpdateProjectStatusRequest $request)
     {
-        if ( ! auth()->user()->can('project-update-status')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change project status'));
-            if ($request->ajax()) {
-                return response()->json(['error' => __('You do not have permission to change project status')], 403);
-            }
-
-            return redirect()->route('projects.show', $external_id);
-        }
-        $input = $request->only(['status_id']);
-
-        if ($request->ajax() && isset($request->statusExternalId)) {
-            $status = Status::whereExternalId($request->statusExternalId)->first();
-            if ( ! $status) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status'));
-
-                return redirect()->back();
-            }
-            $input['status_id'] = $status->id;
-        }
-
-        // Validate that the status_id belongs to project statuses
-        if (isset($input['status_id'])) {
-            $validStatus = Status::typeOfProject()->where('id', $input['status_id'])->exists();
-            if ( ! $validStatus) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status for project')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status for project'));
-
-                return redirect()->back();
-            }
-        }
-
-        $project = $this->findByExternalId($external_id);
-        $project->fill($input)->save();
+        $project            = $this->findByExternalId($external_id);
+        $project->status_id = $request->validated('status_id');
+        $project->save();
 
         event(new ProjectAction($project, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Project status updated'));
 
-        // For AJAX, return 302 to match test expectations
         if ($request->ajax()) {
             return response('', 302)->header('X-Redirect', url()->previous() ?: '/');
         }
