@@ -74,4 +74,5 @@ storage/debugbar/
 # (Add any project-specific ignores below)
 blob-report/
 package-lock.json
-.claude/worktrees/
+.claude/
+CLAUDE.md
