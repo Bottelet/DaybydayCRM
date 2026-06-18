@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const {
   BASE_URL,
   loginAsAdmin,
+  createClient,
   createTask,
   taskData,
   jsonHeaders,
@@ -83,6 +84,49 @@ test('task assignment endpoint accepts valid assignee', async ({ page }) => {
   const body = await response.json();
   expect(response.status()).toBe(200);
   expect(String(body.message ?? '').toLowerCase()).toContain('assigned');
+});
+
+test('browser create shows success notification and task appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  // Ensure at least one client exists for the client_external_id select
+  await createClient(page, request);
+
+  await page.goto(`${BASE_URL}/tasks/create`);
+
+  const title = uniqueValue('PW Browser Task');
+
+  await page.locator('input[name="title"]').fill(title);
+  await page.locator('textarea[name="description"]').fill('Browser test task description');
+
+  const statusFirst = await page.locator('select[name="status_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="status_id"]').selectOption(statusFirst);
+
+  const userFirst = await page.locator('select[name="user_assigned_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="user_assigned_id"]').selectOption(userFirst);
+
+  const clientFirst = await page.locator('select[name="client_external_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="client_external_id"]').selectOption(clientFirst);
+
+  // deadline field has a data-value pre-populated but may need a value
+  const deadlineInput = page.locator('input[name="deadline"]');
+  if (!(await deadlineInput.inputValue())) {
+    await deadlineInput.fill('2030-01-01');
+  }
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/tasks`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Task created');
+
+  // Task title appears in the DataTables list
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('table')).toContainText(title);
 });
 
 test('deleting a task removes it from tasks data feed', async ({ page }) => {

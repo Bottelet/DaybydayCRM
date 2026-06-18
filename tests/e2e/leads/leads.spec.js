@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const {
   BASE_URL,
   loginAsAdmin,
+  createClient,
   createLead,
   leadData,
   jsonHeaders,
@@ -105,6 +106,47 @@ test('lead assignment endpoint accepts a valid assignee', async ({ page }) => {
   });
 
   expect(response.status()).toBe(302);
+});
+
+test('browser create shows success notification and redirects to lead detail page', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  // Ensure at least one client exists for the client_external_id select
+  await createClient(page, request);
+
+  await page.goto(`${BASE_URL}/leads/create`);
+
+  const title = uniqueValue('PW Browser Lead');
+
+  await page.locator('input[name="title"]').fill(title);
+  await page.locator('textarea[name="description"]').fill('Browser test lead description');
+
+  const statusFirst = await page.locator('select[name="status_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="status_id"]').selectOption(statusFirst);
+
+  const userFirst = await page.locator('select[name="user_assigned_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="user_assigned_id"]').selectOption(userFirst);
+
+  const clientFirst = await page.locator('select[name="client_external_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="client_external_id"]').selectOption(clientFirst);
+
+  const deadlineInput = page.locator('input[name="deadline"]');
+  if (!(await deadlineInput.inputValue())) {
+    await deadlineInput.fill('2030-01-01');
+  }
+
+  await Promise.all([
+    page.waitForURL(/\/leads\//),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Leads redirect to the show page — title must be visible in the heading
+  await expect(page.locator('h1, h2, h3, .page-header, .box-title').first()).toContainText(title);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Lead successfully added');
 });
 
 test('deleting a lead through json endpoint removes it from lead feed', async ({ page }) => {

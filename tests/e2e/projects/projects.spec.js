@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const {
   BASE_URL,
   loginAsAdmin,
+  createClient,
   createProject,
   projectData,
   jsonHeaders,
@@ -93,6 +94,48 @@ test('project assignment endpoint accepts valid assignee', async ({ page }) => {
   });
 
   expect(response.status()).toBe(302);
+});
+
+test('browser create shows success notification and project appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  // Ensure at least one client exists for the client_external_id select
+  await createClient(page, request);
+
+  await page.goto(`${BASE_URL}/projects/create`);
+
+  const title = uniqueValue('PW Browser Project');
+
+  await page.locator('input[name="title"]').fill(title);
+  await page.locator('textarea[name="description"]').fill('Browser test project description');
+
+  const statusFirst = await page.locator('select[name="status_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="status_id"]').selectOption(statusFirst);
+
+  const userFirst = await page.locator('select[name="user_assigned_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="user_assigned_id"]').selectOption(userFirst);
+
+  const clientFirst = await page.locator('select[name="client_external_id"] option[value!=""]').first().getAttribute('value');
+  await page.locator('select[name="client_external_id"]').selectOption(clientFirst);
+
+  const deadlineInput = page.locator('input[name="deadline"]');
+  if (!(await deadlineInput.inputValue())) {
+    await deadlineInput.fill('2030-01-01');
+  }
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/projects`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Project created');
+
+  // Project title appears in the DataTables list
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('table')).toContainText(title);
 });
 
 test('deleting a project removes it from projects data feed', async ({ page }) => {

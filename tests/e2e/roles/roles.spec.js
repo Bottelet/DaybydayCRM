@@ -88,3 +88,51 @@ test('updating malformed role id returns not found', async ({ page }) => {
 
   expect(response.status()).toBe(404);
 });
+
+test('browser create shows success notification and role appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.goto(`${BASE_URL}/roles/create`);
+
+  const name = uniqueValue('pw_browser_role').replace(/\s/g, '_');
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('textarea[name="description"], input[name="description"]').first().fill('Browser test role');
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/roles`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Role created');
+
+  // Role appears in the DataTables list
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('table')).toContainText(name);
+});
+
+test('browser edit saves role permissions, shows success notification', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  const { response, name } = await createRole(page, request);
+  expect(response.status()).toBe(200);
+
+  const dataResponse = await roleData(request, name);
+  const dataPayload = await dataResponse.json();
+  const row = (dataPayload.data ?? []).find((r) => r.name === name);
+  expect(row?.external_id).toBeTruthy();
+
+  await page.goto(`${BASE_URL}/roles/${row.external_id}`);
+
+  await Promise.all([
+    page.waitForURL(/\/roles/),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Role is updated');
+});

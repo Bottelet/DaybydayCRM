@@ -71,3 +71,27 @@ test('deleting a department removes it from department data feed', async ({ page
   expect(deleteResponse.status()).toBeLessThan(400);
   expect((afterDataPayload.data ?? []).some((item) => item.name === name)).toBe(false);
 });
+
+test('browser create shows success notification and department appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.goto(`${BASE_URL}/departments/create`);
+
+  const name = uniqueValue('PW Browser Dept');
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('textarea[name="description"]').fill('Browser test department');
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/departments`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  // Element UI success toast
+  await expect(page.locator('.el-message--success')).toBeVisible();
+  await expect(page.locator('.el-message__content')).toContainText('Successfully created new department');
+
+  // Department appears in the DataTables list
+  await page.waitForLoadState('networkidle');
+  await expect(page.locator('table')).toContainText(name);
+});
