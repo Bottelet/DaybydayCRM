@@ -1,5 +1,5 @@
 import type { APIRequestContext, BrowserContext, Page } from '@playwright/test';
-import { loginAsSeededAdmin } from './admin-auth';
+import { loginAsSeededAdmin } from '../../helpers/admin-auth';
 import { registerAndLoginNewUser } from './user-auth';
 
 export type AuthenticatedSession = {

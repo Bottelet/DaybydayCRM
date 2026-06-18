@@ -1,7 +1,7 @@
 import { expect, type APIRequestContext, type Page } from '@playwright/test';
-import { ClientActions, LeadActions } from './feature-domain';
-import { PLAYWRIGHT_BASE_URL } from './config';
-import { fetchCsrfToken } from './csrf';
+import { ClientActions, LeadActions } from '../../helpers/feature-domain';
+import { PLAYWRIGHT_BASE_URL } from '../../helpers/config';
+import { fetchCsrfToken } from '../../helpers/csrf';
 
 const DEFAULT_OFFER_LINES = [
   {

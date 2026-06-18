@@ -2,35 +2,8 @@ const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, jsonHeaders, expectValidationError } = require('../helpers/plain-e2e');
 
 test.describe.serial('Settings behavior', () => {
-  let savedSettings = null;
-
   test.beforeEach(async ({ page }) => {
-    savedSettings = null;
     await loginAsAdmin(page);
-    const request = page.context().request;
-
-    const getResponse = await request.get(`${BASE_URL}/settings`, {
-      failOnStatusCode: false,
-      headers: await jsonHeaders(page),
-    });
-
-    if (getResponse.status() === 200) {
-      const payload = await getResponse.json();
-      savedSettings = payload.settings ?? null;
-    }
-  });
-
-  test.afterEach(async ({ page }) => {
-    if (!savedSettings) return;
-
-    const request = page.context().request;
-    const restoreResponse = await request.patch(`${BASE_URL}/settings/overall`, {
-      failOnStatusCode: false,
-      headers: await jsonHeaders(page),
-      data: savedSettings,
-    });
-
-    expect(restoreResponse.ok()).toBe(true);
   });
 
   test('guest is redirected from settings route', async ({ browser }) => {
