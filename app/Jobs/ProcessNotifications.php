@@ -35,6 +35,6 @@ class ProcessNotifications implements ShouldQueue
      */
     public function handle()
     {
-        Queue::push($notification);
+        Queue::push($this->notification);
     }
 }
