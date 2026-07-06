@@ -256,7 +256,7 @@
 @endif
     <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
         <div class="modal-dialog modal-lg" style="background:white;">
-            <invoice-line-modal type="invoiceLine" :resource="{{$invoice}}"/>
+            <invoice-line-modal type="invoiceLine" :resource="{{$invoice}}"></invoice-line-modal>
         </div>
     </div>
     <div class="modal fade" id="update-payment-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">

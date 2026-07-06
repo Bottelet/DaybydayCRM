@@ -43,7 +43,16 @@
 <body>
 
 <div id="wrapper">
-
+{{--
+    Vue mounts directly onto #wrapper (see resources/assets/js/app.js) using
+    #wrapper's existing markup as an in-DOM template, since there's no
+    explicit render()/template option. Vue 2's compiler requires a template
+    to have exactly one root element, but #wrapper's actual children (navbar
+    include, sidebar nav, page-content-wrapper div) are siblings — so this
+    single wrapping div exists purely to satisfy that single-root requirement
+    without changing anything about the page's visible structure or CSS.
+--}}
+<div>
 @include('layouts._navbar')
 <!-- /#sidebar-wrapper -->
     <!-- Sidebar menu -->
@@ -221,6 +230,7 @@
 
     <!-- /#page-content-wrapper -->
 </div>
+</div>
 {{--
     jQuery MUST load as a classic (non-module) blocking script before all jQuery plugins.
     All classic jQuery plugins attach to the same window.jQuery instance, and then @vite
@@ -239,9 +249,18 @@
 <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/summernote.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery-ui-sortable.min.js') }}"></script>
-@if(file_exists(public_path('js/app.js')))
-    <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
-@endif
+{{--
+    The Vite build externalizes "jquery" (rollupOptions.external) so it shares
+    the one classic, global jQuery instance loaded above rather than bundling
+    a second copy — but that only works via rollupOptions.output.globals for
+    UMD/IIFE output, not the ES module format @vite emits. This import map
+    resolves the bare "jquery" specifier in the built module to a shim that
+    re-exports the global.
+--}}
+<script type="importmap">
+    { "imports": { "jquery": "{{ URL::asset('js/jquery-esm-shim.js') }}" } }
+</script>
+@vite(['resources/assets/js/app.js'])
 <script>
     $(document).ready(function () {
         // Auto-dismiss flashed success/warning alerts after 5s, matching the
@@ -249,6 +268,19 @@
         setTimeout(function () {
             $('.flash-message').fadeOut(400, function () { $(this).remove(); });
         }, 5000);
+
+        // Moved from layouts/_navbar.blade.php — that markup is inside the
+        // Vue-mounted #wrapper subtree, and Vue's compiler drops <script>
+        // tags found in its own in-DOM template.
+        var menuToggle = document.getElementById('menu-toggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var wrapper = document.getElementById('wrapper');
+                if (wrapper) wrapper.classList.toggle('myNavmenu-icons');
+            });
+        }
     });
 </script>
 @if(App::getLocale() === "dk")

@@ -43,7 +43,6 @@
 <script>
     import { Timeline } from 'vis-timeline/standalone';
     import moment from 'moment';
-    import Message from './Message.vue'
 
     export default {
         data() {
@@ -304,9 +303,6 @@
                 element.innerText = text;
                 return element.innerHTML;
             }
-        },
-        components: {
-            message: Message
         }
     }
 </script>

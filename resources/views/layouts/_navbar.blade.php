@@ -1,22 +1,12 @@
 {{-- DESKTOP NAV --}}
+{{-- The click handler for this button lives in master.blade.php, outside the
+     Vue-mounted #wrapper subtree — Vue's compiler drops <script> tags found
+     inside its own in-DOM template, so one placed here would never run. --}}
 <button type="button" id="menu-toggle" class="navbar-toggle menu-txt-toggle" style="">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
 </button>
-<script>
-    (function() {
-        var toggle = document.getElementById('menu-toggle');
-        if (toggle) {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var wrapper = document.getElementById('wrapper');
-                if (wrapper) wrapper.classList.toggle('myNavmenu-icons');
-            });
-        }
-    })();
-</script>
 
 {{-- MOBILE NAV --}}
 <button type="button" id="mobile-toggle" class="mobile-toggle mobile-nav" data-toggle="offcanvas"
