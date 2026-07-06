@@ -137,12 +137,12 @@ class User extends Authenticatable
 
     public function canChangePasswordOn(self $user)
     {
-        return (bool) ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE));
+        return (bool) ($this->id === $user->id || ($this->roles->first()?->name == Role::OWNER_ROLE || $this->roles->first()?->name == Role::ADMIN_ROLE));
     }
 
     public function canChangeRole()
     {
-        return $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE;
+        return $this->roles->first()?->name == Role::OWNER_ROLE || $this->roles->first()?->name == Role::ADMIN_ROLE;
     }
 
     public function isOnline()

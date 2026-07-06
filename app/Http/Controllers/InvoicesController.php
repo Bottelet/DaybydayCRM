@@ -151,7 +151,7 @@ class InvoicesController extends Controller
         if ($request->product_id) {
             $product = $request->product_id;
         } elseif ($request->product) {
-            $product = Product::whereExternalId($request->product)->first()->id;
+            $product = Product::whereExternalId($request->product)->first()?->id;
         }
 
         InvoiceLine::query()->create([
@@ -220,7 +220,7 @@ class InvoicesController extends Controller
     public function moneyFormat()
     {
         $formats                  = [];
-        $currency                 = app(Currency::class, ['code' => Setting::query()->select('currency')->first()->currency]);
+        $currency                 = app(Currency::class, ['code' => Setting::query()->select('currency')->first()?->currency ?? 'USD']);
         $formats                  = array_merge($formats, $currency->toArray());
         $formats['vatPercentage'] = app(Tax::class)->multipleVatRate();
         $formats['vatRate']       = app(Tax::class)->vatRate();

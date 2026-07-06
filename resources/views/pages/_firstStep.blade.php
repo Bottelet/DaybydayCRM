@@ -1,4 +1,4 @@
-<form class="form-horizontal" role="form" method="POST" action="{{route('settings.update.first_step')}}">
+<form class="form-horizontal" role="form" method="POST" action="{{route('settings.updateFirstStep')}}">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
