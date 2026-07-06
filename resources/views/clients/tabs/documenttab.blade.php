@@ -51,7 +51,7 @@
                                         <li class="nav-item">
                                             <span class="nav-link">
                                                 <i class="icon ion-md-trash"></i>
-                                                <form method="POST" action="{{action('DocumentsController@destroy', $document->external_id)}}">
+                                                <form method="POST" action="{{route('document.destroy', $document->external_id)}}">
                                                     <input type="hidden" name="_method" value="delete"/>
                                                     <input type="hidden" name="_token" value="{{csrf_token()}}"/>
                                                     <button type="submit" class="btn btn-clean nav-link-text">{{__('Delete')}}</button>

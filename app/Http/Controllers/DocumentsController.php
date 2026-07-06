@@ -310,18 +310,29 @@ class DocumentsController extends Controller
         $view = view('documents._uploadFileModal');
 
         if ($type == 'task') {
-            $task = Task::whereExternalId($external_id)->first();
+            $task  = Task::whereExternalId($external_id)->first();
+            $title = $task->title;
         } elseif ($type == 'client') {
-            $task = Client::whereExternalId($external_id)->first()->task;
+            // Client has no "task" relation (it has many tasks()) — the entity
+            // itself is what's being uploaded to here, and "title" means its
+            // company name, not an unrelated task's title.
+            $task  = Client::whereExternalId($external_id)->first();
+            $title = $task->company_name;
         } elseif ($type == 'project') {
-            $task = Project::whereExternalId($external_id)->first();
+            $task  = Project::whereExternalId($external_id)->first();
+            $title = $task->title;
         }
 
+        // The client upload route is registered as "document.upload" (nested under
+        // the clients/ prefix group), not "document.client.upload" — task/project
+        // do follow the "document.{type}.upload" pattern.
+        $uploadRouteName = $type === 'client' ? 'document.upload' : 'document.' . $type . '.upload';
+
         return $view
-            ->withTitle($task->title)
+            ->withTitle($title)
             ->with('external_id', $external_id)
             ->withType($type)
-            ->withRoute(route('document.' . $type . '.upload', $external_id));
+            ->withRoute(route($uploadRouteName, $external_id));
     }
 
     /**

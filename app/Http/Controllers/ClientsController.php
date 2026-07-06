@@ -272,6 +272,16 @@ class ClientsController extends Controller
         $filesystemIntegration = Integration::whereApiType('file')->first();
         $storageClass          = GetStorageProvider::providerClassFromIntegration($filesystemIntegration);
 
+        // clients/show.blade.php only shows the Documents tab (and thus any
+        // already-uploaded documents) when this is truthy. GetStorageProvider's
+        // own storage-selection logic already treats local/testing environments
+        // as having usable storage even with no Integration row configured — the
+        // view's gate needs to agree, or uploaded documents become permanently
+        // inaccessible through the UI on any environment without one.
+        $hasFileStorage = $filesystemIntegration !== null
+            || app()->environment('testing')
+            || (app()->environment('local') && config('storage.force_local', true));
+
         // Use already eager-loaded collections to avoid duplicate queries
         $filteredDocuments = $client->documents->filter(
             fn ($document) => $document->integration_type === $storageClass
@@ -288,7 +298,7 @@ class ClientsController extends Controller
             ->withCompanyname(Setting::first()?->company ?? 'Daybyday')
             ->withInvoices($this->clientService->getInvoices($client))
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('filesystem_integration', $filesystemIntegration)
+            ->with('filesystem_integration', $hasFileStorage)
             ->with('documents', $filteredDocuments)
             ->with('lead_statuses', Status::typeOfLead()->get())
             ->with('task_statuses', Status::typeOfTask()->get())
