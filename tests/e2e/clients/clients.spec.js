@@ -10,6 +10,7 @@ const {
   uniqueValue,
   usersCollection,
   html,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from clients create route', async ({ page }) => {
@@ -132,9 +133,9 @@ test('browser create shows success notification and client appears on index', as
   await page.locator('input[name="city"]').fill('Copenhagen');
 
   // Pick first real option from each required select
-  const industryFirst = await page.locator('select[name="industry_id"] option[value!=""]').first().getAttribute('value');
+  const industryFirst = await page.locator('select[name="industry_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="industry_id"]').selectOption(industryFirst);
-  const userFirst = await page.locator('select[name="user_id"] option[value!=""]').first().getAttribute('value');
+  const userFirst = await page.locator('select[name="user_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="user_id"]').selectOption(userFirst);
 
   await Promise.all([
@@ -142,9 +143,7 @@ test('browser create shows success notification and client appears on index', as
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast must be visible
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('Client successfully added');
+  await expectFlashMessage(page, 'Client successfully added');
 
   // After DataTables loads, the new client must appear in the table
   await page.waitForLoadState('networkidle');
@@ -167,9 +166,9 @@ test('browser edit saves changes, shows success notification and updated name on
   await page.locator('input[name="company_name"]').fill(updatedCompanyName);
 
   // Ensure required fields have a selected value
-  const industryFirst = await page.locator('select[name="industry_id"] option[value!=""]').first().getAttribute('value');
+  const industryFirst = await page.locator('select[name="industry_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="industry_id"]').selectOption(industryFirst);
-  const userFirst = await page.locator('select[name="user_id"] option[value!=""]').first().getAttribute('value');
+  const userFirst = await page.locator('select[name="user_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="user_id"]').selectOption(userFirst);
 
   await Promise.all([
@@ -177,9 +176,7 @@ test('browser edit saves changes, shows success notification and updated name on
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('Client successfully updated');
+  await expectFlashMessage(page, 'Client successfully updated');
 
   // Updated company name appears in the table
   await page.waitForLoadState('networkidle');

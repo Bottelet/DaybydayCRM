@@ -7,6 +7,7 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 const malformedId = 'invalid-@@@';
@@ -124,10 +125,10 @@ test('browser create shows success notification and user appears on index', asyn
   await page.locator('input[name="password"]').first().fill(password);
   await page.locator('input[name="password_confirmation"]').first().fill(password);
 
-  const roleFirst = await page.locator('select[name="role"] option[value!=""]').first().getAttribute('value');
+  const roleFirst = await page.locator('select[name="role"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="role"]').selectOption(roleFirst);
 
-  const deptFirst = await page.locator('select[name="department"] option[value!=""]').first().getAttribute('value');
+  const deptFirst = await page.locator('select[name="department"] option:not([value=""])').first().getAttribute('value');
   if (deptFirst) {
     await page.locator('select[name="department"]').selectOption(deptFirst);
   }
@@ -137,9 +138,7 @@ test('browser create shows success notification and user appears on index', asyn
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('User successfully added');
+  await expectFlashMessage(page, 'User successfully added');
 
   // New user appears in the DataTables list
   await page.waitForLoadState('networkidle');
@@ -172,10 +171,10 @@ test('browser edit saves changes, shows success notification and updated name vi
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast (redirects back, so same URL pattern)
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('User successfully updated');
+  await expectFlashMessage(page, 'User successfully updated');
 
-  // Updated name is visible on the page we landed on
-  await expect(page.locator('body')).toContainText(updatedName);
+  // UsersController@update does redirect()->back(), landing back on this same
+  // edit page — the updated name lives in the input's value attribute, not as
+  // visible text content, so check that directly rather than the page body.
+  await expect(page.locator('input[name="name"]')).toHaveValue(updatedName);
 });

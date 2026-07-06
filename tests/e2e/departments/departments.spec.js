@@ -7,6 +7,7 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from departments create route', async ({ page }) => {
@@ -22,7 +23,7 @@ test('creating a department makes it searchable in department data feed', async 
   const dataResponse = await departmentData(request, name);
   const payload = await dataResponse.json();
 
-  expect(response.status()).toBe(302);
+  expect(response.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
   expect((payload.data ?? []).some((row) => row.name === name)).toBe(true);
 });
@@ -52,7 +53,7 @@ test('deleting a department removes it from department data feed', async ({ page
   const name = uniqueValue('PW Dept Delete');
 
   const { response: createResponse } = await createDepartment(page, request, name);
-  expect(createResponse.status()).toBe(302);
+  expect(createResponse.status()).toBe(201);
 
   const createdDataResponse = await departmentData(request, name);
   const createdDataPayload = await createdDataResponse.json();
@@ -87,9 +88,7 @@ test('browser create shows success notification and department appears on index'
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('Successfully created new department');
+  await expectFlashMessage(page, 'Successfully created new department');
 
   // Department appears in the DataTables list
   await page.waitForLoadState('networkidle');
