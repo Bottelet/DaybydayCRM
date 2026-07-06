@@ -141,6 +141,23 @@ test('browser create shows success notification and project appears on index', a
   await expectFlashMessage(page, 'Project created');
 });
 
+test('changing the deadline on a project show page updates it and shows a flash message', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { payload } = await createProject(page, request, uniqueValue('PW Project Deadline'));
+
+  await page.goto(`${BASE_URL}/projects/${payload.project_external_id}`);
+  const deadlineSelector = 'span[data-target="#ModalUpdateDeadline"]';
+  const deadlineValueBefore = await page.locator(deadlineSelector).innerText();
+
+  await page.locator(deadlineSelector).click();
+  await page.locator('input[type="submit"][value="Update deadline"]').click();
+
+  await expectFlashMessage(page, 'New deadline is set');
+  const deadlineValueAfter = await page.locator(deadlineSelector).innerText();
+  expect(deadlineValueAfter).not.toBe(deadlineValueBefore);
+});
+
 test('deleting a project removes it from projects data feed', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;

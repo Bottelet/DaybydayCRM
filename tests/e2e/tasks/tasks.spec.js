@@ -131,6 +131,23 @@ test('browser create shows success notification and task appears on index', asyn
   await expectFlashMessage(page, 'Task created');
 });
 
+test('changing the deadline on a task show page updates it and shows a flash message', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { payload } = await createTask(page, request, uniqueValue('PW Task Deadline'));
+
+  await page.goto(`${BASE_URL}/tasks/${payload.task_external_id}`);
+  const deadlineSelector = 'span[data-target="#ModalUpdateDeadline"]';
+  const deadlineValueBefore = await page.locator(deadlineSelector).innerText();
+
+  await page.locator(deadlineSelector).click();
+  await page.locator('input[type="submit"][value="Update deadline"]').click();
+
+  await expectFlashMessage(page, 'New deadline is set');
+  const deadlineValueAfter = await page.locator(deadlineSelector).innerText();
+  expect(deadlineValueAfter).not.toBe(deadlineValueBefore);
+});
+
 test('deleting a task removes it from tasks data feed', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;

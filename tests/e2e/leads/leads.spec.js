@@ -174,6 +174,30 @@ test('New Offer button on lead show page opens a populated offer creation modal'
   await expect(page.locator('#create-offer button:has-text("Create")')).toBeVisible();
 });
 
+test('changing the follow-up date on a lead show page updates the deadline and shows a flash message', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { leadExternalId } = await createLead(page, request, uniqueValue('PW Lead Followup'));
+
+  await page.goto(`${BASE_URL}/leads/${leadExternalId}`);
+  const followUpValueBefore = await page.locator('span[data-target="#ModalFollowUp"]').innerText();
+
+  await page.locator('span[data-target="#ModalFollowUp"]').click();
+  await expect(page.locator('#ModalFollowUp')).toBeVisible();
+  // #deadline is a readonly pickadate-driven input - selecting a date means
+  // clicking the input to open its popup calendar, then clicking a day cell,
+  // not typing into the field directly. The popup's own CSS transition
+  // doesn't satisfy Playwright's strict toBeVisible/toBeHidden checks, so
+  // rely on its own auto-waiting on the actual interactive elements instead.
+  await page.locator('#deadline').click();
+  await page.locator('#deadline_root .picker__day--infocus:not(.picker__day--selected)').first().click();
+  await page.locator('input[type="submit"][value="Update deadline"]').click();
+
+  await expectFlashMessage(page, 'New follow up date is set');
+  const followUpValueAfter = await page.locator('span[data-target="#ModalFollowUp"]').innerText();
+  expect(followUpValueAfter).not.toBe(followUpValueBefore);
+});
+
 test('deleting a lead through json endpoint removes it from lead feed', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
