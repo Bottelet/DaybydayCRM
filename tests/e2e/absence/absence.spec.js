@@ -27,6 +27,16 @@ test('empty absence payload returns 422 with validation errors', async ({ page }
 test('absence create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/absences/create`);
+  // "reason" has no blank option (always defaults to the first choice), and
+  // start_date/end_date are backed by pickadate.js: the visible input is a
+  // readonly, unnamed decoy, while the real `name="start_date"` field is a
+  // hidden input defaulted to today via JS — a plain click never actually
+  // submits empty. Clear the hidden inputs directly to genuinely trigger
+  // StoreAbsenceRequest's required validation.
+  await page.evaluate(() => {
+    document.querySelector('input[name="start_date"]').value = '';
+    document.querySelector('input[name="end_date"]').value = '';
+  });
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
   await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });

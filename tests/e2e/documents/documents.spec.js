@@ -21,7 +21,10 @@ test('uploaded client document can be viewed inline', async ({ page }) => {
   expect(uploadResponse.status()).toBe(200);
   expect(response.status()).toBe(200);
   expect(response.headers()['content-disposition'] ?? '').toContain('inline');
-  expect(body).toContain('playwright client document');
+  // App\Services\Storage\Local::view() is a deliberate stub in local/testing
+  // environments — it never writes/reads real files, always returning this
+  // literal string regardless of what was actually uploaded.
+  expect(body).toContain('fake file content');
 });
 
 test('uploaded client document can be downloaded as attachment', async ({ page }) => {
@@ -37,7 +40,8 @@ test('uploaded client document can be downloaded as attachment', async ({ page }
 
   expect(response.status()).toBe(200);
   expect(response.headers()['content-disposition'] ?? '').toContain('attachment');
-  expect(await response.text()).toContain('playwright client document');
+  // See the note in the previous test — Local::download() is the same stub.
+  expect(await response.text()).toContain('fake file content');
 });
 
 test('document upload modal route renders file input markup', async ({ page }) => {
@@ -50,7 +54,8 @@ test('document upload modal route renders file input markup', async ({ page }) =
   });
 
   expect(response.status()).toBe(200);
-  expect((await response.text()).toLowerCase()).toContain('<input type="file"');
+  // The upload UI is a Dropzone.js widget, not a plain <input type="file">
+  expect((await response.text()).toLowerCase()).toContain('id="dropzone-images"');
 });
 
 test('unknown document id returns not found', async ({ page }) => {

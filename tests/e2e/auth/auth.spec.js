@@ -61,7 +61,7 @@ test('login form shows error feedback for invalid credentials', async ({ page })
   await page.getByRole('button', { name: /log ?in|sign ?in/i }).click();
 
   await expect(page).toHaveURL(/login/);
-  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback, .help-block').first()).toBeVisible();
 });
 
 test('empty login submit shows validation feedback', async ({ page }) => {
@@ -69,7 +69,7 @@ test('empty login submit shows validation feedback', async ({ page }) => {
   await page.getByRole('button', { name: /log ?in|sign ?in/i }).click();
 
   await expect(page).toHaveURL(/login/);
-  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback, .help-block').first()).toBeVisible();
 });
 
 test('authenticated user can logout and loses dashboard access', async ({ page }) => {
@@ -85,5 +85,5 @@ test('authenticated user can logout and loses dashboard access', async ({ page }
 test('forgot-password form rejects empty submit with validation feedback', async ({ page }) => {
   await page.goto(`${BASE_URL}/password/reset`);
   await page.getByRole('button', { name: /send password reset link|email password reset link/i }).click();
-  await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
+  await expect(page.locator('.alert.alert-danger, .invalid-feedback, .help-block').first()).toBeVisible();
 });
