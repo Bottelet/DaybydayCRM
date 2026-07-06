@@ -47,7 +47,7 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->from(route('absence.create'))->post(route('absence.store'), [
-            'reason'              => 'Sick',
+            'reason'              => 'sick_leave',
             'user_external_id'    => $user->external_id,
             'start_date'          => '2020-01-01',
             'end_date'            => '2020-01-02',
@@ -72,7 +72,7 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->post(route('absence.store'), [
-            'reason'              => 'Sick',
+            'reason'              => 'sick_leave',
             'user_external_id'    => $absentUser->external_id,
             'start_date'          => '2020-01-01',
             'end_date'            => '2020-01-02',
@@ -94,7 +94,7 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->post(route('absence.store'), [
-            'reason'              => 'Sick',
+            'reason'              => 'sick_leave',
             'start_date'          => '2020-01-01',
             'end_date'            => '2020-01-02',
             'medical_certificate' => null,
@@ -114,7 +114,7 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->from(route('absence.create'))->post(route('absence.store'), [
-            'reason'     => 'Sick',
+            'reason'     => 'sick_leave',
             'start_date' => '2020-01-01',
             'end_date'   => '2020-01-02',
         ]);
@@ -133,7 +133,7 @@ class AbsenceControllerTest extends AbstractTestCase
 
         /* Act */
         $response = $this->postJson(route('absence.store'), [
-            'reason'     => 'Sick',
+            'reason'     => 'sick_leave',
             'start_date' => '2020-01-01',
             'end_date'   => '2020-01-02',
         ]);
