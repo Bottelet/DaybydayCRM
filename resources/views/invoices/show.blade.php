@@ -116,8 +116,8 @@
                         color:#61788b;
                         "></i></a>
                     </p>
-                    <p class="invoice-info">{{$contact_info->name}}</p>
-                    <p class="invoice-info">{{$contact_info->email}}</p>
+                    <p class="invoice-info">{{$contact_info?->name}}</p>
+                    <p class="invoice-info">{{$contact_info?->email}}</p>
                     <hr style="margin-top: 5px;">
                     <div class="row">
                         <div class="col-md-6" style="padding-bottom: 1em;">
@@ -238,13 +238,13 @@
                     @lang('Attach invoice as PDF')
                     <input type="checkbox" name="attachPdf" value="1"> <br>
                     @lang('Recipient')
-                    <input type="text" class="form-control" name="recipientMail" value="{{$invoice->client->primaryContact->email}}">
+                    <input type="text" class="form-control" name="recipientMail" value="{{$invoice->client->primaryContact?->email}}">
                     @lang('Subject')
                     <input type="text" class="form-control" name="subject" value="{{__('Invoice from :company', ["company" => $companyName])}}">
 
                     @lang('Message') (@lang("[link-to-pdf], will be replaced when invoice is send, with the actual link to the PDF"))
 
-                    <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact->name, "company" => $companyName, "price" => $finalPrice])</textarea>
+                    <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact?->name, "company" => $companyName, "price" => $finalPrice])</textarea>
                 </div>
                 <input type="submit" value="{{__('Send invoice')}}" class="btn btn-md btn-brand btn-full-width closebtn" id="close-invoice">
             </form>
