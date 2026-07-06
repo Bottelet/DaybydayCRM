@@ -65,14 +65,17 @@ class DepartmentsController extends Controller
     {
         $department = $service->store($request->validated());
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect, so
+        // the flash must be set here to survive that navigation.
+        Session::flash('flash_message', __('Successfully created new department'));
+
         if ($request->expectsJson()) {
             return response()->json([
                 'department_external_id' => $department->external_id,
                 'message'                => __('Successfully created new department'),
             ], 201);
         }
-
-        Session::flash('flash_message', __('Successfully created new department'));
 
         return redirect()->route('departments.index');
     }

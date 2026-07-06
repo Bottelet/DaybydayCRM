@@ -170,12 +170,16 @@ class ProjectsController extends Controller
             }
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true, see the dropzone/AJAX hack below) and
+        // then does a client-side redirect to the show page, so the flash must be
+        // set here to survive that navigation.
+        session()->flash('flash_message', __('Project created'));
+
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
         if ($request->expectsJson()) {
             return response()->json(['project_external_id' => $project->external_id]);
         }
-
-        session()->flash('flash_message', __('Project created'));
 
         return redirect()->route('projects.index');
     }

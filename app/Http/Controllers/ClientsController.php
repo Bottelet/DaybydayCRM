@@ -222,6 +222,11 @@ class ClientsController extends Controller
 
         event(new ClientAction($client, self::CREATED));
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect, so
+        // the flash must be set here to survive that navigation.
+        session()->flash('flash_message', __('Client successfully added'));
+
         if ($expectsJson) {
             return response()->json([
                 'client'  => $client,
@@ -229,8 +234,6 @@ class ClientsController extends Controller
                 'message' => __('Client successfully added'),
             ], 201);
         }
-
-        session()->flash('flash_message', __('Client successfully added'));
 
         return redirect()->route('clients.index');
     }

@@ -114,11 +114,14 @@ class RolesController extends Controller
             );
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect, so
+        // the flash must be set here to survive that navigation.
+        session()->flash('flash_message', __('Role created'));
+
         if ($request->expectsJson()) {
             return response()->json(['message' => __('Role created')], 201);
         }
-
-        session()->flash('flash_message', __('Role created'));
 
         return redirect()->route('roles.index');
     }

@@ -150,11 +150,14 @@ class LeadsController extends Controller
 
         event(new LeadAction($lead, self::CREATED));
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect to
+        // the show page, so the flash must be set here to survive that navigation.
+        session()->flash('flash_message', __('Lead successfully added'));
+
         if ($request->expectsJson()) {
             return response()->json(['lead_external_id' => $lead->external_id], 201);
         }
-
-        session()->flash('flash_message', __('Lead successfully added'));
 
         return redirect()->route('leads.show', $lead->external_id);
     }

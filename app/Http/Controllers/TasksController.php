@@ -197,12 +197,16 @@ class TasksController extends Controller
             }
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true, see the dropzone/AJAX hack below) and
+        // then does a client-side redirect to the show page, so the flash must be
+        // set here to survive that navigation.
+        session()->flash('flash_message', __('Task created'));
+
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
         if ($request->expectsJson()) {
             return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
         }
-
-        session()->flash('flash_message', __('Task created'));
 
         return redirect()->route('tasks.index');
     }
