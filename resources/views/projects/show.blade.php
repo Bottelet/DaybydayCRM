@@ -197,7 +197,6 @@
                         @method('PATCH')
                         <label for="deadline_date" class="control-label">{{ __('Change deadline') }}</label>
                         <input type="date" name="deadline_date" class="form-control" value="{{ old('deadline_date', \Carbon\Carbon::now()->addDays(7)->format('Y-m-d')) }}">
-                        <input type="text" name="deadline_time" class="form-control" value="{{ old('deadline_time', '15:00') }}" onkeydown="return isNumberKey(this)" onchange="validateHhMm(this)" id="deadline_time">
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"

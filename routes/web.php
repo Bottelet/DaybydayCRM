@@ -80,7 +80,9 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::resource('tasks', 'TasksController');
+    Route::resource('tasks', 'TasksController', ['except' => [
+        'edit', 'update',
+    ]]);
 
     /*
      * Leads
@@ -98,7 +100,9 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::resource('leads', 'LeadsController');
+    Route::resource('leads', 'LeadsController', ['except' => [
+        'edit', 'update',
+    ]]);
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /*
@@ -124,7 +128,9 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::resource('projects', 'ProjectsController');
+    Route::resource('projects', 'ProjectsController', ['except' => [
+        'edit', 'update',
+    ]]);
     /*
      * Settings
      */
@@ -143,7 +149,9 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'departments'], static function () {
         Route::get('/indexData', 'DepartmentsController@indexData')->name('departments.indexDataTable');
     });
-    Route::resource('departments', 'DepartmentsController');
+    Route::resource('departments', 'DepartmentsController', ['except' => [
+        'show', 'edit', 'update',
+    ]]);
 
     /*
      * Integrations
@@ -152,7 +160,9 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/revokeAccess', 'IntegrationsController@revokeAccess')->name('integration.revoke-access');
         Route::post('/sync/dinero', 'IntegrationsController@dineroSync')->name('sync.dinero');
     });
-    Route::resource('integrations', 'IntegrationsController');
+    Route::resource('integrations', 'IntegrationsController', ['except' => [
+        'create', 'show', 'edit', 'update', 'destroy',
+    ]]);
 
     /*
      * Notifications
