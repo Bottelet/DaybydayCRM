@@ -268,8 +268,8 @@ class UsersController extends Controller
                 $user->image_path       = $path;
                 $user->language         = in_array($request->language, ['en', 'dk', 'es'], true) ? $request->language : 'en';
                 $user->save();
-                $user->roles()->attach($request->roles);
-                $user->department()->attach($request->departments);
+                $user->roles()->attach($request->role);
+                $user->department()->attach($request->department);
                 $user->save();
             });
         } catch (Throwable $exception) {
