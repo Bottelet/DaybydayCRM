@@ -142,7 +142,7 @@ class UsersTest extends AbstractTestCase
             'roles'                 => $roleId,
             'departments'           => $departmentId,
             'language'              => 'en',
-            'image_path'            => UploadedFile::fake()->image('avatar.jpg'),
+            'image_path'            => UploadedFile::fake()->create('avatar.jpg'),
         ];
     }
 }
