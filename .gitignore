@@ -73,6 +73,10 @@ storage/debugbar/
 # === Custom Exclusions ===
 # (Add any project-specific ignores below)
 blob-report/
+playwright-report/
+test-results/
+.playwright-mcp/
+tests/e2e/setup/no-tour-state.json
 package-lock.json
 .claude/*
 !.claude/skills/

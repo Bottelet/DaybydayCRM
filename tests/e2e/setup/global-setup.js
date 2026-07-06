@@ -32,7 +32,7 @@ async function globalSetup() {
   const farFuture = Math.floor(Date.now() / 1000) + 10 * 365 * 24 * 3600;
 
   const tourCookies = [
-    'dashboard_tour_dismissed',
+    'step_dashboard',
     'step_client_index',
     'step_client_create',
   ].map((name) => ({
