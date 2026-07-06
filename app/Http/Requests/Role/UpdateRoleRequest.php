@@ -37,8 +37,11 @@ class UpdateRoleRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
-        // Ensure permissions is an array
-        if ($this->permissions === null) {
+        // Ensure permissions is an array. An empty array submitted over a form-encoded
+        // request (e.g. permissions: [] from an HTTP client) serializes as an empty
+        // string rather than being omitted, so checking only for null missed this case
+        // and let a raw string reach RoleService::syncPermissions(), which requires array.
+        if ( ! is_array($this->permissions)) {
             $this->merge(['permissions' => []]);
         }
     }
