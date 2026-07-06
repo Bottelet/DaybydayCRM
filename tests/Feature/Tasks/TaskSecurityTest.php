@@ -101,8 +101,8 @@ class TaskSecurityTest extends AbstractTestCase
         ], ['Accept' => 'application/json']);
 
         /* Assert */
-        $response->assertStatus(400)
-            ->assertJson(['error' => 'Invalid status external id']);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['statusExternalId' => 'The selected status external id is invalid.']);
     }
 
     #[Test]
@@ -141,8 +141,8 @@ class TaskSecurityTest extends AbstractTestCase
         $this->task->refresh();
 
         $this->assertEquals($originalStatus, $this->task->status_id);
-        $response->assertStatus(400);
-        $response->assertJson(['error' => 'Invalid status for task']);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['status_id' => 'Invalid status for task']);
     }
 
     #[Test]
@@ -163,7 +163,7 @@ class TaskSecurityTest extends AbstractTestCase
 
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        $response->assertStatus(400);
-        $response->assertJson(['error' => 'Invalid status for task']);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['status_id' => 'The selected status id is invalid.']);
     }
 }
