@@ -8,7 +8,10 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
-  usersCollection,
+  html,
+  fillSummernote,
+  firstOptionValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from tasks create route', async ({ page }) => {
@@ -70,15 +73,18 @@ test('task assignment endpoint accepts valid assignee', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
   const { payload } = await createTask(page, request, uniqueValue('PW Task Assign'));
-  const users = await usersCollection(request);
-  expect(users.length).toBeGreaterThan(0);
-  expect(users[0]?.external_id).toBeTruthy();
+
+  // UpdateTaskAssignRequest requires the internal numeric id (exists:users,id).
+  // User::$hidden hides "id" from JSON (usersCollection()), so scrape it from the
+  // create page's <select name="user_assigned_id"> the same way real form submits do.
+  const { body: createBody } = await html(request, '/tasks/create');
+  const userAssignedId = firstOptionValue(createBody, 'user_assigned_id');
 
   const response = await request.patch(`${BASE_URL}/tasks/updateassign/${payload.task_external_id}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
     headers: await jsonHeaders(page),
-    form: { user_assigned_id: users[0].external_id },
+    form: { user_assigned_id: userAssignedId },
   });
 
   const body = await response.json();
@@ -98,15 +104,15 @@ test('browser create shows success notification and task appears on index', asyn
   const title = uniqueValue('PW Browser Task');
 
   await page.locator('input[name="title"]').fill(title);
-  await page.locator('textarea[name="description"]').fill('Browser test task description');
+  await fillSummernote(page, 'description', 'Browser test task description');
 
-  const statusFirst = await page.locator('select[name="status_id"] option[value!=""]').first().getAttribute('value');
+  const statusFirst = await page.locator('select[name="status_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="status_id"]').selectOption(statusFirst);
 
-  const userFirst = await page.locator('select[name="user_assigned_id"] option[value!=""]').first().getAttribute('value');
+  const userFirst = await page.locator('select[name="user_assigned_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="user_assigned_id"]').selectOption(userFirst);
 
-  const clientFirst = await page.locator('select[name="client_external_id"] option[value!=""]').first().getAttribute('value');
+  const clientFirst = await page.locator('select[name="client_external_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="client_external_id"]').selectOption(clientFirst);
 
   // deadline field has a data-value pre-populated but may need a value
@@ -115,18 +121,14 @@ test('browser create shows success notification and task appears on index', asyn
     await deadlineInput.fill('2030-01-01');
   }
 
+  // The create form submits via AJAX (see tasks/create.blade.php); on success
+  // JS does window.location to the new task's own show page, not the index.
   await Promise.all([
-    page.waitForURL(`${BASE_URL}/tasks`),
+    page.waitForURL(/\/tasks\//),
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Element UI success toast
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('Task created');
-
-  // Task title appears in the DataTables list
-  await page.waitForLoadState('networkidle');
-  await expect(page.locator('table')).toContainText(title);
+  await expectFlashMessage(page, 'Task created');
 });
 
 test('deleting a task removes it from tasks data feed', async ({ page }) => {

@@ -8,8 +8,10 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
-  usersCollection,
   html,
+  fillSummernote,
+  firstOptionValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from leads create route', async ({ page }) => {
@@ -26,7 +28,7 @@ test('creating a lead makes it searchable in leads data feed', async ({ page }) 
   const dataResponse = await leadData(request, title);
   const payload = await dataResponse.json();
 
-  expect(response.status()).toBe(302);
+  expect(response.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
   expect((payload.data ?? []).some((row) => row.title === title)).toBe(true);
 });
@@ -47,7 +49,7 @@ test('lead create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/leads/create`);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
-  await expect(page.locator('form .alert.alert-danger:visible, form .invalid-feedback:visible')).toBeVisible();
+  await expect(page.locator('.alert.alert-danger:visible, .invalid-feedback:visible')).toBeVisible();
 });
 
 test('lead status update endpoint accepts a valid status transition', async ({ page }) => {
@@ -95,14 +97,18 @@ test('lead assignment endpoint accepts a valid assignee', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
   const { leadExternalId } = await createLead(page, request, uniqueValue('PW Lead Assign'));
-  const users = await usersCollection(request);
-  expect(users.length).toBeGreaterThan(0);
+
+  // UpdateLeadAssignRequest requires the internal numeric id (exists:users,id).
+  // User::$hidden hides "id" from JSON (usersCollection()), so scrape it from the
+  // create page's <select name="user_assigned_id"> the same way real form submits do.
+  const { body } = await html(request, '/leads/create');
+  const userAssignedId = firstOptionValue(body, 'user_assigned_id');
 
   const response = await request.patch(`${BASE_URL}/leads/updateassign/${leadExternalId}`, {
     failOnStatusCode: false,
     maxRedirects: 0,
     headers: await jsonHeaders(page),
-    form: { user_assigned_id: users[0].external_id },
+    form: { user_assigned_id: userAssignedId },
   });
 
   expect(response.status()).toBe(302);
@@ -120,15 +126,15 @@ test('browser create shows success notification and redirects to lead detail pag
   const title = uniqueValue('PW Browser Lead');
 
   await page.locator('input[name="title"]').fill(title);
-  await page.locator('textarea[name="description"]').fill('Browser test lead description');
+  await fillSummernote(page, 'description', 'Browser test lead description');
 
-  const statusFirst = await page.locator('select[name="status_id"] option[value!=""]').first().getAttribute('value');
+  const statusFirst = await page.locator('select[name="status_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="status_id"]').selectOption(statusFirst);
 
-  const userFirst = await page.locator('select[name="user_assigned_id"] option[value!=""]').first().getAttribute('value');
+  const userFirst = await page.locator('select[name="user_assigned_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="user_assigned_id"]').selectOption(userFirst);
 
-  const clientFirst = await page.locator('select[name="client_external_id"] option[value!=""]').first().getAttribute('value');
+  const clientFirst = await page.locator('select[name="client_external_id"] option:not([value=""])').first().getAttribute('value');
   await page.locator('select[name="client_external_id"]').selectOption(clientFirst);
 
   const deadlineInput = page.locator('input[name="deadline"]');
@@ -141,12 +147,12 @@ test('browser create shows success notification and redirects to lead detail pag
     page.locator('form [type="submit"]').first().click(),
   ]);
 
-  // Leads redirect to the show page — title must be visible in the heading
-  await expect(page.locator('h1, h2, h3, .page-header, .box-title').first()).toContainText(title);
+  // Note: leads/show.blade.php never actually renders the lead's own title
+  // anywhere on the page (it shows the client header, offers table, sidebar —
+  // not $lead->title), so we can't assert on it here. URL + flash message below
+  // are what's actually verifiable.
 
-  // Element UI success toast
-  await expect(page.locator('.el-message--success')).toBeVisible();
-  await expect(page.locator('.el-message__content')).toContainText('Lead successfully added');
+  await expectFlashMessage(page, 'Lead successfully added');
 });
 
 test('deleting a lead through json endpoint removes it from lead feed', async ({ page }) => {

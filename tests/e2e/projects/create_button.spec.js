@@ -5,5 +5,5 @@ test('projects index page has a create button', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/projects`);
   await dismissTourIfVisible(page);
-  await expect(page.locator('a[href*="/projects/create"]')).toBeVisible();
+  await expect(page.locator('a[href*="/projects/create"]').first()).toBeVisible();
 });

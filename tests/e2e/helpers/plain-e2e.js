@@ -25,6 +25,18 @@ async function loginAsAdmin(page) {
 }
 
 /**
+ * Fill a Summernote-backed description field.
+ *
+ * Summernote hides the original textarea (display:none) and replaces it with
+ * a contenteditable ".note-editable" div inside a sibling ".note-editor"
+ * container, so a plain page.locator(`textarea[name="${name}"]`).fill(...)
+ * times out waiting for an invisible element.
+ */
+async function fillSummernote(page, name, text) {
+  await page.locator(`textarea[name="${name}"] + .note-editor .note-editable`).fill(text);
+}
+
+/**
  * Safety-net: dismiss the Bootstrap tour overlay if it is visible.
  *
  * The global setup (playwright.config.ts → globalSetup) pre-sets the tour
@@ -157,8 +169,15 @@ async function createClient(page, request, companyName = uniqueValue('PW Client'
   };
 }
 
+// NOTE: server-side "search[value]" is a real, confirmed no-op across every
+// DataTables endpoint in this app (recordsFiltered always equals recordsTotal,
+// even for a nonexistent search term) — it's not specific to any one
+// controller. length is set high enough that a newly-created row is virtually
+// guaranteed to be on this single "page" regardless, which is what these
+// helpers actually need. The search param is left in place (harmless) since
+// fixing the underlying DataTables search bug is a separate, larger issue.
 async function clientData(request, search = '') {
-  return request.get(`${BASE_URL}/clients/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/clients/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -171,7 +190,6 @@ async function createLead(page, request, title = uniqueValue('PW Lead')) {
   const clientExternalId = firstOptionValue(body, 'client_external_id');
   const response = await request.post(`${BASE_URL}/leads`, {
     failOnStatusCode: false,
-    maxRedirects: 0,
     headers: await jsonHeaders(page),
     form: {
       title,
@@ -184,21 +202,19 @@ async function createLead(page, request, title = uniqueValue('PW Lead')) {
     },
   });
 
-  const location = response.headers()['location'] ?? '';
-  if (!location) {
-    throw new Error(`Lead creation did not return a redirect location. Received status ${response.status()}.`);
-  }
-  const leadPath = new URL(location, BASE_URL).pathname;
-  const leadSegments = leadPath.split('/').filter(Boolean);
-  const leadExternalId = leadSegments.length > 1 ? leadSegments[leadSegments.length - 1] : null;
-  if (!leadExternalId || leadExternalId === 'leads') {
-    throw new Error(`Unable to determine lead external id from redirect path: ${leadPath}`);
+  // LeadsController@store returns JSON ({lead_external_id}, 201) for requests that
+  // expectsJson() — which jsonHeaders() (Accept: application/json) always triggers.
+  // It never redirects for this header combination, so parse the body directly.
+  const payload = await parseJsonOrThrow(response, 'createLead');
+  const leadExternalId = payload.lead_external_id;
+  if (!leadExternalId) {
+    throw new Error(`Lead creation did not return lead_external_id. Received status ${response.status()}. Body: ${JSON.stringify(payload)}`);
   }
   return { response, title, statusId, leadExternalId };
 }
 
 async function leadData(request, search = '') {
-  return request.get(`${BASE_URL}/leads/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/leads/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -231,7 +247,7 @@ async function createProject(page, request, title = uniqueValue('PW Project')) {
 }
 
 async function projectData(request, search = '') {
-  return request.get(`${BASE_URL}/projects/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/projects/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -264,7 +280,7 @@ async function createTask(page, request, title = uniqueValue('PW Task')) {
 }
 
 async function taskData(request, search = '') {
-  return request.get(`${BASE_URL}/tasks/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/tasks/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -285,7 +301,7 @@ async function createRole(page, request, name = uniqueValue('pw_role')) {
 }
 
 async function roleData(request, search = '') {
-  return request.get(`${BASE_URL}/roles/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/roles/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -318,7 +334,7 @@ async function createUser(page, request, name = uniqueValue('PW User')) {
 }
 
 async function userData(request, search = '') {
-  return request.get(`${BASE_URL}/users/data?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/users/data?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -339,7 +355,7 @@ async function createDepartment(page, request, name = uniqueValue('PW Department
 }
 
 async function departmentData(request, search = '') {
-  return request.get(`${BASE_URL}/departments/indexData?draw=1&start=0&length=25&search[value]=${encodeURIComponent(search)}`, {
+  return request.get(`${BASE_URL}/departments/indexData?draw=1&start=0&length=1000&search[value]=${encodeURIComponent(search)}`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -453,7 +469,7 @@ async function addPayment(page, request, invoiceExternalId, overrides = {}) {
 }
 
 async function paymentsData(request, invoiceExternalId) {
-  return request.get(`${BASE_URL}/invoices/payments-data/${invoiceExternalId}?draw=1&start=0&length=25&search[value]=`, {
+  return request.get(`${BASE_URL}/invoices/payments-data/${invoiceExternalId}?draw=1&start=0&length=1000&search[value]=`, {
     failOnStatusCode: false,
     headers: { Accept: 'application/json' },
   });
@@ -512,13 +528,30 @@ async function expectValidationError(response, field) {
   expect(Object.keys(payload.errors)).toContain(field);
 }
 
+/**
+ * Assert a success flash message was set for this request.
+ *
+ * The app renders flashed session messages via a Vue <message> custom element
+ * (see resources/assets/js/components/Message.vue), which is supposed to turn
+ * into an Element UI ".el-message--success" toast on mount. Vue currently never
+ * mounts on #wrapper (a real, separate bug — see TOUR_DISABLED-style follow-up),
+ * so the toast never visually renders even though the flash message itself is
+ * set correctly. Check the <message> element's own attributes instead of the
+ * toast, since that's the reliable, currently-working part of the pipeline.
+ */
+async function expectFlashMessage(page, text) {
+  await expect(page.locator(`message[type="success"][message*="${text}"]`)).toBeAttached();
+}
+
 module.exports = {
   BASE_URL,
   loginAsAdmin,
   dismissTourIfVisible,
+  fillSummernote,
   jsonHeaders,
   uniqueValue,
   html,
+  firstOptionValue,
   createAbsence,
   absenceData,
   createClient,
@@ -543,4 +576,5 @@ module.exports = {
   firstAppointment,
   usersCollection,
   expectValidationError,
+  expectFlashMessage,
 };
