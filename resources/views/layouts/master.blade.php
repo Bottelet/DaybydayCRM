@@ -191,10 +191,16 @@
                         </div>
                     @endif
                     @if(Session::has('flash_message_warning'))
-                        <message message="{{ Session::get('flash_message_warning') }}" type="warning"></message>
+                        <div class="alert alert-warning alert-dismissible flash-message" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Close') }}"><span aria-hidden="true">&times;</span></button>
+                            {{ Session::get('flash_message_warning') }}
+                        </div>
                     @endif
                     @if(Session::has('flash_message'))
-                        <message message="{{ Session::get('flash_message') }}" type="success"></message>
+                        <div class="alert alert-success alert-dismissible flash-message" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Close') }}"><span aria-hidden="true">&times;</span></button>
+                            {{ Session::get('flash_message') }}
+                        </div>
                     @endif
                     <div class="row" style="margin-bottom: 20px; margin-top: 20px;">
                         <div class="col-md-9">
@@ -236,6 +242,15 @@
 @if(file_exists(public_path('js/app.js')))
     <script type="text/javascript" src="{{ URL::asset('js/app.js') }}"></script>
 @endif
+<script>
+    $(document).ready(function () {
+        // Auto-dismiss flashed success/warning alerts after 5s, matching the
+        // previous toast's duration — manual close via the button still works.
+        setTimeout(function () {
+            $('.flash-message').fadeOut(400, function () { $(this).remove(); });
+        }, 5000);
+    });
+</script>
 @if(App::getLocale() === "dk")
 <script>
     $(document).ready(function () {

@@ -531,16 +531,11 @@ async function expectValidationError(response, field) {
 /**
  * Assert a success flash message was set for this request.
  *
- * The app renders flashed session messages via a Vue <message> custom element
- * (see resources/assets/js/components/Message.vue), which is supposed to turn
- * into an Element UI ".el-message--success" toast on mount. Vue currently never
- * mounts on #wrapper (a real, separate bug — see TOUR_DISABLED-style follow-up),
- * so the toast never visually renders even though the flash message itself is
- * set correctly. Check the <message> element's own attributes instead of the
- * toast, since that's the reliable, currently-working part of the pipeline.
+ * Flashed session messages render as a plain, visible Bootstrap alert
+ * (see layouts/master.blade.php's ".flash-message" block) — no Vue involved.
  */
 async function expectFlashMessage(page, text) {
-  await expect(page.locator(`message[type="success"][message*="${text}"]`)).toBeAttached();
+  await expect(page.locator('.alert.alert-success.flash-message').filter({ hasText: text })).toBeVisible();
 }
 
 module.exports = {

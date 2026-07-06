@@ -17,7 +17,6 @@ import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
 import calendar from './components/Calendar.vue';
-import message from './components/Message.vue';
 import search from './components/Search.vue';
 import dynamictable from './components/DynamicTable.vue';
 import invoiceLineModal from './components/InvoiceLineModal.vue';
@@ -177,7 +176,6 @@ var app = new Vue({
     components: {
         graphline,
         doughnut,
-        message,
         passportclients,
         passportauthorizedclients,
         passportpersonalaccesstokens,
