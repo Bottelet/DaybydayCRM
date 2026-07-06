@@ -38,7 +38,7 @@ class OffersController extends Controller
     {
         $offer->invoiceLines()->forceDelete();
         foreach ($request->all() as $line) {
-            if ( ! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
+            if (empty($line['title']) || empty($line['type']) || empty($line['price']) || empty($line['quantity'])) {
                 return response('missing fields', 422);
             }
 
