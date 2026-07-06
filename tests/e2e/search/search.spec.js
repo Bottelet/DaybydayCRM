@@ -1,6 +1,20 @@
 const { test, expect } = require('@playwright/test');
 const { BASE_URL, loginAsAdmin, createClient, uniqueValue } = require('../helpers/plain-e2e');
 
+test('navbar search widget renders as a real input, not an empty Vue mount', async ({ page }) => {
+  await loginAsAdmin(page);
+  await page.goto(`${BASE_URL}/dashboard`);
+
+  // Regression guard: the navbar's <search></search> tag is a Vue component
+  // (resources/assets/js/components/Search.vue). Vue previously never
+  // mounted anywhere in the app (see resources/assets/js/app.js /
+  // vite.config.mjs), so this rendered as an empty custom element with no
+  // visible input at all.
+  await page.locator('.search-button').click();
+  await expect(page.locator('.search-input')).toBeVisible();
+  await expect(page.locator('.search-input')).toHaveAttribute('placeholder', /search term/i);
+});
+
 test('search returns client hit structure for a newly created company', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;

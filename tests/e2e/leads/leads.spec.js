@@ -155,6 +155,25 @@ test('browser create shows success notification and redirects to lead detail pag
   await expectFlashMessage(page, 'Lead successfully added');
 });
 
+test('New Offer button on lead show page opens a populated offer creation modal', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { leadExternalId } = await createLead(page, request, uniqueValue('PW Lead Offer'));
+
+  await page.goto(`${BASE_URL}/leads/${leadExternalId}`);
+  await page.locator('button:has-text("New Offer")').click();
+
+  // Regression guard: this modal's body is a Vue component
+  // (<invoice-line-modal>). Vue previously never mounted anywhere in the
+  // app (see resources/assets/js/app.js / vite.config.mjs), so the modal
+  // shell opened but stayed empty — clicking "New Offer" looked like the
+  // button did nothing. Assert on the Vue-rendered content, not just modal
+  // visibility, so a regression here fails loudly instead of looking like
+  // a pass.
+  await expect(page.locator('#create-offer .modal-title')).toHaveText(/Offer Management/i);
+  await expect(page.locator('#create-offer button:has-text("Create")')).toBeVisible();
+});
+
 test('deleting a lead through json endpoint removes it from lead feed', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
