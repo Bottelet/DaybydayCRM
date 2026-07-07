@@ -5,6 +5,7 @@ const {
   usersCollection,
   jsonHeaders,
   expectValidationError,
+  createAppointment,
 } = require('../helpers/plain-e2e');
 
 async function fetchAppointments(request) {
@@ -42,21 +43,21 @@ test('appointment update persists new times and assignee', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
-  const appointments = await fetchAppointments(request);
-  test.skip(appointments.length === 0, 'No appointments seeded — cannot test update without an existing record');
-
-  const appointment = appointments[0];
+  // AppointmentsController has no create endpoint - see createAppointment()'s
+  // own doc comment in plain-e2e.js for why this shells out instead of
+  // going through HTTP like every other helper in this file.
+  const { appointmentExternalId, userExternalId } = createAppointment();
   const users = await usersCollection(request);
   expect(users.length).toBeGreaterThan(0);
-  const assignee = users.find((user) => user.external_id !== appointment.user?.external_id) ?? users[0];
+  const assignee = users.find((user) => user.external_id !== userExternalId) ?? users[0];
   expect(assignee).toBeDefined();
   expect(assignee.external_id).toBeTruthy();
 
-  const response = await request.post(`${BASE_URL}/appointments/update/${appointment.external_id}`, {
+  const response = await request.post(`${BASE_URL}/appointments/update/${appointmentExternalId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
     form: {
-      id: appointment.external_id,
+      id: appointmentExternalId,
       start: '2030-01-02T09:00:00.000Z',
       end: '2030-01-02T10:00:00.000Z',
       group: assignee.external_id,
@@ -74,16 +75,13 @@ test('appointment update rejects missing assignee', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
-  const appointments = await fetchAppointments(request);
-  test.skip(appointments.length === 0, 'No appointments seeded — cannot test validation without an existing record');
+  const { appointmentExternalId } = createAppointment();
 
-  const appointment = appointments[0];
-
-  const response = await request.post(`${BASE_URL}/appointments/update/${appointment.external_id}`, {
+  const response = await request.post(`${BASE_URL}/appointments/update/${appointmentExternalId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
     form: {
-      id: appointment.external_id,
+      id: appointmentExternalId,
       start: '2030-01-02T09:00:00.000Z',
       end: '2030-01-02T10:00:00.000Z',
       group: '',

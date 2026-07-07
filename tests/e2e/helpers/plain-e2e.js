@@ -1,4 +1,6 @@
 const { expect } = require('@playwright/test');
+const { execSync } = require('child_process');
+const path = require('path');
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost';
 const ADMIN_EMAIL = process.env.PLAYWRIGHT_ADMIN_EMAIL ?? 'admin@admin.com';
@@ -500,6 +502,56 @@ async function uploadClientDocument(page, request, clientExternalId) {
   return { uploadResponse, documentExternalId };
 }
 
+/**
+ * Appointments have no HTTP create endpoint anywhere in the app -
+ * AppointmentsController only has calendar/data/update/destroy. The only
+ * place one is ever created is Database\Seeders\Concerns\WorldBuilder,
+ * which isn't part of the seeder path this environment actually runs
+ * (see DatabaseSeeder), so a fresh DB has zero appointments and any test
+ * needing one has no way to get it through the running application.
+ *
+ * This shells out to the same `Appointment::factory()` logic WorldBuilder
+ * already uses, via `php artisan tinker` - the one exception to this file's
+ * otherwise all-HTTP pattern, justified by there being no HTTP path to
+ * reach for. DB_HOST is overridden to 127.0.0.1 because this runs on the
+ * host (not inside the app's docker container), where the "mariadb"
+ * hostname from .env doesn't resolve, but mariadb's port is published to
+ * the host directly.
+ */
+function createAppointment() {
+  const projectRoot = path.join(__dirname, '../../..');
+  // Piped to tinker's stdin rather than passed via --execute="...": the
+  // script is plain PHP with no special handling needed, whereas
+  // --execute="$foo" runs through a shell that expands "$foo" as a shell
+  // variable (to empty, since it's never actually set) before PHP ever
+  // sees it - passing it as stdin sidesteps that entirely.
+  const script = `
+$task = \\App\\Models\\Task::first() ?? \\App\\Models\\Task::factory()->create();
+$user = \\App\\Models\\User::first();
+$appointment = \\App\\Models\\Appointment::factory()->create([
+    'user_id' => $user->id,
+    'source_type' => \\App\\Models\\Task::class,
+    'source_id' => $task->id,
+    'client_id' => $task->client_id,
+]);
+echo $appointment->external_id . '|' . $user->external_id;
+`;
+
+  const output = execSync('php artisan tinker', {
+    cwd: projectRoot,
+    encoding: 'utf8',
+    env: { ...process.env, DB_HOST: '127.0.0.1' },
+    input: script,
+  }).trim();
+  const [externalId, userExternalId] = output.split('|');
+
+  if (!externalId || !userExternalId) {
+    throw new Error(`createAppointment: tinker did not return the expected output, got: "${output}"`);
+  }
+
+  return { appointmentExternalId: externalId, userExternalId };
+}
+
 async function firstAppointment(request) {
   const response = await request.get(`${BASE_URL}/appointments/data`, {
     failOnStatusCode: false,
@@ -568,6 +620,7 @@ module.exports = {
   createUser,
   userData,
   createOffer,
+  createAppointment,
   firstAppointment,
   usersCollection,
   expectValidationError,
