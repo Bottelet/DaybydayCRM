@@ -29,7 +29,7 @@ DTOs MUST NOT:
 - contain ORM logic
 - contain validation rules
 - contain side effects
-- depend on framework components (Filament, Request, etc.)
+- depend on framework components (`Request`, Eloquent models, etc.)
 
 ---
 
@@ -131,7 +131,7 @@ Use DTOs when:
 DTOs MAY be skipped when:
 
 - data is short-lived within a single method
-- input comes from trusted UI layer (Filament forms)
+- input comes from a validated `FormRequest`
 - structure is trivial and not reused elsewhere
 
 ---
