@@ -18,10 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -237,7 +234,7 @@ class UsersController extends Controller
      *
      * @return mixed
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, UserUpdateService $userUpdateService)
     {
         $settings = Setting::cached();
         if (User::count() >= $settings->max_users) {
@@ -250,28 +247,7 @@ class UsersController extends Controller
             return redirect()->back();
         }
         try {
-            $path = null;
-            if ($request->hasFile('image_path')) {
-                $file = $request->file('image_path');
-
-                $path = Storage::put($settings->external_id, $file);
-            }
-            DB::transaction(function () use ($request, $path) {
-                $user                   = new User();
-                $user->name             = $request->name;
-                $user->external_id      = Uuid::uuid4()->toString();
-                $user->email            = $request->email;
-                $user->address          = $request->address;
-                $user->primary_number   = $request->primary_number;
-                $user->secondary_number = $request->secondary_number;
-                $user->password         = bcrypt($request->password);
-                $user->image_path       = $path;
-                $user->language         = in_array($request->language, ['en', 'dk', 'es'], true) ? $request->language : 'en';
-                $user->save();
-                $user->roles()->attach($request->role);
-                $user->department()->attach($request->department);
-                $user->save();
-            });
+            $userUpdateService->create($request->validated(), $request->file('image_path'));
         } catch (Throwable $exception) {
             report($exception);
 

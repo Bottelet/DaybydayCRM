@@ -6,12 +6,49 @@ use App\Enums\RoleType;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Ramsey\Uuid\Uuid;
 use RuntimeException;
 
 class UserUpdateService
 {
+    /**
+     * Create a new user with the given validated attributes, role, and
+     * department. Matches the previous inline UsersController@store logic
+     * exactly - including the language fallback to 'en' for anything
+     * outside the 3 supported locales.
+     */
+    public function create(array $validated, ?UploadedFile $imageFile): User
+    {
+        $settings = Setting::cached();
+
+        $path = null;
+        if ($imageFile !== null) {
+            $path = Storage::put($settings->external_id, $imageFile);
+        }
+
+        return DB::transaction(function () use ($validated, $path): User {
+            $user                   = new User();
+            $user->name             = $validated['name'];
+            $user->external_id      = Uuid::uuid4()->toString();
+            $user->email            = $validated['email'];
+            $user->address          = $validated['address'] ?? null;
+            $user->primary_number   = $validated['primary_number'] ?? null;
+            $user->secondary_number = $validated['secondary_number'] ?? null;
+            $user->password         = bcrypt($validated['password']);
+            $user->image_path       = $path;
+            $user->language         = in_array($validated['language'] ?? null, ['en', 'dk', 'es'], true) ? $validated['language'] : 'en';
+            $user->save();
+            $user->roles()->attach($validated['role']);
+            $user->department()->attach($validated['department']);
+            $user->save();
+
+            return $user;
+        });
+    }
+
     public function prepareValidatedInput(User $authenticatedUser, User $user, array $input, ?UploadedFile $imageFile): array
     {
         if ( ! $authenticatedUser->canChangePasswordOn($user)) {

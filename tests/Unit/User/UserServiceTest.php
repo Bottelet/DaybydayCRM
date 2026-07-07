@@ -5,9 +5,11 @@ namespace Tests\Unit\User;
 use App\Enums\RoleType;
 use App\Models\Department;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\User\UserUpdateService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -85,5 +87,58 @@ class UserServiceTest extends AbstractTestCase
         $freshOwnerRole = $owner->fresh()->roles->first();
         $this->assertNotNull($freshOwnerRole);
         $this->assertSame(RoleType::OWNER->value, $freshOwnerRole->name);
+    }
+
+    #[Test]
+    public function it_creates_a_user_with_role_department_and_defaults(): void
+    {
+        /* Arrange */
+        Cache::forget('app_settings');
+        Setting::factory()->create();
+        $service    = new UserUpdateService();
+        $role       = Role::factory()->create();
+        $department = Department::factory()->create();
+
+        /* Act */
+        $user = $service->create([
+            'name'     => 'Jane Doe',
+            'email'    => 'jane@example.com',
+            'password' => 'password123',
+            'role'     => $role->id,
+            'department' => $department->id,
+            'language' => 'dk',
+        ], null);
+
+        /* Assert */
+        $this->assertSame('Jane Doe', $user->name);
+        $this->assertSame('jane@example.com', $user->email);
+        $this->assertTrue(Hash::check('password123', $user->fresh()->password));
+        $this->assertSame('dk', $user->language);
+        $this->assertTrue($user->roles->contains($role));
+        $this->assertTrue($user->department->contains($department));
+    }
+
+    #[Test]
+    public function it_falls_back_to_english_for_an_unsupported_language(): void
+    {
+        /* Arrange */
+        Cache::forget('app_settings');
+        Setting::factory()->create();
+        $service    = new UserUpdateService();
+        $role       = Role::factory()->create();
+        $department = Department::factory()->create();
+
+        /* Act */
+        $user = $service->create([
+            'name'       => 'Jane Doe',
+            'email'      => 'jane2@example.com',
+            'password'   => 'password123',
+            'role'       => $role->id,
+            'department' => $department->id,
+            'language'   => 'fr',
+        ], null);
+
+        /* Assert */
+        $this->assertSame('en', $user->language);
     }
 }
