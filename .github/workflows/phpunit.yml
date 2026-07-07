@@ -90,6 +90,30 @@ jobs:
           php-extensions: 'dom,curl,libxml,mbstring,zip,pcntl,pdo,sqlite,pdo_sqlite,bcmath,soap,intl,gd,exif,iconv,imagick'
           composer-args: '--no-ansi --no-scripts --no-interaction --optimize-autoloader --prefer-dist'
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: yarn
+
+      # Several Feature tests render views that use @vite(...) (e.g. the
+      # shared master.blade.php layout) - without a real build, those requests
+      # 500 with ViteManifestNotFoundException since public/build/manifest.json
+      # doesn't exist yet on a fresh checkout.
+      - name: Build frontend assets
+        run: |
+          if [ -f yarn.lock ]; then
+            corepack enable
+            yarn install --frozen-lockfile
+            yarn build
+          elif [ -f package-lock.json ]; then
+            npm ci
+            npm run build
+          else
+            echo "No lockfile found (expected yarn.lock or package-lock.json)." >&2
+            exit 1
+          fi
+
       - name: Wait for MySQL
         run: |
           for i in {1..30}; do
@@ -100,10 +124,15 @@ jobs:
             sleep 2
           done
 
+      # Only .env needs .env.ci's content, for the artisan CLI commands below
+      # (migrate, seed) that run outside PHPUnit's own environment. .env.testing
+      # is deliberately left as committed: phpunit.xml's <env> tags already
+      # override every key PHPUnit's test run actually needs (DB_CONNECTION,
+      # CACHE_STORE, etc.), and ProjectFilesConfigurationTest asserts on
+      # .env.testing's committed content directly - overwriting it here made
+      # that assertion fail in CI while passing everywhere else.
       - name: Prepare .env
-        run: |
-          cp .env.ci .env.testing
-          cp .env.ci .env
+        run: cp .env.ci .env
 
       - name: Regenerate autoloader
         run: composer dump-autoload --no-scripts
