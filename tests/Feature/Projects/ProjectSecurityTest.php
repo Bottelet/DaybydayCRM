@@ -155,4 +155,40 @@ class ProjectSecurityTest extends AbstractTestCase
         $response->assertRedirect();
         $response->assertSessionHasErrors(['status_id' => __('The selected status id is invalid.')]);
     }
+
+    #[Test]
+    public function it_authorized_user_can_update_assign()
+    {
+        /* Arrange */
+        $this->withPermissions(PermissionName::PROJECT_ASSIGN);
+        $newAssignee = User::factory()->create();
+
+        /* Act */
+        $response = $this->patch(route('project.update.assignee', $this->project->external_id), [
+            'user_assigned_id' => $newAssignee->id,
+        ]);
+
+        /* Assert */
+        $this->project->refresh();
+        $this->assertEquals($newAssignee->id, $this->project->user_assigned_id);
+    }
+
+    #[Test]
+    public function it_unauthorized_user_cannot_update_assign()
+    {
+        /* Arrange */
+        $this->actingAs($this->unauthorizedUser);
+        $originalAssignee = $this->project->user_assigned_id;
+        $newAssignee      = User::factory()->create();
+
+        /* Act */
+        $response = $this->patch(route('project.update.assignee', $this->project->external_id), [
+            'user_assigned_id' => $newAssignee->id,
+        ]);
+
+        /* Assert */
+        $response->assertRedirect();
+        $this->project->refresh();
+        $this->assertEquals($originalAssignee, $this->project->user_assigned_id);
+    }
 }

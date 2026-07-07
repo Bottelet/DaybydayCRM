@@ -166,4 +166,40 @@ class TaskSecurityTest extends AbstractTestCase
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['status_id' => 'The selected status id is invalid.']);
     }
+
+    #[Test]
+    public function it_authorized_user_can_update_assign()
+    {
+        /* Arrange */
+        $this->withPermissions(PermissionName::TASK_ASSIGN);
+        $newAssignee = User::factory()->create();
+
+        /* Act */
+        $response = $this->patch(route('task.update.assignee', $this->task->external_id), [
+            'user_assigned_id' => $newAssignee->id,
+        ], ['Accept' => 'application/json']);
+
+        /* Assert */
+        $response->assertStatus(200);
+        $this->task->refresh();
+        $this->assertEquals($newAssignee->id, $this->task->user_assigned_id);
+    }
+
+    #[Test]
+    public function it_unauthorized_user_cannot_update_assign()
+    {
+        /* Arrange */
+        $originalAssignee = $this->task->user_assigned_id;
+        $newAssignee      = User::factory()->create();
+
+        /* Act */
+        $response = $this->patch(route('task.update.assignee', $this->task->external_id), [
+            'user_assigned_id' => $newAssignee->id,
+        ], ['Accept' => 'application/json']);
+
+        /* Assert */
+        $response->assertStatus(403);
+        $this->task->refresh();
+        $this->assertEquals($originalAssignee, $this->task->user_assigned_id);
+    }
 }
