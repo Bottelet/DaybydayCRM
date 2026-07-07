@@ -6,7 +6,6 @@ use App\Enums\InvoiceStatus;
 use App\Enums\PaymentSource;
 use App\Http\Requests\Invoice\AddInvoiceLine;
 use App\Models\Invoice;
-use App\Models\InvoiceLine;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Repositories\Currency\Currency;
@@ -16,12 +15,13 @@ use App\Services\Billing\BillingIntegrationRegistry;
 use App\Services\Billing\NullBillingAdapter;
 use App\Services\Invoice\InvoiceCalculator;
 use App\Services\Invoice\InvoiceService;
+use App\Services\InvoiceLine\InvoiceLineService;
 use App\Services\InvoiceNumber\InvoiceNumberService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Ramsey\Uuid\Uuid;
+use InvalidArgumentException;
 use Yajra\DataTables\Facades\DataTables;
 
 class InvoicesController extends Controller
@@ -33,6 +33,7 @@ class InvoicesController extends Controller
     public function __construct(
         private BillingIntegrationRegistry $billing,
         private InvoiceService $invoiceService,
+        private InvoiceLineService $invoiceLineService,
     ) {
         $this->middleware('permission:invoice-see', ['only' => ['index', 'show']]);
     }
@@ -141,12 +142,6 @@ class InvoicesController extends Controller
         }
         $invoice = $this->findByExternalId($external_id);
 
-        if ( ! $invoice->canUpdateInvoice()) {
-            session()->flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
-
-            return redirect()->back();
-        }
-
         $product = null;
         if ($request->product_id) {
             $product = $request->product_id;
@@ -154,16 +149,21 @@ class InvoicesController extends Controller
             $product = Product::whereExternalId($request->product)->first()?->id;
         }
 
-        InvoiceLine::query()->create([
-            'external_id' => Uuid::uuid4()->toString(),
-            'title'       => $request->title,
-            'comment'     => $request->comment,
-            'quantity'    => $request->quantity,
-            'type'        => $request->type,
-            'price'       => $request->price * 100,
-            'invoice_id'  => $invoice->id,
-            'product_id'  => $product,
-        ]);
+        try {
+            $this->invoiceLineService->createLine(
+                $invoice,
+                $request->title,
+                $request->type,
+                $request->quantity,
+                (float) $request->price,
+                $request->comment,
+                $product
+            );
+        } catch (InvalidArgumentException $exception) {
+            session()->flash('flash_message_warning', __("Can't insert new invoice line, to already sent invoice"));
+
+            return redirect()->back();
+        }
 
         return redirect()->back();
     }
