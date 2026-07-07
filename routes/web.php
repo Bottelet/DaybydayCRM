@@ -31,7 +31,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/users', 'UsersController@users')->name('users.users');
         Route::get('/calendar-users', 'UsersController@calendarUsers')->name('users.calendar');
     });
-    Route::resource('users', 'UsersController');
+    Route::get('users', 'UsersController@index')->name('users.index');
+    Route::get('users/create', 'UsersController@create')->name('users.create');
+    Route::post('users', 'UsersController@store')->name('users.store');
+    Route::get('users/{user}', 'UsersController@show')->name('users.show');
+    Route::get('users/{user}/edit', 'UsersController@edit')->name('users.edit');
+    Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');
+    Route::delete('users/{user}', 'UsersController@destroy')->name('users.destroy');
 
     /*
      * Roles
@@ -40,9 +46,12 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/data', 'RolesController@indexData')->name('roles.data');
         Route::patch('/update/{external_id}', 'RolesController@update');
     });
-    Route::resource('roles', 'RolesController', ['except' => [
-        'update',
-    ]]);
+    Route::get('roles', 'RolesController@index')->name('roles.index');
+    Route::get('roles/create', 'RolesController@create')->name('roles.create');
+    Route::post('roles', 'RolesController@store')->name('roles.store');
+    Route::get('roles/{role}', 'RolesController@show')->name('roles.show');
+    Route::get('roles/{role}/edit', 'RolesController@edit')->name('roles.edit');
+    Route::delete('roles/{role}', 'RolesController@destroy')->name('roles.destroy');
     /*
      * Clients
      */
@@ -58,7 +67,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/updateassign/{external_id}', 'ClientsController@updateAssign');
         Route::post('/updateassign/{external_id}', 'ClientsController@updateAssign');
     });
-    Route::resource('clients', 'ClientsController');
+    Route::get('clients', 'ClientsController@index')->name('clients.index');
+    Route::get('clients/create', 'ClientsController@create')->name('clients.create');
+    Route::post('clients', 'ClientsController@store')->name('clients.store');
+    Route::get('clients/{client}', 'ClientsController@show')->name('clients.show');
+    Route::get('clients/{client}/edit', 'ClientsController@edit')->name('clients.edit');
+    Route::match(['put', 'patch'], 'clients/{client}', 'ClientsController@update')->name('clients.update');
+    Route::delete('clients/{client}', 'ClientsController@destroy')->name('clients.destroy');
     Route::get('document/{external_id}', 'DocumentsController@view')->name('document.view');
     Route::get('document/download/{external_id}', 'DocumentsController@download')->name('document.download');
     Route::delete('document/{external_id}', 'DocumentsController@destroy')->name('document.destroy');
@@ -80,7 +95,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.update.project');
         Route::patch('/updateproject/{external_id}', 'TasksController@updateProject')->name('tasks.updateProject'); // Alias
     });
-    Route::resource('tasks', 'TasksController');
+    Route::get('tasks', 'TasksController@index')->name('tasks.index');
+    Route::get('tasks/create', 'TasksController@create')->name('tasks.create');
+    Route::post('tasks', 'TasksController@store')->name('tasks.store');
+    Route::get('tasks/{task}', 'TasksController@show')->name('tasks.show');
+    Route::get('tasks/{task}/edit', 'TasksController@edit')->name('tasks.edit');
+    Route::match(['put', 'patch'], 'tasks/{task}', 'TasksController@update')->name('tasks.update');
+    Route::delete('tasks/{task}', 'TasksController@destroy')->name('tasks.destroy');
 
     /*
      * Leads
@@ -98,7 +119,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::get('/create/{client_external_id}', 'LeadsController@create')->name('client.lead.create');
         Route::delete('/{lead}/json', 'LeadsController@destroyJson')->name('leads.destroy.json');
     });
-    Route::resource('leads', 'LeadsController');
+    Route::get('leads', 'LeadsController@index')->name('leads.index');
+    Route::get('leads/create', 'LeadsController@create')->name('leads.create');
+    Route::post('leads', 'LeadsController@store')->name('leads.store');
+    Route::get('leads/{lead}', 'LeadsController@show')->name('leads.show');
+    Route::get('leads/{lead}/edit', 'LeadsController@edit')->name('leads.edit');
+    Route::match(['put', 'patch'], 'leads/{lead}', 'LeadsController@update')->name('leads.update');
+    Route::delete('leads/{lead}', 'LeadsController@destroy')->name('leads.destroy');
     Route::post('/comments/{type}/{external_id}', 'CommentController@store')->name('comments.create');
 
     /*
@@ -124,7 +151,13 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::patch('/update-deadline/{external_id}', 'ProjectsController@updateDeadline')->name('project.update.deadline');
         Route::get('/create/{client_external_id}', 'ProjectsController@create')->name('project.client.create');
     });
-    Route::resource('projects', 'ProjectsController');
+    Route::get('projects', 'ProjectsController@index')->name('projects.index');
+    Route::get('projects/create', 'ProjectsController@create')->name('projects.create');
+    Route::post('projects', 'ProjectsController@store')->name('projects.store');
+    Route::get('projects/{project}', 'ProjectsController@show')->name('projects.show');
+    Route::get('projects/{project}/edit', 'ProjectsController@edit')->name('projects.edit');
+    Route::match(['put', 'patch'], 'projects/{project}', 'ProjectsController@update')->name('projects.update');
+    Route::delete('projects/{project}', 'ProjectsController@destroy')->name('projects.destroy');
     /*
      * Settings
      */
@@ -143,7 +176,13 @@ Route::group(['middleware' => ['auth']], static function () {
     Route::group(['prefix' => 'departments'], static function () {
         Route::get('/indexData', 'DepartmentsController@indexData')->name('departments.indexDataTable');
     });
-    Route::resource('departments', 'DepartmentsController');
+    Route::get('departments', 'DepartmentsController@index')->name('departments.index');
+    Route::get('departments/create', 'DepartmentsController@create')->name('departments.create');
+    Route::post('departments', 'DepartmentsController@store')->name('departments.store');
+    Route::get('departments/{department}', 'DepartmentsController@show')->name('departments.show');
+    Route::get('departments/{department}/edit', 'DepartmentsController@edit')->name('departments.edit');
+    Route::match(['put', 'patch'], 'departments/{department}', 'DepartmentsController@update')->name('departments.update');
+    Route::delete('departments/{department}', 'DepartmentsController@destroy')->name('departments.destroy');
 
     /*
      * Integrations
@@ -152,9 +191,8 @@ Route::group(['middleware' => ['auth']], static function () {
         Route::post('/revokeAccess', 'IntegrationsController@revokeAccess')->name('integration.revoke-access');
         Route::post('/sync/dinero', 'IntegrationsController@dineroSync')->name('sync.dinero');
     });
-    Route::resource('integrations', 'IntegrationsController', ['except' => [
-        'create', 'show', 'edit', 'update', 'destroy',
-    ]]);
+    Route::get('integrations', 'IntegrationsController@index')->name('integrations.index');
+    Route::post('integrations', 'IntegrationsController@store')->name('integrations.store');
 
     /*
      * Notifications
