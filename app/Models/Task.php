@@ -127,6 +127,11 @@ class Task extends Model implements Commentable
         return route('tasks.show', [$this->external_id]);
     }
 
+    public function getEditRoute()
+    {
+        return route('tasks.edit', [$this->external_id]);
+    }
+
     public function getAssignedUserAttribute()
     {
         // Use the loaded relationship if available to prevent N+1 queries

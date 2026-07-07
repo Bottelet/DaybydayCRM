@@ -13,7 +13,7 @@ class DepartmentsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('user.is.admin', ['only' => ['create', 'destroy']]);
+        $this->middleware('user.is.admin', ['only' => ['create', 'edit', 'update', 'destroy']]);
         $this->middleware('is.demo', ['only' => ['destroy']]);
     }
 
@@ -37,6 +37,9 @@ class DepartmentsController extends Controller
             ->editColumn('name', function ($departments) {
                 return $departments->name;
             })
+            ->addColumn('namelink', function ($departments) {
+                return '<a href="' . route('departments.show', $departments->external_id) . '">' . e($departments->name) . '</a>';
+            })
             ->editColumn('description', function ($departments) {
                 return $departments->description;
             })
@@ -46,7 +49,7 @@ class DepartmentsController extends Controller
             {{csrf_field()}}
             <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure?\')"">
             </form>')
-            ->rawColumns(['delete'])
+            ->rawColumns(['namelink', 'delete'])
             ->make(true);
     }
 
@@ -78,6 +81,36 @@ class DepartmentsController extends Controller
         }
 
         return redirect()->route('departments.index');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function show($external_id)
+    {
+        return view('departments.show')
+            ->withDepartment(Department::whereExternalId($external_id)->firstOrFail());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function edit($external_id)
+    {
+        return view('departments.edit')
+            ->withDepartment(Department::whereExternalId($external_id)->firstOrFail());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function update($external_id, StoreDepartmentRequest $request, DepartmentService $service)
+    {
+        $department = Department::whereExternalId($external_id)->firstOrFail();
+        $service->update($department, $request->validated());
+        Session::flash('flash_message', __('Successfully updated department'));
+
+        return redirect()->route('departments.show', $department->external_id);
     }
 
     /**

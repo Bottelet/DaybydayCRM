@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionName;
 use App\Enums\ProjectStatus;
 use App\Events\TaskAction;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskAssignRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
@@ -209,6 +211,26 @@ class TasksController extends Controller
         }
 
         return redirect()->route('tasks.index');
+    }
+
+    public function edit($external_id)
+    {
+        if ( ! auth()->user()->can(PermissionName::TASK_UPDATE->value)) {
+            session()->flash('flash_message_warning', __('You do not have permission to update tasks'));
+
+            return redirect()->route('tasks.show', $external_id);
+        }
+
+        return view('tasks.edit')->withTask($this->findByExternalId($external_id));
+    }
+
+    public function update($external_id, UpdateTaskRequest $request)
+    {
+        $task = $this->findByExternalId($external_id);
+        $this->taskService->update($task, $request->validated());
+        session()->flash('flash_message', __('Task successfully updated'));
+
+        return redirect()->route('tasks.show', $task->external_id);
     }
 
     public function destroy(Task $task, Request $request)

@@ -20,6 +20,16 @@ class DepartmentService
     }
 
     /**
+     * Update an existing department.
+     *
+     * @param array $data The validated data
+     */
+    public function update(Department $department, array $data): void
+    {
+        $department->fill($data)->save();
+    }
+
+    /**
      * Delete a department by external ID.
      *
      * @param string $externalId The external ID of the department

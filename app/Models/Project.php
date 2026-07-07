@@ -123,6 +123,11 @@ class Project extends Model implements Commentable
         return route('comments.create', ['type' => 'project', 'external_id' => $this->external_id]);
     }
 
+    public function getEditRoute()
+    {
+        return route('projects.edit', [$this->external_id]);
+    }
+
     public function getSearchableFields(): array
     {
         return $this->searchableFields;

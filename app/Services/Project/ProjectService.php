@@ -37,6 +37,13 @@ class ProjectService
         $project->save();
     }
 
+    public function update(Project $project, array $validated): void
+    {
+        $project->title       = $validated['title'];
+        $project->description = clean($validated['description']);
+        $project->save();
+    }
+
     public function updateDeadline(Project $project, string $deadlineDate): void
     {
         $project->deadline = Carbon::parse($deadlineDate)->toDateString();

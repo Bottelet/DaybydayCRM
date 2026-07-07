@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionName;
 use App\Enums\ProjectStatus;
 use App\Events\ProjectAction;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectAssignRequest;
 use App\Http\Requests\Project\UpdateProjectDeadlineRequest;
+use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Http\Requests\Project\UpdateProjectStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
@@ -182,6 +184,26 @@ class ProjectsController extends Controller
         }
 
         return redirect()->route('projects.index');
+    }
+
+    public function edit($external_id)
+    {
+        if ( ! auth()->user()->can(PermissionName::PROJECT_UPDATE->value)) {
+            session()->flash('flash_message_warning', __('You do not have permission to update projects'));
+
+            return redirect()->route('projects.show', $external_id);
+        }
+
+        return view('projects.edit')->withProject($this->findByExternalId($external_id));
+    }
+
+    public function update($external_id, UpdateProjectRequest $request)
+    {
+        $project = $this->findByExternalId($external_id);
+        $this->projectService->update($project, $request->validated());
+        session()->flash('flash_message', __('Project successfully updated'));
+
+        return redirect()->route('projects.show', $project->external_id);
     }
 
     /**

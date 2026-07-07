@@ -47,4 +47,11 @@ class TaskService
         $task->deadline = Carbon::parse($deadline)->toDateString();
         $task->save();
     }
+
+    public function update(Task $task, array $validated): void
+    {
+        $task->title       = $validated['title'];
+        $task->description = clean($validated['description']);
+        $task->save();
+    }
 }

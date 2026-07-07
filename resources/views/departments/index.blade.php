@@ -46,9 +46,9 @@
                         select.addClass("tablet__select");
                     },
                     columns: [
-                        {data: 'name', name: 'name'},
+                        {data: 'namelink', name: 'name'},
                         {data: 'description', name: 'description', orderable: false, searchable: false},
-                        @if(Entrust::can('client-delete'))
+                        @if(Entrust::hasRole('administrator') || Entrust::hasRole('owner'))
                         { data: 'delete', name: 'delete', orderable: false, searchable: false, class:'fit-action-delete-th table-actions'},
                         @endif
                     ]

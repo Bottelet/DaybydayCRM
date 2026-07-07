@@ -145,6 +145,11 @@ class Lead extends Model implements Commentable
         return route('leads.show', [$this->external_id]);
     }
 
+    public function getEditRoute()
+    {
+        return route('leads.edit', [$this->external_id]);
+    }
+
     public function getAssignedUserAttribute()
     {
         // Use the loaded relationship if available to prevent N+1 queries

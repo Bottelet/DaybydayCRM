@@ -8,6 +8,7 @@ use App\Http\Requests\Lead\StoreLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadAssignRequest;
 use App\Http\Requests\Lead\UpdateLeadDeadlineRequest;
 use App\Http\Requests\Lead\UpdateLeadFollowUpRequest;
+use App\Http\Requests\Lead\UpdateLeadRequest;
 use App\Http\Requests\Lead\UpdateLeadStatusRequest;
 use App\Models\Client;
 use App\Models\Lead;
@@ -158,6 +159,26 @@ class LeadsController extends Controller
         if ($request->expectsJson()) {
             return response()->json(['lead_external_id' => $lead->external_id], 201);
         }
+
+        return redirect()->route('leads.show', $lead->external_id);
+    }
+
+    public function edit($external_id)
+    {
+        if ( ! auth()->user()->can(PermissionName::LEAD_UPDATE->value)) {
+            session()->flash('flash_message_warning', __('You do not have permission to update leads'));
+
+            return redirect()->route('leads.show', $external_id);
+        }
+
+        return view('leads.edit')->withLead($this->findByExternalId($external_id));
+    }
+
+    public function update($external_id, UpdateLeadRequest $request)
+    {
+        $lead = $this->findByExternalId($external_id);
+        $this->leadService->update($lead, $request->validated());
+        session()->flash('flash_message', __('Lead successfully updated'));
 
         return redirect()->route('leads.show', $lead->external_id);
     }
