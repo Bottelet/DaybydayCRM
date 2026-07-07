@@ -177,3 +177,19 @@ test('deleting a project removes it from projects data feed', async ({ page }) =
   expect(dataResponse.status()).toBe(200);
   expect((dataPayload.data ?? []).some((row) => row.title === title)).toBe(false);
 });
+
+test('editing a project through the edit page persists the new title and description', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { payload } = await createProject(page, request, uniqueValue('PW Project Edit'));
+  const newTitle = uniqueValue('PW Project Edited');
+
+  await page.goto(`${BASE_URL}/projects/${payload.project_external_id}/edit`);
+  await page.locator('input[name="title"]').fill(newTitle);
+  await fillSummernote(page, 'description', 'Edited description');
+  await page.locator('form [type="submit"]').click();
+
+  await expect(page).toHaveURL(new RegExp(payload.project_external_id));
+  await expectFlashMessage(page, 'Project successfully updated');
+  await expect(page.locator('.tablet__head__color-brand .tablet__head-title', { hasText: newTitle })).toBeVisible();
+});

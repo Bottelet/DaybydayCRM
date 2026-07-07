@@ -32,27 +32,27 @@ test('/journeys/create is not a registered route', async ({ page }) => {
 
 /**
  * Regression guard: Route::resource() registers all 7 RESTful routes
- * regardless of whether the controller implements all 7 methods. Several
- * controllers here only ever needed a subset (their real UI uses narrower,
- * purpose-specific endpoints instead - update-status, update-assignee,
- * update-deadline, etc.) but the full resource() routes were still being
- * registered, so hitting one of the never-implemented ones directly threw
- * "Call to undefined method" as an uncaught 500, instead of a clean 404.
- * Fixed via ['except' => [...]] on each Route::resource() call, matching the
- * pattern already used for 'roles'. These routes never had any link pointing
- * to them anywhere in the UI, so this is unreachable-surface cleanup, not a
- * behavior change for real users - but should 404, not 500, if ever hit.
+ * regardless of whether the controller implements all 7 methods. tasks,
+ * leads, projects, and departments have since had real edit/update (and,
+ * for departments, show) methods implemented - see
+ * tests/e2e/{tasks,leads,projects}/*.spec.js and
+ * tests/e2e/departments/departments.spec.js for the positive coverage.
+ *
+ * integrations is different: its store() already upserts by api_type (one
+ * billing integration, one filesystem integration) and disconnecting has
+ * its own dedicated route (integration.revoke-access) - a generic
+ * create/show/edit/update/destroy set doesn't map onto that domain, so
+ * those methods were deliberately left unimplemented and excluded via
+ * Route::resource(..., ['except' => [...]]) rather than built out. These
+ * should 404, not throw "Call to undefined method" as an uncaught 500.
  */
-const deadResourceRoutes = [
-  ['GET', '/tasks/00000000-0000-0000-0000-000000000000/edit'],
-  ['GET', '/leads/00000000-0000-0000-0000-000000000000/edit'],
-  ['GET', '/projects/00000000-0000-0000-0000-000000000000/edit'],
+const deadIntegrationsRoutes = [
   ['GET', '/integrations/create'],
   ['GET', '/integrations/1'],
   ['GET', '/integrations/1/edit'],
 ];
 
-for (const [method, path] of deadResourceRoutes) {
+for (const [method, path] of deadIntegrationsRoutes) {
   test(`${method} ${path} is not a registered route (unimplemented resource method)`, async ({ page }) => {
     await loginAsAdmin(page);
     const request = page.context().request;
@@ -66,17 +66,3 @@ for (const [method, path] of deadResourceRoutes) {
     expect(response.status()).toBe(404);
   });
 }
-
-test('GET /departments/{id} is not a registered route (unimplemented resource method)', async ({ page }) => {
-  await loginAsAdmin(page);
-  const request = page.context().request;
-
-  // departments.destroy (DELETE) is still registered for this same URI, so
-  // Laravel correctly returns 405 (method not allowed) rather than 404 here.
-  const response = await request.get(`${BASE_URL}/departments/00000000-0000-0000-0000-000000000000`, {
-    failOnStatusCode: false,
-    maxRedirects: 0,
-  });
-
-  expect(response.status()).toBe(405);
-});

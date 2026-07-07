@@ -216,3 +216,19 @@ test('deleting a lead through json endpoint removes it from lead feed', async ({
   expect(dataResponse.status()).toBe(200);
   expect((payload.data ?? []).some((row) => row.title === title)).toBe(false);
 });
+
+test('editing a lead through the edit page persists the new title and description', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { leadExternalId } = await createLead(page, request, uniqueValue('PW Lead Edit'));
+  const newTitle = uniqueValue('PW Lead Edited');
+
+  await page.goto(`${BASE_URL}/leads/${leadExternalId}/edit`);
+  await page.locator('input[name="title"]').fill(newTitle);
+  await fillSummernote(page, 'description', 'Edited description');
+  await page.locator('form [type="submit"]').click();
+
+  await expect(page).toHaveURL(new RegExp(leadExternalId));
+  await expectFlashMessage(page, 'Lead successfully updated');
+  await expect(page.locator('.tablet__head__color-brand .tablet__head-title', { hasText: newTitle })).toBeVisible();
+});

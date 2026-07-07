@@ -98,3 +98,29 @@ test('browser create shows success notification and department appears on index'
   const dataPayload = await dataResponse.json();
   expect((dataPayload.data ?? []).some((row) => row.name === name)).toBe(true);
 });
+
+test('department name links to a show page', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { response, name } = await createDepartment(page, request);
+  const payload = await response.json();
+
+  await page.goto(`${BASE_URL}/departments/${payload.department_external_id}`);
+  await expect(page.locator('.tablet__head-title')).toHaveText(name);
+});
+
+test('editing a department through the edit page persists the new name', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { response } = await createDepartment(page, request);
+  const payload = await response.json();
+  const newName = uniqueValue('PW Department Edited');
+
+  await page.goto(`${BASE_URL}/departments/${payload.department_external_id}/edit`);
+  await page.locator('input[name="name"]').fill(newName);
+  await page.locator('form [type="submit"]').click();
+
+  await expect(page).toHaveURL(new RegExp(payload.department_external_id));
+  await expectFlashMessage(page, 'Successfully updated department');
+  await expect(page.locator('.tablet__head-title')).toHaveText(newName);
+});

@@ -148,6 +148,22 @@ test('changing the deadline on a task show page updates it and shows a flash mes
   expect(deadlineValueAfter).not.toBe(deadlineValueBefore);
 });
 
+test('editing a task through the edit page persists the new title and description', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { payload } = await createTask(page, request, uniqueValue('PW Task Edit'));
+  const newTitle = uniqueValue('PW Task Edited');
+
+  await page.goto(`${BASE_URL}/tasks/${payload.task_external_id}/edit`);
+  await page.locator('input[name="title"]').fill(newTitle);
+  await fillSummernote(page, 'description', 'Edited description');
+  await page.locator('form [type="submit"]').click();
+
+  await expect(page).toHaveURL(new RegExp(payload.task_external_id));
+  await expectFlashMessage(page, 'Task successfully updated');
+  await expect(page.locator('.tablet__head__color-brand .tablet__head-title', { hasText: newTitle })).toBeVisible();
+});
+
 test('deleting a task removes it from tasks data feed', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
