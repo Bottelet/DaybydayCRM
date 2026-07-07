@@ -89,7 +89,7 @@ trait WorldBuilder
             $last = $users->last();
             Absence::query()->firstOrCreate(
                 ['user_id' => $last->id, 'start_at' => now()->subDays(2)->toDateString()],
-                ['end_at' => now()->addDays(1)->toDateString()]
+                ['end_at' => now()->addDays(1)->toDateString(), 'reason' => 'vacation']
             );
         }
 

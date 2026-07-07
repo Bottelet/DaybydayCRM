@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use Database\Seeders\Concerns\WorldBuilder;
 use Illuminate\Database\Seeder;
 
@@ -11,13 +12,19 @@ use Illuminate\Database\Seeder;
  * Produces a LEAN, DETERMINISTIC dataset for automated tests (Playwright, PHPUnit).
  * Run with:  php artisan db:seed --class=TestSeeder
  *
+ * Layers on top of DatabaseSeeder rather than colliding with it: CoreSeeder's
+ * sub-seeders are all idempotent (existence checks / syncWithoutDetaching),
+ * so calling it again here is a safe no-op for anything DatabaseSeeder
+ * already created - this seeder only ever adds more users/products/clients
+ * on top, it never deletes or recreates core data.
+ *
  * Design goals:
  *   - Fast  (< 10 s on a local machine)
  *   - Stable email/password credentials that tests can hard-code
  *   - Enough relational data to exercise every major feature
  *   - No randomness that would make assertions flaky
  *
- * Volumes (fixed):
+ * Volumes added by this seeder (fixed):
  *   - 1 owner, 1 admin, 2 managers, 3 employees  =  7 users
  *   - 5 products
  *   - 2 clients per user  →  14 clients
@@ -54,7 +61,7 @@ class TestSeeder extends Seeder
 
         // 1. Products (fixed set so IDs are predictable)
         $bar->setMessage('Products');
-        $this->createProducts(5);
+        Product::factory()->count(5)->create();
         $bar->advance();
 
         // 2. Named users with stable credentials
@@ -70,7 +77,7 @@ class TestSeeder extends Seeder
 
         // 3. Slim relational tree — enough for UI assertions, fast to build
         $bar->setMessage('Clients, Projects, Tasks, Leads…');
-        $this->createClients(
+        $this->createClientTree(
             users:             $users,
             clientsPerUser:    2,
             tasksPerClient:    4,
