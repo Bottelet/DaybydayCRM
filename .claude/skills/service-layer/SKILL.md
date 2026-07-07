@@ -23,7 +23,6 @@ Services MUST:
 
 Services MUST NOT:
 
-- import or use Filament
 - accept or return HTTP request/response objects
 - contain UI logic
 - use `app()` or `resolve()` internally
@@ -44,8 +43,8 @@ public function __construct(
 
 # 3. DTO Rule
 
-DTOs are **not** required for Filament → Service calls. Arrays are fine when the
-source is a trusted Filament form.
+DTOs are **not** required when the source is a validated `FormRequest::validated()`
+array. Arrays are fine there.
 
 Use DTOs when:
 - crossing system boundaries (API, queues, external integrations)
@@ -53,29 +52,19 @@ Use DTOs when:
 - the payload must be stable across refactors
 
 Skip DTOs when:
-- input comes from a single Filament form
+- input comes from a single controller action's validated request
 - the data is short-lived and not reused
 
 ---
 
-# 4. Filament Action Exception
-
-Filament closures do not support constructor DI. `app()` is the only acceptable
-escape hatch — and it belongs in the closure, not inside the service:
-
-```php
-Action::make('create')
-    ->action(function (array $data) {
-        app(InvoiceService::class)->createInvoice($data);
-    });
-```
-
----
-
-# 5. Standard Shape
+# 4. Standard Shape
 
 ```
-Modules/{Name}/Services/{Model}Service.php
+app/Services/{Domain}/{Model}Service.php
 ```
 
-Standard method names: `createX`, `updateX`, `deleteX`, `findOrFail`, `listForCompany`.
+e.g. `app/Services/Task/TaskService.php`, `app/Services/Offer/OfferService.php`.
+
+Standard method names: `create`, `update`, `delete`, `findByExternalId`. Prefer
+one service class per domain holding both `create`/`update` (see `TaskService`)
+over splitting into separate per-action service classes.
