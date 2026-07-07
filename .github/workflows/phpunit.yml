@@ -111,17 +111,21 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
-      - name: Clear configurations
-        run: |
-          php artisan config:clear
-          php artisan cache:clear
-
       - name: Create test database
         run: |
           mysql -h 127.0.0.1 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS daybyday_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
       - name: Run migrations
         run: php artisan migrate:fresh --seed
+
+      # Must run after the database/migrations above, not before: .env.ci sets
+      # CACHE_STORE=database, so `cache:clear` needs the `cache` table (created
+      # by the migration that just ran) to exist. Clearing config/cache before
+      # the database even exists fails with "Unknown database 'daybyday_test'".
+      - name: Clear configurations
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
 
       - name: Set test run options
         id: opts
