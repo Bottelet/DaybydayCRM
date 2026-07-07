@@ -239,4 +239,85 @@ class OfferServiceTest extends AbstractTestCase
         /* Assert */
         $this->assertNull($found);
     }
+
+    #[Test]
+    public function it_creates_offer_for_lead_source(): void
+    {
+        /* Arrange */
+        $lead  = Lead::factory()->create();
+        $lines = [['title' => 'Line 1', 'type' => 'service', 'price' => 10, 'quantity' => 1]];
+
+        /* Act */
+        $offer = $this->service->createForSource($lines, $lead->id, $lead->client_id, Lead::class);
+
+        /* Assert */
+        $this->assertEquals(Lead::class, $offer->source_type);
+        $this->assertEquals($lead->id, $offer->source_id);
+        $this->assertCount(1, $offer->invoiceLines);
+    }
+
+    #[Test]
+    public function it_creates_offer_for_client_source(): void
+    {
+        /* Arrange */
+        $client = \App\Models\Client::factory()->create();
+        $lines  = [['title' => 'Line 1', 'type' => 'service', 'price' => 10, 'quantity' => 1]];
+
+        /* Act */
+        $offer = $this->service->createForSource($lines, $client->id, $client->id, \App\Models\Client::class);
+
+        /* Assert */
+        $this->assertEquals(\App\Models\Client::class, $offer->source_type);
+        $this->assertEquals($client->id, $offer->client_id);
+    }
+
+    #[Test]
+    public function it_rejects_an_invalid_offer_source_type(): void
+    {
+        /* Arrange */
+        $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
+        $this->service->createForSource([], 1, 1, Offer::class);
+    }
+
+    #[Test]
+    public function it_throws_validation_exception_when_line_product_does_not_exist(): void
+    {
+        /* Arrange */
+        $lead  = Lead::factory()->create();
+        $lines = [['title' => 'Line 1', 'type' => 'service', 'price' => 10, 'quantity' => 1, 'product' => 'missing-external-id']];
+
+        /* Act */
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->service->createForSource($lines, $lead->id, $lead->client_id, Lead::class);
+    }
+
+    #[Test]
+    public function it_replaces_invoice_lines_on_an_offer(): void
+    {
+        /* Arrange */
+        $offer = Offer::factory()->create();
+        InvoiceLine::factory()->create(['offer_id' => $offer->id]);
+        $newLines = [['title' => 'New line', 'type' => 'service', 'price' => 20, 'quantity' => 1]];
+
+        /* Act */
+        $this->service->replaceInvoiceLines($offer, $newLines);
+
+        /* Assert */
+        $offer->refresh();
+        $this->assertCount(1, $offer->invoiceLines);
+        $this->assertEquals('New line', $offer->invoiceLines->first()->title);
+    }
+
+    #[Test]
+    public function it_rejects_replacing_invoice_lines_with_a_missing_field(): void
+    {
+        /* Arrange */
+        $offer = Offer::factory()->create();
+
+        /* Act */
+        $this->expectException(InvalidArgumentException::class);
+        $this->service->replaceInvoiceLines($offer, [['type' => 'service', 'price' => 20, 'quantity' => 1]]);
+    }
 }
