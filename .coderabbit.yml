@@ -1,0 +1,195 @@
+# =======================================================
+#  CodeRabbit AI Review Configuration
+#  For Laravel + JS projects
+#  Reference: https://docs.coderabbit.ai/config
+# =======================================================
+
+language: en-US
+
+reviews:
+  # Review tone — defines style of feedback
+  # Options: assertive | chill | friendly | strict | concise | detailed
+  profile: assertive
+
+  # Require resolution before merge
+  request_changes_workflow: true
+
+  # Include an AI summary of the PR
+  high_level_summary: false
+
+  # Report check status to GitHub UI
+  review_status: false
+  commit_status: false
+  fail_commit_status: false
+
+  # Scope review to the app's own PHP source and its tests. Everything
+  # else (Blade/JS/CSS assets, vendor lockfiles, CI/tooling config,
+  # generated artifacts, docs) is noise for a Laravel PR review and
+  # inflates the reviewed-file count without adding review value.
+  path_filters:
+    - '!vendor/**'
+    - '!node_modules/**'
+    - '!public/**'
+    - '!storage/**'
+    - '!bootstrap/cache/**'
+    - '!resources/assets/**'
+    - '!resources/views/**'
+    - '!*.md'
+    - '!**/*.md'
+    - '!yarn.lock'
+    - '!package-lock.json'
+    - '!composer.lock'
+    - '!.github/**'
+    - '!.claude/**'
+    - '!.junie/**'
+    - 'app/**/*.php'
+    - 'tests/**/*.php'
+    - 'database/**/*.php'
+    - 'routes/**/*.php'
+    - 'config/**/*.php'
+
+  path_instructions:
+    - path: 'app/**/*.php'
+      instructions: |
+        This is Laravel application code. Prioritize:
+        - Missing or inconsistent authorization checks (controller
+          constructor middleware, FormRequest::authorize(), and route
+          middleware are all valid enforcement points — check all three
+          before flagging something as unauthorized).
+        - Mass assignment via fill($request->all()) instead of validated()
+          or explicit field lists.
+        - N+1 queries and missing eager loading, especially in anything
+          feeding a DataTables/index endpoint.
+        - Raw Eloquent models or user input echoed into Blade/JSON without
+          escaping.
+    - path: 'tests/**/*.php'
+      instructions: |
+        Each test method must start with `it_` and read as a sentence,
+        annotated with #[Test] (never a `test_` prefix). Flag tests that
+        don't follow Arrange/Act/Assert structure, that depend on shared
+        seeded state instead of factories, or that assert only the happy
+        path for something security-relevant.
+
+  # --- collapsible: UI / Fun / Optional ------------------------------------------------
+  collapse_walkthrough: false
+  sequence_diagrams: false
+  estimate_code_review_effort: true
+  in_progress_fortune: false
+  poem: false
+  # ------------------------------------------------------------------------------------
+
+  auto_review:
+    enabled: false
+    auto_incremental_review: true
+    # --- collapsible: customization ----------------------------------------------------
+    ignore_title_keywords: ['WIP', 'draft']
+    labels: ['needs-review']
+    drafts: false
+    base_branches: ['master', 'development']
+    ignore_usernames: ['dependabot', 'renovate']
+    # ------------------------------------------------------------------------------------
+
+  # --- collapsible: doc/test auto-suggestions ------------------------------------------
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+  # ------------------------------------------------------------------------------------
+
+  # --- collapsible: pre-merge quality gates --------------------------------------------
+  pre_merge_checks:
+    docstrings:
+      mode: warning
+      threshold: 80
+    title:
+      mode: warning
+      requirements: 'Descriptive, mentions component or ticket'
+    description:
+      mode: warning
+  # ------------------------------------------------------------------------------------
+
+tools:
+  # --- Core linters for Laravel (PHP) and JS -------------------------------------------
+  phpstan:
+    enabled: true
+    level: "3"
+  phpcs:
+    enabled: true
+  eslint:
+    enabled: true
+  markdownlint:
+    enabled: true
+
+  # --- collapsible: supporting & infra tools -------------------------------------------
+  shellcheck:
+    enabled: false
+  hadolint:
+    enabled: false
+  yamllint:
+    enabled: false
+  dotenvLint:
+    enabled: false
+  htmlhint:
+    enabled: false
+  semgrep:
+    enabled: false
+  gitleaks:
+    enabled: false
+  osvScanner:
+    enabled: false
+  actionlint:
+    enabled: true
+  # ------------------------------------------------------------------------------------
+
+chat:
+  # --- collapsible: personality + integrations -----------------------------------------
+  art: false
+  auto_reply: true
+  integrations:
+    jira:
+      usage: disabled
+    linear:
+      usage: disabled
+  # ------------------------------------------------------------------------------------
+
+# --- collapsible: AI learning + docs integration ---------------------------------------
+knowledge_base:
+  opt_out: true
+  web_search:
+    enabled: false
+  code_guidelines:
+    enabled: false
+    filePatterns: ['CONTRIBUTING.md', 'docs/code-guidelines.md']
+  learnings:
+    scope: global
+  issues:
+    scope: global
+  pull_requests:
+    scope: global
+# ---------------------------------------------------------------------------------------
+
+# --- collapsible: AI code generation suggestions ---------------------------------------
+code_generation:
+  docstrings:
+    language: en-US
+
+  unit_tests:
+    # Instructions for AI-generated unit tests
+    path_instructions:
+      - path: 'tests/Unit/**'
+        instructions: |
+          Each test method must begin with `it_`  and is in snake_case.
+          Annotate each test method with `#[Test]`.
+          Each test method must contain `$this->markTestIncomplete();` by default.
+          Prefer Fakes and Fixtures over Mocks.
+          Structure tests with `it_` functions and place happy paths last.
+          Reusable logic (e.g., fixtures) must reside in an abstract test case.
+      - path: 'tests/Feature/**'
+        instructions: |
+          Each test method must begin with `it_` and is in snake_case.
+          Annotate each test method with `#[Test]`.
+          Default to `$this->markTestIncomplete();` until test logic is finalized.
+          Use Laravel's HTTP helpers (`->postJson()`, `->getJson()`, etc.).
+          Avoid inline fixture setup; use factories and seeders.
+# ---------------------------------------------------------------------------------------

@@ -124,15 +124,19 @@ jobs:
             sleep 2
           done
 
-      # Only .env needs .env.ci's content, for the artisan CLI commands below
-      # (migrate, seed) that run outside PHPUnit's own environment. .env.testing
-      # is deliberately left as committed: phpunit.xml's <env> tags already
-      # override every key PHPUnit's test run actually needs (DB_CONNECTION,
-      # CACHE_STORE, etc.), and ProjectFilesConfigurationTest asserts on
-      # .env.testing's committed content directly - overwriting it here made
-      # that assertion fail in CI while passing everywhere else.
+      # .env needs .env.ci's content, for the artisan CLI commands below
+      # (migrate, seed) that run outside PHPUnit's own environment.
+      #
+      # .env.testing is no longer committed (it's gitignored so local dev
+      # keys/passwords don't get overwritten by every checkout); regenerate
+      # it verbatim from .env.testing.example. ProjectFilesConfigurationTest
+      # asserts on .env.testing's content directly (file exists, CACHE_STORE
+      # is "array", etc.), so this copy must happen before the test run and
+      # .env.testing.example must stay byte-for-byte what that test expects.
       - name: Prepare .env
-        run: cp .env.ci .env
+        run: |
+          cp .env.ci .env
+          cp .env.testing.example .env.testing
 
       - name: Regenerate autoloader
         run: composer dump-autoload --no-scripts

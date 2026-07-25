@@ -26,6 +26,7 @@ Thumbs.db
 .env
 .env.backup
 .env.production
+.env.testing
 Homestead.yaml
 Homestead.json
 /auth.json

@@ -83,7 +83,11 @@ export default defineConfig({
         manifest: true,
         outDir: 'public/build',
         rollupOptions: {
+            external: ['jquery'],
             output: {
+                globals: {
+                    jquery: '$'
+                },
                 entryFileNames: 'assets/[name]-[hash].js',
                 chunkFileNames: 'assets/[name]-[hash].js',
                 assetFileNames: 'assets/[name]-[hash][extname]',
@@ -91,8 +95,17 @@ export default defineConfig({
         }
     },
     resolve: {
+        // Plain "vue" key (not "vue$") is required here: @vitejs/plugin-vue2
+        // only skips pushing its own "vue" -> vue.runtime.esm.js alias if it
+        // finds an existing alias entry whose `find` is the exact string
+        // "vue". Vite's object-alias syntax does NOT treat a trailing "$" as
+        // a regex/exact-match marker (that's a webpack convention) - "vue$"
+        // is matched completely literally and never matches a bare `import
+        // ... from 'vue'`, so the plugin's runtime-only alias was silently
+        // winning and the app mounted with no in-DOM template compiler,
+        // which is why every Vue-templated feature rendered as empty.
         alias: {
-            vue$: 'vue/dist/vue.esm.js',
+            vue: 'vue/dist/vue.esm.js',
         },
     },
     css: {
