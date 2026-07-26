@@ -60,10 +60,10 @@
                     <p class="contact-paragraph" aria-hidden="true" data-toggle="tooltip"
                         title="{{ __('Vat') }}" data-placement="left">{{$client->vat}}</p>
             @endif
-            @if($client->industry != "")
+            @if($client->industry)
                 <!--Industry-->
                     <p class="contact-paragraph" aria-hidden="true" data-toggle="tooltip"
-                       title="{{ __('Industry') }}" data-placement="left">{{$client->industry}}</p>
+                       title="{{ __('Industry') }}" data-placement="left">{{$client->industry->name}}</p>
             @endif
             @if($client->company_type!= "")
                 <!--Company Type-->

@@ -31,6 +31,7 @@ class UpdateOverallSettingsService
                 'company' => 'Default Company', 'currency' => 'USD', 'country' => 'US', 'language' => 'en',
                 'vat'     => 0, 'client_number' => 1, 'invoice_number' => 1, 'max_users' => 10,
             ]);
+            Setting::clearCache();
         }
         if ( ! $this->clientNumberValidator->validateClientNumber((int) $data['client_number'])) {
             return UpdateOverallSettingsResult::clientNumberInvalid();
@@ -77,6 +78,7 @@ class UpdateOverallSettingsService
         $setting->country  = $data['country'];
         $setting->language = $data['language'];
         $setting->save();
+        Setting::clearCache();
         cache()->delete(GetDateFormat::CACHE_KEY);
 
         return UpdateOverallSettingsResult::success();

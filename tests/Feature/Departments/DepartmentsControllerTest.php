@@ -30,7 +30,7 @@ class DepartmentsControllerTest extends AbstractTestCase
     {
         /* Arrange */
         /* Act */
-        $response = $this->json('POST', route('departments.store'), [
+        $response = $this->post(route('departments.store'), [
             'name'        => 'Test Department',
             'description' => 'This is a test department',
         ]);

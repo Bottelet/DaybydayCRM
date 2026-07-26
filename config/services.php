@@ -63,7 +63,4 @@ return [
         'client_id'     => env('GOOGLE_DRIVE_CLIENT_ID', null),
         'client_secret' => env('GOOGLE_DRIVE_CLIENT_SECRET', null),
     ],
-    'elasticsearch' => [
-        'enabled' => env('ELASTICSEARCH_ENABLED', false),
-    ],
 ];

@@ -122,7 +122,7 @@ class ClientServiceTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $tasks = $this->clientService->getTasksWithRelations($client);
+        $tasks = $this->clientService->getTasksWithRelations($client)->get();
 
         /* Assert */
         $this->assertCount(3, $tasks);
@@ -159,7 +159,7 @@ class ClientServiceTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $projects = $this->clientService->getProjectsWithRelations($client);
+        $projects = $this->clientService->getProjectsWithRelations($client)->get();
 
         /* Assert */
         $this->assertCount(3, $projects);
@@ -196,7 +196,7 @@ class ClientServiceTest extends AbstractTestCase
         ]);
 
         /* Act */
-        $leads = $this->clientService->getLeadsWithRelations($client);
+        $leads = $this->clientService->getLeadsWithRelations($client)->get();
 
         /* Assert */
         $this->assertCount(3, $leads);

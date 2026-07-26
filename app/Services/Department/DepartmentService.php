@@ -16,7 +16,25 @@ class DepartmentService
      */
     public function store(array $data): Department
     {
+        if (isset($data['description'])) {
+            $data['description'] = clean($data['description']);
+        }
+
         return Department::create($data);
+    }
+
+    /**
+     * Update an existing department.
+     *
+     * @param array $data The validated data
+     */
+    public function update(Department $department, array $data): void
+    {
+        if (isset($data['description'])) {
+            $data['description'] = clean($data['description']);
+        }
+
+        $department->fill($data)->save();
     }
 
     /**

@@ -26,7 +26,6 @@ class UpdateProjectDeadlineRequest extends FormRequest
     {
         return [
             'deadline_date' => 'required|date',
-            'deadline_time' => 'nullable|string',
         ];
     }
 }

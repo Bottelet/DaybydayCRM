@@ -96,13 +96,13 @@ class TaskSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::TASK_UPDATE_STATUS);
 
         /* Act */
-        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
-        ], ['X-Requested-With' => 'XMLHttpRequest']);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
-        $response->assertStatus(400)
-            ->assertJson(['error' => 'Invalid status external id']);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['statusExternalId' => 'The selected status external id is invalid.']);
     }
 
     #[Test]
@@ -133,16 +133,16 @@ class TaskSecurityTest extends AbstractTestCase
         $originalStatus = $this->task->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id' => $leadStatus->id,
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $this->task->refresh();
 
         $this->assertEquals($originalStatus, $this->task->status_id);
-        $response->assertStatus(400);
-        $response->assertJson(['error' => 'Invalid status for task']);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['status_id' => 'Invalid status for task']);
     }
 
     #[Test]
@@ -154,16 +154,16 @@ class TaskSecurityTest extends AbstractTestCase
         $originalStatus = $this->task->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('task.update.status', $this->task->external_id), [
+        $response = $this->patch(route('task.update.status', $this->task->external_id), [
             'status_id' => 999999,
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $this->task->refresh();
 
         $this->assertEquals($originalStatus, $this->task->status_id);
 
-        $response->assertStatus(400);
-        $response->assertJson(['error' => 'Invalid status for task']);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['status_id' => 'The selected status id is invalid.']);
     }
 }

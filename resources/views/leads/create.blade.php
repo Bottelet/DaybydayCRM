@@ -33,16 +33,16 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            @if(Request::get('client') != "" || $client)
-                                <input type="hidden" name="client_external_id" value="{!! Request::get('client') ?: $client->external_id !!}">
+                            @if(Request::input('client') != "" || $client)
+                                <input type="hidden" name="client_external_id" value="{{ Request::input('client') ?: $client->external_id }}">
                             @else
-                            
+
                                 <label for="client_external_id" class="control-label thin-weight">@lang('Assign client')</label>
-                                <select 
-                                name="client_external_id" 
-                                id="client_external_id" 
-                                data-container="body" 
-                                data-live-search="true" 
+                                <select
+                                name="client_external_id"
+                                id="client_external_id"
+                                data-container="body"
+                                data-live-search="true"
                                 data-style-base="form-control"
                                 data-style=""
                                 data-width="100%">
@@ -60,7 +60,7 @@
                         <div class="form-inline">
                             <div class="form-group col-sm-7" style="padding-left: 0px;">
                                 <label for="deadline" class="control-label thin-weight">@lang('Deadline')</label>
-                                <input type="text" id="deadline" name="deadline" data-value="{{now()->addDays(3)}}" class="form-control">
+                                <input type="text" id="deadline" name="deadline" data-value="{{now()->addDays(3)->format('Y/m/d')}}" class="form-control">
                             </div>
                             <div class="form-group col-sm-5">
                                 <label for="contact_time" class="control-label thin-weight">@lang("O'clock")</label>
@@ -101,17 +101,19 @@
 @endpush
 @push('scripts')
     <script>
-        $('#client_external_id').selectpicker()
-        $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-            var value = $("#client_external_id").val();
-            if(value == "new_client") {
-              window.location.href = '{{url('/clients/create')}}'
-            }
-          });
+        if ($('#client_external_id').length) {
+            $('#client_external_id').selectpicker()
+            $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                var value = $("#client_external_id").val();
+                if(value == "new_client") {
+                window.location.href = '{{url('/clients/create')}}'
+                }
+            });
+        }
         $('#description').summernote({
             toolbar: [
                 [ 'fontsize', [ 'fontsize' ] ],
-                [ 'font', [ 'bold', 'italic', 'underline','clear'] ],   
+                [ 'font', [ 'bold', 'italic', 'underline','clear'] ],
                 [ 'color', [ 'color' ] ],
                 [ 'para', [ 'ol', 'ul', 'paragraph'] ],
                 [ 'table', [ 'table' ] ],
@@ -122,17 +124,21 @@
              disableDragAndDrop: true
 
            });
-        $('#deadline').pickadate({
-            hiddenName:true,
-            format: "{{frontendDate()}}",
-            formatSubmit: 'yyyy/mm/dd',
-            closeOnClear: false,
-        });
-        $('#contact_time').pickatime({
-            format:'{{frontendTime()}}',
-            formatSubmit: 'HH:i',
-            hiddenName: true
-        })
+        if ($('#deadline').length) {
+            $('#deadline').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                closeOnClear: false,
+            });
+        }
+        if ($('#contact_time').length) {
+            $('#contact_time').pickatime({
+                format:'{{frontendTime()}}',
+                formatSubmit: 'HH:i',
+                hiddenName: true
+            })
+        }
     </script>
 @endpush
 

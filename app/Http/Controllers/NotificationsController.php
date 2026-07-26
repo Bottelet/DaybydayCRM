@@ -14,9 +14,25 @@ class NotificationsController extends Controller
     public function markRead(Request $request)
     {
         $user = auth()->user();
-        $user->unreadNotifications()->where('id', $request->id)->first()->markAsRead();
 
-        return redirect($user->notifications->where('id', $request->id)->first()->data['url']);
+        if ( ! $user) {
+            abort(401, 'Unauthorized');
+        }
+
+        $notification = $user->notifications()->where('id', $request->id)->first();
+
+        if ( ! $notification) {
+            // Already read, deleted, or never belonged to this user (e.g. a
+            // stale/reused link) — nothing to mark, nowhere reliable to send
+            // them, so just go somewhere safe instead of a 500.
+            return redirect()->route('dashboard');
+        }
+
+        if (null === $notification->read_at) {
+            $notification->markAsRead();
+        }
+
+        return redirect($notification->data['url'] ?? route('dashboard'));
     }
 
     /**

@@ -116,8 +116,8 @@
                         color:#61788b;
                         "></i></a>
                     </p>
-                    <p class="invoice-info">{{$contact_info->name}}</p>
-                    <p class="invoice-info">{{$contact_info->email}}</p>
+                    <p class="invoice-info">{{$contact_info?->name}}</p>
+                    <p class="invoice-info">{{$contact_info?->email}}</p>
                     <hr style="margin-top: 5px;">
                     <div class="row">
                         <div class="col-md-6" style="padding-bottom: 1em;">
@@ -168,7 +168,7 @@
                         <div class="col-md-6">
                             @if(Entrust::can('invoice-pay'))
                                         <button type="button" id="update-payment" class="btn btn-md btn-brand btn-full-width closebtn"
-                                                <?php $titleText =  !$invoice->isSent() ? __("Can't pay an invoice with status draft. Send invoice first or force a new status") : "" ?> title="{{$titleText}}"
+                                                <?php $titleText = ! $invoice->isSent() ? __("Can't pay an invoice with status draft. Send invoice first or force a new status") : '' ?> title="{{$titleText}}"
                                                 {{ !$invoice->isSent() ? 'disabled ' : "" }}
                                                 data-toggle="modal" data-target="#update-payment-modal">@lang('Register payment')</button>
                             @endif
@@ -176,7 +176,7 @@
                         <div class="col-md-6">
                             @if(Entrust::can('invoice-send'))
                                 <button type="button" id="sendInvoice" class="btn btn-md btn-brand btn-full-width closebtn" value="add_time_modal"
-                                        <?php $titleText =  $invoice->isSent() ? __('Invoice already sent') : "" ?> title="{{$titleText}}"
+                                        <?php $titleText = $invoice->isSent() ? __('Invoice already sent') : '' ?> title="{{$titleText}}"
                                         {{ $invoice->isSent() ? 'disabled ' : "" }}
                                         data-toggle="modal" data-target="#SendInvoiceModalConfirm" >
                                     {{ __('Send invoice') }}
@@ -238,13 +238,13 @@
                     @lang('Attach invoice as PDF')
                     <input type="checkbox" name="attachPdf" value="1"> <br>
                     @lang('Recipient')
-                    <input type="text" class="form-control" name="recipientMail" value="{{$invoice->client->primaryContact->email}}">
+                    <input type="text" class="form-control" name="recipientMail" value="{{$invoice->client->primaryContact?->email}}">
                     @lang('Subject')
                     <input type="text" class="form-control" name="subject" value="{{__('Invoice from :company', ["company" => $companyName])}}">
 
                     @lang('Message') (@lang("[link-to-pdf], will be replaced when invoice is send, with the actual link to the PDF"))
 
-                    <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact->name, "company" => $companyName, "price" => $finalPrice])</textarea>
+                    <textarea name="message" id="" rows="13" class="form-control">@lang("Dear :name\n\nThank you, for being a customer at :company\n\nHere is you Invoice on :price\n\nClick the link below to download the invoice\n\n[link-to-pdf]\n\nRegards\n---\n:company", ["name" => $invoice->client->primaryContact?->name, "company" => $companyName, "price" => $finalPrice])</textarea>
                 </div>
                 <input type="submit" value="{{__('Send invoice')}}" class="btn btn-md btn-brand btn-full-width closebtn" id="close-invoice">
             </form>
@@ -256,7 +256,7 @@
 @endif
     <div class="modal fade" id="add-invoice-line-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">
         <div class="modal-dialog modal-lg" style="background:white;">
-            <invoice-line-modal type="invoiceLine" :resource="{{$invoice}}"/>
+            <invoice-line-modal type="invoiceLine" :resource="{{$invoice}}"></invoice-line-modal>
         </div>
     </div>
     <div class="modal fade" id="update-payment-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none;">

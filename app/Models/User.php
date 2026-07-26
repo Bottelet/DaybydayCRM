@@ -137,12 +137,12 @@ class User extends Authenticatable
 
     public function canChangePasswordOn(self $user)
     {
-        return (bool) ($this->id === $user->id || ($this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE));
+        return (bool) ($this->id === $user->id || ($this->roles->first()?->name == Role::OWNER_ROLE || $this->roles->first()?->name == Role::ADMIN_ROLE));
     }
 
     public function canChangeRole()
     {
-        return $this->roles->first()->name == Role::OWNER_ROLE || $this->roles->first()->name == Role::ADMIN_ROLE;
+        return $this->roles->first()?->name == Role::OWNER_ROLE || $this->roles->first()?->name == Role::ADMIN_ROLE;
     }
 
     public function isOnline()
@@ -152,8 +152,13 @@ class User extends Authenticatable
 
     public function getNameAndDepartmentAttribute()
     {
-        // dd($this->name, $this->department()->toSql(), $this->department()->getBindings());
-        return $this->name . ' ' . '(' . $this->department()->first()->name . ')';
+        $department = $this->department()->first();
+
+        if ( ! $department) {
+            return $this->name;
+        }
+
+        return $this->name . ' (' . $department->name . ')';
     }
 
     public function getNameAndDepartmentEagerLoadingAttribute()
@@ -162,7 +167,7 @@ class User extends Authenticatable
             ? $this->getRelation('department')->first()
             : $this->department()->first();
 
-        if (!$department) {
+        if ( ! $department) {
             return $this->name;
         }
 

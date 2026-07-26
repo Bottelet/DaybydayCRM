@@ -7,6 +7,7 @@ use App\Http\Requests\User\UpdateUserRequest;
 use App\Models\Client;
 use App\Models\Department;
 use App\Models\Lead;
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\Status;
@@ -17,10 +18,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -47,7 +45,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        return view('users.index')->withUsers(User::all());
+        return view('users.index')->withUsers(User::with(['department', 'roles'])->get());
     }
 
     public function calendarUsers()
@@ -75,7 +73,9 @@ class UsersController extends Controller
         $users = User::query()->select(['id', 'external_id', 'name', 'email', 'primary_number']);
 
         return Datatables::of($users)
-            ->addColumn('namelink', '<a href="{{ route("users.show",[$external_id]) }}">{{$name}}</a>')
+            ->addColumn('namelink', function ($user) {
+                return '<a href="' . route('users.show', $user->external_id) . '">' . e($user->name) . '</a>';
+            })
             ->addColumn('view', function ($user) {
                 return '<a href="' . route('users.show', $user->external_id) . '" class="btn btn-link">' . __('View') . '</a>';
             })
@@ -89,20 +89,56 @@ class UsersController extends Controller
             ->make(true);
     }
 
-    /**
-     * Json for Data tables.
-     *
-     * @return mixed
-     */
+    public function projectData($id)
+    {
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $projects = Project::with(['status', 'client'])
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->select(
+                ['projects.id', 'projects.external_id', 'projects.title', 'projects.created_at', 'projects.deadline', 'projects.user_assigned_id', 'projects.client_id', 'projects.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('projects.title', 'asc');
+
+        return Datatables::of($projects)
+            ->addColumn('titlelink', function ($project) {
+                return '<a href="' . route('projects.show', $project->external_id) . '">' . e($project->title) . '</a>';
+            })
+            ->addColumn('client_id', function ($project) {
+                return $project->client ? $project->client->company_name : '';
+            })
+            ->addColumn('status_id', function ($project) {
+                return $project->status ? $project->status->title : '';
+            })
+            ->rawColumns(['titlelink', 'status_id'])
+            ->make(true);
+    }
+
     public function taskData($id)
     {
-        $tasks = Task::with(['status', 'client.primaryContact'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )
-            ->where('user_assigned_id', $id)->get();
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $tasks = Task::with(['status', 'client'])
+            ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
+            ->select(
+                ['tasks.id', 'tasks.external_id', 'tasks.title', 'tasks.created_at', 'tasks.deadline', 'tasks.user_assigned_id', 'tasks.client_id', 'tasks.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('tasks.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('tasks.title', 'asc');
 
         return Datatables::of($tasks)
-            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($task) {
+                return '<a href="' . route('tasks.show', $task->external_id) . '">' . e($task->title) . '</a>';
+            })
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format(carbonDate()) : '';
@@ -115,26 +151,32 @@ class UsersController extends Controller
                 return '<span class="label label-success" style="background-color:' . $tasks->status->color . '"> ' . $tasks->status->title . '</span>';
             })
             ->editColumn('client_id', function ($tasks) {
-                return $tasks->client->primaryContact->name;
+                return $tasks->client ? $tasks->client->company_name : '';
             })
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
     }
 
-    /**
-     * Json for Data tables.
-     *
-     * @return mixed
-     */
     public function leadData($id)
     {
-        $leads = Lead::with(['status', 'client.primaryContact'])->select(
-            ['id', 'external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'client_id', 'status_id']
-        )
-            ->where('user_assigned_id', $id)->get();
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
+        $leads = Lead::with(['status', 'client'])
+            ->leftJoin('statuses', 'leads.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'leads.client_id', '=', 'clients.id')
+            ->select(
+                ['leads.id', 'leads.external_id', 'leads.title', 'leads.created_at', 'leads.deadline', 'leads.user_assigned_id', 'leads.client_id', 'leads.status_id']
+            )
+            ->where('user_assigned_id', $id)
+            ->orderBy('leads.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('leads.title', 'asc');
 
         return Datatables::of($leads)
-            ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($lead) {
+                return '<a href="' . route('leads.show', $lead->external_id) . '">' . e($lead->title) . '</a>';
+            })
             ->editColumn('created_at', function ($leads) {
                 return $leads->created_at ? with(new Carbon($leads->created_at))
                     ->format(carbonDate()) : '';
@@ -147,8 +189,8 @@ class UsersController extends Controller
                 return '<span class="label label-success" style="background-color:' . $leads->status->color . '"> '
                     . $leads->status->title . '</span>';
             })
-            ->editColumn('client_id', function ($tasks) {
-                return $tasks->client->primaryContact->name;
+            ->editColumn('client_id', function ($leads) {
+                return $leads->client ? $leads->client->company_name : '';
             })
             ->rawColumns(['titlelink', 'status_id'])
             ->make(true);
@@ -161,6 +203,8 @@ class UsersController extends Controller
      */
     public function clientData($id)
     {
+        abort_unless(auth()->id() == $id || auth()->user()?->can('user-view'), 403);
+
         $clients = Client::query()->select(['external_id', 'company_name', 'vat', 'address'])->where('user_id', $id);
 
         return Datatables::of($clients)
@@ -190,9 +234,9 @@ class UsersController extends Controller
      *
      * @return mixed
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, UserUpdateService $userUpdateService)
     {
-        $settings = Setting::first();
+        $settings = Setting::cached();
         if (User::count() >= $settings->max_users) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('Max number of users reached')], 400);
@@ -203,28 +247,7 @@ class UsersController extends Controller
             return redirect()->back();
         }
         try {
-            $path = null;
-            if ($request->hasFile('image_path')) {
-                $file = $request->file('image_path');
-
-                $path = Storage::put($settings->external_id, $file);
-            }
-            DB::transaction(function () use ($request, $path) {
-                $user                   = new User();
-                $user->name             = $request->name;
-                $user->external_id      = Uuid::uuid4()->toString();
-                $user->email            = $request->email;
-                $user->address          = $request->address;
-                $user->primary_number   = $request->primary_number;
-                $user->secondary_number = $request->secondary_number;
-                $user->password         = bcrypt($request->password);
-                $user->image_path       = $path;
-                $user->language         = in_array($request->language, ['en', 'dk', 'es'], true) ? $request->language : 'en';
-                $user->save();
-                $user->roles()->attach($request->roles);
-                $user->department()->attach($request->departments);
-                $user->save();
-            });
+            $userUpdateService->create($request->validated(), $request->file('image_path'));
         } catch (Throwable $exception) {
             report($exception);
 
@@ -250,11 +273,12 @@ class UsersController extends Controller
 
         return view('users.show')
             ->withUser($user)
-            ->withCompanyname(Setting::first()->company)
+            ->withCompanyname(Setting::cached()->company)
             ->with('task_statistics', $user->totalOpenAndClosedTasks($external_id))
             ->with('lead_statistics', $user->totalOpenAndClosedLeads($external_id))
-            ->with('lead_statuses', Status::typeOfLead()->get())
-            ->with('task_statuses', Status::typeOfTask()->get());
+            ->with('lead_statuses', Status::typeOfLead()->get()->unique('title'))
+            ->with('task_statuses', Status::typeOfTask()->get()->unique('title'))
+            ->with('project_statuses', Status::typeOfProject()->get()->unique('title'));
     }
 
     /**

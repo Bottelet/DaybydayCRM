@@ -51,17 +51,7 @@ class Project extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::query()->where('external_id', $externalId)->first();
-    }
-
-    // getRouteKeyName() is provided by HasExternalId trait
+    // findByExternalId() and whereExternalId() are provided by HasExternalId trait
 
     public function displayValue()
     {
@@ -131,6 +121,11 @@ class Project extends Model implements Commentable
     public function getCreateCommentEndpoint(): string
     {
         return route('comments.create', ['type' => 'project', 'external_id' => $this->external_id]);
+    }
+
+    public function getEditRoute()
+    {
+        return route('projects.edit', [$this->external_id]);
     }
 
     public function getSearchableFields(): array

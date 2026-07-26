@@ -5,6 +5,16 @@
 
 @section('content')
 
+    <div class="alert alert-danger title-alert" style="display: none;">
+        {{__("Title is required")}}
+    </div>
+    <div class="alert alert-danger description-alert" style="display: none;">
+        {{__("Description is required")}}
+    </div>
+    <div class="alert alert-danger client-alert" style="display: none;">
+        {{__("Client is required")}}
+    </div>
+
     <div class="row">
         <form action="{{route('tasks.store')}}" method="POST" id="createTaskForm">
             <div class="col-sm-8">
@@ -44,16 +54,17 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            @if(Request::get('client') != "" || $client)
-                                <input type="hidden" name="client_external_id" value="{!! Request::get('client') ?: $client->external_id !!}">
+                            @if(Request::filled('client') || $client)
+                                <input type="hidden" name="client_external_id" value="{{ Request::input('client') ?: $client->external_id }}">
                             @else
                                 <label for="client_external_id" class="control-label thin-weight">@lang('Assign client')</label>
-                                
-                                <select 
-                                name="client_external_id" 
-                                id="client_external_id" 
-                                data-container="body" 
-                                data-live-search="true" 
+
+                                <select
+                                name="client_external_id"
+                                id="client_external_id"
+                                class="selectpicker"
+                                data-container="body"
+                                data-live-search="true"
                                 data-style-base="form-control"
                                 data-style=""
                                 data-width="100%">
@@ -73,7 +84,7 @@
                             <select name="project_external_id" id="project_external_id" class="form-control">
                                 <option value=""></option>
                                 @foreach($projects as $projectLoop => $projectLoopK)
-                                <option value="{{$projectLoop}}" 
+                                <option value="{{$projectLoop}}"
                                 {{$projectLoop === optional($project)->external_id ? 'selected' : ''}}
                                 >{{$projectLoopK}}</option>
                                 @endforeach
@@ -82,7 +93,7 @@
                         @endif
                         <div class="form-group">
                             <label for="deadline" class="control-label thin-weight">@lang('Deadline')</label>
-                            <input type="text" id="deadline" name="deadline" data-value="{{now()->addDays(3)}}" class="form-control">
+                            <input type="text" id="deadline" name="deadline" data-value="{{now()->addDays(3)->format('Y/m/d')}}" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="status_id" class="control-label thin-weight">@lang('Status')</label>
@@ -101,15 +112,6 @@
             </div>
         </form>
     </div>
-    <div class="alert alert-danger title-alert" style="display: none;">
-        {{__("Title is required")}}
-    </div>
-    <div class="alert alert-danger description-alert" style="display: none;">
-        {{__("Description is required")}}
-    </div>
-    <div class="alert alert-danger client-alert" style="display: none;">
-        {{__("Client is required")}}
-    </div>
 @stop
 
 @push('style')
@@ -123,14 +125,15 @@
     <script>
         Dropzone.autoDiscover = false;
         $(document).ready(function () {
-            $('#client_external_id').selectpicker()
-
-            $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                var value = $("#client_external_id").val();
-                if(value == "new_client") {
-                  window.location.href = '{{url('/clients/create')}}'
-                }
-            });
+            if ($('#client_external_id').length) {
+                $('#client_external_id').selectpicker();
+                $('#client_external_id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    var value = $("#client_external_id").val();
+                    if(value == "new_client") {
+                    window.location.href = "{{ url('/clients/create') }}"
+                    }
+                });
+            }
 
             $('#deadline').pickadate({
                 hiddenName:true,
@@ -200,7 +203,7 @@
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            
+
                             if (jqXHR.responseJSON.errors.title != undefined) {
                                 $('.title-alert').show();
                             } else {

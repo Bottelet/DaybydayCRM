@@ -16,11 +16,6 @@ class StoreCommentRequest extends FormRequest
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
         return [
@@ -46,5 +41,18 @@ class StoreCommentRequest extends FormRequest
                 },
             ],
         ];
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'type'        => $this->route('type'),
+            'external_id' => $this->route('external_id'),
+        ]);
     }
 }

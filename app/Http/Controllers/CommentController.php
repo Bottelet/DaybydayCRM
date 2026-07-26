@@ -3,26 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Comment\StoreCommentRequest;
+use App\Services\Comment\CommentService;
 use Illuminate\Support\Facades\Session;
+use InvalidArgumentException;
 
 class CommentController extends Controller
 {
+    public function __construct(private CommentService $commentService) {}
+
     /**
-     * Create a comment for tasks and leads.
-     *
-     * @param $id
+     * Create a comment for tasks, leads, and projects.
      *
      * @return mixed
      */
     public function store(StoreCommentRequest $request)
     {
-        $modelsMapping = [
-            'task'    => 'App\\Models\\Task',
-            'lead'    => 'App\\Models\\Lead',
-            'project' => 'App\\Models\\Project',
-        ];
-
-        if ( ! array_key_exists($request->validated('type'), $modelsMapping)) {
+        try {
+            $this->commentService->createComment(
+                $request->validated('type'),
+                $request->validated('external_id'),
+                $request->validated('description'),
+                auth()->user()->id
+            );
+        } catch (InvalidArgumentException $exception) {
+            // StoreCommentRequest already validates type/existence, so this
+            // path is normally unreachable - kept as defensive parity with
+            // the controller's previous behavior in case that ever changes.
             $message = __('Could not create comment, type not found! Please contact Daybyday support');
             if ($request->expectsJson()) {
                 return response()->json(['error' => $message], 400);
@@ -32,14 +38,9 @@ class CommentController extends Controller
             return redirect()->back();
         }
 
-        $model  = $modelsMapping[$request->validated('type')];
-        $source = $model::findByExternalId($request->validated('external_id'));
-
-        // At this point, $source is guaranteed to exist due to FormRequest validation
-        $source->comments()->create([
-            'description' => clean($request->validated('description')),
-            'user_id'     => auth()->user()->id,
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Comment successfully added')], 201);
+        }
 
         Session::flash('flash_message', __('Comment successfully added'));
 

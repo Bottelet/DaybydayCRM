@@ -39,11 +39,11 @@
 <div class="row margin-top-10">
     <div class="col-md-3">{{ __('Deadline') }}</div>
     <div class="col-md-9">
-                    <span {{Entrust::can('task-update-deadline') ? 'data-toggle=modal data-target=#ModalUpdateDeadline' : ''}}  class="siderbar-list-value {{$project->isCloseToDeadline() ? 'text-danger' : ''}}">{{date(carbonDate(), strTotime($project->deadline))}}
+                    <span {{Entrust::can('project-update-deadline') ? 'data-toggle=modal data-target=#ModalUpdateDeadline' : ''}}  class="siderbar-list-value {{$project->isCloseToDeadline() ? 'text-danger' : ''}}">{{date(carbonDate(), strTotime($project->deadline))}}
                         @if($project->isCloseToDeadline())
                             <span class="small text-black">({!! $project->days_until_deadline !!})</span>
                         @endif
-                        @if(Entrust::can('task-update-deadline'))
+                        @if(Entrust::can('project-update-deadline'))
                             <i class="icon ion-md-create"></i>
                         @endif
                     </span>

@@ -28,7 +28,7 @@ class PaymentsController extends Controller
     public function destroy(Payment $payment, \Illuminate\Http\Request $request)
     {
         if ( ! auth()->user()->can('payment-delete')) {
-            if ($request->expectsJson()) {
+            if ($this->expectsJsonResponse($request)) {
                 return response()->json(['message' => __("You don't have permission to delete a payment")], 403);
             }
             session()->flash('flash_message', __("You don't have permission to delete a payment"));
@@ -38,7 +38,7 @@ class PaymentsController extends Controller
 
         $this->paymentService->deletePayment($payment);
 
-        if ($request->expectsJson()) {
+        if ($this->expectsJsonResponse($request)) {
             return response()->json(['message' => __('Payment successfully deleted')], 200);
         }
 
@@ -50,7 +50,7 @@ class PaymentsController extends Controller
     public function addPayment(PaymentRequest $request, Invoice $invoice)
     {
         if ( ! auth()->user()->can('payment-create')) {
-            if ($request->expectsJson()) {
+            if ($this->expectsJsonResponse($request)) {
                 return response()->json(['message' => __("You don't have permission to add a payment")], 403);
             }
             session()->flash('flash_message', __("You don't have permission to add a payment"));
@@ -59,7 +59,7 @@ class PaymentsController extends Controller
         }
 
         if ( ! $invoice->isSent()) {
-            if ($request->expectsJson()) {
+            if ($this->expectsJsonResponse($request)) {
                 return response()->json(['message' => __("Can't add payment on Invoice")], 422);
             }
             session()->flash('flash_message_warning', __("Can't add payment on Invoice"));
@@ -76,7 +76,7 @@ class PaymentsController extends Controller
                 $request->description ?? null,
             );
         } catch (InvalidArgumentException $e) {
-            if ($request->expectsJson()) {
+            if ($this->expectsJsonResponse($request)) {
                 return response()->json(['message' => $e->getMessage()], 422);
             }
             session()->flash('flash_message_warning', $e->getMessage());
@@ -84,7 +84,7 @@ class PaymentsController extends Controller
             return redirect()->route('invoices.show', $invoice->external_id);
         }
 
-        if ($request->expectsJson()) {
+        if ($this->expectsJsonResponse($request)) {
             return response()->json(['message' => __('Payment successfully added')], 201);
         }
 

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AbsenceReason;
+use App\Http\Requests\Absence\StoreAbsenceRequest;
 use App\Models\Absence;
 use App\Models\User;
 use App\Services\AbsenceService;
-use Illuminate\Http\Request;
 use Throwable;
 use Yajra\DataTables\DataTables;
 
@@ -67,7 +67,7 @@ class AbsenceController extends Controller
             ->withUsers($users);
     }
 
-    public function store(Request $request, AbsenceService $absenceService)
+    public function store(StoreAbsenceRequest $request, AbsenceService $absenceService)
     {
         try {
             $result = $absenceService->storeAbsence($request);
@@ -95,7 +95,7 @@ class AbsenceController extends Controller
         }
         session()->flash('flash_message', __('Absence registered'));
 
-        return redirect()->back();
+        return redirect()->route('absence.index');
     }
 
     public function destroy(Absence $absence)

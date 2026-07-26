@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Daybyday CRM</title>
     <link href="{{ URL::asset('css/jasny-bootstrap.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ URL::asset('css/bootstrap-select.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/dropzone.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ URL::asset('css/jquery.atwho.min.css') }}" rel="stylesheet" type="text/css">
@@ -25,7 +26,7 @@
             baseUrl: "{{url('/')}}"
         }
     </script>
-    <?php if(isDemo()) { ?>
+    <?php if (isDemo()) { ?>
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-152899919-3"></script>
         <script>
@@ -42,7 +43,16 @@
 <body>
 
 <div id="wrapper">
-
+{{--
+    Vue mounts directly onto #wrapper (see resources/assets/js/app.js) using
+    #wrapper's existing markup as an in-DOM template, since there's no
+    explicit render()/template option. Vue 2's compiler requires a template
+    to have exactly one root element, but #wrapper's actual children (navbar
+    include, sidebar nav, page-content-wrapper div) are siblings — so this
+    single wrapping div exists purely to satisfy that single-root requirement
+    without changing anything about the page's visible structure or CSS.
+--}}
+<div>
 @include('layouts._navbar')
 <!-- /#sidebar-wrapper -->
     <!-- Sidebar menu -->
@@ -190,12 +200,28 @@
                         </div>
                     @endif
                     @if(Session::has('flash_message_warning'))
-                        <message message="{{ Session::get('flash_message_warning') }}" type="warning"></message>
+                        <div class="alert alert-warning alert-dismissible flash-message" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Close') }}"><span aria-hidden="true">&times;</span></button>
+                            {{ Session::get('flash_message_warning') }}
+                        </div>
                     @endif
                     @if(Session::has('flash_message'))
-                        <message message="{{ Session::get('flash_message') }}" type="success"></message>
+                        <div class="alert alert-success alert-dismissible flash-message" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Close') }}"><span aria-hidden="true">&times;</span></button>
+                            {{ Session::get('flash_message') }}
+                        </div>
                     @endif
-                    <h1 class="global-heading">@yield('heading')</h1>
+                    <div class="row" style="margin-bottom: 20px; margin-top: 20px;">
+                        <div class="col-md-9">
+                            <h1 class="global-heading" style="margin: 0;">@yield('heading')</h1>
+                        </div>
+                        <div class="col-md-3">
+                            @yield('actions')
+                        </div>
+                    </div>
+                    <div class="row" style="display: none;">
+                        @yield('alerts')
+                    </div>
                     @yield('content')
                 </div>
             </div>
@@ -204,6 +230,7 @@
 
     <!-- /#page-content-wrapper -->
 </div>
+</div>
 {{--
     jQuery MUST load as a classic (non-module) blocking script before all jQuery plugins.
     All classic jQuery plugins attach to the same window.jQuery instance, and then @vite
@@ -211,6 +238,8 @@
     classic jQuery with all plugins available.
 --}}
 <script src="{{ URL::asset('js/jquery.min.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ URL::asset('js/bootstrap-select.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.caret.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery.dataTables.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jasny-bootstrap.min.js') }}"></script>
@@ -220,9 +249,40 @@
 <script type="text/javascript" src="{{ URL::asset('js/dropzone.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/summernote.min.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/jquery-ui-sortable.min.js') }}"></script>
-@if(file_exists(public_path('build/manifest.json')))
-    @vite(['resources/assets/js/app.js'])
-@endif
+{{--
+    The Vite build externalizes "jquery" (rollupOptions.external) so it shares
+    the one classic, global jQuery instance loaded above rather than bundling
+    a second copy — but that only works via rollupOptions.output.globals for
+    UMD/IIFE output, not the ES module format @vite emits. This import map
+    resolves the bare "jquery" specifier in the built module to a shim that
+    re-exports the global.
+--}}
+<script type="importmap">
+    { "imports": { "jquery": "{{ URL::asset('js/jquery-esm-shim.js') }}" } }
+</script>
+@vite(['resources/assets/js/app.js'])
+<script>
+    $(document).ready(function () {
+        // Auto-dismiss flashed success/warning alerts after 5s, matching the
+        // previous toast's duration — manual close via the button still works.
+        setTimeout(function () {
+            $('.flash-message').fadeOut(400, function () { $(this).remove(); });
+        }, 5000);
+
+        // Moved from layouts/_navbar.blade.php — that markup is inside the
+        // Vue-mounted #wrapper subtree, and Vue's compiler drops <script>
+        // tags found in its own in-DOM template.
+        var menuToggle = document.getElementById('menu-toggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var wrapper = document.getElementById('wrapper');
+                if (wrapper) wrapper.classList.toggle('myNavmenu-icons');
+            });
+        }
+    });
+</script>
 @if(App::getLocale() === "dk")
 <script>
     $(document).ready(function () {
@@ -247,17 +307,32 @@
     // copy all translations from /resources/lang/CURRENT_LOCALE/* to global JS variable
     try {
         $filename = File::get(resource_path() . '/lang/' . App::getLocale() . '.json');
-        $trans = [];
-        $entries = json_decode($filename, true);
+        $trans    = [];
+        $entries  = json_decode($filename, true);
         foreach ($entries as $k => $v) {
             $trans[$k] = trans($v);
         }
         $trans[$filename] = trans($filename);
         echo json_encode($trans);
     } catch (\Illuminate\Contracts\Filesystem\FileNotFoundException $e) {
-        echo "{}";
+        echo '{}';
     }
     ?>;
+</script>
+<script>
+    $(document).ready(function() {
+        // Ensure dropdown is available on the jQuery instance used by the page
+        if (!$.fn.dropdown && window.jQuery && window.jQuery.fn.dropdown) {
+            $.fn.dropdown = window.jQuery.fn.dropdown;
+        }
+
+        if (!$.fn.dropdown) {
+            $.fn.dropdown = function() {
+                console.warn('dropdown() was called but is not defined');
+                return this;
+            };
+        }
+    });
 </script>
 </body>
 

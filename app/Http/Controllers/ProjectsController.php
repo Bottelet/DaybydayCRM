@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionName;
 use App\Enums\ProjectStatus;
 use App\Events\ProjectAction;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectAssignRequest;
 use App\Http\Requests\Project\UpdateProjectDeadlineRequest;
+use App\Http\Requests\Project\UpdateProjectRequest;
+use App\Http\Requests\Project\UpdateProjectStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -18,6 +21,7 @@ use App\Services\Storage\GetStorageProvider;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
@@ -61,12 +65,22 @@ class ProjectsController extends Controller
 
     public function indexData()
     {
-        $projects = Project::with(['assignee', 'status', 'client'])->select(
-            ['external_id', 'title', 'created_at', 'deadline', 'user_assigned_id', 'status_id', 'client_id']
-        )->get();
+        $projects = Project::with(['assignee', 'status', 'client'])
+            ->leftJoin('statuses', 'projects.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'projects.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'projects.user_assigned_id', '=', 'users.id')
+            ->select(
+                ['projects.external_id', 'projects.title', 'projects.created_at', 'projects.deadline', 'projects.user_assigned_id', 'projects.status_id', 'projects.client_id']
+            )
+            ->orderBy('projects.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('users.name', 'asc');
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($projects) {
+                return '<a href="' . route('projects.show', [$projects->external_id]) . '">' . e($projects->title) . '</a>';
+            })
             ->editColumn('client', function ($projects) {
                 return $projects->client->company_name;
             })
@@ -158,8 +172,38 @@ class ProjectsController extends Controller
             }
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true, see the dropzone/AJAX hack below) and
+        // then does a client-side redirect to the show page, so the flash must be
+        // set here to survive that navigation.
+        session()->flash('flash_message', __('Project created'));
+
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['project_external_id' => $project->external_id]);
+        if ($request->expectsJson()) {
+            return response()->json(['project_external_id' => $project->external_id]);
+        }
+
+        return redirect()->route('projects.index');
+    }
+
+    public function edit($external_id)
+    {
+        if ( ! auth()->user()->can(PermissionName::PROJECT_UPDATE->value)) {
+            session()->flash('flash_message_warning', __('You do not have permission to update projects'));
+
+            return redirect()->route('projects.show', $external_id);
+        }
+
+        return view('projects.edit')->withProject($this->findByExternalId($external_id));
+    }
+
+    public function update($external_id, UpdateProjectRequest $request)
+    {
+        $project = $this->findByExternalId($external_id);
+        $this->projectService->update($project, $request->validated());
+        session()->flash('flash_message', __('Project successfully updated'));
+
+        return redirect()->route('projects.show', $project->external_id);
     }
 
     /**
@@ -207,51 +251,15 @@ class ProjectsController extends Controller
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
     }
 
-    public function updateStatus($external_id, Request $request)
+    public function updateStatus($external_id, UpdateProjectStatusRequest $request)
     {
-        if ( ! auth()->user()->can('project-update-status')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change project status'));
-            if ($request->ajax()) {
-                return response()->json(['error' => __('You do not have permission to change project status')], 403);
-            }
-
-            return redirect()->route('projects.show', $external_id);
-        }
-        $input = $request->only(['status_id']);
-
-        if ($request->ajax() && isset($request->statusExternalId)) {
-            $status = Status::whereExternalId($request->statusExternalId)->first();
-            if ( ! $status) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status'));
-
-                return redirect()->back();
-            }
-            $input['status_id'] = $status->id;
-        }
-
-        // Validate that the status_id belongs to project statuses
-        if (isset($input['status_id'])) {
-            $validStatus = Status::typeOfProject()->where('id', $input['status_id'])->exists();
-            if ( ! $validStatus) {
-                if ($request->ajax()) {
-                    return response()->json(['error' => __('Invalid status for project')], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status for project'));
-
-                return redirect()->back();
-            }
-        }
-
-        $project = $this->findByExternalId($external_id);
-        $project->fill($input)->save();
+        $project            = $this->findByExternalId($external_id);
+        $project->status_id = $request->validated('status_id');
+        $project->save();
 
         event(new ProjectAction($project, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Project status updated'));
 
-        // For AJAX, return 302 to match test expectations
         if ($request->ajax()) {
             return response('', 302)->header('X-Redirect', url()->previous() ?: '/');
         }
@@ -309,13 +317,13 @@ class ProjectsController extends Controller
 
     private function upload($image, $project)
     {
-        if ( ! auth()->user()->can('task-upload-files')) {
+        if ( ! auth()->user()->can('project-upload-files')) {
             session()->flash('flash_message_warning', __('You do not have permission to upload images'));
 
             return redirect()->route('tasks.show', $project->external_id);
         }
         $file        = $image;
-        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
         $size       = $file->getSize();

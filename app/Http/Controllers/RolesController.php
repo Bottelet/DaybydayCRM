@@ -10,7 +10,7 @@ use App\Models\Role;
 use App\Services\Role\RoleService;
 use Illuminate\Support\Facades\Session;
 use Throwable;
-use Yajra\Datatables\Datatables;
+use Yajra\DataTables\DataTables;
 
 class RolesController extends Controller
 {
@@ -19,7 +19,7 @@ class RolesController extends Controller
      */
     public function __construct(private RoleService $roleService)
     {
-        $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'update']]);
+        $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'store', 'update']]);
         $this->middleware('is.demo', ['except' => ['index', 'create', 'show', 'indexData']]);
     }
 
@@ -114,9 +114,16 @@ class RolesController extends Controller
             );
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect, so
+        // the flash must be set here to survive that navigation.
         session()->flash('flash_message', __('Role created'));
 
-        return view('roles.index');
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Role created')], 201);
+        }
+
+        return redirect()->route('roles.index');
     }
 
     /**

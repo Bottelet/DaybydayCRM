@@ -5,7 +5,6 @@ namespace Database\Factories;
 /* @var Factory $factory */
 
 use App\Models\Client;
-use App\Models\Status;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factory;
@@ -23,7 +22,7 @@ class TaskFactory extends \Illuminate\Database\Eloquent\Factories\Factory
             'user_created_id'  => User::factory(),
             'user_assigned_id' => User::factory(),
             'client_id'        => Client::factory(),
-            'status_id'        => Status::factory(),
+            'status_id'        => \App\Models\Status::where('source_type', \App\Models\Task::class)->inRandomOrder()->first()?->id ?? \App\Models\Status::factory()->create(['source_type' => \App\Models\Task::class])->id,
             'deadline'         => $this->faker->dateTimeThisYear($max = 'now'),
             'created_at'       => $this->faker->dateTimeThisYear($max = 'now'),
             'updated_at'       => $this->faker->dateTimeThisYear($max = 'now'),

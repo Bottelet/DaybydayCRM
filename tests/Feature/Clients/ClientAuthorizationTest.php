@@ -111,7 +111,7 @@ class ClientAuthorizationTest extends AbstractTestCase
         $this->actingAs($this->userWithoutPermission);
 
         /* Act */
-        $response = $this->post(route('clients.store'), [
+        $response = $this->from(route('clients.create'))->post(route('clients.store'), [
             'name'             => 'James Test',
             'email'            => 'james@test.com',
             'primary_number'   => '2342342342',
@@ -126,8 +126,15 @@ class ClientAuthorizationTest extends AbstractTestCase
             'user_id'          => $owner->id,
         ]);
 
-        /* Assert */
-        $response->assertForbidden();
+        /* Assert: StoreClientRequest::authorize() failing throws AuthorizationException,
+         * which the app's exception Handler now converts to a flash+redirect-back for
+         * non-JSON requests (matching the rest of the app's permission-denial pattern)
+         * instead of Laravel's generic 403 error page. */
+        $response->assertRedirect(route('clients.create'));
+        // AuthorizationException's default message ('This action is unauthorized.')
+        // is a hardcoded English string, not translated via __() - StoreClientRequest
+        // doesn't override failedAuthorization() to provide a custom message.
+        $response->assertSessionHas('flash_message_warning', 'This action is unauthorized.');
         $this->assertDatabaseMissing('clients', ['company_name' => 'James & Co']);
     }
 }

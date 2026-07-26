@@ -17,10 +17,6 @@ window._ = _;
  * for JavaScript based Bootstrap features such as modals and tabs. This
  * code may be modified to fit the specific needs of your application.
  */
-
-import 'bootstrap-sass';
-import selectpicker from 'bootstrap-select';
-window.selectpicker = selectpicker;
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
