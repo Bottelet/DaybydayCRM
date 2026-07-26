@@ -83,6 +83,26 @@ class ClientsControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_rejects_client_creation_with_missing_required_name(): void
+    {
+        /* Arrange */
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_CREATE);
+        $industry = Industry::factory()->create();
+        $user     = User::factory()->create();
+        $payload  = $this->validClientPayload($industry->id, $user->id);
+        unset($payload['name']);
+
+        /* Act */
+        $response = $this->json('POST', route('clients.store'), $payload);
+
+        /* Assert */
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name']);
+        $this->assertDatabaseMissing('clients', ['company_name' => 'James & Co']);
+    }
+
+    #[Test]
     public function it_returns_web_error_and_early_returns_when_client_creation_fails()
     {
         /* Arrange */
@@ -191,6 +211,33 @@ class ClientsControllerTest extends AbstractTestCase
         $this->assertEquals($client->primaryContact->secondary_number, '423423432');
         $this->assertEquals($client->primaryContact->name, 'Mads');
         $this->assertNull(Client::where('vat', '5898989898')->first());
+    }
+
+    #[Test]
+    public function it_rejects_client_update_with_missing_required_name(): void
+    {
+        /* Arrange */
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::CLIENT_UPDATE);
+        $industry = Industry::factory()->create();
+        $user     = User::factory()->create();
+        $client   = Client::factory()->create([
+            'company_name' => 'Hello',
+            'industry_id'  => $industry->id,
+            'user_id'      => $user->id,
+        ]);
+
+        /* Act */
+        $response = $this->withoutMiddleware()->json('PATCH', route('clients.update', $client->external_id), [
+            'email'        => 'james@test.com',
+            'company_name' => 'Hello',
+            'user_id'      => $user->id,
+            // name intentionally missing
+        ]);
+
+        /* Assert */
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name']);
     }
 
     #[Test]

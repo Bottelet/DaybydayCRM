@@ -32,6 +32,27 @@ class AppointmentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_creates_appointment_record_with_external_id_via_factory()
+    {
+        /* Arrange */
+
+        /* Act */
+        $appointment = Appointment::factory()->create([
+            'user_id'     => $this->user->id,
+            'source_type' => User::class,
+            'source_id'   => $this->user->id,
+            'color'       => '#FFFFFF',
+        ]);
+
+        /* Assert */
+        $this->assertNotNull($appointment->external_id);
+        $this->assertDatabaseHas('appointments', [
+            'id'          => $appointment->id,
+            'external_id' => $appointment->external_id,
+        ]);
+    }
+
+    #[Test]
     public function it_stores_explicit_external_id_when_provided_for_appointment()
     {
         /* Arrange */
@@ -88,27 +109,6 @@ class AppointmentModelBootTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNotEquals($appointment1->external_id, $appointment2->external_id);
-    }
-
-    #[Test]
-    public function it_creates_appointment_record_with_external_id_via_factory()
-    {
-        /* Arrange */
-
-        /* Act */
-        $appointment = Appointment::factory()->create([
-            'user_id'     => $this->user->id,
-            'source_type' => User::class,
-            'source_id'   => $this->user->id,
-            'color'       => '#FFFFFF',
-        ]);
-
-        /* Assert */
-        $this->assertNotNull($appointment->external_id);
-        $this->assertDatabaseHas('appointments', [
-            'id'          => $appointment->id,
-            'external_id' => $appointment->external_id,
-        ]);
     }
 
     #[Test]

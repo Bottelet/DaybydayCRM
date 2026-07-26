@@ -28,22 +28,7 @@ class ProjectActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_constructor_stores_project_and_action()
-    {
-        /* Arrange */
-        $project = Project::factory()->create();
-        $action  = 'created';
-
-        /* Act */
-        $event = new ProjectAction($project, $action);
-
-        /* Assert */
-        $this->assertEquals($project->id, $event->getProject()->id);
-        $this->assertEquals($action, $event->getAction());
-    }
-
-    #[Test]
-    public function it_gets_project_returns_project_model()
+    public function it_returns_the_associated_project_from_get_project()
     {
         /* Arrange */
         $project = Project::factory()->create();
@@ -56,7 +41,7 @@ class ProjectActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_action_returns_action_string()
+    public function it_returns_the_action_string_from_get_action()
     {
         /* Arrange */
         $project = Project::factory()->create();
@@ -66,6 +51,21 @@ class ProjectActionTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('deleted', $event->getAction());
+    }
+
+    #[Test]
+    public function it_stores_project_and_action_in_the_constructor()
+    {
+        /* Arrange */
+        $project = Project::factory()->create();
+        $action  = 'created';
+
+        /* Act */
+        $event = new ProjectAction($project, $action);
+
+        /* Assert */
+        $this->assertEquals($project->id, $event->getProject()->id);
+        $this->assertEquals($action, $event->getAction());
     }
 
     #[Test]

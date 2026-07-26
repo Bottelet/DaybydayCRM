@@ -30,8 +30,41 @@ class RoleRepositoryTest extends AbstractTestCase
         Role::factory()->create(['name' => 'administrator', 'display_name' => 'Administrator']);
         Role::factory()->create(['name' => 'manager', 'display_name' => 'Manager']);
         Role::factory()->create(['name' => 'employee', 'display_name' => 'Employee']);
+        Role::factory()->create(['name' => 'owner', 'display_name' => 'Owner']);
 
         $this->repository = new RoleRepository();
+    }
+
+    #[Test]
+    public function it_list_all_roles_returns_display_names_keyed_by_id()
+    {
+        /* Arrange */
+
+        /* Act */
+        $roles = $this->repository->listAllRoles();
+
+        /* Assert */
+        $this->assertNotEmpty($roles);
+
+        foreach ($roles as $id => $displayName) {
+            $this->assertIsInt($id);
+            $this->assertIsString($displayName);
+        }
+    }
+
+    #[Test]
+    public function it_list_all_roles_does_not_include_owner()
+    {
+        /* Arrange */
+
+        /* Act */
+        $roles        = $this->repository->listAllRoles();
+        $displayNames = $roles->toArray();
+        $ownerRole    = Role::query()->where('name', 'owner')->firstOrFail();
+
+        /* Assert */
+        $this->assertArrayNotHasKey($ownerRole->id, $displayNames, 'listAllRoles() should not include the owner role');
+        $this->assertNotContains('Owner', $displayNames);
     }
 
     #[Test]
@@ -90,41 +123,6 @@ class RoleRepositoryTest extends AbstractTestCase
 
         /* Assert */
         $this->assertContains('administrator', $roleNames, 'allRoles() should include administrator role');
-    }
-
-    #[Test]
-    public function it_list_all_roles_returns_display_names_keyed_by_id()
-    {
-        /* Arrange */
-
-        /* Act */
-        $roles = $this->repository->listAllRoles();
-
-        /* Assert */
-        $this->assertNotEmpty($roles);
-
-        foreach ($roles as $id => $displayName) {
-            $this->assertIsInt($id);
-            $this->assertIsString($displayName);
-        }
-    }
-
-    #[Test]
-    public function it_list_all_roles_does_not_include_owner()
-    {
-        /* Arrange */
-
-        /* Act */
-        $roles        = $this->repository->listAllRoles();
-        $displayNames = $roles->toArray();
-        $ownerRole    = Role::query()->where('name', 'owner')->first();
-
-        /* Assert */
-        if ($ownerRole) {
-            $this->assertArrayNotHasKey($ownerRole->id, $displayNames, 'listAllRoles() should not include the owner role');
-        }
-
-        $this->assertNotContains('Owner', $displayNames);
     }
 
     #[Test]

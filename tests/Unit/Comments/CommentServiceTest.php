@@ -81,85 +81,6 @@ class CommentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_sanitizes_html_in_description()
-    {
-        /* Arrange */
-        $task        = Task::factory()->create();
-        $user        = User::factory()->create();
-        $description = '<script>alert("xss")</script>Test comment';
-
-        /* Act */
-        $comment = $this->service->createComment('task', $task->external_id, $description, $user->id);
-
-        /* Assert */
-        $this->assertStringNotContainsString('<script>', $comment->description);
-        $this->assertStringContainsString('Test comment', $comment->description);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_invalid_type()
-    {
-        /* Arrange */
-        $task = Task::factory()->create();
-        $user = User::factory()->create();
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unsupported comment type: invalid');
-        $this->service->createComment('invalid', $task->external_id, 'Comments', $user->id);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_nonexistent_model()
-    {
-        /* Arrange */
-        $user = User::factory()->create();
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Could not find task with external ID');
-        $this->service->createComment('task', 'nonexistent-id', 'Comments', $user->id);
-    }
-
-    #[Test]
-    public function it_gets_supported_types()
-    {
-        /* Arrange & Act */
-        $types = $this->service->getSupportedTypes();
-
-        /* Assert */
-        $this->assertCount(3, $types);
-        $this->assertContains('task', $types);
-        $this->assertContains('lead', $types);
-        $this->assertContains('project', $types);
-    }
-
-    #[Test]
-    public function it_checks_type_is_supported()
-    {
-        /* Arrange, Act & Assert */
-        $this->assertTrue($this->service->isTypeSupported('task'));
-        $this->assertTrue($this->service->isTypeSupported('lead'));
-        $this->assertTrue($this->service->isTypeSupported('project'));
-        $this->assertFalse($this->service->isTypeSupported('invalid'));
-    }
-
-    #[Test]
-    public function it_deletes_comment()
-    {
-        /* Arrange */
-        $comment   = Comment::factory()->create();
-        $commentId = $comment->id;
-
-        /* Act */
-        $result = $this->service->deleteComment($comment);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertSoftDeleted('comments', ['id' => $commentId]);
-    }
-
-    #[Test]
     public function it_updates_comment()
     {
         /* Arrange */
@@ -190,5 +111,94 @@ class CommentServiceTest extends AbstractTestCase
         $fresh = $comment->fresh();
         $this->assertStringNotContainsString('onerror', $fresh->description);
         $this->assertStringContainsString('Safe text', $fresh->description);
+    }
+
+    #[Test]
+    public function it_deletes_comment()
+    {
+        /* Arrange */
+        $comment   = Comment::factory()->create();
+        $commentId = $comment->id;
+
+        /* Act */
+        $result = $this->service->deleteComment($comment);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertSoftDeleted('comments', ['id' => $commentId]);
+    }
+
+    #[Test]
+    public function it_gets_supported_types()
+    {
+        /* Arrange */
+
+        /* Act */
+        $types = $this->service->getSupportedTypes();
+
+        /* Assert */
+        $this->assertCount(3, $types);
+        $this->assertContains('task', $types);
+        $this->assertContains('lead', $types);
+        $this->assertContains('project', $types);
+    }
+
+    #[Test]
+    public function it_sanitizes_html_in_description()
+    {
+        /* Arrange */
+        $task        = Task::factory()->create();
+        $user        = User::factory()->create();
+        $description = '<script>alert("xss")</script>Test comment';
+
+        /* Act */
+        $comment = $this->service->createComment('task', $task->external_id, $description, $user->id);
+
+        /* Assert */
+        $this->assertStringNotContainsString('<script>', $comment->description);
+        $this->assertStringContainsString('Test comment', $comment->description);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_invalid_type()
+    {
+        /* Arrange */
+        $task = Task::factory()->create();
+        $user = User::factory()->create();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported comment type: invalid');
+
+        /* Act */
+        $this->service->createComment('invalid', $task->external_id, 'Comments', $user->id);
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_throws_exception_for_nonexistent_model()
+    {
+        /* Arrange */
+        $user = User::factory()->create();
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not find task with external ID');
+
+        /* Act */
+        $this->service->createComment('task', 'nonexistent-id', 'Comments', $user->id);
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_checks_type_is_supported()
+    {
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
+        $this->assertTrue($this->service->isTypeSupported('task'));
+        $this->assertTrue($this->service->isTypeSupported('lead'));
+        $this->assertTrue($this->service->isTypeSupported('project'));
+        $this->assertFalse($this->service->isTypeSupported('invalid'));
     }
 }

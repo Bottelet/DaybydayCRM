@@ -29,6 +29,7 @@ class LeadServiceTest extends AbstractTestCase
     #[Test]
     public function it_covers_lead_service_methods(): void
     {
+        /* Arrange */
         $user   = User::factory()->create();
         $client = Client::factory()->create();
         $open   = Status::factory()->create(['source_type' => Lead::class, 'title' => 'Open']);
@@ -44,6 +45,9 @@ class LeadServiceTest extends AbstractTestCase
             'client_external_id' => $client->external_id,
         ], $user->id);
 
+        $offer = Offer::factory()->create(['source_id' => $lead->id, 'source_type' => Lead::class]);
+
+        /* Act */
         $this->service->assign($lead, $user->id);
         $this->service->updateFollowup($lead, '2026-01-01', '10:30');
         $this->service->updateDeadline($lead, '2026-01-03', '11:00');
@@ -53,10 +57,9 @@ class LeadServiceTest extends AbstractTestCase
         $this->assertTrue($this->service->updateStatus($lead, ['status_id' => $closed->id]));
         $this->assertFalse($this->service->updateStatus($lead, []));
 
-        $offer = Offer::factory()->create(['source_id' => $lead->id, 'source_type' => Lead::class]);
-
         $this->service->delete($lead, false);
 
+        /* Assert */
         $this->assertNull($offer->fresh()->source_id);
     }
 }

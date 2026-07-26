@@ -41,6 +41,143 @@ class ClientServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_creates_client_with_contact()
+    {
+        /* Arrange */
+        $industry = Industry::factory()->create();
+        $user     = User::factory()->create();
+
+        $data = [
+            'name'             => 'John Doe',
+            'company_name'     => 'Test Company',
+            'vat'              => '12345678',
+            'email'            => 'john@example.com',
+            'address'          => '123 Main St',
+            'zipcode'          => '12345',
+            'city'             => 'Springfield',
+            'primary_number'   => '1234567890',
+            'secondary_number' => '0987654321',
+            'industry_id'      => $industry->id,
+            'company_type'     => 'LLC',
+            'user_id'          => $user->id,
+        ];
+
+        /* Act */
+        [$client, $contact] = $this->clientService->createClientWithContact($data);
+
+        /* Assert */
+        $this->assertInstanceOf(Client::class, $client);
+        $this->assertInstanceOf(Contact::class, $contact);
+
+        // Verify client data
+        $this->assertEquals($data['company_name'], $client->company_name);
+        $this->assertEquals($data['vat'], $client->vat);
+        $this->assertEquals($data['address'], $client->address);
+        $this->assertEquals($data['zipcode'], $client->zipcode);
+        $this->assertEquals($data['city'], $client->city);
+        $this->assertEquals($data['company_type'], $client->company_type);
+        $this->assertEquals($industry->id, $client->industry_id);
+        $this->assertEquals($user->id, $client->user_id);
+        $this->assertNotNull($client->external_id);
+
+        // Verify contact data
+        $this->assertEquals($data['name'], $contact->name);
+        $this->assertEquals($data['email'], $contact->email);
+        $this->assertEquals($data['primary_number'], $contact->primary_number);
+        $this->assertEquals($data['secondary_number'], $contact->secondary_number);
+        $this->assertTrue($contact->is_primary);
+        $this->assertEquals($client->id, $contact->client_id);
+        $this->assertNotNull($contact->external_id);
+    }
+
+    #[Test]
+    public function it_creates_client_with_contact_with_minimal_data()
+    {
+        /* Arrange */
+        $industry = Industry::factory()->create();
+        $user     = User::factory()->create();
+
+        $data = [
+            'name'         => 'Jane Doe',
+            'company_name' => 'Minimal Co',
+            'email'        => 'jane@example.com',
+            'industry_id'  => $industry->id,
+            'user_id'      => $user->id,
+        ];
+
+        /* Act */
+        [$client, $contact] = $this->clientService->createClientWithContact($data);
+
+        /* Assert */
+        $this->assertInstanceOf(Client::class, $client);
+        $this->assertInstanceOf(Contact::class, $contact);
+
+        // Verify required fields are set
+        $this->assertEquals($data['company_name'], $client->company_name);
+        $this->assertEquals($data['name'], $contact->name);
+        $this->assertEquals($data['email'], $contact->email);
+
+        // Verify optional fields are null
+        $this->assertNull($client->vat);
+        $this->assertNull($client->address);
+        $this->assertNull($client->zipcode);
+        $this->assertNull($client->city);
+        $this->assertNull($contact->primary_number);
+        $this->assertNull($contact->secondary_number);
+    }
+
+    #[Test]
+    public function it_creates_client_and_contact_in_database()
+    {
+        /* Arrange */
+        $industry = Industry::factory()->create();
+        $user     = User::factory()->create();
+
+        $data = [
+            'name'             => 'Test Contact',
+            'company_name'     => 'Test Corp',
+            'vat'              => '98765432',
+            'email'            => 'test@example.com',
+            'address'          => '456 Oak Ave',
+            'zipcode'          => '54321',
+            'city'             => 'Shelbyville',
+            'primary_number'   => '5555555555',
+            'secondary_number' => '4444444444',
+            'industry_id'      => $industry->id,
+            'company_type'     => 'S-Corp',
+            'user_id'          => $user->id,
+        ];
+
+        /* Act */
+        [$client, $contact] = $this->clientService->createClientWithContact($data);
+
+        /* Assert */
+        // Verify client exists in database
+        $this->assertDatabaseHas('clients', [
+            'company_name' => 'Test Corp',
+            'vat'          => '98765432',
+            'industry_id'  => $industry->id,
+            'user_id'      => $user->id,
+        ]);
+
+        // Verify contact exists in database
+        $this->assertDatabaseHas('contacts', [
+            'name'       => 'Test Contact',
+            'email'      => 'test@example.com',
+            'client_id'  => $client->id,
+            'is_primary' => true,
+        ]);
+
+        // Fetch fresh and verify relationships
+        $freshClient  = Client::findOrFail($client->id);
+        $freshContact = $freshClient->primaryContact;
+
+        $this->assertNotNull($freshContact);
+        $this->assertEquals('Test Contact', $freshContact->name);
+        $this->assertTrue($freshContact->is_primary);
+    }
+
+    #[Test]
     public function it_gets_clients_for_datatable()
     {
         /* Arrange */
@@ -291,147 +428,12 @@ class ClientServiceTest extends AbstractTestCase
     {
         /* Arrange */
         $nonExistentId = 'non-existent-uuid';
-
-        /* Act & Assert */
         $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+
+        /* Act */
         $this->clientService->findByExternalId($nonExistentId);
-    }
-
-    #[Test]
-    public function it_creates_client_with_contact()
-    {
-        /* Arrange */
-        $industry = Industry::factory()->create();
-        $user     = User::factory()->create();
-
-        $data = [
-            'name'             => 'John Doe',
-            'company_name'     => 'Test Company',
-            'vat'              => '12345678',
-            'email'            => 'john@example.com',
-            'address'          => '123 Main St',
-            'zipcode'          => '12345',
-            'city'             => 'Springfield',
-            'primary_number'   => '1234567890',
-            'secondary_number' => '0987654321',
-            'industry_id'      => $industry->id,
-            'company_type'     => 'LLC',
-            'user_id'          => $user->id,
-        ];
-
-        /* Act */
-        [$client, $contact] = $this->clientService->createClientWithContact($data);
 
         /* Assert */
-        $this->assertInstanceOf(Client::class, $client);
-        $this->assertInstanceOf(Contact::class, $contact);
-
-        // Verify client data
-        $this->assertEquals($data['company_name'], $client->company_name);
-        $this->assertEquals($data['vat'], $client->vat);
-        $this->assertEquals($data['address'], $client->address);
-        $this->assertEquals($data['zipcode'], $client->zipcode);
-        $this->assertEquals($data['city'], $client->city);
-        $this->assertEquals($data['company_type'], $client->company_type);
-        $this->assertEquals($industry->id, $client->industry_id);
-        $this->assertEquals($user->id, $client->user_id);
-        $this->assertNotNull($client->external_id);
-
-        // Verify contact data
-        $this->assertEquals($data['name'], $contact->name);
-        $this->assertEquals($data['email'], $contact->email);
-        $this->assertEquals($data['primary_number'], $contact->primary_number);
-        $this->assertEquals($data['secondary_number'], $contact->secondary_number);
-        $this->assertTrue($contact->is_primary);
-        $this->assertEquals($client->id, $contact->client_id);
-        $this->assertNotNull($contact->external_id);
-    }
-
-    #[Test]
-    public function it_creates_client_with_contact_with_minimal_data()
-    {
-        /* Arrange */
-        $industry = Industry::factory()->create();
-        $user     = User::factory()->create();
-
-        $data = [
-            'name'         => 'Jane Doe',
-            'company_name' => 'Minimal Co',
-            'email'        => 'jane@example.com',
-            'industry_id'  => $industry->id,
-            'user_id'      => $user->id,
-        ];
-
-        /* Act */
-        [$client, $contact] = $this->clientService->createClientWithContact($data);
-
-        /* Assert */
-        $this->assertInstanceOf(Client::class, $client);
-        $this->assertInstanceOf(Contact::class, $contact);
-
-        // Verify required fields are set
-        $this->assertEquals($data['company_name'], $client->company_name);
-        $this->assertEquals($data['name'], $contact->name);
-        $this->assertEquals($data['email'], $contact->email);
-
-        // Verify optional fields are null
-        $this->assertNull($client->vat);
-        $this->assertNull($client->address);
-        $this->assertNull($client->zipcode);
-        $this->assertNull($client->city);
-        $this->assertNull($contact->primary_number);
-        $this->assertNull($contact->secondary_number);
-    }
-
-    #[Test]
-    public function it_creates_client_and_contact_in_database()
-    {
-        /* Arrange */
-        $industry = Industry::factory()->create();
-        $user     = User::factory()->create();
-
-        $data = [
-            'name'             => 'Test Contact',
-            'company_name'     => 'Test Corp',
-            'vat'              => '98765432',
-            'email'            => 'test@example.com',
-            'address'          => '456 Oak Ave',
-            'zipcode'          => '54321',
-            'city'             => 'Shelbyville',
-            'primary_number'   => '5555555555',
-            'secondary_number' => '4444444444',
-            'industry_id'      => $industry->id,
-            'company_type'     => 'S-Corp',
-            'user_id'          => $user->id,
-        ];
-
-        /* Act */
-        [$client, $contact] = $this->clientService->createClientWithContact($data);
-
-        /* Assert */
-        // Verify client exists in database
-        $this->assertDatabaseHas('clients', [
-            'company_name' => 'Test Corp',
-            'vat'          => '98765432',
-            'industry_id'  => $industry->id,
-            'user_id'      => $user->id,
-        ]);
-
-        // Verify contact exists in database
-        $this->assertDatabaseHas('contacts', [
-            'name'       => 'Test Contact',
-            'email'      => 'test@example.com',
-            'client_id'  => $client->id,
-            'is_primary' => true,
-        ]);
-
-        // Fetch fresh and verify relationships
-        $freshClient  = Client::findOrFail($client->id);
-        $freshContact = $freshClient->primaryContact;
-
-        $this->assertNotNull($freshContact);
-        $this->assertEquals('Test Contact', $freshContact->name);
-        $this->assertTrue($freshContact->is_primary);
     }
 
     #[Test]

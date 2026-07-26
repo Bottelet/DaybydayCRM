@@ -74,19 +74,6 @@ class InvoiceCalculatorTest extends AbstractTestCase
     }
 
     #[Test]
-    #[Group('flaky')]
-    public function it_calculates_amount_due_correctly()
-    {
-        /* Arrange */
-
-        /* Act */
-        $amountDue = $this->invoiceCalculator->getAmountDue()->getAmount();
-
-        /* Assert */
-        $this->assertEquals(4000, $amountDue);
-    }
-
-    #[Test]
     public function it_gets_amount_due_with_no_payments()
     {
         /* Arrange */
@@ -148,5 +135,18 @@ class InvoiceCalculatorTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals(0, $amountDue);
+    }
+
+    #[Test]
+    #[Group('flaky')]
+    public function it_calculates_amount_due_correctly()
+    {
+        /* Arrange */
+
+        /* Act */
+        $amountDue = $this->invoiceCalculator->getAmountDue()->getAmount();
+
+        /* Assert */
+        $this->assertEquals(4000, $amountDue);
     }
 }

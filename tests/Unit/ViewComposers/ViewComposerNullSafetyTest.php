@@ -45,6 +45,56 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
     // ─── TaskHeaderComposer ──────────────────────────────────────────────────
 
     #[Test]
+    public function it_handles_missing_task_in_view_data()
+    {
+        /* Arrange */
+        $view = new FakeView([]);
+
+        /* Act */
+        (new TaskHeaderComposer())->compose($view);
+
+        /* Assert all three keys are pushed, all null */
+        $this->assertNull($view->getShared('contact'));
+        $this->assertNull($view->getShared('client'));
+        $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_handles_missing_lead_in_view_data()
+    {
+        /* Arrange */
+        $view = new FakeView([]);
+
+        /* Act */
+        (new LeadHeaderComposer())->compose($view);
+
+        /* Assert all three keys present, all null */
+        $this->assertNull($view->getShared('contact'));
+        $this->assertNull($view->getShared('client'));
+        $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_handles_missing_invoice_in_view_data()
+    {
+        /* Arrange */
+        $view = new FakeView([]);
+
+        /* Act */
+        (new InvoiceHeaderComposer())->compose($view);
+
+        /* Assert both keys present and null */
+        $this->assertNull($view->getShared('client'));
+        $this->assertNull($view->getShared('contact_info'));
+
+        /* Assert */
+    }
+
+    #[Test]
     public function it_handles_task_without_client()
     {
         /* Arrange */
@@ -54,13 +104,15 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         ]);
         $view = new FakeView(['tasks' => $task]);
 
-        /* Act – must not throw */
+        /* Act */
         (new TaskHeaderComposer())->compose($view);
 
         /* Assert exact shared values */
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
         $view->assertShared('contact'); // key must be present even when null
+
+        /* Assert */
     }
 
     #[Test]
@@ -84,21 +136,6 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_handles_missing_task_in_view_data()
-    {
-        /* Arrange – no 'tasks' key at all */
-        $view = new FakeView([]);
-
-        /* Act – must not throw */
-        (new TaskHeaderComposer())->compose($view);
-
-        /* Assert all three keys are pushed, all null */
-        $this->assertNull($view->getShared('contact'));
-        $this->assertNull($view->getShared('client'));
-        $this->assertNull($view->getShared('contact_info'));
-    }
-
-    #[Test]
     public function it_populates_contact_client_and_contact_info_when_task_is_complete()
     {
         /* Arrange */
@@ -119,9 +156,9 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertArrayHasKey('contact_info', $shared);
         $this->assertSame($this->user->id, $shared['contact']->id);
         $this->assertSame($client->id, $shared['client']->id);
-    }
 
-    // ─── LeadHeaderComposer ──────────────────────────────────────────────────
+        /* Assert */
+    }
 
     #[Test]
     public function it_handles_lead_without_client()
@@ -140,21 +177,6 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertNull($view->getShared('client'));
         $this->assertNull($view->getShared('contact_info'));
         $view->assertShared('contact');
-    }
-
-    #[Test]
-    public function it_handles_missing_lead_in_view_data()
-    {
-        /* Arrange */
-        $view = new FakeView([]);
-
-        /* Act */
-        (new LeadHeaderComposer())->compose($view);
-
-        /* Assert all three keys present, all null */
-        $this->assertNull($view->getShared('contact'));
-        $this->assertNull($view->getShared('client'));
-        $this->assertNull($view->getShared('contact_info'));
     }
 
     #[Test]
@@ -177,8 +199,6 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertSame($client->id, $shared['client']->id);
     }
 
-    // ─── InvoiceHeaderComposer ───────────────────────────────────────────────
-
     #[Test]
     public function it_handles_invoice_without_client()
     {
@@ -194,20 +214,6 @@ class ViewComposerNullSafetyTest extends AbstractTestCase
         $this->assertNull($view->getShared('contact_info'));
         $view->assertShared('client');
         $view->assertShared('contact_info');
-    }
-
-    #[Test]
-    public function it_handles_missing_invoice_in_view_data()
-    {
-        /* Arrange */
-        $view = new FakeView([]);
-
-        /* Act */
-        (new InvoiceHeaderComposer())->compose($view);
-
-        /* Assert both keys present and null */
-        $this->assertNull($view->getShared('client'));
-        $this->assertNull($view->getShared('contact_info'));
     }
 
     #[Test]

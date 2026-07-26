@@ -47,41 +47,6 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_projects_soft_deletes()
-    {
-        /* Arrange */
-        $document = $this->project->documents()->first();
-
-        /* Act */
-        $this->project->delete();
-
-        /* Assert */
-        $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
-    }
-
-    #[Test]
-    public function it_deletes_project_soft_deletes_relations()
-    {
-        /* Arrange */
-        $this->assertNotEmpty($this->project->comments);
-        $this->assertNotEmpty($this->project->activity);
-        $this->assertNotEmpty($this->project->documents);
-
-        /* Act */
-        $this->project->delete();
-        $this->project->refresh();
-
-        /* Assert */
-        $this->assertEmpty($this->project->comments);
-        $this->assertEmpty($this->project->activity);
-        $this->assertEmpty($this->project->documents);
-
-        $this->assertSoftDeleted($this->project->comments()->withTrashed()->first());
-        $this->assertSoftDeleted($this->project->activity()->withTrashed()->first());
-        $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
-    }
-
-    #[Test]
     public function it_force_delete_removes_project_from_database()
     {
         /* Arrange */
@@ -120,6 +85,84 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_force_delete_project_with_no_relations()
+    {
+        /* Arrange */
+        $projectWithoutRelations = Project::factory()->create();
+        $projectId               = $projectWithoutRelations->id;
+
+        /* Act */
+        $projectWithoutRelations->forceDelete();
+
+        /* Assert */
+        $this->assertDatabaseMissing('projects', [
+            'id' => $projectId,
+        ]);
+    }
+
+    #[Test]
+    public function it_deletes_projects_soft_deletes()
+    {
+        /* Arrange */
+        $document = $this->project->documents()->first();
+
+        /* Act */
+        $this->project->delete();
+
+        /* Assert */
+        $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
+    }
+
+    #[Test]
+    public function it_deletes_project_soft_deletes_relations()
+    {
+        /* Arrange */
+        $this->assertNotEmpty($this->project->comments);
+        $this->assertNotEmpty($this->project->activity);
+        $this->assertNotEmpty($this->project->documents);
+
+        /* Act */
+        $this->project->delete();
+        $this->project->refresh();
+
+        /* Assert */
+        $this->assertEmpty($this->project->comments);
+        $this->assertEmpty($this->project->activity);
+        $this->assertEmpty($this->project->documents);
+
+        $this->assertSoftDeleted($this->project->comments()->withTrashed()->first());
+        $this->assertSoftDeleted($this->project->activity()->withTrashed()->first());
+        $this->assertSoftDeleted($this->project->documents()->withTrashed()->first());
+    }
+
+    #[Test]
+    public function it_deletes_project_with_no_relations()
+    {
+        /* Arrange */
+        $projectWithoutRelations = Project::factory()->create();
+
+        /* Act */
+        $projectWithoutRelations->delete();
+
+        /* Assert */
+        $this->assertSoftDeleted($projectWithoutRelations);
+    }
+
+    #[Test]
+    public function it_deletes_project_with_null_invoice_id()
+    {
+        /* Arrange */
+        $this->project->invoice_id = null;
+        $this->project->save();
+
+        /* Act */
+        $this->project->delete();
+
+        /* Assert */
+        $this->assertSoftDeleted($this->project);
+    }
+
+    #[Test]
     public function it_invoice_is_not_deleted_by_observer()
     {
         /* Arrange */
@@ -141,19 +184,6 @@ class ProjectObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_project_with_no_relations()
-    {
-        /* Arrange */
-        $projectWithoutRelations = Project::factory()->create();
-
-        /* Act */
-        $projectWithoutRelations->delete();
-
-        /* Assert */
-        $this->assertSoftDeleted($projectWithoutRelations);
-    }
-
-    #[Test]
     public function it_restore_project_restores_relations()
     {
         /* Arrange */
@@ -172,35 +202,5 @@ class ProjectObserverDeleteTest extends AbstractTestCase
         $this->assertNull($this->project->comments()->first()->deleted_at);
         $this->assertNull($this->project->activity()->first()->deleted_at);
         $this->assertNull($this->project->documents()->first()->deleted_at);
-    }
-
-    #[Test]
-    public function it_force_delete_project_with_no_relations()
-    {
-        /* Arrange */
-        $projectWithoutRelations = Project::factory()->create();
-        $projectId               = $projectWithoutRelations->id;
-
-        /* Act */
-        $projectWithoutRelations->forceDelete();
-
-        /* Assert */
-        $this->assertDatabaseMissing('projects', [
-            'id' => $projectId,
-        ]);
-    }
-
-    #[Test]
-    public function it_deletes_project_with_null_invoice_id()
-    {
-        /* Arrange */
-        $this->project->invoice_id = null;
-        $this->project->save();
-
-        /* Act */
-        $this->project->delete();
-
-        /* Assert */
-        $this->assertSoftDeleted($this->project);
     }
 }

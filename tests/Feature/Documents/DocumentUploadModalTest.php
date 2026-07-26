@@ -1,0 +1,43 @@
+<?php
+
+namespace Tests\Feature\Documents;
+
+use App\Http\Controllers\DocumentsController;
+use App\Models\Task;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\AbstractTestCase;
+
+#[CoversClass(DocumentsController::class)]
+class DocumentUploadModalTest extends AbstractTestCase
+{
+    use RefreshDatabase;
+
+    protected Task $task;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->task = Task::factory()->create(['user_assigned_id' => $this->user->id]);
+    }
+
+    #[Test]
+    public function it_can_open_upload_files_modal_for_task()
+    {
+        /* Arrange */
+
+        /* Act */
+        $response = $this->get('/add-documents/' . $this->task->external_id . '/task');
+
+        /* Assert */
+        $response->assertStatus(200);
+        $response->assertViewIs('documents._uploadFileModal');
+        $response->assertViewHas('title', $this->task->title);
+        $response->assertViewHas('type', 'task');
+        $response->assertViewHas('external_id', $this->task->external_id);
+        $response->assertViewHas('route', route('document.task.upload', $this->task->external_id));
+        $response->assertSee(route('document.task.upload', $this->task->external_id), false);
+    }
+}

@@ -73,48 +73,6 @@ class AppointmentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_reassigns_to_user()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-        $newUser     = User::factory()->create();
-
-        /* Act */
-        $result = $this->service->reassignToUser($appointment, $newUser);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
-    }
-
-    #[Test]
-    public function it_reassigns_by_external_id()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-        $newUser     = User::factory()->create();
-
-        /* Act */
-        $result = $this->service->reassignToUserByExternalId($appointment, $newUser->external_id);
-
-        /* Assert */
-        $this->assertTrue($result);
-        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_nonexistent_user()
-    {
-        /* Arrange */
-        $appointment = Appointment::factory()->create();
-
-        /* Act & Assert */
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("User with external ID 'nonexistent-id' not found");
-        $this->service->reassignToUserByExternalId($appointment, 'nonexistent-id');
-    }
-
-    #[Test]
     public function it_deletes_appointment()
     {
         /* Arrange */
@@ -162,6 +120,50 @@ class AppointmentServiceTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_reassigns_to_user()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+        $newUser     = User::factory()->create();
+
+        /* Act */
+        $result = $this->service->reassignToUser($appointment, $newUser);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
+    }
+
+    #[Test]
+    public function it_reassigns_by_external_id()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+        $newUser     = User::factory()->create();
+
+        /* Act */
+        $result = $this->service->reassignToUserByExternalId($appointment, $newUser->external_id);
+
+        /* Assert */
+        $this->assertTrue($result);
+        $this->assertEquals($newUser->id, $appointment->fresh()->user_id);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_nonexistent_user()
+    {
+        /* Arrange */
+        $appointment = Appointment::factory()->create();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("User with external ID 'nonexistent-id' not found");
+
+        /* Act */
+        $this->service->reassignToUserByExternalId($appointment, 'nonexistent-id');
+
+        /* Assert */
+    }
+
+    #[Test]
     public function it_finds_appointment_by_id()
     {
         /* Arrange */
@@ -178,6 +180,8 @@ class AppointmentServiceTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_for_nonexistent_appointment()
     {
+        /* Arrange */
+
         /* Act */
         $found = $this->service->findById(99999);
 
@@ -196,15 +200,19 @@ class AppointmentServiceTest extends AbstractTestCase
             'end_at'   => Carbon::parse('2024-01-15 10:00'),
         ]);
 
-        /* Act & Assert */
-        $this->assertTrue($this->service->hasAppointmentAtTime(
+        /* Act */
+        $hasAppointmentDuringExistingSlot = $this->service->hasAppointmentAtTime(
             $user,
             Carbon::parse('2024-01-15 09:30')
-        ));
-        $this->assertFalse($this->service->hasAppointmentAtTime(
+        );
+        $hasAppointmentAtFreeTime = $this->service->hasAppointmentAtTime(
             $user,
             Carbon::parse('2024-01-15 11:00')
-        ));
+        );
+
+        /* Assert */
+        $this->assertTrue($hasAppointmentDuringExistingSlot);
+        $this->assertFalse($hasAppointmentAtFreeTime);
     }
 
     #[Test]

@@ -22,6 +22,21 @@ class ApiControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_returns_status_201_with_data_when_a_resource_is_created()
+    {
+        /* Arrange */
+        $data = ['id' => 42, 'name' => 'Test'];
+
+        /* Act */
+        $response = $this->controller->callRespondCreated($data);
+
+        /* Assert */
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(201, $response->getStatusCode());
+        $this->assertEquals($data, $response->getData(true));
+    }
+
+    #[Test]
     public function it_returns_a_json_response_with_data()
     {
         /* Arrange */
@@ -76,21 +91,6 @@ class ApiControllerTest extends AbstractTestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('{}', $response->getContent());
-    }
-
-    #[Test]
-    public function it_returns_status_201_with_data_when_a_resource_is_created()
-    {
-        /* Arrange */
-        $data = ['id' => 42, 'name' => 'Test'];
-
-        /* Act */
-        $response = $this->controller->callRespondCreated($data);
-
-        /* Assert */
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(201, $response->getStatusCode());
-        $this->assertEquals($data, $response->getData(true));
     }
 
     #[Test]

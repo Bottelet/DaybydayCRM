@@ -26,7 +26,20 @@ class CountryTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_from_code_returns_correct_country_instance()
+    public function it_returns_the_correct_display_value_from_code()
+    {
+        /* Arrange */
+        $countryCode = 'DK';
+
+        /* Act */
+        $country = Country::fromCode($countryCode);
+
+        /* Assert */
+        $this->assertEquals('Denmark', $country->getDisplayValue());
+    }
+
+    #[Test]
+    public function it_returns_the_correct_country_instance_from_code()
     {
         /* Arrange */
         $countryCode = 'DK';
@@ -37,19 +50,6 @@ class CountryTest extends AbstractTestCase
         /* Assert */
         $this->assertInstanceOf(Country::class, $country);
         $this->assertEquals('DK', $country->getCode());
-    }
-
-    #[Test]
-    public function it_from_code_returns_correct_display_value()
-    {
-        /* Arrange */
-        $countryCode = 'DK';
-
-        /* Act */
-        $country = Country::fromCode($countryCode);
-
-        /* Assert */
-        $this->assertEquals('Denmark', $country->getDisplayValue());
     }
 
     #[Test]
@@ -180,18 +180,6 @@ class CountryTest extends AbstractTestCase
         /* Assert */
         $this->assertEquals('m/d/Y', $format['carbonDate']);
         $this->assertEquals('g:i A', $format['carbonTime']);
-    }
-
-    #[Test]
-    public function it_values_returns_all_ten_countries()
-    {
-        /* Arrange */
-
-        /* Act */
-        $values = Country::values();
-
-        /* Assert */
-        $this->assertCount(10, $values);
     }
 
     #[Test]

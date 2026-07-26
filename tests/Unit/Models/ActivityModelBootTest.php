@@ -61,6 +61,33 @@ class ActivityModelBootTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_preserves_explicitly_provided_external_id_when_saved()
+    {
+        /* Arrange */
+        $customExternalId = 'custom-external-id-12345';
+        $customIpAddress  = '127.0.0.1';
+
+        $activity = new Activity();
+        $activity->forceFill([
+            'external_id' => $customExternalId,
+            'ip_address'  => $customIpAddress,
+            'causer_type' => User::class,
+            'causer_id'   => $this->user->id,
+            'source_type' => Task::class,
+            'source_id'   => $this->task->id,
+            'text'        => 'Test activity',
+        ]);
+
+        /* Act */
+        $activity->save();
+        $activity = $activity->fresh();
+
+        /* Assert */
+        $this->assertEquals($customExternalId, $activity->external_id);
+        $this->assertEquals($customIpAddress, $activity->ip_address);
+    }
+
+    #[Test]
     public function it_activity_generates_unique_external_ids_for_each_record()
     {
         /* Arrange */
@@ -92,32 +119,5 @@ class ActivityModelBootTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNotEquals($activity1->external_id, $activity2->external_id);
-    }
-
-    #[Test]
-    public function it_activity_preserves_explicitly_provided_external_id_when_saved()
-    {
-        /* Arrange */
-        $customExternalId = 'custom-external-id-12345';
-        $customIpAddress  = '127.0.0.1';
-
-        $activity = new Activity();
-        $activity->forceFill([
-            'external_id' => $customExternalId,
-            'ip_address'  => $customIpAddress,
-            'causer_type' => User::class,
-            'causer_id'   => $this->user->id,
-            'source_type' => Task::class,
-            'source_id'   => $this->task->id,
-            'text'        => 'Test activity',
-        ]);
-
-        /* Act */
-        $activity->save();
-        $activity = $activity->fresh();
-
-        /* Assert */
-        $this->assertEquals($customExternalId, $activity->external_id);
-        $this->assertEquals($customIpAddress, $activity->ip_address);
     }
 }

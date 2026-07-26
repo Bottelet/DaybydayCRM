@@ -7,6 +7,7 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 test('guest is redirected from departments create route', async ({ page }) => {
@@ -22,7 +23,7 @@ test('creating a department makes it searchable in department data feed', async 
   const dataResponse = await departmentData(request, name);
   const payload = await dataResponse.json();
 
-  expect(response.status()).toBe(302);
+  expect(response.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
   expect((payload.data ?? []).some((row) => row.name === name)).toBe(true);
 });
@@ -52,7 +53,7 @@ test('deleting a department removes it from department data feed', async ({ page
   const name = uniqueValue('PW Dept Delete');
 
   const { response: createResponse } = await createDepartment(page, request, name);
-  expect(createResponse.status()).toBe(302);
+  expect(createResponse.status()).toBe(201);
 
   const createdDataResponse = await departmentData(request, name);
   const createdDataPayload = await createdDataResponse.json();
@@ -70,4 +71,56 @@ test('deleting a department removes it from department data feed', async ({ page
 
   expect(deleteResponse.status()).toBeLessThan(400);
   expect((afterDataPayload.data ?? []).some((item) => item.name === name)).toBe(false);
+});
+
+test('browser create shows success notification and department appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.goto(`${BASE_URL}/departments/create`);
+
+  const name = uniqueValue('PW Browser Dept');
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('textarea[name="description"]').fill('Browser test department');
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/departments`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  await expectFlashMessage(page, 'Successfully created new department');
+
+  // #departments-table uses DataTables serverSide:true against a search
+  // endpoint that's a confirmed no-op — with enough seeded/test departments
+  // the new row isn't reliably on page 1 of 10, so verify via the API instead.
+  const request = page.context().request;
+  const dataResponse = await departmentData(request, name);
+  const dataPayload = await dataResponse.json();
+  expect((dataPayload.data ?? []).some((row) => row.name === name)).toBe(true);
+});
+
+test('department name links to a show page', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { response, name } = await createDepartment(page, request);
+  const payload = await response.json();
+
+  await page.goto(`${BASE_URL}/departments/${payload.department_external_id}`);
+  await expect(page.locator('.tablet__head-title')).toHaveText(name);
+});
+
+test('editing a department through the edit page persists the new name', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+  const { response } = await createDepartment(page, request);
+  const payload = await response.json();
+  const newName = uniqueValue('PW Department Edited');
+
+  await page.goto(`${BASE_URL}/departments/${payload.department_external_id}/edit`);
+  await page.locator('input[name="name"]').fill(newName);
+  await page.locator('form [type="submit"]').click();
+
+  await expect(page).toHaveURL(new RegExp(payload.department_external_id));
+  await expectFlashMessage(page, 'Successfully updated department');
+  await expect(page.locator('.tablet__head-title')).toHaveText(newName);
 });

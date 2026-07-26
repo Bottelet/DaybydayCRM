@@ -27,8 +27,8 @@ class DropboxTest extends AbstractTestCase
     {
         parent::setUp();
 
-        // Create a mock Dropbox client
-        $this->mockClient = $this->createMock(DropboxClient::class);
+        // Create a stub Dropbox client (no expectations needed)
+        $this->mockClient = $this->createStub(DropboxClient::class);
 
         // Create integration record
         Integration::factory()->create([
@@ -39,43 +39,59 @@ class DropboxTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_throws_exception_when_integration_not_configured()
+    public function it_returns_fake_content_in_testing_environment_on_view()
     {
         /* Arrange */
-        Integration::query()->delete();
-
-        /* Assert */
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Dropbox integration is not configured');
+        $file       = new stdClass();
+        $file->path = 'Daybyday/client-123/test.pdf';
 
         /* Act */
-        new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->view($file);
+
+        /* Assert */
+        $this->assertEquals('fake file content', $result);
+    }
+
+    #[Test]
+    public function it_returns_null_for_view_with_null_file()
+    {
+        /* Arrange */
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->view(null);
+
+        /* Assert */
+        $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_returns_false_for_delete_with_null_file()
+    {
+        /* Arrange */
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->delete(null);
+
+        /* Assert */
+        $this->assertFalse($result);
     }
 
     #[Test]
     public function it_successfully_uploads_a_file()
     {
-        $this->markTestIncomplete('Dropbox upload mocking is not yet stable in this test case.');
         /* Arrange */
         $filename = 'test.pdf';
         $folder   = 'client-123';
-        $filePath = '/path/to/test.pdf';
+        $filePath = sys_get_temp_dir() . '/test.pdf';
 
         // Create a temporary test file
         file_put_contents($filePath, 'test file content');
 
-        $this->mockClient->expects($this->once())
-            ->method('upload')
-            ->with(
-                'Daybyday/client-123/test.pdf',
-                'test file content'
-            );
-
-        // Replace the Dropbox client with our mock
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
         /* Act */
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->upload($folder, $filename, $filePath);
 
         // Clean up
@@ -92,108 +108,45 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_handles_upload_errors_gracefully()
     {
-        $this->markTestIncomplete('Dropbox upload error mocking is not yet stable in this test case.');
         /* Arrange */
         $filename = 'test.pdf';
         $folder   = 'client-123';
-        $filePath = '/path/to/test.pdf';
+        $filePath = sys_get_temp_dir() . '/test.pdf';
 
         file_put_contents($filePath, 'test file content');
 
-        $this->mockClient->expects($this->once())
-            ->method('upload')
+        $this->mockClient->method('upload')
             ->willThrowException(new Exception('Upload failed'));
 
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
 
         /* Assert */
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Failed to upload file to Dropbox');
 
         /* Act */
-        $dropbox->upload($folder, $filename, $filePath);
-
-        // Clean up
-        unlink($filePath);
-    }
-
-    #[Test]
-    public function it_successfully_deletes_a_file()
-    {
-        $this->markTestIncomplete('Dropbox delete mocking is not yet stable in this test case.');
-        /* Arrange */
-        $file       = new stdClass();
-        $file->path = 'Daybyday/client-123/test.pdf';
-
-        $this->mockClient->expects($this->once())
-            ->method('delete')
-            ->with('Daybyday/client-123/test.pdf');
-
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->delete($file);
-
-        /* Assert */
-        $this->assertTrue($result);
-    }
-
-    #[Test]
-    public function it_returns_false_for_delete_with_null_file()
-    {
-        /* Arrange */
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->delete(null);
-
-        /* Assert */
-        $this->assertFalse($result);
-    }
-
-    #[Test]
-    public function it_returns_true_when_deleting_non_existent_file()
-    {
-        $this->markTestIncomplete('Dropbox missing-file delete behavior is not yet stable in this test case.');
-        /* Arrange */
-        $file       = new stdClass();
-        $file->path = 'Daybyday/non-existent/test.pdf';
-
-        $this->mockClient->expects($this->once())
-            ->method('delete')
-            ->willThrowException(new Exception('not_found'));
-
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->delete($file);
-
-        /* Assert */
-        $this->assertTrue($result);
+        try {
+            $dropbox->upload($folder, $filename, $filePath);
+        } finally {
+            // Clean up even when exception is thrown
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
     }
 
     #[Test]
     public function it_successfully_downloads_a_file()
     {
-        $this->markTestIncomplete('Dropbox download mocking is not yet stable in this test case.');
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/client-123/test.pdf';
 
-        $this->mockClient->expects($this->once())
-            ->method('download')
-            ->with('Daybyday/client-123/test.pdf')
+        $this->mockClient->method('download')
             ->willReturn('file content');
 
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
         /* Act */
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->get($file);
 
         /* Assert */
@@ -201,21 +154,115 @@ class DropboxTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_returns_null_when_getting_non_existent_file()
+    public function it_returns_fake_content_in_testing_environment_on_download()
     {
-        $this->markTestIncomplete('Dropbox missing-file download behavior is not yet stable in this test case.');
+        /* Arrange */
+        $file       = new stdClass();
+        $file->path = 'Daybyday/client-123/test.pdf';
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->download($file);
+
+        /* Assert */
+        $this->assertEquals('fake file content', $result);
+    }
+
+    #[Test]
+    public function it_returns_null_for_download_with_null_file()
+    {
+        /* Arrange */
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->download(null);
+
+        /* Assert */
+        $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_properly_constructs_full_file_path_on_upload()
+    {
+        /* Arrange */
+        $filename = 'invoice.pdf';
+        $folder   = 'invoices-client-1';
+        $filePath = sys_get_temp_dir() . '/invoice.pdf';
+
+        file_put_contents($filePath, 'invoice content');
+
+        $expectedPath = 'Daybyday/invoices-client-1/invoice.pdf';
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->upload($folder, $filename, $filePath);
+
+        // Clean up
+        unlink($filePath);
+
+        /* Assert */
+        $this->assertEquals($expectedPath, $result['file_path']);
+    }
+
+    #[Test]
+    public function it_successfully_deletes_a_file()
+    {
+        /* Arrange */
+        $file       = new stdClass();
+        $file->path = 'Daybyday/client-123/test.pdf';
+
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->delete($file);
+
+        /* Assert */
+        $this->assertTrue($result);
+    }
+
+    #[Test]
+    public function it_throws_exception_when_integration_not_configured()
+    {
+        /* Arrange */
+        Integration::query()->delete();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Dropbox integration is not configured');
+
+        /* Act */
+        new Dropbox();
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_returns_true_when_deleting_non_existent_file()
+    {
         /* Arrange */
         $file       = new stdClass();
         $file->path = 'Daybyday/non-existent/test.pdf';
 
-        $this->mockClient->expects($this->once())
-            ->method('download')
+        $this->mockClient->method('delete')
             ->willThrowException(new Exception('not_found'));
 
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
+        /* Act */
+        $dropbox = new Dropbox($this->mockClient);
+        $result  = $dropbox->delete($file);
+
+        /* Assert */
+        $this->assertTrue($result);
+    }
+
+    #[Test]
+    public function it_returns_null_when_getting_non_existent_file()
+    {
+        /* Arrange */
+        $file       = new stdClass();
+        $file->path = 'Daybyday/non-existent/test.pdf';
+
+        $this->mockClient->method('download')
+            ->willThrowException(new Exception('not_found'));
 
         /* Act */
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->get($file);
 
         /* Assert */
@@ -226,73 +273,10 @@ class DropboxTest extends AbstractTestCase
     public function it_returns_null_for_get_with_null_file()
     {
         /* Arrange */
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
 
         /* Act */
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->get(null);
-
-        /* Assert */
-        $this->assertNull($result);
-    }
-
-    #[Test]
-    public function it_returns_fake_content_in_testing_environment_on_view()
-    {
-        /* Arrange */
-        $file       = new stdClass();
-        $file->path = 'Daybyday/client-123/test.pdf';
-
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->view($file);
-
-        /* Assert */
-        $this->assertEquals('fake file content', $result);
-    }
-
-    #[Test]
-    public function it_returns_fake_content_in_testing_environment_on_download()
-    {
-        /* Arrange */
-        $file       = new stdClass();
-        $file->path = 'Daybyday/client-123/test.pdf';
-
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->download($file);
-
-        /* Assert */
-        $this->assertEquals('fake file content', $result);
-    }
-
-    #[Test]
-    public function it_returns_null_for_view_with_null_file()
-    {
-        /* Arrange */
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->view(null);
-
-        /* Assert */
-        $this->assertNull($result);
-    }
-
-    #[Test]
-    public function it_returns_null_for_download_with_null_file()
-    {
-        /* Arrange */
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->download(null);
 
         /* Assert */
         $this->assertNull($result);
@@ -302,10 +286,9 @@ class DropboxTest extends AbstractTestCase
     public function it_is_enabled_when_integration_exists()
     {
         /* Arrange */
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
 
         /* Act */
-        $dropbox = new Dropbox();
+        $dropbox = new Dropbox($this->mockClient);
         $result  = $dropbox->isEnabled();
 
         /* Assert */
@@ -315,60 +298,43 @@ class DropboxTest extends AbstractTestCase
     #[Test]
     public function it_is_disabled_when_integration_does_not_exist()
     {
-        $this->markTestIncomplete('Dropbox integration-disabled behavior is not yet stable in this test case.');
         /* Arrange */
+        $dropbox = new Dropbox($this->mockClient);
         Integration::query()->delete();
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
 
         /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->isEnabled();
+        $result = $dropbox->isEnabled();
 
         /* Assert */
         $this->assertFalse($result);
     }
 
     #[Test]
-    public function it_returns_false_for_is_enabled_when_error_occurs()
+    public function it_returns_false_from_is_enabled_when_the_integration_lookup_throws()
     {
-        /* Arrange */
-        Integration::query()->delete();
+        /* Arrange: isEnabled() catches any Exception from the query and
+         * returns false, rather than letting it propagate. Force a real
+         * query failure by pointing the default connection at a host that
+         * doesn't exist, restoring it immediately after the call. */
+        $dropbox            = new Dropbox($this->mockClient);
+        $originalConnection = config('database.default');
+        config([
+            'database.connections.dropbox_test_broken' => [
+                'driver' => 'mysql',
+                'host'   => 'nonexistent-host-for-this-test',
+                'port'   => 1,
+            ],
+            'database.default' => 'dropbox_test_broken',
+        ]);
+
+        try {
+            /* Act */
+            $result = $dropbox->isEnabled();
+        } finally {
+            config(['database.default' => $originalConnection]);
+        }
 
         /* Assert */
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Dropbox integration is not configured');
-
-        /* Act */
-        new Dropbox();
-    }
-
-    #[Test]
-    public function it_properly_constructs_full_file_path_on_upload()
-    {
-        $this->markTestIncomplete('Dropbox upload path construction mocking is not yet stable in this test case.');
-        /* Arrange */
-        $filename = 'invoice.pdf';
-        $folder   = 'invoices-client-1';
-        $filePath = '/tmp/invoice.pdf';
-
-        file_put_contents($filePath, 'invoice content');
-
-        $expectedPath = 'Daybyday/invoices-client-1/invoice.pdf';
-
-        $this->mockClient->expects($this->once())
-            ->method('upload')
-            ->with($expectedPath, 'invoice content');
-
-        $this->app->instance('Spatie\Dropbox\Client', $this->mockClient);
-
-        /* Act */
-        $dropbox = new Dropbox();
-        $result  = $dropbox->upload($folder, $filename, $filePath);
-
-        // Clean up
-        unlink($filePath);
-
-        /* Assert */
-        $this->assertEquals($expectedPath, $result['file_path']);
+        $this->assertFalse($result);
     }
 }
