@@ -74,28 +74,6 @@ class ClientModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_primary_contact_magic_attribute_is_accessible_via_correct_camel_case_method_name()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $client->contacts()->forceDelete();
-
-        $primaryContact = Contact::factory()->create([
-            'client_id'  => $client->id,
-            'is_primary' => true,
-        ]);
-
-        /* Act */
-        $result      = $client->primaryContact;
-        $freshClient = Client::find($client->id);
-        $freshResult = $freshClient->primaryContact;
-
-        /* Assert */
-        $this->assertEquals($primaryContact->id, $result->id);
-        $this->assertEquals($primaryContact->id, $freshResult->id);
-    }
-
-    #[Test]
     public function it_gets_primary_contact_attribute_returns_null_when_no_contacts_exist()
     {
         /* Arrange */
@@ -140,5 +118,27 @@ class ClientModelTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_accesses_primary_contact_magic_attribute_via_camel_case_method_name()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $client->contacts()->forceDelete();
+
+        $primaryContact = Contact::factory()->create([
+            'client_id'  => $client->id,
+            'is_primary' => true,
+        ]);
+
+        /* Act */
+        $result      = $client->primaryContact;
+        $freshClient = Client::find($client->id);
+        $freshResult = $freshClient->primaryContact;
+
+        /* Assert */
+        $this->assertEquals($primaryContact->id, $result->id);
+        $this->assertEquals($primaryContact->id, $freshResult->id);
     }
 }

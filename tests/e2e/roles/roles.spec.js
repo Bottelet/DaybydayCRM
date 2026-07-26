@@ -7,6 +7,7 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 const malformedId = 'invalid-@@@';
@@ -23,7 +24,7 @@ test('creating a role makes it searchable in roles data feed', async ({ page }) 
   const dataResponse = await roleData(request, name);
   const payload = await dataResponse.json();
 
-  expect(response.status()).toBe(200);
+  expect(response.status()).toBe(201);
   expect(dataResponse.status()).toBe(200);
   expect((payload.data ?? []).some((row) => row.name === name)).toBe(true);
 });
@@ -44,7 +45,7 @@ test('role create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/roles/create`);
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
-  await expect(page.locator('form .alert.alert-danger:visible, form .invalid-feedback:visible').first()).toBeVisible();
+  await expect(page.locator('.alert.alert-danger:visible, .invalid-feedback:visible').first()).toBeVisible();
 });
 
 test('updating role permissions redirects and role stays searchable', async ({ page }) => {
@@ -87,4 +88,53 @@ test('updating malformed role id returns not found', async ({ page }) => {
   });
 
   expect(response.status()).toBe(404);
+});
+
+test('browser create shows success notification and role appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.goto(`${BASE_URL}/roles/create`);
+
+  const name = uniqueValue('pw_browser_role').replace(/\s/g, '_');
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('textarea[name="description"], input[name="description"]').first().fill('Browser test role');
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/roles`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  await expectFlashMessage(page, 'Role created');
+
+  // #roles-table uses DataTables serverSide:true against /roles/data, whose
+  // search param is a confirmed no-op (see roleData() note) — the table's own
+  // search box can't find it either, so verify via the API instead of the
+  // paginated (10/page), unsearchable browser table.
+  const request = page.context().request;
+  const dataResponse = await roleData(request, name);
+  const payload = await dataResponse.json();
+  expect((payload.data ?? []).some((row) => row.name === name)).toBe(true);
+});
+
+test('browser edit saves role permissions, shows success notification', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  const { response, name } = await createRole(page, request);
+  expect(response.status()).toBe(201);
+
+  const dataResponse = await roleData(request, name);
+  const dataPayload = await dataResponse.json();
+  const row = (dataPayload.data ?? []).find((r) => r.name === name);
+  expect(row?.external_id).toBeTruthy();
+
+  await page.goto(`${BASE_URL}/roles/${row.external_id}`);
+
+  await Promise.all([
+    page.waitForURL(/\/roles/),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  await expectFlashMessage(page, 'Role is updated');
 });

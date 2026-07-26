@@ -28,22 +28,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_constructor_stores_lead_and_action()
-    {
-        /* Arrange */
-        $lead   = Lead::factory()->create();
-        $action = 'created';
-
-        /* Act */
-        $event = new LeadAction($lead, $action);
-
-        /* Assert */
-        $this->assertEquals($lead->id, $event->getLead()->id);
-        $this->assertEquals($action, $event->getAction());
-    }
-
-    #[Test]
-    public function it_gets_lead_returns_lead_model()
+    public function it_returns_the_associated_lead_from_get_lead()
     {
         /* Arrange */
         $lead = Lead::factory()->create();
@@ -56,7 +41,7 @@ class LeadActionTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_action_returns_action_string()
+    public function it_returns_the_action_string_from_get_action()
     {
         /* Arrange */
         $lead = Lead::factory()->create();
@@ -66,6 +51,21 @@ class LeadActionTest extends AbstractTestCase
 
         /* Assert */
         $this->assertEquals('deleted', $event->getAction());
+    }
+
+    #[Test]
+    public function it_stores_lead_and_action_in_the_constructor()
+    {
+        /* Arrange */
+        $lead   = Lead::factory()->create();
+        $action = 'created';
+
+        /* Act */
+        $event = new LeadAction($lead, $action);
+
+        /* Assert */
+        $this->assertEquals($lead->id, $event->getLead()->id);
+        $this->assertEquals($action, $event->getAction());
     }
 
     #[Test]

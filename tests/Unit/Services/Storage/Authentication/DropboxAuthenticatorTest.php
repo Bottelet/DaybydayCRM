@@ -33,41 +33,41 @@ class DropboxAuthenticatorTest extends AbstractTestCase
     #[Test]
     public function it_throws_exception_when_credentials_not_configured()
     {
-        // Arrange
+        /* Arrange */
         config(['services.dropbox.client_id' => null]);
-
-        // Assert
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Dropbox credentials are not configured');
 
-        // Act
+        /* Act */
         new DropboxAuthenticator();
+
+        /* Assert */
     }
 
     #[Test]
     public function it_throws_exception_when_client_secret_not_configured()
     {
-        // Arrange
+        /* Arrange */
         config(['services.dropbox.client_secret' => null]);
-
-        // Assert
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Dropbox credentials are not configured');
 
-        // Act
+        /* Act */
         new DropboxAuthenticator();
+
+        /* Assert */
     }
 
     #[Test]
     public function it_generates_valid_auth_url()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
 
-        // Act
+        /* Act */
         $authUrl = $authenticator->authUrl();
 
-        // Assert
+        /* Assert */
         $this->assertStringContainsString('https://www.dropbox.com/oauth2/authorize', $authUrl);
         $this->assertStringContainsString('client_id=test-client-id', $authUrl);
         $this->assertStringContainsString('response_type=code', $authUrl);
@@ -77,7 +77,7 @@ class DropboxAuthenticatorTest extends AbstractTestCase
     #[Test]
     public function it_successfully_exchanges_authorization_code_for_token()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
 
         $mockResponse = new Response(200, [], json_encode([
@@ -106,10 +106,10 @@ class DropboxAuthenticatorTest extends AbstractTestCase
         $property->setAccessible(true);
         $property->setValue($authenticator, $mockHttpClient);
 
-        // Act
+        /* Act */
         $token = $authenticator->token('test-auth-code');
 
-        // Assert
+        /* Assert */
         $this->assertIsArray($token);
         $this->assertArrayHasKey('access_token', $token);
         $this->assertEquals('sl.BrQlNr7e5mPow_test', $token['access_token']);
@@ -119,7 +119,7 @@ class DropboxAuthenticatorTest extends AbstractTestCase
     #[Test]
     public function it_throws_exception_on_failed_token_exchange()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
 
         $mockHttpClient = $this->createMock(HttpClient::class);
@@ -132,32 +132,33 @@ class DropboxAuthenticatorTest extends AbstractTestCase
         $property->setAccessible(true);
         $property->setValue($authenticator, $mockHttpClient);
 
-        // Assert
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Failed to exchange Dropbox authorization code');
 
-        // Act
+        /* Act */
         $authenticator->token('invalid-code');
+
+        /* Assert */
     }
 
     #[Test]
     public function it_handles_revoke_access_when_integration_not_found()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
-
-        // Assert
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Dropbox integration not found');
 
-        // Act
+        /* Act */
         $authenticator->revokeAccess();
+
+        /* Assert */
     }
 
     #[Test]
     public function it_successfully_revokes_access()
     {
-        // Arrange
+        /* Arrange */
         Integration::factory()->create([
             'name'     => Dropbox::class,
             'api_type' => 'file',
@@ -165,28 +166,26 @@ class DropboxAuthenticatorTest extends AbstractTestCase
         ]);
 
         $authenticator = new DropboxAuthenticator();
+        $this->expectNotToPerformAssertions();
 
-        // Act & Assert - should not throw exception
-        try {
-            $authenticator->revokeAccess();
-            $this->assertTrue(true);
-        } catch (RuntimeException $e) {
-            $this->fail('revokeAccess should not throw exception when integration exists');
-        }
+        /* Act & Assert: revokeAccess() throws RuntimeException only when no
+         * matching integration exists (see it_handles_revoke_access_when_integration_not_found);
+         * with one present, completing without throwing is the entire contract. */
+        $authenticator->revokeAccess();
     }
 
     #[Test]
     public function it_includes_redirect_uri_in_auth_url()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
 
-        // Act
+        /* Act */
         $authUrl = $authenticator->authUrl();
         $query   = parse_url($authUrl, PHP_URL_QUERY);
         parse_str($query, $params);
 
-        // Assert
+        /* Assert */
         $this->assertArrayHasKey('redirect_uri', $params);
         $this->assertEquals(route('dropbox.callback'), $params['redirect_uri']);
     }
@@ -194,7 +193,7 @@ class DropboxAuthenticatorTest extends AbstractTestCase
     #[Test]
     public function it_uses_correct_oauth_endpoint()
     {
-        // Arrange
+        /* Arrange */
         $authenticator = new DropboxAuthenticator();
 
         $mockResponse = new Response(200, [], json_encode([
@@ -212,10 +211,12 @@ class DropboxAuthenticatorTest extends AbstractTestCase
         $property->setAccessible(true);
         $property->setValue($authenticator, $mockHttpClient);
 
-        // Act
-        $authenticator->token('test-code');
+        /* Act */
+        $result = $authenticator->token('test-code');
 
-        // Assert - if we got here, correct endpoint was used
-        $this->assertTrue(true);
+        /* Assert: the mock's expects()->with(...) already verifies the
+         * endpoint and payload; this asserts token() actually returns the
+         * decoded response instead of silently discarding it. */
+        $this->assertEquals(['access_token' => 'test-token'], $result);
     }
 }

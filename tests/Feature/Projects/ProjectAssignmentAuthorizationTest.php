@@ -72,12 +72,13 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
 
         /* Act */
         $response = $this->actingAs($this->authorizedUser)
+            ->from(route('projects.show', $this->project->external_id))
             ->patch(route('project.update.assignee', $this->project->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
         /* Assert */
-        $response->assertRedirect();
+        $response->assertRedirect(route('projects.show', $this->project->external_id));
         $response->assertSessionHas('flash_message');
         $this->assertDatabaseHas('projects', [
             'id'               => $this->project->id,
@@ -97,12 +98,13 @@ class ProjectAssignmentAuthorizationTest extends AbstractTestCase
 
         /* Act */
         $response = $this->actingAs($this->unauthorizedUser)
+            ->from(route('projects.show', $this->project->external_id))
             ->patch(route('project.update.assignee', $this->project->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
         /* Assert */
-        $response->assertRedirect();
+        $response->assertRedirect(route('projects.show', $this->project->external_id));
         $response->assertSessionHas('flash_message_warning', __('You do not have permission to assign users to this project'));
         $this->assertDatabaseHas('projects', [
             'id'               => $this->project->id,

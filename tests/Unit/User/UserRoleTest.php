@@ -19,6 +19,18 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_users_created_without_role_state_have_no_roles_by_default()
+    {
+        /* Arrange */
+
+        /* Act */
+        $user = User::factory()->create();
+
+        /* Assert */
+        $this->assertTrue($user->roles->isEmpty(), 'User created without role state should have no roles');
+    }
+
+    #[Test]
     public function it_attaches_specified_role_with_factory_state()
     {
         /* Arrange */
@@ -51,7 +63,7 @@ class UserRoleTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_user_role_relationship_is_accessible_when_using_factory_state()
+    public function it_accesses_role_relationship_when_using_factory_state()
     {
         /* Arrange */
 
@@ -64,18 +76,6 @@ class UserRoleTest extends AbstractTestCase
         $this->assertNotNull($user->roles->first()->id);
         $this->assertNotNull($user->roles->first()->name);
         $this->assertNotNull($user->roles->first()->display_name);
-    }
-
-    #[Test]
-    public function it_users_created_without_role_state_have_no_roles_by_default()
-    {
-        /* Arrange */
-
-        /* Act */
-        $user = User::factory()->create();
-
-        /* Assert */
-        $this->assertTrue($user->roles->isEmpty(), 'User created without role state should have no roles');
     }
 
     #[Test]

@@ -52,6 +52,22 @@ class DueAtTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_gets_multiple_invoices_past_due_at()
+    {
+        /* Arrange */
+        $thirdInvoice = Invoice::factory()->create([
+            'sent_at' => Carbon::now(),
+            'due_at'  => Carbon::now()->subDays(5),
+        ]);
+
+        /* Act */
+        $invoices = Invoice::pastDueAt()->get();
+
+        /* Assert */
+        $this->assertCount(2, $invoices);
+    }
+
+    #[Test]
     public function it_dont_get_invoice_if_due_at_is_null()
     {
         /* Arrange */
@@ -80,22 +96,6 @@ class DueAtTest extends AbstractTestCase
 
         /* Assert */
         $this->assertCount(0, $invoices);
-    }
-
-    #[Test]
-    public function it_gets_multiple_invoices_past_due_at()
-    {
-        /* Arrange */
-        $thirdInvoice = Invoice::factory()->create([
-            'sent_at' => Carbon::now(),
-            'due_at'  => Carbon::now()->subDays(5),
-        ]);
-
-        /* Act */
-        $invoices = Invoice::pastDueAt()->get();
-
-        /* Assert */
-        $this->assertCount(2, $invoices);
     }
 
     #[Test]

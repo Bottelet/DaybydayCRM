@@ -6,7 +6,7 @@ const {
   absenceData,
   jsonHeaders,
 } = require('../helpers/plain-e2e');
-test('empty absence payload returns validation errors', async ({ page }) => {
+test('empty absence payload returns 422 with validation errors', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
@@ -16,15 +16,27 @@ test('empty absence payload returns validation errors', async ({ page }) => {
     form: {},
   });
 
+  expect(response.status()).toBe(422);
   const payload = await response.json();
-  expect(response.status()).toBe(500);
-  expect(payload.message).toBeTruthy();
-  expect(payload.errors ?? null).toBeNull();
+  expect(payload.errors).toBeTruthy();
+  expect(Object.keys(payload.errors)).toContain('reason');
+  expect(Object.keys(payload.errors)).toContain('start_date');
+  expect(Object.keys(payload.errors)).toContain('end_date');
 });
 
 test('absence create form shows alert when submitted empty', async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto(`${BASE_URL}/absences/create`);
+  // "reason" has no blank option (always defaults to the first choice), and
+  // start_date/end_date are backed by pickadate.js: the visible input is a
+  // readonly, unnamed decoy, while the real `name="start_date"` field is a
+  // hidden input defaulted to today via JS — a plain click never actually
+  // submits empty. Clear the hidden inputs directly to genuinely trigger
+  // StoreAbsenceRequest's required validation.
+  await page.evaluate(() => {
+    document.querySelector('input[name="start_date"]').value = '';
+    document.querySelector('input[name="end_date"]').value = '';
+  });
   await page.locator('form button[type="submit"], form input[type="submit"]').first().click();
   await expect(page.locator('.alert.alert-danger, .invalid-feedback').first()).toBeVisible();
 });

@@ -32,89 +32,7 @@ class CanNotAccessTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall', []));
-
-        /* Assert */
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
-    }
-
-    #[Test]
-    public function it_access_integrations_page()
-    {
-        /* Arrange */
-
-        /* Act */
-        $response = $this->json('GET', route('integrations.index'));
-
-        /* Assert */
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
-    }
-
-    #[Test]
-    public function it_connect_integrations_integration()
-    {
-        /* Arrange */
-
-        /* Act */
-        $response = $this->json('POST', route('integrations.store'));
-
-        /* Assert */
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
-    }
-
-    #[Test]
-    public function it_deletes_role()
-    {
-        /* Arrange */
-        $role = Role::factory()->create();
-
-        /* Act */
-        $response = $this->json('DELETE', route('roles.destroy', $role->external_id));
-
-        /* Assert */
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
-    }
-
-    #[Test]
-    public function it_deletes_client()
-    {
-        /* Arrange */
-        $user = User::factory()->create();
-        $role = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
-        $user->attachRole($role);
-        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'client-delete']);
-        $role->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->actingAs($user);
-        $client = Client::factory()->create();
-
-        /* Act */
-        $response = $this->json('DELETE', route('clients.destroy', $client->external_id));
-
-        /* Assert */
-        $this->assertEquals(302, $response->getStatusCode());
-        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
-    }
-
-    #[Test]
-    public function it_deletes_user()
-    {
-        /* Arrange */
-        $authUser = User::factory()->create();
-        $role     = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
-        $authUser->attachRole($role);
-        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'user-delete']);
-        $role->attachPermission($permission);
-        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
-        $this->actingAs($authUser);
-        $user = User::factory()->create();
-
-        /* Act */
-        $response = $this->json('DELETE', route('users.destroy', $user->external_id));
+        $response = $this->patch(route('settings.updateOverall', []));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -135,7 +53,63 @@ class CanNotAccessTest extends AbstractTestCase
         $user = User::factory()->create();
 
         /* Act */
-        $response = $this->json('PATCH', route('users.update', $user->external_id));
+        $response = $this->patch(route('users.update', $user->external_id));
+
+        /* Assert */
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
+    }
+
+    #[Test]
+    public function it_deletes_role()
+    {
+        /* Arrange */
+        $role = Role::factory()->create();
+
+        /* Act */
+        $response = $this->delete(route('roles.destroy', $role->external_id));
+
+        /* Assert */
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
+    }
+
+    #[Test]
+    public function it_deletes_client()
+    {
+        /* Arrange */
+        $user = User::factory()->create();
+        $role = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $user->attachRole($role);
+        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'client-delete']);
+        $role->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->actingAs($user);
+        $client = Client::factory()->create();
+
+        /* Act */
+        $response = $this->delete(route('clients.destroy', $client->external_id));
+
+        /* Assert */
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
+    }
+
+    #[Test]
+    public function it_deletes_user()
+    {
+        /* Arrange */
+        $authUser = User::factory()->create();
+        $role     = Role::query()->firstOrCreate(['name' => 'employee'], ['display_name' => 'Employee']);
+        $authUser->attachRole($role);
+        $permission = \App\Models\Permission::query()->firstOrCreate(['name' => 'user-delete']);
+        $role->attachPermission($permission);
+        \Illuminate\Support\Facades\Cache::tags('role_user')->flush();
+        $this->actingAs($authUser);
+        $user = User::factory()->create();
+
+        /* Act */
+        $response = $this->delete(route('users.destroy', $user->external_id));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());
@@ -149,7 +123,33 @@ class CanNotAccessTest extends AbstractTestCase
         $department = Department::factory()->create();
 
         /* Act */
-        $response = $this->json('DELETE', route('departments.destroy', $department->external_id));
+        $response = $this->delete(route('departments.destroy', $department->external_id));
+
+        /* Assert */
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
+    }
+
+    #[Test]
+    public function it_blocks_access_to_the_integrations_page_in_demo_mode()
+    {
+        /* Arrange */
+
+        /* Act */
+        $response = $this->get(route('integrations.index'));
+
+        /* Assert */
+        $this->assertEquals(302, $response->getStatusCode());
+        $this->assertEquals(RedirectIfDemo::MEESAGE, $response->getsession()->get('flash_message_warning'));
+    }
+
+    #[Test]
+    public function it_blocks_connecting_an_integration_in_demo_mode()
+    {
+        /* Arrange */
+
+        /* Act */
+        $response = $this->post(route('integrations.store'));
 
         /* Assert */
         $this->assertEquals(302, $response->getStatusCode());

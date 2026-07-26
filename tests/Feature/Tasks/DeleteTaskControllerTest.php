@@ -47,10 +47,25 @@ class DeleteTaskControllerTest extends AbstractTestCase
         $this->actingAs($this->user);
 
         /* Act */
-        $response = $this->json('DELETE', route('tasks.destroy', $this->task->external_id));
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id), [], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(200);
         $this->assertSoftDeleted('tasks', ['id' => $this->task->id]);
+    }
+
+    #[Test]
+    public function it_rejects_deletion_when_user_lacks_permission()
+    {
+        /* Arrange */
+        $unauthorizedUser = User::factory()->create();
+        $this->actingAs($unauthorizedUser);
+
+        /* Act */
+        $response = $this->delete(route('tasks.destroy', $this->task->external_id), [], ['Accept' => 'application/json']);
+
+        /* Assert */
+        $response->assertStatus(403);
+        $this->assertNotSoftDeleted('tasks', ['id' => $this->task->id]);
     }
 }

@@ -56,7 +56,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_lists_clients_without_n_plus_1_queries()
+    public function it_lists_clients_without_n_plus_1_queries(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -98,7 +98,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_shows_client_detail_without_n_plus_1_queries()
+    public function it_shows_client_detail_without_n_plus_1_queries(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -141,7 +141,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_loads_task_datatable_without_n_plus_1_queries()
+    public function it_loads_task_datatable_without_n_plus_1_queries(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -188,7 +188,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_loads_project_datatable_without_n_plus_1_queries()
+    public function it_loads_project_datatable_without_n_plus_1_queries(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -235,7 +235,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_loads_lead_datatable_without_n_plus_1_queries()
+    public function it_loads_lead_datatable_without_n_plus_1_queries(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();
@@ -282,7 +282,7 @@ class ClientPerformanceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_handles_large_client_load_efficiently()
+    public function it_handles_large_client_load_efficiently(): void
     {
         /* Arrange */
         $this->user = User::factory()->withRole('employee')->create();

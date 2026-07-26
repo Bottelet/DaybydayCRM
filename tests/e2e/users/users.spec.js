@@ -7,6 +7,7 @@ const {
   jsonHeaders,
   expectValidationError,
   uniqueValue,
+  expectFlashMessage,
 } = require('../helpers/plain-e2e');
 
 const malformedId = 'invalid-@@@';
@@ -108,4 +109,76 @@ test('malformed user delete id returns not found', async ({ page }) => {
   });
 
   expect(deleteResponse.status()).toBe(404);
+});
+
+test('browser create shows success notification and user appears on index', async ({ page }) => {
+  await loginAsAdmin(page);
+
+  await page.goto(`${BASE_URL}/users/create`);
+
+  const name = uniqueValue('PW Browser User');
+  const email = `pw_browser_${Date.now()}@example.com`;
+  const password = 'amazingpassword123';
+
+  await page.locator('input[name="name"]').fill(name);
+  await page.locator('input[name="email"]').fill(email);
+  await page.locator('input[name="password"]').first().fill(password);
+  await page.locator('input[name="password_confirmation"]').first().fill(password);
+
+  const roleFirst = await page.locator('select[name="role"] option:not([value=""])').first().getAttribute('value');
+  await page.locator('select[name="role"]').selectOption(roleFirst);
+
+  const deptFirst = await page.locator('select[name="department"] option:not([value=""])').first().getAttribute('value');
+  if (deptFirst) {
+    await page.locator('select[name="department"]').selectOption(deptFirst);
+  }
+
+  await Promise.all([
+    page.waitForURL(`${BASE_URL}/users`),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  await expectFlashMessage(page, 'User successfully added');
+
+  // #users-table uses DataTables serverSide:true against a search endpoint
+  // that's a confirmed no-op — with enough seeded/test users the new row
+  // isn't reliably on page 1 of 10, so verify via the API instead.
+  const request = page.context().request;
+  const dataResponse = await userData(request, name);
+  const dataPayload = await dataResponse.json();
+  expect((dataPayload.data ?? []).some((row) => row.name === name)).toBe(true);
+});
+
+test('browser edit saves changes, shows success notification and updated name visible', async ({ page }) => {
+  await loginAsAdmin(page);
+  const request = page.context().request;
+
+  // Create user via API for fast setup
+  const { response, name: originalName } = await createUser(page, request);
+  expect(response.status()).toBe(302);
+
+  // Fetch data feed to get external_id
+  const dataResponse = await userData(request, originalName);
+  const dataPayload = await dataResponse.json();
+  const row = (dataPayload.data ?? []).find((r) => r.name === originalName);
+  expect(row?.external_id).toBeTruthy();
+
+  const updatedName = uniqueValue('PW Browser User Updated');
+
+  await page.goto(`${BASE_URL}/users/${row.external_id}/edit`);
+
+  await page.locator('input[name="name"]').fill('');
+  await page.locator('input[name="name"]').fill(updatedName);
+
+  await Promise.all([
+    page.waitForURL(/\/users/),
+    page.locator('form [type="submit"]').first().click(),
+  ]);
+
+  await expectFlashMessage(page, 'User successfully updated');
+
+  // UsersController@update does redirect()->back(), landing back on this same
+  // edit page — the updated name lives in the input's value attribute, not as
+  // visible text content, so check that directly rather than the page body.
+  await expect(page.locator('input[name="name"]')).toHaveValue(updatedName);
 });

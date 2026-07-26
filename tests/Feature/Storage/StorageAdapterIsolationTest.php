@@ -5,7 +5,6 @@ namespace Tests\Feature\Storage;
 use App\Enums\PermissionName;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Client;
-use App\Models\Document;
 use App\Repositories\FilesystemIntegration\FilesystemIntegration;
 use App\Services\Storage\NullStorageAdapter;
 use App\Services\Storage\StorageAdapterRegistry;
@@ -29,53 +28,27 @@ class StorageAdapterIsolationTest extends AbstractTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->defaultHeaders['Accept'] = 'application/json';
         $this->withoutMiddleware([VerifyCsrfToken::class]);
         \App\Models\Setting::factory()->create();
     }
 
     #[Test]
-    public function it_resolves_the_storage_registry_via_the_container()
-    {
-        /* Act */
-        $registry = app(StorageAdapterRegistry::class);
-
-        /* Assert */
-        $this->assertInstanceOf(StorageAdapterRegistry::class, $registry);
-    }
-
-    #[Test]
-    public function it_returns_the_same_storage_registry_instance_on_each_resolution()
-    {
-        /* Act */
-        $a = app(StorageAdapterRegistry::class);
-        $b = app(StorageAdapterRegistry::class);
-
-        /* Assert */
-        $this->assertSame($a, $b);
-    }
-
-    #[Test]
     public function it_returns_422_json_when_upload_is_attempted_with_no_storage_enabled()
     {
-        /* Arrange – bind NullStorageAdapter so isEnabled() returns false,
-         * overriding the testing-env Local fallback in the registry. */
+        /* Arrange */
         app()->instance(FilesystemIntegration::class, new NullStorageAdapter());
         app(StorageAdapterRegistry::class)->reset();
-
-        /* Authenticate with document-upload permission so auth doesn't block
-         * us before the storage middleware check. */
         $this->withPermissions([PermissionName::DOCUMENT_UPLOAD]);
-
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json(
-            'POST',
+        $response = $this->post(
             route('document.upload', $client->external_id),
             []
         );
 
-        /* Assert – 422 JSON response, not a redirect */
+        /* Assert */
         $response->assertStatus(422);
         $response->assertJsonFragment(['message' => __('File integration required for this action')]);
     }
@@ -89,13 +62,37 @@ class StorageAdapterIsolationTest extends AbstractTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = $this->json(
-            'POST',
+        $response = $this->post(
             route('document.upload', $client->external_id),
             []
         );
 
-        /* Assert – unauthorized response, before any storage initialization */
+        /* Assert */
         $response->assertStatus(403);
+    }
+
+    #[Test]
+    public function it_resolves_the_storage_registry_via_the_container()
+    {
+        /* Arrange */
+
+        /* Act */
+        $registry = app(StorageAdapterRegistry::class);
+
+        /* Assert */
+        $this->assertInstanceOf(StorageAdapterRegistry::class, $registry);
+    }
+
+    #[Test]
+    public function it_returns_the_same_storage_registry_instance_on_each_resolution()
+    {
+        /* Arrange */
+
+        /* Act */
+        $a = app(StorageAdapterRegistry::class);
+        $b = app(StorageAdapterRegistry::class);
+
+        /* Assert */
+        $this->assertSame($a, $b);
     }
 }

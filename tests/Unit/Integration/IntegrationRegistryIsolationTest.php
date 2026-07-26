@@ -36,7 +36,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_billing_adapter_when_no_billing_integration_is_configured()
     {
-        /* Arrange – no integration rows at all */
+        /* Arrange */
         Integration::whereApiType('billing')->delete();
 
         /* Act */
@@ -63,7 +63,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     #[Test]
     public function it_returns_null_billing_adapter_when_billing_integration_class_does_not_exist()
     {
-        /* Arrange – integration row with a non-existent class */
+        /* Arrange */
         Integration::factory()->create([
             'api_type' => 'billing',
             'name'     => 'NonExistentBillingClass',
@@ -85,7 +85,9 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         /* Arrange */
         $adapter = new NullBillingAdapter();
 
-        /* Act & Assert – every method returns a safe non-throwing default */
+        /* Act */
+
+        /* Assert */
         $this->assertSame([], $adapter->getContacts());
         $this->assertSame([], $adapter->getProductMapping());
         $this->assertNull($adapter->getClient());
@@ -106,8 +108,10 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         /* Arrange */
         $adapter = new NullBillingAdapter();
 
-        /* Assert – bookInvoice should never throw */
+        /* Act */
         $result = $adapter->bookInvoice('some-guid', now()->toDateTimeString());
+
+        /* Assert */
         $this->assertNull($result);
     }
 
@@ -118,6 +122,8 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         $adapter = new NullBillingAdapter();
         $client  = \App\Models\Client::factory()->make();
 
+        /* Act */
+
         /* Assert */
         $this->assertNull($adapter->getPrimaryContact($client));
     }
@@ -125,6 +131,8 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     #[Test]
     public function it_resolves_the_billing_registry_as_a_singleton()
     {
+        /* Arrange */
+
         /* Act */
         $a = app(BillingIntegrationRegistry::class);
         $b = app(BillingIntegrationRegistry::class);
@@ -145,7 +153,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         $registry->reset();
         $second = $registry->driver();
 
-        /* Assert – both are NullBillingAdapter but separate instances */
+        /* Assert */
         $this->assertInstanceOf(NullBillingAdapter::class, $first);
         $this->assertInstanceOf(NullBillingAdapter::class, $second);
         $this->assertNotSame($first, $second, 'reset() should clear cached driver instance');
@@ -156,7 +164,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     #[Test]
     public function it_returns_local_adapter_in_testing_environment()
     {
-        /* Arrange – ensure no file integration exists */
+        /* Arrange */
         Integration::whereApiType('file')->delete();
 
         /* Act */
@@ -164,7 +172,7 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         $driver   = $registry->driver();
         $driver   = $registry->driver();
 
-        /* Assert – testing env always uses local */
+        /* Assert */
         $this->assertSame('Local', class_basename($driver));
     }
 
@@ -173,6 +181,8 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     {
         /* Arrange */
         $adapter = new NullStorageAdapter();
+
+        /* Act */
 
         /* Assert */
         $this->assertFalse($adapter->isEnabled());
@@ -184,7 +194,9 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
         /* Arrange */
         $adapter = new NullStorageAdapter();
 
-        /* Act & Assert */
+        /* Act */
+
+        /* Assert */
         $this->assertNull($adapter->view(null));
         $this->assertNull($adapter->download(null));
         $this->assertTrue($adapter->delete('/some/path'));
@@ -197,6 +209,8 @@ class IntegrationRegistryIsolationTest extends AbstractTestCase
     #[Test]
     public function it_resolves_the_storage_registry_as_a_singleton()
     {
+        /* Arrange */
+
         /* Act */
         $a = app(StorageAdapterRegistry::class);
         $b = app(StorageAdapterRegistry::class);

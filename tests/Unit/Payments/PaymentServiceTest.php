@@ -62,57 +62,6 @@ class PaymentServiceTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_converts_amount_to_cents()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => now()]);
-
-        /* Act */
-        $payment = $this->service->addPayment($invoice, 99.99, '2024-01-15', 'check');
-
-        /* Assert */
-        $this->assertEquals(9999, $payment->amount);
-        $this->assertEquals('bank', $payment->payment_source);
-    }
-
-    #[Test]
-    public function it_throws_exception_for_unsent_invoice()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => null]);
-
-        /* Act & Assert */
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot add payment to unsent invoice');
-        $this->service->addPayment($invoice, 100, '2024-01-15', 'cash');
-    }
-
-    #[Test]
-    public function it_throws_exception_for_invalid_payment_source()
-    {
-        /* Arrange */
-        $invoice = Invoice::factory()->create(['sent_at' => now()]);
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        $this->service->addPayment($invoice, 100, '2024-01-15', 'invalid_source');
-    }
-
-    #[Test]
-    public function it_parses_payment_date_correctly()
-    {
-        /* Arrange */
-        $invoice    = Invoice::factory()->create(['sent_at' => now()]);
-        $dateString = '2024-01-15';
-
-        /* Act */
-        $payment = $this->service->addPayment($invoice, 100, $dateString, 'cash');
-
-        /* Assert */
-        $this->assertEquals('2024-01-15', $payment->payment_date->format('Y-m-d'));
-    }
-
-    #[Test]
     public function it_deletes_payment()
     {
         /* Arrange */
@@ -125,30 +74,6 @@ class PaymentServiceTest extends AbstractTestCase
         /* Assert */
         $this->assertTrue($result);
         $this->assertSoftDeleted('payments', ['id' => $paymentId]);
-    }
-
-    #[Test]
-    public function it_finds_payment_by_external_id()
-    {
-        /* Arrange */
-        $payment = Payment::factory()->create();
-
-        /* Act */
-        $found = $this->service->findByExternalId($payment->external_id);
-
-        /* Assert*/
-        $this->assertNotNull($found);
-        $this->assertEquals($payment->id, $found->id);
-    }
-
-    #[Test]
-    public function it_returns_null_for_nonexistent_payment()
-    {
-        /* Act */
-        $found = $this->service->findByExternalId('nonexistent-id');
-
-        /* Assert */
-        $this->assertNull($found);
     }
 
     #[Test]
@@ -167,6 +92,87 @@ class PaymentServiceTest extends AbstractTestCase
         foreach ($payments as $payment) {
             $this->assertEquals($invoice->id, $payment->invoice_id);
         }
+    }
+
+    #[Test]
+    public function it_converts_amount_to_cents()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => now()]);
+
+        /* Act */
+        $payment = $this->service->addPayment($invoice, 99.99, '2024-01-15', 'check');
+
+        /* Assert */
+        $this->assertEquals(9999, $payment->amount);
+        $this->assertEquals('bank', $payment->payment_source);
+    }
+
+    #[Test]
+    public function it_throws_exception_for_unsent_invoice()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => null]);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot add payment to unsent invoice');
+
+        /* Act */
+        $this->service->addPayment($invoice, 100, '2024-01-15', 'cash');
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_throws_exception_for_invalid_payment_source()
+    {
+        /* Arrange */
+        $invoice = Invoice::factory()->create(['sent_at' => now()]);
+        $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
+        $this->service->addPayment($invoice, 100, '2024-01-15', 'invalid_source');
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_parses_payment_date_correctly()
+    {
+        /* Arrange */
+        $invoice    = Invoice::factory()->create(['sent_at' => now()]);
+        $dateString = '2024-01-15';
+
+        /* Act */
+        $payment = $this->service->addPayment($invoice, 100, $dateString, 'cash');
+
+        /* Assert */
+        $this->assertEquals('2024-01-15', $payment->payment_date->format('Y-m-d'));
+    }
+
+    #[Test]
+    public function it_finds_payment_by_external_id()
+    {
+        /* Arrange */
+        $payment = Payment::factory()->create();
+
+        /* Act */
+        $found = $this->service->findByExternalId($payment->external_id);
+
+        /* Assert */
+        $this->assertNotNull($found);
+        $this->assertEquals($payment->id, $found->id);
+    }
+
+    #[Test]
+    public function it_returns_null_for_nonexistent_payment()
+    {
+        /* Arrange */
+
+        /* Act */
+        $found = $this->service->findByExternalId('nonexistent-id');
+
+        /* Assert */
+        $this->assertNull($found);
     }
 
     #[Test]

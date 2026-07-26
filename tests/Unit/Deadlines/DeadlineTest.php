@@ -60,6 +60,30 @@ class DeadlineTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_gets_days_until_deadline()
+    {
+        /* Arrange */
+        $this->task->deadline = Carbon::now()->addDays(3);
+        $this->task->save();
+
+        $this->lead->deadline = Carbon::now()->addDays(3);
+        $this->lead->save();
+
+        $this->project->deadline = Carbon::now()->addDays(3);
+        $this->project->save();
+
+        /* Act */
+        $leadDays    = $this->lead->days_until_deadline;
+        $taskDays    = $this->task->days_until_deadline;
+        $projectDays = $this->project->days_until_deadline;
+
+        /* Assert */
+        $this->assertEquals(3, $leadDays);
+        $this->assertEquals(3, $taskDays);
+        $this->assertEquals(3, $projectDays);
+    }
+
+    #[Test]
     public function it_is_not_over_deadline()
     {
         /* Arrange */
@@ -89,30 +113,6 @@ class DeadlineTest extends AbstractTestCase
         $this->assertTrue($leadResult);
         $this->assertTrue($taskResult);
         $this->assertTrue($projectResult);
-    }
-
-    #[Test]
-    public function it_gets_days_until_deadline()
-    {
-        /* Arrange */
-        $this->task->deadline = Carbon::now()->addDays(3);
-        $this->task->save();
-
-        $this->lead->deadline = Carbon::now()->addDays(3);
-        $this->lead->save();
-
-        $this->project->deadline = Carbon::now()->addDays(3);
-        $this->project->save();
-
-        /* Act */
-        $leadDays    = $this->lead->days_until_deadline;
-        $taskDays    = $this->task->days_until_deadline;
-        $projectDays = $this->project->days_until_deadline;
-
-        /* Assert */
-        $this->assertEquals(3, $leadDays);
-        $this->assertEquals(3, $taskDays);
-        $this->assertEquals(3, $projectDays);
     }
 
     #[Test]

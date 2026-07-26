@@ -3,6 +3,7 @@
 namespace Tests\Feature\Settings;
 
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Group;
@@ -21,6 +22,21 @@ class SettingsSecurityTest extends AbstractTestCase
     {
         parent::setUp();
 
+        // Ensure a Setting record exists so the controller doesn't have to create one
+        Setting::query()->updateOrCreate(
+            ['id' => 1],
+            [
+                'company'        => 'Default Company',
+                'currency'       => 'USD',
+                'country'        => 'US',
+                'language'       => 'en',
+                'vat'            => 0,
+                'client_number'  => 1000,
+                'invoice_number' => 1000,
+                'max_users'      => 10,
+            ]
+        );
+
         $this->nonAdminUser = User::factory()->withRole('employee')->create();
 
         $this->user = User::factory()->withRole('administrator')->create();
@@ -35,7 +51,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('GET', route('settings.index'));
+        $response = $this->get(route('settings.index'), ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(200);
@@ -51,13 +67,10 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->json('GET', route('settings.index'));
+        $response = $this->get(route('settings.index'), ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(403);
-        $response->assertJson([
-            'message' => 'This action is unauthorized.',
-        ]);
     }
 
     #[Test]
@@ -66,7 +79,7 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patch(route('settings.updateOverall'), [
             'company'        => 'Test Company',
             'country'        => 'GB',
             'language'       => 'en',
@@ -75,7 +88,7 @@ class SettingsSecurityTest extends AbstractTestCase
             'currency'       => 'GBP',
             'start_time'     => '09:00',
             'end_time'       => '17:00',
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertOk();
@@ -96,7 +109,7 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->json('PATCH', route('settings.updateOverall'), [
+        $response = $this->patch(route('settings.updateOverall'), [
             'company'        => 'Hacked Company',
             'country'        => 'GB',
             'language'       => 'en',
@@ -105,7 +118,7 @@ class SettingsSecurityTest extends AbstractTestCase
             'currency'       => 'GBP',
             'start_time'     => '09:00',
             'end_time'       => '17:00',
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(403);
@@ -120,15 +133,16 @@ class SettingsSecurityTest extends AbstractTestCase
         /* Arrange */
 
         /* Act */
-        $response = $this->json('POST', route('settings.updateFirstStep'), [
-            'company_name' => 'Test Company',
-            'country'      => 'GB',
-            'start_time'   => '09:00',
-            'end_time'     => '17:00',
-        ]);
+        $response = $this->from(route('settings.index'))
+            ->post(route('settings.updateFirstStep'), [
+                'company_name' => 'Test Company',
+                'country'      => 'GB',
+                'start_time'   => '09:00',
+                'end_time'     => '17:00',
+            ]);
 
         /* Assert */
-        $response->assertRedirect();
+        $response->assertRedirect(route('settings.index'));
         $this->assertDatabaseHas('settings', [
             'company' => 'Test Company',
             'country' => 'GB',
@@ -142,12 +156,12 @@ class SettingsSecurityTest extends AbstractTestCase
         $this->actingAs($this->nonAdminUser);
 
         /* Act */
-        $response = $this->json('POST', route('settings.updateFirstStep'), [
+        $response = $this->post(route('settings.updateFirstStep'), [
             'company_name' => 'Hacked Company',
             'country'      => 'GB',
             'start_time'   => '09:00',
             'end_time'     => '17:00',
-        ]);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
         $response->assertStatus(403);

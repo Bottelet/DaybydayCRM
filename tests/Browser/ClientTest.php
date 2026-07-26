@@ -17,26 +17,30 @@ class ClientTest extends DuskTestCase
      * Test user can access customer thorugh index page.
      */
     #[Test]
-    public function it_user_can_see_clients_on_client_index_and_go_to_the_customer_with_link()
+    public function it_shows_clients_on_index_page_with_navigation_links()
     {
         /* Arrange */
         $client = Client::factory()->create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->addCookie('step_client_create', true)
                 ->addCookie('step_client_index', true)
                 ->visit('/clients')
                 ->type('.dataTables_filter input', $client->company_name)
-                ->waitForText($client->company_name)
-                ->assertSee($client->company_name)
+                ->waitForText($client->company_name);
+
+            /* Assert */
+            $browser->assertSee($client->company_name)
                 ->assertSee($client->vat)
-                ->assertSee($client->address)
-                ->clickLink($client->company_name)
+                ->assertSee($client->address);
+
+            $browser->clickLink($client->company_name)
                 ->assertPathIs('/clients/' . $client->external_id)
-                ->waitForText($client->primary_contact->name)
-                ->assertSee($client->primary_contact->name)
+                ->waitForText($client->primary_contact->name);
+
+            $browser->assertSee($client->primary_contact->name)
                 ->assertSee($client->company_name);
         });
     }
@@ -45,17 +49,19 @@ class ClientTest extends DuskTestCase
      * Test i can see all the correct information on customer page.
      */
     #[Test]
-    public function it_i_can_see_all_customer_values_on_show_page()
+    public function it_can_see_all_customer_values_on_show_page()
     {
         /* Arrange */
         $client = Client::factory()->create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($client) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/' . $client->external_id)
-                ->waitForText($client->primary_contact->name)
-                ->assertSee($client->primary_contact->name)
+                ->waitForText($client->primary_contact->name);
+
+            /* Assert */
+            $browser->assertSee($client->primary_contact->name)
                 ->assertSee($client->primary_contact->email)
                 ->assertSee($client->primary_contact->primary_number)
                 ->assertSee($client->primary_contact->secondary_number)
@@ -69,7 +75,7 @@ class ClientTest extends DuskTestCase
      * Test i can see all the correct relations for customer, and not the wrong ones.
      */
     #[Test]
-    public function it_i_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
+    public function it_can_see_task_and_leads_related_to_customer_and_not_those_who_are_not_related()
     {
         /* Arrange */
         $client = Client::factory()->create();
@@ -88,33 +94,22 @@ class ClientTest extends DuskTestCase
             'client_id' => $client_2->id,
         ]);
 
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($client) {
+        /* Act */
+        $this->browse(function (Browser $browser) use ($client, $task, $lead, $task_2, $lead_2) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id);
-        });
-    }
+                ->visit('/clients/' . $client->external_id)
+                ->click('#tab-tasks')
+                ->waitForText($task->title);
 
-    /**
-     * Test i can assign a new user to client, and see the correct user info after new user is assigned.
-     */
-    #[Test]
-    public function it_i_can_assign_a_new_user_to_customer()
-    {
-        /* Arrange */
-        $client = Client::factory()->create();
-        $user   = User::factory()->create();
+            /* Assert */
+            $browser->assertSee($task->title)
+                ->assertDontSee($task_2->title);
 
-        /* Act & Assert */
-        $this->browse(function (Browser $browser) use ($client, $user) {
-            $browser->loginAs(User::whereEmail('admin@admin.com')->first());
-            $browser->visit('/clients/' . $client->external_id);
-            $browser->assertDontSee($user->email);
-            $browser->assertDontSee($user->name);
-            $browser->click('#assignee-user');
-            $browser->clickLink($user->name, 'span');
-            $browser->seeLink($user->email);
-            $browser->assertSee($user->name);
+            $browser->click('#tab-leads')
+                ->waitForText($lead->title);
+
+            $browser->assertSee($lead->title)
+                ->assertDontSee($lead_2->title);
         });
     }
 
@@ -122,12 +117,12 @@ class ClientTest extends DuskTestCase
      * Test i can create a new customer.
      */
     #[Test]
-    public function it_i_can_create_a_new_customer()
+    public function it_can_create_a_new_customer()
     {
         /* Arrange */
         $faker = Faker::create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/create')
@@ -142,8 +137,37 @@ class ClientTest extends DuskTestCase
                 ->type('city', $faker->city)
                 ->type('company_type', 'ApS')
                 ->select('industry_id')
-                ->press('Create New Client')
-                ->assertSee('Client successfully added');
+                ->press('Create New Client');
+
+            /* Assert */
+            $browser->assertSee('Client successfully added');
+        });
+    }
+
+    /**
+     * Test i can assign a new user to client, and see the correct user info after new user is assigned.
+     */
+    #[Test]
+    public function it_can_assign_a_new_user_to_customer()
+    {
+        /* Arrange */
+        $client = Client::factory()->create();
+        $user   = User::factory()->create();
+
+        /* Act */
+        $this->browse(function (Browser $browser) use ($client, $user) {
+            $browser->loginAs(User::whereEmail('admin@admin.com')->first());
+            $browser->visit('/clients/' . $client->external_id);
+
+            /* Assert */
+            $browser->assertDontSee($user->email);
+            $browser->assertDontSee($user->name);
+
+            $browser->click('#assignee-user');
+            $browser->clickLink($user->name, 'span');
+
+            $browser->seeLink($user->email);
+            $browser->assertSee($user->name);
         });
     }
 
@@ -151,12 +175,12 @@ class ClientTest extends DuskTestCase
      * Test creating a new customer will fail if all values are not given.
      */
     #[Test]
-    public function it_i_cant_create_a_new_customer_without_name_company_and_email()
+    public function it_cant_create_a_new_customer_without_name_company_and_email()
     {
         /* Arrange */
         $faker = Faker::create();
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($faker) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
                 ->visit('/clients/create')
@@ -165,8 +189,10 @@ class ClientTest extends DuskTestCase
                 ->type('address', $faker->secondaryAddress)
                 ->type('zipcode', $faker->randomNumber(4))
                 ->type('company_type', 'ApS')
-                ->press('Create New Client')
-                ->assertSee('The name field is required.')
+                ->press('Create New Client');
+
+            /* Assert */
+            $browser->assertSee('The name field is required.')
                 ->assertSee('The company name field is required.')
                 ->assertSee('The email field is required.');
         });
@@ -176,7 +202,7 @@ class ClientTest extends DuskTestCase
      * Test i can see all the correct information on customer page.
      */
     #[Test]
-    public function it_i_can_update_an_existing_client()
+    public function it_can_update_an_existing_client()
     {
         /* Arrange */
         $faker    = Faker::create();
@@ -186,11 +212,13 @@ class ClientTest extends DuskTestCase
         $zip_code = $faker->randomNumber(4);
         $city     = $faker->city;
 
-        /* Act & Assert */
+        /* Act */
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id . '/edit')
-                ->assertInputValue('name', $client->primary_contact->name)
+                ->visit('/clients/' . $client->external_id . '/edit');
+
+            /* Assert */
+            $browser->assertInputValue('name', $client->primary_contact->name)
                 ->assertInputValue('email', $client->primary_contact->email)
                 ->assertInputValue('company_name', $client->company_name)
                 ->assertInputValue('primary_number', $client->primary_contact->primary_number)
@@ -199,8 +227,9 @@ class ClientTest extends DuskTestCase
                 ->assertInputValue('zipcode', $client->zipcode)
                 ->assertInputValue('city', $client->city)
                 ->assertInputValue('company_type', $client->company_type)
-                ->assertInputValue('vat', $client->vat)
-                ->type('email', $email)
+                ->assertInputValue('vat', $client->vat);
+
+            $browser->type('email', $email)
                 ->type('address', $address)
                 ->type('zipcode', $zip_code)
                 ->type('city', $city)
@@ -211,8 +240,10 @@ class ClientTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($client, $email, $address, $zip_code, $city) {
             $browser->loginAs(User::whereEmail('admin@admin.com')->first())
-                ->visit('/clients/' . $client->external_id)
-                ->assertSee($email)
+                ->visit('/clients/' . $client->external_id);
+
+            /* Assert */
+            $browser->assertSee($email)
                 ->assertSee($address)
                 ->assertSee($zip_code)
                 ->assertSee($city);

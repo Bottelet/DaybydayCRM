@@ -50,45 +50,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_deletes_tasks_soft_deletes()
-    {
-        /* Arrange */
-        $document = $this->task->documents()->first();
-
-        /* Act */
-        $this->task->delete();
-
-        /* Assert */
-        $this->assertSoftDeleted($this->task->documents()->withTrashed()->first());
-    }
-
-    #[Test]
-    public function it_deletes_task_soft_deletes_relations()
-    {
-        /* Arrange */
-        $this->assertNotEmpty($this->task->comments);
-        $this->assertNotEmpty($this->task->activity);
-        $this->assertNotEmpty($this->task->appointments);
-        $this->assertNotEmpty($this->task->documents);
-
-        /* Act */
-        $this->task->delete();
-        $this->task->refresh();
-
-        /* Assert */
-        $this->assertEmpty($this->task->comments);
-        $this->assertEmpty($this->task->activity);
-        $this->assertEmpty($this->task->appointments);
-        $this->assertEmpty($this->task->documents);
-
-        $this->assertSoftDeleted($this->task->comments()->withTrashed()->first());
-        $this->assertSoftDeleted($this->task->activity()->withTrashed()->first());
-        $this->assertSoftDeleted($this->task->appointments()->withTrashed()->first());
-        $this->assertSoftDeleted($this->task->documents()->withTrashed()->first());
-    }
-
-    #[Test]
-    public function it_force_delete_removes_task_from_database()
+    public function it_removes_task_from_database_on_force_delete()
     {
         /* Arrange */
         $taskId = $this->task->id;
@@ -103,7 +65,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_force_delete_removes_relations_from_database()
+    public function it_removes_relations_from_database_on_force_delete()
     {
         /* Arrange */
         $commentId     = $this->task->comments->first()->id;
@@ -130,6 +92,59 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_force_deletes_a_task_with_no_relations()
+    {
+        /* Arrange */
+        $taskWithoutRelations = Task::factory()->create();
+        $taskId               = $taskWithoutRelations->id;
+
+        /* Act */
+        $taskWithoutRelations->forceDelete();
+
+        /* Assert */
+        $this->assertDatabaseMissing('tasks', [
+            'id' => $taskId,
+        ]);
+    }
+
+    #[Test]
+    public function it_soft_deletes_the_tasks_documents_when_the_task_is_deleted()
+    {
+        /* Arrange */
+
+        /* Act */
+        $this->task->delete();
+
+        /* Assert */
+        $this->assertSoftDeleted($this->task->documents()->withTrashed()->first());
+    }
+
+    #[Test]
+    public function it_soft_deletes_relations_when_the_task_is_deleted()
+    {
+        /* Arrange */
+        $this->assertNotEmpty($this->task->comments);
+        $this->assertNotEmpty($this->task->activity);
+        $this->assertNotEmpty($this->task->appointments);
+        $this->assertNotEmpty($this->task->documents);
+
+        /* Act */
+        $this->task->delete();
+        $this->task->refresh();
+
+        /* Assert */
+        $this->assertEmpty($this->task->comments);
+        $this->assertEmpty($this->task->activity);
+        $this->assertEmpty($this->task->appointments);
+        $this->assertEmpty($this->task->documents);
+
+        $this->assertSoftDeleted($this->task->comments()->withTrashed()->first());
+        $this->assertSoftDeleted($this->task->activity()->withTrashed()->first());
+        $this->assertSoftDeleted($this->task->appointments()->withTrashed()->first());
+        $this->assertSoftDeleted($this->task->documents()->withTrashed()->first());
+    }
+
+    #[Test]
     public function it_deletes_task_with_no_relations()
     {
         /* Arrange */
@@ -143,7 +158,7 @@ class TaskObserverDeleteTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_restore_task_restores_relations()
+    public function it_restores_relations_when_the_task_is_restored()
     {
         /* Arrange */
         $this->task->delete();
@@ -163,21 +178,5 @@ class TaskObserverDeleteTest extends AbstractTestCase
         $this->assertNull($this->task->activity()->first()->deleted_at);
         $this->assertNull($this->task->appointments()->first()->deleted_at);
         $this->assertNull($this->task->documents()->first()->deleted_at);
-    }
-
-    #[Test]
-    public function it_force_delete_task_with_no_relations()
-    {
-        /* Arrange */
-        $taskWithoutRelations = Task::factory()->create();
-        $taskId               = $taskWithoutRelations->id;
-
-        /* Act */
-        $taskWithoutRelations->forceDelete();
-
-        /* Assert */
-        $this->assertDatabaseMissing('tasks', [
-            'id' => $taskId,
-        ]);
     }
 }

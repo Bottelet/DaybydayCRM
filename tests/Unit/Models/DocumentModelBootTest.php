@@ -38,6 +38,26 @@ class DocumentModelBootTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_creates_document_record_with_external_id_via_factory()
+    {
+        /* Arrange */
+        $task = Task::factory()->create();
+
+        /* Act */
+        $document = Document::factory()->create([
+            'source_type' => Task::class,
+            'source_id'   => $task->id,
+        ]);
+
+        /* Assert */
+        $this->assertNotNull($document->external_id);
+        $this->assertDatabaseHas('documents', [
+            'id'          => $document->id,
+            'external_id' => $document->external_id,
+        ]);
+    }
+
+    #[Test]
     public function it_stores_explicit_external_id_when_provided_for_document()
     {
         /* Arrange */
@@ -111,26 +131,6 @@ class DocumentModelBootTest extends AbstractTestCase
         /* Assert */
         $this->assertInstanceOf(MorphTo::class, $relationship);
         $this->assertTrue(method_exists($document, 'source'));
-    }
-
-    #[Test]
-    public function it_creates_document_record_with_external_id_via_factory()
-    {
-        /* Arrange */
-        $task = Task::factory()->create();
-
-        /* Act */
-        $document = Document::factory()->create([
-            'source_type' => Task::class,
-            'source_id'   => $task->id,
-        ]);
-
-        /* Assert */
-        $this->assertNotNull($document->external_id);
-        $this->assertDatabaseHas('documents', [
-            'id'          => $document->id,
-            'external_id' => $document->external_id,
-        ]);
     }
 
     #[Test]

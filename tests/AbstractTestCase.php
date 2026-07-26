@@ -9,12 +9,15 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use RuntimeException;
 
 abstract class AbstractTestCase extends BaseTestCase
 {
     use CreatesApplication;
 
-    protected static $schemaIsUpToDate = false; // <-- add this (for this process)
+    /** @deprecated — kept for BC, but no longer used for schema checks */
+    protected static $schemaIsUpToDate = false;
 
     protected $user;
 
@@ -25,13 +28,31 @@ abstract class AbstractTestCase extends BaseTestCase
         // Reset Faker's unique state to avoid collisions with seeded data
         fake()->unique(true);
 
-        if ( ! static::$schemaIsUpToDate) {
+        // Skip migrate:fresh when RefreshDatabase is used — that trait already
+        // handles migrations itself (via its own setUp hook, which already ran
+        // by the time we get here), and running migrate:fresh again inside the
+        // transaction it starts would be redundant and unsafe.
+        $usesRefreshDatabase = in_array(
+            \Illuminate\Foundation\Testing\RefreshDatabase::class,
+            array_keys((function () {
+                return class_uses_recursive($this);
+            })->call($this))
+        );
+
+        if ( ! $usesRefreshDatabase && ! Schema::hasTable('users')) {
             Artisan::call('migrate:fresh', ['--seed' => true]);
-            static::$schemaIsUpToDate = true;
         }
 
-        // Use a guaranteed unique email for the test user
-        $uniqueEmail = 'testuser_' . uniqid('', true) . '@example.org';
+        if ( ! Schema::hasTable('users')) {
+            throw new RuntimeException(
+                'The `users` table does not exist after test database setup. '
+                . ($usesRefreshDatabase
+                    ? 'This test uses RefreshDatabase, which should have migrated it - check that trait\'s setup.'
+                    : 'migrate:fresh --seed just ran and should have created it - check the migration/seeder output.')
+            );
+        }
+
+        $uniqueEmail = 'user_' . uniqid() . '@test.com';
         $this->user  = User::factory()->create([
             'email' => $uniqueEmail,
             'name'  => 'Admin',
@@ -135,5 +156,10 @@ abstract class AbstractTestCase extends BaseTestCase
         if ($scheme = parse_url($url, PHP_URL_SCHEME)) {
             app('url')->forceScheme($scheme);
         }
+    }
+
+    protected function getJsonRequest(string $url)
+    {
+        return $this->get($url, ['Accept' => 'application/json']);
     }
 }

@@ -83,12 +83,13 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
 
         /* Act */
         $response = $this->actingAs($this->authorizedUser)
+            ->from(route('tasks.show', $this->task->external_id))
             ->patch(route('task.update.assignee', $this->task->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
         /* Assert */
-        $response->assertRedirect();
+        $response->assertRedirect(route('tasks.show', $this->task->external_id));
         $response->assertSessionHas('flash_message');
 
         $this->assertDatabaseHas('tasks', [
@@ -110,13 +111,18 @@ class TaskAssignmentAuthorizationTest extends AbstractTestCase
 
         /* Act */
         $response = $this->actingAs($this->unauthorizedUser)
+            ->from(route('tasks.show', $this->task->external_id))
             ->patch(route('task.update.assignee', $this->task->external_id), [
                 'user_assigned_id' => $this->newAssignee->id,
             ]);
 
-        /* Assert */
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning');
+        /* Assert: gated by IsTaskAssigned middleware (task.assigned alias), not
+         * the controller/FormRequest - has its own specific message. */
+        $response->assertRedirect(route('tasks.show', $this->task->external_id));
+        $response->assertSessionHas(
+            'flash_message_warning',
+            __("You don't have the right permission for this action")
+        );
 
         $this->assertDatabaseHas('tasks', [
             'id'               => $this->task->id,

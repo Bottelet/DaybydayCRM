@@ -34,7 +34,40 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_payment_invoice_relationship_returns_belongs_to_instance()
+    public function it_creates_payment_with_invoice_via_factory()
+    {
+        /* Arrange */
+
+        /* Act */
+        $payment = Payment::factory()->create();
+
+        /* Assert */
+        $this->assertNotNull($payment->invoice_id);
+        $this->assertNotNull($payment->invoice);
+        $this->assertInstanceOf(Invoice::class, $payment->invoice);
+    }
+
+    #[Test]
+    public function it_preserves_invoice_relationship_after_soft_deletion()
+    {
+        /* Arrange */
+        $payment = Payment::factory()->create([
+            'invoice_id' => $this->invoice->id,
+        ]);
+        $paymentId = $payment->id;
+        $payment->delete();
+
+        /* Act */
+        $deletedPayment = Payment::withTrashed()->find($paymentId);
+
+        /* Assert */
+        $this->assertNotNull($deletedPayment);
+        $this->assertNotNull($deletedPayment->invoice);
+        $this->assertEquals($this->invoice->id, $deletedPayment->invoice->id);
+    }
+
+    #[Test]
+    public function it_returns_a_belongs_to_instance_for_the_invoice_relationship()
     {
         /* Arrange */
         $payment = Payment::factory()->create([
@@ -49,7 +82,7 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_payment_belongs_to_invoice()
+    public function it_belongs_to_an_invoice()
     {
         /* Arrange */
         $payment = Payment::factory()->create([
@@ -63,20 +96,6 @@ class PaymentModelTest extends AbstractTestCase
         $this->assertNotNull($relatedInvoice);
         $this->assertInstanceOf(Invoice::class, $relatedInvoice);
         $this->assertEquals($this->invoice->id, $relatedInvoice->id);
-    }
-
-    #[Test]
-    public function it_creates_payment_with_invoice_via_factory()
-    {
-        /* Arrange */
-
-        /* Act */
-        $payment = Payment::factory()->create();
-
-        /* Assert */
-        $this->assertNotNull($payment->invoice_id);
-        $this->assertNotNull($payment->invoice);
-        $this->assertInstanceOf(Invoice::class, $payment->invoice);
     }
 
     #[Test]
@@ -103,15 +122,17 @@ class PaymentModelTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_payment_invoice_method_exists_on_model()
+    public function it_verifies_invoice_relationship_method_exists_on_payment_model()
     {
         /* Arrange */
         $payment = Payment::factory()->create([
             'invoice_id' => $this->invoice->id,
         ]);
 
-        /* Act & Assert */
+        /* Act */
         $this->assertTrue(method_exists($payment, 'invoice'));
+
+        /* Assert */
     }
 
     #[Test]
@@ -131,25 +152,6 @@ class PaymentModelTest extends AbstractTestCase
 
         /* Assert */
         $this->assertNull($relatedInvoice);
-    }
-
-    #[Test]
-    public function it_soft_deleted_payment_still_has_invoice_relationship()
-    {
-        /* Arrange */
-        $payment = Payment::factory()->create([
-            'invoice_id' => $this->invoice->id,
-        ]);
-        $paymentId = $payment->id;
-        $payment->delete();
-
-        /* Act */
-        $deletedPayment = Payment::withTrashed()->find($paymentId);
-
-        /* Assert */
-        $this->assertNotNull($deletedPayment);
-        $this->assertNotNull($deletedPayment->invoice);
-        $this->assertEquals($this->invoice->id, $deletedPayment->invoice->id);
     }
 
     #[Test]

@@ -27,16 +27,29 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_getting_reason_returns_instance_of_absence_reason()
+    public function it_gets_display_value_from_reason()
     {
         /* Arrange */
         $statusValue = 'vacation';
 
         /* Act */
-        $result = AbsenceReason::fromStatus($statusValue);
+        $displayValue = AbsenceReason::fromStatus($statusValue)->getDisplayValue();
 
         /* Assert */
-        $this->assertInstanceOf(AbsenceReason::class, $result);
+        $this->assertEquals('Vacation', $displayValue);
+    }
+
+    #[Test]
+    public function it_gets_reason_from_display_value()
+    {
+        /* Arrange */
+        $displayValue = 'Vacation';
+
+        /* Act */
+        $reason = AbsenceReason::fromDisplayValue($displayValue)->getReason();
+
+        /* Assert */
+        $this->assertEquals('vacation', $reason);
     }
 
     #[Test]
@@ -54,20 +67,77 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_display_value_from_reason()
+    public function it_accepts_a_null_display_value_in_the_constructor()
+    {
+        /* Arrange */
+        $reasonValue  = 'custom_reason';
+        $displayValue = null;
+
+        /* Act */
+        $reason = new AbsenceReason($reasonValue, $displayValue);
+
+        /* Assert */
+        $this->assertEquals('custom_reason', $reason->getReason());
+        // getDisplayValue() has a non-nullable `string` return type, so a null
+        // constructor argument must fall back to the reason string rather
+        // than being returned as-is (which would be a TypeError).
+        $this->assertEquals('custom_reason', $reason->getDisplayValue());
+    }
+
+    #[Test]
+    public function it_throws_exception_if_display_value_is_not_known()
+    {
+        /* Arrange */
+        $invalidDisplayValue = 'None existing display value';
+        $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
+        AbsenceReason::fromDisplayValue($invalidDisplayValue);
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_treats_display_value_lookup_as_case_sensitive()
+    {
+        /* Arrange */
+        $wrongCase = 'vacation';
+        $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
+        AbsenceReason::fromDisplayValue($wrongCase);
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_throws_for_a_partial_display_value_match()
+    {
+        /* Arrange */
+        $partialMatch = 'Vacatio';
+        $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
+        AbsenceReason::fromDisplayValue($partialMatch);
+
+        /* Assert */
+    }
+
+    #[Test]
+    public function it_returns_an_absence_reason_instance_when_getting_reason()
     {
         /* Arrange */
         $statusValue = 'vacation';
 
         /* Act */
-        $displayValue = AbsenceReason::fromStatus($statusValue)->getDisplayValue();
+        $result = AbsenceReason::fromStatus($statusValue);
 
         /* Assert */
-        $this->assertEquals('Vacation', $displayValue);
+        $this->assertInstanceOf(AbsenceReason::class, $result);
     }
 
     #[Test]
-    public function it_reason_returns_correct_reason_in_instance()
+    public function it_returns_the_correct_reason_value()
     {
         /* Arrange */
 
@@ -79,20 +149,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_gets_reason_from_display_value()
-    {
-        /* Arrange */
-        $displayValue = 'Vacation';
-
-        /* Act */
-        $reason = AbsenceReason::fromDisplayValue($displayValue)->getReason();
-
-        /* Assert */
-        $this->assertEquals('vacation', $reason);
-    }
-
-    #[Test]
-    public function it_values_returns_all_eight_absence_reasons()
+    public function it_values_contains_expected_absence_reason_keys()
     {
         /* Arrange */
 
@@ -100,7 +157,29 @@ class AbsenceReasonTest extends AbstractTestCase
         $values = AbsenceReason::values();
 
         /* Assert */
-        $this->assertCount(8, $values);
+        $this->assertArrayHasKey('sick_leave', $values);
+        $this->assertArrayHasKey('personal_leave', $values);
+        $this->assertArrayHasKey('vacation', $values);
+        $this->assertArrayHasKey('vacation_day', $values);
+        $this->assertArrayHasKey('time_off', $values);
+        $this->assertArrayHasKey('time_off_in_lieu', $values);
+        $this->assertArrayHasKey('flextime', $values);
+        $this->assertArrayHasKey('other', $values);
+    }
+
+    #[Test]
+    public function it_values_stores_distinct_reason_per_entry()
+    {
+        /* Arrange */
+
+        /* Act */
+        $values = AbsenceReason::values();
+
+        /* Assert: guards against the values() array constructing an entry with
+         * the wrong reason constant, which previously made 'time_off_in_lieu'
+         * indistinguishable from 'time_off'. */
+        $this->assertEquals('time_off', $values['time_off']->getReason());
+        $this->assertEquals('time_off_in_lieu', $values['time_off_in_lieu']->getReason());
     }
 
     #[Test]
@@ -165,9 +244,12 @@ class AbsenceReasonTest extends AbstractTestCase
         /* Act */
         $reason = AbsenceReason::timeOffInLieu();
 
-        /* Assert */
+        /* Assert: getReason() must be 'time_off_in_lieu', distinct from plain
+         * 'time_off' — the values() array previously constructed this entry
+         * with the wrong reason constant, making it indistinguishable from
+         * TIME_OFF and breaking fromStatus('time_off_in_lieu'). */
         $this->assertInstanceOf(AbsenceReason::class, $reason);
-        $this->assertEquals('time_off', $reason->getReason());
+        $this->assertEquals('time_off_in_lieu', $reason->getReason());
         $this->assertEquals('Time off in lieu', $reason->getDisplayValue());
     }
 
@@ -240,7 +322,7 @@ class AbsenceReasonTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_verifies_time_off_in_lieu_shares_reason_string_with_time_off()
+    public function it_verifies_time_off_in_lieu_has_a_distinct_reason_from_time_off()
     {
         /* Arrange */
 
@@ -249,22 +331,8 @@ class AbsenceReasonTest extends AbstractTestCase
         $timeOffInLieu = AbsenceReason::timeOffInLieu();
 
         /* Assert */
-        $this->assertEquals($timeOff->getReason(), $timeOffInLieu->getReason());
+        $this->assertNotEquals($timeOff->getReason(), $timeOffInLieu->getReason());
         $this->assertNotEquals($timeOff->getDisplayValue(), $timeOffInLieu->getDisplayValue());
-    }
-
-    #[Test]
-    public function it_constructor_accepts_null_display_value()
-    {
-        /* Arrange */
-        $reasonValue  = 'custom_reason';
-        $displayValue = null;
-
-        /* Act */
-        $reason = new AbsenceReason($reasonValue, $displayValue);
-
-        /* Assert */
-        $this->assertEquals('custom_reason', $reason->getReason());
     }
 
     #[Test]
@@ -272,21 +340,12 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $invalidReason = 'non_existing_reason';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromStatus($invalidReason);
-    }
 
-    #[Test]
-    public function it_throws_exception_if_display_value_is_not_known()
-    {
-        /* Arrange */
-        $invalidDisplayValue = 'None existing display value';
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        AbsenceReason::fromDisplayValue($invalidDisplayValue);
+        /* Assert */
     }
 
     #[Test]
@@ -294,31 +353,11 @@ class AbsenceReasonTest extends AbstractTestCase
     {
         /* Arrange */
         $wrongCase = 'Vacation';
-
-        /* Act & Assert */
         $this->expectException(InvalidArgumentException::class);
+
+        /* Act */
         AbsenceReason::fromStatus($wrongCase);
-    }
 
-    #[Test]
-    public function it_from_display_value_is_case_sensitive()
-    {
-        /* Arrange */
-        $wrongCase = 'vacation';
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        AbsenceReason::fromDisplayValue($wrongCase);
-    }
-
-    #[Test]
-    public function it_from_display_value_throws_for_partial_match()
-    {
-        /* Arrange */
-        $partialMatch = 'Vacatio';
-
-        /* Act & Assert */
-        $this->expectException(InvalidArgumentException::class);
-        AbsenceReason::fromDisplayValue($partialMatch);
+        /* Assert */
     }
 }
