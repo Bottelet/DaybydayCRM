@@ -1,4 +1,4 @@
-<form class="form-horizontal" role="form" method="POST" action="{{route('settings.update.first_step')}}">
+<form class="form-horizontal" role="form" method="POST" action="{{route('settings.updateFirstStep')}}">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -72,16 +72,20 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('#start_time').pickatime({
-                format:'{{frontendTime()}}',
-                formatSubmit: 'HH:i',
-                hiddenName: true
-            })
-            $('#end_time').pickatime({
-                format:'{{frontendTime()}}',
-                formatSubmit: 'HH:i',
-                hiddenName: true
-            })
+            if ($('#start_time').length) {
+                $('#start_time').pickatime({
+                    format:'{{frontendTime()}}',
+                    formatSubmit: 'HH:i',
+                    hiddenName: true
+                })
+            }
+            if ($('#end_time').length) {
+                $('#end_time').pickatime({
+                    format:'{{frontendTime()}}',
+                    formatSubmit: 'HH:i',
+                    hiddenName: true
+                })
+            }
         });
     </script>
 @endpush

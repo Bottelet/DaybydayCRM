@@ -51,11 +51,13 @@
 @push('scripts')
     <script>
 
-        $('#payment_date').pickadate({
-            hiddenName:true,
-            format: "{{frontendDate()}}",
-            formatSubmit: 'yyyy/mm/dd',
-            closeOnClear: false,
-        });
+        if ($('#payment_date').length) {
+            $('#payment_date').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                closeOnClear: false,
+            });
+        }
     </script>
 @endpush

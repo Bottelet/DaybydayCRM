@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddCascadingForAppointments extends Migration
@@ -13,8 +14,12 @@ class AddCascadingForAppointments extends Migration
      */
     public function up()
     {
-        Schema::table('appointments', static function (Blueprint $table) {
-            $table->dropForeign('appointments_client_id_foreign');
+        $isSqlite = DB::getDriverName() === 'sqlite';
+
+        Schema::table('appointments', static function (Blueprint $table) use ($isSqlite) {
+            if ( ! $isSqlite) {
+                $table->dropForeign('appointments_client_id_foreign');
+            }
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }

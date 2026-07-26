@@ -21,6 +21,20 @@ trait HasExternalId
         });
     }
 
+    public static function findByExternalId(?string $externalId): ?static
+    {
+        if ($externalId === null) {
+            return null;
+        }
+
+        return static::query()->where('external_id', $externalId)->first();
+    }
+
+    public static function whereExternalId(?string $externalId)
+    {
+        return static::query()->where('external_id', $externalId);
+    }
+
     /**
      * Get the route key for the model.
      *

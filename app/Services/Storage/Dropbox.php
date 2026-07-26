@@ -13,8 +13,14 @@ class Dropbox implements FilesystemIntegration
 {
     private $client;
 
-    public function __construct()
+    public function __construct(?DropboxClient $client = null)
     {
+        if ($client !== null) {
+            $this->client = $client;
+
+            return;
+        }
+
         $dropbox_integration = Integration::query()->where('name', self::class)->first();
 
         if ( ! $dropbox_integration) {

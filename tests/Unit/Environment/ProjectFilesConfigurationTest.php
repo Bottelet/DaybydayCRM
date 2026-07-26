@@ -39,7 +39,7 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
     }
 
     #[Test]
-    public function it_env_ci_cache_store_is_set_to_array(): void
+    public function it_env_ci_cache_store_matches_the_real_deployment_default(): void
     {
         /* Arrange */
         $vars = $this->parseEnvFile('.env.ci');
@@ -50,9 +50,12 @@ class ProjectFilesConfigurationTest extends AbstractTestCase
         /* Assert */
         $this->assertArrayHasKey('CACHE_STORE', $vars);
         $this->assertEquals(
-            'array',
+            'database',
             $cacheStore,
-            'CACHE_STORE in .env.ci must be "array" for CI test isolation'
+            '.env.ci drives real HTTP requests in the Playwright suite, so it must use the '
+                . 'same CACHE_STORE as .env.example (database) — "array" never serializes '
+                . 'cached values and would hide bugs like cached Eloquent models silently '
+                . 'turning into __PHP_Incomplete_Class (see config/cache.php serializable_classes)'
         );
     }
 

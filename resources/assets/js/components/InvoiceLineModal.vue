@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="modal-content">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="invoice-modal-title modal-title" id="myModalLabel">
@@ -15,7 +15,7 @@
                 <span class="pull-right" v-if="line.errors && line.errors.length" style="color:red; font-size:2.2em; font-style:bold;">!</span>
                 <div class="line-summary row" @click="toggleLine(line)" v-show="!line.show" style="background: #f7f7f7; padding: 10px;">
                     <div class="col-lg-3">{{line.title}}</div>
-                    <div class="col-lg-3">{{line.price | currency({ 
+                    <div class="col-lg-3">{{line.price | currency({
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
                                     fractionCount: moneyFormat.precision,
@@ -23,7 +23,7 @@
                                     symbolPosition: moneyFormat.symbolPlacement == "after" ? 'back' : 'front',
                                     })}}</div>
                     <div class="col-lg-2">{{line.quantity}}</div>
-                    <div class="col-lg-2">   {{getTotalLinePrice(line) | currency({ 
+                    <div class="col-lg-2">   {{getTotalLinePrice(line) | currency({
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
                                     fractionCount: moneyFormat.precision,
@@ -34,11 +34,11 @@
                 <div class="line-information" v-show="line.show">
                     <div class="form-group">
                         <label v-if="products.length && !readOnly" for="product" class="control-label thin-weight">{{trans('Product')}}</label>
-                        <v-select 
-                        :options="products" 
+                        <v-select
+                        :options="products"
                         v-model="line.product_name"
                         v-if="products.length && !readOnly"
-                        label="name" 
+                        label="name"
                         v-on:input="product => fillWithProduct(product, line, lineIndex)"></v-select>
                     </div>
                     <div class="form-inline row">
@@ -49,7 +49,7 @@
 
                     <div class="form-group col-sm-6">
                         <label for="comment" class="control-label thin-weight">{{trans('Description')}}</label>
-                        <input v-model="line.comment" type="text" name="comment" :disabled="readOnly" class="form-control" placeholder="A short description, as to what is being billed"> 
+                        <input v-model="line.comment" type="text" name="comment" :disabled="readOnly" class="form-control" placeholder="A short description, as to what is being billed">
                     </div>
                     </div>
 
@@ -82,7 +82,7 @@
                         <div class="form-group col-sm-6" style="padding-top: 15px;">
                             <div class="col-sm-4">
                                 <p>{{trans('Total')}}</p>
-                                {{getTotalLinePrice(line)| currency({ 
+                                {{getTotalLinePrice(line)| currency({
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
                                     fractionCount: moneyFormat.precision,
@@ -92,7 +92,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <p>{{trans('Sub Total')}}</p>
-                                {{getSubTotalLinePrice(line) | currency({ 
+                                {{getSubTotalLinePrice(line) | currency({
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
                                     fractionCount: moneyFormat.precision,
@@ -102,7 +102,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <p>{{trans('Tax')}}</p>
-                                {{getLineVat(line)| currency({ 
+                                {{getLineVat(line)| currency({
                                     symbol: moneyFormat.symbol,
                                     thousandsSeparator: moneyFormat.thousandSeparator,
                                     fractionCount: moneyFormat.precision,
@@ -116,9 +116,9 @@
                         <p v-for="(error, index) in line.errors" :key="index" class="text-danger">
                             {{error}}
                         </p>
-                    
+
             </div>
-             
+
         </div>
         <hr >
         <div class="row form-inline">
@@ -126,9 +126,9 @@
                 <p>{{trans('Total')}}</p>
             </div>
             <div class="form-group col-sm-6">
-                <div class="col-sm-4"> 
+                <div class="col-sm-4">
                     <p style="font-weight:bold;">{{trans('Total')}}</p>
-                    {{getTotalOfAllLines()| currency({ 
+                    {{getTotalOfAllLines()| currency({
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
                         fractionCount: moneyFormat.precision,
@@ -138,18 +138,18 @@
                 </div>
                 <div class="col-sm-4">
                 <p style="font-weight:bold;">{{trans('Sub Total')}}</p>
-                    {{getSubTotalOfAllLines()| currency({ 
+                    {{getSubTotalOfAllLines()| currency({
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
                         fractionCount: moneyFormat.precision,
                         fractionSeparator: moneyFormat.decimalSeparator,
                         symbolPosition: moneyFormat.symbolPlacement == "after" ? 'back' : 'front',
                         }) }}
-              
+
                 </div>
                 <div class="col-sm-4">
                     <p style="font-weight:bold;">{{trans('Tax')}}</p>
-                    {{getVatOfAllLines()| currency({ 
+                    {{getVatOfAllLines()| currency({
                         symbol: moneyFormat.symbol,
                         thousandsSeparator: moneyFormat.thousandSeparator,
                         fractionCount: moneyFormat.precision,
@@ -160,9 +160,9 @@
 
             </div>
         </div>
-        
+
         </div>
-       
+
         <div class="modal-footer">
             <button type="button" class="btn btn-default col-lg-6" data-dismiss="modal">{{trans('Close')}}</button>
             <div class="col-lg-6" v-if="!readOnly">
@@ -178,11 +178,11 @@ import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 export default {
   props: {
-    type: { 
+    type: {
       type: String,
       required: true
     },
-    resource: { 
+    resource: {
       type: Object,
       required: false
     },
@@ -214,13 +214,13 @@ export default {
       vSelect: vSelect
   },
   methods: {
-      fillWithProduct(product, line, lineIndex) {       
+      fillWithProduct(product, line, lineIndex) {
             line.title = product.name
             line.comment = product.description
             line.type = product.default_type
             line.price = product.divided_price
             line.product = product.external_id
-            line.product_name = line.product_name 
+            line.product_name = line.product_name
 
             //Hack to change selectpicker value
             this.$nextTick(function(){ $("#" + lineIndex + "_type").selectpicker('refresh'); });
@@ -233,7 +233,7 @@ export default {
       },
       addNewLine() {
             var self = this;
-  
+
             this.lines.map(function(line) {
                 line.show = false;
             })
@@ -251,7 +251,7 @@ export default {
 
           this.lines.map(function(line) {
                 self.products.findIndex( p => p.external_id == line.product )
-            })           
+            })
       },
       toggleLine(line) {
           line.show = !line.show
@@ -310,7 +310,7 @@ export default {
                   line.errors.push("Type is required");
               }
           });
-         
+
           if(!error) {
               if (this.isEditable) {
                 axios
@@ -359,7 +359,7 @@ export default {
                   this.lines = [];
                   res.data.forEach(line => {
                     var invoiceLine = {}
-      
+
                     invoiceLine.show = true;
                     invoiceLine.title = line.title
                     invoiceLine.product = line.product ? line.product.external_id : null;
@@ -380,7 +380,7 @@ export default {
             this.moneyFormat = res.data;
         });
     },
-    
+
 }
 </script>
 

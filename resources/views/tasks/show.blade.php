@@ -160,7 +160,7 @@
                                                             <li class="nav-item">
                                             <span class="nav-link">
                                                 <i class="icon ion-md-trash"></i>
-                                                <form method="POST" action="{{action('DocumentsController@destroy', $file->external_id)}}">
+                                                <form method="POST" action="{{route('document.destroy', $file->external_id)}}">
                                                     <input type="hidden" name="_method" value="delete"/>
                                                     <input type="hidden" name="_token" value="{{csrf_token()}}"/>
                                                     <button type="submit" class="btn btn-clean nav-link-text">{{__('Delete')}}</button>
@@ -202,7 +202,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="deadline_date" class="control-label thin-weight">@lang('Change deadline')</label>
-                                <input type="text" id="deadline_date" name="deadline_date" data-value="{{now()->addDays(3)}}" class="form-control">
+                                <input type="text" id="deadline_date" name="deadline_date" data-value="{{now()->addDays(3)->format('Y/m/d')}}" class="form-control">
                             </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default col-lg-6"
@@ -228,12 +228,14 @@
 @push('scripts')
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#deadline_date').pickadate({
-                hiddenName:true,
-                format: "{{frontendDate()}}",
-                formatSubmit: 'yyyy/mm/dd',
-                closeOnClear: false,
-            });
+            if ($('#deadline_date').length) {
+                $('#deadline_date').pickadate({
+                    hiddenName:true,
+                    format: "{{frontendDate()}}",
+                    formatSubmit: 'yyyy/mm/dd',
+                    closeOnClear: false,
+                });
+            }
 
             @if(Entrust::can('task-upload-files') && $filesystem_integration)
             $('#add-files').on('click', function () {

@@ -33,7 +33,7 @@ class SettingsController extends Controller
      */
     public function index(Request $request)
     {
-        $setting = Setting::first();
+        $setting = Setting::cached();
         if ( ! $setting) {
             $setting = Setting::query()->create([
                 'company'        => 'Default Company',
@@ -45,6 +45,7 @@ class SettingsController extends Controller
                 'invoice_number' => 1,
                 'max_users'      => 10,
             ]);
+            Setting::clearCache();
         }
 
         if ($request->expectsJson()) {
@@ -73,7 +74,7 @@ class SettingsController extends Controller
     {
         $start_time = Carbon::parse('2020-01-01 ' . $request->start_time . ':00');
         $end_time   = Carbon::parse('2020-01-01 ' . $request->end_time . ':00');
-        $settings   = Setting::first();
+        $settings   = Setting::cached();
         if ( ! $settings) {
             $settings = Setting::query()->create([
                 'company'        => 'Default Company',
@@ -85,6 +86,7 @@ class SettingsController extends Controller
                 'invoice_number' => 1,
                 'max_users'      => 10,
             ]);
+            Setting::clearCache();
         }
 
         if ($start_time->gt($end_time)) {
@@ -129,6 +131,7 @@ class SettingsController extends Controller
         $settings->currency = $currency->getCode();
         $settings->language = mb_strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';
         $settings->save();
+        Setting::clearCache();
 
         $user           = auth()->user();
         $user->language = mb_strtolower($country->getLanguage()) === 'danish' ? 'dk' : 'en';

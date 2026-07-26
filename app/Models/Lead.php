@@ -64,17 +64,7 @@ class Lead extends Model implements Commentable
         // HasExternalId trait handles external_id generation
     }
 
-    /**
-     * Find a model by external_id (UUID).
-     *
-     * @return static|null
-     */
-    public static function findByExternalId(string $externalId)
-    {
-        return static::query()->where('external_id', $externalId)->first();
-    }
-
-    // getRouteKeyName() is provided by HasExternalId trait
+    // findByExternalId() and whereExternalId() are provided by HasExternalId trait
 
     public function displayValue()
     {
@@ -155,6 +145,11 @@ class Lead extends Model implements Commentable
         return route('leads.show', [$this->external_id]);
     }
 
+    public function getEditRoute()
+    {
+        return route('leads.edit', [$this->external_id]);
+    }
+
     public function getAssignedUserAttribute()
     {
         // Use the loaded relationship if available to prevent N+1 queries
@@ -188,7 +183,7 @@ class Lead extends Model implements Commentable
         ]);
 
         $this->invoice_id = $invoice->id;
-        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->first()->id;
+        $this->status_id  = Status::typeOfLead()->where('title', 'Closed')->firstOrFail()->id;
         $this->save();
 
         return $invoice;

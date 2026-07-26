@@ -3,6 +3,11 @@
         <div class="tablet__head-label">
             <h3 class="tablet__head-title text-white">{{$subject->title}}</h3>
         </div>
+        @if(method_exists($subject, 'getEditRoute') && Entrust::can(mb_strtolower(class_basename($subject)) . '-update'))
+            <a href="{{$subject->getEditRoute()}}" class="tablet__head-icon" title="{{__('Edit')}}">
+                <i class="icon ion-md-create text-white"></i>
+            </a>
+        @endif
     </div>
     <div class="tablet__body">
         <p class="">{!! $subject->description !!}</p>
@@ -16,8 +21,8 @@
     </div>
 </div>
 
-<?php $count = 0;?>
-<?php $i = 1 ?>
+<?php $count = 0; ?>
+<?php $i     = 1 ?>
 @foreach($subject->comments as $comment)
     <div class="tablet tablet__shadow">
         <div class="tablet__body tablet__tigthen">

@@ -39,8 +39,11 @@ class AbsenceReason
 
     public function __construct(string $reason, ?string $displayValue = null)
     {
-        $this->reason       = $reason;
-        $this->displayValue = $displayValue;
+        $this->reason = $reason;
+        // getDisplayValue() declares a non-nullable `string` return type, so a
+        // null $displayValue must fall back to something safe rather than
+        // being stored as-is (which would throw a TypeError on read).
+        $this->displayValue = $displayValue ?? $reason;
     }
 
     /**

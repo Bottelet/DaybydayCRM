@@ -32,12 +32,13 @@ class ProductsController extends Controller
         } else {
             $product              = Product::make();
             $product->external_id = Uuid::uuid4()->toString();
+            $product->archived    = false;
         }
 
         $product->name         = $request->name;
         $product->description  = $request->description;
         $product->default_type = $request->type;
-        $product->price        = $request->price * 100;
+        $product->price        = (float) $request->price * 100;
         $product->number       = $request->product_number;
 
         $product->save();

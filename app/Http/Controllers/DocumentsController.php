@@ -10,7 +10,7 @@ use App\Models\Task;
 use App\Models\User;
 use App\Services\Storage\StorageAdapterRegistry;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 class DocumentsController extends Controller
@@ -123,7 +123,7 @@ class DocumentsController extends Controller
         $client = Client::whereExternalId($external_id)->first();
 
         $file        = $request->file('file');
-        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
         $size       = $file->getSize();
@@ -131,7 +131,7 @@ class DocumentsController extends Controller
         $totaltsize = mb_substr($mbsize, 0, 4);
 
         if ($totaltsize > 15) {
-            Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+            session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
 
             return redirect()->back();
         }
@@ -139,22 +139,19 @@ class DocumentsController extends Controller
         $client_folder = $client->external_id;
         $fileSystem    = $this->storage->driver();
         $fileData      = $fileSystem->upload($client_folder, $filename, $file);
-        $input         = array_replace(
-            $request->all(),
-            [
-                'external_id'       => Uuid::uuid4()->toString(),
-                'path'              => $fileData['file_path'],
-                'size'              => $totaltsize,
-                'original_filename' => $fileOrginal,
-                'source_id'         => $client->id,
-                'source_type'       => Client::class,
-                'mime'              => $file->getClientMimeType(),
-                'integration_id'    => $fileData['id'] ?? null,
-                'integration_type'  => get_class($fileSystem),
-            ]
-        );
+        $input         = [
+            'external_id'       => Uuid::uuid4()->toString(),
+            'path'              => $fileData['file_path'],
+            'size'              => $totaltsize,
+            'original_filename' => $fileOrginal,
+            'source_id'         => $client->id,
+            'source_type'       => Client::class,
+            'mime'              => $file->getClientMimeType(),
+            'integration_id'    => $fileData['id'] ?? null,
+            'integration_type'  => get_class($fileSystem),
+        ];
         Document::query()->create($input);
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
     }
 
     /**
@@ -181,7 +178,7 @@ class DocumentsController extends Controller
         if (null !== $request->files) {
             foreach ($request->file('files') as $image) {
                 $file        = $image;
-                $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+                $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
                 $size       = $file->getSize();
@@ -189,7 +186,7 @@ class DocumentsController extends Controller
                 $totaltsize = mb_substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
-                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
 
                     return redirect()->back();
                 }
@@ -211,7 +208,7 @@ class DocumentsController extends Controller
                 ]);
             }
         }
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
 
         return response()->json(['external_id' => $task->external_id], 200);
     }
@@ -240,7 +237,7 @@ class DocumentsController extends Controller
         if (null !== $request->files) {
             foreach ($request->file('files') as $image) {
                 $file        = $image;
-                $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+                $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
                 $size       = $file->getSize();
@@ -248,7 +245,7 @@ class DocumentsController extends Controller
                 $totaltsize = mb_substr($mbsize, 0, 4);
 
                 if ($totaltsize > 15) {
-                    Session::flash('flash_message', __('File Size cannot be bigger than 15MB'));
+                    session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
 
                     return redirect()->back();
                 }
@@ -272,7 +269,7 @@ class DocumentsController extends Controller
                 ]);
             }
         }
-        Session::flash('flash_message', __('File successfully uploaded'));
+        session()->flash('flash_message', __('File successfully uploaded'));
 
         return response()->json(['external_id' => $project->external_id], 200);
     }
@@ -313,18 +310,29 @@ class DocumentsController extends Controller
         $view = view('documents._uploadFileModal');
 
         if ($type == 'task') {
-            $task = Task::whereExternalId($external_id)->first();
+            $task  = Task::whereExternalId($external_id)->first();
+            $title = $task->title;
         } elseif ($type == 'client') {
-            $task = Client::whereExternalId($external_id)->first()->task;
+            // Client has no "task" relation (it has many tasks()) — the entity
+            // itself is what's being uploaded to here, and "title" means its
+            // company name, not an unrelated task's title.
+            $task  = Client::whereExternalId($external_id)->first();
+            $title = $task->company_name;
         } elseif ($type == 'project') {
-            $task = Project::whereExternalId($external_id)->first();
+            $task  = Project::whereExternalId($external_id)->first();
+            $title = $task->title;
         }
 
+        // The client upload route is registered as "document.upload" (nested under
+        // the clients/ prefix group), not "document.client.upload" — task/project
+        // do follow the "document.{type}.upload" pattern.
+        $uploadRouteName = $type === 'client' ? 'document.upload' : 'document.' . $type . '.upload';
+
         return $view
-            ->withTitle($task->title)
+            ->withTitle($title)
             ->with('external_id', $external_id)
             ->withType($type)
-            ->withRoute(route('document.' . $type . '.upload', $external_id));
+            ->withRoute(route($uploadRouteName, $external_id));
     }
 
     /**
@@ -340,19 +348,16 @@ class DocumentsController extends Controller
     {
         $user = auth()->user();
 
-        // Use the morphTo relationship to get the source model
         $source = $document->source;
 
         if ( ! $source) {
             return false;
         }
 
-        // For Client source type, check user_id
         if ($document->source_type === Client::class) {
             return $source->user_id === $user->id;
         }
 
-        // For Task, Project, and Lead - check creator, assignee, or client ownership
         if (in_array($document->source_type, self::ASSIGNABLE_TYPES)) {
             return $this->userOwnsAssignableSource($source, $user);
         }

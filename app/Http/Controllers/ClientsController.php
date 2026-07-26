@@ -43,6 +43,11 @@ class ClientsController extends Controller
 
     public function __construct(private ClientService $clientService)
     {
+        $this->middleware(function ($request, $next) {
+            abort_unless(auth()->check() && auth()->user()->can('client-view'), 403);
+
+            return $next($request);
+        }, ['only' => ['index', 'show']]);
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);
@@ -217,6 +222,11 @@ class ClientsController extends Controller
 
         event(new ClientAction($client, self::CREATED));
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true) and then does a client-side redirect, so
+        // the flash must be set here to survive that navigation.
+        session()->flash('flash_message', __('Client successfully added'));
+
         if ($expectsJson) {
             return response()->json([
                 'client'  => $client,
@@ -224,8 +234,6 @@ class ClientsController extends Controller
                 'message' => __('Client successfully added'),
             ], 201);
         }
-
-        session()->flash('flash_message', __('Client successfully added'));
 
         return redirect()->route('clients.index');
     }
@@ -264,6 +272,16 @@ class ClientsController extends Controller
         $filesystemIntegration = Integration::whereApiType('file')->first();
         $storageClass          = GetStorageProvider::providerClassFromIntegration($filesystemIntegration);
 
+        // clients/show.blade.php only shows the Documents tab (and thus any
+        // already-uploaded documents) when this is truthy. GetStorageProvider's
+        // own storage-selection logic already treats local/testing environments
+        // as having usable storage even with no Integration row configured — the
+        // view's gate needs to agree, or uploaded documents become permanently
+        // inaccessible through the UI on any environment without one.
+        $hasFileStorage = $filesystemIntegration !== null
+            || app()->environment('testing')
+            || (app()->environment('local') && config('storage.force_local', true));
+
         // Use already eager-loaded collections to avoid duplicate queries
         $filteredDocuments = $client->documents->filter(
             fn ($document) => $document->integration_type === $storageClass
@@ -277,10 +295,10 @@ class ClientsController extends Controller
 
         return view('clients.show')
             ->withClient($client)
-            ->withCompanyname(Setting::first()->company)
+            ->withCompanyname(Setting::first()?->company ?? 'Daybyday')
             ->withInvoices($this->clientService->getInvoices($client))
             ->withUsers(User::with('department')->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('filesystem_integration', $filesystemIntegration)
+            ->with('filesystem_integration', $hasFileStorage)
             ->with('documents', $filteredDocuments)
             ->with('lead_statuses', Status::typeOfLead()->get())
             ->with('task_statuses', Status::typeOfTask()->get())

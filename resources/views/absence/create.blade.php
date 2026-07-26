@@ -98,32 +98,37 @@
 
 @push('scripts')
     <script>
-        $('#user-search-select').selectpicker();
-        $endDateInput = $('#end_date').pickadate({
-            hiddenName:true,
-            format: "{{frontendDate()}}",
-            formatSubmit: 'yyyy/mm/dd',
-            min: true,
-            clear: false,
-        });
+        if ($('#user-search-select').length) {
+            $('#user-search-select').selectpicker();
+        }
 
-        let endDatePicker = $endDateInput.pickadate('picker')
+        if ($('#end_date').length && $('#start_date').length) {
+            $endDateInput = $('#end_date').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                min: true,
+                clear: false,
+            });
 
-        $startDateInput = $('#start_date').pickadate({
-            hiddenName:true,
-            format: "{{frontendDate()}}",
-            formatSubmit: 'yyyy/mm/dd',
-            clear: false,
-            style: "background:#fff",
-            onSet: function(context) {
-                let minDate = new Date(context.select)
-                if(minDate > new Date(endDatePicker.get('select', 'yyyy/mm/dd'))) {
-                    endDatePicker.set('select', minDate)
+            let endDatePicker = $endDateInput.pickadate('picker')
+
+            $startDateInput = $('#start_date').pickadate({
+                hiddenName:true,
+                format: "{{frontendDate()}}",
+                formatSubmit: 'yyyy/mm/dd',
+                clear: false,
+                style: "background:#fff",
+                onSet: function(context) {
+                    let minDate = new Date(context.select)
+                    if(minDate > new Date(endDatePicker.get('select', 'yyyy/mm/dd'))) {
+                        endDatePicker.set('select', minDate)
+                    }
+                    endDatePicker.set('min', minDate)
                 }
-                endDatePicker.set('min', minDate)
-            }
-        });
-        let startDatePicker = $startDateInput.pickadate('picker')
+            });
+            let startDatePicker = $startDateInput.pickadate('picker')
+        }
 
         $('#reason').change(function() {
             if ($(this).val() === 'sick_leave') {

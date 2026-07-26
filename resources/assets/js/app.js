@@ -17,7 +17,6 @@ import ElementUI from 'element-ui';
 import graphline from './components/Graphline.vue';
 import doughnut from './components/Doughnut.vue';
 import calendar from './components/Calendar.vue';
-import message from './components/Message.vue';
 import search from './components/Search.vue';
 import dynamictable from './components/DynamicTable.vue';
 import invoiceLineModal from './components/InvoiceLineModal.vue';
@@ -54,11 +53,20 @@ $("#collapse1").click(function () {
 //Sidebar menu
 $(document).ready(function () {
     // Desktop Nav Collapse
-    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function () {
+    $('body').on('click', '#menu-toggle, .menu-txt-toggle', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         $("#wrapper").toggleClass("myNavmenu-icons");
         $("#myNavmenu .panel .list-group-item").addClass("collapsed");
         $("#myNavmenu .collapse").removeClass("in");
         $('#myNavmenu i.sidebar-arrow').removeClass("arrow-down").addClass("arrow-side");
+    });
+
+    // Close desktop sidebar when clicking content
+    $('#page-content-wrapper').click(function (e) {
+        if ($("#wrapper").hasClass("myNavmenu-icons")) {
+            $("#wrapper").removeClass("myNavmenu-icons");
+        }
     });
 
     // Mobile Nav Toggle
@@ -152,34 +160,46 @@ $(window).on('resize', function () {
     }
 });
 
-$('.search-select')
-    .dropdown({
-        direction: 'upward'
-    })
-;
+if (typeof $.fn.dropdown === 'function') {
+    $('.search-select')
+        .dropdown({
+            direction: 'upward'
+        });
+}
 
 Vue.prototype.trans = (key) => {
     return _.get(window.trans, key, key);
 };
 
-var app = new Vue({
-    el: '#wrapper',
-    components: {
-        graphline,
-        doughnut,
-        message,
-        passportclients,
-        passportauthorizedclients,
-        passportpersonalaccesstokens,
-        search,
-        dynamictable,
-        calendar,
-        invoiceLineModal
-    },
-    //Used for global accessibilty to reload page on events
-    methods: {
-        reload: function () {
-            location.reload();
-        }
-    }
+// Each of these custom tags is mounted as its own small, independent Vue
+// root instance, scoped to just that element - NOT one big instance
+// mounted on #wrapper (which used to be the plan). Mounting on #wrapper
+// would make Vue compile the *entire* page as an in-DOM template and
+// replace all of it with freshly-created DOM nodes on first render,
+// which destroys every jQuery plugin binding already attached to the
+// original nodes by the time this (deferred/module) script runs -
+// summernote, pickadate, DataTables, dropzone, bootstrap-select, atwho
+// all initialize earlier, as classic blocking scripts. Mounting narrowly
+// on only the elements that actually need Vue leaves all of that
+// jQuery-managed DOM completely untouched.
+var vueComponents = {
+    graphline,
+    doughnut,
+    passportclients,
+    passportauthorizedclients,
+    passportpersonalaccesstokens,
+    search,
+    dynamictable,
+    calendar,
+    invoiceLineModal
+};
+Object.keys(vueComponents).forEach(function (tagName) {
+    // Component names here are already all-lowercase, so this matches the
+    // camelCase-registered `invoiceLineModal` to its kebab-case usage in
+    // templates (<invoice-line-modal>) the same way Vue's own template
+    // compiler would.
+    var selector = tagName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    document.querySelectorAll(selector).forEach(function (el) {
+        new Vue({ components: vueComponents }).$mount(el);
+    });
 });

@@ -42,16 +42,6 @@ class UpdateProjectStatusRequest extends FormRequest
         $validator->after(function ($validator) {
             $statusId = $this->status_id;
 
-            // Convert external ID to ID if provided
-            if ($this->statusExternalId && ! $statusId) {
-                $status = Status::whereExternalId($this->statusExternalId)->first();
-                if ($status) {
-                    $statusId = $status->id;
-                    // Merge resolved status_id back into request
-                    $this->merge(['status_id' => $statusId]);
-                }
-            }
-
             // Validate status belongs to Project
             if ($statusId) {
                 $validStatus = Status::typeOfProject()->where('id', $statusId)->exists();
@@ -60,5 +50,24 @@ class UpdateProjectStatusRequest extends FormRequest
                 }
             }
         });
+    }
+
+    /**
+     * Normalize input before validation.
+     *
+     * Resolving statusExternalId -> status_id here (rather than in withValidator's
+     * after() hook) matters: the Validator snapshots its data when it's built, so a
+     * merge() done inside after() never reaches validated() — validated('status_id')
+     * would come back null even though the external id resolved correctly, and the
+     * controller would then try to save a null status_id.
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('statusExternalId') && ! $this->has('status_id')) {
+            $status = Status::whereExternalId($this->input('statusExternalId'))->first();
+            if ($status) {
+                $this->merge(['status_id' => $status->id]);
+            }
+        }
     }
 }

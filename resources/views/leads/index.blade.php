@@ -3,6 +3,12 @@
     {{__('All Leads')}}
 @stop
 
+@section('actions')
+    @if(Entrust::can('lead-create'))
+        <a href="{{ route('leads.create') }}" class="btn btn-brand">@lang('Create Lead')</a>
+    @endif
+@stop
+
 @section('content')
     <table class="table table-hover" id="leads-table">
         <thead>
@@ -61,9 +67,11 @@
     }
     .table-actions {
         opacity: 0;
+        white-space: nowrap;
     }
     #leads-table tbody tr:hover .table-actions {
         opacity: 1;
+        display: flex;
     }
     .title-table-tab {
         width:260px;

@@ -2,26 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\InvoiceStatus;
-use App\Enums\OfferStatus;
 use App\Http\Requests\Offer\CreateOfferRequest;
 use App\Models\Client;
-use App\Models\Invoice;
-use App\Models\InvoiceLine;
 use App\Models\Lead;
 use App\Models\Offer;
-use App\Models\Product;
-use App\Services\InvoiceNumber\InvoiceNumberService;
+use App\Services\Offer\OfferService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
-use Ramsey\Uuid\Uuid;
 use Throwable;
 
 class OffersController extends Controller
 {
-    public function __construct()
+    public function __construct(private OfferService $offerService)
     {
         $this->middleware('permission:offer-create', ['only' => ['create']]);
         $this->middleware('permission:offer-edit', ['only' => ['update', 'won', 'lost']]);
@@ -36,21 +29,10 @@ class OffersController extends Controller
 
     public function update(Request $request, Offer $offer)
     {
-        $offer->invoiceLines()->forceDelete();
-        foreach ($request->all() as $line) {
-            if ( ! $line['title'] || ! $line['type'] || ! $line['price'] || ! $line['quantity']) {
-                return response('missing fields', 422);
-            }
-
-            $invoiceLine = InvoiceLine::make([
-                'title'      => $line['title'],
-                'type'       => $line['type'],
-                'quantity'   => $line['quantity'] ?: 1,
-                'comment'    => $line['comment'] ?? null,
-                'price'      => $line['price'] * 100,
-                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
-            ]);
-            $offer->invoiceLines()->save($invoiceLine);
+        try {
+            $this->offerService->replaceInvoiceLines($offer, $request->all());
+        } catch (InvalidArgumentException $exception) {
+            return response($exception->getMessage(), 422);
         }
     }
 
@@ -99,22 +81,11 @@ class OffersController extends Controller
     public function won(Request $request)
     {
         $offer = Offer::whereExternalId($request->get('offer_external_id'))->with('invoiceLines')->firstOrFail();
-        $offer->setAsWon();
+        $this->offerService->convertToInvoice($offer);
 
-        $invoice                 = Invoice::query()->create($offer->toArray());
-        $invoice->offer_id       = $offer->id;
-        $invoice->invoice_number = app(InvoiceNumberService::class)->setNextInvoiceNumber();
-        $invoice->status         = InvoiceStatus::draft()->getStatus();
-        $invoice->save();
-
-        $lines    = $offer->invoiceLines;
-        $newLines = collect();
-        foreach ($lines as $invoiceLine) {
-            $invoiceLine->offer_id = null;
-            $newLines->push(InvoiceLine::make($invoiceLine->toArray()));
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'OK'], 200);
         }
-
-        $invoice->invoiceLines()->saveMany($newLines);
 
         return redirect()->back();
     }
@@ -122,49 +93,18 @@ class OffersController extends Controller
     public function lost(Request $request)
     {
         $offer = Offer::whereExternalId($request->get('offer_external_id'))->firstOrFail();
-        $offer->setAsLost();
+        $this->offerService->markAsLost($offer);
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'OK'], 200);
+        }
 
         return redirect()->back();
     }
 
     private function createOfferForSource(CreateOfferRequest $request, int $sourceId, int $clientId, string $sourceType)
     {
-        if ( ! in_array($sourceType, [Lead::class, Client::class], true)) {
-            throw new InvalidArgumentException('Invalid offer source type provided');
-        }
-
-        DB::transaction(function () use ($clientId, $request, $sourceId, $sourceType): void {
-            $offer = Offer::query()->create([
-                'status'      => OfferStatus::inProgress()->getStatus(),
-                'client_id'   => $clientId,
-                'external_id' => Uuid::uuid4()->toString(),
-                'source_id'   => $sourceId,
-                'source_type' => $sourceType,
-            ]);
-
-            foreach ($request->validated() as $index => $line) {
-                $productId = null;
-                if (isset($line['product']) && $line['product']) {
-                    $productId = Product::whereExternalId($line['product'])->value('id');
-
-                    if ( ! $productId) {
-                        throw ValidationException::withMessages([
-                            $index . '.product' => __('Selected product was not found.'),
-                        ]);
-                    }
-                }
-
-                $invoiceLine = InvoiceLine::make([
-                    'title'      => $line['title'],
-                    'type'       => $line['type'],
-                    'quantity'   => $line['quantity'] ?: 1,
-                    'comment'    => $line['comment'] ?? null,
-                    'price'      => $line['price'] * 100,
-                    'product_id' => $productId,
-                ]);
-                $offer->invoiceLines()->save($invoiceLine);
-            }
-        });
+        $this->offerService->createForSource($request->validated(), $sourceId, $clientId, $sourceType);
 
         if ($request->expectsJson()) {
             return response()->json(['message' => 'OK'], 200);

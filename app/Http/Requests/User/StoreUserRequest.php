@@ -23,6 +23,10 @@ class StoreUserRequest extends FormRequest
      */
     public function rules()
     {
+        // "role"/"department" (singular) match both the actual <select> field names in
+        // the shared users/form.blade.php partial and UpdateUserRequest's rules. This
+        // used to require "roles"/"departments" (plural), which the form never sent —
+        // every real user-creation submission silently failed validation.
         return [
             'name'                  => ['required'],
             'email'                 => ['required', 'email'],
@@ -32,8 +36,8 @@ class StoreUserRequest extends FormRequest
             'password'              => ['required', 'min:6', 'confirmed'],
             'password_confirmation' => ['required', 'min:6'],
             'image_path'            => ['nullable', 'file'],
-            'roles'                 => ['required', 'integer', 'exists:roles,id'],
-            'departments'           => ['required', 'integer', 'exists:departments,id'],
+            'role'                  => ['required', 'integer', 'exists:roles,id'],
+            'department'            => ['required', 'integer', 'exists:departments,id'],
             'language'              => ['nullable', 'string', 'in:en,dk,es'],
         ];
     }

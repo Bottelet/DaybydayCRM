@@ -203,7 +203,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         /* Act */
-        $response = $this->json('POST', route('offer.won'), [
+        $response = $this->post(route('offer.won'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 
@@ -239,7 +239,7 @@ class OfferAuthorizationTest extends AbstractTestCase
         $this->userWithEditPermission = $this->userWithEditPermission->fresh();
 
         /* Act */
-        $response = $this->json('POST', route('offer.lost'), [
+        $response = $this->post(route('offer.lost'), [
             'offer_external_id' => $this->offer->external_id,
         ]);
 

@@ -88,13 +88,13 @@ class ProjectSecurityTest extends AbstractTestCase
         $this->withPermissions(PermissionName::PROJECT_UPDATE_STATUS);
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
+        $response = $this->patch(route('project.update.status', $this->project->external_id), [
             'statusExternalId' => 'invalid-uuid-12345',
-        ], ['X-Requested-With' => 'XMLHttpRequest']);
+        ], ['Accept' => 'application/json']);
 
         /* Assert */
-        $response->assertStatus(400)
-            ->assertJson(['error' => __('Invalid status')]);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['statusExternalId' => 'The selected status external id is invalid.']);
     }
 
     #[Test]
@@ -125,15 +125,16 @@ class ProjectSecurityTest extends AbstractTestCase
         $originalStatus = $this->project->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
-            'status_id' => $leadStatus->id,
-        ]);
+        $response = $this->from(route('projects.show', $this->project->external_id))
+            ->patch(route('project.update.status', $this->project->external_id), [
+                'status_id' => $leadStatus->id,
+            ]);
         $this->project->refresh();
 
         /* Assert */
         $this->assertEquals($originalStatus, $this->project->status_id);
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));
+        $response->assertRedirect(route('projects.show', $this->project->external_id));
+        $response->assertSessionHasErrors(['status_id' => __('Invalid status for project')]);
     }
 
     #[Test]
@@ -145,14 +146,15 @@ class ProjectSecurityTest extends AbstractTestCase
         $originalStatus = $this->project->status_id;
 
         /* Act */
-        $response = $this->json('PATCH', route('project.update.status', $this->project->external_id), [
-            'status_id' => 999999,
-        ]);
+        $response = $this->from(route('projects.show', $this->project->external_id))
+            ->patch(route('project.update.status', $this->project->external_id), [
+                'status_id' => 999999,
+            ]);
         $this->project->refresh();
 
         /* Assert */
         $this->assertEquals($originalStatus, $this->project->status_id);
-        $response->assertRedirect();
-        $response->assertSessionHas('flash_message_warning', __('Invalid status for project'));
+        $response->assertRedirect(route('projects.show', $this->project->external_id));
+        $response->assertSessionHasErrors(['status_id' => __('The selected status id is invalid.')]);
     }
 }

@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Appointment\UpdateAppointmentCalendarRequest;
 use App\Models\Appointment;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Services\Appointment\AppointmentService;
 use Throwable;
 
 class AppointmentsController extends Controller
 {
+    public function __construct(private AppointmentService $appointmentService)
+    {
+        $this->middleware('permission:calendar-view', ['only' => ['calendar']]);
+        $this->middleware('permission:appointment-edit', ['only' => ['update']]);
+        $this->middleware('permission:appointment-delete', ['only' => ['destroy']]);
+    }
+
     public function calendar()
     {
-        if ( ! auth()->user()->can('calendar-view')) {
-            session()->flash('flash_message_warning', __('You do not have permission to view this page'));
-
-            return redirect()->back();
-        }
-
         return view('appointments.calendar');
     }
 
@@ -32,11 +33,10 @@ class AppointmentsController extends Controller
     public function update(UpdateAppointmentCalendarRequest $request, Appointment $appointment)
     {
         try {
-            // Parse the timestamps directly - they're already in the correct format
-            // Don't convert timezone as that would shift the time
-            $appointment->start_at = Carbon::parse($request->start);
-            $appointment->end_at   = Carbon::parse($request->end);
-            $assignee              = User::query()->where('external_id', $request->group)->first();
+            // Assignee existence is validated here (not in the service) because
+            // a missing assignee is a request-validation-shaped 400/redirect
+            // response, not something the service should decide how to render.
+            $assignee = User::query()->where('external_id', $request->group)->first();
 
             if ( ! $assignee) {
                 $message = __('Selected assignee was not found.');
@@ -51,8 +51,7 @@ class AppointmentsController extends Controller
                 return redirect()->back()->withInput()->withErrors(['group' => $message]);
             }
 
-            $appointment->user()->associate($assignee);
-            $appointment->save();
+            $this->appointmentService->updateAppointmentTime($appointment, $request->start, $request->end, $assignee->external_id);
         } catch (Throwable $exception) {
             report($exception);
 
@@ -68,11 +67,7 @@ class AppointmentsController extends Controller
 
     public function destroy(Appointment $appointment)
     {
-        if ( ! auth()->user()->can('appointment-delete')) {
-            return response('Access denied', 403);
-        }
-
-        $deleted = $appointment->delete();
+        $deleted = $this->appointmentService->deleteAppointment($appointment);
         if ($deleted) {
             return response('Success');
         }

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PermissionName;
 use App\Enums\ProjectStatus;
 use App\Events\TaskAction;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskAssignRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Requests\Task\UpdateTaskStatusRequest;
 use App\Models\Client;
 use App\Models\Document;
 use App\Models\Integration;
@@ -22,6 +25,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 use Yajra\DataTables\Facades\DataTables;
@@ -70,7 +74,7 @@ class TasksController extends Controller
     public function index()
     {
         return view('tasks.index')
-            ->withStatuses(Status::typeOfTask()->get());
+            ->withStatuses(Status::typeOfTask()->get()->unique('title'));
     }
 
     public function anyData()
@@ -81,11 +85,40 @@ class TasksController extends Controller
                     return (new Task())->qualifyColumn($field);
                 })
                 ->all()
-        );
+        )
+            ->leftJoin('statuses', 'tasks.status_id', '=', 'statuses.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id')
+            ->leftJoin('users', 'tasks.user_assigned_id', '=', 'users.id')
+            ->orderBy('tasks.deadline', 'desc')
+            ->orderBy('statuses.title', 'asc')
+            ->orderBy('clients.company_name', 'asc')
+            ->orderBy('users.name', 'asc');
 
         return DataTables::of($tasks)
+            ->filterColumn('client', function ($query, $keyword) {
+                $query->whereHas('client', function ($q) use ($keyword) {
+                    $q->where('company_name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('user_assigned_id', function ($query, $keyword) {
+                $query->whereHas('user', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
+            ->filterColumn('status.title', function ($query, $keyword) {
+                if (str_starts_with($keyword, '^') && str_ends_with($keyword, '$')) {
+                    $cleanKeyword = mb_substr($keyword, 1, -1);
+                    $query->whereHas('status', function ($q) use ($cleanKeyword) {
+                        $q->where('title', '=', $cleanKeyword);
+                    });
+                } else {
+                    $query->whereHas('status', function ($q) use ($keyword) {
+                        $q->where('title', 'like', "%{$keyword}%");
+                    });
+                }
+            })
             ->addColumn('titlelink', function ($task) {
-                return '<a href="' . route('tasks.show', [$task->external_id]) . '">' . $task->title . '</a>';
+                return '<a href="' . route('tasks.show', [$task->external_id]) . '">' . e($task->title) . '</a>';
             })
             ->editColumn('client', function ($task) {
                 return $task->client ? $task->client->company_name : '';
@@ -120,6 +153,9 @@ class TasksController extends Controller
         $projects = null;
         $client   = $client_external_id ? Client::whereExternalId($client_external_id)->first() : null;
         $project  = Project::whereExternalId($project_external_id)->first();
+        if ( ! $client && $project) {
+            $client = $project->client;
+        }
         if ($client) {
             $projects = $client->projects()->whereHas('status', function ($q) {
                 return $q->whereRaw('LOWER(title) != ?', [mb_strtolower(ProjectStatus::CLOSED->value)]);
@@ -128,11 +164,11 @@ class TasksController extends Controller
 
         return view('tasks.create')
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->withClients(Client::query()->pluck('company_name', 'external_id'))
+            ->withClients(Client::query()->orderBy('company_name')->pluck('company_name', 'external_id'))
             ->withClient($client)
             ->withProjects($projects ?: null)
             ->withProject($project ?: null)
-            ->withStatuses(Status::typeOfTask()->pluck('title', 'id'))
+            ->withStatuses(Status::typeOfTask()->get()->unique('title')->pluck('title', 'id'))
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
     }
 
@@ -163,8 +199,38 @@ class TasksController extends Controller
             }
         }
 
+        // Flash before the JSON early-return: the real browser create form submits
+        // via AJAX (expectsJson() is true, see the dropzone/AJAX hack below) and
+        // then does a client-side redirect to the show page, so the flash must be
+        // set here to survive that navigation.
+        session()->flash('flash_message', __('Task created'));
+
         // Hack to make dropzone js work, as it only called with AJAX and not form submit
-        return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
+        if ($request->expectsJson()) {
+            return response()->json(['task_external_id' => $task->external_id, 'project_external_id' => $task->project ? $task->project->external_id : null]);
+        }
+
+        return redirect()->route('tasks.index');
+    }
+
+    public function edit($external_id)
+    {
+        if ( ! auth()->user()->can(PermissionName::TASK_UPDATE->value)) {
+            session()->flash('flash_message_warning', __('You do not have permission to update tasks'));
+
+            return redirect()->route('tasks.show', $external_id);
+        }
+
+        return view('tasks.edit')->withTask($this->findByExternalId($external_id));
+    }
+
+    public function update($external_id, UpdateTaskRequest $request)
+    {
+        $task = $this->findByExternalId($external_id);
+        $this->taskService->update($task, $request->validated());
+        session()->flash('flash_message', __('Task successfully updated'));
+
+        return redirect()->route('tasks.show', $task->external_id);
     }
 
     public function destroy(Task $task, Request $request)
@@ -210,8 +276,8 @@ class TasksController extends Controller
         return view('tasks.show')
             ->withTasks($task)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('company_name', Setting::first()->company ?? '')
-            ->withStatuses(Status::typeOfTask()->pluck('title', 'id'))
+            ->with('company_name', Setting::cached()->company ?? '')
+            ->withStatuses(Status::typeOfTask()->get()->unique('title')->pluck('title', 'id'))
             ->withProjects($task->client ? $task->client->projects()->pluck('title', 'external_id') : collect())
             ->withFiles($task->documents)
             ->with('filesystem_integration', Integration::whereApiType('file')->first());
@@ -223,47 +289,10 @@ class TasksController extends Controller
      * If Auth and user_id allow complete else redirect back if all allowed excute
      * else stmt
      */
-    public function updateStatus($external_id, Request $request)
+    public function updateStatus($external_id, UpdateTaskStatusRequest $request)
     {
-        if ( ! auth()->user()->can('task-update-status')) {
-            session()->flash('flash_message_warning', __('You do not have permission to change task status'));
-
-            return redirect()->route('tasks.show', $external_id);
-        }
-        $input = $request->only(['status_id', 'statusExternalId']);
-        // Accept status_id or statusExternalId (AJAX)
-        if (isset($input['statusExternalId'])) {
-            $status = Status::whereExternalId($input['statusExternalId'])->first();
-            if ( ! $status) {
-                if ($request->expectsJson()) {
-                    return response()->json(['error' => 'Invalid status external id'], 400);
-                }
-                session()->flash('flash_message_warning', __('Invalid status external id'));
-
-                return redirect()->back();
-            }
-            $input['status_id'] = $status->id;
-        }
-        if ( ! isset($input['status_id']) || ! is_numeric($input['status_id'])) {
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Invalid status id'], 400);
-            }
-            session()->flash('flash_message_warning', __('Invalid status id'));
-
-            return redirect()->back();
-        }
-        // Validate that the status_id belongs to task statuses
-        $validStatus = Status::typeOfTask()->where('id', $input['status_id'])->exists();
-        if ( ! $validStatus) {
-            session()->flash('flash_message_warning', __('Invalid status for task'));
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Invalid status for task'], 400);
-            }
-
-            return redirect()->back();
-        }
         $task            = $this->findByExternalId($external_id);
-        $task->status_id = $input['status_id'];
+        $task->status_id = $request->validated('status_id');
         $task->save();
         event(new TaskAction($task, self::UPDATED_STATUS));
         session()->flash('flash_message', __('Task status is updated'));
@@ -357,8 +386,6 @@ class TasksController extends Controller
      */
     public function marked()
     {
-        Notifynder::readAll(Auth::id());
-
         return redirect()->back();
     }
 
@@ -370,7 +397,7 @@ class TasksController extends Controller
             return redirect()->route('tasks.show', $task->external_id);
         }
         $file        = $image;
-        $filename    = str_random(8) . '_' . $file->getClientOriginalName();
+        $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
         $size       = $file->getClientSize();

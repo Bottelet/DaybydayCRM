@@ -72,7 +72,7 @@ class PagesController extends Controller
             ->withTotalLeads(Lead::count())
             ->withTotalProjects(Project::count())
             ->withTotalClients(Client::count())
-            ->withSettings(Setting::first())
+            ->withSettings(Setting::cached())
             ->withAbsencesToday($absences);
     }
 }

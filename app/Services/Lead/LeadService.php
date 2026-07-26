@@ -45,6 +45,13 @@ class LeadService
         $lead->save();
     }
 
+    public function update(Lead $lead, array $validated): void
+    {
+        $lead->title       = $validated['title'];
+        $lead->description = clean($validated['description']);
+        $lead->save();
+    }
+
     public function updateFollowup(Lead $lead, string $deadline, string $contactTime): void
     {
         $lead->deadline = Carbon::parse($this->buildDeadline($deadline, $contactTime))->format('Y-m-d H:i:s');

@@ -68,6 +68,20 @@ class Handler extends ExceptionHandler
             );
         }
 
+        // FormRequest::authorize() returning false throws this directly (not
+        // wrapped in an HttpException until Laravel's own handler converts
+        // it), which would otherwise fall through to a generic 403 error
+        // page instead of the flash+redirect-back pattern the rest of the
+        // app uses for permission denials.
+        if ($exception instanceof AuthorizationException && ! $request->expectsJson()) {
+            session()->flash(
+                'flash_message_warning',
+                $exception->getMessage() ?: __('You are not authorized to perform this action.')
+            );
+
+            return redirect()->back();
+        }
+
         return parent::render($request, $exception);
     }
 

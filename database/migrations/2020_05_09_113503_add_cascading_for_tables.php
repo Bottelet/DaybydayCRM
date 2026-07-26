@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class AddCascadingForTables extends Migration
@@ -13,18 +14,26 @@ class AddCascadingForTables extends Migration
      */
     public function up()
     {
-        Schema::table('comments', static function (Blueprint $table) {
-            $table->dropForeign('comments_user_id_foreign');
+        $isSqlite = DB::getDriverName() === 'sqlite';
+
+        Schema::table('comments', static function (Blueprint $table) use ($isSqlite) {
+            if ( ! $isSqlite) {
+                $table->dropForeign('comments_user_id_foreign');
+            }
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
-        Schema::table('tasks', static function (Blueprint $table) {
-            $table->dropForeign('tasks_project_id_foreign');
-            $table->dropForeign('tasks_invoice_id_foreign');
-            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
+        Schema::table('tasks', static function (Blueprint $table) use ($isSqlite) {
+            if ( ! $isSqlite) {
+                $table->dropForeign('tasks_project_id_foreign');
+                $table->dropForeign('tasks_invoice_id_foreign');
+                $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('set null');
+            }
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
         });
-        Schema::table('payments', static function (Blueprint $table) {
-            $table->dropForeign('payments_invoice_id_foreign');
+        Schema::table('payments', static function (Blueprint $table) use ($isSqlite) {
+            if ( ! $isSqlite) {
+                $table->dropForeign('payments_invoice_id_foreign');
+            }
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
         });
     }

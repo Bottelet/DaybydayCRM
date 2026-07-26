@@ -20,7 +20,7 @@ class ProjectFactory extends \Illuminate\Database\Eloquent\Factories\Factory
             'user_created_id'  => User::factory(),
             'user_assigned_id' => User::factory(),
             'client_id'        => Client::factory(),
-            'status_id'        => Status::factory(),
+            'status_id'        => Status::where('source_type', Project::class)->inRandomOrder()->first()?->id ?? Status::factory()->create(['source_type' => Project::class])->id,
             'deadline'         => $this->faker->dateTimeThisYear($max = 'now'),
             'created_at'       => $this->faker->dateTimeThisYear($max = 'now'),
             'updated_at'       => $this->faker->dateTimeThisYear($max = 'now'),

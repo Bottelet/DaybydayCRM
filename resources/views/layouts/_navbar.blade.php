@@ -1,11 +1,14 @@
-<!-- DESKTOP NAV --->
+{{-- DESKTOP NAV --}}
+{{-- The click handler for this button lives in master.blade.php, outside the
+     Vue-mounted #wrapper subtree — Vue's compiler drops <script> tags found
+     inside its own in-DOM template, so one placed here would never run. --}}
 <button type="button" id="menu-toggle" class="navbar-toggle menu-txt-toggle" style="">
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
 </button>
 
-<!-- MOBILE NAV -->
+{{-- MOBILE NAV --}}
 <button type="button" id="mobile-toggle" class="mobile-toggle mobile-nav" data-toggle="offcanvas"
         data-target="#myNavmenu">
     <span class="icon-bar"></span>
