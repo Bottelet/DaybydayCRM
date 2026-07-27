@@ -105,12 +105,10 @@ services:
       - service_net
 
   redis:
-    image: 'bitnami/redis:7.4'
+    image: 'redis:7-alpine'
     container_name: redisMain
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
     volumes:
-      - redisdata:/bitnami/redis/data
+      - redisdata:/data
     ports:
       - 6379:6379
     networks:

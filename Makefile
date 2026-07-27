@@ -55,11 +55,13 @@ DOCKER_EXEC    := docker exec -t --user=$(DOCKER_USER) $$(docker ps -aqf "name=$
 
 # Run a specific test from host: make dtest f=ProjectsControllerTest
 dtest:
-	@$(DOCKER_EXEC) vendor/bin/phpunit --exclude-group flaky --stop-on-failure $(if $(f),--filter $(f),)
+	@$(DOCKER_EXEC) bash -c 'test -f .env.testing || cp .env.testing.example .env.testing'
+	@$(DOCKER_EXEC) bash -c 'unset CACHE_STORE; APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure $(if $(f),--filter $(f),)'
 
 # Run all tests until first failure: make dfail
 dfail:
-	@$(DOCKER_EXEC) vendor/bin/phpunit --exclude-group flaky --stop-on-failure
+	@$(DOCKER_EXEC) bash -c 'test -f .env.testing || cp .env.testing.example .env.testing'
+	@$(DOCKER_EXEC) bash -c 'unset CACHE_STORE; APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure'
 
 # Quick shell access: make dsh
 dsh:
@@ -95,11 +97,19 @@ e2e-install:
 	yarn install --frozen-lockfile
 	yarn run e2e:install
 
+# e2e-* targets run Playwright's browser inside this container, where "nginx" is
+# the reachable host, unlike the "localhost" that docker-compose.env's APP_URL
+# uses for a human browsing from outside on the host.
+# APP_URL must match too: AppServiceProvider calls URL::forceRootUrl(config('app.url'))
+# outside the testing env, so login/redirect targets would otherwise resolve to
+# this container's own loopback (nothing listens on :80 there) instead of nginx.
+E2E_ENV := PLAYWRIGHT_BASE_URL=http://nginx APP_URL=http://nginx
+
 e2e-test:
 	@if [ "$(STOP_ON_FAILURE)" = "true" ]; then \
-		yarn run test:e2e:stop-on-failure -- $(E2E_ARGS); \
+		$(E2E_ENV) yarn run test:e2e:stop-on-failure -- $(E2E_ARGS); \
 	else \
-		yarn run test:e2e -- $(E2E_ARGS); \
+		$(E2E_ENV) yarn run test:e2e -- $(E2E_ARGS); \
 	fi
 
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
@@ -107,13 +117,13 @@ e2e-test:
 e2e-test-one:
 	@test -n "$(E2E_SPEC)" || { echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'"; exit 1; }
 	@if [ "$(STOP_ON_FAILURE)" = "true" ]; then \
-		yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
+		$(E2E_ENV) yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
 	else \
-		yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS); \
+		$(E2E_ENV) yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS); \
 	fi
 # Run Playwright tests, stop on first failure: make e2e-fail
 e2e-fail:
-	yarn run test:e2e:stop-on-failure -- $(E2E_ARGS)
+	$(E2E_ENV) yarn run test:e2e:stop-on-failure -- $(E2E_ARGS)
 
 e2e-list:
 	yarn run test:e2e:list
@@ -123,26 +133,37 @@ clear:
 
 # --- Standard Testing ---
 
-phpunit:
-	vendor/bin/phpunit
+# .env.testing is gitignored (local dev keys/passwords shouldn't get
+# overwritten by every checkout); regenerate it from .env.testing.example,
+# mirroring the "Prepare .env" step in .github/workflows/phpunit.yml.
+env-testing:
+	@test -f .env.testing || cp .env.testing.example .env.testing
 
-test:
-	APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure --stop-on-error
+# CACHE_STORE is exported into the container's real environment (docker-compose.env)
+# so normal browsing hits Redis; Laravel's dotenv never overrides an already-set
+# env var, so .env.testing's CACHE_STORE=array would otherwise be ignored here.
+# DB_HOST etc. are intentionally left alone: inside this container "db" is the
+# real MySQL host, unlike .env.testing.example's 127.0.0.1 (correct for CI/host runs).
+phpunit: env-testing
+	@unset CACHE_STORE; vendor/bin/phpunit
 
-test-fail:
-	APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure
+test: env-testing
+	@unset CACHE_STORE; APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure --stop-on-error
+
+test-fail: env-testing
+	@unset CACHE_STORE; APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --stop-on-failure
 
 # Usage: make test-filter f=SomeTest
-test-filter:
-	APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --filter $(f) --stop-on-failure --stop-on-error
+test-filter: env-testing
+	@unset CACHE_STORE; APP_ENV=testing vendor/bin/phpunit --exclude-group flaky --filter $(f) --stop-on-failure --stop-on-error
 
 # --- Parallel Testing (Inside Container) ---
 
-paratest:
-	APP_ENV=testing vendor/bin/paratest --exclude-group flaky -p16 > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
+paratest: env-testing
+	@unset CACHE_STORE; APP_ENV=testing vendor/bin/paratest --exclude-group flaky -p16 > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
 
-parafail:
-	APP_ENV=testing vendor/bin/paratest --exclude-group flaky -p16 --stop-on-failure > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
+parafail: env-testing
+	@unset CACHE_STORE; APP_ENV=testing vendor/bin/paratest --exclude-group flaky -p16 --stop-on-failure > phpunit-testdox.log 2>&1 || (cat phpunit-testdox.log >&2; exit 1)
 
 # --- Docker Compose (Host Level) ---
 
