@@ -72,17 +72,22 @@ class ClientsController extends Controller
         $clients = $this->clientService->getClientsForDataTable();
 
         return Datatables::of($clients)
-            ->addColumn('namelink', '<a href="{{ route("clients.show",[$external_id]) }}">{{$company_name}}</a>')
-            ->addColumn('view', '
-                <a href="{{ route(\'clients.show\', $external_id) }}" class="btn btn-link" >' . __('View') . '</a>')
-            ->addColumn('edit', '
-                <a href="{{ route(\'clients.edit\', $external_id) }}" class="btn btn-link" >' . __('Edit') . '</a>')
-            ->addColumn('delete', '
-                <form action="{{ route(\'clients.destroy\', $external_id) }}" method="POST">
+            ->addColumn('namelink', function ($clients) {
+                return '<a href="' . route('clients.show', [$clients->external_id]) . '">' . e($clients->company_name) . '</a>';
+            })
+            ->addColumn('view', function ($clients) {
+                return '<a href="' . route('clients.show', $clients->external_id) . '" class="btn btn-link">' . __('View') . '</a>';
+            })
+            ->addColumn('edit', function ($clients) {
+                return '<a href="' . route('clients.edit', $clients->external_id) . '" class="btn btn-link">' . __('Edit') . '</a>';
+            })
+            ->addColumn('delete', function ($clients) {
+                return '<form action="' . route('clients.destroy', $clients->external_id) . '" method="POST">
             <input type="hidden" name="_method" value="DELETE">
             <input type="submit" name="submit" value="' . __('Delete') . '" class="btn btn-link" onClick="return confirm(\'Are you sure? All the clients tasks, leads, projects, etc will be deleted as well\')"">
-            {{csrf_field()}}
-            </form>')
+            ' . csrf_field() . '
+            </form>';
+            })
             ->rawColumns(['namelink', 'view', 'edit', 'delete'])
             ->make(true);
     }
@@ -93,7 +98,9 @@ class ClientsController extends Controller
         $tasks  = $this->clientService->getTasksWithRelations($client);
 
         return Datatables::of($tasks)
-            ->addColumn('titlelink', '<a href="{{ route("tasks.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($tasks) {
+                return '<a href="' . route('tasks.show', [$tasks->external_id]) . '">' . e($tasks->title) . '</a>';
+            })
             ->editColumn('created_at', function ($tasks) {
                 return $tasks->created_at ? with(new Carbon($tasks->created_at))
                     ->format(carbonDate()) : '';
@@ -118,7 +125,9 @@ class ClientsController extends Controller
         $projects = $this->clientService->getProjectsWithRelations($client);
 
         return Datatables::of($projects)
-            ->addColumn('titlelink', '<a href="{{ route("projects.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($projects) {
+                return '<a href="' . route('projects.show', [$projects->external_id]) . '">' . e($projects->title) . '</a>';
+            })
             ->editColumn('created_at', function ($projects) {
                 return $projects->created_at ? with(new Carbon($projects->created_at))
                     ->format(carbonDate()) : '';
@@ -143,7 +152,9 @@ class ClientsController extends Controller
         $leads  = $this->clientService->getLeadsWithRelations($client);
 
         return Datatables::of($leads)
-            ->addColumn('titlelink', '<a href="{{ route("leads.show",[$external_id]) }}">{{$title}}</a>')
+            ->addColumn('titlelink', function ($leads) {
+                return '<a href="' . route('leads.show', [$leads->external_id]) . '">' . e($leads->title) . '</a>';
+            })
             ->editColumn('created_at', function ($leads) {
                 return $leads->created_at ? with(new Carbon($leads->created_at))
                     ->format(carbonDate()) : '';
