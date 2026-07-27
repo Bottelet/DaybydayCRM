@@ -203,6 +203,10 @@ class ProjectsController extends Controller
         $this->projectService->update($project, $request->validated());
         session()->flash('flash_message', __('Project successfully updated'));
 
+        if ($request->expectsJson()) {
+            return response()->json(['message' => __('Project successfully updated'), 'project_external_id' => $project->external_id]);
+        }
+
         return redirect()->route('projects.show', $project->external_id);
     }
 

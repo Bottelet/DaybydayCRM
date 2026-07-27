@@ -60,7 +60,9 @@ class AlterInvoicesTableAddSource extends Migration
                 product_id VARCHAR,
                 created_at TIMESTAMP,
                 updated_at TIMESTAMP,
-                deleted_at TIMESTAMP
+                deleted_at TIMESTAMP,
+                FOREIGN KEY (invoice_id) REFERENCES invoices(id),
+                FOREIGN KEY (offer_id) REFERENCES offers(id)
             )');
             DB::statement('INSERT INTO invoice_lines_new (id, external_id, title, comment, price, invoice_id, type, quantity, product_id, created_at, updated_at, deleted_at) SELECT id, external_id, title, comment, price, invoice_id, type, quantity, product_id, created_at, updated_at, deleted_at FROM invoice_lines');
             DB::statement('DROP TABLE invoice_lines');

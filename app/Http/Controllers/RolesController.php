@@ -19,7 +19,7 @@ class RolesController extends Controller
      */
     public function __construct(private RoleService $roleService)
     {
-        $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'store', 'update']]);
+        $this->middleware('user.is.admin', ['only' => ['index', 'create', 'destroy', 'show', 'store', 'update', 'indexData']]);
         $this->middleware('is.demo', ['except' => ['index', 'create', 'show', 'indexData']]);
     }
 

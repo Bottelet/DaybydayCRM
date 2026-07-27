@@ -276,7 +276,7 @@ class TasksController extends Controller
         return view('tasks.show')
             ->withTasks($task)
             ->withUsers(User::with(['department'])->get()->pluck('nameAndDepartmentEagerLoading', 'id'))
-            ->with('company_name', Setting::cached()->company ?? '')
+            ->with('company_name', Setting::cached()?->company ?? '')
             ->withStatuses(Status::typeOfTask()->get()->unique('title')->pluck('title', 'id'))
             ->withProjects($task->client ? $task->client->projects()->pluck('title', 'external_id') : collect())
             ->withFiles($task->documents)
@@ -375,18 +375,6 @@ class TasksController extends Controller
     public function findByExternalId($external_id)
     {
         return Task::whereExternalId($external_id)->firstOrFail();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return mixed
-     *
-     * @internal param int $id
-     */
-    public function marked()
-    {
-        return redirect()->back();
     }
 
     private function upload($image, $task)

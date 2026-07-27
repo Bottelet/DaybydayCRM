@@ -4,7 +4,7 @@
    <h1>{{ $role->display_name }} <small>{{ __('Permission management') }}</small></h1>
 	<div class="row">
 	<div class="col-xs-12">
-    <form action="{{ url('roles/update', $role->external_id) }}" method="POST">
+    <form action="{{ route('roles.update', $role->external_id) }}" method="POST">
         @csrf
         @method('PATCH')
    @foreach($permissions_grouping as $permissions)

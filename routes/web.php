@@ -68,13 +68,13 @@ Route::group(['middleware' => ['auth']], static function () {
      */
     Route::group(['prefix' => 'roles'], static function () {
         Route::get('/data', [RolesController::class, 'indexData'])->name('roles.data');
-        Route::patch('/update/{external_id}', [RolesController::class, 'update']);
     });
     Route::get('roles', [RolesController::class, 'index'])->name('roles.index');
     Route::get('roles/create', [RolesController::class, 'create'])->name('roles.create');
     Route::post('roles', [RolesController::class, 'store'])->name('roles.store');
     Route::get('roles/{role}', [RolesController::class, 'show'])->name('roles.show');
     Route::get('roles/{role}/edit', [RolesController::class, 'edit'])->name('roles.edit');
+    Route::match(['put', 'patch'], 'roles/{role}', [RolesController::class, 'update'])->name('roles.update');
     Route::delete('roles/{role}', [RolesController::class, 'destroy'])->name('roles.destroy');
     /*
      * Clients

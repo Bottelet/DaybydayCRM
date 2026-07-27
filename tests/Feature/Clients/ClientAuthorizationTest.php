@@ -73,6 +73,20 @@ class ClientAuthorizationTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_denies_client_datatable_endpoints_without_client_view_permission(): void
+    {
+        /* Arrange */
+        $this->actingAs($this->userWithoutPermission);
+
+        /* Act & Assert */
+        $this->getJson(route('clients.data'))->assertStatus(403);
+        $this->getJson(route('clients.taskDataTable', $this->client->external_id))->assertStatus(403);
+        $this->getJson(route('clients.projectDataTable', $this->client->external_id))->assertStatus(403);
+        $this->getJson(route('clients.leadDataTable', $this->client->external_id))->assertStatus(403);
+        $this->getJson(route('clients.invoiceDataTable', $this->client->external_id))->assertStatus(403);
+    }
+
+    #[Test]
     public function it_redirects_user_without_client_create_permission_from_client_create_page(): void
     {
         /* Arrange */
