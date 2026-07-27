@@ -32,7 +32,7 @@ class RoleTest extends AbstractTestCase
 
         /* Act: gated by RedirectIfNotAdmin middleware (user.is.admin alias). */
         $response = $this->from(route('dashboard'))
-            ->patch("/roles/update/{$role->external_id}", [
+            ->patch(route('roles.update', $role->external_id), [
                 'name'         => 'hacked-role',
                 'display_name' => 'Hacked Role',
             ]);
@@ -45,6 +45,22 @@ class RoleTest extends AbstractTestCase
             'id'   => $role->id,
             'name' => 'hacked-role',
         ]);
+    }
+
+    #[Test]
+    public function it_unprivileged_user_cannot_access_roles_data(): void
+    {
+        /* Arrange */
+        /** @var User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        /* Act: gated by RedirectIfNotAdmin middleware (user.is.admin alias). */
+        $response = $this->from(route('dashboard'))->get(route('roles.data'));
+
+        /* Assert */
+        $response->assertRedirect(route('dashboard'))
+            ->assertSessionHas('flash_message_warning', __('Only Allowed for admins'));
     }
 
     #[Test]

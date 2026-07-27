@@ -237,7 +237,7 @@ class UsersController extends Controller
     public function store(StoreUserRequest $request, UserUpdateService $userUpdateService)
     {
         $settings = Setting::cached();
-        if (User::count() >= $settings->max_users) {
+        if ($settings === null || User::count() >= $settings->max_users) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => __('Max number of users reached')], 400);
             }
@@ -273,7 +273,7 @@ class UsersController extends Controller
 
         return view('users.show')
             ->withUser($user)
-            ->withCompanyname(Setting::cached()->company)
+            ->withCompanyname(Setting::cached()?->company ?? '')
             ->with('task_statistics', $user->totalOpenAndClosedTasks($external_id))
             ->with('lead_statistics', $user->totalOpenAndClosedLeads($external_id))
             ->with('lead_statuses', Status::typeOfLead()->get()->unique('title'))

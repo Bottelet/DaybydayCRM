@@ -47,7 +47,7 @@ class ClientsController extends Controller
             abort_unless(auth()->check() && auth()->user()->can('client-view'), 403);
 
             return $next($request);
-        }, ['only' => ['index', 'show']]);
+        }, ['only' => ['index', 'show', 'anyData', 'taskDataTable', 'projectDataTable', 'leadDataTable', 'invoiceDataTable']]);
         $this->middleware('client.create', ['only' => ['create']]);
         $this->middleware('client.update', ['only' => ['edit']]);
         $this->middleware('client.delete', ['only' => ['destroy']]);

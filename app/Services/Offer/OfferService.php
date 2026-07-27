@@ -89,20 +89,22 @@ class OfferService
             }
         }
 
-        $offer->invoiceLines()->forceDelete();
+        DB::transaction(function () use ($offer, $lines): void {
+            $offer->invoiceLines()->forceDelete();
 
-        foreach ($lines as $line) {
-            $product     = isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first() : null;
-            $invoiceLine = InvoiceLine::make([
-                'title'      => $line['title'],
-                'type'       => $line['type'],
-                'quantity'   => $line['quantity'] ?: 1,
-                'comment'    => $line['comment'] ?? null,
-                'price'      => $line['price'] * 100,
-                'product_id' => $product?->id,
-            ]);
-            $offer->invoiceLines()->save($invoiceLine);
-        }
+            foreach ($lines as $line) {
+                $product     = isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first() : null;
+                $invoiceLine = InvoiceLine::make([
+                    'title'      => $line['title'],
+                    'type'       => $line['type'],
+                    'quantity'   => $line['quantity'] ?: 1,
+                    'comment'    => $line['comment'] ?? null,
+                    'price'      => $line['price'] * 100,
+                    'product_id' => $product?->id,
+                ]);
+                $offer->invoiceLines()->save($invoiceLine);
+            }
+        });
     }
 
     /**

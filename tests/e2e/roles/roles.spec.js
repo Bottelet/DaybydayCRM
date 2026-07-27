@@ -60,7 +60,7 @@ test('updating role permissions redirects and role stays searchable', async ({ p
   expect(row?.external_id).toBeTruthy();
 
   const rolePath = `${BASE_URL}/roles/${row.external_id}`;
-  const updateResponse = await request.patch(`${BASE_URL}/roles/update/${row.external_id}`, {
+  const updateResponse = await request.patch(rolePath, {
     failOnStatusCode: false,
     maxRedirects: 0,
     headers: await jsonHeaders(page, { Referer: rolePath }),
@@ -81,7 +81,7 @@ test('updating malformed role id returns not found', async ({ page }) => {
   await loginAsAdmin(page);
   const request = page.context().request;
 
-  const response = await request.patch(`${BASE_URL}/roles/update/${malformedId}`, {
+  const response = await request.patch(`${BASE_URL}/roles/${malformedId}`, {
     failOnStatusCode: false,
     headers: await jsonHeaders(page),
     form: { permissions: [] },
