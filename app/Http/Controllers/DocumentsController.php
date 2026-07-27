@@ -126,9 +126,7 @@ class DocumentsController extends Controller
         $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
         $fileOrginal = $file->getClientOriginalName();
 
-        $size       = $file->getSize();
-        $mbsize     = $size / 1048576;
-        $totaltsize = mb_substr($mbsize, 0, 4);
+        $totaltsize = $this->sizeInMegabytes($file->getSize());
 
         if ($totaltsize > 15) {
             session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -152,6 +150,8 @@ class DocumentsController extends Controller
         ];
         Document::query()->create($input);
         session()->flash('flash_message', __('File successfully uploaded'));
+
+        return response()->json(['external_id' => $client->external_id], 200);
     }
 
     /**
@@ -181,9 +181,7 @@ class DocumentsController extends Controller
                 $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size       = $file->getSize();
-                $mbsize     = $size / 1048576;
-                $totaltsize = mb_substr($mbsize, 0, 4);
+                $totaltsize = $this->sizeInMegabytes($file->getSize());
 
                 if ($totaltsize > 15) {
                     session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -240,9 +238,7 @@ class DocumentsController extends Controller
                 $filename    = Str::random(8) . '_' . $file->getClientOriginalName();
                 $fileOrginal = $file->getClientOriginalName();
 
-                $size       = $file->getSize();
-                $mbsize     = $size / 1048576;
-                $totaltsize = mb_substr($mbsize, 0, 4);
+                $totaltsize = $this->sizeInMegabytes($file->getSize());
 
                 if ($totaltsize > 15) {
                     session()->flash('flash_message', __('File Size cannot be bigger than 15MB'));
@@ -388,5 +384,10 @@ class DocumentsController extends Controller
 
         // Check if user owns the client associated with the source
         return (bool) ($source->client && null !== $source->client->user_id && $source->client->user_id === $user->id);
+    }
+
+    private function sizeInMegabytes(int $bytes): float
+    {
+        return round($bytes / 1048576, 2);
     }
 }
