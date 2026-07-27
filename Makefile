@@ -43,12 +43,12 @@
 # -----------------------------------------------------------------------------
 
 # --- Configuration ---
-CONTAINER_NAME := workspace
-DOCKER_USER    := ivpldock
+CONTAINER_NAME := phpMain
+DOCKER_USER    := daybyday
 E2E_SPEC       ?=
 E2E_ARGS       ?=
 STOP_ON_FAILURE ?= false
-# Dynamic container lookup for Laradock-style naming
+# Dynamic container lookup, matches container_name in docker-compose.yml
 DOCKER_EXEC    := docker exec -t --user=$(DOCKER_USER) $$(docker ps -aqf "name=$(CONTAINER_NAME)")
 
 # --- Primary Entry Points (Host) ---
@@ -76,7 +76,9 @@ dseed:
 # --- Inside-Container Targets (Local PHP) ---
 
 install:
+	@test -f .env || cp .env.example .env
 	composer install
+	@grep -q '^APP_KEY=base64:' .env || php artisan key:generate --ansi
 
 mfs:
 	php artisan migrate:fresh --seed
@@ -103,10 +105,8 @@ e2e-test:
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js
 # Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js STOP_ON_FAILURE=true
 e2e-test-one:
-e2e-test-one:
-	`@test` -n "$(E2E_SPEC)" || { echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'"; exit 1; }
-	`@if` [ "$(STOP_ON_FAILURE)" = "true" ]; then \
-		yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
+	@test -n "$(E2E_SPEC)" || { echo "Usage: make e2e-test-one E2E_SPEC=tests/e2e/auth/auth.spec.js E2E_ARGS='--project=chromium'"; exit 1; }
+	@if [ "$(STOP_ON_FAILURE)" = "true" ]; then \
 		yarn run test:e2e:stop-on-failure -- $(E2E_SPEC) $(E2E_ARGS); \
 	else \
 		yarn run test:e2e:file -- $(E2E_SPEC) $(E2E_ARGS); \

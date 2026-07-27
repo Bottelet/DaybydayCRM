@@ -1,57 +1,57 @@
-FROM php:7.3-fpm
+FROM php:8.3-fpm
+
 MAINTAINER Casper Bottelet <cbottelet@gmail.com>
 
-# Update packages and install composer and PHP dependencies.
+# Install system dependencies
 RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    mariadb-client \
-    libmemcached-dev \
-    libpq-dev \
-    libzip-dev \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
-    libmcrypt-dev \
-    libbz2-dev \
-    cron \
-    nginx \
-    && pecl channel-update pecl.php.net \
-    && pecl install apcu
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        mariadb-client \
+        libmemcached-dev \
+        libpq-dev \
+        libzip-dev \
+        libonig-dev \
+        libicu-dev \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+        libbz2-dev \
+        unzip \
+    && pecl channel-update pecl.php.net
 
-# PHP Extensions
-RUN docker-php-ext-install bcmath
-RUN docker-php-ext-install zip 
-RUN docker-php-ext-install bz2 
-RUN docker-php-ext-install mbstring 
-RUN docker-php-ext-install pdo 
-RUN docker-php-ext-install pdo_mysql 
-RUN docker-php-ext-install pcntl
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-&& docker-php-ext-install gd
+# PHP extensions
+RUN docker-php-ext-install -j$(nproc) \
+        bcmath \
+        zip \
+        bz2 \
+        mbstring \
+        intl \
+        pdo \
+        pdo_mysql \
+        pcntl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
-# Install the PHP mcrypt extention (from PECL, mcrypt has been removed from PHP 7.2)
-RUN pecl install mcrypt-1.0.2
-RUN docker-php-ext-enable mcrypt
+# PECL extensions: caching and memcached (mcrypt is gone for good in PHP 8 - Laravel 12 doesn't need it)
+RUN pecl install apcu memcached redis \
+    && docker-php-ext-enable apcu memcached redis
 
-# Install the php memcached extension
-RUN pecl install memcached && docker-php-ext-enable memcached
+# Composer (pinned via official image, no curl-pipe-to-shell)
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
-# Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Node.js 20 LTS + Yarn (via corepack; the old deb.nodesource/apt yarn repo is unmaintained)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && corepack enable \
+    && corepack prepare yarn@stable --activate
 
-#Nodejs
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt install nodejs -y
+RUN groupadd -g 1000 daybyday \
+    && useradd -u 1000 -ms /bin/bash daybyday -g daybyday
 
-RUN groupadd -g 1000 daybyday
-RUN useradd -u 1000 -ms /bin/bash daybyday -g daybyday
-
-ADD . /var/www/html
 COPY --chown=daybyday:daybyday . /var/www/html
 WORKDIR /var/www/html
 
 # Set permissions
-RUN chmod 0775 ./bootstrap/cache -R
-RUN chmod 0775 ./storage/* -R
+RUN chmod -R 0775 ./bootstrap/cache ./storage
 
 USER 1000:1000
 
