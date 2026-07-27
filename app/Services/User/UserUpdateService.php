@@ -22,10 +22,13 @@ class UserUpdateService
      */
     public function create(array $validated, ?UploadedFile $imageFile): User
     {
-        $settings = Setting::cached();
-
         $path = null;
         if ($imageFile !== null) {
+            $settings = Setting::cached();
+            if ($settings === null) {
+                throw new RuntimeException('No company settings found. Please configure company settings or contact support if this persists.');
+            }
+
             $path = Storage::put($settings->external_id, $imageFile);
         }
 

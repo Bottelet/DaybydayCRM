@@ -21,6 +21,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
 use Yajra\DataTables\Facades\DataTables;
@@ -89,7 +90,7 @@ class InvoicesController extends Controller
             ->withPaymentSources(PaymentSource::values())
             ->withAmountDue($amountDue)
             ->withSource($invoice->source)
-            ->withCompanyName(Setting::cached()->company);
+            ->withCompanyName(Setting::cached()?->company ?? '');
     }
 
     /**
@@ -159,12 +160,32 @@ class InvoicesController extends Controller
             return response()->json(['message' => __('You do not have permission to modify invoice lines')], 403);
         }
 
-        foreach ($request->all() as $invoiceLine) {
-            $error = $this->createInvoiceLine($external_id, $invoiceLine);
+        $invoiceLines = $request->all();
 
-            if ($error !== null) {
-                return response()->json(['message' => $error], 422);
+        foreach ($invoiceLines as $invoiceLine) {
+            if ( ! is_array($invoiceLine)) {
+                return response()->json(['message' => __('Invalid invoice line data')], 422);
             }
+        }
+
+        $error = null;
+
+        try {
+            DB::transaction(function () use ($external_id, $invoiceLines, &$error) {
+                foreach ($invoiceLines as $invoiceLine) {
+                    $error = $this->createInvoiceLine($external_id, $invoiceLine);
+
+                    // A plain InvalidArgumentException here is just a rollback signal for
+                    // a per-line validation failure - not to be confused with the
+                    // ModelNotFoundException (itself a RuntimeException) that firstOrFail()
+                    // throws for an unknown invoice, which must propagate as a 404 instead.
+                    if ($error !== null) {
+                        throw new InvalidArgumentException($error);
+                    }
+                }
+            });
+        } catch (InvalidArgumentException $exception) {
+            return response()->json(['message' => $error ?? $exception->getMessage()], 422);
         }
 
         return response()->json(['message' => 'Invoice lines updated'], 200);
@@ -172,7 +193,7 @@ class InvoicesController extends Controller
 
     public function findByExternalId($external_id)
     {
-        return Invoice::whereExternalId($external_id)->first();
+        return Invoice::whereExternalId($external_id)->firstOrFail();
     }
 
     public function paymentsDataTable(Invoice $invoice)

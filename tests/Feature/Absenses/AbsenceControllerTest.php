@@ -107,6 +107,32 @@ class AbsenceControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_redirects_to_dashboard_on_non_json_create_when_actor_lacks_absence_view(): void
+    {
+        /* Arrange: absence-manage but not absence-view. */
+        $this->user = User::factory()->withRole('employee')->create();
+        $this->withPermissions(PermissionName::ABSENCE_MANAGE);
+        $user = User::factory()->create();
+
+        /* Act */
+        $response = $this->post(route('absence.store'), [
+            'reason'              => 'sick_leave',
+            'user_external_id'    => $user->external_id,
+            'start_date'          => '2020-01-01',
+            'end_date'            => '2020-01-02',
+            'medical_certificate' => null,
+            'comment'             => 'Sick kid',
+        ]);
+
+        /* Assert: the success redirect must not bounce through the view-gated
+         * absence index (which would immediately flash a conflicting
+         * permission warning and redirect back out). */
+        $response->assertRedirect(route('dashboard'));
+        $response->assertSessionHas('flash_message', __('Absence registered'));
+        $this->assertCount(1, $user->fresh()->absences);
+    }
+
+    #[Test]
     public function it_returns_web_error_when_absence_creation_throws_exception()
     {
         /* Arrange */

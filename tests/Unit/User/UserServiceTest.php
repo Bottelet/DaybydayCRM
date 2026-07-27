@@ -8,10 +8,13 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\User\UserUpdateService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\AbstractTestCase;
 
 #[CoversClass(UserUpdateService::class)]
@@ -85,5 +88,28 @@ class UserServiceTest extends AbstractTestCase
         $freshOwnerRole = $owner->fresh()->roles->first();
         $this->assertNotNull($freshOwnerRole);
         $this->assertSame(RoleType::OWNER->value, $freshOwnerRole->name);
+    }
+
+    #[Test]
+    public function it_throws_when_creating_a_user_with_an_image_but_no_settings_are_configured(): void
+    {
+        /* Arrange: no Setting row is created, so Setting::cached() resolves to null. */
+        Cache::forget('app_settings');
+        $service    = new UserUpdateService();
+        $role       = Role::factory()->create();
+        $department = Department::factory()->create();
+        $imageFile  = UploadedFile::fake()->create('avatar.jpg', 10);
+
+        /* Act & Assert */
+        $this->expectException(RuntimeException::class);
+
+        $service->create([
+            'name'       => 'Jane Doe',
+            'email'      => 'jane3@example.com',
+            'password'   => 'password123',
+            'role'       => $role->id,
+            'department' => $department->id,
+            'language'   => 'en',
+        ], $imageFile);
     }
 }
