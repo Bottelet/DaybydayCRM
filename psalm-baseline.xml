@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="7.0.0-beta19@7e751c06a756fa64dc4c759c09fe4a173afcb433">
+  <file src="app/Http/Controllers/DocumentsController.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[View]]></code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="app/Http/Controllers/OffersController.php">
+    <ModelMakeDiscouraged>
+      <code><![CDATA[InvoiceLine::make($invoiceLine->toArray())]]></code>
+      <code><![CDATA[InvoiceLine::make([
+                    'title'      => $line['title'],
+                    'type'       => $line['type'],
+                    'quantity'   => $line['quantity'] ?: 1,
+                    'comment'    => $line['comment'] ?? null,
+                    'price'      => $line['price'] * 100,
+                    'product_id' => $productId,
+                ])]]></code>
+      <code><![CDATA[InvoiceLine::make([
+                'title'      => $line['title'],
+                'type'       => $line['type'],
+                'quantity'   => $line['quantity'] ?: 1,
+                'comment'    => $line['comment'] ?? null,
+                'price'      => $line['price'] * 100,
+                'product_id' => isset($line['product']) && $line['product'] ? Product::whereExternalId($line['product'])->first()->id : null,
+            ])]]></code>
+    </ModelMakeDiscouraged>
+  </file>
+  <file src="app/Http/Controllers/ProductsController.php">
+    <ModelMakeDiscouraged>
+      <code><![CDATA[Product::make()]]></code>
+    </ModelMakeDiscouraged>
+  </file>
+  <file src="app/Http/Controllers/ProjectsController.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[StoreTaskRequest]]></code>
+      <code><![CDATA[UpdateLeadFollowUpRequest]]></code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="app/Http/Controllers/TasksController.php">
+    <UndefinedClass>
+      <code><![CDATA[Notifynder]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="app/Services/Offer/OfferService.php">
+    <ModelMakeDiscouraged>
+      <code><![CDATA[InvoiceLine::make($invoiceLine->toArray())]]></code>
+      <code><![CDATA[InvoiceLine::make([
+                'title'      => $line['title'],
+                'type'       => $line['type'],
+                'quantity'   => $line['quantity'] ?: 1,
+                'comment'    => $line['comment'] ?? null,
+                'price'      => (int) ($line['price'] * 100), // Convert to cents
+                'product_id' => $productId,
+            ])]]></code>
+    </ModelMakeDiscouraged>
+  </file>
+  <file src="app/Services/Storage/Dropbox.php">
+    <TaintedFile>
+      <code><![CDATA[$file]]></code>
+    </TaintedFile>
+    <TaintedSSRF>
+      <code><![CDATA[$file]]></code>
+    </TaintedSSRF>
+  </file>
+  <file src="app/Services/Storage/GoogleDrive.php">
+    <TaintedFile>
+      <code><![CDATA[$file]]></code>
+    </TaintedFile>
+    <TaintedSSRF>
+      <code><![CDATA[$file]]></code>
+    </TaintedSSRF>
+  </file>
+  <file src="app/Zizaco/Entrust/Entrust.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[$user]]></code>
+      <code><![CDATA[Illuminate\Auth\UserInterface|null]]></code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="app/Zizaco/Entrust/EntrustServiceProvider.php">
+    <UndefinedClass>
+      <code><![CDATA[MigrationCommand]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="config/services.php">
+    <UndefinedClass>
+      <code><![CDATA[Tenant]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="database/factories/FilesFactory.php">
+    <UndefinedClass>
+      <code><![CDATA[File]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="database/seeders/Concerns/WorldBuilder.php">
+    <MissingTemplateParam>
+      <code><![CDATA[Collection<User>]]></code>
+    </MissingTemplateParam>
+  </file>
+</files>
