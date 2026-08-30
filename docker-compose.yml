@@ -1,144 +1,122 @@
-version: "3"
+version: "3.8"
 
 services:
   php:
-    container_name: phpMain
+    container_name: workspace
     build:
       context: .
       dockerfile: .docker/php/Dockerfile
     working_dir: /var/www/html
     volumes:
       - .:/var/www/html
-      - .docker/php/custom.ini:/usr/local/etc/php/php.ini
+      - .docker/php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_KEY=i53weLzCSdunQzNc2SXR2AE9XJVDuNaq
+      - APP_KEY=base64:EqIIgNhMb5heanJyMvuY3mwvIkaVESHJzYfFHsEoqK2=
       - DB_HOST=db
       - DB_DATABASE=daybyday
       - DB_USERNAME=root
       - DB_PASSWORD=root
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
     depends_on:
       - db
+      - redis
     env_file:
-        - docker-compose.env
-    links:
-        - elasticsearch
-        - elasticsearch2
-        - redis
+      - docker-compose.env
     ports:
       - 9000:9000
     networks:
       - service_net
-
-  chrome:
-    image: robcherry/docker-chromedriver
-    networks:
-      - service_net
-    environment:
-      CHROMEDRIVER_WHITELISTED_IPS: ""
-      CHROMEDRIVER_PORT: "9515"
-    ports:
-      - 9515:9515
-    cap_add:
-      - "SYS_ADMIN"
-    links:
-      - php
-      - nginx:daybydaycrm.test
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   db:
     container_name: dbMain
-    image: mysql:5.7
+    image: mysql:8.0
+    restart: unless-stopped
     volumes:
       - dbdata:/var/lib/mysql
       - .docker/db/db/:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
-    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=daybyday
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: daybyday
+      MYSQL_USER: daybyday
+      MYSQL_PASSWORD: daybyday
+      MYSQL_ALLOW_EMPTY_PASSWORD: "false"
     networks:
       - service_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   nginx:
     container_name: nginxMain
     build:
       context: .
-      dockerfile: ./.docker/nginx/Dockerfile
+      dockerfile: .docker/nginx/Dockerfile
+    restart: unless-stopped
     volumes:
       - .docker/nginx/nginx-local.conf:/etc/nginx/nginx.conf
       - .:/var/www/html
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - php
-    links:
-      - php
     networks:
       - service_net
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
-    container_name: elasticsearchMain
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata1:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-    networks:
-      - service_net
-
-  elasticsearch2:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
-    container_name: elasticsearchSecond
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "discovery.zen.ping.unicast.hosts=elasticsearch"
-      - "ELASTICSEARCH_MINIMUM_MASTER_NODES=2"
-      - "discovery.zen.minimum_master_nodes=2"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-        - esdata2:/usr/share/elasticsearch/data
-    networks:
-      - service_net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
-    image: 'bitnami/redis:latest'
     container_name: redisMain
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+    image: redis:7-alpine
+    restart: unless-stopped
     volumes:
-      - redisdata:/bitnami/redis/data
+      - redisdata:/data
     ports:
       - 6379:6379
     networks:
       - service_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: Chromium for Playwright e2e tests
+  chrome:
+    image: mcr.microsoft.com/playwright:v1.40.0-focal
+    container_name: chrome
+    restart: unless-stopped
+    networks:
+      - service_net
+    ports:
+      - 9515:9515
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 volumes:
-  esdata1:
-    driver: local
-  esdata2:
-    driver: local
   redisdata:
     driver: local
   dbdata:
     driver: local
 
 networks:
-    service_net:
-      driver: bridge
+  service_net:
+    driver: bridge
