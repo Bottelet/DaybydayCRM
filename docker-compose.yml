@@ -13,19 +13,20 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_KEY=base64:EqIIgNhMb5heanJyMvuY3mwvIkaVESHJzYfFHsEoqK2=
       - DB_HOST=db
       - DB_DATABASE=daybyday
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
+      - DB_USERNAME=daybyday
+      - DB_PASSWORD=daybyday
       - CACHE_DRIVER=redis
       - SESSION_DRIVER=redis
       - QUEUE_CONNECTION=redis
-    depends_on:
-      - db
-      - redis
     env_file:
       - docker-compose.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - 9000:9000
     networks:
@@ -35,6 +36,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
 
   db:
     container_name: dbMain
@@ -58,6 +60,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 15s
 
   nginx:
     container_name: nginxMain
@@ -72,7 +75,8 @@ services:
       - 80:80
       - 443:443
     depends_on:
-      - php
+      php:
+        condition: service_healthy
     networks:
       - service_net
     healthcheck:
@@ -80,6 +84,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
 
   redis:
     container_name: redisMain
@@ -96,6 +101,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
 
   # Optional: Chromium for Playwright e2e tests
   chrome:

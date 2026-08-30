@@ -1,0 +1,55 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+
+# PHP
+vendor
+composer.lock
+.phpunit.result.cache
+
+# Laravel
+bootstrap/cache/*
+storage/*
+.env.local
+.env.*.local
+
+# Docker
+docker-compose.override.yml
+Dockerfile.dev
+
+# Testing
+coverage
+.phpstorm.meta.php
+_ide_helper.php
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Documentation
+docs
+README.md
+CHANGELOG.md
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Development
+.editorconfig
+.env.example
+Makefile
