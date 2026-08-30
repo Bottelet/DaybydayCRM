@@ -27,22 +27,36 @@ CONTAINER   := $$(docker ps -aqf "name=$(CONTAINER_NAME)")
 
 # --- Docker Compose (Host Level) ---
 
+build:
+	docker-compose build
+	@echo "✓ Docker images built successfully"
+
 up:
 	docker-compose up -d
 	@echo "✓ Containers started"
+	@echo "  Web:   http://localhost"
+	@echo "  PHP:   localhost:9000"
+	@echo "  MySQL: localhost:3306"
+	@echo "  Redis: localhost:6379"
 
 down:
 	docker-compose down -v
 	@echo "✓ Containers stopped and volumes removed"
 
-rebuild:
-	docker-compose down -v
-	docker-compose build --no-cache
-	docker-compose up -d
-	@echo "✓ Containers rebuilt"
+rebuild: down build up
+	@echo "✓ Containers rebuilt successfully"
 
-docker-logs:
+logs:
 	docker-compose logs -f
+
+logs-php:
+	docker-compose logs -f php
+
+logs-nginx:
+	docker-compose logs -f nginx
+
+logs-db:
+	docker-compose logs -f db
 
 # --- Shell Access ---
 
@@ -148,10 +162,16 @@ help:
 	@echo "=============================================================="
 	@echo ""
 	@echo "DOCKER MANAGEMENT (run from host):"
+	@echo "  make build           Build Docker images"
 	@echo "  make up              Start all Docker containers"
 	@echo "  make down            Stop and remove containers"
 	@echo "  make rebuild         Rebuild all containers from scratch"
-	@echo "  make docker-logs     View live Docker logs"
+	@echo ""
+	@echo "DOCKER LOGS:"
+	@echo "  make logs            View all container logs (follow mode)"
+	@echo "  make logs-php        View PHP container logs"
+	@echo "  make logs-nginx      View Nginx container logs"
+	@echo "  make logs-db         View Database container logs"
 	@echo ""
 	@echo "HOST COMMANDS (run from host terminal):"
 	@echo "  make dsh             Enter workspace container shell"
