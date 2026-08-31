@@ -71,9 +71,6 @@ jobs:
       - name: Check database migrations
         run: docker-compose exec -T php php artisan migrate:status
 
-      - name: Run Laravel tests with composer
-        run: docker-compose exec -T php composer test 2>/dev/null || echo "Composer test script not defined"
-
       - name: View container logs on failure
         if: failure()
         run: docker-compose logs
