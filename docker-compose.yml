@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   php:
-    container_name: workspace
+    container_name: phpMain
     build:
       context: .
       dockerfile: .docker/php/Dockerfile
