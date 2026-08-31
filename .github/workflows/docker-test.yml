@@ -35,10 +35,10 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build Docker images
-        run: docker-compose build --no-cache
+        run: docker compose build --no-cache
 
       - name: Start containers
-        run: docker-compose up -d
+        run: docker compose up -d
         timeout-minutes: 5
 
       - name: Wait for services to be healthy
@@ -56,16 +56,16 @@ jobs:
             sleep 5
           done
           echo "Services did not become healthy"
-          docker-compose logs
+          docker compose logs
           exit 1
 
       - name: Test artisan route:list
-        run: docker-compose exec -T php php artisan route:list
+        run: docker compose exec -T php php artisan route:list
 
       - name: View container logs on failure
         if: failure()
-        run: docker-compose logs
+        run: docker compose logs
 
       - name: Stop containers
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
