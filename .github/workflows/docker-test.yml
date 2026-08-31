@@ -34,6 +34,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Verify Docker installation
+        run: |
+          docker --version
+          docker-compose --version
+
       - name: Build Docker images
         run: docker-compose build --no-cache
 
@@ -61,6 +66,12 @@ jobs:
 
       - name: Test artisan route:list
         run: docker-compose exec -T php php artisan route:list
+
+      - name: Test artisan config check
+        run: docker-compose exec -T php php artisan config:cache
+
+      - name: Verify application environment
+        run: docker-compose exec -T php php artisan tinker --execute="echo 'Laravel app is running';"
 
       - name: View container logs on failure
         if: failure()
