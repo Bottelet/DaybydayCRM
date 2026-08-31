@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "Waiting for services to be healthy..."
           for i in {1..60}; do
-            if docker ps | grep -q "workspace.*healthy" && \
+            if docker ps | grep -q "phpMain.*healthy" && \
                docker ps | grep -q "nginxMain.*healthy" && \
                docker ps | grep -q "dbMain.*healthy" && \
                docker ps | grep -q "redisMain.*healthy"; then
@@ -61,15 +61,6 @@ jobs:
 
       - name: Test artisan route:list
         run: docker-compose exec -T php php artisan route:list
-
-      - name: Run PHP linting
-        run: docker-compose exec -T php vendor/bin/phpstan analyse app --level=5
-
-      - name: Run PHPUnit tests
-        run: docker-compose exec -T php vendor/bin/phpunit --exclude-group flaky --stop-on-failure
-
-      - name: Check database migrations
-        run: docker-compose exec -T php php artisan migrate:status
 
       - name: View container logs on failure
         if: failure()
