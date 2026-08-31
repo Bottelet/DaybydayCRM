@@ -59,6 +59,9 @@ jobs:
           docker-compose logs
           exit 1
 
+      - name: Test artisan route:list
+        run: docker-compose exec -T php php artisan route:list
+
       - name: Run PHP linting
         run: docker-compose exec -T php vendor/bin/phpstan analyse app --level=5
 
