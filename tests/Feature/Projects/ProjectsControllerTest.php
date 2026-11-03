@@ -56,6 +56,22 @@ class ProjectsControllerTest extends AbstractTestCase
     }
 
     #[Test]
+    public function it_escapes_project_titles_in_the_datatable_action_html()
+    {
+        $title = 'Project"><img src=x onerror=alert(1)>';
+        $project = Project::factory()->create(['title' => $title]);
+
+        $response = $this->getJson(route('projects.index.data'));
+
+        $response->assertOk();
+        $row = collect($response->json('data'))->firstWhere('external_id', $project->external_id);
+
+        $this->assertNotNull($row);
+        $this->assertStringContainsString(e($title), $row['view']);
+        $this->assertStringNotContainsString('<img', $row['view']);
+    }
+
+    #[Test]
     public function it_returns_web_error_when_project_creation_throws_exception()
     {
         /* Arrange */
