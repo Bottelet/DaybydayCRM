@@ -101,7 +101,7 @@ class ProjectsController extends Controller
             })
             ->addColumn('view', function ($projects) {
                 return '<a href="' . route('projects.show', $projects->external_id) . '" class="btn btn-link">' . __('View') . '</a>'
-                . '<a data-toggle="modal" data-id="' . route('projects.destroy', $projects->external_id) . '" data-title="' . $projects->title . '" data-target="#deletion" class="btn btn-link">' . __('Delete') . '</a>';
+                . '<a data-toggle="modal" data-id="' . route('projects.destroy', $projects->external_id) . '" data-title="' . e($projects->title) . '" data-target="#deletion" class="btn btn-link">' . __('Delete') . '</a>';
             })
             ->rawColumns(['titlelink', 'view', 'status_id'])
             ->make(true);
